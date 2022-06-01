@@ -1,14 +1,10 @@
-# Project
+# SBOM Tool
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 compatible SBOMs for any variety of artifacts.
 
-As the maintainer of this project, please make a few updates:
+## Telemetry
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+By default, telemetry will output to your output file path and will be a JSON blob. No data is submitted to Microsoft.
 
 ## Contributing
 
