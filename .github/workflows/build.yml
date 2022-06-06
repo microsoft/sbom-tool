@@ -15,8 +15,8 @@ jobs:
       OFFICIAL_BUILD: 'True'
       # Set the build number in MinVer.
       MINVERBUILDMETADATA: build.${{github.run_number}}
-      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: ${{ secrets.MANIFEST_TOOL_FEED_PAT }}
-      
+      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '{"endpointCredentials": [{"endpoint":"https://pkgs.dev.azure.com/mseng/AzureDevOps/_packaging/ManifestTool/nuget/v3/index.json", "username":"optional", "password":"${{ secrets.MANIFEST_TOOL_FEED_PAT }}"}]}'
+  
     steps:
     - uses: actions/checkout@v3
     
@@ -24,12 +24,14 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 3.1.x
+    - name: env vars
+      run: echo $VSS_NUGET_EXTERNAL_FEED_ENDPOINTS
         
     - name: Install credential provider
       run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) }"
     
     - name: Restore dependencies
-      run: nuget restore
+      run: dotnet restore
     
     - name: Build
       run: dotnet build --no-restore
