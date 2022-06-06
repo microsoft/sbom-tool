@@ -29,7 +29,7 @@ jobs:
       run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) }"
     
     - name: Restore dependencies
-      run: dotnet restore 
+      run: nuget restore 
       
     - name: Build
       run: dotnet build --no-restore
