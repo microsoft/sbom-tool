@@ -58,6 +58,17 @@ jobs:
 #    - name: Autobuild
 #      uses: github/codeql-action/autobuild@v2
 
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 3.1.x
+
+    - name: dotnet restore
+      run: dotnet restore
+      
+    - name: Build and publish
+      run: dotnet publish -o dist -c Release .\Microsoft.Sbom.sln
+
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
 
