@@ -23,6 +23,9 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 3.1.x
+        
+    - name: Install credential provider
+      run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) }"
     
     - name: Restore dependencies
       run: dotnet restore
