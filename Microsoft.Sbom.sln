@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32505.173
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Extensions", "src\Microsoft.Sbom.Extensions\Microsoft.Sbom.Extensions.csproj", "{256D50F7-5B0E-4394-81E0-DCEE32F96634}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9142A120-B118-4B9E-8B6C-C6C97C9A33F7} = {9142A120-B118-4B9E-8B6C-C6C97C9A33F7}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Api.Contracts", "src\Microsoft.Sbom.Api.Contracts\Microsoft.Sbom.Api.Contracts.csproj", "{9142A120-B118-4B9E-8B6C-C6C97C9A33F7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{256D50F7-5B0E-4394-81E0-DCEE32F96634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{256D50F7-5B0E-4394-81E0-DCEE32F96634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{256D50F7-5B0E-4394-81E0-DCEE32F96634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{256D50F7-5B0E-4394-81E0-DCEE32F96634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9142A120-B118-4B9E-8B6C-C6C97C9A33F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9142A120-B118-4B9E-8B6C-C6C97C9A33F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9142A120-B118-4B9E-8B6C-C6C97C9A33F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9142A120-B118-4B9E-8B6C-C6C97C9A33F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7A5A6B45-3C4A-410E-B020-8972CD745155}
+	EndGlobalSection
+EndGlobal

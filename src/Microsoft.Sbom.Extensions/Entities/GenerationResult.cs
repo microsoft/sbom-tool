@@ -1,0 +1,32 @@
+﻿using System;
+using System.Text.Json;
+
+namespace ManifestInterface.Entities
+{
+    /// <summary>
+    /// A object that represents the generated <see cref="JsonDocument"/> along
+    /// with additional metadata about the generated object.
+    /// </summary>
+    public class GenerationResult
+    {
+        private JsonDocument document;
+
+        /// <summary>
+        /// The entity object in the JSON format as expected by the current SBOM format.
+        /// </summary>
+        public JsonDocument Document
+        {
+            get { return document; }
+            set
+            {
+                document = value ?? throw new Exception("JsonDocument cannot be null.");
+            }
+        }
+
+        /// <summary>
+        /// Any additional metadata that needs to be returned about the current
+        /// entity or SBOM.
+        /// </summary>
+        public ResultMetadata ResultMetadata { get; set; }
+    }
+}

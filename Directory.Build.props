@@ -1,0 +1,35 @@
+<Project>
+
+    <PropertyGroup Label="Build">
+        <LangVersion>latest</LangVersion>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <TreatWarningsAsErrors Condition="'$(OFFICIAL_BUILD)' == 'True'">true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Package">
+        <Authors>Microsoft</Authors>
+        <Company>Microsoft</Company>
+        <Copyright>Copyright © Microsoft Corporation. All rights reserved.</Copyright>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/microsoft/sbom-tool</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/microsoftsbom-tool.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageReleaseNotes>https://github.com/microsoft/sbom-tool/releases</PackageReleaseNotes>
+    </PropertyGroup>
+
+    <ItemGroup Label="Package References">
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" PrivateAssets="all"/>
+        <PackageReference Include="MinVer" PrivateAssets="all"/>
+        <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all"/>
+    </ItemGroup>
+
+    <PropertyGroup>
+        <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)analyzers.ruleset</CodeAnalysisRuleSet>
+        <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+        <NoWarn>NU1608,NU5119</NoWarn>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(OFFICIAL_BUILD)'=='True'">
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+</Project>
