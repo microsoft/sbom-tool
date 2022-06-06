@@ -25,8 +25,8 @@ jobs:
       with:
         dotnet-version: 3.1.x
         
-    - name: Install credential provider
-      run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) }"
+   # - name: Install credential provider
+  #    run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) }"
     
     - name: Restore dependencies
       run: nuget restore 
