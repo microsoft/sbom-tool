@@ -4,6 +4,7 @@
         <LangVersion>latest</LangVersion>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <TreatWarningsAsErrors Condition="'$(OFFICIAL_BUILD)' == 'True'">true</TreatWarningsAsErrors>
+        <RootNamespace>Microsoft.Sbom</RootNamespace>
     </PropertyGroup>
 
     <PropertyGroup Label="Package">
