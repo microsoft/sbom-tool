@@ -15,7 +15,7 @@ jobs:
       OFFICIAL_BUILD: 'True'
       # Set the build number in MinVer.
       MINVERBUILDMETADATA: build.${{github.run_number}}
-      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '{"endpointCredentials": [{"endpoint":"https://pkgs.dev.azure.com/mseng/AzureDevOps/_packaging/ManifestTool/nuget/v3/index.json", "username":"optional", "password":"${{ secrets.MANIFEST_TOOL_FEED_PAT }}"}]}'
+      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: "{\"endpointCredentials\":[{\"endpoint\":\"https://pkgs.dev.azure.com/mseng/AzureDevOps/_packaging/ManifestTool/nuget/v3/index.json\",\"username\":\"optional\",\"password\":\"${{secrets.MANIFEST_TOOL_FEED_PAT}}\"}]}"
   
     steps:
     - uses: actions/checkout@v3
