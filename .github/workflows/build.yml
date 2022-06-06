@@ -24,14 +24,12 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 3.1.x
-    - name: env vars
-      run: echo $VSS_NUGET_EXTERNAL_FEED_ENDPOINTS
         
     - name: Install credential provider
       run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) }"
     
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore --interactive
     
     - name: Build
       run: dotnet build --no-restore
