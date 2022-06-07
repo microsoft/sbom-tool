@@ -15,7 +15,6 @@ jobs:
       OFFICIAL_BUILD: 'True'
       # Set the build number in MinVer.
       MINVERBUILDMETADATA: build.${{github.run_number}}
-      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: ${{ secrets.MANIFEST_TOOL_FEED_TOKEN }}
   
     steps:
     - uses: actions/checkout@v3
@@ -25,11 +24,8 @@ jobs:
       with:
         dotnet-version: 3.1.x
         
-    - name: Install credential provider
-      run: iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) }"
-
-    - name: test2
-      run: .\CredentialProvider.Microsoft.exe -h
+    - name: Add nuget credentials
+      run: dotnet nuget update source 'ManifestTool' -u optional -p ${{ secrets.MANIFEST_TOOL_FEED_TOKEN }} --configfile .\nuget.config
       
     - name: Restore dependencies
       run: dotnet restore 
