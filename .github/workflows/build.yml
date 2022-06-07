@@ -23,10 +23,7 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 3.1.x
-        
-    - name: Add nuget credentials
-      run: dotnet nuget update source 'ManifestTool' -u optional -p ${{ secrets.MANIFEST_TOOL_FEED_TOKEN }} --configfile .\nuget.config
-      
+
     - name: Restore dependencies
       run: dotnet restore 
       
