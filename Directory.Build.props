@@ -19,8 +19,10 @@
         <PackageReleaseNotes>https://github.com/microsoft/sbom-tool/releases</PackageReleaseNotes>
     </PropertyGroup>
 
-    <ItemGroup Label="Package References">       
+    <ItemGroup Label="Package References"> 
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" PrivateAssets="all"/>
         <PackageReference Include="MinVer" PrivateAssets="all"/>
+        <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all"/>    
     </ItemGroup>
 
     <PropertyGroup>
@@ -28,8 +30,8 @@
         <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
         <NoWarn>NU1608,NU5119</NoWarn>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
-<AnalysisLevel>latest</AnalysisLevel>
-<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+        <AnalysisLevel>latest</AnalysisLevel>
+        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(OFFICIAL_BUILD)'=='True'">
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
