@@ -29,9 +29,6 @@
         <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)analyzers.ruleset</CodeAnalysisRuleSet>
         <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
         <NoWarn>NU1608,NU5119</NoWarn>
-        <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <AnalysisLevel>latest</AnalysisLevel>
-        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(OFFICIAL_BUILD)'=='True'">
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
