@@ -19,7 +19,8 @@
         <PackageReleaseNotes>https://github.com/microsoft/sbom-tool/releases</PackageReleaseNotes>
     </PropertyGroup>
 
-    <ItemGroup Label="Package References">
+    <ItemGroup Label="Package References">       
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" PrivateAssets="all"/>
         <PackageReference Include="MinVer" PrivateAssets="all"/>
         <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all"/>
     </ItemGroup>
