@@ -23,6 +23,6 @@ namespace Microsoft.Sbom.Contracts.Enums
         /// The entity is a package.
         /// </summary>
         [EnumMember(Value = "Package")]
-        Package = 2
+        Package = 2,
     }
 }

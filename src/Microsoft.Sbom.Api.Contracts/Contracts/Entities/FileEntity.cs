@@ -9,12 +9,13 @@ namespace Microsoft.Sbom.Contracts.Entities
     public class FileEntity : Entity
     {
         /// <summary>
-        /// The path of the file as included in the SBOM.
+        /// Gets the path of the file as included in the SBOM.
         /// </summary>
         public string Path { get; private set; }
         
         /// <nodoc />
-        public FileEntity(string path, string id = null) : base(EntityType.File, id)
+        public FileEntity(string path, string id = null)
+            : base(EntityType.File, id)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -27,7 +28,7 @@ namespace Microsoft.Sbom.Contracts.Entities
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"FileEntity (Path={Path}{(Id == null ? string.Empty : ", Id="+Id)})";
+            return $"FileEntity (Path={Path}{(Id == null ? string.Empty : $", Id={Id}")})";
         }
     }
 }

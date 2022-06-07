@@ -10,13 +10,13 @@ namespace Microsoft.Sbom.Contracts
     public class Checksum : IEquatable<Checksum>
     {
         /// <summary>
-        /// The name of the hashing algorithm used to generate this hash.
-        /// ex. <see cref="AlgorithmName.SHA256"/>
+        /// Gets or sets the name of the hashing algorithm used to generate this hash.
+        /// ex. <see cref="AlgorithmName.SHA256"/>.
         /// </summary>
         public AlgorithmName Algorithm { get; set; }
 
         /// <summary>
-        /// The generated hash value.
+        /// Gets or sets the generated hash value.
         /// </summary>
         public string ChecksumValue { get; set; }
 
@@ -35,8 +35,8 @@ namespace Microsoft.Sbom.Contracts
         public override int GetHashCode()
         {
             int hashCode = 1457973397;
-            hashCode = hashCode * -1521134295 + Algorithm.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(ChecksumValue);
+            hashCode = (hashCode * -1521134295) + Algorithm.GetHashCode();
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(ChecksumValue);
             return hashCode;
         }
 

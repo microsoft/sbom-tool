@@ -1,7 +1,7 @@
 ﻿namespace ManifestInterface
 {
     /// <summary>
-    /// A list of keys that are available as metadata in the internal metadata provider
+    /// A list of keys that are available as metadata in the internal metadata provider.
     /// </summary>
     public enum MetadataKey
     {
@@ -53,7 +53,7 @@
         ImageOS,
         ImageVersion,
         OrganizationId,
-        ProjectId
+        ProjectId,
 
         #endregion
     }

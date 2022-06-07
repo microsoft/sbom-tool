@@ -11,7 +11,7 @@ namespace Microsoft.Sbom.Contracts
     public interface ISBOMGenerator
     {
         /// <summary>
-        /// Generate a SBOM in the rootPath using the provided file and package lists
+        /// Generate a SBOM in the rootPath using the provided file and package lists.
         /// </summary>
         /// <param name="rootPath">The root path of the drop where the generated SBOM will be placed.</param>
         /// <param name="files">The list of <see cref="SBOMFile">files</see> to include in this SBOM.</param>
@@ -23,14 +23,15 @@ namespace Microsoft.Sbom.Contracts
         /// <param name="manifestDirPath">Output directory. If null defaults to rootPath.</param>
         /// <returns>The result object that indicates if the generation succeeded, and a list of 
         /// errors if it failed along with telemetry.</returns>
-        Task<SBOMGenerationResult> GenerateSBOMAsync(string rootPath,
-                                          IEnumerable<SBOMFile> files,
-                                          IEnumerable<SBOMPackage> packages,
-                                          SBOMMetadata metadata,
-                                          IList<SBOMSpecification> specifications = null,
-                                          RuntimeConfiguration runtimeConfiguration = null,
-                                          string manifestDirPath = null,
-                                          string externalDocumentReferenceListFile = null);
+        Task<SBOMGenerationResult> GenerateSBOMAsync(
+                    string rootPath,
+                    IEnumerable<SBOMFile> files,
+                    IEnumerable<SBOMPackage> packages,
+                    SBOMMetadata metadata,
+                    IList<SBOMSpecification> specifications = null,
+                    RuntimeConfiguration runtimeConfiguration = null,
+                    string manifestDirPath = null,
+                    string externalDocumentReferenceListFile = null);
 
         /// <summary>
         /// Generate a SBOM by traversing the rootPath folder and discovering files and packages.
@@ -41,10 +42,11 @@ namespace Microsoft.Sbom.Contracts
         /// <param name="specifications">Provide a list of <see cref="SBOMSpecification"/> that you want your SBOM to be generated
         /// for. If this is not provided, we will generate SBOMs for all the available formats.</param>
         /// <param name="runtimeConfiguration">Configuration to tweak the SBOM generator workflow.</param>
-        /// <param name="manifestDirPath">Output directory. If null defaults to rootPath joined to _manifest</param>
+        /// <param name="manifestDirPath">Output directory. If null defaults to rootPath joined to _manifest.</param>
         /// <returns>The result object that indicates if the generation succeeded, and a list of 
         /// errors if it failed along with telemetry.</returns>
-        Task<SBOMGenerationResult> GenerateSBOMAsync(string rootPath,
+        Task<SBOMGenerationResult> GenerateSBOMAsync(
+                                  string rootPath,
                                   string componentPath,
                                   SBOMMetadata metadata,
                                   IList<SBOMSpecification> specifications = null,
@@ -57,14 +59,14 @@ namespace Microsoft.Sbom.Contracts
         /// generated for them. Use this function to get a list of the required hash algorithms for your 
         /// SBOM specification. The SBOM generator may throw an exception if a hash algorithm value is missing.
         /// </summary>
-        /// <param name="specification">The SBOM specification</param>
-        /// <returns>A list of <see cref="HashAlgorithmName"/></returns>
+        /// <param name="specification">The SBOM specification.</param>
+        /// <returns>A list of <see cref="HashAlgorithmName"/>.</returns>
         IEnumerable<AlgorithmName> GetRequiredAlgorithms(SBOMSpecification specification);
 
         /// <summary>
         /// Gets a list of <see cref="SBOMSpecification"/> this SBOM generator supports.
         /// </summary>
-        /// <returns>A list of <see cref="SBOMSpecification"/></returns>
+        /// <returns>A list of <see cref="SBOMSpecification"/>.</returns>
         IEnumerable<SBOMSpecification> GetSupportedSBOMSpecifications();
     }
 }

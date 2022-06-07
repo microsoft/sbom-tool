@@ -9,25 +9,27 @@ namespace Microsoft.Sbom.Contracts.Entities
     public class PackageEntity : Entity
     {
         /// <summary>
-        /// The name of the package.
+        /// Gets the name of the package.
         /// </summary>
         public string Name { get; private set; }
 
         /// <summary>
-        /// The version of the package.
+        /// Gets the version of the package.
         /// </summary>
         public string Version { get; private set; }
 
         /// <summary>
-        /// The path where the package was found.
+        /// Gets the path where the package was found.
         /// </summary>
         public string Path { get; private set; }
 
         /// <nodoc />
-        public PackageEntity(string name,
-                             string version = null,
-                             string path = null,
-                             string id = null) : base(EntityType.Package, id)
+        public PackageEntity(
+            string name,
+            string version = null,
+            string path = null,
+            string id = null)
+            : base(EntityType.Package, id)
         {
             if (string.IsNullOrEmpty(name))
             {

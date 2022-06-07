@@ -6,17 +6,17 @@ namespace Microsoft.Sbom.Contracts
 {
     /// <summary>
     /// Represents the specification of the SBOM.
-    /// For ex. SPDX 2.2
+    /// For ex. SPDX 2.2.
     /// </summary>
     public class SBOMSpecification : IEquatable<SBOMSpecification>
     {
         /// <summary>
-        /// The name of the SBOM specification.
+        /// Gets the name of the SBOM specification.
         /// </summary>
         public string Name { get; private set; }
 
         /// <summary>
-        /// The version of the SBOM specification.
+        /// Gets the version of the SBOM specification.
         /// </summary>
         public string Version { get; private set; }
 
@@ -41,7 +41,7 @@ namespace Microsoft.Sbom.Contracts
         /// </summary>
         /// <param name="value">The string representation of the SBOM.</param>
         /// <returns>A SBOMSpecification object.</returns>
-        /// <example>spdx:2.2</example>
+        /// <example>spdx:2.2.</example>
         public static SBOMSpecification Parse(string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -93,8 +93,8 @@ namespace Microsoft.Sbom.Contracts
         public override int GetHashCode()
         {
             int hashCode = 2112831277;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Version);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Version);
             return hashCode;
         }
 

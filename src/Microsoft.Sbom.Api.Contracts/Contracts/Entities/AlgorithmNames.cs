@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Contracts.Contracts.Entities
                 AlgorithmName.SHA1,
                 AlgorithmName.SHA256,
                 AlgorithmName.SHA512,
-                AlgorithmName.MD5
+                AlgorithmName.MD5,
             };
         }
     }

@@ -8,7 +8,7 @@ namespace Microsoft.Sbom.Contracts.Entities
     public abstract class Entity
     {
         /// <summary>
-        /// The type of the entity.
+        /// Gets the type of the entity.
         /// </summary>
         public EntityType EntityType { get; private set; }
 

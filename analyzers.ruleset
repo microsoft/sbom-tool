@@ -70,7 +70,7 @@
         <Rule Id="SA1121"  Action="Warning" />          <!-- Use built-in type alias -->
         <Rule Id="SA1122"  Action="Warning" />          <!-- Use string.Empty for empty strings -->
         <Rule Id="SA1123"  Action="Warning" />          <!-- Do not place regions within elements -->
-        <Rule Id="SA1124"  Action="Warning" />          <!-- Do not use regions -->
+        <Rule Id="SA1124"  Action="None" />          <!-- Do not use regions -->
         <Rule Id="SA1125"  Action="None" />          <!-- Use shorthand for nullable types -->
         <Rule Id="SA1126"  Action="None" />             <!-- Prefix calls correctly -->
         <Rule Id="SA1127"  Action="Warning" />          <!-- Generic type constraints should be on their own line -->
