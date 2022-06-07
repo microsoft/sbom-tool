@@ -9,7 +9,7 @@ namespace ManifestInterface.Entities
     public class ManifestInfo : IEquatable<ManifestInfo>
     {
         /// <summary>
-        /// s the name of the manifest.
+        /// Gets or sets s the name of the manifest.
         /// </summary>
         public string Name { get; set; }
 
