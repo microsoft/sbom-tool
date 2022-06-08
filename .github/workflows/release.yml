@@ -12,9 +12,6 @@ permissions:
 jobs:
   release:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        rid: [win-x64, linux-x64, osx-x64]
 
     env:
       OFFICIAL_BUILD: 'True'
