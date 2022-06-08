@@ -10,11 +10,8 @@ permissions:
   packages: write
 
 jobs:
-  release:
+  release_job:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        rid: [win-x64, linux-x64, osx-x64]
 
     env:
       OFFICIAL_BUILD: 'True'
@@ -26,7 +23,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          
+
     # - uses: ./.github/workflows/setup-dotnet.yml
     #   with:
     #     platform_name: ${{ env.RUNNER_OS }}
