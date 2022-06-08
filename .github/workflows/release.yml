@@ -28,7 +28,9 @@ jobs:
           fetch-depth: 0
 
       - uses: ./.github/workflows/setup-dotnet.yml
-
+        with:
+          platform_name: ${{ env.RUNNER_OS }}
+          
       - name: Restore dependencies
         run: dotnet restore 
         

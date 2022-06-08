@@ -20,6 +20,8 @@ jobs:
     - uses: actions/checkout@v3
     
     - uses: ./.github/workflows/setup-dotnet.yml
+      with:
+        platform_name: ${{ env.RUNNER_OS }}
 
     - name: Verify files contain copyright header
       run: .\scripts\verification\Verify-LicenceHeader.ps1 -Target .\src -LicenseHeaderPath .\scripts\verification\LicenseHeader.txt -Extensions *.xaml,*.xml,*.cs,*.ps1 -AddIfAbsent $false
