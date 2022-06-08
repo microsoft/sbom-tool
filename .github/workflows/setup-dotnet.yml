@@ -1,8 +1,15 @@
 on:
   workflow_call:
+    inputs:
+      platform_name:
+        required: true
+        type: string
 
 jobs:
   setup_dotnet:
+
+    runs-on: ${{ inputs.platform_name }}
+  
     steps:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
