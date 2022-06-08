@@ -15,7 +15,7 @@
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/microsoft/sbom-tool</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/microsoftsbom-tool.git</RepositoryUrl>
+        <RepositoryUrl>https://github.com/microsoft/sbom-tool.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageReleaseNotes>https://github.com/microsoft/sbom-tool/releases</PackageReleaseNotes>
     </PropertyGroup>
