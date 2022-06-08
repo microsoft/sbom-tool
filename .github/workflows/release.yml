@@ -42,4 +42,4 @@ jobs:
         run: dotnet pack --no-restore --configuration Release --output ./out
 
       - name: Publish NuGet packages to GitHub Packages
-        run: dotnet nuget push "./out/*.nupkg" --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.html
+        run: dotnet nuget push "./out/*.nupkg" --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}
