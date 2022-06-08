@@ -1,0 +1,26 @@
+<!-- All csproj package references should not include version numbers. The version numbers are set using this props file. -->
+<Project>
+    <ItemDefinitionGroup>
+        <PackageReference>
+            <!-- Do not share compile-time dependencies transitively.  This requires that all projects reference all packages -->
+            <PrivateAssets>Compile</PrivateAssets>
+        </PackageReference>
+    </ItemDefinitionGroup>
+
+    <ItemGroup>
+        <PackageVersion Include="MinVer" Version="2.5.0"/>
+        <PackageVersion Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0"/>
+        <PackageVersion Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118"/>
+        <PackageVersion Include="System.Text.Json" Version="5.0.2" />  
+        <PackageVersion Include="System.Composition.AttributedModel" Version="1.4.1"/>
+        <PackageVersion Include="System.Composition.Convention" Version="1.4.1"/>
+        <PackageVersion Include="System.Composition.Hosting" Version="1.4.1"/>
+        <PackageVersion Include="System.Composition.Runtime" Version="1.4.1"/>
+        <PackageVersion Include="System.Composition.TypedParts" Version="1.4.1"/>
+        <PackageVersion Include="System.Memory" Version="4.5.4"/>
+        <PackageVersion Include="System.Reactive" Version="5.0.0"/>
+        <PackageVersion Include="System.Runtime.Loader" Version="4.3.0"/>
+        <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.9.0"/>
+    </ItemGroup>
+</Project>
