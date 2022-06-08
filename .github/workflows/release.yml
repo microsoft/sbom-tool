@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        rid: [win-x64, linux-x64, osx-x64]
+
+    env:
+      OFFICIAL_BUILD: 'True'
+      # Set the build number in MinVer.
+      MINVERBUILDMETADATA: build.${{github.run_number}}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/workflows/setup-dotnet.yml
+
+      - name: Restore dependencies
+        run: dotnet restore 
+        
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Build NuGet packages
+        run: dotnet pack --configuration Release --output ./out
+
+      - name: Publish NuGet packages to GitHub Packages
+        run: dotnet nuget push "./out/*.nupkg" --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}
