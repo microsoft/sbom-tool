@@ -2,9 +2,9 @@ on:
   workflow_call:
 
 jobs:
-setup_dotnet:
-  steps:
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: 3.1.300
+  setup_dotnet:
+    steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 3.1.300
