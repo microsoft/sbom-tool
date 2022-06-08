@@ -26,11 +26,15 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - uses: ./.github/workflows/setup-dotnet.yml
-        with:
-          platform_name: ${{ env.RUNNER_OS }}
           
+    # - uses: ./.github/workflows/setup-dotnet.yml
+    #   with:
+    #     platform_name: ${{ env.RUNNER_OS }}
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 3.1.300
+
       - name: Restore dependencies
         run: dotnet restore 
         

@@ -58,10 +58,14 @@ jobs:
 #    - name: Autobuild
 #      uses: github/codeql-action/autobuild@v2
 
-    - uses: ./.github/workflows/setup-dotnet.yml
+    # - uses: ./.github/workflows/setup-dotnet.yml
+    #   with:
+    #     platform_name: ${{ env.RUNNER_OS }}
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
       with:
-        platform_name: ${{ env.RUNNER_OS }}
-        
+        dotnet-version: 3.1.300
+
     - name: dotnet restore
       run: dotnet restore
       
