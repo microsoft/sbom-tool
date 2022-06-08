@@ -1,4 +1,7 @@
-﻿using Microsoft.Sbom.Contracts.Enums;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Contracts.Interfaces;
 using System;
 using System.Collections.Generic;

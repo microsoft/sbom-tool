@@ -1,4 +1,7 @@
-﻿using System.Diagnostics.Tracing;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Diagnostics.Tracing;
 
 namespace Microsoft.Sbom.Contracts
 {

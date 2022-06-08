@@ -69,7 +69,7 @@ function Get-LineCommentedHeader($SplitVanillaLicenseHeader, $lineComment){
             $licenseHeader = "$licenseHeader$lineComment $line$NewLine"
         }
     }
-    return $licenseHeader; 
+    return "$licenseHeader$NewLine"; 
 }
 
 <# Function to generate line commented license header text. 

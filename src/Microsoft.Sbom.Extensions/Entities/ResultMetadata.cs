@@ -1,4 +1,7 @@
-﻿namespace ManifestInterface.Entities
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace ManifestInterface.Entities
 {
     /// <summary>
     /// A list of metadata about the current entity being serialized. This can be

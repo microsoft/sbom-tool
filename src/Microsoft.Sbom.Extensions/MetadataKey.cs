@@ -1,4 +1,7 @@
-﻿namespace ManifestInterface
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace ManifestInterface
 {
     /// <summary>
     /// A list of keys that are available as metadata in the internal metadata provider.
