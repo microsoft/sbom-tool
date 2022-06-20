@@ -1,4 +1,7 @@
-﻿namespace Microsoft.Sbom.Entities
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace Microsoft.Sbom.Entities
 {
     /// <summary>
     /// Defines relationships between elements in the current SBOM.
