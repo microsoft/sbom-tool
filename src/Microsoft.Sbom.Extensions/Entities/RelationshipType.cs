@@ -1,7 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace ManifestInterface.Entities
 {
@@ -10,7 +7,7 @@ namespace ManifestInterface.Entities
     /// target element.
     /// </summary>
     /// <remarks>
-    /// See https://spdx.github.io/spdx-spec/relationships-between-SPDX-elements/.
+    /// See https://spdx.github.io/spdx-spec/relationships-between-SPDX-elements/
     /// </remarks>
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum RelationshipType
@@ -58,6 +55,6 @@ namespace ManifestInterface.Entities
         /// <example>
         /// The package ‘WildFly’ is described by SPDX document WildFly.spdx.
         /// </example>
-        DESCRIBED_BY,
+        DESCRIBED_BY
     }
 }

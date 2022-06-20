@@ -1,7 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
-using ManifestInterface.Entities;
+﻿using ManifestInterface.Entities;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using System.Collections.Generic;
@@ -40,7 +37,7 @@ namespace ManifestInterface
         /// has the responsibility to dispose this object, so don't use 'using' or dispose this object 
         /// in this function.
         /// </summary>
-        /// <param name="packageInfo">The current package that needs to be serialized.</param>
+        /// <param name="packageInfo">The current package that needs to be serialized</param>
         /// <returns></returns>
         GenerationResult GenerateJsonDocument(SBOMPackage packageInfo);
 
@@ -81,37 +78,37 @@ namespace ManifestInterface
         GenerationResult GenerateJsonDocument(ExternalDocumentReferenceInfo externalDocumentReferenceInfo);
 
         /// <summary>
-        /// Gets an array of <see cref="AlgorithmName">hash algorithm names</see> this
+        /// An array of <see cref="AlgorithmName">hash algorithm names</see> this
         /// manifest needs to generate for each file.
         /// </summary>
         AlgorithmName[] RequiredHashAlgorithms { get; }
 
         /// <summary>
-        /// Gets the version of this <see cref="IManifestInterface"/>.
+        /// The version of this <see cref="IManifestInterface"/>
         /// </summary>
         string Version { get; }
 
         /// <summary>
-        /// Gets the value of the header to use where the files section of the SBOM will be placed.
-        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
+        /// The value of the header to use where the files section of the SBOM will be placed.
+        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>
         /// </summary>
         string FilesArrayHeaderName { get; }
 
         /// <summary>
-        /// Gets the value of the header to use where the packages section of the SBOM will be placed.
-        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
+        /// The value of the header to use where the packages section of the SBOM will be placed.
+        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>
         /// </summary>
         string PackagesArrayHeaderName { get; }
 
         /// <summary>
-        /// Gets the value of the header where the relationship data about this SBOM will be placed.
-        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
+        /// The value of the header where the relationship data about this SBOM will be placed.
+        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>
         /// </summary>
         string RelationshipsArrayHeaderName { get; }
 
         /// <summary>
-        /// Gets the value of the header where the external document reference data about this SBOM will be placed.
-        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
+        /// The value of the header where the external document reference data about this SBOM will be placed.
+        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>
         /// </summary>
         string ExternalDocumentRefArrayHeaderName { get; }
 
