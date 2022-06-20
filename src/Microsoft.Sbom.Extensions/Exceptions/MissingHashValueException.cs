@@ -10,10 +10,16 @@ namespace ManifestInterface.Exceptions
     public class MissingHashValueException : Exception
     {
         public MissingHashValueException() { }
-        public MissingHashValueException(string message) : base(message) { }
-        public MissingHashValueException(string message, Exception inner) : base(message, inner) { }
+
+        public MissingHashValueException(string message)
+            : base(message) { }
+
+        public MissingHashValueException(string message, Exception inner)
+            : base(message, inner) { }
+
         protected MissingHashValueException(
           SerializationInfo info,
-          StreamingContext context) : base(info, context) { }
+          StreamingContext context)
+            : base(info, context) { }
     }
 }

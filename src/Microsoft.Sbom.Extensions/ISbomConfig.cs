@@ -10,32 +10,32 @@ namespace ManifestInterface
     public interface ISbomConfig : IDisposable, IAsyncDisposable
     {
         /// <summary>
-        /// Absolute path of manifest json directory
+        /// Gets or sets absolute path of manifest json directory
         /// </summary>
         public string ManifestJsonDirPath { get; set; }
 
         /// <summary>
-        /// Absolute path of the manfest json file
+        /// Gets or sets absolute path of the manfest json file
         /// </summary>
         public string ManifestJsonFilePath { get; set; }
 
         /// <summary>
-        /// Derived manifestInfo or from configurations
+        /// Gets or sets derived manifestInfo or from configurations
         /// </summary>
         public ManifestInfo ManifestInfo { get; set; }
 
         /// <summary>
-        /// The metadata builder for this manifest format.
+        /// Gets or sets the metadata builder for this manifest format.
         /// </summary>
         public IMetadataBuilder MetadataBuilder { get; set; }
 
         /// <summary>
-        /// The generated manifest tool json serializer for this SBOM config.
+        /// Gets the generated manifest tool json serializer for this SBOM config.
         /// </summary>
         public IManifestToolJsonSerializer JsonSerializer { get; }
 
         /// <summary>
-        /// Records ids and generated package details for the current SBOM.
+        /// Gets or sets records ids and generated package details for the current SBOM.
         /// </summary>
         public ISbomPackageDetailsRecorder Recorder { get; set; }
 

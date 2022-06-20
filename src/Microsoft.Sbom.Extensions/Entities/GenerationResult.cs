@@ -12,11 +12,15 @@ namespace ManifestInterface.Entities
         private JsonDocument document;
 
         /// <summary>
-        /// The entity object in the JSON format as expected by the current SBOM format.
+        /// Gets or sets the entity object in the JSON format as expected by the current SBOM format.
         /// </summary>
         public JsonDocument Document
         {
-            get { return document; }
+            get
+            {
+                return document;
+            }
+
             set
             {
                 document = value ?? throw new Exception("JsonDocument cannot be null.");
@@ -24,7 +28,7 @@ namespace ManifestInterface.Entities
         }
 
         /// <summary>
-        /// Any additional metadata that needs to be returned about the current
+        /// Gets or sets any additional metadata that needs to be returned about the current
         /// entity or SBOM.
         /// </summary>
         public ResultMetadata ResultMetadata { get; set; }

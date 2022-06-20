@@ -9,27 +9,27 @@ namespace ManifestInterface.Entities
     public class ExternalDocumentReferenceInfo // TODO: Move to Contracts
     {
         /// <summary>
-        /// The name of the exteral SBOM document.
+        /// Gets or sets the name of the exteral SBOM document.
         /// </summary>
         public string ExternalDocumentName { get; set; }
 
         /// <summary>
-        /// The document namespace of the external SBOM
+        /// Gets or sets the document namespace of the external SBOM
         /// </summary>
         public string DocumentNamespace { get; set; }
 
         /// <summary>
-        /// Checksums of the SBOM file. 
+        /// Gets or sets checksums of the SBOM file. 
         /// </summary>
         public IEnumerable<Checksum> Checksum { get; set; }
 
         /// <summary>
-        /// ID of the root element that external document is describing.
+        /// Gets or sets iD of the root element that external document is describing.
         /// </summary>
         public string DescribedElementID { get; set; }
 
         /// <summary>
-        /// The path of the external SBOM document
+        /// Gets or sets the path of the external SBOM document
         /// </summary>
         public string Path { get; set; }
     }

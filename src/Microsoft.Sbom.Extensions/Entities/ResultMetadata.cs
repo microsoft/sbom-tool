@@ -7,12 +7,12 @@
     public class ResultMetadata
     {
         /// <summary>
-        /// The generated id of the current entity.
+        /// Gets or sets the generated id of the current entity.
         /// </summary>
         public string EntityId { get; set; }
 
         /// <summary>
-        /// The generated id of the current SBOM document.
+        /// Gets or sets the generated id of the current SBOM document.
         /// </summary>
         public string DocumentId { get; set; }
     }

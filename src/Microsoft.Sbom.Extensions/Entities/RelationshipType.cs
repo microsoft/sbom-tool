@@ -55,6 +55,6 @@ namespace ManifestInterface.Entities
         /// <example>
         /// The package ‘WildFly’ is described by SPDX document WildFly.spdx.
         /// </example>
-        DESCRIBED_BY
+        DESCRIBED_BY,
     }
 }
