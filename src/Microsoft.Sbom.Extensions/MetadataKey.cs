@@ -1,4 +1,4 @@
-﻿namespace ManifestInterface.Entities
+﻿namespace Microsoft.Sbom
 {
     /// <summary>
     /// A list of keys that are available as metadata in the internal metadata provider.

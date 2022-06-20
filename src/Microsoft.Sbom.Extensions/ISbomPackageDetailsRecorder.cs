@@ -1,7 +1,7 @@
-﻿using ManifestInterface.Entities;
-using Microsoft.Sbom.Contracts;
+﻿using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Entities;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom
 {
     public interface ISbomPackageDetailsRecorder
     {

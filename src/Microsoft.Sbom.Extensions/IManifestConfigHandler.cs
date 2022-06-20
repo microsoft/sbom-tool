@@ -1,4 +1,4 @@
-﻿namespace ManifestInterface
+﻿namespace Microsoft.Sbom
 {
     /// <summary>
     /// Provides a <see cref="ManifestConfig"/> object for a given

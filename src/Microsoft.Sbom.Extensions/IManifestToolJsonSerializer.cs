@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom
 {
     /// <summary>
     /// This implements the custom serializer for writing json output by the Manifest 
@@ -38,7 +38,7 @@ namespace ManifestInterface
         /// This writes a json document to the underlying stream. 
         /// We also call dispose on the JsonDocument once we finish writing.
         /// </summary>
-        /// <param name="jsonDocument">The json document</param>
+        /// <param name="jsonDocument">The json document.</param>
         public void Write(JsonDocument jsonDocument);
 
         /// <summary>

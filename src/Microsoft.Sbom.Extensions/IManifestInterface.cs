@@ -1,6 +1,6 @@
-﻿using ManifestInterface.Entities;
+﻿using Microsoft.Sbom.Entities;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom
 {
     /// <summary>
     /// The validator will use this interface to register a manifest parsing library
@@ -13,7 +13,7 @@ namespace ManifestInterface
     {
         /// <summary>
         /// This function is called by the validator upon initialization to get all the 
-        /// manifest versions this library can parse
+        /// manifest versions this library can parse.
         /// </summary>
         /// <returns>An version sorted array in ascending order of 
         /// <see cref="ManifestInfo">manifests</see> this library can parse.</returns>
@@ -27,7 +27,7 @@ namespace ManifestInterface
         ManifestData ParseManifest(string manifest);
 
         /// <summary>
-        /// Gets or sets the version of this <see cref="IManifestInterface"/>
+        /// Gets or sets the version of this <see cref="IManifestInterface"/>.
         /// </summary>
         string Version { get; set; }
     }

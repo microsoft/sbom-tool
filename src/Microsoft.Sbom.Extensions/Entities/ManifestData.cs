@@ -1,7 +1,7 @@
 ﻿using Microsoft.Sbom.Contracts;
 using System.Collections.Generic;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Entities
 {
     /// <summary>
     /// The manifest object that is returned by the parser.
@@ -17,7 +17,7 @@ namespace ManifestInterface.Entities
         /// Gets or sets a dictionary with the key as the relative path of a file,
         /// and as list of <see cref="Checksum"/> for that file.
         /// </summary>
-        public IDictionary<string, Microsoft.Sbom.Contracts.Checksum[]> HashesMap { get; set; }
+        public IDictionary<string, Checksum[]> HashesMap { get; set; }
 
         /// <summary>
         /// Gets or sets the manifest info object that identifies the current manifest.

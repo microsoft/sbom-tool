@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Entities
 {
     /// <summary>
     /// A object that represents the generated <see cref="JsonDocument"/> along

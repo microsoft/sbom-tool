@@ -2,7 +2,7 @@
 using Microsoft.Sbom.Contracts.Enums;
 using System.Collections.Generic;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Entities
 {
     /// <summary>
     /// InternalSBOMFileInfo class used for processing and storing extra data during the generation process.
@@ -40,7 +40,7 @@ namespace ManifestInterface.Entities
         public bool IsOutsideDropPath { get; set; }
 
         /// <summary>
-        /// Gets or sets contains the list of file types for this file
+        /// Gets or sets contains the list of file types for this file.
         /// </summary>
         public List<FileType> FileTypes { get; set; }
     }

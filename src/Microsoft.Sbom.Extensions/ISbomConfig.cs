@@ -1,7 +1,7 @@
-﻿using ManifestInterface.Entities;
+﻿using Microsoft.Sbom.Entities;
 using System;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom
 {
     /// <summary>
     /// Represents a configuration object for a given SBOM Format. It holds all the 
@@ -10,17 +10,17 @@ namespace ManifestInterface
     public interface ISbomConfig : IDisposable, IAsyncDisposable
     {
         /// <summary>
-        /// Gets or sets absolute path of manifest json directory
+        /// Gets or sets absolute path of manifest json directory.
         /// </summary>
         public string ManifestJsonDirPath { get; set; }
 
         /// <summary>
-        /// Gets or sets absolute path of the manfest json file
+        /// Gets or sets absolute path of the manfest json file.
         /// </summary>
         public string ManifestJsonFilePath { get; set; }
 
         /// <summary>
-        /// Gets or sets derived manifestInfo or from configurations
+        /// Gets or sets derived manifestInfo or from configurations.
         /// </summary>
         public ManifestInfo ManifestInfo { get; set; }
 

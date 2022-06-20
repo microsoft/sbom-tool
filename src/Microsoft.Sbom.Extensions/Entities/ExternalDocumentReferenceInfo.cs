@@ -1,10 +1,10 @@
 ﻿using Microsoft.Sbom.Contracts;
 using System.Collections.Generic;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Entities
 {
     /// <summary>
-    /// Represents the property that is needed to generate External Document Reference
+    /// Represents the property that is needed to generate External Document Reference.
     /// </summary>
     public class ExternalDocumentReferenceInfo // TODO: Move to Contracts
     {
@@ -14,7 +14,7 @@ namespace ManifestInterface.Entities
         public string ExternalDocumentName { get; set; }
 
         /// <summary>
-        /// Gets or sets the document namespace of the external SBOM
+        /// Gets or sets the document namespace of the external SBOM.
         /// </summary>
         public string DocumentNamespace { get; set; }
 
@@ -29,7 +29,7 @@ namespace ManifestInterface.Entities
         public string DescribedElementID { get; set; }
 
         /// <summary>
-        /// Gets or sets the path of the external SBOM document
+        /// Gets or sets the path of the external SBOM document.
         /// </summary>
         public string Path { get; set; }
     }

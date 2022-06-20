@@ -1,6 +1,4 @@
-﻿using Microsoft.Sbom.Contracts;
-
-namespace ManifestInterface.Entities
+﻿namespace Microsoft.Sbom.Entities
 {
     /// <summary>
     /// Defines relationships between elements in the current SBOM.

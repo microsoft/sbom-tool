@@ -1,6 +1,6 @@
-﻿using ManifestInterface.Entities;
+﻿using Microsoft.Sbom.Entities;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom
 {
     /// <summary>
     /// Interface for metadata builder that adds additional information to the SBOM.

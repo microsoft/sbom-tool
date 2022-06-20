@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Entities
 {
     /// <summary>
     /// Defines a manifest name and version.

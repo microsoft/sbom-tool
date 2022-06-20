@@ -1,13 +1,13 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Entities
 {
     /// <summary>
     /// Defines the type of <see cref="Relationship"/> between the source and the 
     /// target element.
     /// </summary>
     /// <remarks>
-    /// See https://spdx.github.io/spdx-spec/relationships-between-SPDX-elements/
+    /// See https://spdx.github.io/spdx-spec/relationships-between-SPDX-elements/.
     /// </remarks>
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum RelationshipType

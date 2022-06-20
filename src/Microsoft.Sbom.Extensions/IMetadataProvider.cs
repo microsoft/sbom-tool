@@ -1,7 +1,6 @@
-﻿using ManifestInterface.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom
 {
     /// <summary>
     /// Provides metadata about the environment where this SBOM was generated.

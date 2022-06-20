@@ -1,7 +1,7 @@
 ﻿using Microsoft.Sbom.Contracts;
 using System.Collections.Generic;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Entities
 {
     /// <summary>
     /// A data structure that is used to store the data generated during SBOM generation.
@@ -37,12 +37,12 @@ namespace ManifestInterface.Entities
         public IList<KeyValuePair<string, string>> ExternalDocumentReferenceIDs { get; set; }
 
         /// <summary>
-        /// Gets or sets the id of the root package in this SBOM
+        /// Gets or sets the id of the root package in this SBOM.
         /// </summary>
         public string RootPackageId { get; set; }
 
         /// <summary>
-        /// Gets or sets the id of the SBOM document
+        /// Gets or sets the id of the SBOM document.
         /// </summary>
         public string DocumentId { get; set; }
     }

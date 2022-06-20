@@ -1,9 +1,9 @@
-﻿using ManifestInterface.Entities;
-using Microsoft.Sbom.Contracts;
+﻿using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Entities;
 using System.Collections.Generic;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom
 {
     /// <summary>
     /// The manifest tool uses this interface to generate a manifest (JSON format currently)
@@ -37,7 +37,7 @@ namespace ManifestInterface
         /// has the responsibility to dispose this object, so don't use 'using' or dispose this object 
         /// in this function.
         /// </summary>
-        /// <param name="packageInfo">The current package that needs to be serialized</param>
+        /// <param name="packageInfo">The current package that needs to be serialized.</param>
         /// <returns></returns>
         GenerationResult GenerateJsonDocument(SBOMPackage packageInfo);
 
@@ -84,31 +84,31 @@ namespace ManifestInterface
         AlgorithmName[] RequiredHashAlgorithms { get; }
 
         /// <summary>
-        /// Gets the version of this <see cref="IManifestInterface"/>
+        /// Gets the version of this <see cref="IManifestInterface"/>.
         /// </summary>
         string Version { get; }
 
         /// <summary>
         /// Gets the value of the header to use where the files section of the SBOM will be placed.
-        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>
+        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
         /// </summary>
         string FilesArrayHeaderName { get; }
 
         /// <summary>
         /// Gets the value of the header to use where the packages section of the SBOM will be placed.
-        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>
+        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
         /// </summary>
         string PackagesArrayHeaderName { get; }
 
         /// <summary>
         /// Gets the value of the header where the relationship data about this SBOM will be placed.
-        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>
+        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
         /// </summary>
         string RelationshipsArrayHeaderName { get; }
 
         /// <summary>
         /// Gets the value of the header where the external document reference data about this SBOM will be placed.
-        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>
+        /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
         /// </summary>
         string ExternalDocumentRefArrayHeaderName { get; }
 

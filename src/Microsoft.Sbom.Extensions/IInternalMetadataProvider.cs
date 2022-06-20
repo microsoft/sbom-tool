@@ -1,6 +1,6 @@
-﻿using ManifestInterface.Entities;
+﻿using Microsoft.Sbom.Entities;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom
 {
     /// <summary>
     /// Provides internally generated metadata that can be used to create 

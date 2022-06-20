@@ -1,4 +1,4 @@
-﻿namespace ManifestInterface.Entities
+﻿namespace Microsoft.Sbom.Entities
 {
     /// <summary>
     /// A list of metadata about the current entity being serialized. This can be
