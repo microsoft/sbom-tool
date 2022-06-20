@@ -1,0 +1,21 @@
+﻿using System.Runtime.InteropServices;
+
+namespace ManifestInterface
+{
+    /// <summary>
+    /// Validates the given manifest.json using the platform specific sign verification mechanism.
+    /// </summary>
+    public interface ISignValidator
+    {
+        /// <summary>
+        /// The OS Platform that this validator supports, ex. Windows or Linux.
+        /// </summary>
+        public OSPlatform SupportedPlatform { get; }
+
+        /// <summary>
+        /// Validates the given manifest.json using the platform specific sign verification mechanism.
+        /// </summary>
+        /// <returns>true if valid, false otherwise.</returns>
+        bool Validate();
+    }
+}

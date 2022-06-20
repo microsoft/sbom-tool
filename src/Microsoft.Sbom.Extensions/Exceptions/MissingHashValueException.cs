@@ -1,7 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
-using System;
+﻿using System;
 using System.Runtime.Serialization;
 
 namespace ManifestInterface.Exceptions
@@ -13,16 +10,10 @@ namespace ManifestInterface.Exceptions
     public class MissingHashValueException : Exception
     {
         public MissingHashValueException() { }
-
-        public MissingHashValueException(string message)
-            : base(message) { }
-
-        public MissingHashValueException(string message, Exception inner)
-            : base(message, inner) { }
-
+        public MissingHashValueException(string message) : base(message) { }
+        public MissingHashValueException(string message, Exception inner) : base(message, inner) { }
         protected MissingHashValueException(
           SerializationInfo info,
-          StreamingContext context)
-            : base(info, context) { }
+          StreamingContext context) : base(info, context) { }
     }
 }

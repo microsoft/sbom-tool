@@ -1,7 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ManifestInterface.Entities
@@ -12,18 +9,18 @@ namespace ManifestInterface.Entities
     public class ManifestInfo : IEquatable<ManifestInfo>
     {
         /// <summary>
-        /// Gets or sets s the name of the manifest.
+        /// The name of the manifest.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the version of the manifest.
+        /// The version of the manifest.
         /// </summary>
         public string Version { get; set; }
 
         /// <summary>
         /// Parses the manifest info from a string
-        /// The format is. <name>:<version>
+        /// The format is <name>:<version>
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -43,7 +40,7 @@ namespace ManifestInterface.Entities
             return new ManifestInfo
             {
                 Name = values[0],
-                Version = values[1],
+                Version = values[1]
             };
         }
 
@@ -72,8 +69,8 @@ namespace ManifestInterface.Entities
         public override int GetHashCode()
         {
             int hashCode = 2112831277;
-            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Version);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Version);
             return hashCode;
         }
 

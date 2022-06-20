@@ -1,10 +1,7 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
-namespace ManifestInterface
+﻿namespace ManifestInterface.Entities
 {
     /// <summary>
-    /// A list of keys that are available as metadata in the internal metadata provider.
+    /// A list of keys that are available as metadata in the internal metadata provider
     /// </summary>
     public enum MetadataKey
     {
@@ -46,7 +43,7 @@ namespace ManifestInterface
         /// https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml#build-variables-devops-services
         /// </summary>
         #region Azure DevOps Pipelines metadata
-       
+
         Build_BuildId,
         Build_DefinitionName,
         Build_Repository_Uri,
@@ -56,7 +53,7 @@ namespace ManifestInterface
         ImageOS,
         ImageVersion,
         OrganizationId,
-        ProjectId,
+        ProjectId
 
         #endregion
     }

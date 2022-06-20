@@ -1,7 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
-namespace ManifestInterface.Entities
+﻿namespace ManifestInterface.Entities
 {
     /// <summary>
     /// A list of metadata about the current entity being serialized. This can be
@@ -10,12 +7,12 @@ namespace ManifestInterface.Entities
     public class ResultMetadata
     {
         /// <summary>
-        /// Gets or sets the generated id of the current entity.
+        /// The generated id of the current entity.
         /// </summary>
         public string EntityId { get; set; }
 
         /// <summary>
-        /// Gets or sets the generated id of the current SBOM document.
+        /// The generated id of the current SBOM document.
         /// </summary>
         public string DocumentId { get; set; }
     }
