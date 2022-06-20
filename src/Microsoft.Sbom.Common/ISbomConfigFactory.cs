@@ -19,7 +19,6 @@ namespace Microsoft.Sbom.Common
             string manifestDirPath,
             string manifestFilePath,
             ISbomPackageDetailsRecorder recorder,
-            IMetadataBuilder metadataBuilder
-        );
+            IMetadataBuilder metadataBuilder);
     }
 }

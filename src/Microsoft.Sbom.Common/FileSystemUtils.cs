@@ -67,23 +67,33 @@ namespace Microsoft.Sbom.Common
                 var readDeny = false;
                 var accessControlList = GetDirectorySecurity(directoryPath);
                 if (accessControlList == null)
+                {
                     return false;
+                }
 
                 //get the access rules that pertain to a valid SID/NTAccount.
                 var accessRules = accessControlList.GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
                 if (accessRules == null)
+                {
                     return false;
+                }
 
                 //we want to go over these rules to ensure a valid SID has access
                 foreach (FileSystemAccessRule rule in accessRules)
                 {
                     if ((FileSystemRights.Read & rule.FileSystemRights) != FileSystemRights.Read)
+                    {
                         continue;
+                    }
 
                     if (rule.AccessControlType == AccessControlType.Allow)
+                    {
                         readAllow = true;
+                    }
                     else if (rule.AccessControlType == AccessControlType.Deny)
+                    {
                         readDeny = true;
+                    }
                 }
 
                 return readAllow && !readDeny;
@@ -103,20 +113,31 @@ namespace Microsoft.Sbom.Common
                 var writeDeny = false;
                 var accessControlList = GetDirectorySecurity(directoryPath);
                 if (accessControlList == null)
+                {
                     return false;
+                }
+
                 var accessRules = accessControlList.GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
                 if (accessRules == null)
+                {
                     return false;
+                }
 
                 foreach (FileSystemAccessRule rule in accessRules)
                 {
                     if ((FileSystemRights.Write & rule.FileSystemRights) != FileSystemRights.Write)
+                        {
                         continue;
+                    }
 
                     if (rule.AccessControlType == AccessControlType.Allow)
+                        {
                         writeAllow = true;
+                    }
                     else if (rule.AccessControlType == AccessControlType.Deny)
+                        {
                         writeDeny = true;
+                    }
                 }
 
                 return writeAllow && !writeDeny;
@@ -138,6 +159,5 @@ namespace Microsoft.Sbom.Common
 
         /// <inheritdoc/>
         public bool IsDirectoryEmpty(string directoryPath) => DirectoryExists(directoryPath) && !Directory.EnumerateFiles(directoryPath).Any();
-
     }
 }

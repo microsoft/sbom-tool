@@ -44,7 +44,7 @@ namespace Microsoft.Sbom.Common.Config
         public ConfigurationSetting<string> OutputPath { get; set; }
 
         /// <inheritdoc cref="IConfiguration.Parallelism" />
-        [IntRange(MinRange:Constants.MinParallelism, MaxRange:Constants.MaxParallelism)]
+        [IntRange(minRange: Constants.MinParallelism, maxRange: Constants.MaxParallelism)]
         [DefaultValue(Constants.DefaultParallelism)]
         public ConfigurationSetting<int> Parallelism { get; set; }
 

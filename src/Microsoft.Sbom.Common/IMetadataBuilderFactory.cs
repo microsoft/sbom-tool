@@ -11,7 +11,6 @@ namespace Microsoft.Sbom.Common
     /// </summary>
     public interface IMetadataBuilderFactory
     {
-
         /// <summary>
         /// Get the <see cref="MetadataBuilder"/> object for the given SBOM format.
         /// </summary>

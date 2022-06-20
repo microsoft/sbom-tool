@@ -12,15 +12,16 @@ namespace ManifestInterface.Entities
     public class ManifestInfo : IEquatable<ManifestInfo>
     {
         /// <summary>
-        /// The name of the manifest.
+        /// Gets or sets the name of the manifest.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// The version of the manifest.
+        /// Gets or sets the version of the manifest.
         /// </summary>
         public string Version { get; set; }
 
+#pragma warning disable SA1629 // Documentation text should end with a period
         /// <summary>
         /// Parses the manifest info from a string
         /// The format is <name>:<version>
@@ -28,6 +29,7 @@ namespace ManifestInterface.Entities
         /// <param name="value"></param>
         /// <returns></returns>
         public static ManifestInfo Parse(string value)
+#pragma warning restore SA1629 // Documentation text should end with a period
         {
             if (string.IsNullOrEmpty(value))
             {
@@ -72,8 +74,8 @@ namespace ManifestInterface.Entities
         public override int GetHashCode()
         {
             int hashCode = 2112831277;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Version);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Version);
             return hashCode;
         }
 

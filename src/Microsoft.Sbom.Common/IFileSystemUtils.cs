@@ -13,12 +13,19 @@ namespace Microsoft.Sbom.Common
     public interface IFileSystemUtils
     {
         bool DirectoryExists(string path);
+
         DirectoryInfo CreateDirectory(string path);
+        
         IEnumerable<string> GetFilesInDirectory(string path, bool followSymlinks = true);
+        
         IEnumerable<string> GetDirectories(string path, bool followSymlinks = true);
+        
         Stream OpenRead(string filePath);
+        
         Stream OpenWrite(string filePath);
+        
         string ReadAllText(string filePath);
+        
         string JoinPaths(string root, string relativePath);
 
         string JoinPaths(string root, string relativePath, string secondRelativePath);
@@ -34,11 +41,17 @@ namespace Microsoft.Sbom.Common
         string GetRelativePath(string relativeTo, string path);
 
         bool FileExists(string path);
+
         string GetDirectoryName(string filePath);
+        
         DirectorySecurity GetDirectorySecurity(string directoryPath);
+        
         bool DirectoryHasReadPermissions(string directoryPath);
+        
         bool DirectoryHasWritePermissions(string directoryPath);
+        
         void DeleteFile(string filePath);
+
         /// <summary>
         /// Delete a directory.
         /// </summary>

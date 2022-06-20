@@ -18,7 +18,6 @@ namespace Microsoft.Sbom.Common
         {
             OSPlatform.Windows,
             OSPlatform.OSX,
-            // OSPlatform.FreeBSD, //FreeBSD is not available in netstandard2.1
             OSPlatform.Linux
         };
 
@@ -26,7 +25,7 @@ namespace Microsoft.Sbom.Common
 
         private readonly IEnvironmentWrapper environment;
 
-        private Dictionary<String, String> environmentVariables;
+        private Dictionary<string, string> environmentVariables;
 
         public OSUtils(ILogger logger, IEnvironmentWrapper environment)
         {
@@ -59,7 +58,8 @@ namespace Microsoft.Sbom.Common
             {
                 var firstEnvVarInstance = variableNameValues.SingleOrDefault();
                 return firstEnvVarInstance;
-            } catch ( InvalidOperationException )
+            }
+            catch (InvalidOperationException)
             {
                 var firstEnvVarInstance = variableNameValues.First();
                 logger.Warning($"There are duplicate environment variables in different case for {variableName}, the value used is {firstEnvVarInstance}");

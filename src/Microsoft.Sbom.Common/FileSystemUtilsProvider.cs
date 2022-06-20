@@ -11,7 +11,6 @@ namespace Microsoft.Sbom.Common
     /// </summary>
     public class FileSystemUtilsProvider : Provider<IFileSystemUtils>
     {
-
         public FileSystemUtilsProvider()
         {
         }
@@ -31,7 +30,6 @@ namespace Microsoft.Sbom.Common
             }
 
             return new UnixFileSystemUtils();
-
         }
     }
 }

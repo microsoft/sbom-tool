@@ -10,7 +10,7 @@ namespace ManifestInterface.Entities
     /// target element.
     /// </summary>
     /// <remarks>
-    /// See https://spdx.github.io/spdx-spec/relationships-between-SPDX-elements/
+    /// See https://spdx.github.io/spdx-spec/relationships-between-SPDX-elements/.
     /// </remarks>
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum RelationshipType

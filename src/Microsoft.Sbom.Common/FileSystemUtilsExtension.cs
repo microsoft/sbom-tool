@@ -10,18 +10,28 @@ namespace Microsoft.Sbom.Common
     /// FileSystemUtilsExtension class uses FileSystemUtils class to run additional more complex
     /// file system logic that can be reused.
     /// </summary>
-    public class FileSystemUtilsExtension: IFileSystemUtilsExtension
+    public class FileSystemUtilsExtension : IFileSystemUtilsExtension
     {
-        [Inject] public IFileSystemUtils FileSystemUtils { get; set; }
-        [Inject] public IOSUtils OsUtils { get; set; }
+        [Inject]
+        public IFileSystemUtils FileSystemUtils { get; set; }
+        
+        [Inject]
+        public IOSUtils OsUtils { get; set; }
 
         /// <summary>
         /// Determines if the targetPath is a child of the sourcePath.
         /// </summary>
         public bool IsTargetPathInSource(string targetPath, string sourcePath)
         {
-            if (targetPath == null) throw new ArgumentNullException(nameof(targetPath));
-            if (sourcePath == null) throw new ArgumentNullException(nameof(sourcePath));
+            if (targetPath == null)
+            {
+                throw new ArgumentNullException(nameof(targetPath));
+            }
+
+            if (sourcePath == null)
+            {
+                throw new ArgumentNullException(nameof(sourcePath));
+            }
 
             // Sanitize the paths before comparison.
             var sanitizedPath = FileSystemUtils.AbsolutePath(targetPath);

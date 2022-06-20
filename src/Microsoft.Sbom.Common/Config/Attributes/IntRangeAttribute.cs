@@ -12,24 +12,24 @@ namespace Microsoft.Sbom.Common.Config.Attributes
     public sealed class IntRangeAttribute : Attribute
     {
         /// <summary>
-        /// Execute this validation only for the given action. Default is all.
+        /// Gets or sets execute this validation only for the given action. Default is all.
         /// </summary>
         public ManifestToolActions ForAction { get; set; }
 
         /// <summary>
-        /// The inclusive minimum value of this integer.
+        /// Gets the inclusive minimum value of this integer.
         /// </summary>
         public int MinRange { get; }
 
         /// <summary>
-        /// The inclusive maximum value of this integer.
+        /// Gets the inclusive maximum value of this integer.
         /// </summary>
         public int MaxRange { get; }
 
-        public IntRangeAttribute(int MinRange, int MaxRange)
+        public IntRangeAttribute(int minRange, int maxRange)
         {
-            this.MinRange = MinRange;
-            this.MaxRange = MaxRange;
+            this.MinRange = minRange;
+            this.MaxRange = maxRange;
             ForAction = ManifestToolActions.All;
         }
     }

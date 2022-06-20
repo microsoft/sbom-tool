@@ -33,7 +33,5 @@ namespace Microsoft.Sbom.Common.Config.Attributes
                 Version = version
             };
         }
-
-
     }
 }
