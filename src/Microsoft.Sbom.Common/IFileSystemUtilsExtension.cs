@@ -1,4 +1,7 @@
-﻿namespace Microsoft.Sbom.Common
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace Microsoft.Sbom.Common
 {
     /// <summary>
     /// FileSystemUtilsExtension class uses FileSystemUtils class to run additional more complex

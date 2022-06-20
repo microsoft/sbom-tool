@@ -1,4 +1,7 @@
-﻿using ManifestInterface.Entities;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using ManifestInterface.Entities;
 using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
