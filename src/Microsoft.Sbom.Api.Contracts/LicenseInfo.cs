@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.Sbom.Contracts
+namespace Microsoft.Sbom.Api.Contracts
 {
     /// <summary>
     /// Defines license strings for an entity.

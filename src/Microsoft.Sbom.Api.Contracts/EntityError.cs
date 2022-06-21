@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Contracts.Entities;
-using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Api.Contracts.Entities;
+using Microsoft.Sbom.Api.Contracts.Enums;
 
-namespace Microsoft.Sbom.Contracts
+namespace Microsoft.Sbom.Api.Contracts
 {
     /// <summary>
     /// Represents a single error for a given entity. The entity could be a file or package.

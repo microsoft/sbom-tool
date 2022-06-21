@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Contracts
+namespace Microsoft.Sbom.Api.Contracts
 {
     /// <summary>
     /// A structure that represents a package in a SBOM.

@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Contracts.Enums;
-
-namespace Microsoft.Sbom.Contracts
+namespace Microsoft.Sbom.Api.Contracts
 {
     /// <summary>
     /// Use this class to provide addtional metadata to the SBOM generator 

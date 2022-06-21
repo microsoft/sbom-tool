@@ -1,10 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Contracts.Enums;
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Contracts
+namespace Microsoft.Sbom.Api.Contracts
 {
     /// <summary>
     /// Customer facing structure that represents a file in a SBOM.

@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Api.Contracts.Enums;
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Contracts.Interfaces
+namespace Microsoft.Sbom.Api.Contracts.Interfaces
 {
     /// <summary>
     /// The implemention of this interface should provide a list of hashing algorithms that can be

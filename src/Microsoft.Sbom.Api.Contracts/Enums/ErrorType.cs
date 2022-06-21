@@ -3,7 +3,7 @@
 
 using System.Runtime.Serialization;
 
-namespace Microsoft.Sbom.Contracts.Enums
+namespace Microsoft.Sbom.Api.Contracts.Enums
 {
     /// <summary>
     /// The type of <see cref="EntityError"/> for a given entity.

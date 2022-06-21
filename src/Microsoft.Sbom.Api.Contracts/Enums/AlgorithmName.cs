@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Microsoft.Sbom.Contracts.Enums
+namespace Microsoft.Sbom.Api.Contracts.Enums
 {
     /// <summary>
     /// A list of the names of the hash algorithms that are supported by this SBOM api.

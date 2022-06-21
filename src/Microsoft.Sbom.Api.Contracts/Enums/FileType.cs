@@ -3,7 +3,7 @@
 
 using System.Runtime.Serialization;
 
-namespace Microsoft.Sbom.Contracts.Enums
+namespace Microsoft.Sbom.Api.Contracts.Enums
 {
     /// <summary>
     /// Represents the type of a file.
