@@ -30,6 +30,9 @@ jobs:
     - name: Verify files contain copyright header
       run: .\scripts\verification\Verify-LicenceHeader.ps1 -Target .\src -LicenseHeaderPath .\scripts\verification\LicenseHeader.txt -Extensions *.xaml,*.xml,*.cs,*.ps1 -AddIfAbsent $false
     
+    - name: Add authentication for private ManifestTool feed
+      run: dotnet nuget update source ManifestTool -u test -p ${{ secrets.MANIFEST_TOOL_FEED_PAT }}
+    
     - name: Restore dependencies
       run: dotnet restore 
       
