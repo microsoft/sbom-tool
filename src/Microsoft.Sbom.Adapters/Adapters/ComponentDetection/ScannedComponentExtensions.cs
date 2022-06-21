@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using Microsoft.Sbom.Adapters.Report;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
@@ -44,5 +47,4 @@ namespace Microsoft.Sbom.Adapters.Adapters.ComponentDetection
             }
         }
     }
-
 }

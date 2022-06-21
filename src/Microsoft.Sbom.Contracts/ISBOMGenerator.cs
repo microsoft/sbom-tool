@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Contracts.Enums;
@@ -23,7 +26,8 @@ namespace Microsoft.Sbom.Contracts
         /// <param name="manifestDirPath">Output directory. If null defaults to rootPath.</param>
         /// <returns>The result object that indicates if the generation succeeded, and a list of 
         /// errors if it failed along with telemetry.</returns>
-        Task<SBOMGenerationResult> GenerateSBOMAsync(string rootPath,
+        Task<SBOMGenerationResult> GenerateSBOMAsync(
+                                          string rootPath,
                                           IEnumerable<SBOMFile> files,
                                           IEnumerable<SBOMPackage> packages,
                                           SBOMMetadata metadata,

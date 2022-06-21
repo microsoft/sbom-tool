@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,17 +9,17 @@ namespace Microsoft.Sbom.Contracts
 {
     /// <summary>
     /// Represents the specification of the SBOM.
-    /// For ex. SPDX 2.2
+    /// For ex. SPDX 2.2.
     /// </summary>
     public class SBOMSpecification : IEquatable<SBOMSpecification>
     {
         /// <summary>
-        /// The name of the SBOM specification.
+        /// Gets the name of the SBOM specification.
         /// </summary>
         public string Name { get; private set; }
 
         /// <summary>
-        /// The version of the SBOM specification.
+        /// Gets the version of the SBOM specification.
         /// </summary>
         public string Version { get; private set; }
 
@@ -36,6 +39,7 @@ namespace Microsoft.Sbom.Contracts
             Version = version;
         }
 
+#pragma warning disable SA1629 // Documentation text should end with a period
         /// <summary>
         /// Parse the given string into a <see cref="SBOMSpecification"/> object.
         /// </summary>
@@ -43,6 +47,7 @@ namespace Microsoft.Sbom.Contracts
         /// <returns>A SBOMSpecification object.</returns>
         /// <example>spdx:2.2</example>
         public static SBOMSpecification Parse(string value)
+#pragma warning restore SA1629 // Documentation text should end with a period
         {
             if (string.IsNullOrEmpty(value))
             {
@@ -93,8 +98,8 @@ namespace Microsoft.Sbom.Contracts
         public override int GetHashCode()
         {
             int hashCode = 2112831277;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Version);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Version);
             return hashCode;
         }
 

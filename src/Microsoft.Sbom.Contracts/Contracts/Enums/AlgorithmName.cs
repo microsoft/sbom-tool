@@ -1,4 +1,7 @@
-﻿using Microsoft.Sbom.Contracts.Interfaces;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Microsoft.Sbom.Contracts.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,7 +51,11 @@ namespace Microsoft.Sbom.Contracts.Enums
 
         public static bool operator ==(AlgorithmName left, AlgorithmName right)
         {
-            if ((left is null) && (right is null)) { return true; }
+            if ((left is null) && (right is null))
+            {
+                return true;
+            }
+
             return left?.Equals(right) == true;
         }
 
@@ -58,24 +65,24 @@ namespace Microsoft.Sbom.Contracts.Enums
         }
 
         /// <summary>
-        /// Equivalent to <see cref="HashAlgorithmName.SHA1"/>
+        /// Gets equivalent to <see cref="HashAlgorithmName.SHA1"/>.
         /// </summary>
 #pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
         public static AlgorithmName SHA1 => new AlgorithmName(nameof(SHA1), stream => System.Security.Cryptography.SHA1.Create().ComputeHash(stream));
 #pragma warning restore CA5350
 
         /// <summary>
-        /// Equivalent to <see cref="HashAlgorithmName.SHA256"/>
+        /// Gets equivalent to <see cref="HashAlgorithmName.SHA256"/>
         /// </summary>
         public static AlgorithmName SHA256 => new AlgorithmName(nameof(SHA256), stream => System.Security.Cryptography.SHA256.Create().ComputeHash(stream));
 
         /// <summary>
-        /// Equivalent to <see cref="HashAlgorithmName.SHA512"/>
+        /// Gets equivalent to <see cref="HashAlgorithmName.SHA512"/>
         /// </summary>
         public static AlgorithmName SHA512 => new AlgorithmName(nameof(SHA512), stream => throw new ArgumentException($"Unsupported hash algorithm {nameof(SHA512)}"));
 
         /// <summary>
-        /// Equivalent to <see cref="HashAlgorithmName.MD5"/>
+        /// Gets equivalent to <see cref="HashAlgorithmName.MD5"/>
         /// </summary>
         public static AlgorithmName MD5 => new AlgorithmName(nameof(MD5), stream => throw new ArgumentException($"Unsupported hash algorithm {nameof(MD5)}"));
 

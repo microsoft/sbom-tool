@@ -1,4 +1,7 @@
-﻿using Microsoft.Sbom.Adapters.Adapters.ComponentDetection;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Microsoft.Sbom.Adapters.Adapters.ComponentDetection;
 using Microsoft.Sbom.Adapters.Report;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -42,8 +45,7 @@ namespace Microsoft.Sbom.Adapters
                 {
                     packages = componentDetectionScanResult.ComponentsFound
                         .Select(component => component.ToSbomPackage(report))
-                        // It is acceptable to return a partial list of values with null filtered out since they should be reported as failures already
-                        .Where(package => package != null)
+                        .Where(package => package != null) // It is acceptable to return a partial list of values with null filtered out since they should be reported as failures already
                         .Select(package => package!);
 
                     report.LogSuccess();

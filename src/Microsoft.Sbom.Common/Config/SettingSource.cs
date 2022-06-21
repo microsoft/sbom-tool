@@ -19,7 +19,7 @@ namespace Microsoft.Sbom.Common.Config
         CommandLine,
 
         /// <summary>
-        /// THe setting was set using the config json file.
+        /// The setting was set using the config json file.
         /// </summary>
         JsonConfig,
 

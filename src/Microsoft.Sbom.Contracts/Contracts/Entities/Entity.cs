@@ -1,4 +1,7 @@
-﻿using Microsoft.Sbom.Contracts.Enums;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Microsoft.Sbom.Contracts.Enums;
 
 namespace Microsoft.Sbom.Contracts.Entities
 {
@@ -8,7 +11,7 @@ namespace Microsoft.Sbom.Contracts.Entities
     public abstract class Entity
     {
         /// <summary>
-        /// The type of the entity.
+        /// Gets the type of the entity.
         /// </summary>
         public EntityType EntityType { get; private set; }
 

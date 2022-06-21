@@ -1,4 +1,7 @@
-﻿namespace Microsoft.Sbom.Contracts
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace Microsoft.Sbom.Contracts
 {
     /// <summary>
     /// Defines license strings for an entity.
@@ -6,13 +9,13 @@
     public class LicenseInfo
     {
         /// <summary>
-        /// The declared license of this entity. This was explicitly declared
+        /// Gets or sets the declared license of this entity. This was explicitly declared
         /// by the owner of this entity.
         /// </summary>
         public string Declared { get; set; }
 
         /// <summary>
-        /// The concluded license of this entity. This was inferred based on the
+        /// Gets or sets the concluded license of this entity. This was inferred based on the
         /// context in which this entity exists.
         /// </summary>
         public string Concluded { get; set; }

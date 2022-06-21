@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Common;
 using Ninject;
 using System;
 
-namespace Microsoft.Sbom.Common
+namespace Microsoft.Sbom.Common.Extensions
 {
     /// <summary>
     /// FileSystemUtilsExtension class uses FileSystemUtils class to run additional more complex
@@ -14,7 +15,7 @@ namespace Microsoft.Sbom.Common
     {
         [Inject]
         public IFileSystemUtils FileSystemUtils { get; set; }
-        
+
         [Inject]
         public IOSUtils OsUtils { get; set; }
 

@@ -4,7 +4,7 @@
 using Microsoft.Sbom.Common.Config;
 using System;
 
-namespace Microsoft.Sbom.Api.Attributes
+namespace Microsoft.Sbom.Common.Config.Attributes
 {
     /// <summary>
     /// Validate if the property value is a valid URI.

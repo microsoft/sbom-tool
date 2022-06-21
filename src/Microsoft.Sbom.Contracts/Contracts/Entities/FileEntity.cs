@@ -1,4 +1,7 @@
-﻿using Microsoft.Sbom.Contracts.Enums;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Microsoft.Sbom.Contracts.Enums;
 using System;
 
 namespace Microsoft.Sbom.Contracts.Entities
@@ -9,12 +12,13 @@ namespace Microsoft.Sbom.Contracts.Entities
     public class FileEntity : Entity
     {
         /// <summary>
-        /// The path of the file as included in the SBOM.
+        /// Gets the path of the file as included in the SBOM.
         /// </summary>
         public string Path { get; private set; }
         
         /// <nodoc />
-        public FileEntity(string path, string id = null) : base(EntityType.File, id)
+        public FileEntity(string path, string id = null)
+            : base(EntityType.File, id)
         {
             if (string.IsNullOrEmpty(path))
             {

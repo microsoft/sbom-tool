@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 
 namespace Microsoft.Sbom.Adapters.Report
 {
@@ -17,7 +20,8 @@ namespace Microsoft.Sbom.Adapters.Report
     /// </summary>
     public class AdapterReportItem
     {
-        public AdapterReportItemType Type {  get; set; }
+        public AdapterReportItemType Type { get; set; }
+        
         public string Details { get; set; }
 
         public AdapterReportItem(AdapterReportItemType type, string details)

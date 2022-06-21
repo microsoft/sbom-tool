@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using Microsoft.Sbom.Contracts.Enums;
 
 namespace Microsoft.Sbom.Contracts.Entities
@@ -24,10 +27,8 @@ namespace Microsoft.Sbom.Contracts.Entities
         public string Path { get; private set; }
 
         /// <nodoc />
-        public PackageEntity(string name,
-                             string version = null,
-                             string path = null,
-                             string id = null) : base(EntityType.Package, id)
+        public PackageEntity(string name, string version = null, string path = null, string id = null)
+            : base(EntityType.Package, id)
         {
             if (string.IsNullOrEmpty(name))
             {
