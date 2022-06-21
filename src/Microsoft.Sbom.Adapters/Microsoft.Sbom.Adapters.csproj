@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Microsoft.SBOM.Adapters</AssemblyName>
+    <SignAssembly>True</SignAssembly>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Microsoft Corporation</Authors>
+    <Description>Provides a set of adapters from external component formats to a single SBOM format.</Description>
+    <PackageVersion>$(SBOMPackageVersion)</PackageVersion>
+    <!--NU5104: Warning thrown because Microsoft.VisualStudio.Services.Governance.ComponentDetection.Contracts is a "prerelease" package.-->
+    <!--Note: due to a bug in dotnet, this needs to be a global nowarn instead of for the specific package it is trying to suppress.-->
+    <NoWarn>NU5104</NoWarn>
+    <AssemblyOriginatorKeyFile>Microsoft.SBOM.Adapters.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ComponentDetection.Contracts" />
+    <PackageReference Include="Newtonsoft.Json" />
+	  <PackageReference Include="PackageUrl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

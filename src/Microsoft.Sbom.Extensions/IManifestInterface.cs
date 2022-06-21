@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ManifestInterface.Entities;
+using Microsoft.Sbom.Extensions.Entities;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom.Extensions
 {
     /// <summary>
     /// The validator will use this interface to register a manifest parsing library

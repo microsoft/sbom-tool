@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ManifestInterface.Entities;
+using Microsoft.Sbom.Extensions.Entities;
 using System;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom.Extensions
 {
     /// <summary>
     /// Represents a configuration object for a given SBOM Format. It holds all the 

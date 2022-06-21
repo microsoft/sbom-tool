@@ -26,5 +26,7 @@
         <PackageVersion Include="Ninject" Version="3.3.4" />
         <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
         <PackageVersion Include="Mono.Posix.NETStandard" Version="1.0.0" />
+        <PackageVersion Include="Microsoft.ComponentDetection.Contracts" Version="1.0.12" />
+        <PackageVersion Include="PackageUrl" Version="1.0.0" />
     </ItemGroup>
 </Project>

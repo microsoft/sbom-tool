@@ -4,7 +4,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace ManifestInterface.Exceptions
+namespace Microsoft.Sbom.Extensions.Exceptions
 {
     /// <summary>
     /// Thrown when a required hash value for a package or file is missing.

@@ -12,6 +12,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Api.Contract
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Common", "src\Microsoft.Sbom.Common\Microsoft.Sbom.Common.csproj", "{07A58335-CBFF-4A50-9B25-066A1F223894}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Adapters", "src\Microsoft.Sbom.Adapters\Microsoft.Sbom.Adapters.csproj", "{67C5E2DF-E56F-4627-975D-534C50E904C5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B4BFDF6F-4AFB-40AB-B2CE-3027FE04DBCD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Contracts", "src\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj", "{AA73B697-C992-4940-8375-17B9B77AB351}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +36,14 @@ Global
 		{07A58335-CBFF-4A50-9B25-066A1F223894}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07A58335-CBFF-4A50-9B25-066A1F223894}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07A58335-CBFF-4A50-9B25-066A1F223894}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67C5E2DF-E56F-4627-975D-534C50E904C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67C5E2DF-E56F-4627-975D-534C50E904C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67C5E2DF-E56F-4627-975D-534C50E904C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67C5E2DF-E56F-4627-975D-534C50E904C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA73B697-C992-4940-8375-17B9B77AB351}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA73B697-C992-4940-8375-17B9B77AB351}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA73B697-C992-4940-8375-17B9B77AB351}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA73B697-C992-4940-8375-17B9B77AB351}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

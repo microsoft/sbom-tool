@@ -3,7 +3,7 @@
 
 using System;
 
-namespace DropValidator.Api.Attributes
+namespace Microsoft.Sbom.Common.Config.Attributes
 {
     [AttributeUsage(AttributeTargets.Assembly)]
     public class DefaultNamespaceBaseUriAttribute : Attribute

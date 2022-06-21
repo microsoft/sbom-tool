@@ -3,7 +3,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Extensions.Entities
 {
     /// <summary>
     /// Defines the type of <see cref="Relationship"/> between the source and the 

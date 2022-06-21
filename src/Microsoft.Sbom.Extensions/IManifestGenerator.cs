@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ManifestInterface.Entities;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using System.Collections.Generic;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom.Extensions
 {
     /// <summary>
     /// The manifest tool uses this interface to generate a manifest (JSON format currently)

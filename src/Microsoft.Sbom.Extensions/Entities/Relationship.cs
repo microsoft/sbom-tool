@@ -3,7 +3,7 @@
 
 using Microsoft.Sbom.Contracts;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Extensions.Entities
 {
     /// <summary>
     /// Defines relationships between elements in the current SBOM.

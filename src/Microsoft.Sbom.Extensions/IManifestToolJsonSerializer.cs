@@ -4,7 +4,7 @@
 using System;
 using System.Text.Json;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom.Extensions
 {
     /// <summary>
     /// This implements the custom serializer for writing json output by the Manifest 

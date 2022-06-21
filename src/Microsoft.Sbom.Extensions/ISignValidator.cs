@@ -3,7 +3,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom.Extensions
 {
     /// <summary>
     /// Validates the given manifest.json using the platform specific sign verification mechanism.
