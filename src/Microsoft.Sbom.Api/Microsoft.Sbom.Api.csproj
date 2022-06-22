@@ -3,9 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <AssemblyName>Microsoft.Sbom.Api</AssemblyName>
-        <RootNamespace>Microsoft.Sbom.Api</RootNamespace>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <PackageVersion>$(SBOMPackageVersion)</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -28,21 +26,6 @@
       
     </ItemGroup>
 
-    <!--<ItemGroup>
-      <Content Remove="\lib\netcoreapp3.1\Microsoft.VisualStudio.Services.Governance.ComponentDetection.AzureDevOpsWrapper.dll" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Remove="\lib\netcoreapp3.1\Microsoft.VisualStudio.Services.Governance.ComponentDetection.AzureDevOpsWrapper.dll" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="$(PkgMicrosoft_VisualStudio_Services_Governance_Componentdetection_AzureDevOpsWrapper)\$(BuildOutputTargetFolder)\$(TargetFramework)\Microsoft.VisualStudio.Services.Governance.ComponentDetection.AzureDevOpsWrapper.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <TargetPath>Plugins\Microsoft.VisualStudio.Services.Governance.ComponentDetection.AzureDevOpsWrapper.dll</TargetPath>
-      </Content>
-    </ItemGroup>-->
-
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>$(AssemblyName).Tests</_Parameter1>
@@ -53,14 +36,6 @@
         <Content Include="README.md">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-    </ItemGroup>
-
-    <!-- Set default value for namespace base uri for the internal Microsoft assembly. -->
-    <ItemGroup>
-      <AssemblyAttribute Include="Microsoft.Sbom.Common.Config.Attributes.DefaultNamespaceBaseUriAttribute">
-        <_Parameter1>https://sbom.microsoft</_Parameter1>
-        <_Parameter2>The 'NamespaceUriBase' parameter cannot be overriden for internal Microsoft projects, setting it to the default value.</_Parameter2>
-      </AssemblyAttribute>
     </ItemGroup>
   
     <ItemGroup>
