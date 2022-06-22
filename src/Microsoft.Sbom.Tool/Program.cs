@@ -7,7 +7,6 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api;
-//using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Config;
 
 namespace Microsoft.Sbom.Tool
