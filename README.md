@@ -7,6 +7,7 @@ The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 
 By default, telemetry will output to your output file path and will be a JSON blob. No data is submitted to Microsoft.
 
 ## Contributing
+I am making changes.
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
