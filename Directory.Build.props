@@ -3,7 +3,7 @@
     <PropertyGroup Label="Build">
         <LangVersion>latest</LangVersion>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-        <TreatWarningsAsErrors Condition="'$(OFFICIAL_BUILD)' == 'True'">true</TreatWarningsAsErrors>
+        <TreatWarningsAsErrors Condition="'$(OFFICIAL_BUILD)' == 'True'">false</TreatWarningsAsErrors>
         <RootNamespace>Microsoft.Sbom</RootNamespace>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     </PropertyGroup>
@@ -32,6 +32,6 @@
         <NoWarn>NU1608,NU5119</NoWarn>
     </PropertyGroup>
     <PropertyGroup Condition="'$(OFFICIAL_BUILD)'=='True'">
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     </PropertyGroup>
 </Project>
