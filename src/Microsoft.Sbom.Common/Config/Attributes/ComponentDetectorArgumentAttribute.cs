@@ -12,7 +12,7 @@ namespace Microsoft.Sbom.Common.Config.Attributes
     public class ComponentDetectorArgumentAttribute : Attribute
     {
         /// <summary>
-        /// The name of the paramter to be specified when passing the value of the target to Component Detection.
+        /// Gets the name of the paramter to be specified when passing the value of the target to Component Detection.
         /// </summary>
         public string ParameterName { get; } = string.Empty;
 
