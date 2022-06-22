@@ -66,8 +66,8 @@ jobs:
     - name: dotnet restore
       run: dotnet restore
       
-    - name: Build and publish
-      run: dotnet publish -o dist -c Release ./Microsoft.Sbom.sln
+    - name: Build solution
+      run: dotnet build --no-restore
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
