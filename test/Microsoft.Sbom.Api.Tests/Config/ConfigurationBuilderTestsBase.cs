@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using AutoMapper;
 using Microsoft.Sbom.Api.Config.Validators;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
