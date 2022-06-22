@@ -41,7 +41,7 @@ namespace SPDX22SBOMParserTest
             spdxPackage.AddPackageUrls(packageInfo);
             var externalRef = spdxPackage.ExternalReferences.First();
             Assert.AreEqual(ReferenceCategory.PACKAGE_MANAGER, externalRef.ReferenceCategory);
-            Assert.AreEqual(ExternalRepositoryType.purl, externalRef.Type);
+            Assert.AreEqual(ExternalRepositoryType.Purl, externalRef.Type);
             Assert.AreEqual(PackageUrl, externalRef.Locator);
         }
 
@@ -81,7 +81,7 @@ namespace SPDX22SBOMParserTest
             var externalRef = spdxPackage.ExternalReferences.First();
 
             Assert.AreEqual(ReferenceCategory.PACKAGE_MANAGER, externalRef.ReferenceCategory);
-            Assert.AreEqual(ExternalRepositoryType.purl, externalRef.Type);
+            Assert.AreEqual(ExternalRepositoryType.Purl, externalRef.Type);
             Assert.AreEqual(expectedUrl, externalRef.Locator);
         }
 

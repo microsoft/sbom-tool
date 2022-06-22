@@ -12,13 +12,13 @@ namespace Microsoft.SPDX22SBOMParser.Entities
     public class CreationInfo
     {
         /// <summary>
-        /// A string that specifies the time the SBOM was created on.
+        /// Gets or sets a string that specifies the time the SBOM was created on.
         /// </summary>
         [JsonPropertyName("created")]
         public string Created { get; set; }
         
         /// <summary>
-        /// A list of strings that specify metadata about the creators of this
+        /// Gets or sets a list of strings that specify metadata about the creators of this
         /// SBOM. This could be the person or organization name, or tool name, etc.
         /// </summary>
         [JsonPropertyName("creators")]

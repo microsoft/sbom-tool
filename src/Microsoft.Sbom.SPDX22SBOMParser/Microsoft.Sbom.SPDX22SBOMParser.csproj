@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -10,9 +10,9 @@
     <PackageVersion>$(SBOMPackageVersion)</PackageVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Text.Json" />
-  </ItemGroup>
+  <!--<ItemGroup>
+    <PackageReference Include="System.Text.Json" VersionOverride="6.0.0"/>
+  </ItemGroup>-->
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />

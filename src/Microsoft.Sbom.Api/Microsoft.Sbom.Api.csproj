@@ -1,0 +1,73 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <AssemblyName>Microsoft.Sbom.Api</AssemblyName>
+        <RootNamespace>Microsoft.Sbom.Api</RootNamespace>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <PackageVersion>$(SBOMPackageVersion)</PackageVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" />
+        <PackageReference Include="Microsoft.ComponentDetection.Common" />
+        <PackageReference Include="Microsoft.ComponentDetection.Contracts" />
+        <PackageReference Include="Microsoft.ComponentDetection.Orchestrator" />
+        <PackageReference Include="Microsoft.ComponentDetection.Detectors" />
+        <PackageReference Include="Ninject" />
+        <PackageReference Include="Ninject.Extensions.Conventions" />
+        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="packageurl-dotnet" />
+        <PackageReference Include="PowerArgs" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="System.IO.FileSystem.AccessControl" />
+        <PackageReference Include="System.Threading.Channels" />
+        <PackageReference Include="System.Threading.Tasks.Extensions" />
+        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" VersionOverride="6.0.0" />
+      
+    </ItemGroup>
+
+    <!--<ItemGroup>
+      <Content Remove="\lib\netcoreapp3.1\Microsoft.VisualStudio.Services.Governance.ComponentDetection.AzureDevOpsWrapper.dll" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="\lib\netcoreapp3.1\Microsoft.VisualStudio.Services.Governance.ComponentDetection.AzureDevOpsWrapper.dll" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="$(PkgMicrosoft_VisualStudio_Services_Governance_Componentdetection_AzureDevOpsWrapper)\$(BuildOutputTargetFolder)\$(TargetFramework)\Microsoft.VisualStudio.Services.Governance.ComponentDetection.AzureDevOpsWrapper.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <TargetPath>Plugins\Microsoft.VisualStudio.Services.Governance.ComponentDetection.AzureDevOpsWrapper.dll</TargetPath>
+      </Content>
+    </ItemGroup>-->
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>$(AssemblyName).Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="README.md">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <!-- Set default value for namespace base uri for the internal Microsoft assembly. -->
+    <ItemGroup>
+      <AssemblyAttribute Include="Microsoft.Sbom.Common.Config.Attributes.DefaultNamespaceBaseUriAttribute">
+        <_Parameter1>https://sbom.microsoft</_Parameter1>
+        <_Parameter2>The 'NamespaceUriBase' parameter cannot be overriden for internal Microsoft projects, setting it to the default value.</_Parameter2>
+      </AssemblyAttribute>
+    </ItemGroup>
+  
+    <ItemGroup>
+      <ProjectReference Include="..\Microsoft.Sbom.Adapters\Microsoft.Sbom.Adapters.csproj" />
+      <ProjectReference Include="..\Microsoft.Sbom.Common\Microsoft.Sbom.Common.csproj" />
+      <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
+      <ProjectReference Include="..\Microsoft.Sbom.Extensions\Microsoft.Sbom.Extensions.csproj" />
+      <ProjectReference Include="..\Microsoft.Sbom.SPDX22SBOMParser\Microsoft.Sbom.SPDX22SBOMParser.csproj" />
+    </ItemGroup>
+
+</Project>

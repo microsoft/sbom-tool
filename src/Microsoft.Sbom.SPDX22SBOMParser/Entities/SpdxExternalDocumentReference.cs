@@ -11,19 +11,19 @@ namespace Microsoft.SPDX22SBOMParser.Entities
     public class SpdxExternalDocumentReference
     {
         /// <summary>
-        /// Unique Identifier for ExternalDocumentReference in SPDX document.
+        /// Gets or sets unique Identifier for ExternalDocumentReference in SPDX document.
         /// </summary>
         [JsonPropertyName("externalDocumentId")]
         public string ExternalDocumentId { get; set; }
 
         /// <summary>
-        /// Document namespace of the input SBOM
+        /// Gets or sets document namespace of the input SBOM
         /// </summary>
         [JsonPropertyName("spdxDocument")]
         public string SpdxDocument { get; set; }
 
         /// <summary>
-        /// Checksum values for External SBOM file
+        /// Gets or sets checksum values for External SBOM file
         /// </summary>
         [JsonPropertyName("checksum")]
         public Checksum Checksum { get; set; }
