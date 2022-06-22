@@ -92,7 +92,6 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             Assert.IsTrue(docs.Count == 2);
         }
 
-
         [TestMethod]
         public async Task RunShouldNotFailWithNull()
         {

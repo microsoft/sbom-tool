@@ -49,7 +49,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
             hashAlgorithmProvider.Init();
 
             var configSanitizer = new ConfigSanitizer(hashAlgorithmProvider, fileSystemUtilsMock.Object, mockAssemblyConfig.Object);
-            object ctor(Type type)
+            object Ctor(Type type)
             {
                 if (type == typeof(ConfigPostProcessor))
                 {
@@ -61,7 +61,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.ConstructServicesUsing(ctor);
+                cfg.ConstructServicesUsing(Ctor);
                 cfg.AddProfile<ConfigurationProfile>();
             });
 

@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>manifesttool</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <AssemblyName>Microsoft.Sbom.Tool</AssemblyName>
+    <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+    <SignAssembly>true</SignAssembly>
+    <IsPublishable>true</IsPublishable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Sbom.Api\Microsoft.Sbom.Api.csproj" />
+    <ProjectReference Include="..\Microsoft.Sbom.Common\Microsoft.Sbom.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="signtool.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="MS.ThirdPartyMarketplaceRoot.cer">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

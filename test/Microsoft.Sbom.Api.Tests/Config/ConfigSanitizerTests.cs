@@ -83,7 +83,6 @@ namespace Microsoft.Sbom.Api.Tests.Config
             };
         }
 
-
         [TestMethod]
         public void SetValueForManifestInfoForValidation_Succeeds()
         {

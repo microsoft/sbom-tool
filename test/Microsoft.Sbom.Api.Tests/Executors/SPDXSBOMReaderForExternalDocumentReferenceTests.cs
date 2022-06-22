@@ -31,11 +31,11 @@ namespace Microsoft.Sbom.Api.Tests.Executors
         private readonly ManifestGeneratorProvider manifestGeneratorProvider;
         private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
 
-        private const string jsonMissingName = "{\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-2.2\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
-        private const string jsonMissingNamespace = "{\"name\": \"docname\",\"spdxVersion\": \"SPDX-2.2\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
-        private const string jsonMissingVersion = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\",\"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
-        private const string jsonInvalidVersion = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-2.1\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
-        private const string jsonMissingDocumentDescribe = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-2.2\"}";
+        private const string JsonMissingName = "{\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-2.2\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
+        private const string JsonMissingNamespace = "{\"name\": \"docname\",\"spdxVersion\": \"SPDX-2.2\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
+        private const string JsonMissingVersion = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\",\"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
+        private const string JsonInvalidVersion = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-2.1\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
+        private const string JsonMissingDocumentDescribe = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-2.2\"}";
 
         public SPDXSBOMReaderForExternalDocumentReferenceTests()
         {
@@ -152,11 +152,11 @@ namespace Microsoft.Sbom.Api.Tests.Executors
         }
 
         [TestMethod]
-        [DataRow(jsonMissingName)]
-        [DataRow(jsonMissingNamespace)]
-        [DataRow(jsonMissingVersion)]
-        [DataRow(jsonInvalidVersion)]
-        [DataRow(jsonMissingDocumentDescribe)]
+        [DataRow(JsonMissingName)]
+        [DataRow(JsonMissingNamespace)]
+        [DataRow(JsonMissingVersion)]
+        [DataRow(JsonInvalidVersion)]
+        [DataRow(JsonMissingDocumentDescribe)]
         public async Task When_ParseSBOMFile_WithSPDXDocumentIssues_ThenThrowException(string inputJson)
         {
             mockHashGenerator.Setup(h => h.GenerateHashes(It.IsAny<string>(), It.IsAny<AlgorithmName[]>()))

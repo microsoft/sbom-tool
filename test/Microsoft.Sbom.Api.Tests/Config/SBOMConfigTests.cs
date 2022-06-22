@@ -88,9 +88,10 @@ namespace Microsoft.Sbom.Api.Tests.Config
         }
 
         private ISbomConfigProvider CreateSbomConfigs(IMetadataProvider[] metadataProviders) =>
-            new SbomConfigProvider(manifestConfigHandlers: new IManifestConfigHandler[] { configHandler.Object },
-                            metadataProviders: metadataProviders,
-                            logger: logger.Object,
-                            recorder: recorder.Object);
+            new SbomConfigProvider(
+                manifestConfigHandlers: new IManifestConfigHandler[] { configHandler.Object },
+                metadataProviders: metadataProviders,
+                logger: logger.Object,
+                recorder: recorder.Object);
     }
 }
