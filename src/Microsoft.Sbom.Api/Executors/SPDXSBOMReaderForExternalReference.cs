@@ -127,6 +127,7 @@ namespace Microsoft.Sbom.Api.Executors
                         }
                     }
                 }
+
                 foreach (var externalDocumentRefrence in externalDocumentReferenceInfos)
                 {
                     await output.Writer.WriteAsync(externalDocumentRefrence);
@@ -162,8 +163,8 @@ namespace Microsoft.Sbom.Api.Executors
                     throw new Exception($"{Constants.SpdxVersionString} property could not be parsed from referenced SPDX Document '{file}', this is not a valid SPDX-2.2 Document.");
                 }
 
-                if(!IsSPDXVersionSupported(versionValue))
-                {                    
+                if (!IsSPDXVersionSupported(versionValue))
+                {
                     throw new Exception($"The SPDX version ${versionValue} is not valid format in the referenced SBOM, we currently only support SPDX-2.2 SBOM format.");
                 }
 
@@ -207,4 +208,3 @@ namespace Microsoft.Sbom.Api.Executors
         private bool IsSPDXVersionSupported(string version) => supportedSPDXVersions.Contains(version);
     }
 }
-

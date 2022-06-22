@@ -30,10 +30,10 @@ namespace Microsoft.Sbom.Api.Workflows
     {
         [Inject]
         public IFileSystemUtils FileSystemUtils { get; set; }
-        
+
         [Inject]
         public IConfiguration Configuration { get; set; }
-        
+
         [Inject]
         public ILogger Log { get; set; }
 
@@ -115,7 +115,7 @@ namespace Microsoft.Sbom.Api.Workflows
                     Log.Error("Encountered an error while generating the manifest.");
                     Log.Error($"Error details: {e.Message}");
                     deleteSBOMDir = true;
-                    
+
                     // TODO: Create EntityError with exception message and record to surface unexpected exceptions to client.
                     return false;
                 }

@@ -12,19 +12,17 @@ namespace Microsoft.Sbom.Api.Tests.Config
     [TestClass]
     public class ConfigurationCLITests
     {
-        const string defaultArgs = "--defaultArg1 val1 --defaultArg2 --val2";
-        Mock<IConfiguration> mockConfiguration;
+        private Mock<IConfiguration> mockConfiguration;
 
         [TestInitialize]
         public void Setup()
         {
             mockConfiguration = new Mock<IConfiguration>();
         }
-        
+
         [TestMethod]
         public void Configuration_CommandLineParams()
         {
-
             // A property that is not a ComponentDetectorArgument
             mockConfiguration.SetupProperty(c => c.BuildComponentPath, new ConfigurationSetting<string> { Value = "build_component_path" });
 
@@ -33,7 +31,7 @@ namespace Microsoft.Sbom.Api.Tests.Config
 
             // An unnamed ComponentDetectorArgument
             mockConfiguration.SetupProperty(c => c.AdditionalComponentDetectorArgs, new ConfigurationSetting<string> { Value = "--arg1 val1 --arg2 val2" });
-            
+
             var config = mockConfiguration.Object;
 
             var argBuilder = new ComponentDetectionCliArgumentBuilder()
@@ -41,7 +39,7 @@ namespace Microsoft.Sbom.Api.Tests.Config
                 .SourceDirectory("X:/")
                 .AddArg("defaultArg1", "val1")
                 .AddArg("defaultArg2", "val2");
-            
+
             var commandLineParams = config.ToComponentDetectorCommandLineParams(argBuilder);
 
             Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --defaultArg1 val1 --defaultArg2 val2 --DockerImagesToScan the_docker_image --arg1 val1 --arg2 val2", string.Join(" ", commandLineParams));
@@ -57,7 +55,7 @@ namespace Microsoft.Sbom.Api.Tests.Config
                 .SourceDirectory("X:/")
                 .AddArg("defaultArg1", "val1")
                 .AddArg("defaultArg2", "val2");
-            
+
             var commandLineParams = config.ToComponentDetectorCommandLineParams(argBuilder);
 
             Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --defaultArg1 val1 --defaultArg2 val2", string.Join(" ", commandLineParams));

@@ -73,7 +73,7 @@ namespace Microsoft.Sbom.Api.Executors
                 }
 
                 // Split on Environment.NewLine and discard blank lines.
-                string[] separator = new string[] {Environment.NewLine};
+                string[] separator = new string[] { Environment.NewLine };
                 IEnumerable<string> files = allText.Split(separator, StringSplitOptions.None)
                                    .Where(t => !string.IsNullOrEmpty(t));
                 foreach (var oneFile in files)
@@ -103,7 +103,6 @@ namespace Microsoft.Sbom.Api.Executors
                         });
                     }
                 }
-               
             }
 
             Task.Run(async () =>

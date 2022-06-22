@@ -29,7 +29,7 @@ namespace Microsoft.Sbom.Api.Executors
             {
                 try
                 {
-                    foreach(var component in components)
+                    foreach (var component in components)
                     {
                         await output.Writer.WriteAsync(component);
                     }

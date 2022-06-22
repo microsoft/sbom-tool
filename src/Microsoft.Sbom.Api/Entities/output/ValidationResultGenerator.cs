@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Sbom.Common.Config;
 
-namespace Microsoft.Sbom.Api.Entities.output
+namespace Microsoft.Sbom.Api.Entities.Output
 {
     /// <summary>
     /// Generates a <see cref="ValidationResult"/> object.
@@ -105,6 +105,5 @@ namespace Microsoft.Sbom.Api.Entities.output
                 }
             };
         }
-
     }
 }

@@ -169,7 +169,6 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
                 provider = metadataProviders.FirstOrDefault(p => p is IDefaultMetadataProvider);
             }
 
-
             if (provider != null)
             {
                 return provider.GetDocumentNamespaceUri();

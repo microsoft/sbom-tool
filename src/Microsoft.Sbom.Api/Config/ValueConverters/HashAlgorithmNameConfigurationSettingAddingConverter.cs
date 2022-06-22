@@ -26,6 +26,7 @@ namespace Microsoft.Sbom.Api.Config.ValueConverters
             {
                 settingSource = SettingSource.Default;
             }
+
             return new ConfigurationSetting<AlgorithmName>
             {
                 Source = settingSource,

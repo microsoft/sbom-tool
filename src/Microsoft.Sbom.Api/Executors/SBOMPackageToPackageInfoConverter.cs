@@ -11,7 +11,6 @@ using Microsoft.Sbom.Api.Entities;
 
 namespace Microsoft.Sbom.Api.Executors
 {
-
     /// <summary>
     /// Takes a SBOMPackage object and converts it into a PackageInfo object.
     /// </summary>
@@ -29,7 +28,6 @@ namespace Microsoft.Sbom.Api.Executors
 
             Task.Run(async () =>
             {
-
                 await foreach (SBOMPackage component in componentReader.ReadAllAsync())
                 {
                     await WritePackageInfo(component, output, errors);

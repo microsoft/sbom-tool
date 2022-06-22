@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Api.Entities.output
+namespace Microsoft.Sbom.Api.Entities.Output
 {
     /// <summary>
     /// Error container for validation errors.

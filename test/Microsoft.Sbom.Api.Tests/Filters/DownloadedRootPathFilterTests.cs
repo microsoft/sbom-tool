@@ -45,7 +45,7 @@ namespace Microsoft.Sbom.Api.Filters.Tests
 
             var configMock = new Mock<IConfiguration>();
             configMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "C:/test" });
-            configMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "validPath"});
+            configMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "validPath" });
 
             var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
             filter.Init();
@@ -60,6 +60,5 @@ namespace Microsoft.Sbom.Api.Filters.Tests
             fileSystemMock.VerifyAll();
             configMock.VerifyAll();
         }
-
     }
 }

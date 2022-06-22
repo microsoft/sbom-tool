@@ -3,7 +3,7 @@
 
 using Microsoft.Sbom.Common.Config;
 
-namespace Microsoft.Sbom.Api.Entities.output
+namespace Microsoft.Sbom.Api.Entities.Output
 {
     /// <summary>
     /// The summary section specifies telemetry and other metadata about the validation.

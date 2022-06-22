@@ -18,12 +18,12 @@ namespace Microsoft.Sbom.Api.Hashing.Tests
         [TestMethod]
         public void GenerateHashTest_Returs2Hashes_Succeeds()
         {
-            var hashAlgorithmNames = new 
+            var hashAlgorithmNames = new
                 AlgorithmName[] { AlgorithmName.SHA256, AlgorithmName.SHA512 };
-            Checksum[] expectedHashes = new Checksum[] 
-            { 
-                new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "185F8DB32271FE25F561A6FC938B2E264306EC304EDA518007D1764826381969"},
-                new Checksum { Algorithm = AlgorithmName.SHA512, ChecksumValue = "3615F80C9D293ED7402687F94B22D58E529B8CC7916F8FAC7FDDF7FBD5AF4CF777D3D795A7A00A16BF7E7F3FB9561EE9BAAE480DA9FE7A18769E71886B03F315"}
+            Checksum[] expectedHashes = new Checksum[]
+            {
+                new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "185F8DB32271FE25F561A6FC938B2E264306EC304EDA518007D1764826381969" },
+                new Checksum { Algorithm = AlgorithmName.SHA512, ChecksumValue = "3615F80C9D293ED7402687F94B22D58E529B8CC7916F8FAC7FDDF7FBD5AF4CF777D3D795A7A00A16BF7E7F3FB9561EE9BAAE480DA9FE7A18769E71886B03F315" }
             };
 
             var mockFileSystemUtils = new Mock<IFileSystemUtils>();

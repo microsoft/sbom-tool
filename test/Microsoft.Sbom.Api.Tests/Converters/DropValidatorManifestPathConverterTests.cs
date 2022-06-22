@@ -41,8 +41,8 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
         {
             var rootPath = @"C:\Sample\Root";
             var operatingSystems = new List<OSPlatform>() {
-                OSPlatform.Windows, 
-                OSPlatform.Linux, 
+                OSPlatform.Windows,
+                OSPlatform.Linux,
                 OSPlatform.OSX,
 #if !NETFRAMEWORK
                 OSPlatform.FreeBSD 
@@ -66,7 +66,7 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
                 OSPlatform.Windows,
                 OSPlatform.Linux,
                 OSPlatform.OSX,
-                OSPlatform.FreeBSD 
+                OSPlatform.FreeBSD
                 };
 
             foreach (var os in operatingSystems)
@@ -102,7 +102,7 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
         public void DropValidatorManifestPathConverterTests_CaseSensitive_Windows_FreeBSD_Succeeds()
         {
             var rootPath = @"C:\Sample\Root";
-            var operatingSystems = new List<OSPlatform>() { 
+            var operatingSystems = new List<OSPlatform>() {
                 OSPlatform.Windows, 
 #if !NETFRAMEWORK
                 OSPlatform.FreeBSD 
@@ -167,7 +167,6 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
             var (path, isOutsideDropPath) = converter.Convert(filePath);
             Assert.AreEqual(expectedPath, path);
         }
-
 
         [TestMethod]
         public void DropValidatorManifestPathConverterTests_RootPathOutside_SbomOnSameDrive_Succeeds()

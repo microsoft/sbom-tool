@@ -11,14 +11,12 @@ namespace Microsoft.Sbom.Api.Utils
     {
         public const string ManifestFolder = "_manifest";
 
-        
-
         public static ManifestInfo SPDX22ManifestInfo = new ManifestInfo
         {
             Name = "SPDX",
             Version = "2.2"
         };
-           
+
         // TODO: move to test csproj
         public static ManifestInfo TestManifestInfo = new ManifestInfo
         {

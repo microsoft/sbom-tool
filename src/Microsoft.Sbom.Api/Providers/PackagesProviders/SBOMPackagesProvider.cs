@@ -22,9 +22,9 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
 
         public override bool IsSupported(ProviderType providerType)
         {
-            if(providerType == ProviderType.Packages)
+            if (providerType == ProviderType.Packages)
             {
-                if(Configuration.PackagesList?.Value != null)
+                if (Configuration.PackagesList?.Value != null)
                 {
                     Log.Debug($"Using the {nameof(SBOMPackagesProvider)} provider for the packages workflow.");
                     return true;

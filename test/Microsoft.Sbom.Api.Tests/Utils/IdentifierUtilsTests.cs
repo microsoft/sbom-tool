@@ -23,7 +23,7 @@ namespace DropValidator.Api.Utils.Tests
         [TestMethod]
         public void TryGetGuidFromShortGuidTest_BadString_Fails_DoesntThrow()
         {
-            Assert.IsFalse(IdentifierUtils.TryGetGuidFromShortGuid("", out Guid guid1));
+            Assert.IsFalse(IdentifierUtils.TryGetGuidFromShortGuid(string.Empty, out Guid guid1));
             Assert.IsTrue(guid1.Equals(Guid.Empty));
 
             Assert.IsFalse(IdentifierUtils.TryGetGuidFromShortGuid(null, out Guid guid2));

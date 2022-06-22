@@ -51,7 +51,6 @@ namespace Microsoft.Sbom.Api.Executors
 
             Task.Run(async () =>
             {
-
                 await foreach (InternalSBOMFileInfo fileInfo in fileInfos.ReadAllAsync())
                 {
                     await Generate(filesArraySupportingSBOMs, fileInfo, result, errors);

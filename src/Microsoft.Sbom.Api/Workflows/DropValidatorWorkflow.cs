@@ -4,7 +4,7 @@
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Entities.output;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
@@ -197,11 +197,11 @@ namespace Microsoft.Sbom.Api.Workflows
                 }
                 finally
                 {
-                    if(validFailures != null)
+                    if (validFailures != null)
                     {
                         recorder.RecordTotalErrors(validFailures.ToList());
                     }
-                    
+
                     // Log telemetry
                     LogResultsSummary(validationResultOutput, validFailures);
                     LogIndividualFileResults(validFailures);
@@ -226,22 +226,22 @@ namespace Microsoft.Sbom.Api.Workflows
             log.Verbose("Additional files not in the manifest: ");
             log.Verbose("");
             validFailures.Where(vf => vf.ErrorType == ErrorType.AdditionalFile).ForEach(f => log.Verbose(f.Path));
-            log.Verbose("------------------------------------------------------------"); ;
+            log.Verbose("------------------------------------------------------------");
 
             log.Verbose("Files with invalid hashes:");
             log.Verbose("");
             validFailures.Where(vf => vf.ErrorType == ErrorType.InvalidHash).ForEach(f => log.Verbose(f.Path));
-            log.Verbose("------------------------------------------------------------"); ;
+            log.Verbose("------------------------------------------------------------");
 
             log.Verbose("Files in the manifest missing from the disk:");
             log.Verbose("");
             validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => log.Verbose(f.Path));
-            log.Verbose("------------------------------------------------------------"); ;
+            log.Verbose("------------------------------------------------------------");
 
             log.Verbose("Unknown file failures:");
             log.Verbose("");
             validFailures.Where(vf => vf.ErrorType == ErrorType.Other).ForEach(f => log.Verbose(f.Path));
-            log.Verbose("------------------------------------------------------------"); ;
+            log.Verbose("------------------------------------------------------------");
         }
 
         private void LogResultsSummary(ValidationResult validationResultOutput, IEnumerable<FileValidationResult> validFailures)

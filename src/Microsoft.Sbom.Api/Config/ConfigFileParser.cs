@@ -23,7 +23,7 @@ namespace Microsoft.Sbom.Api.Config
 
         public async Task<ConfigFile> ParseFromJsonFile(string filePath)
         {
-            if(string.IsNullOrEmpty(filePath))
+            if (string.IsNullOrEmpty(filePath))
             {
                 throw new ArgumentNullException($"{nameof(filePath)} cannot be emtpy.");
             }

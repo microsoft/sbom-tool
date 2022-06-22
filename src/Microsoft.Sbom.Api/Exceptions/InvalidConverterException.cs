@@ -20,15 +20,18 @@ namespace Microsoft.Sbom.Api.Exceptions
         {
         }
 
-        public InvalidConverterException(string message) : base(message)
+        public InvalidConverterException(string message)
+            : base(message)
         {
         }
 
-        public InvalidConverterException(string message, Exception innerException) : base(message, innerException)
+        public InvalidConverterException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
-        protected InvalidConverterException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected InvalidConverterException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

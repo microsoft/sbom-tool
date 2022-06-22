@@ -13,7 +13,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Entities.output;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Output.Telemetry.Entities;
 using DropValidator.Api.Output.Telemetry.Entities;
 using PowerArgs;
@@ -28,12 +28,12 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
     public class TelemetryRecorder : IRecorder
     {
         private readonly ConcurrentBag<TimingRecorder> timingRecorders = new ConcurrentBag<TimingRecorder>();
-        private readonly IDictionary<ManifestInfo, string> _sbomFormats = new Dictionary<ManifestInfo, string>();
-        private readonly IDictionary<string, object> _switches = new Dictionary<string, object>();
-        private readonly IList<Exception> _exceptions = new List<Exception>();
+        private readonly IDictionary<ManifestInfo, string> sbomFormats = new Dictionary<ManifestInfo, string>();
+        private readonly IDictionary<string, object> switches = new Dictionary<string, object>();
+        private readonly IList<Exception> exceptions = new List<Exception>();
 
-        private IList<FileValidationResult> _errors = new List<FileValidationResult>();
-        private Result _result = Result.Success;
+        private IList<FileValidationResult> errors = new List<FileValidationResult>();
+        private Result result = Result.Success;
 
         [Inject]
         public IFileSystemUtils FileSystemUtils { get; set; }
@@ -46,7 +46,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
 
         public virtual IList<FileValidationResult> Errors
         {
-            get { return _errors; }
+            get { return errors; }
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
         /// <exception cref="ArgumentNullException">If the errors object is null.</exception>
         public void RecordTotalErrors(IList<FileValidationResult> errors)
         {
-            _errors = errors ?? throw new ArgumentNullException(nameof(errors));
+            this.errors = errors ?? throw new ArgumentNullException(nameof(errors));
         }
 
         /// <inheritdoc/>
@@ -89,7 +89,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
                 throw new ArgumentException($"'{nameof(sbomFilePath)}' cannot be null or whitespace.", nameof(sbomFilePath));
             }
 
-            this._sbomFormats[manifestInfo] = sbomFilePath;
+            this.sbomFormats[manifestInfo] = sbomFilePath;
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
                 throw new ArgumentNullException(nameof(exception));
             }
 
-            this._exceptions.Add(exception);
+            this.exceptions.Add(exception);
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
                 throw new ArgumentNullException(nameof(value));
             }
 
-            this._switches.Add(switchName, value);
+            this.switches.Add(switchName, value);
         }
 
         /// <summary>
@@ -137,36 +137,36 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
             try
             {
                 // Calculate result
-                if (this._errors.Any() || this._exceptions.Any())
+                if (this.errors.Any() || this.exceptions.Any())
                 {
-                    this._result = Result.Failure;
+                    this.result = Result.Failure;
                 }
 
                 // Calculate SBOM file sizes.
-                var sbomFormatsUsed = _sbomFormats
+                var sbomFormatsUsed = sbomFormats
                                         .Where(f => File.Exists(f.Value))
                                         .Select(f => new SBOMFile
-                                            { 
-                                                SbomFilePath = f.Value,
-                                                SbomFormatName = f.Key,
-                                                FileSizeInBytes = new System.IO.FileInfo(f.Value).Length
-                                            })
+                                        {
+                                            SbomFilePath = f.Value,
+                                            SbomFormatName = f.Key,
+                                            FileSizeInBytes = new System.IO.FileInfo(f.Value).Length
+                                        })
                                         .ToList();
 
                 // Create the telemetry object.
                 var telemetry = new SBOMTelemetry
                 {
-                    Result = this._result,
+                    Result = this.result,
                     Errors = new ErrorContainer<FileValidationResult>
                     {
-                        Errors = this._errors,
-                        Count = this._errors.Count
+                        Errors = this.errors,
+                        Count = this.errors.Count
                     },
                     Timings = timingRecorders.Select(t => t.ToTiming()).ToList(),
                     Parameters = Configuration,
                     SBOMFormatsUsed = sbomFormatsUsed,
-                    Switches = this._switches,
-                    Exceptions = this._exceptions.ToDictionary(k => k.GetType().ToString(), v => v.Message)
+                    Switches = this.switches,
+                    Exceptions = this.exceptions.ToDictionary(k => k.GetType().ToString(), v => v.Message)
                 };
 
                 // Log to logger.

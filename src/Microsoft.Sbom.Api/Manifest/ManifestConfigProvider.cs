@@ -14,8 +14,7 @@ namespace Microsoft.Sbom.Api.Manifest
     public class ManifestConfigProvider : Provider<ISbomConfig>
     {
         private readonly IManifestConfigHandler[] manifestConfigHandlers;
-        
-        
+
         public ManifestConfigProvider(IManifestConfigHandler[] manifestConfigHandlers)
         {
             this.manifestConfigHandlers = manifestConfigHandlers ?? throw new ArgumentNullException(nameof(manifestConfigHandlers));

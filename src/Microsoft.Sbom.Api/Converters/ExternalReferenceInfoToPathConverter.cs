@@ -36,16 +36,17 @@ namespace Microsoft.Sbom.Api.Converters
                     {
                         var path = externalDocumentRef.Path;
 
-                        if(path == null)
+                        if (path == null)
                         {
                             log.Debug($"Encountered an error while converting external reference {externalDocumentRef.ExternalDocumentName} for null path.");
                             await errors.Writer.WriteAsync(new FileValidationResult
                             {
                                 ErrorType = ErrorType.Other,
+
                                 // on the exception that Path does not exist, use DocumentName for uniqueness
                                 Path = externalDocumentRef.ExternalDocumentName
                             });
-                        } 
+                        }
                         else
                         {
                             await output.Writer.WriteAsync(path);

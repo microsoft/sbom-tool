@@ -33,7 +33,7 @@ namespace DropValidator.Api.Config.Extensions
         /// <param name="arg"></param>
         /// <param name="builder"></param>
         /// <returns></returns>
-        private static ComponentDetectionCliArgumentBuilder AddToCommandLineBuilder(this (string Name, object Value) arg, ComponentDetectionCliArgumentBuilder builder) => 
+        private static ComponentDetectionCliArgumentBuilder AddToCommandLineBuilder(this (string Name, object Value) arg, ComponentDetectionCliArgumentBuilder builder) =>
             !string.IsNullOrWhiteSpace(arg.Name) ? builder.AddArg(arg.Name, arg.Value.ToString()) : builder.ParseAndAddArgs(arg.Value.ToString());
 
         /// <summary>
@@ -49,6 +49,5 @@ namespace DropValidator.Api.Config.Extensions
                 .ForEach(arg => arg.AddToCommandLineBuilder(builder));
             return builder.Build();
         }
-
     }
 }

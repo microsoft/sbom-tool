@@ -40,11 +40,15 @@ namespace Microsoft.Sbom.Api.Convertors
             //relativeTo 
             string buildDropPath = configuration.BuildDropPath.Value;
             bool isOutsideDropPath = false;
-            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (path == null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
 
             if (!fileSystemUtilsExtension.IsTargetPathInSource(path, buildDropPath))
             {
                 isOutsideDropPath = true;
+
                 // Allow spdx files to be outside the root path, all externalDocumentReference must be in the file array regardless of where they are located.
                 // More details are in this spec: https://github.com/spdx/spdx-spec/issues/571
                 if (!path.EndsWith(Constants.SPDXFileExtension, osUtils.GetFileSystemStringComparisonType()))

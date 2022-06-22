@@ -61,15 +61,14 @@ namespace Microsoft.Sbom.Api.Converters
 
         private ExternalDocumentReferenceInfo ConvertComponentToExternalReference(ScannedComponent component)
         {
-
-            if(!(component.Component is SpdxComponent))
+            if (!(component.Component is SpdxComponent))
             {
                 throw new ArgumentException($"{nameof(component.Component)} is not an SpdxComponent");
             }
 
             var sbomComponent = (SpdxComponent)component.Component;
 
-            if(sbomComponent.DocumentNamespace is null)
+            if (sbomComponent.DocumentNamespace is null)
             {
                 throw new ArgumentException($"{nameof(sbomComponent)} should have {nameof(sbomComponent.DocumentNamespace)}");
             }

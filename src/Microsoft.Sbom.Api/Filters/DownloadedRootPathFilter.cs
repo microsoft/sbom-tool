@@ -74,14 +74,14 @@ namespace Microsoft.Sbom.Api.Filters
         {
             logger.Verbose("Adding root path filter valid paths");
             skipValidation = true;
-            
-            if(configuration.RootPathFilter != null)
+
+            if (configuration.RootPathFilter != null)
             {
                 skipValidation = false;
                 validPaths = new HashSet<string>();
                 string[] relativeRootPaths = configuration.RootPathFilter.Value.Split(';');
-                
-                validPaths.UnionWith(relativeRootPaths.Select(r => 
+
+                validPaths.UnionWith(relativeRootPaths.Select(r =>
                         new FileInfo(fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, r))
                                 .FullName));
 

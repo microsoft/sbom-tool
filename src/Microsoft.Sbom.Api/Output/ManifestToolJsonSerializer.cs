@@ -18,7 +18,7 @@ namespace Microsoft.Sbom.Api.Output
     /// </summary>
     public sealed class ManifestToolJsonSerializer : IManifestToolJsonSerializer
     {
-        private Utf8JsonWriter _jsonWriter;
+        private Utf8JsonWriter jsonWriter;
 
         public ManifestToolJsonSerializer(Stream stream)
         {
@@ -27,23 +27,23 @@ namespace Microsoft.Sbom.Api.Output
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            _jsonWriter = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
+            jsonWriter = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
         }
 
         public void Dispose()
         {
-            _jsonWriter?.Dispose();
-            _jsonWriter = null;
+            jsonWriter?.Dispose();
+            jsonWriter = null;
         }
 
         public async ValueTask DisposeAsync()
         {
-            if (_jsonWriter != null)
+            if (jsonWriter != null)
             {
-                await _jsonWriter.DisposeAsync().ConfigureAwait(false);
+                await jsonWriter.DisposeAsync().ConfigureAwait(false);
             }
 
-            _jsonWriter = null;
+            jsonWriter = null;
         }
 
         /// <summary>
@@ -60,13 +60,13 @@ namespace Microsoft.Sbom.Api.Output
 
             using (jsonDocument)
             {
-                jsonDocument.WriteTo(_jsonWriter);
+                jsonDocument.WriteTo(jsonWriter);
             }
 
             // If the pending buffer size is greater than a megabyte, flush the stream.
-            if (_jsonWriter.BytesPending > 1_000_000)
+            if (jsonWriter.BytesPending > 1_000_000)
             {
-                _jsonWriter.Flush();
+                jsonWriter.Flush();
             }
         }
 
@@ -81,7 +81,7 @@ namespace Microsoft.Sbom.Api.Output
                 using JsonDocument document = JsonDocument.Parse(jsonString);
                 foreach (JsonProperty property in document.RootElement.EnumerateObject())
                 {
-                    property.WriteTo(_jsonWriter);
+                    property.WriteTo(jsonWriter);
                 }
             }
         }
@@ -89,23 +89,23 @@ namespace Microsoft.Sbom.Api.Output
         /// <summary>
         /// Writes the start JSON object. Must be called before writing to the serializer.
         /// </summary>
-        public void StartJsonObject() => _jsonWriter.WriteStartObject();
+        public void StartJsonObject() => jsonWriter.WriteStartObject();
 
         /// <summary>
         /// Writes the end JSON object. Must be called after finishing writing to 
         /// the serializer to close the json object.
         /// </summary>
-        public void FinalizeJsonObject() => _jsonWriter.WriteEndObject();
+        public void FinalizeJsonObject() => jsonWriter.WriteEndObject();
 
         /// <summary>
         /// Start an array object with the header string as the key.
         /// </summary>
         /// <param name="arrayHeader">They key to the array.</param>
-        public void StartJsonArray(string arrayHeader) => _jsonWriter.WriteStartArray(JsonEncodedText.Encode(arrayHeader));
+        public void StartJsonArray(string arrayHeader) => jsonWriter.WriteStartArray(JsonEncodedText.Encode(arrayHeader));
 
         /// <summary>
         /// End the current array. Throws if there is currently no array object being written to.
         /// </summary>
-        public void EndJsonArray() => _jsonWriter.WriteEndArray();
+        public void EndJsonArray() => jsonWriter.WriteEndArray();
     }
 }

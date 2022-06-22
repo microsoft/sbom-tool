@@ -16,15 +16,18 @@ namespace Microsoft.Sbom.Api.Exceptions
         {
         }
 
-        public UnsupportedHashAlgorithmException(string message) : base(message)
+        public UnsupportedHashAlgorithmException(string message)
+            : base(message)
         {
         }
 
-        public UnsupportedHashAlgorithmException(string message, Exception innerException) : base(message, innerException)
+        public UnsupportedHashAlgorithmException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
-        protected UnsupportedHashAlgorithmException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected UnsupportedHashAlgorithmException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

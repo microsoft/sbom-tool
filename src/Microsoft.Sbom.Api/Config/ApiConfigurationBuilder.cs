@@ -30,7 +30,7 @@ namespace Microsoft.Sbom.Api.Config
         /// <param name="specifications"></param>
         /// <param name="runtimeConfiguration"></param>
         /// <param name="verbosity"></param>
-        /// <returns>A generate configuration</returns>
+        /// <returns>A generate configuration.</returns>
         internal Configuration GetConfiguration(
             string rootPath,
             string manifestDirPath,
@@ -62,9 +62,9 @@ namespace Microsoft.Sbom.Api.Config
             configuration.PackageVersion = GetConfigurationSetting(metadata.PackageVersion);
             configuration.Parallelism = GetConfigurationSetting(sanitizedRuntimeConfiguration.WorkflowParallelism);
             configuration.GenerationTimestamp = GetConfigurationSetting(sanitizedRuntimeConfiguration.GenerationTimestamp);
-            configuration.NamespaceUriBase = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriBase);   
-            configuration.NamespaceUriUniquePart = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriUniquePart);   
-            configuration.FollowSymlinks = GetConfigurationSetting(sanitizedRuntimeConfiguration.FollowSymlinks);   
+            configuration.NamespaceUriBase = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriBase);
+            configuration.NamespaceUriUniquePart = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriUniquePart);
+            configuration.FollowSymlinks = GetConfigurationSetting(sanitizedRuntimeConfiguration.FollowSymlinks);
 
             SetVerbosity(sanitizedRuntimeConfiguration, configuration);
 
@@ -82,8 +82,8 @@ namespace Microsoft.Sbom.Api.Config
             {
                 configuration.ExternalDocumentReferenceListFile = GetConfigurationSetting(externalDocumentReferenceListFile);
             }
-            
-            if (!String.IsNullOrWhiteSpace(componentPath))
+
+            if (!string.IsNullOrWhiteSpace(componentPath))
             {
                 configuration.BuildComponentPath = GetConfigurationSetting(componentPath);
             }

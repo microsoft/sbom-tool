@@ -82,7 +82,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
         public async Task ListWalkerTests_UnreachableFile_FailsAsync()
         {
             List<string> files = new List<string>
-            { 
+            {
                 @"d:\directorya\directoryb\file1.txt",
                 @"d:\directorya\directoryc\file3.txt",
             };

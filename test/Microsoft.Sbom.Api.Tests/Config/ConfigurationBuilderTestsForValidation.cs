@@ -35,7 +35,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
             fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemUtilsMock.Setup(f => f.GetDirectoryName(It.IsAny<string>())).Returns("test").Verifiable();
             fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
-            
+
             var args = new ValidationArgs
             {
                 BuildDropPath = "BuildDropPath",
@@ -98,7 +98,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
             var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
             fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath));
-           
+
             var args = new ValidationArgs
             {
                 BuildDropPath = "BuildDropPath",
@@ -175,11 +175,11 @@ namespace Microsoft.Sbom.Api.Config.Tests
             };
 
             var config = await cb.GetConfiguration(args);
-            
+
             Assert.IsNotNull(config);
             Assert.IsNotNull(config.ManifestDirPath);
             Assert.AreEqual("ManifestDirPath", config.ManifestDirPath.Value);
-            
+
             fileSystemUtilsMock.VerifyAll();
         }
     }

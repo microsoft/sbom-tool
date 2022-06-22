@@ -35,7 +35,6 @@ namespace Microsoft.Sbom.Api.Executors
 
             Task.Run(async () =>
             {
-
                 await foreach (string file in files.ReadAllAsync())
                 {
                     await FilterFiles(file, errors, output);
@@ -43,7 +42,6 @@ namespace Microsoft.Sbom.Api.Executors
 
                 output.Writer.Complete();
                 errors.Writer.Complete();
-
             });
 
             return (output, errors);

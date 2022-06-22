@@ -24,7 +24,6 @@ namespace Microsoft.Sbom.Api.Tests.Converters
         [TestMethod]
         public async Task When_ConvertingComponentToExternalDocRefInfo_WithCommonCase_ThenTestPass()
         {
-
             var scannedComponents = from i in Enumerable.Range(1, 5)
                                     select new ScannedComponent
                                     {
@@ -60,6 +59,7 @@ namespace Microsoft.Sbom.Api.Tests.Converters
 
                 index++;
             }
+
             Assert.AreEqual(scannedComponents.ToList().Count, index - 1);
         }
 

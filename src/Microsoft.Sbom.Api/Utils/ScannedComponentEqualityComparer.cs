@@ -16,16 +16,24 @@ namespace Microsoft.Sbom.Api.Utils
         public bool Equals([AllowNull] ScannedComponent scannedComponent1, [AllowNull] ScannedComponent scannedComponent2)
         {
             if (scannedComponent2 == null && scannedComponent1 == null)
+            {
                 return true;
+            }
             else if (scannedComponent1 == null || scannedComponent2 == null)
+            {
                 return false;
+            }
             else if (string.Equals(
                         scannedComponent1.Component.Id,
-                        scannedComponent2.Component.Id, 
+                        scannedComponent2.Component.Id,
                         StringComparison.OrdinalIgnoreCase))
+            {
                 return true;
+            }
             else
+            {
                 return false;
+            }
         }
 
         public int GetHashCode([DisallowNull] ScannedComponent scannedComponent)

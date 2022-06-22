@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Api.Output
         public MetadataBuilder(
             ILogger logger,
             ManifestGeneratorProvider manifestGeneratorProvider,
-            ManifestInfo manifestInfo, 
+            ManifestInfo manifestInfo,
             IRecorder recorder)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -42,7 +42,7 @@ namespace Microsoft.Sbom.Api.Output
         /// <returns></returns>
         public string GetHeaderJsonString(IInternalMetadataProvider internalMetadataProvider)
         {
-            using(recorder.TraceEvent(string.Format(Events.MetadataBuilder, manifestInfo)))
+            using (recorder.TraceEvent(string.Format(Events.MetadataBuilder, manifestInfo)))
             {
                 logger.Debug("Building the header object.");
                 var headerDictionary = manifestGenerator.GetMetadataDictionary(internalMetadataProvider);
@@ -101,10 +101,10 @@ namespace Microsoft.Sbom.Api.Output
             {
                 generationResult = manifestGenerator
                                     .GenerateRootPackage(internalMetadataProvider);
-                
-                if(generationResult == null) 
-                { 
-                    return false; 
+
+                if (generationResult == null)
+                {
+                    return false;
                 }
 
                 return true;

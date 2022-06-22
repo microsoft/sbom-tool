@@ -71,7 +71,7 @@ namespace Microsoft.Sbom.Api.Tests
             Assert.AreEqual(0, config.FilesList.Value.ToList().Count);
             Assert.AreEqual(externalDocumentRefListFile, config.ExternalDocumentReferenceListFile.Value);
             Assert.AreEqual(1, config.ManifestInfo.Value.Count);
-            Assert.IsTrue(config.ManifestInfo.Value[0].Equals(expectedManifestInfo));   
+            Assert.IsTrue(config.ManifestInfo.Value[0].Equals(expectedManifestInfo));
 
             Assert.AreEqual(SettingSource.SBOMApi, config.BuildDropPath.Source);
             Assert.AreEqual(SettingSource.SBOMApi, config.BuildComponentPath.Source);
@@ -130,8 +130,8 @@ namespace Microsoft.Sbom.Api.Tests
         }
 
         [TestMethod]
-        [DataRow(MinParallelism-1, DefaultParallelism)]
-        [DataRow(MaxParallelism+1, DefaultParallelism)]
+        [DataRow(MinParallelism - 1, DefaultParallelism)]
+        [DataRow(MaxParallelism + 1, DefaultParallelism)]
         [DataRow(10, 10)]
         [DataRow(null, DefaultParallelism)]
         public void GetConfiguration_SantizeRuntimeConfig_Parallelism(int? input, int output)

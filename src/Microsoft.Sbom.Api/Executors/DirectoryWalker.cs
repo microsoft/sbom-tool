@@ -35,7 +35,7 @@ namespace Microsoft.Sbom.Api.Executors
 
             followSymlinks = configuration.FollowSymlinks?.Value ?? true;
 
-            if(!followSymlinks)
+            if (!followSymlinks)
             {
                 log.Information("FollowSymlinks parameter is set to false, we won't follow symbolic links while traversing the filesystem.");
             }
@@ -45,7 +45,7 @@ namespace Microsoft.Sbom.Api.Executors
         {
             log.Debug($"Enumerating files under the root path {root}.");
 
-            if(!fileSystemUtils.DirectoryExists(root))
+            if (!fileSystemUtils.DirectoryExists(root))
             {
                 throw new InvalidPathException($"The root path at {root} doesn't exist or is not accessible.");
             }
@@ -59,13 +59,12 @@ namespace Microsoft.Sbom.Api.Executors
                 {
                     foreach (var file in fileSystemUtils.GetFilesInDirectory(path, followSymlinks))
                     {
-                        await output.Writer.WriteAsync(file);                        
+                        await output.Writer.WriteAsync(file);
                     }
 
                     var tasks = fileSystemUtils.GetDirectories(path, followSymlinks).Select(WalkDir);
                     await Task.WhenAll(tasks.ToArray());
-
-                } 
+                }
                 catch (Exception e)
                 {
                     log.Debug($"Encountered an unknown error for {path}: {e.Message}");

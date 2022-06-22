@@ -10,7 +10,8 @@ namespace Microsoft.Sbom.Api.Utils
     /// </summary>
     public class ExternalReferenceDeduplicator : ChannelDeduplicator<ExternalDocumentReferenceInfo>
     {
-        public ExternalReferenceDeduplicator() : base() { }
+        public ExternalReferenceDeduplicator()
+            : base() { }
 
         public override string GetKey(ExternalDocumentReferenceInfo obj)
         {

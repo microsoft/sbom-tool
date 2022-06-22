@@ -34,7 +34,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
             IDictionary d = new Dictionary<string, string>()
             {
                 { "Agent", "a" },
-                { variable, "true"},
+                { variable, "true" },
             };
 
             environment.Setup(o => o.GetEnvironmentVariables()).Returns(d);
@@ -51,9 +51,9 @@ namespace Microsoft.Sbom.Api.Tests.Utils
             IDictionary d = new Dictionary<string, string>()
             {
                 { "Agent", "a" },
-                { variable, "true"},
-                { variable.ToLower(), "trueLower"},
-                { variable.ToUpper(), "trueUpper"},
+                { variable, "true" },
+                { variable.ToLower(), "trueLower" },
+                { variable.ToUpper(), "trueUpper" },
             };
 
             environment.Setup(o => o.GetEnvironmentVariables()).Returns(d);
@@ -83,7 +83,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void GetEnvironmentVariable_NullFromEmptyEnvVar()
         {
-            IDictionary d = new Dictionary<string, string>(){};
+            IDictionary d = new Dictionary<string, string>() { };
 
             environment.Setup(o => o.GetEnvironmentVariables()).Returns(d);
             osUtils = new OSUtils(logger.Object, environment.Object);

@@ -18,7 +18,6 @@ namespace Microsoft.Sbom.Api.Config
         [ArgReviver]
         public static IList<ManifestInfo> ReviveManifestInfo(string _, string value)
         {
-
             try
             {
                 IList<ManifestInfo> manifestInfos = new List<ManifestInfo>();

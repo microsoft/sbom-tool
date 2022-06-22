@@ -1,26 +1,25 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using DropValidator.Api.Config;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Ninject;
 using PowerArgs;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
-using Microsoft.Sbom.Common.Config.Validators;
 
 namespace Microsoft.Sbom.Api
 {
@@ -80,7 +79,7 @@ namespace Microsoft.Sbom.Api
             IRecorder recorder = kernel.Get<IRecorder>();
             await recorder.FinalizeAndLogTelemetryAsync();
 
-            var entityErrors = ((TelemetryRecorder)recorder).Errors.Select( error => error.ToEntityError()).ToList();
+            var entityErrors = ((TelemetryRecorder)recorder).Errors.Select(error => error.ToEntityError()).ToList();
 
             return new SBOMGenerationResult(isSuccess, entityErrors);
         }
@@ -176,7 +175,8 @@ namespace Microsoft.Sbom.Api
 
             foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(config))
             {
-                configValidators.ForEach(v => {
+                configValidators.ForEach(v =>
+                {
                     v.CurrentAction = config.ManifestToolAction;
                     v.Validate(property.DisplayName, property.GetValue(config), property.Attributes);
                 });
@@ -185,6 +185,5 @@ namespace Microsoft.Sbom.Api
             configSanitizer.SanitizeConfig(config);
             return config;
         }
-
     }
 }

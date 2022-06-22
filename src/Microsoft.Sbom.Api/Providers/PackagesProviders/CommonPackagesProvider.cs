@@ -62,7 +62,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
             return packageInfos;
         }
 
-        protected override(ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) 
+        protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors)
             WriteAdditionalItems(IList<ISbomConfig> requiredConfigs)
         {
             return PackageInfoJsonWriter.Write(GetCommonPackages(), requiredConfigs);

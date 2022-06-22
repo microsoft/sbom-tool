@@ -27,13 +27,13 @@ namespace Microsoft.Sbom.Api.Tests.Entities
         [DataRow(ErrorType.Other, EntityErrorType.Other)]
         public void FileValidationResultErrorTypeMapping(ErrorType input, EntityErrorType output)
         {
-            var fileValidationResult = new FileValidationResult() { ErrorType = input, Path = "random"};
+            var fileValidationResult = new FileValidationResult() { ErrorType = input, Path = "random" };
             var entityError = fileValidationResult.ToEntityError();
 
             Assert.AreEqual(entityError.ErrorType, output);
             Assert.AreEqual(entityError.Details, null);
 
-            if(input == ErrorType.PackageError)
+            if (input == ErrorType.PackageError)
             {
                 Assert.AreEqual(((PackageEntity)entityError.Entity).Path, "random");
                 Assert.AreEqual(((PackageEntity)entityError.Entity).Name, "random");
@@ -42,7 +42,7 @@ namespace Microsoft.Sbom.Api.Tests.Entities
             else
             {
                 Assert.AreEqual(((FileEntity)entityError.Entity).Path, "random");
-                Assert.AreEqual(entityError.Entity.GetType(),typeof(FileEntity));
+                Assert.AreEqual(entityError.Entity.GetType(), typeof(FileEntity));
             }
         }
     }

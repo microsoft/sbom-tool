@@ -31,9 +31,9 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
             return false;
         }
 
-        protected override (ChannelReader<string> entities, ChannelReader<FileValidationResult> errors)  GetSourceChannel()
+        protected override (ChannelReader<string> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            if(Configuration.ExternalDocumentReferenceListFile?.Value == null)
+            if (Configuration.ExternalDocumentReferenceListFile?.Value == null)
             {
                 var emptyList = Channel.CreateUnbounded<string>();
                 emptyList.Writer.Complete();
@@ -41,6 +41,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
                 errors.Writer.Complete();
                 return (emptyList, errors);
             }
+
             return ListWalker.GetFilesFromList(Configuration.ExternalDocumentReferenceListFile.Value);
         }
 

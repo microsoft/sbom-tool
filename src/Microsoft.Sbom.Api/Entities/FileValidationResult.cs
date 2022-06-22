@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json;
 using Microsoft.Sbom.Contracts;
-using Microsoft.Sbom.Contracts.Enums;
-using EntityErrorType = Microsoft.Sbom.Contracts.Enums.ErrorType;
 using Microsoft.Sbom.Contracts.Entities;
+using Microsoft.Sbom.Contracts.Enums;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using EntityErrorType = Microsoft.Sbom.Contracts.Enums.ErrorType;
 
 namespace Microsoft.Sbom.Api.Entities
 {

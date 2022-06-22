@@ -38,10 +38,11 @@ namespace Microsoft.Sbom.Api.Hashing
             foreach (var hashAlgorithmName in hashAlgorithmNames)
             {
                 var checksum = hashAlgorithmName.ComputeHash(bufferedStream);
-                
+
                 fileHashes[i++] = new Checksum
                 {
                     Algorithm = hashAlgorithmName,
+
                     // TODO make this be bytes instead of converting to string.
                     ChecksumValue = BitConverter.ToString(checksum).Replace("-", string.Empty)
                 };

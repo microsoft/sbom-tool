@@ -45,7 +45,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             };
             foreach (var file in fileList)
             {
-                hashDict[file] = new Checksum[] 
+                hashDict[file] = new Checksum[]
                 {
                     new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hash" }
                 };
@@ -67,7 +67,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
                                                               new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                                  .Returns(new Checksum[]
                                  {
-                                     new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash"}
+                                     new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
                                  });
             manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>())).Returns((string r) => (r, true));
 
@@ -114,7 +114,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
                                                               new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                                  .Returns(new Checksum[]
                                  {
-                                     new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash"}
+                                     new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
                                  });
 
             manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>())).Returns((string r) => (r, true));
@@ -180,11 +180,11 @@ namespace Microsoft.Sbom.Api.Executors.Tests
                                                               new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                 .Returns(new Checksum[]
                                  {
-                                     new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash"}
+                                     new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
                                  })
                 .Returns(new Checksum[]
                                  {
-                                     new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = ""}
+                                     new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "" }
                                  })
                 .Throws(new UnauthorizedAccessException("Can't access file"));
             manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>())).Returns((string r) => (r, true));
@@ -246,9 +246,9 @@ namespace Microsoft.Sbom.Api.Executors.Tests
                                                               new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                                  .Returns(new Checksum[]
                                  {
-                                     new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash"}
+                                     new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
                                  });
-            
+
             var manifestInfoList = new List<ManifestInfo>
             {
                 ManifestInfo.Parse("test:1"),
@@ -259,7 +259,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             var generator2 = new Mock<IManifestGenerator>();
 
             generator1.Setup(g => g.RegisterManifest()).Returns(ManifestInfo.Parse("test:1"));
-            generator2.Setup(g => g.RequiredHashAlgorithms).Returns(new AlgorithmName[] { AlgorithmName.SHA256});
+            generator2.Setup(g => g.RequiredHashAlgorithms).Returns(new AlgorithmName[] { AlgorithmName.SHA256 });
             generator2.Setup(g => g.RegisterManifest()).Returns(ManifestInfo.Parse("test:2"));
 
             var manifestGenProvider = new ManifestGeneratorProvider(new IManifestGenerator[]
@@ -289,6 +289,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             {
                 await files.Writer.WriteAsync(file);
             }
+
             files.Writer.Complete();
 
             await foreach (InternalSBOMFileInfo fileHash in fileHashes.file.ReadAllAsync())

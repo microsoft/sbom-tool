@@ -40,7 +40,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
             return false;
         }
 
-        protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) 
+        protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors)
             ConvertToJson(
                 ChannelReader<ScannedComponent> sourceChannel,
                 IList<ISbomConfig> requiredConfigs)

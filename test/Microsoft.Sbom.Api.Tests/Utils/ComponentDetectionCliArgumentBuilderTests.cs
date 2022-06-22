@@ -97,7 +97,6 @@ namespace Microsoft.Sbom.Api.Tests.Utils
                 .AddArg("ManifestFile", "Hello")
                 .AddArg("--DirectoryExclusionList", "X:/hello");
 
-
             var result = builder.Build();
             Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --ManifestFile Hello --DirectoryExclusionList X:/hello", string.Join(" ", result));
         }

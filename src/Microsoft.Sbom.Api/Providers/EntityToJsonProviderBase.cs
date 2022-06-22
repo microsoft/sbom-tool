@@ -75,10 +75,9 @@ namespace Microsoft.Sbom.Api.Providers
                 jsonDocResults.Add(additionalResults);
             }
 
-            if(additionalErrors != null)
+            if (additionalErrors != null)
             {
                 errors.Add(additionalErrors);
-
             }
 
             return (ChannelUtils.Merge(jsonDocResults.ToArray()), ChannelUtils.Merge(errors.ToArray()));

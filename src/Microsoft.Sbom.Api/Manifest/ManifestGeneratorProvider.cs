@@ -36,7 +36,8 @@ namespace Microsoft.Sbom.Api.Manifest
         public IManifestGenerator Get(ManifestInfo manifestInfo)
         {
             var key = $"{manifestInfo.Name}:{manifestInfo.Version}";
-            if(manifestMap.TryGetValue(key, out IManifestGenerator generator)) {
+            if (manifestMap.TryGetValue(key, out IManifestGenerator generator))
+            {
                 return generator;
             }
 

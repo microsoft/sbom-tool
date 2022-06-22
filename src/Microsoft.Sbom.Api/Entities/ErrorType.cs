@@ -18,7 +18,7 @@ namespace Microsoft.Sbom.Api.Entities
 
         [EnumMember(Value = "Additional File")]
         AdditionalFile = 2,
-        
+
         [EnumMember(Value = "Missing File")]
         MissingFile = 3,
 

@@ -55,7 +55,7 @@ namespace Microsoft.Sbom.Api.Tests
         public async Task When_GenerateSbomAsync_WithRecordedErrors_Then_PopulateEntityErrors()
         {
             var fileValidationResults = new List<FileValidationResult>();
-            fileValidationResults.Add(new FileValidationResult() { Path = "random", ErrorType = ErrorType.Other});
+            fileValidationResults.Add(new FileValidationResult() { Path = "random", ErrorType = ErrorType.Other });
 
             kernel.Bind<IWorkflow>().ToMethod(x => mockWorkflow.Object).Named(nameof(SBOMGenerationWorkflow));
             kernel.Bind<IRecorder>().ToMethod(x => mockRecorder.Object).InSingletonScope();
@@ -78,7 +78,7 @@ namespace Microsoft.Sbom.Api.Tests
             kernel.Bind<IRecorder>().ToMethod(x => mockRecorder.Object).InSingletonScope();
             mockRecorder.Setup(c => c.Errors).Returns(new List<FileValidationResult>()).Verifiable();
             mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
-            
+
             var result = await generator.GenerateSBOMAsync("rootPath", "compPath", new SBOMMetadata(), configuration: runtimeConfiguration);
 
             Assert.AreEqual(0, result.Errors.Count);

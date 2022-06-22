@@ -25,7 +25,7 @@ namespace Microsoft.Sbom.Api.Output
         public MetadataBuilderFactory(
             IMetadataProvider[] metadataProviders,
             ILogger logger,
-            ManifestGeneratorProvider manifestGeneratorProvider, 
+            ManifestGeneratorProvider manifestGeneratorProvider,
             IRecorder recorder)
         {
             if (logger is null)

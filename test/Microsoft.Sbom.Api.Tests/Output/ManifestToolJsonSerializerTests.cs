@@ -32,6 +32,7 @@ namespace Microsoft.Sbom.Api.Output.Tests
                     serializer.WriteJsonString(metadataString);
                     serializer.FinalizeJsonObject();
                 }
+
                 result = Encoding.UTF8.GetString(stream.ToArray());
             }
 

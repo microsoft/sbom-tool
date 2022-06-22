@@ -39,14 +39,14 @@ namespace Microsoft.Sbom.Api.Config
             {
                 // Assign default values if any using the default value attribute.
                 if (property.GetValue(destination) == null &&
-                    property.Attributes[typeof(System.ComponentModel.DefaultValueAttribute)] 
+                    property.Attributes[typeof(System.ComponentModel.DefaultValueAttribute)]
                         is System.ComponentModel.DefaultValueAttribute defaultValueAttribute)
                 {
                     SetDefautValue(destination, defaultValueAttribute.Value, property);
                 }
 
                 // Run validators on all properties.
-                configValidators.ForEach(v => v.Validate(property.DisplayName, property.GetValue(destination), property.Attributes));               
+                configValidators.ForEach(v => v.Validate(property.DisplayName, property.GetValue(destination), property.Attributes));
             }
 
             // Sanitize configuration
@@ -81,6 +81,7 @@ namespace Microsoft.Sbom.Api.Config
                     Source = SettingSource.Default
                 });
             }
+
             // Fall through, only primitive types are currently supported. 
             // Add more primitive types if needed here.
         }

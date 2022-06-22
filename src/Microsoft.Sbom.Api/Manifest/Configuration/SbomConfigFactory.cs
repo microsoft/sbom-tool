@@ -10,11 +10,11 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
 {
     public class SbomConfigFactory : ISbomConfigFactory
     {
-        private readonly IFileSystemUtils _fileSystemUtils;
+        private readonly IFileSystemUtils fileSystemUtils;
 
         public SbomConfigFactory(IFileSystemUtils fileSystemUtils)
         {
-            _fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+            this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         }
 
         public ISbomConfig Get(
@@ -22,10 +22,9 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
             string manifestDirPath,
             string manifestFilePath,
             ISbomPackageDetailsRecorder recorder,
-            IMetadataBuilder metadataBuilder
-        )
+            IMetadataBuilder metadataBuilder)
         {
-            return new SbomConfig(_fileSystemUtils)
+            return new SbomConfig(fileSystemUtils)
             {
                 ManifestInfo = manifestInfo,
                 ManifestJsonDirPath = manifestDirPath,

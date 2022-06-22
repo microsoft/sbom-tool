@@ -54,7 +54,6 @@ namespace Microsoft.Sbom.Api.Config
             // Convert config file arguments to configuration.
             var configFileArgs = mapper.Map<ConfigFile, Configuration>(configFromFile);
 
-            
             // Combine both configs, include defaults.
             return mapper.Map(commandLineArgs, configFileArgs);
         }

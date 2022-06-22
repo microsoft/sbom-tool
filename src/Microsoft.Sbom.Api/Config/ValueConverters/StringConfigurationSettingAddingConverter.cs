@@ -21,7 +21,9 @@ namespace Microsoft.Sbom.Api.Config.ValueConverters
         public ConfigurationSetting<string> Convert(string sourceMember, ResolutionContext context)
         {
             if (string.IsNullOrEmpty(sourceMember))
+            {
                 return null;
+            }
 
             return new ConfigurationSetting<string>
             {

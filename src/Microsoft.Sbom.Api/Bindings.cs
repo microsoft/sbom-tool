@@ -6,7 +6,7 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Convertors;
-using Microsoft.Sbom.Api.Entities.output;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Api.Hashing;
@@ -41,6 +41,7 @@ namespace Microsoft.Sbom.Api
     /// </remarks>
     public class Bindings : NinjectModule
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1123:Do not place regions within elements", Justification = "Enable documentation of code")]
         public override void Load()
         {
             Bind<IFileSystemUtils>().ToProvider<FileSystemUtilsProvider>().InSingletonScope();
@@ -59,10 +60,11 @@ namespace Microsoft.Sbom.Api
 
             Bind<IFilter>().To<DownloadedRootPathFilter>().Named(nameof(DownloadedRootPathFilter)).OnActivation(f => f.Init());
             Bind<IFilter>().To<ManifestFolderFilter>().Named(nameof(ManifestFolderFilter)).OnActivation(f => f.Init());
-            
+
             Bind<ILogger>().ToProvider<LoggerProvider>();
 
             #region Bind all manifest parsers
+
             // Search external assemblies
             Kernel.Bind(scan => scan
                                 .FromAssembliesMatching("*Parsers*")
@@ -83,6 +85,7 @@ namespace Microsoft.Sbom.Api
             #endregion
 
             #region Bind all manifest generators
+
             // Search external assemblies
             Kernel.Bind(scan => scan
                                 .FromAssembliesMatching("*Parsers*")
@@ -208,7 +211,6 @@ namespace Microsoft.Sbom.Api
             Bind<SBOMPackageToPackageInfoConverter>().ToSelf().InThreadScope();
             Bind<ExternalDocumentReferenceWriter>().ToSelf().InThreadScope();
             Bind<ISBOMReaderForExternalDocumentReference>().To<SPDXSBOMReaderForExternalDocumentReference>().InThreadScope();
-
 
             #endregion
 

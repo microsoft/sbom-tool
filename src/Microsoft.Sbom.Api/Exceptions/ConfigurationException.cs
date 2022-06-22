@@ -8,7 +8,7 @@ using Microsoft.Sbom.Common.Config;
 namespace Microsoft.Sbom.Api.Exceptions
 {
     /// <summary>
-    /// Thrown when there is a problem in parsing the <see cref="IConfiguration"/>
+    /// Thrown when there is a problem in parsing the <see cref="IConfiguration"/>.
     /// </summary>
     [Serializable]
     public class ConfigurationException : Exception
@@ -17,15 +17,18 @@ namespace Microsoft.Sbom.Api.Exceptions
         {
         }
 
-        public ConfigurationException(string message) : base(message)
+        public ConfigurationException(string message)
+            : base(message)
         {
         }
 
-        public ConfigurationException(string message, Exception innerException) : base(message, innerException)
+        public ConfigurationException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
-        protected ConfigurationException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected ConfigurationException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

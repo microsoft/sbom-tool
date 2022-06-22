@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using DropValidator.Api.Output.Telemetry.Entities;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Entities.output;
+using Microsoft.Sbom.Api.Entities.Output;
 
 namespace Microsoft.Sbom.Api.Output.Telemetry.Entities
 {

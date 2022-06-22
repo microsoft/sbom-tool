@@ -89,7 +89,6 @@ namespace Microsoft.Sbom.Api.Executors
 
             Task.Run(async () =>
             {
-
                 await foreach (string file in fileInfo.ReadAllAsync())
                 {
                     await GenerateHash(file, output, errors);
@@ -133,7 +132,7 @@ namespace Microsoft.Sbom.Api.Executors
                 {
                     ManifestData.HashesMap.Remove(relativeFilePath);
                 }
-                
+
                 log.Error($"Encountered an error while generating hash for file {file}: {e.Message}");
                 await errors.Writer.WriteAsync(new FileValidationResult
                 {

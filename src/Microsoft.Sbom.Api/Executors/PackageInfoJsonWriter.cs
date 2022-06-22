@@ -43,7 +43,6 @@ namespace Microsoft.Sbom.Api.Executors
 
             Task.Run(async () =>
             {
-
                 await foreach (SBOMPackage packageInfo in packageInfos.ReadAllAsync())
                 {
                     await GenerateJson(packagesArraySupportingConfigs, packageInfo, result, errors);

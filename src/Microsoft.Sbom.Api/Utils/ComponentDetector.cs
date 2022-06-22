@@ -11,7 +11,7 @@ namespace Microsoft.Sbom.Api.Utils
     /// </summary>
     public class ComponentDetector
     {
-        public virtual ScanResult Scan(string [] args)
+        public virtual ScanResult Scan(string[] args)
         {
             var orchestrator = new Orchestrator();
             return orchestrator.Load(args);

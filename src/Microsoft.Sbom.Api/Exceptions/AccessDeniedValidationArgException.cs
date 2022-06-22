@@ -12,11 +12,13 @@ namespace Microsoft.Sbom.Api.Exceptions
     [Serializable]
     public class AccessDeniedValidationArgException : ValidationArgException
     {
-        public AccessDeniedValidationArgException(string message) : base(message)
+        public AccessDeniedValidationArgException(string message)
+            : base(message)
         {
         }
 
-        public AccessDeniedValidationArgException(string message, Exception innerException) : base(message, innerException)
+        public AccessDeniedValidationArgException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
     }

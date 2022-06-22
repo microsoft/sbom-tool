@@ -37,7 +37,6 @@ namespace Microsoft.Sbom.Api.Executors
 
             Task.Run(async () =>
             {
-
                 await foreach (SBOMFile component in componentReader.ReadAllAsync())
                 {
                     await Convert(component, output, errors);
@@ -65,7 +64,7 @@ namespace Microsoft.Sbom.Api.Executors
                 }
 
                 var fileInfo = new InternalSBOMFileInfo
-                { 
+                {
                     Path = component.Path,
                     Checksum = checksums.ToArray(),
                     FileCopyrightText = component.FileCopyrightText,

@@ -205,6 +205,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             {
                 await componentsChannel.Writer.WriteAsync(scannedComponent);
             }
+
             componentsChannel.Writer.Complete();
             var packageInfoConverter = new ComponentToPackageInfoConverter(mockLogger.Object);
             var (output, errors) = packageInfoConverter.Convert(componentsChannel);

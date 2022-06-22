@@ -17,14 +17,13 @@ namespace Microsoft.Sbom.Api.Metadata
     /// </summary>
     public class LocalMetadataProvider : IMetadataProvider, IDefaultMetadataProvider
     {
-        private const string productName = "Microsoft.SBOMTool";
+        private const string ProductName = "Microsoft.SBOMTool";
         private const string buildEnvironmentName = "local";
 
         private static readonly Lazy<string> version = new Lazy<string>(() =>
         {
             return typeof(LocalMetadataProvider).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "";
         });
-
 
         public string BuildEnvironmentName => buildEnvironmentName;
 
@@ -43,7 +42,8 @@ namespace Microsoft.Sbom.Api.Metadata
 
         private void PopulateMetadata()
         {
-            MetadataDictionary.Add(MetadataKey.SBOMToolName, productName);
+            MetadataDictionary.Add(MetadataKey.SBOMToolName, ProductName);
+
             // TODO get tool version from dll manifest.
             MetadataDictionary.Add(MetadataKey.SBOMToolVersion, version.Value);
 

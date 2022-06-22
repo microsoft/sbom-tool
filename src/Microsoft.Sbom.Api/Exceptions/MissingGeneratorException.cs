@@ -16,15 +16,18 @@ namespace Microsoft.Sbom.Api.Exceptions
         {
         }
 
-        public MissingGeneratorException(string message) : base(message)
+        public MissingGeneratorException(string message)
+            : base(message)
         {
         }
 
-        public MissingGeneratorException(string message, Exception innerException) : base(message, innerException)
+        public MissingGeneratorException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
-        protected MissingGeneratorException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected MissingGeneratorException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

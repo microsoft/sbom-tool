@@ -166,7 +166,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
             Assert.IsNotNull(config);
             Assert.IsNotNull(config.ManifestDirPath);
             Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
-            
+
             fileSystemUtilsMock.VerifyAll();
         }
 
@@ -262,11 +262,10 @@ namespace Microsoft.Sbom.Api.Config.Tests
                 {
                     var config = await cb.GetConfiguration(args);
                     Assert.Fail($"NamespaceUriBase test should fail. nsUri: {badNsUri}");
-
                 }
                 catch (ValidationArgException e)
                 {
-                    ++ failedCount;
+                    ++failedCount;
                     Assert.AreEqual("The value of NamespaceUriBase must be a valid URI.", e.Message);
                 }
             }

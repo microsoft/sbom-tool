@@ -111,7 +111,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
         private IEnumerator<Relationship> GetRelationships(RelationshipType relationshipType, string sourceElementId, IEnumerable<string> targetElementIds)
         {
             foreach (var targetElementId in targetElementIds)
-            { 
+            {
                 if (targetElementId != null || sourceElementId != null)
                 {
                     yield return new Relationship

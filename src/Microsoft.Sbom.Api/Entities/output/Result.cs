@@ -3,7 +3,7 @@
 
 using System.Runtime.Serialization;
 
-namespace Microsoft.Sbom.Api.Entities.output
+namespace Microsoft.Sbom.Api.Entities.Output
 {
     /// <summary>
     /// The result of the validation.

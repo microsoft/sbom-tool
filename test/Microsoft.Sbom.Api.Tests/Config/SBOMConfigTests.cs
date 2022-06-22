@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Extensions;
-﻿using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Metadata;
 using Microsoft.Sbom.Api.Output.Telemetry;

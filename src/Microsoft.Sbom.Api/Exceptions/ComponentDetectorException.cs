@@ -16,15 +16,18 @@ namespace Microsoft.Sbom.Api.Exceptions
         {
         }
 
-        public ComponentDetectorException(string message) : base(message)
+        public ComponentDetectorException(string message)
+            : base(message)
         {
         }
 
-        public ComponentDetectorException(string message, Exception innerException) : base(message, innerException)
+        public ComponentDetectorException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
-        protected ComponentDetectorException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected ComponentDetectorException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

@@ -14,17 +14,18 @@ namespace Microsoft.Sbom.Api.Config.Validators
     /// </summary>
     public class IntRangeValidator : ConfigValidator
     {
-        public IntRangeValidator(IAssemblyConfig assemblyConfig) : base(typeof(IntRangeAttribute), assemblyConfig)
+        public IntRangeValidator(IAssemblyConfig assemblyConfig)
+            : base(typeof(IntRangeAttribute), assemblyConfig)
         {
         }
 
         public override void ValidateInternal(string paramName, object paramValue, Attribute attribute)
         {
-            if(paramValue != null && paramValue is int value)
+            if (paramValue != null && paramValue is int value)
             {
                 IntRangeAttribute intRangeAttribute = attribute as IntRangeAttribute;
-                
-                if(value < intRangeAttribute.MinRange || value > intRangeAttribute.MaxRange)
+
+                if (value < intRangeAttribute.MinRange || value > intRangeAttribute.MaxRange)
                 {
                     throw new ValidationArgException($"The value for {paramName} should be equal to or between {intRangeAttribute.MinRange} and {intRangeAttribute.MaxRange}");
                 }

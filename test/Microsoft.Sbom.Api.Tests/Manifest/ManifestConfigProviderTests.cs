@@ -51,14 +51,14 @@ namespace Microsoft.Sbom.Api.Manifest.Tests
             var mockContext = new Mock<IContext>();
 
             mockConfiguration.Setup(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
-            mockConfiguration.Setup(c => c.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root","_manifest") });
+            mockConfiguration.Setup(c => c.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest") });
             mockConfiguration.Setup(c => c.ManifestToolAction).Returns(ManifestToolActions.Generate);
             mockConfiguration
                 .Setup(c => c.ManifestInfo)
                 .Returns(
-                    new ConfigurationSetting<IList<ManifestInfo>> 
-                    { 
-                        Value = new List<ManifestInfo> { Constants.SPDX22ManifestInfo } 
+                    new ConfigurationSetting<IList<ManifestInfo>>
+                    {
+                        Value = new List<ManifestInfo> { Constants.SPDX22ManifestInfo }
                     });
 
             var configHandlerArray = new IManifestConfigHandler[]
@@ -139,7 +139,7 @@ namespace Microsoft.Sbom.Api.Manifest.Tests
             mockConfiguration.Setup(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
 
             var configHandlerArray = new IManifestConfigHandler[]
-            {                
+            {
                 new SPDX22ManifestConfigHandler(mockConfiguration.Object, mockFileSystemUtils.Object, mockMetadataBuilderFactory)
             };
 
@@ -147,6 +147,5 @@ namespace Microsoft.Sbom.Api.Manifest.Tests
 
             configProvider.Create(mockContext.Object);
         }
-
     }
 }

@@ -16,10 +16,11 @@ namespace Microsoft.Sbom.Api.Utils
     {
         public List<FileType> GetFileTypesBy(string fileName)
         {
-            if(!string.IsNullOrWhiteSpace(fileName) && fileName.EndsWith(Constants.SPDXFileExtension, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrWhiteSpace(fileName) && fileName.EndsWith(Constants.SPDXFileExtension, StringComparison.OrdinalIgnoreCase))
             {
                 return new List<FileType> { FileType.SPDX };
             }
+
             return null;
         }
     }

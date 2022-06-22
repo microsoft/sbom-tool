@@ -35,13 +35,13 @@ namespace Microsoft.Sbom.Api.SignValidator
         {
             foreach (var signValidator in signValidators)
             {
-                signValidatorsMap[signValidator.SupportedPlatform] = signValidator;   
+                signValidatorsMap[signValidator.SupportedPlatform] = signValidator;
             }
         }
 
         public ISignValidator Get()
         {
-            if(!signValidatorsMap.TryGetValue(osUtils.GetCurrentOSPlatform(), out ISignValidator signValidator))
+            if (!signValidatorsMap.TryGetValue(osUtils.GetCurrentOSPlatform(), out ISignValidator signValidator))
             {
                 logger.Error($"No signature validator found for current OS, supported OS are {signValidatorsMap.Keys}");
                 throw new SignValidatorNotFoundException("No signature validator found for current OS");

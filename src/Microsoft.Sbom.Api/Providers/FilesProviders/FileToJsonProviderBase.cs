@@ -46,7 +46,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
             foreach (var fileChannel in splitFilesChannels)
             {
                 var (jsonDoc, convertErrors) = ConvertToJson(fileChannel, requiredConfigs);
-               
+
                 errors.Add(convertErrors);
                 jsonDocResults.Add(jsonDoc);
             }
@@ -66,7 +66,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
         /// <param name="files"></param>
         /// <param name="requiredConfigs"></param>
         /// <returns></returns>
-        protected abstract (ChannelReader<JsonDocWithSerializer> files, ChannelReader<FileValidationResult> errors) 
+        protected abstract (ChannelReader<JsonDocWithSerializer> files, ChannelReader<FileValidationResult> errors)
             ConvertToJson(ChannelReader<T> files, IList<ISbomConfig> requiredConfigs);
 
         /// <summary>

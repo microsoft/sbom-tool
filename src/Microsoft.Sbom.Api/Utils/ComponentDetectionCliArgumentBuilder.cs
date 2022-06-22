@@ -22,11 +22,11 @@ namespace Microsoft.Sbom.Api.Utils
         private Dictionary<string, string> keyValueArgs = new Dictionary<string, string>();
         private List<string> keyArgs = new List<string>();
 
-        private const string verbosityParamName = "Verbosity";
-        private const string sourceDirectoryParamName = "SourceDirectory";
-        private const string detectorArgsParamName = "DetectorArgs";
+        private const string VerbosityParamName = "Verbosity";
+        private const string SourceDirectoryParamName = "SourceDirectory";
+        private const string DetectorArgsParamName = "DetectorArgs";
 
-        private const string scanAction = "scan";
+        private const string ScanAction = "scan";
 
         public ComponentDetectionCliArgumentBuilder()
         {
@@ -49,12 +49,12 @@ namespace Microsoft.Sbom.Api.Utils
         {
             Validate();
 
-            var command = $"{action} --{verbosityParamName} {verbosity} --{sourceDirectoryParamName} {sourceDirectory}";
+            var command = $"{action} --{VerbosityParamName} {verbosity} --{SourceDirectoryParamName} {sourceDirectory}";
 
             if (detectorArgs.Any())
             {
                 var args = string.Join(",", detectorArgs.Select(arg => $"{arg.Key}={arg.Value}"));
-                var detectorArgsCommand = $"--{detectorArgsParamName} {args}";
+                var detectorArgsCommand = $"--{DetectorArgsParamName} {args}";
                 command += $" {detectorArgsCommand}";
             }
 
@@ -79,7 +79,7 @@ namespace Microsoft.Sbom.Api.Utils
 
         public ComponentDetectionCliArgumentBuilder Scan()
         {
-            action = scanAction;
+            action = ScanAction;
             return this;
         }
 
@@ -88,7 +88,6 @@ namespace Microsoft.Sbom.Api.Utils
             detectorArgs.Add(name, value);
             return this;
         }
-
 
         public ComponentDetectionCliArgumentBuilder Verbosity(VerbosityMode verbosity)
         {
@@ -121,21 +120,22 @@ namespace Microsoft.Sbom.Api.Utils
                 throw new ArgumentNullException($"{nameof(name)} should not be null or be empty");
             }
 
-            if (name.Equals(sourceDirectoryParamName, StringComparison.OrdinalIgnoreCase))
+            if (name.Equals(SourceDirectoryParamName, StringComparison.OrdinalIgnoreCase))
             {
                 return SourceDirectory(value);
             }
 
-            if (name.Equals(verbosityParamName, StringComparison.OrdinalIgnoreCase))
+            if (name.Equals(VerbosityParamName, StringComparison.OrdinalIgnoreCase))
             {
                 if (!Enum.TryParse(value, out VerbosityMode verbosity))
                 {
                     throw new ArgumentException($"Invalid verbosity value provided - {value}.");
                 }
+
                 return Verbosity(verbosity);
             }
 
-            if (name.Equals(detectorArgsParamName, StringComparison.OrdinalIgnoreCase))
+            if (name.Equals(DetectorArgsParamName, StringComparison.OrdinalIgnoreCase))
             {
                 var detectorArgs = value.Split(",").Select(arg => arg.Trim()).Select(arg => arg.Split("="));
                 if (detectorArgs.Any())
@@ -148,6 +148,7 @@ namespace Microsoft.Sbom.Api.Utils
                         }
                     }
                 }
+
                 return this;
             }
 
@@ -199,6 +200,7 @@ namespace Microsoft.Sbom.Api.Utils
                     AddArg(argArray[i].Substring(2));
                 }
             }
+
             return this;
         }
     }

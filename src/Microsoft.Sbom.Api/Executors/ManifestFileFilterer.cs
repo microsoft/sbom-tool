@@ -32,7 +32,7 @@ namespace Microsoft.Sbom.Api.Executors
             [Named(nameof(DownloadedRootPathFilter))]
             IFilter rootPathFilter,
             IConfiguration configuration,
-            ILogger log, 
+            ILogger log,
             IFileSystemUtils fileSystemUtils)
         {
             this.manifestData = manifestData ?? throw new ArgumentNullException(nameof(manifestData));
@@ -48,7 +48,7 @@ namespace Microsoft.Sbom.Api.Executors
 
             Task.Run(async () =>
             {
-                var manifestKeys = manifestData.HashesMap != null 
+                var manifestKeys = manifestData.HashesMap != null
                                         ? new List<string>(manifestData.HashesMap.Keys)
                                         : new List<string>();
 
@@ -85,6 +85,5 @@ namespace Microsoft.Sbom.Api.Executors
 
             return errors;
         }
-
     }
 }

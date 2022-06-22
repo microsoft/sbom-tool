@@ -96,7 +96,6 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
             await foreach (FileValidationResult error in validationResults.errors.ReadAllAsync())
             {
-
                 Assert.AreEqual(ErrorType.InvalidHash, error.ErrorType);
                 Assert.IsTrue(fileList.Remove(error.Path));
             }
@@ -137,7 +136,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             files.Writer.Complete();
             errors.Writer.Complete();
 
-            var validator = new HashValidator(configuration.Object, new ManifestData {HashesMap = hashDict });
+            var validator = new HashValidator(configuration.Object, new ManifestData { HashesMap = hashDict });
             var validationResults = validator.Validate(files);
 
             await foreach (FileValidationResult error in validationResults.errors.ReadAllAsync())

@@ -98,7 +98,7 @@ namespace Microsoft.Sbom.Api.Config
         /// Gets or sets the name of the package this SBOM represents.
         /// </summary>
         public string PackageName { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the version of the package this SBOM represents.
         /// </summary>
@@ -133,7 +133,7 @@ namespace Microsoft.Sbom.Api.Config
         /// Gets or sets additional set of command-line arguments for Component Detector.
         /// </summary>
         public string AdditionalComponentDetectorArgs { get; set; }
-        
+
         /// <summary>
         /// Gets or sets unique part of the namespace uri for SPDX 2.2 SBOMs. This value should be globally unique.
         /// If this value is not provided, we generate a unique guid that will make the namespace globally unique.

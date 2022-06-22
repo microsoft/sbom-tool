@@ -13,12 +13,15 @@ namespace Microsoft.Sbom.Api.Exceptions
     {
         public ManifestToolSerializerException() { }
 
-        public ManifestToolSerializerException(string message) : base(message) { }
+        public ManifestToolSerializerException(string message)
+            : base(message) { }
 
-        public ManifestToolSerializerException(string message, Exception inner) : base(message, inner) { }
+        public ManifestToolSerializerException(string message, Exception inner)
+            : base(message, inner) { }
 
         protected ManifestToolSerializerException(
           System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+          System.Runtime.Serialization.StreamingContext context)
+            : base(info, context) { }
     }
 }

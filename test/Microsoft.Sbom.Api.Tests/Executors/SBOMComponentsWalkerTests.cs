@@ -25,7 +25,6 @@ namespace Microsoft.Sbom.Api.Executors.Tests
     [TestClass]
     public class SBOMComponentsWalkerTests
     {
-
         private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
         private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
         private readonly Mock<ISbomConfigProvider> mockSbomConfigs = new Mock<ISbomConfigProvider>();
@@ -93,6 +92,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
                 scannedComponents.Add(scannedComponent);
             }
+
             var nonSbomComponent = new ScannedComponent
             {
                 Component = new NpmComponent("componentName", "123"),

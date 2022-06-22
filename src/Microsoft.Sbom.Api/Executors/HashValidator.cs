@@ -28,7 +28,7 @@ namespace Microsoft.Sbom.Api.Executors
             this.manifestData = manifestData;
         }
 
-        public (ChannelReader<FileValidationResult> output, ChannelReader<FileValidationResult> errors) 
+        public (ChannelReader<FileValidationResult> output, ChannelReader<FileValidationResult> errors)
             Validate(ChannelReader<InternalSBOMFileInfo> fileWithHash)
         {
             var output = Channel.CreateUnbounded<FileValidationResult>();
@@ -36,7 +36,6 @@ namespace Microsoft.Sbom.Api.Executors
 
             Task.Run(async () =>
             {
-
                 await foreach (var fileHash in fileWithHash.ReadAllAsync())
                 {
                     await Validate(fileHash, output, errors);

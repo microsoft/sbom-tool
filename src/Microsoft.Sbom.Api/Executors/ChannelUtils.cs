@@ -24,10 +24,10 @@ namespace Microsoft.Sbom.Api.Executors
             {
                 async Task Redirect(ChannelReader<T> input)
                 {
-
                     await foreach (T item in input.ReadAllAsync())
+                    {
                         await output.Writer.WriteAsync(item);
-
+                    }
                 }
 
                 await Task.WhenAll(inputs.Select(i => Redirect(i)).ToArray());
@@ -48,7 +48,9 @@ namespace Microsoft.Sbom.Api.Executors
         {
             var outputs = new Channel<T>[n];
             for (var i = 0; i < n; i++)
+            {
                 outputs[i] = Channel.CreateUnbounded<T>();
+            }
 
             Task.Run(async () =>
             {

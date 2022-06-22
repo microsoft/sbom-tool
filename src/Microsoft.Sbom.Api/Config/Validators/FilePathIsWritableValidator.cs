@@ -17,7 +17,7 @@ namespace Microsoft.Sbom.Api.Config.Validators
     {
         private readonly IFileSystemUtils fileSystemUtils;
 
-        public FilePathIsWritableValidator(IFileSystemUtils fileSystemUtils, IAssemblyConfig assemblyConfig) 
+        public FilePathIsWritableValidator(IFileSystemUtils fileSystemUtils, IAssemblyConfig assemblyConfig)
             : base(typeof(FilePathIsWritableAttribute), assemblyConfig)
         {
             this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));

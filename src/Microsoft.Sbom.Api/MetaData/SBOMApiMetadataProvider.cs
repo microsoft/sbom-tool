@@ -34,7 +34,7 @@ namespace Microsoft.Sbom.Api.Metadata
 
         public string BuildEnvironmentName
         {
-            get 
+            get
             {
                 if (MetadataDictionary.TryGetValue(MetadataKey.BuildEnvironmentName, out var name))
                 {

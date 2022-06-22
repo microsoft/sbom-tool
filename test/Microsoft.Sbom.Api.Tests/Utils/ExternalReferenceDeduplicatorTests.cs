@@ -15,7 +15,6 @@ namespace Microsoft.Sbom.Api.Tests.Utils
     [TestClass]
     public class ExternalReferenceDeduplicatorTests
     {
-
         private readonly ChannelUtils channelUtils = new ChannelUtils();
 
         [TestMethod]
@@ -128,7 +127,6 @@ namespace Microsoft.Sbom.Api.Tests.Utils
             var resultList = await result.ReadAllAsync().ToListAsync();
 
             Assert.AreEqual(resultList.Count, references.Count - 1);
-
         }
 
         [TestMethod]

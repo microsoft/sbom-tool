@@ -279,7 +279,6 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                                                     mockLogger.Object),
                 PackagesWalker = new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs),
                 SBOMConfigs = sbomConfigs
-
             };
 
             var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider
@@ -443,6 +442,5 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             "\"Source\":\"/child2/grandchild1/file7\",\"AzureArtifactsHash\":\"/root/child2/grandchild1/file7hash\",\"S" +
             "ha256Hash\":\"/root/child2/grandchild1/file7hash\"},{\"Source\":\"/child3/file12\",\"AzureArtifactsHash\":" +
             "\"/root/child3/file12hash\",\"Sha256Hash\":\"/root/child3/file12hash\"}]}";
-
     }
 }

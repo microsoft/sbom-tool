@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers
 {
-
     /// <summary>
     /// This class generates an array of filenames and hashes based on the format of the SBOM. 
     /// </summary>
@@ -35,13 +34,14 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
 
         [Inject]
         public IRecorder Recorder { get; set; }
+
         /// <summary>
         /// Traverses all the files inside the buildDropPath, and serializes the SBOM using the JSON serializer creating
         /// an array object whose key is defined by <paramref name="headerName"/>. Upon failure, returns a list of 
         /// <see cref="FileValidationResult"/> objects that can be used to trace the error.
         /// </summary>
-        /// <param name="jsonSerializer">The serializer used to write the SBOM</param>
-        /// <param name="headerName">The header key for the file array object</param>
+        /// <param name="jsonSerializer">The serializer used to write the SBOM.</param>
+        /// <param name="headerName">The header key for the file array object.</param>
         /// <returns></returns>
         public async Task<IList<FileValidationResult>> GenerateAsync()
         {
@@ -64,6 +64,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                         filesArraySupportingSBOMs.Add(config);
                     }
                 }
+
                 foreach (var sourcesProvider in sourcesProviders)
                 {
                     var (jsondDocResults, errors) = sourcesProvider.Get(filesArraySupportingSBOMs);
@@ -90,7 +91,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                 }
 
                 return totalErrors;
-            }   
+            }
         }
     }
 }

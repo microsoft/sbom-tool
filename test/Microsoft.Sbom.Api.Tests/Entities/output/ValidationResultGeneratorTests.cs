@@ -13,7 +13,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Api.Entities.output.Tests
+namespace Microsoft.Sbom.Api.Entities.Output.Tests
 {
     [TestClass]
     public class ValidationResultGeneratorTests

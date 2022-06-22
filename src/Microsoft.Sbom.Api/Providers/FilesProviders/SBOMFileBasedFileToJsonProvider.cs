@@ -45,7 +45,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
         {
             if (providerType == ProviderType.Files)
             {
-                if(Configuration.FilesList?.Value != null && string.IsNullOrWhiteSpace(Configuration.BuildListFile?.Value))
+                if (Configuration.FilesList?.Value != null && string.IsNullOrWhiteSpace(Configuration.BuildListFile?.Value))
                 {
                     Log.Debug($"Using the {nameof(SBOMFileBasedFileToJsonProvider)} provider for the files workflow.");
                     return true;
@@ -55,7 +55,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
             return false;
         }
 
-        protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) 
+        protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors)
             ConvertToJson(ChannelReader<SBOMFile> sourceChannel, IList<ISbomConfig> requiredConfigs)
         {
             IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
@@ -76,7 +76,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
             return listWalker.GetComponents(Configuration.FilesList.Value);
         }
 
-        protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) 
+        protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors)
             WriteAdditionalItems(IList<ISbomConfig> requiredConfigs)
         {
             return (null, null);

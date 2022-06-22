@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
     public class PackagesWalkerTests
     {
         private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
-        private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>(); 
+        private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
         private readonly Mock<ISbomConfigProvider> mockSbomConfigs = new Mock<ISbomConfigProvider>();
         private readonly Mock<IFileSystemUtils> mockFileSystemUtils = new Mock<IFileSystemUtils>();
 
@@ -114,7 +114,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
             scannedComponents.Add(scannedComponentOther);
 
- 
+
             var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
 
             var scanResult = new ScanResult
@@ -177,6 +177,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             {
                 Assert.Fail("Packages were still returned when the detector failed.");
             }
+
             await foreach (ComponentDetectorException error in packagesChannelReader.error.ReadAllAsync())
             {
                 actualError = error;

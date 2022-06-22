@@ -12,8 +12,8 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
     /// </summary>
     public class TimingRecorder : IDisposable
     {
-        private readonly string _eventName;
-        private readonly Stopwatch _stopWatch;
+        private readonly string eventName;
+        private readonly Stopwatch stopWatch;
 
         /// <summary>
         /// Record the duration of execution for a given event.
@@ -26,19 +26,19 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
                 throw new ArgumentException($"'{nameof(eventName)}' cannot be null or whitespace.", nameof(eventName));
             }
 
-            _eventName = eventName;
-            _stopWatch = Stopwatch.StartNew();
+            this.eventName = eventName;
+            stopWatch = Stopwatch.StartNew();
         }
 
         public void Dispose()
         {
-            _stopWatch.Stop();
+            stopWatch.Stop();
         }
 
         /// <summary>
         /// Gets a value indicating whether returns true if the timings recorder is currently running.
         /// </summary>
-        public bool IsRunning => _stopWatch.IsRunning;
+        public bool IsRunning => stopWatch.IsRunning;
 
         /// <summary>
         /// Returns a <see cref="Timing"/> object representation of this event.
@@ -46,15 +46,15 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
         /// </summary>
         public Timing ToTiming()
         {
-            if (_stopWatch.IsRunning)
+            if (stopWatch.IsRunning)
             {
                 throw new Exception($"Tried to read event details for an executing event.");
             }
 
             return new Timing
             {
-                EventName = _eventName,
-                TimeSpan = _stopWatch.Elapsed.ToString()
+                EventName = eventName,
+                TimeSpan = stopWatch.Elapsed.ToString()
             };
         }
     }

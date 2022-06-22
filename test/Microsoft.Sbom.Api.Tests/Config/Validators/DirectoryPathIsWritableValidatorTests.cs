@@ -22,7 +22,7 @@ namespace Microsoft.Sbom.Api.Tests.Config.Validators
         {
             var fileSystemUtilsMock = new Mock<IFileSystemUtils>();
             fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(false).Verifiable();
-            
+
             var validator = new DirectoryPathIsWritableValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object);
             validator.ValidateInternal("property", "value", null);
         }

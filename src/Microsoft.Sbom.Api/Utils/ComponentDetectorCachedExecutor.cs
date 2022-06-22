@@ -14,7 +14,6 @@ namespace Microsoft.Sbom.Api.Utils
     /// </summary>
     public class ComponentDetectorCachedExecutor
     {
-
         private readonly ILogger log;
         private readonly ComponentDetector detector;
         private ConcurrentDictionary<int, ScanResult> results;
@@ -24,7 +23,7 @@ namespace Microsoft.Sbom.Api.Utils
             this.log = log ?? throw new ArgumentNullException(nameof(log));
             this.detector = detector ?? throw new ArgumentNullException(nameof(detector));
 
-            results = new ConcurrentDictionary<int,ScanResult>();
+            results = new ConcurrentDictionary<int, ScanResult>();
         }
 
         /// <summary>
@@ -34,13 +33,13 @@ namespace Microsoft.Sbom.Api.Utils
         /// <returns>Result of CD scan</returns>
         public virtual ScanResult Scan(string[] args)
         {
-            if(args is null)
+            if (args is null)
             {
                 throw new ArgumentNullException(nameof(args));
             }
 
             var argsHashCode = string.Join("", args).GetHashCode();
-            if(results.ContainsKey(argsHashCode))
+            if (results.ContainsKey(argsHashCode))
             {
                 log.Debug("Using cached CD scan result for the call with the same arguments");
                 return results[argsHashCode];

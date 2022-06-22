@@ -4,7 +4,7 @@
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Convertors;
-using Microsoft.Sbom.Api.Entities.output;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Api.Hashing;
@@ -55,20 +55,22 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
 
             var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
-            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(It.IsAny<string>(),
-                                                              new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
-                                 .Returns((string fileName, AlgorithmName[] algos) =>
-                                             new Checksum[] 
-                                             { 
-                                                 new Checksum 
-                                                 { 
-                                                     ChecksumValue =  $"{fileName}hash", 
-                                                     Algorithm = Constants.DefaultHashAlgorithmName 
-                                                 }
-                                             });
+            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
+                It.IsAny<string>(),
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+                    .Returns((string fileName, AlgorithmName[] algos) =>
+                                new Checksum[]
+                                {
+                                    new Checksum
+                                    {
+                                        ChecksumValue = $"{fileName}hash",
+                                        Algorithm = Constants.DefaultHashAlgorithmName
+                                    }
+                                });
 
-            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(It.Is<string>(a => a == "/root/child2/grandchild1/file10"),
-                                                              new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
+                It.Is<string>(a => a == "/root/child2/grandchild1/file10"),
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                                  .Throws(new FileNotFoundException());
 
             var configurationMock = new Mock<IConfiguration>();
@@ -79,11 +81,11 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             configurationMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "child1;child2;child3" });
             configurationMock.SetupGet(c => c.IgnoreMissing).Returns(new ConfigurationSetting<bool> { Value = false });
             configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
-            configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool>{ Value = true });
+            configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
 
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(true);
-            
+
             var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object, manifestData);
 
             var outputWriterMock = new Mock<IOutputWriter>();
@@ -93,7 +95,8 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
-            var fileHasher = new FileHasher(hashCodeGeneratorMock.Object,
+            var fileHasher = new FileHasher(
+                               hashCodeGeneratorMock.Object,
                                new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
                                mockLogger.Object,
                                configurationMock.Object,
@@ -125,8 +128,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     configurationMock.Object,
                     mockLogger.Object,
                     fileSystemMock.Object),
-                recorderMock
-                );
+                recorderMock);
 
             var result = await workflow.RunAsync();
             Assert.IsFalse(result);
@@ -179,7 +181,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                                              {
                                                  new Checksum
                                                  {
-                                                     ChecksumValue =  $"{fileName}hash",
+                                                     ChecksumValue = $"{fileName}hash",
                                                      Algorithm = Constants.DefaultHashAlgorithmName
                                                  }
                                              });
@@ -236,8 +238,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     configurationMock.Object,
                     mockLogger.Object,
                     fileSystemMock.Object),
-                recorderMock
-                );
+                recorderMock);
 
             var result = await workflow.RunAsync();
             Assert.IsTrue(result);
@@ -251,7 +252,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             Assert.AreEqual(0, missingFileErrors.Count);
 
             var invalidHashErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.InvalidHash).ToList();
-            Assert.AreEqual(0, invalidHashErrors.Count); ;
+            Assert.AreEqual(0, invalidHashErrors.Count);
 
             var otherErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.Other).ToList();
             Assert.AreEqual(0, otherErrors.Count);
@@ -284,7 +285,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                                              {
                                                  new Checksum
                                                  {
-                                                     ChecksumValue =  $"{fileName}hash",
+                                                     ChecksumValue = $"{fileName}hash",
                                                      Algorithm = Constants.DefaultHashAlgorithmName
                                                  }
                                              });
@@ -341,8 +342,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     configurationMock.Object,
                     mockLogger.Object,
                     fileSystemMock.Object),
-                recorderMock
-                );
+                recorderMock);
 
             var result = await workflow.RunAsync();
             Assert.IsTrue(result);
@@ -356,7 +356,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             Assert.AreEqual(1, missingFileErrors.Count);
 
             var invalidHashErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.InvalidHash).ToList();
-            Assert.AreEqual(0, invalidHashErrors.Count); ;
+            Assert.AreEqual(0, invalidHashErrors.Count);
 
             var otherErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.Other).ToList();
             Assert.AreEqual(0, otherErrors.Count);
@@ -388,7 +388,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                                              {
                                                  new Checksum
                                                  {
-                                                     ChecksumValue =  $"{fileName}hash",
+                                                     ChecksumValue = $"{fileName}hash",
                                                      Algorithm = Constants.DefaultHashAlgorithmName
                                                  }
                                              });
@@ -445,8 +445,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     configurationMock.Object,
                     mockLogger.Object,
                     fileSystemMock.Object),
-                recorderMock
-                );
+                recorderMock);
 
             var result = await workflow.RunAsync();
             Assert.IsTrue(result);
@@ -460,7 +459,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             Assert.AreEqual(1, missingFileErrors.Count);
 
             var invalidHashErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.InvalidHash).ToList();
-            Assert.AreEqual(0, invalidHashErrors.Count); ;
+            Assert.AreEqual(0, invalidHashErrors.Count);
 
             var otherErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.Other).ToList();
             Assert.AreEqual(0, otherErrors.Count);
@@ -492,7 +491,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                                              {
                                                  new Checksum
                                                  {
-                                                     ChecksumValue =  $"{fileName}hash",
+                                                     ChecksumValue = $"{fileName}hash",
                                                      Algorithm = Constants.DefaultHashAlgorithmName
                                                  }
                                              });
@@ -549,8 +548,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     configurationMock.Object,
                     mockLogger.Object,
                     fileSystemMock.Object),
-                recorderMock
-                );
+                recorderMock);
 
             var result = await workflow.RunAsync();
             Assert.IsFalse(result);
@@ -564,7 +562,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             Assert.AreEqual(1, missingFileErrors.Count);
 
             var invalidHashErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.InvalidHash).ToList();
-            Assert.AreEqual(0, invalidHashErrors.Count); ;
+            Assert.AreEqual(0, invalidHashErrors.Count);
 
             var otherErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.Other).ToList();
             Assert.AreEqual(0, otherErrors.Count);
@@ -577,7 +575,6 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
         [TestMethod]
         public async Task SignValidationFailsDoesntRunWorkflow_Fails()
         {
-
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(false);
             var recorderMock = new Mock<IRecorder>().Object;
@@ -597,7 +594,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 null,
                 recorderMock);
 
-            var result= await workflow.RunAsync();
+            var result = await workflow.RunAsync();
             Assert.IsFalse(result);
             signValidatorMock.VerifyAll();
         }
@@ -643,6 +640,5 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 HashesMap = new ConcurrentDictionary<string, Checksum[]>(hashDictionary, StringComparer.InvariantCultureIgnoreCase)
             };
         }
-
     }
 }

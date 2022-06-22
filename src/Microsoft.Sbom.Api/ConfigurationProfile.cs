@@ -109,7 +109,6 @@ namespace Microsoft.Sbom.Api
             ForAllPropertyMaps(
                 p => p.SourceType == typeof(AlgorithmName),
                 (c, memberOptions) => memberOptions.ConvertUsing(new HashAlgorithmNameConfigurationSettingAddingConverter(GetSettingSourceFor(c.SourceMember.ReflectedType))));
-
         }
 
         // Based on the type of source, return the settings type.
@@ -118,13 +117,12 @@ namespace Microsoft.Sbom.Api
             switch (sourceType)
             {
                 case Type _ when sourceType.IsSubclassOf(typeof(CommonArgs)):
-                case Type _ when sourceType == typeof(CommonArgs): 
+                case Type _ when sourceType == typeof(CommonArgs):
                     return SettingSource.CommandLine;
                 case Type _ when sourceType == typeof(ConfigFile):
                     return SettingSource.JsonConfig;
                 default: return SettingSource.Default;
             }
         }
-
     }
 }

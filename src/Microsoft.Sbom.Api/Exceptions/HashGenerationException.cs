@@ -16,15 +16,18 @@ namespace Microsoft.Sbom.Api.Exceptions
         {
         }
 
-        public HashGenerationException(string message) : base(message)
+        public HashGenerationException(string message)
+            : base(message)
         {
         }
 
-        public HashGenerationException(string message, Exception innerException) : base(message, innerException)
+        public HashGenerationException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
-        protected HashGenerationException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected HashGenerationException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

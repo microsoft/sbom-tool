@@ -19,6 +19,6 @@ namespace Microsoft.Sbom.Api.Output.Telemetry.Entities
         /// <summary>
         /// Gets or sets the duration it took to execute the event.
         /// </summary>
-        public string TimeSpan { get; set; } 
+        public string TimeSpan { get; set; }
     }
 }

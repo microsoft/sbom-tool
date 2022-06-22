@@ -27,7 +27,7 @@ namespace Microsoft.Sbom.Api.Config.Validators
         {
             if (paramValue != null && paramValue is string value && !string.IsNullOrEmpty(value))
             {
-                if(!fileSystemUtils.FileExists(value))
+                if (!fileSystemUtils.FileExists(value))
                 {
                     throw new ValidationArgException($"{paramName} file not found for '{value}'");
                 }

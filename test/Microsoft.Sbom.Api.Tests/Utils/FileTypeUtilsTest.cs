@@ -10,7 +10,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
     [TestClass]
     public class FileTypeUtilsTest
     {
-        FileTypeUtils fileTypeUtils = new FileTypeUtils();
+        private readonly FileTypeUtils fileTypeUtils = new FileTypeUtils();
 
         [TestMethod]
         public void When_GetFileTypeBy_WithSpdxFile_ThenReturnSPDXType()

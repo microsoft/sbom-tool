@@ -39,9 +39,9 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             mock.Setup(m => m.RegisterManifest()).Returns(mi);
             m.Init();
 
-            mock.Setup(m => m.GenerateJsonDocument(It.IsAny<Relationship>())).Throws( new InvalidOperationException());
+            mock.Setup(m => m.GenerateJsonDocument(It.IsAny<Relationship>())).Throws(new InvalidOperationException());
 
-            ChannelReader<JsonDocument> channel =  rg.Run(rs.GetEnumerator(), mi);
+            ChannelReader<JsonDocument> channel = rg.Run(rs.GetEnumerator(), mi);
 
             // This timeout will cause an OperationCanceledException to be thrown if the channel is orphaned
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
@@ -75,8 +75,8 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
             var g1 = new GenerationResult { Document = j1 };
             var g2 = new GenerationResult { Document = j2 };
-            
-            mock.Setup(m => m.GenerateJsonDocument(It.Is<Relationship>(r => r.RelationshipType == RelationshipType.DEPENDS_ON ))).Returns(g1);
+
+            mock.Setup(m => m.GenerateJsonDocument(It.Is<Relationship>(r => r.RelationshipType == RelationshipType.DEPENDS_ON))).Returns(g1);
             mock.Setup(m => m.GenerateJsonDocument(It.Is<Relationship>(r => r.RelationshipType == RelationshipType.CONTAINS))).Returns(g2);
 
             ChannelReader<JsonDocument> channel = rg.Run(rs.GetEnumerator(), mi);
@@ -101,7 +101,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             var m = new ManifestGeneratorProvider(new IManifestGenerator[] { mock.Object });
 
             var rg = new RelationshipGenerator(m);
-            var rs = new List<Relationship> ();
+            var rs = new List<Relationship>();
 
             var mi = new ManifestInfo();
             mi.Name = "Test";

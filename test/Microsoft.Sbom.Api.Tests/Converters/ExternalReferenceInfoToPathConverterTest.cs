@@ -87,7 +87,7 @@ namespace Microsoft.Sbom.Api.Tests.Converters
             {
                 Path = @"/path3"
             };
-            var externalDocRef4 = new ExternalDocumentReferenceInfo() {};
+            var externalDocRef4 = new ExternalDocumentReferenceInfo() { };
 
             var externalDocRefs = new List<ExternalDocumentReferenceInfo>()
             {

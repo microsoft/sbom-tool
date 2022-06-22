@@ -44,12 +44,12 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
         /// Gets or sets the metadata builder for this manifest format.
         /// </summary>
         public IMetadataBuilder MetadataBuilder { get; set; }
-        
+
         /// <summary>
         /// Gets the generated manifest tool json serializer for this SBOM config.
         /// </summary>
         public IManifestToolJsonSerializer JsonSerializer { get; private set; }
-        
+
         /// <summary>
         /// Gets or sets records ids and generated package details for the current SBOM.
         /// </summary>

@@ -17,15 +17,18 @@ namespace Microsoft.Sbom.Api.Exceptions
         {
         }
 
-        public SignValidatorNotFoundException(string message) : base(message)
+        public SignValidatorNotFoundException(string message)
+            : base(message)
         {
         }
 
-        public SignValidatorNotFoundException(string message, Exception innerException) : base(message, innerException)
+        public SignValidatorNotFoundException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
-        protected SignValidatorNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected SignValidatorNotFoundException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

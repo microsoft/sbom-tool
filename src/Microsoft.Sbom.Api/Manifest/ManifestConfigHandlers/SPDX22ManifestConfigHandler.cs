@@ -70,6 +70,7 @@ namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers
                 {
                     return false;
                 }
+
                 return true;
             }
 

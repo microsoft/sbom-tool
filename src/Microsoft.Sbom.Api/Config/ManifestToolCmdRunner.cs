@@ -97,12 +97,11 @@ namespace Microsoft.Sbom.Api.Config
                 var configFileParser = kernel.Get<ConfigFileParser>();
                 var configBuilder = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-                kernel.Bind<IConfiguration>().ToConstant(await configBuilder.GetConfiguration(generationArgs));    
-                
+                kernel.Bind<IConfiguration>().ToConstant(await configBuilder.GetConfiguration(generationArgs));
+
                 var result = await kernel.Get<IWorkflow>(nameof(SBOMGenerationWorkflow)).RunAsync();
                 await kernel.Get<IRecorder>().FinalizeAndLogTelemetryAsync();
                 IsFailed = !result;
-
             }
             catch (AccessDeniedValidationArgException e)
             {
