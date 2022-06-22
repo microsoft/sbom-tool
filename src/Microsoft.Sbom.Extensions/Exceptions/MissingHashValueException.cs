@@ -4,7 +4,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace ManifestInterface.Exceptions
+namespace Microsoft.Sbom.Extensions.Exceptions
 {
     /// <summary>
     /// Thrown when a required hash value for a package or file is missing.
@@ -13,13 +13,13 @@ namespace ManifestInterface.Exceptions
     public class MissingHashValueException : Exception
     {
         public MissingHashValueException() { }
-
+        
         public MissingHashValueException(string message)
             : base(message) { }
-
+        
         public MissingHashValueException(string message, Exception inner)
             : base(message, inner) { }
-
+        
         protected MissingHashValueException(
           SerializationInfo info,
           StreamingContext context)

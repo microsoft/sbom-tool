@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Extensions.Entities
 {
     /// <summary>
     /// Defines a manifest name and version.
@@ -12,7 +12,7 @@ namespace ManifestInterface.Entities
     public class ManifestInfo : IEquatable<ManifestInfo>
     {
         /// <summary>
-        /// Gets or sets s the name of the manifest.
+        /// Gets or sets the name of the manifest.
         /// </summary>
         public string Name { get; set; }
 
@@ -21,13 +21,15 @@ namespace ManifestInterface.Entities
         /// </summary>
         public string Version { get; set; }
 
+#pragma warning disable SA1629 // Documentation text should end with a period
         /// <summary>
         /// Parses the manifest info from a string
-        /// The format is. <name>:<version>
+        /// The format is <name>:<version>
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
         public static ManifestInfo Parse(string value)
+#pragma warning restore SA1629 // Documentation text should end with a period
         {
             if (string.IsNullOrEmpty(value))
             {
@@ -43,7 +45,7 @@ namespace ManifestInterface.Entities
             return new ManifestInfo
             {
                 Name = values[0],
-                Version = values[1],
+                Version = values[1]
             };
         }
 

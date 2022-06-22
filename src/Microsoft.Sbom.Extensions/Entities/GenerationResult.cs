@@ -4,7 +4,7 @@
 using System;
 using System.Text.Json;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Extensions.Entities
 {
     /// <summary>
     /// A object that represents the generated <see cref="JsonDocument"/> along
@@ -24,7 +24,7 @@ namespace ManifestInterface.Entities
         }
 
         /// <summary>
-        /// Gets or sets any additional metadata that needs to be returned about the current
+        /// Any additional metadata that needs to be returned about the current
         /// entity or SBOM.
         /// </summary>
         public ResultMetadata ResultMetadata { get; set; }

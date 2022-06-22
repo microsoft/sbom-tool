@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using ManifestInterface.Entities;
+using Microsoft.Sbom.Extensions.Entities;
 
-namespace ManifestInterface
+namespace Microsoft.Sbom.Extensions
 {
     /// <summary>
     /// The validator will use this interface to register a manifest parsing library
@@ -16,7 +16,7 @@ namespace ManifestInterface
     {
         /// <summary>
         /// This function is called by the validator upon initialization to get all the 
-        /// manifest versions this library can parse.
+        /// manifest versions this library can parse
         /// </summary>
         /// <returns>An version sorted array in ascending order of 
         /// <see cref="ManifestInfo">manifests</see> this library can parse.</returns>
@@ -30,7 +30,7 @@ namespace ManifestInterface
         ManifestData ParseManifest(string manifest);
 
         /// <summary>
-        /// Gets or sets the version of this <see cref="IManifestInterface"/>.
+        /// The version of this <see cref="IManifestInterface"/>
         /// </summary>
         string Version { get; set; }
     }

@@ -3,7 +3,7 @@
 
 using Microsoft.Sbom.Contracts;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Extensions.Entities
 {
     /// <summary>
     /// Defines relationships between elements in the current SBOM.
@@ -11,22 +11,22 @@ namespace ManifestInterface.Entities
     public class Relationship
     {
         /// <summary>
-        /// Gets or sets defines the type of the relationship between the source and the target element.
+        /// Defines the type of the relationship between the source and the target element.
         /// </summary>
         public RelationshipType RelationshipType { get; set; }
 
         /// <summary>
-        /// Gets or sets the id of the target element with whom the source element has a relationship.
+        /// The id of the target element with whom the source element has a relationship.
         /// </summary>
         public string TargetElementId { get; set; }
 
         /// <summary>
-        /// Gets or sets iD of the reference for the target element, if the element is referenced from external document.
+        /// ID of the reference for the target element, if the element is referenced from external document.
         /// </summary>
         public string TargetElementExternalReferenceId { get; set; }
 
         /// <summary>
-        /// Gets or sets the id of the target element with whom the source element has a relationship.
+        /// The id of the target element with whom the source element has a relationship.
         /// </summary>
         public string SourceElementId { get; set; }
     }
