@@ -24,7 +24,6 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest    
-    environment: Build
     permissions:
       actions: read
       contents: read

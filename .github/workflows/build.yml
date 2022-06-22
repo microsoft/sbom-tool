@@ -10,8 +10,6 @@ jobs:
   build:
 
     runs-on: windows-latest
-    
-    environment: Build
 
     env:
       OFFICIAL_BUILD: 'True'

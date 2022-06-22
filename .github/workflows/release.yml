@@ -12,8 +12,6 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    
-    environment: Build
 
     env:
       OFFICIAL_BUILD: 'True'
