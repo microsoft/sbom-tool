@@ -11,14 +11,14 @@ namespace Microsoft.SPDX22SBOMParser.Entities
     public class Checksum
     {
         /// <summary>
-        /// The name of the hash algorithm.
+        /// Gets or sets the name of the hash algorithm.
         /// </summary>
         [JsonPropertyName("algorithm")]
 
         public string Algorithm { get; set; }
 
         /// <summary>
-        /// The string value of the computed hash.
+        /// Gets or sets the string value of the computed hash.
         /// </summary>
         [JsonPropertyName("checksumValue")]
         public string ChecksumValue { get; set; }

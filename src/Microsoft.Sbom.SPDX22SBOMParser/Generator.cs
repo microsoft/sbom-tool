@@ -42,7 +42,10 @@ namespace Microsoft.SPDX22SBOMParser
 
         public GenerationResult GenerateJsonDocument(InternalSBOMFileInfo fileInfo)
         {
-            if (fileInfo is null) throw new ArgumentNullException(nameof(fileInfo));
+            if (fileInfo is null)
+            {
+                throw new ArgumentNullException(nameof(fileInfo));
+            }
 
             var spdxFileElement = ConvertSbomFileToSpdxFile(fileInfo);
             return new GenerationResult
@@ -135,11 +138,11 @@ namespace Microsoft.SPDX22SBOMParser
             {
                 { Constants.SPDXVersionHeaderName, Version },
                 { Constants.DataLicenseHeaderName, Constants.DataLicenceValue },
-                { Constants.SPDXIDHeaderName, Constants.SPDXDocumentIdValue},
+                { Constants.SPDXIDHeaderName, Constants.SPDXDocumentIdValue },
                 { Constants.DocumentNameHeaderName, documentName },
-                { Constants.DocumentNamespaceHeaderName,  identityUtils.GetDocumentNamespace(internalMetadataProvider)},
+                { Constants.DocumentNamespaceHeaderName,  identityUtils.GetDocumentNamespace(internalMetadataProvider) },
                 { Constants.CreationInfoHeaderName, creationInfo },
-                { Constants.DocumentDescribesHeaderName, new string [] { generationData.RootPackageId } }
+                { Constants.DocumentDescribesHeaderName, new string[] { generationData.RootPackageId } }
             };
         }
 

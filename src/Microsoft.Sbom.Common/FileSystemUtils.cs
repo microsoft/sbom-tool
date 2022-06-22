@@ -14,25 +14,25 @@ namespace Microsoft.Sbom.Common
     /// </summary>
     public class FileSystemUtils : IFileSystemUtils
     {
-        private readonly EnumerationOptions _dontFollowSymlinks = new EnumerationOptions
+        private readonly EnumerationOptions dontFollowSymlinks = new EnumerationOptions
         {
             AttributesToSkip = FileAttributes.ReparsePoint
         };
 
-        private const string _searchAllFilesAndFolders = "*";
+        private const string SearchAllFilesAndFolders = "*";
 
         public bool DirectoryExists(string path) => Directory.Exists(path);
 
-        public IEnumerable<string> GetDirectories(string path, bool followSymlinks = true) => (followSymlinks) switch
+        public IEnumerable<string> GetDirectories(string path, bool followSymlinks = true) => followSymlinks switch
         {
             true => Directory.GetDirectories(path),
-            false => Directory.GetDirectories(path, _searchAllFilesAndFolders, _dontFollowSymlinks)
+            false => Directory.GetDirectories(path, SearchAllFilesAndFolders, dontFollowSymlinks)
         };
 
-        public IEnumerable<string> GetFilesInDirectory(string path, bool followSymlinks = true) => (followSymlinks) switch
+        public IEnumerable<string> GetFilesInDirectory(string path, bool followSymlinks = true) => followSymlinks switch
         {
             true => Directory.GetFiles(path),
-            false => Directory.GetFiles(path, _searchAllFilesAndFolders, _dontFollowSymlinks)
+            false => Directory.GetFiles(path, SearchAllFilesAndFolders, dontFollowSymlinks)
         };
 
         public DirectorySecurity GetDirectorySecurity(string directoryPath) => new DirectoryInfo(directoryPath).GetAccessControl();
@@ -52,7 +52,8 @@ namespace Microsoft.Sbom.Common
 
         public bool FileExists(string path) => File.Exists(path);
 
-        public Stream OpenWrite(string filePath) => new FileStream(filePath,
+        public Stream OpenWrite(string filePath) => new FileStream(
+                                filePath,
                                 FileMode.Create,
                                 FileAccess.Write,
                                 FileShare.Delete,
