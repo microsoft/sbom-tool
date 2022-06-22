@@ -16,7 +16,7 @@ namespace Microsoft.Sbom.Api.Executors
 {
     /// <summary>
     /// Takes a <see cref="ScannedComponent"/> object and converts it to a <see cref="PackageInfo"/>
-    /// object using a <see cref="IPackageInfoConverter"/>
+    /// object using a <see cref="IPackageInfoConverter"/>.
     /// </summary>
     public class ComponentToPackageInfoConverter
     {
@@ -68,7 +68,5 @@ namespace Microsoft.Sbom.Api.Executors
 
             return (output, errors);
         }
-
-        
     }
 }
