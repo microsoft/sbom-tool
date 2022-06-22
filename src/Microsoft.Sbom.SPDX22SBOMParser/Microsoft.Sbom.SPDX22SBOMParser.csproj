@@ -10,10 +10,6 @@
     <PackageVersion>$(SBOMPackageVersion)</PackageVersion>
   </PropertyGroup>
 
-  <!--<ItemGroup>
-    <PackageReference Include="System.Text.Json" VersionOverride="6.0.0"/>
-  </ItemGroup>-->
-
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
     <ProjectReference Include="..\Microsoft.Sbom.Extensions\Microsoft.Sbom.Extensions.csproj" />
