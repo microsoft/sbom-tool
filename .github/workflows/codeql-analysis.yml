@@ -23,7 +23,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest    
     permissions:
       actions: read
       contents: read
@@ -65,6 +65,9 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 3.1.300
+
+    - name: Add authentication for private ManifestTool feed
+      run: dotnet nuget update source ManifestTool -u test -p ${{ secrets.MANIFEST_TOOL_FEED_PAT }} --store-password-in-clear-text
 
     - name: dotnet restore
       run: dotnet restore
