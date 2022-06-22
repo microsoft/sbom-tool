@@ -34,4 +34,7 @@
     <PropertyGroup Condition="'$(OFFICIAL_BUILD)'=='True'">
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(CODEQL_BUILD)'=='True'">
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
 </Project>
