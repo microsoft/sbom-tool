@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     
     environment: Build
-    
+
     env:
       OFFICIAL_BUILD: 'True'
       # Set the build number in MinVer.
@@ -35,7 +35,7 @@ jobs:
           dotnet-version: 3.1.300
 
       - name: Add authentication for private ManifestTool feed
-        run: dotnet nuget update source ManifestTool -u test -p ${{ secrets.MANIFEST_TOOL_FEED_PAT }}
+        run: dotnet nuget update source ManifestTool -u test -p ${{ secrets.MANIFEST_TOOL_FEED_PAT }} --store-password-in-clear-text
         
       - name: Restore dependencies
         run: dotnet restore 
