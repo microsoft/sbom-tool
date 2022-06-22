@@ -23,23 +23,23 @@ namespace Microsoft.SPDX22SBOMParser.Entities.Enums
 
         #region Persistent-Id
         
-        swh,
+        Swh,
 
         #endregion
 
         #region Package-Manager
 
-        maven_central,
-        npm,
-        nuget,
-        bower,
-        purl,
+        Maven_central,
+        Npm,
+        Nuget,
+        Bower,
+        Purl,
 
         #endregion
 
         #region Other
 
-        idstring
+        Idstring
 
         #endregion
     }

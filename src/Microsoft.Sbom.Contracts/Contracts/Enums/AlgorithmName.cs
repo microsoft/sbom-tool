@@ -79,11 +79,11 @@ namespace Microsoft.Sbom.Contracts.Enums
         /// <summary>
         /// Gets equivalent to <see cref="HashAlgorithmName.SHA512"/>.
         /// </summary>
-        public static AlgorithmName SHA512 => new AlgorithmName(nameof(SHA512), stream => throw new ArgumentException($"Unsupported hash algorithm {nameof(SHA512)}"));
+        public static AlgorithmName SHA512 => new AlgorithmName(nameof(SHA512), stream => System.Security.Cryptography.SHA512.Create().ComputeHash(stream));
 
         /// <summary>
         /// Gets equivalent to <see cref="HashAlgorithmName.MD5"/>.
         /// </summary>
-        public static AlgorithmName MD5 => new AlgorithmName(nameof(MD5), stream => throw new ArgumentException($"Unsupported hash algorithm {nameof(MD5)}"));
+        public static AlgorithmName MD5 => new AlgorithmName(nameof(MD5), stream => System.Security.Cryptography.MD5.Create().ComputeHash(stream));
     }
 }
