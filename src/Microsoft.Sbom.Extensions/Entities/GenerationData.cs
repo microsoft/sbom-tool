@@ -40,12 +40,12 @@ namespace Microsoft.Sbom.Extensions.Entities
         public IList<KeyValuePair<string, string>> ExternalDocumentReferenceIDs { get; set; }
 
         /// <summary>
-        /// The id of the root package in this SBOM
+        /// The id of the root package in this SBOM.
         /// </summary>
         public string RootPackageId { get; set; }
 
         /// <summary>
-        /// The id of the SBOM document
+        /// The id of the SBOM document.
         /// </summary>
         public string DocumentId { get; set; }
     }

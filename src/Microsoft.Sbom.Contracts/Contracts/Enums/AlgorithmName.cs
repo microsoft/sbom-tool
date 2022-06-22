@@ -72,19 +72,18 @@ namespace Microsoft.Sbom.Contracts.Enums
 #pragma warning restore CA5350
 
         /// <summary>
-        /// Gets equivalent to <see cref="HashAlgorithmName.SHA256"/>
+        /// Gets equivalent to <see cref="HashAlgorithmName.SHA256"/>.
         /// </summary>
         public static AlgorithmName SHA256 => new AlgorithmName(nameof(SHA256), stream => System.Security.Cryptography.SHA256.Create().ComputeHash(stream));
 
         /// <summary>
-        /// Gets equivalent to <see cref="HashAlgorithmName.SHA512"/>
+        /// Gets equivalent to <see cref="HashAlgorithmName.SHA512"/>.
         /// </summary>
         public static AlgorithmName SHA512 => new AlgorithmName(nameof(SHA512), stream => throw new ArgumentException($"Unsupported hash algorithm {nameof(SHA512)}"));
 
         /// <summary>
-        /// Gets equivalent to <see cref="HashAlgorithmName.MD5"/>
+        /// Gets equivalent to <see cref="HashAlgorithmName.MD5"/>.
         /// </summary>
         public static AlgorithmName MD5 => new AlgorithmName(nameof(MD5), stream => throw new ArgumentException($"Unsupported hash algorithm {nameof(MD5)}"));
-
     }
 }

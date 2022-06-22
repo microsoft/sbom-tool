@@ -43,7 +43,7 @@ namespace Microsoft.Sbom.Extensions.Entities
         public bool IsOutsideDropPath { get; set; }
 
         /// <summary>
-        /// Contains the list of file types for this file
+        /// Contains the list of file types for this file.
         /// </summary>
         public List<FileType> FileTypes { get; set; }
     }

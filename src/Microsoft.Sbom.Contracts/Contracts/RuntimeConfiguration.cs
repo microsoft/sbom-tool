@@ -36,12 +36,12 @@ namespace Microsoft.Sbom.Contracts
 
         /// <summary>
         /// Gets or sets the base of the URI that will be used to generate this SBOM. This should be a value that identifies that
-        /// the SBOM belongs to a single publisher (or company)
+        /// the SBOM belongs to a single publisher (or company).
         /// </summary>
         public string NamespaceUriBase { get; set; }
 
         /// <summary>
-        /// Gets or sets a timestamp in the format <code>yyyy-MM-ddTHH:mm:ssZ</code> that will be used as the generated timestamp for the SBOM.
+        /// Gets or sets a timestamp in the format. <code>yyyy-MM-ddTHH:mm:ssZ</code> that will be used as the generated timestamp for the SBOM.
         /// </summary>
         public string GenerationTimestamp { get; set; }
 

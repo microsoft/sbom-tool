@@ -31,7 +31,7 @@ namespace Microsoft.Sbom.Contracts.Entities
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"FileEntity (Path={Path}{(Id == null ? string.Empty : ", Id="+Id)})";
+            return $"FileEntity (Path={Path}{(Id == null ? string.Empty : $", Id={Id}")})";
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Microsoft.SPDX22SBOMParser.Entities
         public string SPDXVersion { get; set; }
 
         /// <summary>
-        /// License for compliance with the SPDX specification
+        /// License for compliance with the SPDX specification.
         /// </summary>
         [JsonPropertyName("dataLicense")]
         public string DataLicense { get; set; }
@@ -32,7 +32,7 @@ namespace Microsoft.SPDX22SBOMParser.Entities
         public string DocumentName { get; set; }
 
         /// <summary>
-        /// SPDX document specific namespace as a URI
+        /// SPDX document specific namespace as a URI.
         /// </summary>
         [JsonPropertyName("documentNamespace")]
         public string DocumentNamespace { get; set; }

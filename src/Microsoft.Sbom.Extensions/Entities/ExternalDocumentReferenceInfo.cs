@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Microsoft.Sbom.Extensions.Entities
 {
     /// <summary>
-    /// Represents the property that is needed to generate External Document Reference
+    /// Represents the property that is needed to generate External Document Reference.
     /// </summary>
     public class ExternalDocumentReferenceInfo // TODO: Move to Contracts
     {
@@ -17,7 +17,7 @@ namespace Microsoft.Sbom.Extensions.Entities
         public string ExternalDocumentName { get; set; }
 
         /// <summary>
-        /// The document namespace of the external SBOM
+        /// The document namespace of the external SBOM.
         /// </summary>
         public string DocumentNamespace { get; set; }
 
@@ -32,7 +32,7 @@ namespace Microsoft.Sbom.Extensions.Entities
         public string DescribedElementID { get; set; }
 
         /// <summary>
-        /// The path of the external SBOM document
+        /// The path of the external SBOM document.
         /// </summary>
         public string Path { get; set; }
     }

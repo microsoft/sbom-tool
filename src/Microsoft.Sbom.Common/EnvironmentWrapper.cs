@@ -7,7 +7,7 @@ using System.Collections;
 namespace Microsoft.Sbom.Common
 {
     /// <summary>
-    /// Wrapper class for System.Environment to allow for testing
+    /// Wrapper class for System.Environment to allow for testing.
     /// </summary>
     public class EnvironmentWrapper : IEnvironmentWrapper
     {

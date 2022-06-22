@@ -13,17 +13,17 @@ namespace Microsoft.Sbom.Extensions
     public interface ISbomConfig : IDisposable, IAsyncDisposable
     {
         /// <summary>
-        /// Absolute path of manifest json directory
+        /// Absolute path of manifest json directory.
         /// </summary>
         public string ManifestJsonDirPath { get; set; }
 
         /// <summary>
-        /// Absolute path of the manfest json file
+        /// Absolute path of the manfest json file.
         /// </summary>
         public string ManifestJsonFilePath { get; set; }
 
         /// <summary>
-        /// Derived manifestInfo or from configurations
+        /// Derived manifestInfo or from configurations.
         /// </summary>
         public ManifestInfo ManifestInfo { get; set; }
 
