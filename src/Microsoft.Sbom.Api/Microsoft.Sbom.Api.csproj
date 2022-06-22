@@ -24,6 +24,7 @@
         <PackageReference Include="System.Threading.Channels" />
         <PackageReference Include="System.Threading.Tasks.Extensions" />
         <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" VersionOverride="6.0.0" />
+        <PackageReference Include="System.Security.Cryptography.ProtectedData" />
       
     </ItemGroup>
 
