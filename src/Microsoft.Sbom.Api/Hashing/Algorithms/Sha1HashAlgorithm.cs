@@ -10,8 +10,8 @@ namespace Microsoft.Sbom.Api.Hashing.Algorithms
     /// The hash algorithm implementation of the <see cref="SHA1"/> hash type
     /// </summary>
 #pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
-    //class Sha1HashAlgorithm : IHashAlgorithm
-    //{
-    //    public byte[] ComputeHash(Stream stream) => SHA1.Create().ComputeHash(stream);
-    //}
+    public class Sha1HashAlgorithm : IHashAlgorithm
+    {
+        public byte[] ComputeHash(Stream stream) => SHA1.Create().ComputeHash(stream);
+    }
 }
