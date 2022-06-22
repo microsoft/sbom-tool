@@ -1,0 +1,25 @@
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
+namespace Microsoft.SPDX22SBOMParser.Entities
+{
+    /// <summary>
+    /// Used to specify a hash code that describes all the individual
+    /// files within this package.
+    /// </summary>
+    public class PackageVerificationCode
+    {
+        /// <summary>
+        /// The actual package verification code as a hex encoded value.
+        /// </summary>
+        [JsonPropertyName("packageVerificationCodeValue")]
+        public string PackageVerificationCodeValue { get; set; }
+
+        /// <summary>
+        /// Files that were excluded when calculating the package verification code.
+        /// </summary>
+        [JsonPropertyName("packageVerificationCodeExcludedFiles")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<string> PackageVerificationCodeExcludedFiles { get; set; }
+    }
+}

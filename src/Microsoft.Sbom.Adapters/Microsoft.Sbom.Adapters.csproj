@@ -18,7 +18,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.ComponentDetection.Contracts" />
     <PackageReference Include="Newtonsoft.Json" />
-	  <PackageReference Include="PackageUrl" />
+    <PackageReference Include="packageurl-dotnet" />
   </ItemGroup>
 
   <ItemGroup>

@@ -23,7 +23,7 @@ namespace Microsoft.Sbom.Adapters.Adapters.ComponentDetection
             PackageVersion = otherComponent.Version,
             PackageSource = otherComponent.DownloadUrl?.ToString(),
             Checksum = new List<Checksum>() {
-                        new Checksum()  {
+                        new Checksum() {
                             ChecksumValue = otherComponent.Hash
                         },
                     },

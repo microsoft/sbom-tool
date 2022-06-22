@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Sbom.Api.Contracts\Microsoft.Sbom.Api.Contracts.csproj" />
+    <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
