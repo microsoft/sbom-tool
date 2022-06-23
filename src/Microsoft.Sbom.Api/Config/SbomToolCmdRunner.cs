@@ -18,17 +18,17 @@ namespace Microsoft.Sbom.Api.Config
     [ArgDescription("The manifest tool validates or generates a manifest for a build artifact.")]
     [ArgExceptionBehavior(ArgExceptionPolicy.StandardExceptionHandling)]
     [ArgProductName("ManifestTool.exe")]
-    public class ManifestToolCmdRunner
+    public class SbomToolCmdRunner
     {
         private readonly StandardKernel kernel;
 
-        public ManifestToolCmdRunner()
+        public SbomToolCmdRunner()
         {
             IsFailed = false;
             kernel = new StandardKernel(new Bindings());
         }
 
-        public ManifestToolCmdRunner(StandardKernel kernel)
+        public SbomToolCmdRunner(StandardKernel kernel)
         {
             IsFailed = false;
             this.kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));

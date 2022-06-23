@@ -29,7 +29,7 @@ namespace Microsoft.Sbom.Tool
 
         public static async Task<int> Main(string[] args)
         {
-            var result = await Args.InvokeActionAsync<ManifestToolCmdRunner>(args);
+            var result = await Args.InvokeActionAsync<SbomToolCmdRunner>(args);
             Log.CloseAndFlush();
             if (result.Cancelled || result.HandledException != null || result.Args.IsFailed)
             {

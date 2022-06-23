@@ -35,7 +35,7 @@ namespace Microsoft.Sbom.Api.Config.Args
         public string BuildListFile { get; set; }
 
         /// <summary>
-        /// Gets or sets the root folder where the generated manifest (and other files like bsi.json) files will be placed.
+        /// Gets or sets the root folder where the generated manifest files as well as other files will be placed.
         /// By default we will generate this folder in the same level as the build drop with the name '_manifest'.
         /// </summary>
         [ArgShortcut("m")]

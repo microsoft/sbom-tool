@@ -36,7 +36,7 @@ namespace Microsoft.Sbom.Api
     /// Creates the Ninject bindings for the whole project.
     /// </summary>
     /// <remarks>
-    /// Microsoft.ManifestTool.Api.dll is the assembly name of the SBOM API project.
+    /// Microsoft.Sbom.Api.dll is the assembly name of the SBOM API project.
     /// Using pattern matching until all bindings are in the same assembly. 
     /// </remarks>
     public class Bindings : NinjectModule

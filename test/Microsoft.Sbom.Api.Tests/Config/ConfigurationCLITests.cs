@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using DropValidator.Api.Config.Extensions;
+using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

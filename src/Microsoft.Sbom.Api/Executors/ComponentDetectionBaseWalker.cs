@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Castle.Core.Internal;
-using DropValidator.Api.Config.Extensions;
+using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Extensions;
 using Microsoft.ComponentDetection.Common;
 using Microsoft.ComponentDetection.Contracts;
