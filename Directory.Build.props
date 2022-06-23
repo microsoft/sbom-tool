@@ -31,8 +31,7 @@
         <NoWarn>NU1608,NU5119</NoWarn>
     </PropertyGroup>
     <PropertyGroup Condition="'$(OFFICIAL_BUILD)'=='True'">
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <RunCodeAnalysis>false</RunCodeAnalysis>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     </PropertyGroup>
     <PropertyGroup Condition="'$(CODEQL_BUILD)'=='True'">
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
