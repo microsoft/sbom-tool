@@ -20,7 +20,7 @@ namespace Microsoft.Sbom.Api.Tests.Config
         {
             var bindings = new Bindings();
 
-            var runner = new ManifestToolCmdRunner(new StandardKernel(bindings));
+            var runner = new SbomToolCmdRunner(new StandardKernel(bindings));
 
             var fileSystemUtilsMock = new Mock<IFileSystemUtils>();
             fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
@@ -44,7 +44,7 @@ namespace Microsoft.Sbom.Api.Tests.Config
         {
             var bindings = new Bindings();
 
-            var runner = new ManifestToolCmdRunner(new StandardKernel(bindings));
+            var runner = new SbomToolCmdRunner(new StandardKernel(bindings));
 
             var fileSystemUtilsMock = new Mock<IFileSystemUtils>();
             fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
