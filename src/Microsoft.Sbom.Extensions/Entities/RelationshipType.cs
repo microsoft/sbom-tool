@@ -3,7 +3,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Extensions.Entities
 {
     /// <summary>
     /// Defines the type of <see cref="Relationship"/> between the source and the 
@@ -58,6 +58,6 @@ namespace ManifestInterface.Entities
         /// <example>
         /// The package ‘WildFly’ is described by SPDX document WildFly.spdx.
         /// </example>
-        DESCRIBED_BY,
+        DESCRIBED_BY
     }
 }

@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <AssemblyName>Microsoft.Sbom.Api</AssemblyName>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" />
+        <PackageReference Include="Microsoft.ComponentDetection.Common" />
+        <PackageReference Include="Microsoft.ComponentDetection.Contracts" />
+        <PackageReference Include="Microsoft.ComponentDetection.Orchestrator" />
+        <PackageReference Include="Microsoft.ComponentDetection.Detectors" />
+        <PackageReference Include="Ninject" />
+        <PackageReference Include="Ninject.Extensions.Conventions" />
+        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="packageurl-dotnet" />
+        <PackageReference Include="PowerArgs" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="System.IO.FileSystem.AccessControl" />
+        <PackageReference Include="System.Threading.Channels" />
+        <PackageReference Include="System.Threading.Tasks.Extensions" />
+        <PackageReference Include="System.Security.Cryptography.ProtectedData" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>$(AssemblyName).Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="README.md">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+  
+    <ItemGroup>
+      <ProjectReference Include="..\Microsoft.Sbom.Adapters\Microsoft.Sbom.Adapters.csproj" />
+      <ProjectReference Include="..\Microsoft.Sbom.Common\Microsoft.Sbom.Common.csproj" />
+      <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
+      <ProjectReference Include="..\Microsoft.Sbom.Extensions\Microsoft.Sbom.Extensions.csproj" />
+      <ProjectReference Include="..\Microsoft.Sbom.SPDX22SBOMParser\Microsoft.Sbom.SPDX22SBOMParser.csproj" />
+    </ItemGroup>
+
+</Project>

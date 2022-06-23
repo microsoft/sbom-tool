@@ -4,7 +4,7 @@
 using Microsoft.Sbom.Contracts;
 using System.Collections.Generic;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Extensions.Entities
 {
     /// <summary>
     /// Represents the property that is needed to generate External Document Reference.
@@ -27,7 +27,7 @@ namespace ManifestInterface.Entities
         public IEnumerable<Checksum> Checksum { get; set; }
 
         /// <summary>
-        /// Gets or sets the ID of the root element that external document is describing.
+        /// Gets or sets iD of the root element that external document is describing.
         /// </summary>
         public string DescribedElementID { get; set; }
 

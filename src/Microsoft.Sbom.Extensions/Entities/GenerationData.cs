@@ -4,7 +4,7 @@
 using Microsoft.Sbom.Contracts;
 using System.Collections.Generic;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Extensions.Entities
 {
     /// <summary>
     /// A data structure that is used to store the data generated during SBOM generation.

@@ -3,8 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
-namespace ManifestInterface.Entities
+namespace Microsoft.Sbom.Extensions.Entities
 {
     /// <summary>
     /// Defines a manifest name and version.
@@ -12,7 +13,7 @@ namespace ManifestInterface.Entities
     public class ManifestInfo : IEquatable<ManifestInfo>
     {
         /// <summary>
-        /// Gets or sets s the name of the manifest.
+        /// Gets or sets the name of the manifest.
         /// </summary>
         public string Name { get; set; }
 
@@ -23,10 +24,12 @@ namespace ManifestInterface.Entities
 
         /// <summary>
         /// Parses the manifest info from a string
-        /// The format is. <name>:<version>
+        /// The format is <name>:<version>
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1629:Documentation text should end with a period", 
+            Justification = "Code element in comment.")]
         public static ManifestInfo Parse(string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -43,7 +46,7 @@ namespace ManifestInterface.Entities
             return new ManifestInfo
             {
                 Name = values[0],
-                Version = values[1],
+                Version = values[1]
             };
         }
 
