@@ -25,10 +25,10 @@
         <PackageVersion Include="Serilog.Sinks.Console" Version="4.0.0" />
         <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
         <PackageVersion Include="Mono.Posix.NETStandard" Version="1.0.0" />
-        <PackageVersion Include="Microsoft.ComponentDetection.Contracts" Version="1.1.7" />
-        <PackageVersion Include="Microsoft.ComponentDetection.Common" Version="1.1.7" />
-        <PackageVersion Include="Microsoft.ComponentDetection.Orchestrator" Version="1.1.7" />
-        <PackageVersion Include="Microsoft.ComponentDetection.Detectors" Version="1.1.7" />
+        <PackageVersion Include="Microsoft.ComponentDetection.Contracts" Version="1.1.9" />
+        <PackageVersion Include="Microsoft.ComponentDetection.Common" Version="1.1.9" />
+        <PackageVersion Include="Microsoft.ComponentDetection.Orchestrator" Version="1.1.9" />
+        <PackageVersion Include="Microsoft.ComponentDetection.Detectors" Version="1.1.9" />
         <PackageVersion Include="packageurl-dotnet" Version="1.1.0" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
         <PackageVersion Include="MSTest.TestFramework" Version="2.2.5" />
