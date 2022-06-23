@@ -33,12 +33,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore 
       
-    - name: Build
-      run: dotnet build --no-restore
-    
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-
     - name: Build NuGet packages
       run: dotnet pack --no-restore --output ./out
 
