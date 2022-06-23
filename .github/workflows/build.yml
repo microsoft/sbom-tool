@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     env:
       OFFICIAL_BUILD: 'True'
@@ -27,8 +27,8 @@ jobs:
       with:
         dotnet-version: 3.1.300
 
-    - name: Verify files contain copyright header
-      run: .\scripts\verification\Verify-LicenceHeader.ps1 -Target .\src -LicenseHeaderPath .\scripts\verification\LicenseHeader.txt -Extensions *.xaml,*.xml,*.cs,*.ps1 -AddIfAbsent $false
+    # - name: Verify files contain copyright header
+    #   run: .\scripts\verification\Verify-LicenceHeader.ps1 -Target .\src -LicenseHeaderPath .\scripts\verification\LicenseHeader.txt -Extensions *.xaml,*.xml,*.cs,*.ps1 -AddIfAbsent $false
     
     - name: Restore dependencies
       run: dotnet restore 
