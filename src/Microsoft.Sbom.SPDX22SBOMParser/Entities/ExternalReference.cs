@@ -21,14 +21,14 @@ namespace Microsoft.SPDX22SBOMParser.Entities
 
         /// <summary>
         /// Gets or sets type of the external reference. These are definined in an appendix in the SPDX specification.
-        /// https://spdx.github.io/spdx-spec/appendix-VI-external-repository-identifiers/
+        /// https://spdx.github.io/spdx-spec/appendix-VI-external-repository-identifiers/.
         /// </summary>
         [JsonPropertyName("referenceType")]
         public ExternalRepositoryType Type { get; set; }
 
         /// <summary>
         /// Gets or sets a unique string without any spaces that specifies a location where the package specific information
-        /// can be located. The locator constraints are defined by the <see cref="Type"/>
+        /// can be located. The locator constraints are defined by the <see cref="Type"/>.
         /// </summary>
         [JsonPropertyName("referenceLocator")]
         public string Locator { get; set; }

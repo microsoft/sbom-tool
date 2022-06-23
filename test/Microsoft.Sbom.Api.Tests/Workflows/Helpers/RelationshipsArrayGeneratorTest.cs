@@ -34,24 +34,22 @@ namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers
         private readonly Mock<ILogger> loggerMock = new Mock<ILogger>();
         private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
         private readonly Mock<IFileSystemUtils> fileSystemUtilsMock = new Mock<IFileSystemUtils>();
+        private readonly ManifestGeneratorProvider manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
+        private ISbomPackageDetailsRecorder recorder;
+        private IMetadataBuilder metadataBuilder;
+        private ISbomConfig sbomConfig;
+        private readonly ManifestInfo manifestInfo = new ManifestInfo();
 
-        ManifestGeneratorProvider manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
-        ISbomPackageDetailsRecorder recorder;
-        IMetadataBuilder metadataBuilder;
-        ISbomConfig sbomConfig;
-        ManifestInfo manifestInfo = new ManifestInfo();
+        private const string DocumentId = "documentId";
+        private const string RootPackageId = "rootPackageId";
+        private const string FileId1 = "fileId1";
+        private const string FileId2 = "fileId2";
+        private const string PackageId1 = "packageId1";
+        private const string ExternalDocRefId1 = "externalDocRefId1";
+        private const string ManifestJsonDirPath = "/root/_manifest";
+        private const string JsonFilePath = "/root/_manifest/manifest.json";
 
-        private const string documentId = "documentId";
-        private const string rootPackageId = "rootPackageId";
-        private const string fileId1 = "fileId1";
-        private const string fileId2 = "fileId2";
-        private InternalSBOMFileInfo file1 = new InternalSBOMFileInfo() { Path = fileId1 };
-        private const string packageId1 = "packageId1";
-        private const string externalDocRefId1 = "externalDocRefId1";
-        private const string manifestJsonDirPath = "/root/_manifest";
-        private const string jsonFilePath = "/root/_manifest/manifest.json";
-
-        List<Relationship> relationships;
+        private List<Relationship> relationships;
 
         [TestInitialize]
         public void Setup()
@@ -84,13 +82,13 @@ namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers
             sbomConfig = new SbomConfig(fileSystemUtilsMock.Object)
             {
                 ManifestInfo = Constants.TestManifestInfo,
-                ManifestJsonDirPath = manifestJsonDirPath,
-                ManifestJsonFilePath = jsonFilePath,
+                ManifestJsonDirPath = ManifestJsonDirPath,
+                ManifestJsonFilePath = JsonFilePath,
                 MetadataBuilder = metadataBuilder,
                 Recorder = recorder,
             };
-            fileSystemUtilsMock.Setup(f => f.CreateDirectory(manifestJsonDirPath));
-            fileSystemUtilsMock.Setup(f => f.OpenWrite(jsonFilePath)).Returns(new MemoryStream());
+            fileSystemUtilsMock.Setup(f => f.CreateDirectory(ManifestJsonDirPath));
+            fileSystemUtilsMock.Setup(f => f.OpenWrite(JsonFilePath)).Returns(new MemoryStream());
 
             sbomConfig.StartJsonSerialization();
             sbomConfig.JsonSerializer.StartJsonObject();
@@ -102,8 +100,8 @@ namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers
         [TestMethod]
         public async Task When_BaseGenerationDataExist_DescribesRelationshipsAreGenerated()
         {
-            recorder.RecordDocumentId(documentId);
-            recorder.RecordRootPackageId(rootPackageId);
+            recorder.RecordDocumentId(DocumentId);
+            recorder.RecordRootPackageId(RootPackageId);
             var results = await relationshipsArrayGenerator.GenerateAsync();
 
             Assert.AreEqual(0, results.Count);
@@ -112,18 +110,18 @@ namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers
             var describesRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.DESCRIBES);
             Assert.AreEqual(1, describesRelationships.Count());
             var describesRelationship = describesRelationships.First();
-            Assert.AreEqual(rootPackageId, describesRelationship.TargetElementId);
-            Assert.AreEqual(documentId, describesRelationship.SourceElementId);
+            Assert.AreEqual(RootPackageId, describesRelationship.TargetElementId);
+            Assert.AreEqual(DocumentId, describesRelationship.SourceElementId);
         }
 
         [TestMethod]
         public async Task When_SPDXFileGenerationDataExist_DescribedByRelationshipsAreGenerated()
         {
-            recorder.RecordDocumentId(documentId);
-            recorder.RecordRootPackageId(rootPackageId);
-            recorder.RecordFileId(fileId1);
-            recorder.RecordFileId(fileId2);
-            recorder.RecordSPDXFileId(fileId1);
+            recorder.RecordDocumentId(DocumentId);
+            recorder.RecordRootPackageId(RootPackageId);
+            recorder.RecordFileId(FileId1);
+            recorder.RecordFileId(FileId2);
+            recorder.RecordSPDXFileId(FileId1);
             var results = await relationshipsArrayGenerator.GenerateAsync();
 
             Assert.AreEqual(0, results.Count);
@@ -132,16 +130,16 @@ namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers
             var describedByRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.DESCRIBED_BY);
             Assert.AreEqual(1, describedByRelationships.Count());
             var describedByRelationship = describedByRelationships.First();
-            Assert.AreEqual(documentId, describedByRelationship.TargetElementId);
-            Assert.AreEqual(fileId1, describedByRelationship.SourceElementId);
+            Assert.AreEqual(DocumentId, describedByRelationship.TargetElementId);
+            Assert.AreEqual(FileId1, describedByRelationship.SourceElementId);
         }
 
         [TestMethod]
         public async Task When_ExternalDocRefGenerationDataExist_PreReqRelationshipsAreGenerated()
         {
-            recorder.RecordDocumentId(documentId);
-            recorder.RecordRootPackageId(rootPackageId);
-            recorder.RecordExternalDocumentReferenceIdAndRootElement(externalDocRefId1, rootPackageId);
+            recorder.RecordDocumentId(DocumentId);
+            recorder.RecordRootPackageId(RootPackageId);
+            recorder.RecordExternalDocumentReferenceIdAndRootElement(ExternalDocRefId1, RootPackageId);
             var results = await relationshipsArrayGenerator.GenerateAsync();
 
             Assert.AreEqual(0, results.Count);
@@ -150,17 +148,17 @@ namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers
             var preReqForRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.PREREQUISITE_FOR);
             Assert.AreEqual(1, preReqForRelationships.Count());
             var preReqForRelationship = preReqForRelationships.First();
-            Assert.AreEqual(rootPackageId, preReqForRelationship.TargetElementId);
-            Assert.AreEqual(rootPackageId, preReqForRelationship.SourceElementId);
-            Assert.AreEqual(externalDocRefId1, preReqForRelationship.TargetElementExternalReferenceId);
+            Assert.AreEqual(RootPackageId, preReqForRelationship.TargetElementId);
+            Assert.AreEqual(RootPackageId, preReqForRelationship.SourceElementId);
+            Assert.AreEqual(ExternalDocRefId1, preReqForRelationship.TargetElementExternalReferenceId);
         }
 
         [TestMethod]
         public async Task When_PackageGenerationDataExist_DependOnRelationshipsAreGenerated()
         {
-            recorder.RecordDocumentId(documentId);
-            recorder.RecordRootPackageId(rootPackageId);
-            recorder.RecordPackageId(packageId1);
+            recorder.RecordDocumentId(DocumentId);
+            recorder.RecordRootPackageId(RootPackageId);
+            recorder.RecordPackageId(PackageId1);
             var results = await relationshipsArrayGenerator.GenerateAsync();
 
             Assert.AreEqual(0, results.Count);
@@ -169,8 +167,8 @@ namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers
             var dependsOnRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.DEPENDS_ON);
             Assert.AreEqual(1, dependsOnRelationships.Count());
             var dependsOnRelationship = dependsOnRelationships.First();
-            Assert.AreEqual(packageId1, dependsOnRelationship.TargetElementId);
-            Assert.AreEqual(rootPackageId, dependsOnRelationship.SourceElementId);
+            Assert.AreEqual(PackageId1, dependsOnRelationship.TargetElementId);
+            Assert.AreEqual(RootPackageId, dependsOnRelationship.SourceElementId);
         }
 
         [TestMethod]

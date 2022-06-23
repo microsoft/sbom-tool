@@ -17,7 +17,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry.Entities
     public class SBOMTelemetry
     {
         /// <summary>
-        /// Gets or sets the result of the execution
+        /// Gets or sets the result of the execution.
         /// </summary>
         public Result Result { get; set; }
 

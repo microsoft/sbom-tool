@@ -6,7 +6,7 @@ using PowerArgs;
 namespace Microsoft.Sbom.Api.Config.Args
 {
     /// <summary>
-    /// The command line arguments provided for the generate action in ManifestTool
+    /// The command line arguments provided for the generate action in ManifestTool.
     /// </summary>
     public class GenerationArgs : CommonArgs
     {
@@ -36,7 +36,7 @@ namespace Microsoft.Sbom.Api.Config.Args
 
         /// <summary>
         /// Gets or sets the root folder where the generated manifest (and other files like bsi.json) files will be placed.
-        /// By default we will generate this folder in the same level as the build drop with the name '_manifest'
+        /// By default we will generate this folder in the same level as the build drop with the name '_manifest'.
         /// </summary>
         [ArgShortcut("m")]
         [ArgDescription("The path of the directory where the generated manifest files will be placed." +
@@ -82,14 +82,14 @@ namespace Microsoft.Sbom.Api.Config.Args
 
         /// <summary>
         /// Gets or sets the base of the URI that will be used to generate this SBOM. This should be a value that identifies that
-        /// the SBOM belongs to a single publisher (or company)
+        /// the SBOM belongs to a single publisher (or company).
         /// </summary>
         [ArgShortcut("nsb")]
         [ArgDescription("The base path of the SBOM namespace URI.")]
         public string NamespaceUriBase { get; set; }
 
         /// <summary>
-        /// Gets or sets a timestamp in the format <code>yyyy-MM-ddTHH:mm:ssZ</code> that will be used as the generated timestamp for the SBOM.
+        /// Gets or sets a timestamp in the format. <code>yyyy-MM-ddTHH:mm:ssZ</code> that will be used as the generated timestamp for the SBOM.
         /// </summary>
         [ArgShortcut("gt")]
         [ArgDescription("A timestamp in the format 'yyyy-MM-ddTHH:mm:ssZ' that will be used as the generated timestamp for the SBOM.")]

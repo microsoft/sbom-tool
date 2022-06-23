@@ -9,7 +9,7 @@ using Microsoft.Sbom.Contracts.Enums;
 namespace Microsoft.Sbom.Api.Config.Args
 {
     /// <summary>
-    /// The command line arguments provided for the validate action in ManifestTool
+    /// The command line arguments provided for the validate action in ManifestTool.
     /// </summary>
     public class ValidationArgs : CommonArgs
     {
@@ -38,7 +38,7 @@ namespace Microsoft.Sbom.Api.Config.Args
         public string OutputPath { get; set; }
 
         /// <summary>
-        /// Gets or sets the path of the signed catalog file used to validate the manifest.json
+        /// Gets or sets the path of the signed catalog file used to validate the manifest.json.
         /// </summary>
         [ArgDescription("The path of signed catalog file that is used to verify the signature of the manifest json file.")]
         public string CatalogFilePath { get; set; }

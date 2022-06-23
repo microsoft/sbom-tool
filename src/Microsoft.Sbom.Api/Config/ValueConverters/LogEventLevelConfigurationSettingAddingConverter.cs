@@ -10,7 +10,7 @@ using Constants = Microsoft.Sbom.Common.Constants;
 namespace Microsoft.Sbom.Api.Config.ValueConverters
 {
     /// <summary>
-    /// Converts an LogEventLevel member to a ConfigurationSetting decorated string member
+    /// Converts an LogEventLevel member to a ConfigurationSetting decorated string member.
     /// </summary>
     internal class LogEventLevelConfigurationSettingAddingConverter : IValueConverter<LogEventLevel?, ConfigurationSetting<LogEventLevel>>
     {

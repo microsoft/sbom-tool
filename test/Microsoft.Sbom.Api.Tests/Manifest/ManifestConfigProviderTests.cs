@@ -21,6 +21,7 @@ namespace Microsoft.Sbom.Api.Manifest.Tests
     public class ManifestConfigProviderTests
     {
         private readonly IMetadataBuilderFactory mockMetadataBuilderFactory;
+
         public ManifestConfigProviderTests()
         {
             var mockBuilderFactory = new Mock<IMetadataBuilderFactory>();
@@ -73,9 +74,10 @@ namespace Microsoft.Sbom.Api.Manifest.Tests
             Assert.IsNotNull(config);
             Assert.IsTrue(config.ManifestInfo == Constants.SPDX22ManifestInfo);
 
-            string sbomDirPath = PathUtils.Join("/root",
-                                      Constants.ManifestFolder,
-                                      $"{Constants.SPDX22ManifestInfo.Name.ToLower()}_{Constants.SPDX22ManifestInfo.Version.ToLower()}");
+            string sbomDirPath = PathUtils.Join(
+                "/root",
+                Constants.ManifestFolder,
+                $"{Constants.SPDX22ManifestInfo.Name.ToLower()}_{Constants.SPDX22ManifestInfo.Version.ToLower()}");
 
             // sbom file path is manifest.spdx.json in the sbom directory.
             string sbomFilePath = PathUtils.Join(sbomDirPath, $"manifest.{Constants.SPDX22ManifestInfo.Name.ToLower()}.json");
@@ -111,9 +113,10 @@ namespace Microsoft.Sbom.Api.Manifest.Tests
             Assert.IsNotNull(config);
             Assert.IsTrue(config.ManifestInfo == Constants.SPDX22ManifestInfo);
 
-            var sbomDirPath = PathUtils.Join("/root",
-                                      Constants.ManifestFolder,
-                                      $"{Constants.SPDX22ManifestInfo.Name.ToLower()}_{Constants.SPDX22ManifestInfo.Version.ToLower()}");
+            var sbomDirPath = PathUtils.Join(
+                "/root",
+                Constants.ManifestFolder,
+                $"{Constants.SPDX22ManifestInfo.Name.ToLower()}_{Constants.SPDX22ManifestInfo.Version.ToLower()}");
 
             // sbom file path is manifest.spdx.json in the sbom directory.
             var sbomFilePath = PathUtils.Join(sbomDirPath, $"manifest.{Constants.SPDX22ManifestInfo.Name.ToLower()}.json");

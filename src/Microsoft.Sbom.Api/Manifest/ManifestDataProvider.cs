@@ -34,7 +34,7 @@ namespace Microsoft.Sbom.Api.Manifest
         /// <summary>
         /// Uses the manifest parser provider to select the correct parser.
         /// Converts the dictionary inside the <see cref="ManifestData"/> into a case insensitive
-        /// concurrent dictionary
+        /// concurrent dictionary.
         /// </summary>
         /// 
         /// <param name="context"></param>

@@ -60,7 +60,8 @@ namespace Microsoft.Sbom.Api.Config
         /// Validate a build artifact using the manifest. Optionally also verify the signing certificate of the manfiest.
         /// </summary>
         /// <param name="validationArgs"></param>
-        [ArgActionMethod, ArgDescription("Validate a build artifact using the manifest. " +
+        [ArgActionMethod]
+        [ArgDescription("Validate a build artifact using the manifest. " +
             "Optionally also verify the signing certificate of the manfiest.")]
         public async Task Validate(ValidationArgs validationArgs)
         {
@@ -87,7 +88,8 @@ namespace Microsoft.Sbom.Api.Config
         /// <summary>
         /// Generate a manifest.json and a bsi.json for all the files in the given build drop folder.
         /// </summary>
-        [ArgActionMethod, ArgDescription("Generate a manifest.json and a bsi.json for all the files " +
+        [ArgActionMethod]
+        [ArgDescription("Generate a manifest.json and a bsi.json for all the files " +
             "in the given build drop folder.")]
         public async Task Generate(GenerationArgs generationArgs)
         {

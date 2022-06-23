@@ -13,7 +13,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
 {
     /// <summary>
     /// Provider for external document reference file supported only when 
-    /// ExternalDocumentReferenceListFile is provided in the generation arguments
+    /// ExternalDocumentReferenceListFile is provided in the generation arguments.
     /// </summary>
     public class ExternalDocumentReferenceFileProvider : PathBasedFileToJsonProviderBase
     {

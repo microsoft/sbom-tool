@@ -16,7 +16,7 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
 {
     /// <summary>
     /// Provider for external document reference. supported only when 
-    /// ExternalDocumentReferenceListFile is provided in the generation arguments
+    /// ExternalDocumentReferenceListFile is provided in the generation arguments.
     /// </summary>
     public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string>
     {

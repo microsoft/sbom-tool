@@ -7,7 +7,7 @@ using Microsoft.Sbom.Common.Config;
 namespace Microsoft.Sbom.Api.Config.ValueConverters
 {
     /// <summary>
-    /// Converts a nullable bool member to a ConfigurationSetting decorated string member
+    /// Converts a nullable bool member to a ConfigurationSetting decorated string member.
     /// </summary>
     internal class NullableBoolConfigurationSettingAddingConverter : IValueConverter<bool?, ConfigurationSetting<bool>>
     {

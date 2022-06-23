@@ -19,7 +19,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
 
         private OSUtils osUtils;
 
-        const string variable = "Packaging.Variable";
+        private const string Variable = "Packaging.Variable";
 
         [TestInitialize]
         public void TestInitialize()
@@ -34,13 +34,13 @@ namespace Microsoft.Sbom.Api.Tests.Utils
             IDictionary d = new Dictionary<string, string>()
             {
                 { "Agent", "a" },
-                { variable, "true" },
+                { Variable, "true" },
             };
 
             environment.Setup(o => o.GetEnvironmentVariables()).Returns(d);
             osUtils = new OSUtils(logger.Object, environment.Object);
 
-            Assert.AreEqual("true", osUtils.GetEnvironmentVariable(variable));
+            Assert.AreEqual("true", osUtils.GetEnvironmentVariable(Variable));
             environment.VerifyAll();
             logger.VerifyAll();
         }
@@ -51,17 +51,17 @@ namespace Microsoft.Sbom.Api.Tests.Utils
             IDictionary d = new Dictionary<string, string>()
             {
                 { "Agent", "a" },
-                { variable, "true" },
-                { variable.ToLower(), "trueLower" },
-                { variable.ToUpper(), "trueUpper" },
+                { Variable, "true" },
+                { Variable.ToLower(), "trueLower" },
+                { Variable.ToUpper(), "trueUpper" },
             };
 
             environment.Setup(o => o.GetEnvironmentVariables()).Returns(d);
             osUtils = new OSUtils(logger.Object, environment.Object);
 
-            Assert.AreEqual("true", osUtils.GetEnvironmentVariable(variable));
+            Assert.AreEqual("true", osUtils.GetEnvironmentVariable(Variable));
             environment.VerifyAll();
-            logger.Verify(o => o.Warning($"There are duplicate environment variables in different case for {variable}, the value used is true"), Times.Once());
+            logger.Verify(o => o.Warning($"There are duplicate environment variables in different case for {Variable}, the value used is true"), Times.Once());
         }
 
         [TestMethod]
@@ -75,7 +75,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
             environment.Setup(o => o.GetEnvironmentVariables()).Returns(d);
             osUtils = new OSUtils(logger.Object, environment.Object);
 
-            Assert.AreEqual(null, osUtils.GetEnvironmentVariable(variable));
+            Assert.AreEqual(null, osUtils.GetEnvironmentVariable(Variable));
             environment.VerifyAll();
             logger.VerifyAll();
         }
@@ -88,7 +88,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
             environment.Setup(o => o.GetEnvironmentVariables()).Returns(d);
             osUtils = new OSUtils(logger.Object, environment.Object);
 
-            Assert.AreEqual(null, osUtils.GetEnvironmentVariable(variable));
+            Assert.AreEqual(null, osUtils.GetEnvironmentVariable(Variable));
             environment.VerifyAll();
             logger.VerifyAll();
         }

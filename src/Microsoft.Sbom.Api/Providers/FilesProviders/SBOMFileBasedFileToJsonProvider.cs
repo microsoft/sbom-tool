@@ -19,13 +19,13 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
     public class SBOMFileBasedFileToJsonProvider : EntityToJsonProviderBase<SBOMFile>
     {
         /// <summary>
-        /// Gets or sets serializes a <see cref="FileInfo"/> object to Json
+        /// Gets or sets serializes a <see cref="FileInfo"/> object to Json.
         /// </summary>
         [Inject]
         public FileInfoWriter FileHashWriter { get; set; }
 
         /// <summary>
-        /// Gets or sets converts a <see cref="SBOMFile"/> object to a <see cref="FileInfo"/>
+        /// Gets or sets converts a <see cref="SBOMFile"/> object to a <see cref="FileInfo"/>.
         /// </summary>
         [Inject]
         public SBOMFileToFileInfoConverter SBOMFileToFileInfoConverter { get; set; }

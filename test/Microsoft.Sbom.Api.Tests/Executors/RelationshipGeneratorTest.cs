@@ -20,7 +20,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
     public class RelationshipGeneratorTest
     {
         /// <summary>
-        /// This repros a channel being orhpaned by not closing it in the face of exceptions
+        /// This repros a channel being orhpaned by not closing it in the face of exceptions.
         /// </summary>
         [TestMethod]
         public async Task RunShouldHandleExceptionWithoutOrphaningChannel()
@@ -91,7 +91,6 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             Assert.IsTrue(docs.Contains(j2));
             Assert.IsTrue(docs.Count == 2);
         }
-
 
         [TestMethod]
         public async Task RunShouldNotFailWithNull()

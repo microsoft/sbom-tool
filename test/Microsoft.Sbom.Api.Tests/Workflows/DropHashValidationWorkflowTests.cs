@@ -112,8 +112,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var workflow = new DropValidatorWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
-                new ManifestFolderFilterer(manifestFilterMock,
-                                           mockLogger.Object),
+                new ManifestFolderFilterer(
+                    manifestFilterMock,
+                    mockLogger.Object),
                 new ChannelUtils(),
                 fileHasher,
                 new HashValidator(configurationMock.Object, manifestData),
@@ -174,8 +175,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             manifestData.HashesMap.Remove("/child2/grandchild2/file10");
 
             var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
-            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(It.IsAny<string>(),
-                                                              new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
+                It.IsAny<string>(),
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                                  .Returns((string fileName, AlgorithmName[] algos) =>
                                              new Checksum[]
                                              {
@@ -208,13 +210,14 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
-            var fileHasher = new FileHasher(hashCodeGeneratorMock.Object,
-                               new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
-                               mockLogger.Object,
-                               configurationMock.Object,
-                               new Mock<ISbomConfigProvider>().Object,
-                               new ManifestGeneratorProvider(null),
-                               new FileTypeUtils())
+            var fileHasher = new FileHasher(
+                hashCodeGeneratorMock.Object,
+                new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
+                mockLogger.Object,
+                configurationMock.Object,
+                new Mock<ISbomConfigProvider>().Object,
+                new ManifestGeneratorProvider(null),
+                new FileTypeUtils())
             {
                 ManifestData = manifestData
             };
@@ -222,8 +225,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var workflow = new DropValidatorWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
-                new ManifestFolderFilterer(manifestFilterMock,
-                                           mockLogger.Object),
+                new ManifestFolderFilterer(
+                    manifestFilterMock,
+                    mockLogger.Object),
                 new ChannelUtils(),
                 fileHasher,
                 new HashValidator(configurationMock.Object, manifestData),
@@ -278,8 +282,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             manifestData.HashesMap["/child2/grandchild1/file10"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/grandchild1/file10hash" } };
 
             var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
-            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(It.IsAny<string>(),
-                                                              new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
+                It.IsAny<string>(),
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                                  .Returns((string fileName, AlgorithmName[] algos) =>
                                              new Checksum[]
                                              {
@@ -312,13 +317,14 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
-            var fileHasher = new FileHasher(hashCodeGeneratorMock.Object,
-                               new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
-                               mockLogger.Object,
-                               configurationMock.Object,
-                               new Mock<ISbomConfigProvider>().Object,
-                               new ManifestGeneratorProvider(null),
-                               new FileTypeUtils())
+            var fileHasher = new FileHasher(
+                hashCodeGeneratorMock.Object,
+                new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
+                mockLogger.Object,
+                configurationMock.Object,
+                new Mock<ISbomConfigProvider>().Object,
+                new ManifestGeneratorProvider(null),
+                new FileTypeUtils())
             {
                 ManifestData = manifestData
             };
@@ -326,8 +332,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var workflow = new DropValidatorWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
-                new ManifestFolderFilterer(manifestFilterMock,
-                                           mockLogger.Object),
+                new ManifestFolderFilterer(
+                    manifestFilterMock,
+                    mockLogger.Object),
                 new ChannelUtils(),
                 fileHasher,
                 new HashValidator(configurationMock.Object, manifestData),
@@ -381,8 +388,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             manifestData.HashesMap["/child2/grandchild1/file10"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/grandchild1/file10hash" } };
 
             var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
-            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(It.IsAny<string>(),
-                                                              new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
+                It.IsAny<string>(),
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                                  .Returns((string fileName, AlgorithmName[] algos) =>
                                              new Checksum[]
                                              {
@@ -415,13 +423,14 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
-            var fileHasher = new FileHasher(hashCodeGeneratorMock.Object,
-                               new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
-                               mockLogger.Object,
-                               configurationMock.Object,
-                               new Mock<ISbomConfigProvider>().Object,
-                               new ManifestGeneratorProvider(null),
-                               new FileTypeUtils())
+            var fileHasher = new FileHasher(
+                hashCodeGeneratorMock.Object,
+                new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
+                mockLogger.Object,
+                configurationMock.Object,
+                new Mock<ISbomConfigProvider>().Object,
+                new ManifestGeneratorProvider(null),
+                new FileTypeUtils())
             {
                 ManifestData = manifestData
             };
@@ -429,8 +438,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var workflow = new DropValidatorWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
-                new ManifestFolderFilterer(manifestFilterMock,
-                                           mockLogger.Object),
+                new ManifestFolderFilterer(
+                    manifestFilterMock,
+                    mockLogger.Object),
                 new ChannelUtils(),
                 fileHasher,
                 new HashValidator(configurationMock.Object, manifestData),
@@ -484,8 +494,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             manifestData.HashesMap["/child2/grandchild1/file10"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/grandchild1/file10hash" } };
 
             var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
-            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(It.IsAny<string>(),
-                                                              new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
+                It.IsAny<string>(),
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                                  .Returns((string fileName, AlgorithmName[] algos) =>
                                              new Checksum[]
                                              {
@@ -518,13 +529,14 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
-            var fileHasher = new FileHasher(hashCodeGeneratorMock.Object,
-                               new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
-                               mockLogger.Object,
-                               configurationMock.Object,
-                               new Mock<ISbomConfigProvider>().Object,
-                               new ManifestGeneratorProvider(null),
-                               new FileTypeUtils())
+            var fileHasher = new FileHasher(
+                hashCodeGeneratorMock.Object,
+                new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
+                mockLogger.Object,
+                configurationMock.Object,
+                new Mock<ISbomConfigProvider>().Object,
+                new ManifestGeneratorProvider(null),
+                new FileTypeUtils())
             {
                 ManifestData = manifestData
             };
@@ -532,8 +544,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var workflow = new DropValidatorWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
-                new ManifestFolderFilterer(manifestFilterMock,
-                                           mockLogger.Object),
+                new ManifestFolderFilterer(
+                    manifestFilterMock,
+                    mockLogger.Object),
                 new ChannelUtils(),
                 fileHasher,
                 new HashValidator(configurationMock.Object, manifestData),

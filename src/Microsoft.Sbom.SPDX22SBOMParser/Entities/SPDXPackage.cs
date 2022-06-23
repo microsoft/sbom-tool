@@ -75,7 +75,7 @@ namespace Microsoft.SPDX22SBOMParser.Entities
 
         /// <summary>
         /// Gets or sets version of the package.
-        /// Not Required
+        /// Not Required.
         /// </summary>
         [JsonPropertyName("versionInfo")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -83,7 +83,7 @@ namespace Microsoft.SPDX22SBOMParser.Entities
 
         /// <summary>
         /// Gets or sets provide an independently reproducible mechanism that permits unique identification of a specific 
-        /// package that correlates to the data in this SPDX file
+        /// package that correlates to the data in this SPDX file.
         /// </summary>
         [JsonPropertyName("checksums")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

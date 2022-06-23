@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace Microsoft.Sbom.Api.Config.Args
 {
     /// <summary>
-    /// Defines the common arguments used by all actions of the ManifestTool
+    /// Defines the common arguments used by all actions of the ManifestTool.
     /// </summary>
     public class CommonArgs
     {
@@ -27,7 +27,7 @@ namespace Microsoft.Sbom.Api.Config.Args
         public int? Parallelism { get; set; }
 
         /// <summary>
-        /// Gets or sets a JSON config file that can be used to specify all the arguments for an action
+        /// Gets or sets a JSON config file that can be used to specify all the arguments for an action.
         /// </summary>
         [ArgDescription("The json file that contains the configuration for the DropValidator.")]
         public string ConfigFilePath { get; set; }

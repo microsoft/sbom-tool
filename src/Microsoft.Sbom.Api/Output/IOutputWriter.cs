@@ -8,7 +8,7 @@ namespace Microsoft.Sbom.Api.Output
     public interface IOutputWriter
     {
         /// <summary>
-        /// Writes a string to a file asynchronously
+        /// Writes a string to a file asynchronously.
         /// </summary>
         /// <param name="output"></param>
         /// <returns></returns>

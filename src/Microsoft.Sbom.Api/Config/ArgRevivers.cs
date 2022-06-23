@@ -6,9 +6,11 @@ using Microsoft.Sbom.Contracts.Enums;
 using PowerArgs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Sbom.Api.Config
 {
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "Discard variable has a _ name")]
     public class ArgRevivers
     {
         /// <summary>

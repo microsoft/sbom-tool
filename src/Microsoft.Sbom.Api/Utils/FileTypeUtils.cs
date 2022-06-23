@@ -10,7 +10,7 @@ using System.IO;
 namespace Microsoft.Sbom.Api.Utils
 {
     /// <summary>
-    /// FileTypeUtils is used to get the FileType for a given filename
+    /// FileTypeUtils is used to get the FileType for a given filename.
     /// </summary>
     public class FileTypeUtils : IFileTypeUtils
     {

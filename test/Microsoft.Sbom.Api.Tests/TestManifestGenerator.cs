@@ -9,10 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Sbom.Api.Tests
 {
-    class TestManifestGenerator : IManifestGenerator
+    internal class TestManifestGenerator : IManifestGenerator
     {
         public AlgorithmName[] RequiredHashAlgorithms => new[] {
             AlgorithmName.SHA256
@@ -109,6 +110,7 @@ namespace Microsoft.Sbom.Api.Tests
             };
         }
 
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "Discard variable has a _ name")]
         public GenerationResult GenerateRootPackage(IInternalMetadataProvider _)
         {
             var jsonString = $@"

@@ -8,7 +8,7 @@ using Microsoft.Sbom.Api.Entities;
 namespace Microsoft.Sbom.Api.Executors
 {
     /// <summary>
-    /// interface to read read SBOM file. Implement this class for different formats of SBOM file
+    /// interface to read read SBOM file. Implement this class for different formats of SBOM file.
     /// </summary>
     public interface ISBOMReaderForExternalDocumentReference
     {

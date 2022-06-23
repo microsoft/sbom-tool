@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Microsoft.Sbom.Api.Converters
 {
     /// <summary>
-    /// Converts ExternalDocumentReferenceInfo objects to their path as string
+    /// Converts ExternalDocumentReferenceInfo objects to their path as string.
     /// </summary>
     public class ExternalReferenceInfoToPathConverter
     {

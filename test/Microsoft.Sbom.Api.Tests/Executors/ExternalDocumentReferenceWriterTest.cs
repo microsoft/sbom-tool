@@ -30,7 +30,6 @@ namespace Microsoft.Sbom.Api.Tests.Executors
         private Mock<IRecorder> recorderMock = new Mock<IRecorder>();
         private Mock<IFileSystemUtils> fileSystemUtilsMock = new Mock<IFileSystemUtils>();
 
-
         [TestMethod]
         public async Task PassExternalDocumentReferenceInfosChannel_ReturnsJsonDocWithSerializer()
         {

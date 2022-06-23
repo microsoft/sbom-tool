@@ -1,22 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Api.Tests;
-using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Newtonsoft.Json.Linq;
-using Serilog.Events;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
-using Microsoft.Sbom.Common.Config;
+using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
@@ -27,19 +14,32 @@ using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
+using Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders;
 using Microsoft.Sbom.Api.Providers.FilesProviders;
 using Microsoft.Sbom.Api.Providers.PackagesProviders;
 using Microsoft.Sbom.Api.Recorder;
+using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows.Helpers;
-using ILogger = Serilog.ILogger;
-using Microsoft.ComponentDetection.Contracts;
-using Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders;
+using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using Newtonsoft.Json.Linq;
+using Serilog.Events;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Channels;
+using System.Threading.Tasks;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
-using Microsoft.Sbom.Common;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
+using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Workflows.Tests
 {
@@ -102,10 +102,11 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 { MetadataKey.Build_DefinitionName, "test" },
             });
 
-            var sbomConfigs = new SbomConfigProvider(new IManifestConfigHandler[] { mockConfigHandler.Object },
-                                              new IMetadataProvider[] { mockMetadataProvider.Object },
-                                              mockLogger.Object,
-                                              recorderMock.Object);
+            var sbomConfigs = new SbomConfigProvider(
+                new IManifestConfigHandler[] { mockConfigHandler.Object },
+                new IMetadataProvider[] { mockMetadataProvider.Object },
+                mockLogger.Object,
+                recorderMock.Object);
 
             using var manifestStream = new MemoryStream();
             using var manifestWriter = new StreamWriter(manifestStream);
@@ -231,18 +232,20 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             {
                 ChannelUtils = new ChannelUtils(),
                 DirectoryWalker = new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
-                FileHasher = new FileHasher(hashCodeGeneratorMock.Object,
-                                                        new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
-                                                        mockLogger.Object,
-                                                        configurationMock.Object,
-                                                        sbomConfigs,
-                                                        manifestGeneratorProvider,
-                                                        new FileTypeUtils()),
+                FileHasher = new FileHasher(
+                    hashCodeGeneratorMock.Object,
+                    new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
+                    mockLogger.Object,
+                    configurationMock.Object,
+                    sbomConfigs,
+                    manifestGeneratorProvider,
+                    new FileTypeUtils()),
                 FileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
-                FileHashWriter = new FileInfoWriter(manifestGeneratorProvider,
-                                                                mockLogger.Object,
-                                                                fileSystemUtilsExtensionMock.Object,
-                                                                configurationMock.Object),
+                FileHashWriter = new FileInfoWriter(
+                    manifestGeneratorProvider,
+                    mockLogger.Object,
+                    fileSystemUtilsExtensionMock.Object,
+                    configurationMock.Object),
                 Log = mockLogger.Object,
                 Configuration = configurationMock.Object,
                 InternalSBOMFileInfoDeduplicator = new InternalSBOMFileInfoDeduplicator()
@@ -251,18 +254,20 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var fileListBasedProvider = new FileListBasedFileToJsonProvider
             {
                 ChannelUtils = new ChannelUtils(),
-                FileHasher = new FileHasher(hashCodeGeneratorMock.Object,
-                                            new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
-                                            mockLogger.Object,
-                                            configurationMock.Object,
-                                            sbomConfigs,
-                                            manifestGeneratorProvider,
-                                            new FileTypeUtils()),
+                FileHasher = new FileHasher(
+                    hashCodeGeneratorMock.Object,
+                    new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
+                    mockLogger.Object,
+                    configurationMock.Object,
+                    sbomConfigs,
+                    manifestGeneratorProvider,
+                    new FileTypeUtils()),
                 FileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
-                FileHashWriter = new FileInfoWriter(manifestGeneratorProvider,
-                                                    mockLogger.Object,
-                                                    fileSystemUtilsExtensionMock.Object,
-                                                    configurationMock.Object),
+                FileHashWriter = new FileInfoWriter(
+                    manifestGeneratorProvider,
+                    mockLogger.Object,
+                    fileSystemUtilsExtensionMock.Object,
+                    configurationMock.Object),
 
                 Log = mockLogger.Object,
                 Configuration = configurationMock.Object,
@@ -275,8 +280,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 Log = mockLogger.Object,
                 Configuration = configurationMock.Object,
                 PackageInfoConverter = packageInfoConverterMock.Object,
-                PackageInfoJsonWriter = new PackageInfoJsonWriter(manifestGeneratorProvider,
-                                                    mockLogger.Object),
+                PackageInfoJsonWriter = new PackageInfoJsonWriter(
+                    manifestGeneratorProvider,
+                    mockLogger.Object),
                 PackagesWalker = new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs),
                 SBOMConfigs = sbomConfigs
             };
@@ -284,8 +290,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider
             {
                 ChannelUtils = new ChannelUtils(),
-                ExternalDocumentReferenceWriter = new ExternalDocumentReferenceWriter(manifestGeneratorProvider,
-                                                  mockLogger.Object),
+                ExternalDocumentReferenceWriter = new ExternalDocumentReferenceWriter(
+                    manifestGeneratorProvider,
+                    mockLogger.Object),
                 SPDXSBOMReaderForExternalDocumentReference = sBOMReaderForExternalDocumentReferenceMock.Object,
                 Log = mockLogger.Object,
                 Configuration = configurationMock.Object,
@@ -297,7 +304,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 { fileListBasedProvider },
                 { directoryTraversingProvider },
                 { cgPackagesProvider },
-                {externalDocumentReferenceProvider }
+                { externalDocumentReferenceProvider }
             };
 
             var fileArrayGenerator = new FileArrayGenerator
@@ -357,7 +364,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             var outputs = resultJson["Outputs"];
             JArray sortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
-            var expectedJson = JObject.Parse(goodJson);
+            var expectedJson = JObject.Parse(GoodJson);
             JArray expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
 
             var packages = resultJson["Packages"];
@@ -427,7 +434,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             Assert.IsFalse(result);
         }
 
-        private const string goodJson = "{\"Outputs\":[{\"Source\":\"/child1/file2\",\"AzureArtifactsHash\":" +
+        private const string GoodJson = "{\"Outputs\":[{\"Source\":\"/child1/file2\",\"AzureArtifactsHash\":" +
             "\"/root/child1/file2hash\",\"Sha256Hash\":\"/root/child1/file2hash\"},{\"Source\":\"/child1/file1\"," +
             "\"AzureArtifactsHash\":\"/root/child1/file1hash\",\"Sha256Hash\":\"/root/child1/file1hash\"},{\"Source\":" +
             "\"/child2/file3\",\"AzureArtifactsHash\":\"/root/child2/file3hash\",\"Sha256Hash\":\"/root/child2/file3hash\"}" +

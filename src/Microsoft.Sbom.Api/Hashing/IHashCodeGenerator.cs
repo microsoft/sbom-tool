@@ -10,11 +10,11 @@ namespace Microsoft.Sbom.Api.Hashing
     {
         /// <summary>
         /// Given a file path, returns a list of <see cref="Checksum"/>for the file 
-        /// for each hash algorithm name provided in <paramref name="hashAlgorithmNames"/>
+        /// for each hash algorithm name provided in <paramref name="hashAlgorithmNames"/>.
         /// </summary>
-        /// <param name="filePath">The path of the file</param>
+        /// <param name="filePath">The path of the file.</param>
         /// <param name="hashAlgorithmNames">A list of the hash algorithms for which hashes will be generated.</param>
-        /// <returns>A list of <see cref="Checksum"/></returns>
+        /// <returns>A list of <see cref="Checksum"/>.</returns>
         Checksum[] GenerateHashes(string filePath, AlgorithmName[] hashAlgorithmNames);
     }
 }

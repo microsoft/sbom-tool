@@ -15,7 +15,7 @@ namespace Microsoft.Sbom.Api.SignValidator.Tests
     [TestClass]
     public class SignValidationProviderTests
     {
-        IMock<ILogger> mockLogger;
+        private IMock<ILogger> mockLogger;
 
         [TestInitialize]
         public void Setup()
