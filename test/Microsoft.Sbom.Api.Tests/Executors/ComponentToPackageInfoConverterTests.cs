@@ -52,20 +52,20 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             {
                 new ScannedComponent
                 {
-                     LocationsFoundAt = "test".Split(),
-                     Component = new NuGetComponent("nugetpackage", "1.0.0")
+                    LocationsFoundAt = "test".Split(),
+                    Component = new NuGetComponent("nugetpackage", "1.0.0")
                 },
                 new ScannedComponent
                 {
-                     LocationsFoundAt = "test".Split(),
-                     Component = new NuGetComponent("nugetpackage2", "1.0.0")
+                    LocationsFoundAt = "test".Split(),
+                    Component = new NuGetComponent("nugetpackage2", "1.0.0")
                 },
-                 new ScannedComponent
+                new ScannedComponent
                 {
                     LocationsFoundAt = "test".Split(),
                     Component = new GitComponent(new Uri("http://test.uri"), "hash")
                 },
-                 new ScannedComponent
+                new ScannedComponent
                 {
                     LocationsFoundAt = "test".Split(),
                     Component = new MavenComponent("groupId", "artifactId", "1.0.0")
