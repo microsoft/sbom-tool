@@ -7,9 +7,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 
 namespace Microsoft.Sbom.Api.Executors.Tests

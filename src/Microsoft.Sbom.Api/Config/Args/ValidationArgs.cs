@@ -2,8 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using PowerArgs;
-using Microsoft.Sbom.Extensions.Entities;
-using System.Collections.Generic;
 using Microsoft.Sbom.Contracts.Enums;
 
 namespace Microsoft.Sbom.Api.Config.Args

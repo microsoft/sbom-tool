@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Threading.Channels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
-using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders

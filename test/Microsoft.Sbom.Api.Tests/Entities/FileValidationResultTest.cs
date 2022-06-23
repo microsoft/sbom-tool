@@ -4,9 +4,6 @@
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using EntityErrorType = Microsoft.Sbom.Contracts.Enums.ErrorType;
 
 namespace Microsoft.Sbom.Api.Tests.Entities

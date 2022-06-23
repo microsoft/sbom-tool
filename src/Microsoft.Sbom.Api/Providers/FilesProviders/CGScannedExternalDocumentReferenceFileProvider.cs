@@ -6,7 +6,6 @@ using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Executors;
-using Microsoft.Sbom.Api.Manifest.Configuration;
 using Ninject;
 using System.Collections.Generic;
 using System.Linq;

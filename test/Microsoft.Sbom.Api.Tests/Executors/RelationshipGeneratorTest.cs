@@ -3,7 +3,6 @@
 
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

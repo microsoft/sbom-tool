@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using AutoMapper;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Serilog.Events;
 using Constants = Microsoft.Sbom.Common.Constants;
