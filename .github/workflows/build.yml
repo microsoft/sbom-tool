@@ -38,3 +38,19 @@ jobs:
     
     - name: Test
       run: dotnet test --no-build --verbosity normal
+
+    - name: Build NuGet packages
+      run: dotnet pack --no-restore --configuration Release --output ./out
+
+    - name: Publish NuGet packages to Azure Artifacts
+      run: |
+        # https://github.com/NuGet/Home/issues/7792
+        dotnet nuget add source "https://pkgs.dev.azure.com/aamallad/test/_packaging/test12/nuget/v3/index.json" \
+          --name ado \
+          --username unused \
+          --password ${{ secrets.AAMALLAD_FEED_PAT }} \
+          --store-password-in-clear-text
+        dotnet nuget push "./out/*.nupkg" \
+          --skip-duplicate \
+          --source ado \
+          --api-key unused
