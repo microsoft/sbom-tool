@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Channels;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Manifest.Configuration;
 
 namespace Microsoft.Sbom.Api.Providers
 {

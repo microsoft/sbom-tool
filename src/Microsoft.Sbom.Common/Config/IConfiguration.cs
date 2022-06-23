@@ -8,6 +8,7 @@ using Microsoft.Sbom.Contracts.Enums;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Sbom.Common.Config
 {
@@ -161,12 +162,12 @@ namespace Microsoft.Sbom.Common.Config
         /// </summary>
         ConfigurationSetting<string> NamespaceUriBase { get; set; }
 
-#pragma warning disable SA1629 // Documentation text should end with a period
         /// <summary>
         /// Gets or sets a timestamp in the format <code>yyyy-MM-ddTHH:mm:ssZ</code> that will be used as the generated timestamp for the SBOM.
         /// </summary>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1629:Documentation text should end with a period",
+            Justification = "Code element in comment.")]
         ConfigurationSetting<string> GenerationTimestamp { get; set; }
-#pragma warning restore SA1629 // Documentation text should end with a period
 
         /// <summary>
         /// Gets or sets if set to false, we will not follow symlinks while traversing the build drop folder. Default is set to 'true'.

@@ -3,7 +3,6 @@
 
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Contracts.Interfaces;
-using System;
 using System.Collections.Generic;
 
 namespace Microsoft.Sbom.Contracts.Contracts.Entities

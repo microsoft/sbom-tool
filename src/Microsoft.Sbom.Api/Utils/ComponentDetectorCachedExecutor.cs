@@ -29,8 +29,8 @@ namespace Microsoft.Sbom.Api.Utils
         /// <summary>
         /// Performs component detection scan or gets results from cache based on provided arguments.
         /// </summary>
-        /// <param name="args">CD arguments</param>
-        /// <returns>Result of CD scan</returns>
+        /// <param name="args">CD arguments.</param>
+        /// <returns>Result of CD scan.</returns>
         public virtual ScanResult Scan(string[] args)
         {
             if (args is null)
@@ -38,7 +38,7 @@ namespace Microsoft.Sbom.Api.Utils
                 throw new ArgumentNullException(nameof(args));
             }
 
-            var argsHashCode = string.Join("", args).GetHashCode();
+            var argsHashCode = string.Join(string.Empty, args).GetHashCode();
             if (results.ContainsKey(argsHashCode))
             {
                 log.Debug("Using cached CD scan result for the call with the same arguments");

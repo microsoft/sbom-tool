@@ -25,13 +25,12 @@ using ErrorType = Microsoft.Sbom.Api.Entities.ErrorType;
 namespace Microsoft.Sbom.Api.Executors
 {
     /// <summary>
-    /// Reads SPDX json format SBOM file
+    /// Reads SPDX json format SBOM file.
     /// </summary>
     public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternalDocumentReference
     {
         private readonly IHashCodeGenerator hashCodeGenerator;
         private readonly ILogger log;
-        private readonly ISbomConfigProvider sbomConfigs;
         private readonly AlgorithmName[] hashAlgorithmNames;
         private readonly IFileSystemUtils fileSystemUtils;
 
@@ -50,6 +49,11 @@ namespace Microsoft.Sbom.Api.Executors
                 throw new ArgumentNullException(nameof(configuration));
             }
 
+            if (sbomConfigs is null)
+            {
+                throw new ArgumentNullException(nameof(sbomConfigs));
+            }
+
             if (manifestGeneratorProvider is null)
             {
                 throw new ArgumentNullException(nameof(manifestGeneratorProvider));
@@ -57,7 +61,6 @@ namespace Microsoft.Sbom.Api.Executors
 
             this.hashCodeGenerator = hashCodeGenerator ?? throw new ArgumentNullException(nameof(hashCodeGenerator));
             this.log = log ?? throw new ArgumentNullException(nameof(log));
-            this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
             this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
 
             hashAlgorithmNames = sbomConfigs.GetManifestInfos()

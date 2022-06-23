@@ -25,7 +25,7 @@ namespace Microsoft.SPDX22SBOMParser.Utils
         /// If we are unable to generate a package name, we throw an <see cref="ArgumentException"/>
         /// exception.
         /// </summary>
-        /// <returns>The string package name</returns>
+        /// <returns>The string package name.</returns>
         public string GetPackageName(IInternalMetadataProvider internalMetadataProvider)
         {
             if (internalMetadataProvider is null)
@@ -54,7 +54,7 @@ namespace Microsoft.SPDX22SBOMParser.Utils
         /// <summary>
         /// Generates the package verification code for a given package using the SPDX 2.2 specification.
         /// 
-        /// Algorithm defined here https://spdx.github.io/spdx-spec/3-package-information/#39-package-verification-code
+        /// Algorithm defined here https://spdx.github.io/spdx-spec/3-package-information/#39-package-verification-code.
         /// </summary>
         /// <param name="internalMetadataProvider"></param>
         /// <returns></returns>
@@ -113,7 +113,7 @@ namespace Microsoft.SPDX22SBOMParser.Utils
         /// If we are unable to generate a package name, we throw an <see cref="ArgumentException"/>
         /// exception.
         /// </summary>
-        /// <returns>The string package version</returns>
+        /// <returns>The string package version.</returns>
         public string GetPackageVersion(IInternalMetadataProvider internalMetadataProvider)
         {
             if (internalMetadataProvider is null)

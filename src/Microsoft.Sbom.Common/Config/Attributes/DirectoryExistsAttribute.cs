@@ -13,17 +13,17 @@ namespace Microsoft.Sbom.Common.Config.Attributes
     public sealed class DirectoryExistsAttribute : Attribute
     {
         /// <summary>
-        /// Execute this validation only for the given action. Default is all.
+        /// Gets or sets the action for which this validation should run. Default is all.
         /// </summary>
         public ManifestToolActions ForAction { get; set; }
 
         /// <summary>
-        /// Checks if the directory has read permissions, 'true' by default.
+        /// Gets or sets a value indicating whether checks if the directory has read permissions, 'true' by default.
         /// </summary>
         public bool HasReadPermissions { get; set; }
 
         /// <summary>
-        /// Checks if the directory has write permissions, 'false' by default.
+        /// Gets or sets a value indicating whether checks if the directory has write permissions, 'false' by default.
         /// </summary>
         public bool HasWritePermissions { get; set; }
 

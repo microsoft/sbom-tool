@@ -16,7 +16,7 @@ using Microsoft.Sbom.Extensions.Entities;
 namespace Microsoft.Sbom.Api.Converters
 {
     /// <summary>
-    /// Converts ScannedComponent objects of SbomComponent type to ExternalDocumentReferenceInfo
+    /// Converts ScannedComponent objects of SbomComponent type to ExternalDocumentReferenceInfo.
     /// </summary>
     public class ComponentToExternalReferenceInfoConverter
     {

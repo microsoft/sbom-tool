@@ -43,7 +43,7 @@ namespace Microsoft.Sbom.Api.Config
 
         /// <summary>
         /// Gets or sets the root folder where the generated manifest (and other files like bsi.json) files will be placed.
-        /// By default we will generate this folder in the same level as the build drop with the name '_manifest'
+        /// By default we will generate this folder in the same level as the build drop with the name '_manifest'.
         /// </summary>
         public string ManifestDirPath { get; set; }
 
@@ -53,7 +53,7 @@ namespace Microsoft.Sbom.Api.Config
         public string OutputPath { get; set; }
 
         /// <summary>
-        /// Gets or sets the path of the signed catalog file used to validate the manifest.json
+        /// Gets or sets the path of the signed catalog file used to validate the manifest.json.
         /// </summary>
         public string CatalogFilePath { get; set; }
 
@@ -105,7 +105,7 @@ namespace Microsoft.Sbom.Api.Config
         public string PackageVersion { get; set; }
 
         /// <summary>
-        /// Gets or sets a JSON config file that can be used to specify all the arguments for an action
+        /// Gets or sets a JSON config file that can be used to specify all the arguments for an action.
         /// </summary>
         [JsonIgnore]
         public string ConfigFilePath { get; set; }
@@ -142,12 +142,12 @@ namespace Microsoft.Sbom.Api.Config
 
         /// <summary>
         /// Gets or sets the base of the URI that will be used to generate this SBOM. This should be a value that identifies that
-        /// the SBOM belongs to a single publisher (or company)
+        /// the SBOM belongs to a single publisher (or company).
         /// </summary>
         public string NamespaceUriBase { get; set; }
 
         /// <summary>
-        /// Gets or sets a timestamp in the format <code>yyyy-MM-ddTHH:mm:ssZ</code> that will be used as the generated timestamp for the SBOM.
+        /// Gets or sets a timestamp in the format. <code>yyyy-MM-ddTHH:mm:ssZ</code> that will be used as the generated timestamp for the SBOM.
         /// </summary>
         public string GenerationTimestamp { get; set; }
 

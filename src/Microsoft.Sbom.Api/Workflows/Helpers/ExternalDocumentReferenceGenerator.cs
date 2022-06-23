@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest.Configuration;
@@ -18,7 +17,7 @@ using System.Threading.Tasks;
 namespace Microsoft.Sbom.Api.Workflows.Helpers
 {
     /// <summary>
-    /// This class generates an array of external document references 
+    /// This class generates an array of external document references. 
     /// </summary>
     public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator
     {

@@ -42,7 +42,7 @@ namespace Microsoft.Sbom.Api.Filters
         /// but if the root path contains /root/parent3/, this filePath will return false.
         /// 
         /// </summary>
-        /// <param name="filePath">The file path to validate</param>
+        /// <param name="filePath">The file path to validate.</param>
         /// <returns></returns>
         public bool IsValid(string filePath)
         {

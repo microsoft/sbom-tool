@@ -52,7 +52,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
         /// <summary>
         /// Start recording the duration of exeuction of the given event.
         /// </summary>
-        /// <param name="eventName">The event name</param>
+        /// <param name="eventName">The event name.</param>
         /// <returns>A disposable <see cref="TimingRecorder"/> object.</returns>
         public TimingRecorder TraceEvent(string eventName)
         {
@@ -96,7 +96,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
         /// Record any exception that was encountered during the exection of the tool.
         /// </summary>
         /// <param name="exception">The exception that was encountered.</param>
-        /// <exception cref="ArgumentNullException">If the exception is null</exception>
+        /// <exception cref="ArgumentNullException">If the exception is null.</exception>
         public void RecordException(Exception exception)
         {
             if (exception is null)

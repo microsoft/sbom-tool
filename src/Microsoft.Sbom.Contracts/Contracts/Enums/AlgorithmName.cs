@@ -1,9 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Contracts.Interfaces;
 using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 
@@ -84,6 +83,7 @@ namespace Microsoft.Sbom.Contracts.Enums
         /// <summary>
         /// Gets equivalent to <see cref="HashAlgorithmName.MD5"/>.
         /// </summary>
+        [SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms", Justification = "Used by conda package manager.")]
         public static AlgorithmName MD5 => new AlgorithmName(nameof(MD5), stream => System.Security.Cryptography.MD5.Create().ComputeHash(stream));
     }
 }

@@ -49,13 +49,13 @@ namespace Microsoft.Sbom.Contracts
         /// <returns>The result object that indicates if the generation succeeded, and a list of 
         /// errors if it failed along with telemetry.</returns>
         Task<SBOMGenerationResult> GenerateSBOMAsync(
-                                  string rootPath,
-                                  string componentPath,
-                                  SBOMMetadata metadata,
-                                  IList<SBOMSpecification> specifications = null,
-                                  RuntimeConfiguration runtimeConfiguration = null,
-                                  string manifestDirPath = null,
-                                  string externalDocumentReferenceListFile = null);
+            string rootPath,
+            string componentPath,
+            SBOMMetadata metadata,
+            IList<SBOMSpecification> specifications = null,
+            RuntimeConfiguration runtimeConfiguration = null,
+            string manifestDirPath = null,
+            string externalDocumentReferenceListFile = null);
 
         /// <summary>
         /// Each SBOM specification requires that each file and package have a specific list of hashes 

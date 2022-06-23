@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace Microsoft.SPDX22SBOMParser.Entities
 {
     /// <summary>
-    /// SPDX 2.2 format External Document reference
+    /// SPDX 2.2 format External Document reference.
     /// </summary>
     public class SpdxExternalDocumentReference
     {
@@ -17,13 +17,13 @@ namespace Microsoft.SPDX22SBOMParser.Entities
         public string ExternalDocumentId { get; set; }
 
         /// <summary>
-        /// Gets or sets document namespace of the input SBOM
+        /// Gets or sets document namespace of the input SBOM.
         /// </summary>
         [JsonPropertyName("spdxDocument")]
         public string SpdxDocument { get; set; }
 
         /// <summary>
-        /// Gets or sets checksum values for External SBOM file
+        /// Gets or sets checksum values for External SBOM file.
         /// </summary>
         [JsonPropertyName("checksum")]
         public Checksum Checksum { get; set; }

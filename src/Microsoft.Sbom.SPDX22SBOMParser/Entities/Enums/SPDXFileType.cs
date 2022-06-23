@@ -7,7 +7,7 @@ namespace Microsoft.SPDX22SBOMParser.Entities.Enums
 {
     /// <summary>
     /// This field provides information about the type of file identified.
-    /// Full definition here: https://spdx.github.io/spdx-spec/file-information/#83-file-type-field
+    /// Full definition here: https://spdx.github.io/spdx-spec/file-information/#83-file-type-field.
     /// </summary>
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SPDXFileType

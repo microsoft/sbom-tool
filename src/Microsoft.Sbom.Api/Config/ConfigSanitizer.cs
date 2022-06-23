@@ -116,7 +116,7 @@ namespace Microsoft.Sbom.Api.Config
         }
 
         /// <summary>
-        /// Set ManifestDirPath if the value is null or empty to default value
+        /// Set ManifestDirPath if the value is null or empty to default value.
         /// </summary>
         private ConfigurationSetting<string> GetManifestDirPath(ConfigurationSetting<string> manifestDirPathConfig, string buildDropPath, ManifestToolActions manifestToolAction)
         {

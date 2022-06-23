@@ -41,7 +41,7 @@ namespace Microsoft.Sbom.Extensions
         /// This writes a json document to the underlying stream. 
         /// We also call dispose on the JsonDocument once we finish writing.
         /// </summary>
-        /// <param name="jsonDocument">The json document</param>
+        /// <param name="jsonDocument">The json document.</param>
         public void Write(JsonDocument jsonDocument);
 
         /// <summary>

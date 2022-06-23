@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Microsoft.Sbom.Api.Exceptions
 {
     /// <summary>
-    /// Thrown when we are unable to find a generator to serialize the SBOM
+    /// Thrown when we are unable to find a generator to serialize the SBOM.
     /// </summary>
     [Serializable]
     public class MissingGeneratorException : Exception

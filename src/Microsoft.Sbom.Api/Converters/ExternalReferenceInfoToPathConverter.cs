@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Entities;
 using Serilog;
 using System;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 namespace Microsoft.Sbom.Api.Converters
 {
     /// <summary>
-    /// Converts ExternalDocumentReferenceInfo objects to their path as string
+    /// Converts ExternalDocumentReferenceInfo objects to their path as string.
     /// </summary>
     public class ExternalReferenceInfoToPathConverter
     {

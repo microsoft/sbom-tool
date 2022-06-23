@@ -11,7 +11,7 @@ namespace Microsoft.Sbom.Extensions
     public interface ISignValidator
     {
         /// <summary>
-        /// The OS Platform that this validator supports, ex. Windows or Linux.
+        /// Gets the OS Platform that this validator supports, ex. Windows or Linux.
         /// </summary>
         public OSPlatform SupportedPlatform { get; }
 

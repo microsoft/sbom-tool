@@ -8,7 +8,7 @@ namespace Microsoft.Sbom.Api.Exceptions
 {
     /// <summary>
     /// Thrown when the instantiated <see cref="IPackageInfoConverter"/> 
-    /// cannot convert the <see cref="Microsoft.VisualStudio.Services.Governance.ComponentDetection.TypedComponent"/>
+    /// cannot convert the <see cref="Microsoft.VisualStudio.Services.Governance.ComponentDetection.TypedComponent"/>.
     /// </summary>
     /// <remarks>
     /// Thrown out of public classes implementing IPackageInfoConverter so it must also be public.

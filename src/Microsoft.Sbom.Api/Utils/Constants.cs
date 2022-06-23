@@ -3,7 +3,6 @@
 
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Contracts.Enums;
-using Serilog.Events;
 
 namespace Microsoft.Sbom.Api.Utils
 {

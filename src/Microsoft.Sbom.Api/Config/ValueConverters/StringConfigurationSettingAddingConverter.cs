@@ -7,7 +7,7 @@ using Microsoft.Sbom.Common.Config;
 namespace Microsoft.Sbom.Api.Config.ValueConverters
 {
     /// <summary>
-    /// Converts a string member to a ConfigurationSetting decorated string member
+    /// Converts a string member to a ConfigurationSetting decorated string member.
     /// </summary>
     internal class StringConfigurationSettingAddingConverter : IValueConverter<string, ConfigurationSetting<string>>
     {

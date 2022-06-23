@@ -13,7 +13,7 @@ using Microsoft.Sbom.Extensions;
 namespace Microsoft.Sbom.Api.Providers.PackagesProviders
 {
     /// <summary>
-    /// Provides a serialized list of packages given a list of <see cref="SBOMPackage"/>
+    /// Provides a serialized list of packages given a list of <see cref="SBOMPackage"/>.
     /// </summary>
     public class SBOMPackagesProvider : CommonPackagesProvider<SBOMPackage>
     {

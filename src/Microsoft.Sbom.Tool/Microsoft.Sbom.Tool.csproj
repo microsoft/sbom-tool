@@ -4,11 +4,9 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackAsTool>true</PackAsTool>
-    <ToolCommandName>manifesttool</ToolCommandName>
-    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <ToolCommandName>sbomtool</ToolCommandName>
     <AssemblyName>Microsoft.Sbom.Tool</AssemblyName>
     <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
-    <SignAssembly>true</SignAssembly>
     <IsPublishable>true</IsPublishable>
   </PropertyGroup>
 
