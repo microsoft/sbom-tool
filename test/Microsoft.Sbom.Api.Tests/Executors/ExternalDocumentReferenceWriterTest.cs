@@ -26,10 +26,9 @@ namespace Microsoft.Sbom.Api.Tests.Executors
     [TestClass]
     public class ExternalDocumentReferenceWriterTest
     {
-        private Mock<ILogger> mockLogger = new Mock<ILogger>();
-        private Mock<IRecorder> recorderMock = new Mock<IRecorder>();
-        private Mock<IFileSystemUtils> fileSystemUtilsMock = new Mock<IFileSystemUtils>();
-
+        private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+        private readonly Mock<IRecorder> recorderMock = new Mock<IRecorder>();
+        private readonly Mock<IFileSystemUtils> fileSystemUtilsMock = new Mock<IFileSystemUtils>();
 
         [TestMethod]
         public async Task PassExternalDocumentReferenceInfosChannel_ReturnsJsonDocWithSerializer()

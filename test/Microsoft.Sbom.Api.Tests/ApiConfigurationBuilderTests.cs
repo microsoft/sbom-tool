@@ -15,35 +15,36 @@ using System.Linq;
 namespace Microsoft.Sbom.Api.Tests
 {
     /// <summary>
-    /// Responsible for testing <see cref="ApiConfigurationBuilder"/>
+    /// Responsible for testing <see cref="ApiConfigurationBuilder"/>.
     /// </summary>
     [TestClass]
     public class ApiConfigurationBuilderTests
     {
-        private const string rootPath = @"D:\TMP";
+        private const string RootPath = @"D:\TMP";
         private const int MinParallelism = 2;
         private const int DefaultParallelism = 8;
         private const int MaxParallelism = 48;
-        private const string packageName = "packageName";
-        private const string packageVersion = "packageVersion";
-
-        ApiConfigurationBuilder builder = new ApiConfigurationBuilder();
-        SBOMMetadata metadata = new SBOMMetadata()
+        private const string PackageName = "packageName";
+        private const string PackageVersion = "packageVersion";
+        private readonly ApiConfigurationBuilder builder = new ApiConfigurationBuilder();
+        private readonly SBOMMetadata metadata = new SBOMMetadata()
         {
-            PackageName = packageName,
-            PackageVersion = packageVersion,
+            PackageName = PackageName,
+            PackageVersion = PackageVersion,
         };
-        RuntimeConfiguration runtime = new RuntimeConfiguration()
+
+        private readonly RuntimeConfiguration runtime = new RuntimeConfiguration()
         {
             Verbosity = EventLevel.Verbose,
             WorkflowParallelism = DefaultParallelism,
             DeleteManifestDirectoryIfPresent = true
         };
-        string manifestDirPath = "manifestDirPath";
-        List<SBOMFile> files = new List<SBOMFile>();
-        List<SBOMPackage> packages = new List<SBOMPackage>();
-        string externalDocumentRefListFile = "externalDocRef";
-        string componentPath = @"D:\COMPONENT";
+
+        private readonly string manifestDirPath = "manifestDirPath";
+        private readonly List<SBOMFile> files = new List<SBOMFile>();
+        private readonly List<SBOMPackage> packages = new List<SBOMPackage>();
+        private readonly string externalDocumentRefListFile = "externalDocRef";
+        private readonly string componentPath = @"D:\COMPONENT";
 
         [TestMethod]
         public void GetConfiguration_PopulateAll()
@@ -57,14 +58,14 @@ namespace Microsoft.Sbom.Api.Tests
                 Version = "2.2"
             };
 
-            var config = builder.GetConfiguration(rootPath, manifestDirPath, files, packages, metadata, specs, runtime, externalDocumentRefListFile, componentPath);
+            var config = builder.GetConfiguration(RootPath, manifestDirPath, files, packages, metadata, specs, runtime, externalDocumentRefListFile, componentPath);
 
-            Assert.AreEqual(rootPath, config.BuildDropPath.Value);
+            Assert.AreEqual(RootPath, config.BuildDropPath.Value);
             Assert.AreEqual(componentPath, config.BuildComponentPath.Value);
             Assert.AreEqual(manifestDirPath, config.ManifestDirPath.Value);
             Assert.AreEqual(ManifestToolActions.Generate, config.ManifestToolAction);
-            Assert.AreEqual(packageName, config.PackageName.Value);
-            Assert.AreEqual(packageVersion, config.PackageVersion.Value);
+            Assert.AreEqual(PackageName, config.PackageName.Value);
+            Assert.AreEqual(PackageVersion, config.PackageVersion.Value);
             Assert.AreEqual(DefaultParallelism, config.Parallelism.Value);
             Assert.AreEqual(LogEventLevel.Verbose, config.Verbosity.Value);
             Assert.AreEqual(0, config.PackagesList.Value.ToList().Count);
@@ -89,7 +90,7 @@ namespace Microsoft.Sbom.Api.Tests
         [TestMethod]
         public void GetConfiguration_NullProperties()
         {
-            var config = builder.GetConfiguration(rootPath, manifestDirPath, null, null, metadata, null, runtime, null, componentPath);
+            var config = builder.GetConfiguration(RootPath, manifestDirPath, null, null, metadata, null, runtime, null, componentPath);
 
             Assert.IsNull(config.PackagesList);
             Assert.IsNull(config.FilesList);
@@ -102,7 +103,7 @@ namespace Microsoft.Sbom.Api.Tests
         [DataRow(" ")]
         public void GetConfiguration_NullComponentPath(string componentPath)
         {
-            var config = builder.GetConfiguration(rootPath, manifestDirPath, null, null, metadata, null, runtime, null, componentPath);
+            var config = builder.GetConfiguration(RootPath, manifestDirPath, null, null, metadata, null, runtime, null, componentPath);
 
             Assert.IsNull(config.BuildComponentPath);
         }
@@ -123,7 +124,7 @@ namespace Microsoft.Sbom.Api.Tests
             };
 
             IConfiguration config = builder.GetConfiguration(
-                rootPath, string.Empty, null, null,
+                RootPath, string.Empty, null, null,
                 metadata, null, runtime);
 
             Assert.AreEqual(output, config.Verbosity.Value);

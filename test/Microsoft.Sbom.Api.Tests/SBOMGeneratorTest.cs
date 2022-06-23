@@ -20,7 +20,7 @@ namespace Microsoft.Sbom.Api.Tests
     [TestClass]
     public class SBOMGeneratorTest
     {
-        private Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
+        private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
         private SBOMGenerator generator;
         private StandardKernel kernel;
         private Mock<SBOMGenerationWorkflow> mockWorkflow;

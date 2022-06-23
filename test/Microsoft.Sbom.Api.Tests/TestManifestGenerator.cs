@@ -12,7 +12,7 @@ using System.Text.Json;
 
 namespace Microsoft.Sbom.Api.Tests
 {
-    class TestManifestGenerator : IManifestGenerator
+    internal class TestManifestGenerator : IManifestGenerator
     {
         public AlgorithmName[] RequiredHashAlgorithms => new[] {
             AlgorithmName.SHA256
@@ -109,7 +109,9 @@ namespace Microsoft.Sbom.Api.Tests
             };
         }
 
+#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
         public GenerationResult GenerateRootPackage(IInternalMetadataProvider _)
+#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
         {
             var jsonString = $@"
 {{

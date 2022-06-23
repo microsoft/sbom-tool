@@ -63,8 +63,9 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             mockConfiguration.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
             mockConfiguration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
 
-            hashCodeGeneratorMock.Setup(m => m.GenerateHashes(It.IsAny<string>(),
-                                                              new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+            hashCodeGeneratorMock.Setup(m => m.GenerateHashes(
+                It.IsAny<string>(),
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                                  .Returns(new Checksum[]
                                  {
                                      new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
@@ -73,13 +74,14 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
             var files = Channel.CreateUnbounded<string>();
             (ChannelReader<InternalSBOMFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
-                = new FileHasher(hashCodeGeneratorMock.Object,
-                                 manifestPathConverter.Object,
-                                 mockLogger.Object,
-                                 mockConfiguration.Object,
-                                 new Mock<ISbomConfigProvider>().Object,
-                                 new ManifestGeneratorProvider(null),
-                                 new FileTypeUtils())
+                = new FileHasher(
+                    hashCodeGeneratorMock.Object,
+                    manifestPathConverter.Object,
+                    mockLogger.Object,
+                    mockConfiguration.Object,
+                    new Mock<ISbomConfigProvider>().Object,
+                    new ManifestGeneratorProvider(null),
+                    new FileTypeUtils())
                                                   .Run(files);
             foreach (var file in fileList)
             {
@@ -110,8 +112,9 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
             var manifestPathConverter = new Mock<IManifestPathConverter>();
 
-            hashCodeGeneratorMock.Setup(m => m.GenerateHashes(It.IsAny<string>(),
-                                                              new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+            hashCodeGeneratorMock.Setup(m => m.GenerateHashes(
+                It.IsAny<string>(),
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                                  .Returns(new Checksum[]
                                  {
                                      new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
@@ -120,13 +123,14 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>())).Returns((string r) => (r, true));
             manifestPathConverter.Setup(m => m.Convert(It.Is<string>(d => d == "test2"))).Throws(new InvalidPathException());
 
-            var fileHasher = new FileHasher(hashCodeGeneratorMock.Object,
-                                 manifestPathConverter.Object,
-                                 mockLogger.Object,
-                                 mockConfiguration.Object,
-                                 new Mock<ISbomConfigProvider>().Object,
-                                 new ManifestGeneratorProvider(null),
-                                 new FileTypeUtils())
+            var fileHasher = new FileHasher(
+                hashCodeGeneratorMock.Object,
+                manifestPathConverter.Object,
+                mockLogger.Object,
+                mockConfiguration.Object,
+                new Mock<ISbomConfigProvider>().Object,
+                new ManifestGeneratorProvider(null),
+                new FileTypeUtils())
             {
                 ManifestData = ManifestDataSingleton.Instance
             };
@@ -166,7 +170,6 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             mockConfiguration.VerifyAll();
         }
 
-
         [TestMethod]
         public async Task FileHasherTest_Validate_HashError_ReturnsValidationFailureAsync()
         {
@@ -176,8 +179,9 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
             var manifestPathConverter = new Mock<IManifestPathConverter>();
 
-            hashCodeGeneratorMock.SetupSequence(m => m.GenerateHashes(It.IsAny<string>(),
-                                                              new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+            hashCodeGeneratorMock.SetupSequence(m => m.GenerateHashes(
+                It.IsAny<string>(),
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                 .Returns(new Checksum[]
                                  {
                                      new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
@@ -189,13 +193,14 @@ namespace Microsoft.Sbom.Api.Executors.Tests
                 .Throws(new UnauthorizedAccessException("Can't access file"));
             manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>())).Returns((string r) => (r, true));
 
-            var fileHasher = new FileHasher(hashCodeGeneratorMock.Object,
-                                 manifestPathConverter.Object,
-                                 mockLogger.Object,
-                                 mockConfiguration.Object,
-                                 new Mock<ISbomConfigProvider>().Object,
-                                 new ManifestGeneratorProvider(null),
-                                 new FileTypeUtils())
+            var fileHasher = new FileHasher(
+                hashCodeGeneratorMock.Object,
+                manifestPathConverter.Object,
+                mockLogger.Object,
+                mockConfiguration.Object,
+                new Mock<ISbomConfigProvider>().Object,
+                new ManifestGeneratorProvider(null),
+                new FileTypeUtils())
             {
                 ManifestData = ManifestDataSingleton.Instance
             };
@@ -242,8 +247,9 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
             mockConfiguration.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Generate);
 
-            hashCodeGeneratorMock.Setup(m => m.GenerateHashes(It.IsAny<string>(),
-                                                              new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+            hashCodeGeneratorMock.Setup(m => m.GenerateHashes(
+                It.IsAny<string>(),
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
                                  .Returns(new Checksum[]
                                  {
                                      new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
@@ -277,13 +283,14 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
             var files = Channel.CreateUnbounded<string>();
             (ChannelReader<InternalSBOMFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
-                = new FileHasher(hashCodeGeneratorMock.Object,
-                                 manifestPathConverter.Object,
-                                 mockLogger.Object,
-                                 mockConfiguration.Object,
-                                 sbomConfigs.Object,
-                                 manifestGenProvider,
-                                 new FileTypeUtils())
+                = new FileHasher(
+                    hashCodeGeneratorMock.Object,
+                    manifestPathConverter.Object,
+                    mockLogger.Object,
+                    mockConfiguration.Object,
+                    sbomConfigs.Object,
+                    manifestGenProvider,
+                    new FileTypeUtils())
                                                   .Run(files);
             foreach (var file in fileList)
             {
@@ -307,7 +314,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
         private sealed class ManifestDataSingleton
         {
-            static readonly IDictionary<string, Checksum[]> hashDictionary = new Dictionary<string, Checksum[]>
+            private static readonly IDictionary<string, Checksum[]> hashDictionary = new Dictionary<string, Checksum[]>
             {
                 ["test1"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "test1_hash" } },
                 ["test2"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "test2_hash" } },

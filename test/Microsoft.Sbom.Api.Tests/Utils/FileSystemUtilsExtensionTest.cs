@@ -15,7 +15,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         private readonly Mock<IOSUtils> osUtilMock = new Mock<IOSUtils>();
         private FileSystemUtilsExtension fileSystemUtilsExtension;
 
-        private const string sourcePath = "/source/path";
+        private const string SourcePath = "/source/path";
 
         [TestInitialize]
         public void Setup()
@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
                 OsUtils = osUtilMock.Object,
             };
             osUtilMock.Setup(o => o.GetFileSystemStringComparisonType()).Returns(System.StringComparison.InvariantCultureIgnoreCase);
-            fileSystemUtilMock.Setup(f => f.AbsolutePath(sourcePath)).Returns($"C:{sourcePath}");
+            fileSystemUtilMock.Setup(f => f.AbsolutePath(SourcePath)).Returns($"C:{SourcePath}");
         }
 
         [TestMethod]
@@ -35,7 +35,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
             var targetPath = "/source/outsidePath";
             fileSystemUtilMock.Setup(f => f.AbsolutePath(targetPath)).Returns($"C:{targetPath}");
 
-            Assert.IsFalse(fileSystemUtilsExtension.IsTargetPathInSource(targetPath, sourcePath));
+            Assert.IsFalse(fileSystemUtilsExtension.IsTargetPathInSource(targetPath, SourcePath));
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
             var targetPath = "/source/path/insidePath";
             fileSystemUtilMock.Setup(f => f.AbsolutePath(targetPath)).Returns($"C:{targetPath}");
 
-            Assert.IsTrue(fileSystemUtilsExtension.IsTargetPathInSource(targetPath, sourcePath));
+            Assert.IsTrue(fileSystemUtilsExtension.IsTargetPathInSource(targetPath, SourcePath));
         }
     }
 }

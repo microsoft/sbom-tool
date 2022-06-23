@@ -130,7 +130,6 @@ namespace Microsoft.Sbom.Api.Config.Tests
             var configuration = await cb.GetConfiguration(args);
         }
 
-
         [TestMethod]
         public async Task ConfigurationBuilderTest_Validation_DefaultManifestDirPath_AddsManifestDir()
         {

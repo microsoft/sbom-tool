@@ -114,7 +114,6 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
             scannedComponents.Add(scannedComponentOther);
 
-
             var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
 
             var scanResult = new ScanResult
@@ -152,7 +151,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
             var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object);
             walker.GetComponents(null);
-            walker.GetComponents("");
+            walker.GetComponents(string.Empty);
 
             mockDetector.Verify(mock => mock.Scan(It.IsAny<string[]>()), Times.Never());
         }
