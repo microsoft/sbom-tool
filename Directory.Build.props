@@ -3,7 +3,6 @@
     <PropertyGroup Label="Build">
         <LangVersion>latest</LangVersion>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-        <TreatWarningsAsErrors Condition="'$(OFFICIAL_BUILD)' == 'True'">false</TreatWarningsAsErrors>
         <RootNamespace>Microsoft.Sbom</RootNamespace>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     </PropertyGroup>
@@ -33,5 +32,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(OFFICIAL_BUILD)'=='True'">
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(CODEQL_BUILD)'=='True'">
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 </Project>
