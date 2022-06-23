@@ -33,6 +33,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore 
       
+    - name: Build
+      run: dotnet build --no-restore --configuration Release           
+      
     - name: Build NuGet packages
       run: dotnet pack --no-restore --output ./out
 
