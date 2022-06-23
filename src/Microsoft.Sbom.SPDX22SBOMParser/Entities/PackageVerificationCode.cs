@@ -13,13 +13,13 @@ namespace Microsoft.SPDX22SBOMParser.Entities
     public class PackageVerificationCode
     {
         /// <summary>
-        /// The actual package verification code as a hex encoded value.
+        /// Gets or sets the actual package verification code as a hex encoded value.
         /// </summary>
         [JsonPropertyName("packageVerificationCodeValue")]
         public string PackageVerificationCodeValue { get; set; }
 
         /// <summary>
-        /// Files that were excluded when calculating the package verification code.
+        /// Gets or sets files that were excluded when calculating the package verification code.
         /// </summary>
         [JsonPropertyName("packageVerificationCodeExcludedFiles")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

@@ -1,3 +1,6 @@
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.SPDX22SBOMParser.Entities;
@@ -41,7 +44,7 @@ namespace SPDX22SBOMParserTest
             spdxPackage.AddPackageUrls(packageInfo);
             var externalRef = spdxPackage.ExternalReferences.First();
             Assert.AreEqual(ReferenceCategory.PACKAGE_MANAGER, externalRef.ReferenceCategory);
-            Assert.AreEqual(ExternalRepositoryType.purl, externalRef.Type);
+            Assert.AreEqual(ExternalRepositoryType.Purl, externalRef.Type);
             Assert.AreEqual(PackageUrl, externalRef.Locator);
         }
 
@@ -81,7 +84,7 @@ namespace SPDX22SBOMParserTest
             var externalRef = spdxPackage.ExternalReferences.First();
 
             Assert.AreEqual(ReferenceCategory.PACKAGE_MANAGER, externalRef.ReferenceCategory);
-            Assert.AreEqual(ExternalRepositoryType.purl, externalRef.Type);
+            Assert.AreEqual(ExternalRepositoryType.Purl, externalRef.Type);
             Assert.AreEqual(expectedUrl, externalRef.Locator);
         }
 

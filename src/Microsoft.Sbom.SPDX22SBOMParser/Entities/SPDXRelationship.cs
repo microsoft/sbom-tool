@@ -12,19 +12,19 @@ namespace Microsoft.SPDX22SBOMParser.Entities
     public class SPDXRelationship
     {
         /// <summary>
-        /// Defines the type of the relationship between the source and the target element.
+        /// Gets or sets defines the type of the relationship between the source and the target element.
         /// </summary>
         [JsonPropertyName("relationshipType")]
         public SPDXRelationshipType RelationshipType { get; set; }
 
         /// <summary>
-        /// The id of the target element with whom the source element has a relationship.
+        /// Gets or sets the id of the target element with whom the source element has a relationship.
         /// </summary>
         [JsonPropertyName("relatedSpdxElement")]
         public string TargetElementId { get; set; }
 
         /// <summary>
-        /// The id of the target element with whom the source element has a relationship.
+        /// Gets or sets the id of the target element with whom the source element has a relationship.
         /// </summary>
         [JsonPropertyName("spdxElementId")]
         public string SourceElementId { get; set; }

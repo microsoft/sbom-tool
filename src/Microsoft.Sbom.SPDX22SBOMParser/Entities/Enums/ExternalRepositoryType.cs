@@ -5,7 +5,6 @@ using System.Text.Json.Serialization;
 
 namespace Microsoft.SPDX22SBOMParser.Entities.Enums
 {
-
 #pragma warning disable SA1629 // Documentation text should end with a period
     /// <summary>
     /// Type of the external reference. These are definined in an appendix in the SPDX specification.
@@ -23,23 +22,23 @@ namespace Microsoft.SPDX22SBOMParser.Entities.Enums
 
         #region Persistent-Id
         
-        swh,
+        Swh,
 
         #endregion
 
         #region Package-Manager
 
-        maven_central,
-        npm,
-        nuget,
-        bower,
-        purl,
+        Maven_central,
+        Npm,
+        Nuget,
+        Bower,
+        Purl,
 
         #endregion
 
         #region Other
 
-        idstring
+        Idstring
 
         #endregion
     }
