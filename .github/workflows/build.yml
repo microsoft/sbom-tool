@@ -34,7 +34,7 @@ jobs:
       run: dotnet restore 
       
     - name: Build
-      run: dotnet build --no-restore --configuration Release           
+      run: dotnet build --no-restore          
       
     - name: Build NuGet packages
       run: dotnet pack --no-restore --output ./out
