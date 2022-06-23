@@ -12,12 +12,12 @@ namespace Microsoft.Sbom.Common.Config.Attributes
     public sealed class ValidUriAttribute : Attribute
     {
         /// <summary>
-        /// Execute this validation only for the given action. Default is all.
+        /// Gets or sets execute this validation only for the given action. Default is all.
         /// </summary>
         public ManifestToolActions ForAction { get; set; }
 
         /// <summary>
-        /// The type of URI the value should be.
+        /// Gets or sets the type of URI the value should be.
         /// </summary>
         public UriKind UriKind { get; set; }
 

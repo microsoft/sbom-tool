@@ -12,7 +12,7 @@ namespace Microsoft.Sbom.Common.Config.Attributes
     public sealed class DirectoryPathIsWritableAttribute : Attribute
     {
         /// <summary>
-        /// Execute this validation only for the given action. Default is all.
+        /// Gets or sets the action for which this validation should run. Default is all.
         /// </summary>
         public ManifestToolActions ForAction { get; set; }
 

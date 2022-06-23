@@ -10,7 +10,7 @@ namespace Microsoft.Sbom.Common.Config.Attributes
     public class DefaultManifestInfoArgForValidationAttribute : Attribute
     {
         /// <summary>
-        /// The default value of the ManifestInfo to use in case of validation action
+        /// Gets or sets the default value of the ManifestInfo to use in case of validation action
         /// where the user hasn't provided any parameter value.
         /// </summary>
         public ManifestInfo ManifestInfo { get; set; }

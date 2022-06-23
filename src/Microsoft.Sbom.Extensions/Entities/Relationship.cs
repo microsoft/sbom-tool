@@ -9,22 +9,22 @@ namespace Microsoft.Sbom.Extensions.Entities
     public class Relationship
     {
         /// <summary>
-        /// Defines the type of the relationship between the source and the target element.
+        /// Gets or sets defines the type of the relationship between the source and the target element.
         /// </summary>
         public RelationshipType RelationshipType { get; set; }
 
         /// <summary>
-        /// The id of the target element with whom the source element has a relationship.
+        /// Gets or sets the id of the target element with whom the source element has a relationship.
         /// </summary>
         public string TargetElementId { get; set; }
 
         /// <summary>
-        /// ID of the reference for the target element, if the element is referenced from external document.
+        /// Gets or sets iD of the reference for the target element, if the element is referenced from external document.
         /// </summary>
         public string TargetElementExternalReferenceId { get; set; }
 
         /// <summary>
-        /// The id of the target element with whom the source element has a relationship.
+        /// Gets or sets the id of the target element with whom the source element has a relationship.
         /// </summary>
         public string SourceElementId { get; set; }
     }

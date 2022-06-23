@@ -30,7 +30,7 @@ namespace Microsoft.Sbom.Extensions
         ManifestData ParseManifest(string manifest);
 
         /// <summary>
-        /// The version of this <see cref="IManifestInterface"/>.
+        /// Gets or sets the version of this <see cref="IManifestInterface"/>.
         /// </summary>
         string Version { get; set; }
     }
