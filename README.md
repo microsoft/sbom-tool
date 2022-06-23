@@ -1,6 +1,15 @@
-# SBOM Tool
+# Salus - SBOM Tool
+
+## Introduction
 
 The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 compatible SBOMs for any variety of artifacts.
+
+## Table of Contents
+
+* [Telemetry](#Telemetry)
+* [Contriubting](#Contributing)
+* [Security](#Security)
+* [Trademarks](#Trademarks)
 
 ## Telemetry
 
