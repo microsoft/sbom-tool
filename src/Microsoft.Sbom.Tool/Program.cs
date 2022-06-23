@@ -19,7 +19,7 @@ namespace Microsoft.Sbom.Tool
 
         private static readonly Lazy<string> NameValue = new Lazy<string>(() =>
         {
-            return typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product ?? "DropValidator";
+            return typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product ?? "sbomtool";
         });
 
         private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
