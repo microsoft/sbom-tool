@@ -24,7 +24,7 @@ namespace Microsoft.Sbom.Extensions.Entities
         }
 
         /// <summary>
-        /// Any additional metadata that needs to be returned about the current
+        /// Gets or sets any additional metadata that needs to be returned about the current
         /// entity or SBOM.
         /// </summary>
         public ResultMetadata ResultMetadata { get; set; }

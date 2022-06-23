@@ -12,7 +12,7 @@ namespace Microsoft.Sbom.Contracts
     public class EntityError
     {
         /// <summary>
-        /// Gets or sets the type of error
+        /// Gets or sets the type of error.
         /// </summary>
         public ErrorType ErrorType { get; set; }
 

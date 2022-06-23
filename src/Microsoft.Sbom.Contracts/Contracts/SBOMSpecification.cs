@@ -39,15 +39,13 @@ namespace Microsoft.Sbom.Contracts
             Version = version;
         }
 
-#pragma warning disable SA1629 // Documentation text should end with a period
         /// <summary>
         /// Parse the given string into a <see cref="SBOMSpecification"/> object.
         /// </summary>
         /// <param name="value">The string representation of the SBOM.</param>
         /// <returns>A SBOMSpecification object.</returns>
-        /// <example>spdx:2.2</example>
+        /// <example>spdx:2.2.</example>
         public static SBOMSpecification Parse(string value)
-#pragma warning restore SA1629 // Documentation text should end with a period
         {
             if (string.IsNullOrEmpty(value))
             {

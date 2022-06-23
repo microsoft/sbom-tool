@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Contracts
     {
         /// <summary>
         /// Gets or sets the name of the hashing algorithm used to generate this hash.
-        /// ex. <see cref="AlgorithmName.SHA256"/>
+        /// ex. <see cref="AlgorithmName.SHA256"/>.
         /// </summary>
         public AlgorithmName Algorithm { get; set; }
 

@@ -2,13 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Sbom.Api.Filters;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Moq;
 using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Api.Utils;
 using Serilog;
 using Microsoft.Sbom.Common;
 

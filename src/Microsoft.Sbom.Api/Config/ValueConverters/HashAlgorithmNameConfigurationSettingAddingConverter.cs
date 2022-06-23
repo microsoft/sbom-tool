@@ -9,7 +9,7 @@ using Microsoft.Sbom.Contracts.Enums;
 namespace Microsoft.Sbom.Api.Config.ValueConverters
 {
     /// <summary>
-    /// Converts an LogEventLevel member to a ConfigurationSetting decorated string member
+    /// Converts an LogEventLevel member to a ConfigurationSetting decorated string member.
     /// </summary>
     internal class HashAlgorithmNameConfigurationSettingAddingConverter : IValueConverter<AlgorithmName, ConfigurationSetting<AlgorithmName>>
     {

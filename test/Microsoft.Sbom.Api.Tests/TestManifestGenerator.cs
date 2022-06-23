@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Sbom.Api.Tests
 {
@@ -109,9 +110,8 @@ namespace Microsoft.Sbom.Api.Tests
             };
         }
 
-#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "Discard variable has a _ name")]
         public GenerationResult GenerateRootPackage(IInternalMetadataProvider _)
-#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
         {
             var jsonString = $@"
 {{

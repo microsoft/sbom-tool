@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Sbom.Extensions.Entities
 {
@@ -21,15 +22,15 @@ namespace Microsoft.Sbom.Extensions.Entities
         /// </summary>
         public string Version { get; set; }
 
-#pragma warning disable SA1629 // Documentation text should end with a period
         /// <summary>
         /// Parses the manifest info from a string
         /// The format is <name>:<version>
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1629:Documentation text should end with a period", 
+            Justification = "Code element in comment.")]
         public static ManifestInfo Parse(string value)
-#pragma warning restore SA1629 // Documentation text should end with a period
         {
             if (string.IsNullOrEmpty(value))
             {

@@ -8,7 +8,7 @@ using System;
 namespace Microsoft.SPDX22SBOMParser
 {
     /// <summary>
-    /// Validates files in a folder against their checksums stored in an SPDX 2.2 SBOM 
+    /// Validates files in a folder against their checksums stored in an SPDX 2.2 SBOM. 
     /// </summary>
     public class Validator : IManifestInterface
     {

@@ -32,7 +32,7 @@ namespace Microsoft.Sbom.Api.Entities.Output
         /// Retuns the <see cref="ValidationResultGenerator"/> for chaining.
         /// </summary>
         /// <param name="successCount"></param>
-        /// <returns><see cref="ValidationResultGenerator"/></returns>
+        /// <returns><see cref="ValidationResultGenerator"/>.</returns>
         public ValidationResultGenerator WithSuccessCount(int successCount)
         {
             this.successCount = successCount;
@@ -44,7 +44,7 @@ namespace Microsoft.Sbom.Api.Entities.Output
         /// Retuns the <see cref="ValidationResultGenerator"/> for chaining.
         /// </summary>
         /// <param name="duration"></param>
-        /// <returns><see cref="ValidationResultGenerator"/></returns>
+        /// <returns><see cref="ValidationResultGenerator"/>.</returns>
         public ValidationResultGenerator WithTotalDuration(TimeSpan duration)
         {
             this.duration = duration;
@@ -56,7 +56,7 @@ namespace Microsoft.Sbom.Api.Entities.Output
         /// Retuns the <see cref="ValidationResultGenerator"/> for chaining.
         /// </summary>
         /// <param name="nodeValidationResults"></param>
-        /// <returns><see cref="ValidationResultGenerator"/></returns>       
+        /// <returns><see cref="ValidationResultGenerator"/>.</returns>       
         public ValidationResultGenerator WithValidationResults(IList<FileValidationResult> nodeValidationResults)
         {
             NodeValidationResults = nodeValidationResults ?? new List<FileValidationResult>();

@@ -6,14 +6,13 @@ using System.Collections.Generic;
 using System.Threading.Channels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
-using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders
 {
     /// <summary>
     /// Provider for external document reference file supported only when 
-    /// ExternalDocumentReferenceListFile is provided in the generation arguments
+    /// ExternalDocumentReferenceListFile is provided in the generation arguments.
     /// </summary>
     public class ExternalDocumentReferenceFileProvider : PathBasedFileToJsonProviderBase
     {

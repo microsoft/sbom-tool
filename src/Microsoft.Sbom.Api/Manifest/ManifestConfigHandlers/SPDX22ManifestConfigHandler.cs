@@ -5,7 +5,6 @@ using Microsoft.Sbom.Extensions;
 using System;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Manifest.Configuration;
-using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Recorder;
 using Microsoft.Sbom.Common;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;

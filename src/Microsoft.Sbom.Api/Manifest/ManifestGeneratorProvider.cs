@@ -5,7 +5,6 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Sbom.Api.Exceptions;
 
 namespace Microsoft.Sbom.Api.Manifest

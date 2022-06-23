@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using AutoMapper;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Serilog.Events;
 using Constants = Microsoft.Sbom.Common.Constants;
@@ -10,7 +9,7 @@ using Constants = Microsoft.Sbom.Common.Constants;
 namespace Microsoft.Sbom.Api.Config.ValueConverters
 {
     /// <summary>
-    /// Converts an LogEventLevel member to a ConfigurationSetting decorated string member
+    /// Converts an LogEventLevel member to a ConfigurationSetting decorated string member.
     /// </summary>
     internal class LogEventLevelConfigurationSettingAddingConverter : IValueConverter<LogEventLevel?, ConfigurationSetting<LogEventLevel>>
     {

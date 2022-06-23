@@ -10,7 +10,7 @@ using Microsoft.Sbom.Api.Utils;
 namespace Microsoft.Sbom.Api.Config.Validators
 {
     /// <summary>
-    /// Verifies that the value is not null
+    /// Verifies that the value is not null.
     /// </summary>
     public class ValueRequiredValidator : ConfigValidator
     {

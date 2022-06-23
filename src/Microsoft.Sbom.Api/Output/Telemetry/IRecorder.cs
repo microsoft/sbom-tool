@@ -17,7 +17,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
         /// <summary>
         /// Start recording the duration of exeuction of the given event.
         /// </summary>
-        /// <param name="eventName">The event name</param>
+        /// <param name="eventName">The event name.</param>
         /// <returns>A disposable <see cref="TimingRecorder"/> object.</returns>
         public TimingRecorder TraceEvent(string eventName);
 
@@ -31,7 +31,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
         /// <summary>
         /// Records a SBOM format that we used during the execution of the SBOM tool.
         /// </summary>
-        /// <param name="manifestInfo">The SBOM format as a <see cref="ManifestInfo"/> object</param>
+        /// <param name="manifestInfo">The SBOM format as a <see cref="ManifestInfo"/> object.</param>
         /// <param name="sbomFilePath">The path where the generated SBOM is stored.</param>
         /// <exception cref="ArgumentNullException">If the manifestInfo object is null.</exception>
         public void RecordSBOMFormat(ManifestInfo manifestInfo, string sbomFilePath);
@@ -49,7 +49,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
         /// Record any exception that was encountered during the exection of the tool.
         /// </summary>
         /// <param name="exception">The exception that was encountered.</param>
-        /// <exception cref="ArgumentNullException">If the exception is null</exception>
+        /// <exception cref="ArgumentNullException">If the exception is null.</exception>
         public void RecordException(Exception exception);
 
         /// <summary>

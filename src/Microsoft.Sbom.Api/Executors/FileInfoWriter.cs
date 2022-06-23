@@ -5,7 +5,6 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest;
-using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Serilog;

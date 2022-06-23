@@ -4,7 +4,7 @@
 namespace Microsoft.Sbom.Extensions.Entities
 {
     /// <summary>
-    /// A list of keys that are available as metadata in the internal metadata provider
+    /// A list of keys that are available as metadata in the internal metadata provider.
     /// </summary>
     public enum MetadataKey
     {

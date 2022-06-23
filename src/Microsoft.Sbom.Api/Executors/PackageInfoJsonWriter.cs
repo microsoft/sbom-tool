@@ -9,7 +9,6 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest;
-using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Contracts;
 
 namespace Microsoft.Sbom.Api.Executors

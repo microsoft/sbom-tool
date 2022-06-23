@@ -2,10 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
-using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Utils;
 using Ninject;
 using System.Collections.Generic;
@@ -16,7 +14,7 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
 {
     /// <summary>
     /// Provider for external document reference. supported only when 
-    /// ExternalDocumentReferenceListFile is provided in the generation arguments
+    /// ExternalDocumentReferenceListFile is provided in the generation arguments.
     /// </summary>
     public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string>
     {

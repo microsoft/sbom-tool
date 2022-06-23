@@ -217,29 +217,29 @@ namespace Microsoft.Sbom.Api.Workflows
                 return;
             }
 
-            log.Verbose("");
+            log.Verbose(string.Empty);
             log.Verbose("------------------------------------------------------------");
             log.Verbose("Individual file validation results");
             log.Verbose("------------------------------------------------------------");
-            log.Verbose("");
+            log.Verbose(string.Empty);
 
             log.Verbose("Additional files not in the manifest: ");
-            log.Verbose("");
+            log.Verbose(string.Empty);
             validFailures.Where(vf => vf.ErrorType == ErrorType.AdditionalFile).ForEach(f => log.Verbose(f.Path));
             log.Verbose("------------------------------------------------------------");
 
             log.Verbose("Files with invalid hashes:");
-            log.Verbose("");
+            log.Verbose(string.Empty);
             validFailures.Where(vf => vf.ErrorType == ErrorType.InvalidHash).ForEach(f => log.Verbose(f.Path));
             log.Verbose("------------------------------------------------------------");
 
             log.Verbose("Files in the manifest missing from the disk:");
-            log.Verbose("");
+            log.Verbose(string.Empty);
             validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => log.Verbose(f.Path));
             log.Verbose("------------------------------------------------------------");
 
             log.Verbose("Unknown file failures:");
-            log.Verbose("");
+            log.Verbose(string.Empty);
             validFailures.Where(vf => vf.ErrorType == ErrorType.Other).ForEach(f => log.Verbose(f.Path));
             log.Verbose("------------------------------------------------------------");
         }
@@ -252,11 +252,11 @@ namespace Microsoft.Sbom.Api.Workflows
                 return;
             }
 
-            log.Debug("");
+            log.Debug(string.Empty);
             log.Debug("------------------------------------------------------------");
             log.Debug("Validation Summary");
             log.Debug("------------------------------------------------------------");
-            log.Debug("");
+            log.Debug(string.Empty);
 
             log.Debug($"Validation Result . . . . . . . . . . . . . . . .{validationResultOutput.Result}");
             log.Debug($"Total execution time (sec) . . . . . . . . . . . {validationResultOutput.Summary.TotalExecutionTimeInSeconds}");

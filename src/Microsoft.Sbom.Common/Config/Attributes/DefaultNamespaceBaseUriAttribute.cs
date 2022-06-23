@@ -9,12 +9,12 @@ namespace Microsoft.Sbom.Common.Config.Attributes
     public class DefaultNamespaceBaseUriAttribute : Attribute
     {
         /// <summary>
-        /// The default value for the namespace base URI.
+        /// Gets or sets the default value for the namespace base URI.
         /// </summary>
         public string DefaultBaseNamespaceUri { get; set; }
 
         /// <summary>
-        /// The warning to display to the user if they provide a value in the 
+        /// Gets or sets the warning to display to the user if they provide a value in the 
         /// NamespaceUriBase parameter in IConfiguration, since we will be overriding
         /// this value.
         /// </summary>

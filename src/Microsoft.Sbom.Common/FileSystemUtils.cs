@@ -53,12 +53,12 @@ namespace Microsoft.Sbom.Common
         public bool FileExists(string path) => File.Exists(path);
 
         public Stream OpenWrite(string filePath) => new FileStream(
-                                filePath,
-                                FileMode.Create,
-                                FileAccess.Write,
-                                FileShare.Delete,
-                                Constants.DefaultStreamBufferSize,
-                                FileOptions.Asynchronous);
+            filePath,
+            FileMode.Create,
+            FileAccess.Write,
+            FileShare.Delete,
+            Constants.DefaultStreamBufferSize,
+            FileOptions.Asynchronous);
 
         virtual public bool DirectoryHasReadPermissions(string directoryPath)
         {

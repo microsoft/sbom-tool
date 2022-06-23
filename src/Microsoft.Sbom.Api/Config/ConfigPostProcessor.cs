@@ -2,17 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using AutoMapper;
-using DropValidator.Api.Config;
-using Microsoft.Sbom.Api.Config.Validators;
-using Microsoft.Sbom.Api.Hashing;
-using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Validators;
-using Microsoft.Sbom.Contracts.Enums;
 using PowerArgs;
 using System;
 using System.ComponentModel;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Config
 {

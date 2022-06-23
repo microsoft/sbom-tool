@@ -1,15 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.Internal;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -17,8 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using ILogger = Serilog.ILogger;
 using HashAlgorithmName = Microsoft.Sbom.Contracts.Enums.AlgorithmName;
+using ILogger = Serilog.ILogger;
 using PackageInfo = Microsoft.Sbom.Contracts.SBOMPackage;
 
 namespace Microsoft.Sbom.Api.Executors.Tests
@@ -60,12 +60,12 @@ namespace Microsoft.Sbom.Api.Executors.Tests
                      LocationsFoundAt = "test".Split(),
                      Component = new NuGetComponent("nugetpackage2", "1.0.0")
                 },
-                new ScannedComponent
+                 new ScannedComponent
                 {
                     LocationsFoundAt = "test".Split(),
                     Component = new GitComponent(new Uri("http://test.uri"), "hash")
                 },
-                new ScannedComponent
+                 new ScannedComponent
                 {
                     LocationsFoundAt = "test".Split(),
                     Component = new MavenComponent("groupId", "artifactId", "1.0.0")

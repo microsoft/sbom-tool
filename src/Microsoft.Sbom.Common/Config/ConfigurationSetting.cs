@@ -24,12 +24,12 @@ namespace Microsoft.Sbom.Common.Config
         }
 
         /// <summary>
-        /// The actual value of the setting.
+        /// Gets or sets the actual value of the setting.
         /// </summary>
         public T Value { get; set; }
 
         /// <summary>
-        /// The <see cref="SettingSource">source</see> where this setting came from.
+        /// Gets or sets the <see cref="SettingSource">source</see> where this setting came from.
         /// </summary>
         public SettingSource Source { get; set; }
 
@@ -40,7 +40,7 @@ namespace Microsoft.Sbom.Common.Config
         public override string ToString() => Value?.ToString() ?? base.ToString();
 
         /// <summary>
-        /// Returns whether the <see cref="SettingSource"/> for the this ConfigurationSetting is the default source (i.e. not user-supplied).
+        /// Gets a value indicating whether returns whether the <see cref="SettingSource"/> for the this ConfigurationSetting is the default source (i.e. not user-supplied).
         /// </summary>
         public bool IsDefaultSource => Source == SettingSource.Default;
     }

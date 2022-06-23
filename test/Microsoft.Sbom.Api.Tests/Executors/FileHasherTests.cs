@@ -188,7 +188,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
                                  })
                 .Returns(new Checksum[]
                                  {
-                                     new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "" }
+                                     new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = string.Empty }
                                  })
                 .Throws(new UnauthorizedAccessException("Can't access file"));
             manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>())).Returns((string r) => (r, true));
@@ -314,24 +314,25 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
         private sealed class ManifestDataSingleton
         {
-            private static readonly IDictionary<string, Checksum[]> hashDictionary = new Dictionary<string, Checksum[]>
+            private static readonly IDictionary<string, Checksum[]> HashDictionary = new Dictionary<string, Checksum[]>
             {
                 ["test1"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "test1_hash" } },
                 ["test2"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "test2_hash" } },
                 ["test3"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "test3_hash" } },
             };
-            private static readonly Lazy<ManifestData>
-                lazy =
-                new Lazy<ManifestData>
-                    (() => new ManifestData { HashesMap = new ConcurrentDictionary<string, Checksum[]>(hashDictionary, StringComparer.InvariantCultureIgnoreCase) });
 
-            public static ManifestData Instance { get { return lazy.Value; } }
+            private static readonly Lazy<ManifestData>
+                Lazy =
+                new Lazy<ManifestData>(
+                    () => new ManifestData { HashesMap = new ConcurrentDictionary<string, Checksum[]>(HashDictionary, StringComparer.InvariantCultureIgnoreCase) });
+
+            public static ManifestData Instance { get { return Lazy.Value; } }
 
             private ManifestDataSingleton() { }
 
             public static void ResetDictionary()
             {
-                lazy.Value.HashesMap = new ConcurrentDictionary<string, Checksum[]>(hashDictionary, StringComparer.InvariantCultureIgnoreCase);
+                Lazy.Value.HashesMap = new ConcurrentDictionary<string, Checksum[]>(HashDictionary, StringComparer.InvariantCultureIgnoreCase);
             }
         }
     }

@@ -9,7 +9,7 @@ using Microsoft.Sbom.Common.Config;
 namespace Microsoft.Sbom.Api.Config.ValueConverters
 {
     /// <summary>
-    /// Converts an ManifestInfo member to a ConfigurationSetting decorated string member
+    /// Converts an ManifestInfo member to a ConfigurationSetting decorated string member.
     /// </summary>
     internal class ManifestInfoConfigurationSettingAddingConverter : IValueConverter<IList<ManifestInfo>, ConfigurationSetting<IList<ManifestInfo>>>
     {

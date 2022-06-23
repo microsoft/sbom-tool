@@ -44,7 +44,6 @@ namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers
         private const string RootPackageId = "rootPackageId";
         private const string FileId1 = "fileId1";
         private const string FileId2 = "fileId2";
-        private readonly InternalSBOMFileInfo file1 = new InternalSBOMFileInfo() { Path = FileId1 };
         private const string PackageId1 = "packageId1";
         private const string ExternalDocRefId1 = "externalDocRefId1";
         private const string ManifestJsonDirPath = "/root/_manifest";

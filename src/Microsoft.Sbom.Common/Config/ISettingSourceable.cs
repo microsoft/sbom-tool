@@ -9,7 +9,7 @@ namespace Microsoft.Sbom.Common.Config
     public interface ISettingSourceable
     {
         /// <summary>
-        /// The <see cref="SettingSource">source</see> where this setting came from.
+        /// Gets or sets the <see cref="SettingSource">source</see> where this setting came from.
         /// </summary>
         SettingSource Source { get; set; }
     }

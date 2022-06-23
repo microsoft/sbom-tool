@@ -206,7 +206,7 @@ namespace Microsoft.Sbom.Api.Tests.Config
         [TestMethod]
         public void NullDefaultNamespaceUriBaseShouldReturnExistingValue_Succeeds()
         {
-            mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns("");
+            mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns(string.Empty);
             var config = GetConfigurationBaseObject();
             config.NamespaceUriBase = new ConfigurationSetting<string>
             {

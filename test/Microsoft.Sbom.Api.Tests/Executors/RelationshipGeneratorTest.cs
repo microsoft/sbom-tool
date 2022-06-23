@@ -3,7 +3,6 @@
 
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -20,7 +19,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
     public class RelationshipGeneratorTest
     {
         /// <summary>
-        /// This repros a channel being orhpaned by not closing it in the face of exceptions
+        /// This repros a channel being orhpaned by not closing it in the face of exceptions.
         /// </summary>
         [TestMethod]
         public async Task RunShouldHandleExceptionWithoutOrphaningChannel()
