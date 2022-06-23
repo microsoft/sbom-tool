@@ -26,7 +26,6 @@ namespace Microsoft.Sbom.Api.Tests
         private const int MaxParallelism = 48;
         private const string PackageName = "packageName";
         private const string PackageVersion = "packageVersion";
-
         private readonly ApiConfigurationBuilder builder = new ApiConfigurationBuilder();
         private readonly SBOMMetadata metadata = new SBOMMetadata()
         {

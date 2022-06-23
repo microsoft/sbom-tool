@@ -15,7 +15,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
     [TestClass]
     public class SBOMFileDedeplicatorTests
     {
-        private ChannelUtils channelUtils = new ChannelUtils();
+        private readonly ChannelUtils channelUtils = new ChannelUtils();
 
         [TestMethod]
         public async Task When_DeduplicatingSBOMFile_WithSingleChannel_ThenTestPass()

@@ -50,12 +50,12 @@ namespace Microsoft.Sbom.Api.Executors.Tests
         {
             var scannedComponents = new List<ScannedComponent>()
             {
-                 new ScannedComponent
+                new ScannedComponent
                 {
                      LocationsFoundAt = "test".Split(),
                      Component = new NuGetComponent("nugetpackage", "1.0.0")
                 },
-                 new ScannedComponent
+                new ScannedComponent
                 {
                      LocationsFoundAt = "test".Split(),
                      Component = new NuGetComponent("nugetpackage2", "1.0.0")
