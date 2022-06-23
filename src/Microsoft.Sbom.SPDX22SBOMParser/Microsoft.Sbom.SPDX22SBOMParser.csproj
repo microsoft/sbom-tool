@@ -1,13 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>Microsoft.Parsers.SPDX22SBOMParser</AssemblyName>
-    <RootNamespace>Microsoft.SPDX22SBOMParser</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>Microsoft.SPDX22SBOMParser.snk</AssemblyOriginatorKeyFile>
-    <PackageVersion>$(SBOMPackageVersion)</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
