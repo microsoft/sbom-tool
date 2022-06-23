@@ -82,7 +82,7 @@ namespace Microsoft.SPDX22SBOMParser.Utils
                 var extRef = new ExternalReference
                 {
                     ReferenceCategory = ReferenceCategory.PACKAGE_MANAGER,
-                    Type = ExternalRepositoryType.Purl,
+                    Type = ExternalRepositoryType.purl,
                     Locator = FormatPackageUrl(packageInfo.PackageUrl)
                 };
 

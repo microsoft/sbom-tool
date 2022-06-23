@@ -16,30 +16,30 @@ namespace Microsoft.SPDX22SBOMParser.Entities.Enums
     public enum ExternalRepositoryType
     {
         #region Security
-        Cpe22,
-        Cpe23,
+        cpe22,
+        cpe23,
 
         #endregion
 
         #region Persistent-Id
         
-        Swh,
+        swh,
 
         #endregion
 
         #region Package-Manager
 
-        Maven_central,
-        Npm,
-        Nuget,
-        Bower,
-        Purl,
+        maven_central,
+        npm,
+        nuget,
+        bower,
+        purl,
 
         #endregion
 
         #region Other
 
-        Idstring
+        idstring
 
         #endregion
     }

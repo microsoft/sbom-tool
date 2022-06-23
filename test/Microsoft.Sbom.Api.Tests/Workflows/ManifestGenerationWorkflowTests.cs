@@ -432,6 +432,5 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Never);
             Assert.IsFalse(result);
         }
-
     }
 }
