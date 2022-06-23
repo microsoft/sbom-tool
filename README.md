@@ -7,7 +7,7 @@ The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 
 ## Table of Contents
 
 * [Telemetry](#Telemetry)
-* [Contriubting](#Contributing)
+* [Contributing](#Contributing)
 * [Security](#Security)
 * [Trademarks](#Trademarks)
 
