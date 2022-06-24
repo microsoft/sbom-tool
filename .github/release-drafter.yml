@@ -1,0 +1,39 @@
+# release-drafter automatically creates a draft release for you each time you complete a PR in the main branch.
+# It uses GitHub labels to categorize changes (See categories) and draft the release.
+# release-drafter also generates a version for your release based on GitHub labels. You can add a label of 'major',
+# 'minor' or 'patch' to determine which number in the version to increment.
+# You may need to add these labels yourself.
+# See https://github.com/release-drafter/release-drafter
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+change-template: '- $TITLE by @$AUTHOR (#$NUMBER)'
+change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
+no-changes-template: '- No changes'
+categories:
+  - title: '📝 Documentation'
+    labels:
+      - 'type:docs'
+  - title: '🚀 New Features'
+    labels:
+      - 'type:feature'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'type:bug'
+  - title: '🧰 Maintenance'
+    labels:
+      - 'type:ci'
+      - 'type:refactor'
+version-resolver:
+  major:
+    labels:
+      - 'version:major'
+  minor:
+    labels:
+      - 'version:minor'
+  patch:
+    labels:
+      - 'version:patch'
+  default: patch
+template: |
+  ## ⚙️ Changes
+  $CHANGES

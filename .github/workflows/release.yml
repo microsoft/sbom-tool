@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rid: [win-x64, linux-x64, osx-x64]
+    env:
+      OFFICIAL_BUILD: 'True'
+      # Set the build number in MinVer.
+      MINVERBUILDMETADATA: build.${{github.run_number}}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      # - uses: ./.github/workflows/setup-dotnet.yml
+      #   with:
+      #     platform_name: ${{ env.RUNNER_OS }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 3.1.300
+        
+      - name: Restore dependencies
+        run: dotnet restore 
+
+      - name: Build CLI tool
+        run: dotnet publish --configuration Release --output ./bin --self-contained --runtime ${{ matrix.rid }} -p:PublishSingleFile=true -p:DebugType=None -p:PublishTrimmed=true ./src/Microsoft.Sbom.Tool
+
+      - name: Publish CLI tool
+        uses: shogo82148/actions-upload-release-asset@v1.6.2
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./bin/*
+          asset_name: sbom-tool-${{ matrix.rid }}${{ matrix.rid == 'win-x64' && '.exe' || '' }}
+
+      - name: Build NuGet packages
+        run: dotnet pack --no-restore --configuration Release --output ./out
+
+      - name: Publish NuGet packages to GitHub Packages
+        run: dotnet nuget push "./out/*.nupkg" --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}
