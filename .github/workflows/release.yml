@@ -13,7 +13,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     environment: Production
-    
+
     strategy:
       matrix:
         rid: [win-x64, linux-x64, osx-x64]
@@ -38,6 +38,9 @@ jobs:
         
       - name: Restore dependencies
         run: dotnet restore 
+      
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
       - name: Build CLI tool
         run: dotnet publish --configuration Release --output ./bin --self-contained --runtime ${{ matrix.rid }} -p:PublishSingleFile=true -p:DebugType=None -p:PublishTrimmed=true ./src/Microsoft.Sbom.Tool
