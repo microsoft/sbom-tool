@@ -40,7 +40,7 @@ jobs:
         run: dotnet restore 
 
       - name: Build CLI cross-platform
-        run: dotnet publish --configuration Release --output ./bin -p:DebugType=None ./src/Microsoft.Sbom.Tool
+        run: dotnet publish --configuration Release -p:DebugType=None ./src/Microsoft.Sbom.Tool
 
       - name: Build CLI self-contained
         run: dotnet publish --configuration Release --output ./bin --self-contained --runtime ${{ matrix.rid }} -p:PublishSingleFile=true -p:DebugType=None -p:PublishTrimmed=true ./src/Microsoft.Sbom.Tool
