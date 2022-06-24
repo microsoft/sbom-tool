@@ -170,7 +170,7 @@ namespace Microsoft.Sbom.Api
             #region Bind metadata providers
 
             Kernel.Bind(scan => scan
-                                .FromAssembliesInPath(new AssemblyConfig().AssemblyDirectory)
+                                .FromAssembliesMatching("Microsoft.Sbom.*")
                                 .SelectAllClasses()
                                 .InheritedFrom<IMetadataProvider>()
                                 .BindAllInterfaces());
