@@ -5,7 +5,7 @@ using Microsoft.Sbom.Common.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace DropValidator.Api.Utils.Tests
+namespace Microsoft.Sbom.Api.Utils.Tests
 {
     [TestClass]
     public class IdentifierUtilsTests

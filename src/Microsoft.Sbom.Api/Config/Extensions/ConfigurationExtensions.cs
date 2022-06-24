@@ -8,7 +8,7 @@ using PowerArgs;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DropValidator.Api.Config.Extensions
+namespace Microsoft.Sbom.Api.Config.Extensions
 {
     /// <summary>
     /// Provides extension methods for an instance of <see cref="IConfiguration"/>.

@@ -25,8 +25,6 @@ namespace Microsoft.Sbom.Api.Utils
 
         public static AlgorithmName DefaultHashAlgorithmName = AlgorithmName.SHA256;
 
-        public const string ManifestBsiFileName = "bsi.json";
-
         public const string SPDXFileExtension = ".spdx.json";
         public const string DocumentNamespaceString = "documentNamespace";
         public const string NameString = "name";

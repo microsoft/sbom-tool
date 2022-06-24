@@ -15,7 +15,6 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Output.Telemetry.Entities;
-using DropValidator.Api.Output.Telemetry.Entities;
 using PowerArgs;
 using System.IO;
 using Microsoft.Sbom.Common;

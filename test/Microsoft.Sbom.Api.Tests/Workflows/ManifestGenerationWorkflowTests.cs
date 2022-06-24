@@ -364,7 +364,6 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             var outputs = resultJson["Outputs"];
             JArray sortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
-            var expectedJson = JObject.Parse(GoodJson);
             JArray expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
 
             var packages = resultJson["Packages"];
@@ -433,21 +432,5 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Never);
             Assert.IsFalse(result);
         }
-
-        private const string GoodJson = "{\"Outputs\":[{\"Source\":\"/child1/file2\",\"AzureArtifactsHash\":" +
-            "\"/root/child1/file2hash\",\"Sha256Hash\":\"/root/child1/file2hash\"},{\"Source\":\"/child1/file1\"," +
-            "\"AzureArtifactsHash\":\"/root/child1/file1hash\",\"Sha256Hash\":\"/root/child1/file1hash\"},{\"Source\":" +
-            "\"/child2/file3\",\"AzureArtifactsHash\":\"/root/child2/file3hash\",\"Sha256Hash\":\"/root/child2/file3hash\"}" +
-            ",{\"Source\":\"/child2/file4\",\"AzureArtifactsHash\":\"/root/child2/file4hash\",\"Sha256Hash\":\"/root/child2" +
-            "/file4hash\"},{\"Source\":\"/child2/grandchild1/file6\",\"AzureArtifactsHash\":\"/root/child2/grandchild1/" +
-            "file6hash\",\"Sha256Hash\":\"/root/child2/grandchild1/file6hash\"},{\"Source\":\"/child2/grandchild1/file10" +
-            "\",\"AzureArtifactsHash\":\"/root/child2/grandchild1/file10hash\",\"Sha256Hash\":\"/root/child2/grandchild1" +
-            "/file10hash\"},{\"Source\":\"/child2/grandchild1/file9\",\"AzureArtifactsHash\":\"/root/child2/grandchild1" +
-            "/file9hash\",\"Sha256Hash\":\"/root/child2/grandchild1/file9hash\"},{\"Source\":\"/child3/file11\",\"Azure" +
-            "ArtifactsHash\":\"/root/child3/file11hash\",\"Sha256Hash\":\"/root/child3/file11hash\"},{\"Source\":\"/chi" +
-            "ld2/file5\",\"AzureArtifactsHash\":\"/root/child2/file5hash\",\"Sha256Hash\":\"/root/child2/file5hash\"},{" +
-            "\"Source\":\"/child2/grandchild1/file7\",\"AzureArtifactsHash\":\"/root/child2/grandchild1/file7hash\",\"S" +
-            "ha256Hash\":\"/root/child2/grandchild1/file7hash\"},{\"Source\":\"/child3/file12\",\"AzureArtifactsHash\":" +
-            "\"/root/child3/file12hash\",\"Sha256Hash\":\"/root/child3/file12hash\"}]}";
     }
 }
