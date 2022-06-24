@@ -5,7 +5,7 @@ using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Contracts.Interfaces;
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Contracts.Contracts.Entities
+namespace Microsoft.Sbom.Contracts.Entities
 {
     public class AlgorithmNames : IAlgorithmNames
     {

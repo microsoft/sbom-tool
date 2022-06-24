@@ -7,7 +7,7 @@ using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config.Validators;
-using Microsoft.Sbom.Contracts.Contracts.Entities;
+using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.Sbom.Contracts.Interfaces;
 using Moq;
 using System;
