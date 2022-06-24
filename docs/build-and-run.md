@@ -18,7 +18,7 @@ You can add `--no-restore` or `--no-build` if you don't want to rebuild before t
 You can add `--Debug` to get the application to wait for debugger attachment to complete.
 
 ## Running in Visual Studio (2019+)
-1. open [Microsoft.Sbom.sln](../Microsoft.Sbom.sln) in Visual Studio
+1. Open [Microsoft.Sbom.sln](../Microsoft.Sbom.sln) in Visual Studio
 1. Set the Microsoft.Sbom.Tool project as the startup project (rightclick-> Set as Startup Project)
 1. Set Run arguments for the Microsoft.Sbom.Tool project (rightclick->properties->Debug)  
 	*Minimum:* `generate -b <drop path> -pn <package name> -pv <package version> -nsb <namespace uri base>`
