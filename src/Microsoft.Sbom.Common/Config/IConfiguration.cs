@@ -14,7 +14,8 @@ namespace Microsoft.Sbom.Common.Config
 {
     /// <summary>
     /// This holds the configuration for the ManifestTool. The values in this
-    /// file are populated from the command line, config file and default.
+    /// file are populated from the command line or config file. Some values
+    /// are set by default.
     /// </summary>
     public interface IConfiguration
     {
