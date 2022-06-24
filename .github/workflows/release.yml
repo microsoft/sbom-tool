@@ -38,9 +38,6 @@ jobs:
         
       - name: Restore dependencies
         run: dotnet restore 
-      
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
 
       - name: Build CLI tool
         run: dotnet publish --configuration Release --output ./bin --self-contained --runtime ${{ matrix.rid }} -p:PublishSingleFile=true -p:DebugType=None -p:PublishTrimmed=true ./src/Microsoft.Sbom.Tool
@@ -53,7 +50,7 @@ jobs:
           asset_name: sbom-tool-${{ matrix.rid }}${{ matrix.rid == 'win-x64' && '.exe' || '' }}
 
       - name: Build NuGet packages
-        run: dotnet pack --no-restore --no-build --configuration Release --output ./out
+        run: dotnet pack --no-restore -p:DebugType=None --include-symbols --no-build --configuration Release --output ./out 
 
       - name: Publish NuGet packages to GitHub Packages
         run: dotnet nuget push "./out/*.nupkg" --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}
