@@ -1,0 +1,50 @@
+name: 'Generate docs'
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/Microsoft.Sbom.Api/Config/Args/*.cs'
+      - 'src/Microsoft.Sbom.Common/Config/IConfiguration.cs'
+
+jobs:
+  gen-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 3.1.300
+
+      - name: Restore dependencies
+        run: dotnet restore 
+        
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Generate docs
+        run: |
+          # Run CLI
+          dotnet run -p src/Microsoft.Sbom.Tool generate -- -h 2> help.txt || true
+          cat <<EOF > docs/sbom-tool-arguments.md
+          # Sbom tool arguments
+          
+          \`\`\`shell
+          dotnet run -p './src/Microsoft.Sbom.Tool' generate -- -h
+          \`\`\`
+
+          \`\`\`
+          $(tail --lines=+4 help.txt)
+          \`\`\`
+          EOF
+
+      - name: Commit
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'Update docs'
+          file_pattern: '*.md'
