@@ -11,7 +11,7 @@ dotnet build
 ````
 The most basic run:
 ```
-dotnet run --project src/Microsoft.Sbom.Tool generate -b <drop path> -pn <package name> -pv <package version> -nsb <namespace uri base>
+dotnet run --project src/Microsoft.Sbom.Tool generate -- -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -nsb <namespace uri base>
 ```
 You can add `--no-restore` or `--no-build` if you don't want to rebuild before the run
 	
@@ -21,7 +21,7 @@ You can add `--Debug` to get the application to wait for debugger attachment to 
 1. Open [Microsoft.Sbom.sln](../Microsoft.Sbom.sln) in Visual Studio
 1. Set the Microsoft.Sbom.Tool project as the startup project (rightclick-> Set as Startup Project)
 1. Set Run arguments for the Microsoft.Sbom.Tool project (rightclick->properties->Debug)  
-	*Minimum:* `generate -b <drop path> -pn <package name> -pv <package version> -nsb <namespace uri base>`
+	*Minimum:* `generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -nsb <namespace uri base>`
 1. Now, any time you make a change, you can press `F5`. This will build the changes, and start the process in debug mode (hitting any breakpoints you set)
 
 ## Using Codespaces
