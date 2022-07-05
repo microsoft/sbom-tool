@@ -57,7 +57,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          asset_paths: '["./bin/sbom-tool-${{ matrix.rid }}${{ matrix.rid == 'win-x64' && '.exe' || '' }}", "./bin/_manifest/spdx_2.2/manifest.spdx.json"]' 
+          asset_paths: '["./bin/*"]' 
       
       - name: Build NuGet packages
         run: dotnet pack --no-restore -p:DebugType=None --include-symbols --no-build --configuration Release --output ./out 
