@@ -6,12 +6,37 @@ The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 
 
 ## Table of Contents
 
-* [Installation](docs/installation.md)
-* [Building and running Sbom tool](docs/build-and-run.md)
+* [Installation](#installation)
+* [Run the tool]()
+* [Building and running Sbom tool from source](docs/build-and-run.md)
 * [Telemetry](#Telemetry)
 * [Contributing](#Contributing)
 * [Security](#Security)
 * [Trademarks](#Trademarks)
+
+## Installation
+
+### Windows, Mac and Linux executable.
+Please check the [Releases](https://github.com/microsoft/sbom-tool/releases) page to go to the version of the tool you want to install. Then download the tool from the release assets for the required runtime. 
+
+Please check the [arguments](docs/sbom-tool-arguments.md) that you can provide to the sbom tool.
+
+### Sbom tool C# Api
+Please add and authenticate the Microsoft GitHub NuGet package [registry](https://github.com/orgs/microsoft/packages?repo_name=sbom-tool) to your nuget.config. Then install the `Microsoft.Sbom.Api` package to your project using these [instructions](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry#installing-a-package)
+
+## Run the tool to generate an SBOM
+
+Once you have installed the command line tool for your OS, run the tool using this command:
+
+```
+generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -nsb <namespace uri base>
+```
+
+The drop path is the folder where all the files to be shipped are located. All these files will be hashed and added to the files section of the SBOM. The build components path is usually your source folder, we will scan this folder to search for project files like *.csproj or package.json to see what components were used to build the package. The package name and version represent the package the SBOM is describing. 
+
+Each SBOM has a unique namespace that uniquely identifies the SBOM, we generate a unique identifier for the namespace field inside the SBOM, however we need a base URI that would be common for your entire organization. For example, a sample value for the `-nsb` parameter could be `https://companyName.com/teamName`, then the generator will create the namespace that would look like `https://companyName.com/teamName/<packageName>/<packageVersion>/<new-guid>`. Read more about the document namespace field [here](https://spdx.github.io/spdx-spec/document-creation-information/#65-spdx-document-namespace-field). 
+
+A more detailed list of available arguments can be found [here](sbom-tool-arguments.md)
 
 ## Telemetry
 
