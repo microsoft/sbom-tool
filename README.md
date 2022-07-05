@@ -1,5 +1,9 @@
 # Salus - SBOM Tool
 
+[![Build](https://github.com/microsoft/sbom-tool/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/microsoft/sbom-tool/actions/workflows/build.yml)
+![GitHub release (latest by date)](https://img.shields.io/github/downloads/microsoft/sbom-tool/latest/total)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/microsoft/sbom-tool?include_prereleases)
+
 ## Introduction
 
 The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 compatible SBOMs for any variety of artifacts.
@@ -7,8 +11,8 @@ The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 
 ## Table of Contents
 
 * [Installation](#installation)
-* [Run the tool]()
-* [Building and running Sbom tool from source](docs/build-and-run.md)
+* [Run the tool](#run-the-tool-to-generate-an-sbom)
+* [Building the tool from source](docs/build-and-run.md)
 * [Telemetry](#Telemetry)
 * [Contributing](#Contributing)
 * [Security](#Security)
