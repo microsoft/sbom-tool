@@ -47,7 +47,7 @@ jobs:
         run: dotnet publish --configuration Release --output ./bin --self-contained --runtime ${{ matrix.rid }} -p:PublishSingleFile=true -p:DebugType=None -p:PublishTrimmed=true ./src/Microsoft.Sbom.Tool
 
       - name: Generate SBOM for sbom-tool
-        run: dotnet run --project src/Microsoft.Sbom.Tool generate -- -b ./bin -bc ./src/ -pn sbom-tool -pv ${{ RESOLVED_VERSION }} -nsb https://sbom.microsoft
+        run: dotnet run --project src/Microsoft.Sbom.Tool generate -- -b ./bin -bc ./src/ -pn sbom-tool -pv ${{ github.event.release.tag_name }} -nsb https://sbom.microsoft
         
       - name: Publish SBOM
         uses: shogo82148/actions-upload-release-asset@v1.6.2
