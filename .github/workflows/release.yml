@@ -57,6 +57,7 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./bin/_manifest/spdx_2.2/manifest.spdx.json
+          assetName: ${{ matrix.rid }}-manifest.spdx.json
       
       - name: Upload binaries to release
         uses: shogo82148/actions-upload-release-asset@v1.6.2
