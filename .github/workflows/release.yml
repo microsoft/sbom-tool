@@ -45,13 +45,24 @@ jobs:
       - name: Build CLI self-contained
         run: dotnet publish --configuration Release --output ./bin --self-contained --runtime ${{ matrix.rid }} -p:PublishSingleFile=true -p:DebugType=None -p:PublishTrimmed=true ./src/Microsoft.Sbom.Tool
 
+      - name: Generate SBOM for sbom-tool
+        run: dotnet run --project src/Microsoft.Sbom.Tool generate -- -b ./bin -bc ./src/ -pn sbom-tool -pv ${{ RESOLVED_VERSION }} -nsb https://sbom.microsoft
+        
+      - name: Publish SBOM
+        uses: shogo82148/actions-upload-release-asset@v1.6.2
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./bin/_manifest/spdx/manifest.spdx.json
+          asset_name: manifest.spdx.json
+
       - name: Publish CLI tool
         uses: shogo82148/actions-upload-release-asset@v1.6.2
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./bin/*
           asset_name: sbom-tool-${{ matrix.rid }}${{ matrix.rid == 'win-x64' && '.exe' || '' }}
-
+          
+      
       - name: Build NuGet packages
         run: dotnet pack --no-restore -p:DebugType=None --include-symbols --no-build --configuration Release --output ./out 
 
