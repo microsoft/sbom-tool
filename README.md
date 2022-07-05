@@ -12,7 +12,6 @@ The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 
 
 * [Installation](#installation)
 * [Run the tool](#run-the-tool-to-generate-an-sbom)
-* [Building the tool from source](docs/build-and-run.md)
 * [Telemetry](#Telemetry)
 * [Contributing](#Contributing)
 * [Security](#Security)
@@ -47,6 +46,8 @@ A more detailed list of available arguments can be found [here](sbom-tool-argume
 By default, telemetry will output to your output file path and will be a JSON blob. No data is submitted to Microsoft.
 
 ## Contributing
+
+Please follow the steps [here](docs/build-and-run.md) to clone and build this repository from source.
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
