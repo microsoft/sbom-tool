@@ -5,7 +5,7 @@ using System;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Adapters.Report;
 
-namespace Microsoft.Sbom.Adapters.Adapters.ComponentDetection.Logging
+namespace Microsoft.Sbom.Adapters.ComponentDetection.Logging
 {
     /// <summary>
     /// A set of static helper methods used by the component detection adapter for logging.

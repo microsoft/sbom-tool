@@ -6,7 +6,7 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Adapters.Adapters.ComponentDetection
+namespace Microsoft.Sbom.Adapters.ComponentDetection
 {
     /// <summary>
     /// Extensions methods for <see cref="GoComponent"/>.

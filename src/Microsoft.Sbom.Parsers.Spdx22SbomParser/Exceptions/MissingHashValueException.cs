@@ -4,7 +4,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Microsoft.SPDX22SBOMParser.Exceptions
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Exceptions
 {
     [Serializable]
     internal class MissingHashValueException : Exception

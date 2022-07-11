@@ -5,16 +5,16 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.SPDX22SBOMParser.Entities;
-using Microsoft.SPDX22SBOMParser.Entities.Enums;
-using Microsoft.SPDX22SBOMParser.Exceptions;
-using Microsoft.SPDX22SBOMParser.Utils;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Exceptions;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 
-namespace Microsoft.SPDX22SBOMParser
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
 {
     /// <summary>
     /// Generates a SPDX 2.2 format SBOM document.

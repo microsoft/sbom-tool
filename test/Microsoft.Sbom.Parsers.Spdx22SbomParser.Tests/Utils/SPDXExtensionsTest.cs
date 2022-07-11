@@ -3,9 +3,9 @@
 
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.SPDX22SBOMParser.Entities;
-using Microsoft.SPDX22SBOMParser.Entities.Enums;
-using Microsoft.SPDX22SBOMParser.Utils;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;

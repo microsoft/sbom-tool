@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.SPDX22SBOMParser.Entities.Enums;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.SPDX22SBOMParser.Entities
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities
 {
     /// <summary>
     /// Defines a reference to an external source of additional information, metadata,

@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
-using Microsoft.Sbom.Adapters.Adapters.ComponentDetection;
+using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.Sbom.Adapters.Report;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Contracts;

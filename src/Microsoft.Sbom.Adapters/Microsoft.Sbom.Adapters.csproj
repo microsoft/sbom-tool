@@ -2,13 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>Microsoft.SBOM.Adapters</AssemblyName>
+    <AssemblyName>Microsoft.Sbom.Adapters</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>Provides a set of adapters from external component formats to a single SBOM format.</Description>
     <Nullable>enable</Nullable>
-    <!--NU5104: Warning thrown because Microsoft.VisualStudio.Services.Governance.ComponentDetection.Contracts is a "prerelease" package.-->
-    <!--Note: due to a bug in dotnet, this needs to be a global nowarn instead of for the specific package it is trying to suppress.-->
-    <NoWarn>NU5104</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

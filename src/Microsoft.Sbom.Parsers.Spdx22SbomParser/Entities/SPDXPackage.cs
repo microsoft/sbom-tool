@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.SPDX22SBOMParser.Entities
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities
 {
     /// <summary>
     /// Represents a SPDX 2.2 Package.

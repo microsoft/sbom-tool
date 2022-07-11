@@ -5,7 +5,7 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using System;
 
-namespace Microsoft.SPDX22SBOMParser
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
 {
     /// <summary>
     /// Validates files in a folder against their checksums stored in an SPDX 2.2 SBOM. 

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>Microsoft.Parsers.SPDX22SBOMParser</AssemblyName>
+    <AssemblyName>Microsoft.Sbom.Parsers.Spdx22SbomParser</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 

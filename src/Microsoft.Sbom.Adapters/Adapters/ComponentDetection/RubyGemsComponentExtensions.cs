@@ -4,7 +4,7 @@
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
 
-namespace Microsoft.Sbom.Adapters.Adapters.ComponentDetection
+namespace Microsoft.Sbom.Adapters.ComponentDetection
 {
     /// <summary>
     /// Extensions methods for <see cref="RubyGemsComponent"/>.
