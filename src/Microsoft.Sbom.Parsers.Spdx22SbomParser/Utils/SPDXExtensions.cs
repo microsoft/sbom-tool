@@ -4,8 +4,8 @@
 using Microsoft.Sbom.Extensions.Exceptions;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.SPDX22SBOMParser.Entities;
-using Microsoft.SPDX22SBOMParser.Entities.Enums;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Microsoft.SPDX22SBOMParser.Utils
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
 {
     /// <summary>
     /// Provides extensions to SPDX objects.

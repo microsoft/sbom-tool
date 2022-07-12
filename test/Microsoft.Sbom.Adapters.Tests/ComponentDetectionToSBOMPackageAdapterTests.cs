@@ -9,12 +9,12 @@ using System.Linq;
 using Microsoft.Sbom.Adapters.Report;
 using Microsoft.Sbom.Contracts;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
-using Microsoft.Sbom.Adapters.Adapters.ComponentDetection;
+using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.ComponentDetection.Contracts.Internal;
 
-namespace Microsoft.Sbom.Adapters.Adapters.Tests
+namespace Microsoft.Sbom.Adapters.Tests
 {
     [TestClass]
     public class ComponentDetectionToSBOMPackageAdapterTests

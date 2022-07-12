@@ -15,9 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Contracts", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Adapters.Tests", "test\Microsoft.Sbom.Adapters.Tests\Microsoft.Sbom.Adapters.Tests.csproj", "{4F5EA400-F98B-4010-A8E1-D55A96428B07}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.SPDX22SBOMParser", "src\Microsoft.Sbom.SPDX22SBOMParser\Microsoft.Sbom.SPDX22SBOMParser.csproj", "{86EC977D-A785-40FF-AE78-C1EC4254AFF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Parsers.Spdx22SbomParser", "src\Microsoft.Sbom.Parsers.Spdx22SbomParser\Microsoft.Sbom.Parsers.Spdx22SbomParser.csproj", "{86EC977D-A785-40FF-AE78-C1EC4254AFF8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.SPDX22SBOMParser.Tests", "test\Microsoft.Sbom.SPDX22SBOMParser.Tests\Microsoft.Sbom.SPDX22SBOMParser.Tests.csproj", "{ADDEE422-40D1-48D9-A5FB-BBE990272B78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests", "test\Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests\Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests.csproj", "{ADDEE422-40D1-48D9-A5FB-BBE990272B78}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Api", "src\Microsoft.Sbom.Api\Microsoft.Sbom.Api.csproj", "{725723C5-DCA4-4BAD-8883-CC94E5F5A5A8}"
 EndProject

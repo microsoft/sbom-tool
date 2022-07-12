@@ -3,7 +3,7 @@
 
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.SPDX22SBOMParser.Entities;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using HashAlgorithmName = Microsoft.Sbom.Contracts.Enums.AlgorithmName;
 
-namespace Microsoft.SPDX22SBOMParser.Utils
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
 {
     /// <summary>
     /// Provides helper functions to generate identity strings for SPDX.

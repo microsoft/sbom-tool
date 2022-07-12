@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.ComponentModel;
 
-namespace Microsoft.SPDX22SBOMParser.Utils.Tests
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
 {
     [TestClass]
     public class IdentityUtilsTests

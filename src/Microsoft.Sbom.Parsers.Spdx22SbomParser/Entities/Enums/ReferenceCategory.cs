@@ -3,7 +3,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Microsoft.SPDX22SBOMParser.Entities.Enums
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums
 {
     /// <summary>
     /// Defines a Category for an external package reference.

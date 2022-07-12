@@ -5,10 +5,10 @@ using System;
 using Microsoft.Sbom.Adapters.Report;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
-using Microsoft.Sbom.Adapters.Adapters.ComponentDetection.Logging;
+using Microsoft.Sbom.Adapters.ComponentDetection.Logging;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 
-namespace Microsoft.Sbom.Adapters.Adapters.ComponentDetection
+namespace Microsoft.Sbom.Adapters.ComponentDetection
 {
     /// <summary>
     /// Extensions methods for <see cref="ScannedComponent"/>.

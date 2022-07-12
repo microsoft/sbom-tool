@@ -4,7 +4,7 @@
 using Microsoft.Sbom.Extensions.Entities;
 using System.Collections.Generic;
 
-namespace Microsoft.SPDX22SBOMParser
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
 {
     internal class Constants
     {

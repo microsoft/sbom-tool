@@ -3,7 +3,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Microsoft.SPDX22SBOMParser.Entities
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities
 {
     /// <summary>
     /// SPDX 2.2 format External Document reference.
