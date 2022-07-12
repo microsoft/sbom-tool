@@ -39,7 +39,7 @@ The drop path is the folder where all the files to be shipped are located. All t
 
 Each SBOM has a unique namespace that uniquely identifies the SBOM, we generate a unique identifier for the namespace field inside the SBOM, however we need a base URI that would be common for your entire organization. For example, a sample value for the `-nsb` parameter could be `https://companyName.com/teamName`, then the generator will create the namespace that would look like `https://companyName.com/teamName/<packageName>/<packageVersion>/<new-guid>`. Read more about the document namespace field [here](https://spdx.github.io/spdx-spec/document-creation-information/#65-spdx-document-namespace-field). 
 
-A more detailed list of available arguments can be found [here](sbom-tool-arguments.md)
+A more detailed list of available arguments can be found [here](docs/sbom-tool-arguments.md)
 
 ## Telemetry
 
