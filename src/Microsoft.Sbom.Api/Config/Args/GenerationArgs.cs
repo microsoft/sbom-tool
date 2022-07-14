@@ -11,11 +11,11 @@ namespace Microsoft.Sbom.Api.Config.Args
     public class GenerationArgs : CommonArgs
     {
         /// <summary>
-        /// Gets or sets the root folder of the drop directory for which the manifest file will be generated.
+        /// Gets or sets the root folder of the drop directory for which the SBOM file will be generated.
         /// </summary>
         [ArgShortcut("b")]
         [ArgRequired(IfNot = "ConfigFilePath")]
-        [ArgDescription("The root folder of the drop directory for which the manifest file will be generated.")]
+        [ArgDescription("The root folder of the drop directory for which the SBOM file will be generated.")]
         public string BuildDropPath { get; set; }
 
         /// <summary>
@@ -31,7 +31,8 @@ namespace Microsoft.Sbom.Api.Config.Args
         /// by Environment.NewLine. Blank lines are discarded.
         /// </summary>
         [ArgShortcut("bl")]
-        [ArgDescription("The file path to a file containing a list of files one file per line for which the manifest file will be generated. Only files listed in the file will be inlcuded in the generated manifest.")]
+        [ArgDescription("The file path to a file containing a list of files one file per line for which the SBOM" + 
+            " file will be generated. Only files listed in the file will be inlcuded in the generated SBOM.")]
         public string BuildListFile { get; set; }
 
         /// <summary>
@@ -39,7 +40,8 @@ namespace Microsoft.Sbom.Api.Config.Args
         /// By default we will generate this folder in the same level as the build drop with the name '_manifest'.
         /// </summary>
         [ArgShortcut("m")]
-        [ArgDescription("The path of the directory where the generated manifest files will be placed." +
+        [ArgDescription("The path of the directory where the generated SBOM files will be placed." +
+            " A folder named '_manifest' will be created at this location, where all generated SBOMs will be placed." +
             " If this parameter is not specified, the files will be placed in {BuildDropPath}/_manifest directory.")]
         public string ManifestDirPath { get; set; }
 
