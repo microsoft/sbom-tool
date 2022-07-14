@@ -44,7 +44,7 @@ jobs:
         run: dotnet publish --configuration Release -p:DebugType=None ./src/Microsoft.Sbom.Tool
 
       - name: Build CLI self-contained
-        run: dotnet publish --configuration Release --output ./bin --self-contained --runtime ${{ matrix.rid }} -p:PublishSingleFile=true -p:DebugType=None -p:PublishTrimmed=true ./src/Microsoft.Sbom.Tool
+        run: dotnet publish --configuration Release --output ./bin --self-contained --runtime ${{ matrix.rid }} -p:PublishSingleFile=true -p:DebugType=None -p:PublishTrimmed=false ./src/Microsoft.Sbom.Tool
 
       - name: Rename binary to short name
         run: mv ./bin/Microsoft.Sbom.Tool${{ matrix.rid == 'win-x64' && '.exe' || '' }} ./bin/sbom-tool-${{ matrix.rid }}${{ matrix.rid == 'win-x64' && '.exe' || '' }}
