@@ -47,5 +47,6 @@ jobs:
       - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: 'Update docs'
-          file_pattern: '*.md'
+          commit_message: 'Auto update docs/*.md'
+          file_pattern: 'docs/*.md'
+          
