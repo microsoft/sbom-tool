@@ -1,6 +1,7 @@
 name: 'Generate docs'
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -26,6 +27,9 @@ jobs:
         
       - name: Build
         run: dotnet build --no-restore
+        
+      - name: Test
+        run: dotnet run -p src/Microsoft.Sbom.Tool generate -- -h
 
       - name: Generate docs
         run: |
