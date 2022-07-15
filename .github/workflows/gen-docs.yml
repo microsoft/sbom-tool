@@ -1,6 +1,7 @@
 name: 'Generate docs'
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -48,3 +49,4 @@ jobs:
         with:
           commit_message: 'Auto update docs/*.md'
           file_pattern: 'docs/*.md'
+          
