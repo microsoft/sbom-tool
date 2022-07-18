@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>Microsoft.Sbom.Parsers.Spdx22SbomParser</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Description>SPDX2.2 parser for Salus SBOM tool.</Description>
+    <Description>SPDX2.2 parser for SBOM tool.</Description>
   </PropertyGroup>
 
   <ItemGroup>
