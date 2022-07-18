@@ -1,4 +1,4 @@
-# Salus - SBOM Tool
+# SBOM Tool
 
 [![Build](https://github.com/microsoft/sbom-tool/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/microsoft/sbom-tool/actions/workflows/build.yml)
 ![GitHub all releases](https://img.shields.io/github/downloads/microsoft/sbom-tool/total)
