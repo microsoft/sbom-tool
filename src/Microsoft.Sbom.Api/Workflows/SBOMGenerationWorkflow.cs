@@ -112,20 +112,16 @@ namespace Microsoft.Sbom.Api.Workflows
 
                     return !validErrors.Any();
                 }
-                catch (ManifestFolderExistsException e)
-                {
-                    Recorder.RecordException(e);
-                    Log.Error("Encountered an error while generating the manifest.");
-                    Log.Error($"Error details: {e.Message}");
-
-                    return false;
-                }
                 catch (Exception e)
                 {
                     Recorder.RecordException(e);
                     Log.Error("Encountered an error while generating the manifest.");
                     Log.Error($"Error details: {e.Message}");
-                    deleteSBOMDir = true;
+
+                    if (e is not ManifestFolderExistsException)
+                    {
+                        deleteSBOMDir = true;
+                    }
 
                     // TODO: Create EntityError with exception message and record to surface unexpected exceptions to client.
                     return false;
