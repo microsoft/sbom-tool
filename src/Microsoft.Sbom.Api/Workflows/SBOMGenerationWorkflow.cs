@@ -118,7 +118,7 @@ namespace Microsoft.Sbom.Api.Workflows
                     Log.Error("Encountered an error while generating the manifest.");
                     Log.Error($"Error details: {e.Message}");
 
-                    if (e is not ManifestFolderExistsException)
+                    if (!(e is ManifestFolderExistsException))
                     {
                         deleteSBOMDir = true;
                     }
