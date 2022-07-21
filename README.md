@@ -20,7 +20,7 @@ The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 
 ## Download and Installation
 
 ### Executables for Windows, Linux, macOS
-We distribute executables and SBOM files of the tool in [GitHub Releases](https://github.com/microsoft/sbom-tool/releases) page. You can go and download necessary binary manually or use commands below to get latest version of the tool for your platform.
+We distribute executables and SBOM files of the tool in [GitHub Releases](https://github.com/microsoft/sbom-tool/releases) page. You can go and download binaries manually or use commands below to get the latest version of the tool for your platform.
 
 #### Windows (PowerShell)
 ```powershell
