@@ -6,6 +6,7 @@ using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Api.Hashing;
@@ -382,7 +383,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
         [TestMethod]
         public async Task ManifestGenerationWorkflowTests_SBOMDirExists_Throws()
         {
+            configurationMock.SetupGet(x => x.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.Default });
             fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+            mockOSUtils.Setup(o => o.GetEnvironmentVariable(It.IsAny<string>())).Returns("false");
             var sbomConfig = new SbomConfig(fileSystemMock.Object)
             {
                 ManifestInfo = Constants.TestManifestInfo,
@@ -395,10 +398,12 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 FileSystemUtils = fileSystemMock.Object,
                 Log = mockLogger.Object,
                 SBOMConfigs = new Mock<ISbomConfigProvider>().Object,
-                Recorder = recorderMock.Object
+                Recorder = recorderMock.Object,
+                OSUtils = mockOSUtils.Object
             };
 
             Assert.IsFalse(await workflow.RunAsync());
+            recorderMock.Verify(r => r.RecordException(It.IsAny<ManifestFolderExistsException>()), Times.Once);
         }
 
         [TestMethod]
