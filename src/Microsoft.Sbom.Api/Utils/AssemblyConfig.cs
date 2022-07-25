@@ -6,6 +6,7 @@ using Microsoft.Sbom.Common.Config.Attributes;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 
 namespace Microsoft.Sbom.Api.Utils
 {
@@ -24,25 +25,29 @@ namespace Microsoft.Sbom.Api.Utils
         /// <inheritdoc/>
         public string AssemblyDirectory => AssemblyDirectoryValue.Value;
 
-        private static readonly Lazy<string> DefaultSBOMBaseNamespaceUri = new Lazy<string>(() =>
-        {
-            return Assembly.GetExecutingAssembly().GetCustomAttribute<DefaultNamespaceBaseUriAttribute>()?.DefaultBaseNamespaceUri;
-        });
+        private static readonly Lazy<string> DefaultSBOMBaseNamespaceUri
+            = GetCustomAttributeValue<DefaultNamespaceBaseUriAttribute, string>(a => a?.DefaultBaseNamespaceUri);
 
-        private static readonly Lazy<string> DefaultSBOMBaseNamespaceUriWarningMessage = new Lazy<string>(() =>
-        {
-            return Assembly.GetExecutingAssembly().GetCustomAttribute<DefaultNamespaceBaseUriAttribute>()?.WarningMessage;
-        });
+        private static readonly Lazy<string> DefaultSBOMBaseNamespaceUriWarningMessage
+            = GetCustomAttributeValue<DefaultNamespaceBaseUriAttribute, string>(a => a?.WarningMessage);
 
-        private static readonly Lazy<ManifestInfo> DefaultManifestInfoForValidationActionValue = new Lazy<ManifestInfo>(() =>
-        {
-            return Assembly.GetExecutingAssembly().GetCustomAttribute<DefaultManifestInfoArgForValidationAttribute>()?.ManifestInfo;
-        });
+        private static readonly Lazy<ManifestInfo> DefaultManifestInfoForValidationActionValue
+            = GetCustomAttributeValue<DefaultManifestInfoArgForValidationAttribute, ManifestInfo>(a => a?.ManifestInfo);
 
         private static readonly Lazy<string> AssemblyDirectoryValue = new Lazy<string>(() =>
         {
             string location = Assembly.GetExecutingAssembly().Location;
             return Path.GetDirectoryName(location);
         });
+
+        private static Lazy<TVal> GetCustomAttributeValue<T, TVal>(Func<T, TVal> getValue)
+            where T : Attribute
+            => new Lazy<TVal>(() =>
+            {
+                var attr = AppDomain.CurrentDomain
+                    .GetAssemblies()
+                    .FirstOrDefault(a => a.IsDefined(typeof(T)))?.GetCustomAttribute<T>();
+                return getValue(attr);
+            });
     }
 }
