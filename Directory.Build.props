@@ -10,7 +10,7 @@
     <PropertyGroup Label="Package">
         <Authors>Microsoft</Authors>
         <Company>Microsoft</Company>
-        <Copyright>Copyright © Microsoft Corporation. All rights reserved.</Copyright>
+        <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/microsoft/sbom-tool</PackageProjectUrl>
