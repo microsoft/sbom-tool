@@ -22,10 +22,12 @@ The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 
 ### Windows, Mac and Linux executable.
 Please check the [Releases](https://github.com/microsoft/sbom-tool/releases) page to go to the version of the tool you want to install. Then download the tool from the release assets for the required runtime. 
 
-Please check the [arguments](docs/sbom-tool-arguments.md) that you can provide to the sbom tool.
+Please check the [CLI Reference](docs/sbom-tool-cli-reference.md) document for additional help regarding the CLI tool.
 
 ### Sbom tool C# Api
 Please add and authenticate the Microsoft GitHub NuGet package [registry](https://github.com/orgs/microsoft/packages?repo_name=sbom-tool) to your nuget.config. Then install the `Microsoft.Sbom.Api` package to your project using these [instructions](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry#installing-a-package)
+
+Please check the [API Reference](docs/sbom-tool-api-reference.md) document for addditional help regarding the SBOM tool C# Api.
 
 ## Run the tool to generate an SBOM
 
@@ -47,7 +49,7 @@ By default, telemetry will output to your output file path and will be a JSON bl
 
 ## Contributing
 
-Please follow the steps [here](docs/build-and-run.md) to clone and build this repository from source.
+Please follow the steps [here](docs/building-from-source.md) to clone and build this repository from source.
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
