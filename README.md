@@ -12,6 +12,7 @@ The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 
 
 * [Download and Installation](#download-and-installation)
 * [Run the tool](#run-the-tool)
+* [Integrating SBOM tool to your CI/CD pipelines](#integrating-sbom-tool-to-your-cicd-pipelines)
 * [Telemetry](#Telemetry)
 * [Contributing](#Contributing)
 * [Security](#Security)
@@ -61,6 +62,12 @@ The drop path is the folder where all the files to be shipped are located. All t
 Each SBOM has a unique namespace that uniquely identifies the SBOM, we generate a unique identifier for the namespace field inside the SBOM, however we need a base URI that would be common for your entire organization. For example, a sample value for the `-nsb` parameter could be `https://companyName.com/teamName`, then the generator will create the namespace that would look like `https://companyName.com/teamName/<packageName>/<packageVersion>/<new-guid>`. Read more about the document namespace field [here](https://spdx.github.io/spdx-spec/document-creation-information/#65-spdx-document-namespace-field). 
 
 A more detailed list of available CLI arguments for the tool can be found [here](docs/sbom-tool-arguments.md)
+
+## Integrating SBOM tool to your CI/CD pipelines.
+
+You can follow these guides to integrate the SBOM tool into your CI/CD pipelines 
+
+* [Setting up GitHub Actions to use SBOM tool](docs/setting-up-github-actions.md).
 
 ## Telemetry
 
