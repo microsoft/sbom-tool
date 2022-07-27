@@ -1,14 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Hashing.Algorithms;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions;
 using Ninject;
 using PowerArgs;
 using Serilog;
@@ -98,7 +99,9 @@ namespace Microsoft.Sbom.Api.Workflows
                         validErrors.Concat(await RelationshipsArrayGenerator.GenerateAsync());
 
                         // Write headers
-                        SBOMConfigs.ApplyToEachConfig(config => config.JsonSerializer.WriteJsonString(config.MetadataBuilder.GetHeaderJsonString(SBOMConfigs)));
+                        SBOMConfigs.ApplyToEachConfig(config =>
+                            config.JsonSerializer.WriteJsonString(
+                                config.MetadataBuilder.GetHeaderJsonString(SBOMConfigs)));
 
                         // Finalize JSON
                         SBOMConfigs.ApplyToEachConfig(config => config.JsonSerializer.FinalizeJsonObject());
@@ -114,7 +117,11 @@ namespace Microsoft.Sbom.Api.Workflows
                     Recorder.RecordException(e);
                     Log.Error("Encountered an error while generating the manifest.");
                     Log.Error($"Error details: {e.Message}");
-                    deleteSBOMDir = true;
+
+                    if (!(e is ManifestFolderExistsException))
+                    {
+                        deleteSBOMDir = true;
+                    }
 
                     // TODO: Create EntityError with exception message and record to surface unexpected exceptions to client.
                     return false;
@@ -133,30 +140,30 @@ namespace Microsoft.Sbom.Api.Workflows
                     }
                 }
             }
-
-            void DeleteManifestFolder(string sbomDir)
+        }
+        
+        private void DeleteManifestFolder(string sbomDir)
+        {
+            try
             {
-                try
+                if (!string.IsNullOrEmpty(sbomDir) && FileSystemUtils.DirectoryExists(sbomDir))
                 {
-                    if (!string.IsNullOrEmpty(sbomDir) && FileSystemUtils.DirectoryExists(sbomDir))
+                    if (Configuration.ManifestDirPath.IsDefaultSource)
                     {
-                        if (Configuration.ManifestDirPath.IsDefaultSource)
-                        {
-                            FileSystemUtils.DeleteDir(sbomDir, true);
-                        }
-                        else if (!FileSystemUtils.IsDirectoryEmpty(sbomDir))
-                        {
-                            Log.Warning($"Manifest generation failed, however we were " +
-                                $"unable to delete the partially generated manifest.json file and the {sbomDir} directory because the directory was not empty.");
-                        }
+                        FileSystemUtils.DeleteDir(sbomDir, true);
+                    }
+                    else if (!FileSystemUtils.IsDirectoryEmpty(sbomDir))
+                    {
+                        Log.Warning($"Manifest generation failed, however we were " +
+                                    $"unable to delete the partially generated manifest.json file and the {sbomDir} directory because the directory was not empty.");
                     }
                 }
-                catch (Exception e)
-                {
-                    Log.Warning(
-                        $"Manifest generation failed, however we were " +
-                        $"unable to delete the partially generated manifest.json file and the {sbomDir} directory.", e);
-                }
+            }
+            catch (Exception e)
+            {
+                Log.Warning(
+                    $"Manifest generation failed, however we were " +
+                    $"unable to delete the partially generated manifest.json file and the {sbomDir} directory.", e);
             }
         }
 
@@ -197,20 +204,28 @@ namespace Microsoft.Sbom.Api.Workflows
 
                     if (!deleteSbomDirSwitch)
                     {
-                        throw new Exception($"The BuildDropRoot folder already contains a _manifest folder. Please" +
+                        throw new ManifestFolderExistsException(
+                            $"The BuildDropRoot folder already contains a _manifest folder. Please" +
                             $" delete this folder before running the generation or set the " +
                             $"{Constants.DeleteManifestDirBoolVariableName} environment variable to 'true' to " +
                             $"overwrite this folder.");
                     }
 
-                    Log.Warning($"Deleting pre-existing folder {rootManifestFolderPath} as {Constants.DeleteManifestDirBoolVariableName}" +
+                    Log.Warning(
+                        $"Deleting pre-existing folder {rootManifestFolderPath} as {Constants.DeleteManifestDirBoolVariableName}" +
                         $" is 'true'.");
                     FileSystemUtils.DeleteDir(rootManifestFolderPath, true);
                 }
             }
+            catch (ManifestFolderExistsException)
+            {
+                // Rethrow exception if manifest folder already exists.
+                throw;
+            }
             catch (Exception e)
             {
-                throw new ValidationArgException($"Unable to create manifest directory at path {rootManifestFolderPath}. Error: {e.Message}");
+                throw new ValidationArgException(
+                    $"Unable to create manifest directory at path {rootManifestFolderPath}. Error: {e.Message}");
             }
         }
     }

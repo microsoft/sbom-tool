@@ -10,26 +10,45 @@ The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 
 
 ## Table of Contents
 
-* [Installation](#installation)
-* [Run the tool](#run-the-tool-to-generate-an-sbom)
+* [Download and Installation](#download-and-installation)
+* [Run the tool](#run-the-tool)
 * [Telemetry](#Telemetry)
 * [Contributing](#Contributing)
 * [Security](#Security)
 * [Trademarks](#Trademarks)
 
-## Installation
+## Download and Installation
 
-### Windows, Mac and Linux executable.
-Please check the [Releases](https://github.com/microsoft/sbom-tool/releases) page to go to the version of the tool you want to install. Then download the tool from the release assets for the required runtime. 
+### Executables for Windows, Linux, macOS
+We distribute executables and SBOM files of the tool in [GitHub Releases](https://github.com/microsoft/sbom-tool/releases) page. You can go and download binaries manually or use commands below to get the latest version of the tool for your platform.
 
 Please check the [CLI Reference](docs/sbom-tool-cli-reference.md) document for additional help regarding the CLI tool.
 
-### Sbom tool C# Api
+#### Windows (PowerShell)
+```powershell
+Invoke-WebRequest -Uri "https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-win-x64.exe" -OutFile "sbom-tool.exe"
+```
+
+#### Linux (curl)
+```bash
+curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
+chmod +x sbom-tool
+```
+
+#### macOS (curl)
+```bash
+curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-osx-x64
+chmod +x sbom-tool
+```
+
+### SBOM API NuGet package
 Please add and authenticate the Microsoft GitHub NuGet package [registry](https://github.com/orgs/microsoft/packages?repo_name=sbom-tool) to your nuget.config. Then install the `Microsoft.Sbom.Api` package to your project using these [instructions](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry#installing-a-package)
 
 Please check the [API Reference](docs/sbom-tool-api-reference.md) document for addditional help regarding the SBOM tool C# Api.
 
-## Run the tool to generate an SBOM
+## Run the tool
+
+### SBOM Generation
 
 Once you have installed the command line tool for your OS, run the tool using this command:
 
@@ -37,11 +56,11 @@ Once you have installed the command line tool for your OS, run the tool using th
 generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -nsb <namespace uri base>
 ```
 
-The drop path is the folder where all the files to be shipped are located. All these files will be hashed and added to the files section of the SBOM. The build components path is usually your source folder, we will scan this folder to search for project files like *.csproj or package.json to see what components were used to build the package. The package name and version represent the package the SBOM is describing. 
+The drop path is the folder where all the files to be shipped are located. All these files will be hashed and added to the files section of the SBOM. The build components path is usually your source folder, tool will scan this folder to search for project files like *.csproj or package.json to see what components were used to build the package. Tool uses [component-detection](https://github.com/microsoft/component-detection) to scan for components and dependencies, visit its Github page to get more information about supported components. The package name and version represent the package the SBOM is describing. 
 
 Each SBOM has a unique namespace that uniquely identifies the SBOM, we generate a unique identifier for the namespace field inside the SBOM, however we need a base URI that would be common for your entire organization. For example, a sample value for the `-nsb` parameter could be `https://companyName.com/teamName`, then the generator will create the namespace that would look like `https://companyName.com/teamName/<packageName>/<packageVersion>/<new-guid>`. Read more about the document namespace field [here](https://spdx.github.io/spdx-spec/document-creation-information/#65-spdx-document-namespace-field). 
 
-A more detailed list of available arguments can be found [here](docs/sbom-tool-arguments.md)
+A more detailed list of available CLI arguments for the tool can be found [here](docs/sbom-tool-arguments.md)
 
 ## Telemetry
 
