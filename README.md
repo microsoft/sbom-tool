@@ -12,6 +12,7 @@ The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 
 
 * [Download and Installation](#download-and-installation)
 * [Run the tool](#run-the-tool)
+* [Integrating SBOM tool to your CI/CD pipelines](#integrating-sbom-tool-to-your-cicd-pipelines)
 * [Telemetry](#Telemetry)
 * [Contributing](#Contributing)
 * [Security](#Security)
@@ -21,6 +22,8 @@ The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 
 
 ### Executables for Windows, Linux, macOS
 We distribute executables and SBOM files of the tool in [GitHub Releases](https://github.com/microsoft/sbom-tool/releases) page. You can go and download binaries manually or use commands below to get the latest version of the tool for your platform.
+
+Please check the [CLI Reference](docs/sbom-tool-cli-reference.md) document for additional help regarding the CLI tool.
 
 #### Windows (PowerShell)
 ```powershell
@@ -42,6 +45,8 @@ chmod +x sbom-tool
 ### SBOM API NuGet package
 Please add and authenticate the Microsoft GitHub NuGet package [registry](https://github.com/orgs/microsoft/packages?repo_name=sbom-tool) to your nuget.config. Then install the `Microsoft.Sbom.Api` package to your project using these [instructions](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry#installing-a-package)
 
+Please check the [API Reference](docs/sbom-tool-api-reference.md) document for addditional help regarding the SBOM tool C# Api.
+
 ## Run the tool
 
 ### SBOM Generation
@@ -58,13 +63,20 @@ Each SBOM has a unique namespace that uniquely identifies the SBOM, we generate 
 
 A more detailed list of available CLI arguments for the tool can be found [here](docs/sbom-tool-arguments.md)
 
+## Integrating SBOM tool to your CI/CD pipelines.
+
+You can follow these guides to integrate the SBOM tool into your CI/CD pipelines 
+
+* [Setting up GitHub Actions to use the SBOM tool](docs/setting-up-github-actions.md).
+* [Setting up Azure DevOps Pipelines to use the SBOM tool](docs/setting-up-ado-pipelines.md).
+
 ## Telemetry
 
 By default, telemetry will output to your output file path and will be a JSON blob. No data is submitted to Microsoft.
 
 ## Contributing
 
-Please follow the steps [here](docs/build-and-run.md) to clone and build this repository from source.
+Please follow the steps [here](docs/building-from-source.md) to clone and build this repository from source.
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
