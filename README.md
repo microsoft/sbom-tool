@@ -67,7 +67,8 @@ A more detailed list of available CLI arguments for the tool can be found [here]
 
 You can follow these guides to integrate the SBOM tool into your CI/CD pipelines 
 
-* [Setting up GitHub Actions to use SBOM tool](docs/setting-up-github-actions.md).
+* [Setting up GitHub Actions to use the SBOM tool](docs/setting-up-github-actions.md).
+* [Setting up Azure DevOps Pipelines to use the SBOM tool](docs/setting-up-ado-pipelines.md).
 
 ## Telemetry
 
