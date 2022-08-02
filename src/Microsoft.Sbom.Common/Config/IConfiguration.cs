@@ -170,7 +170,6 @@ namespace Microsoft.Sbom.Common.Config
             Justification = "Code element in comment.")]
         ConfigurationSetting<string> GenerationTimestamp { get; set; }
 
-
         /// <summary>
         /// If set to false, we will not follow symlinks while traversing the build drop folder. Default is set to 'true'.
         /// </summary>
@@ -181,6 +180,5 @@ namespace Microsoft.Sbom.Common.Config
         /// for confirmation. The new manifest directory will then be created at this location and the generated SBOM will be stored there.
         /// </summary>
         ConfigurationSetting<bool> DeleteManifestDirIfPresent { get; set; }
-
     }
 }
