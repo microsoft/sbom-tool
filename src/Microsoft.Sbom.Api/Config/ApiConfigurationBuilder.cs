@@ -59,6 +59,7 @@ namespace Microsoft.Sbom.Api.Config
             configuration.ManifestToolAction = ManifestToolActions.Generate;
             configuration.PackageName = GetConfigurationSetting(metadata.PackageName);
             configuration.PackageVersion = GetConfigurationSetting(metadata.PackageVersion);
+            configuration.PackageSupplier = GetConfigurationSetting(metadata.PackageSupplier);
             configuration.Parallelism = GetConfigurationSetting(sanitizedRuntimeConfiguration.WorkflowParallelism);
             configuration.GenerationTimestamp = GetConfigurationSetting(sanitizedRuntimeConfiguration.GenerationTimestamp);
             configuration.NamespaceUriBase = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriBase);

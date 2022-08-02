@@ -29,6 +29,11 @@ namespace Microsoft.Sbom.Extensions.Entities
         PackageVersion,
 
         /// <summary>
+        /// The supplier of the package this SBOM represents.
+        /// </summary>
+        PackageSupplier,
+
+        /// <summary>
         /// The name of the build environment, like ADO or cloudbuild.
         /// </summary>
         BuildEnvironmentName,

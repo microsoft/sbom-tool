@@ -12,7 +12,6 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
         internal const string SPDXVersion = "2.2";
         internal const string DataLicenceValue = "CC0-1.0";
         internal const string SPDXDocumentIdValue = "SPDXRef-DOCUMENT";
-        internal const string OrganizationValue = "Microsoft";
         internal const string RootPackageIdValue = "SPDXRef-RootPackage";
         internal const string SPDXRefFile = "SPDXRef-File";
         #region Headers
@@ -35,7 +34,6 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
         #region Value format strings
 
         internal const string SPDXDocumentNameFormatString = "{0} {1}";
-        internal const string SPDXDocumentNamespaceFormatString = "https://sbom.microsoft/package/{0}";
         internal const string PackageSupplierFormatString = "Organization: {0}";
 
         #endregion

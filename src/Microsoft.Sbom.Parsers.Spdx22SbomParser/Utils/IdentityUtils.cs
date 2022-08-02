@@ -138,6 +138,25 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
             throw new ArgumentException($"Unable to generate a package version based on provided parameters. " +
                 $"Please provide the package version in the 'PackageVersion' parameter.");
         }
+
+        public string GetPackageSupplier(IInternalMetadataProvider internalMetadataProvider)
+        {
+            if (internalMetadataProvider is null)
+            {
+                throw new ArgumentNullException(nameof(internalMetadataProvider));
+            }
+
+            // First check if the user provided a package version.
+            if (internalMetadataProvider.TryGetMetadata(MetadataKey.PackageSupplier, out object packageSupplier))
+            {
+                return packageSupplier as string;
+            }
+
+            // Right now we don't have any better way to version the package. Throw an exception for the user to 
+            // provide a package version.
+            throw new ArgumentException($"Unable to generate a package supplier based on provided parameters. " +
+                $"Please provide the package supplier in the 'PackageSupplier' parameter.");
+        }
  
         public string GetDocumentNamespace(IInternalMetadataProvider internalMetadataProvider)
         {

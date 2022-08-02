@@ -50,6 +50,8 @@ namespace Microsoft.Sbom.Api.Metadata
             // Add the package name if available.
             MetadataDictionary.AddIfKeyNotPresentAndValueNotNull(MetadataKey.PackageName, configuration.PackageName?.Value);
             MetadataDictionary.AddIfKeyNotPresentAndValueNotNull(MetadataKey.PackageVersion, configuration.PackageVersion?.Value);
+            MetadataDictionary.AddIfKeyNotPresentAndValueNotNull(MetadataKey.PackageSupplier, configuration.PackageSupplier?.Value);
+
 
             // Add generation timestamp
             MetadataDictionary.AddIfKeyNotPresentAndValueNotNull(MetadataKey.GenerationTimestamp, configuration.GenerationTimestamp?.Value);

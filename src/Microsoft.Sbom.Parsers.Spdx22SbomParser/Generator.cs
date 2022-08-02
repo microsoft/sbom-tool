@@ -129,7 +129,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
                 Created = identityUtils.GetGenerationTimestamp(internalMetadataProvider),
                 Creators = new List<string>
                 {
-                    $"Organization: {Constants.OrganizationValue}",
+                    $"Organization: {identityUtils.GetPackageSupplier(internalMetadataProvider)}",
                     $"Tool: {sbomToolName}-{sbomToolVersion}"
                 }
             };
@@ -215,7 +215,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
                 LicenseInfoFromFiles = Constants.NoAssertionListValue,
                 FilesAnalyzed = true,
                 PackageVerificationCode = identityUtils.GetPackageVerificationCode(internalMetadataProvider),
-                Supplier = string.Format(Constants.PackageSupplierFormatString, Constants.OrganizationValue),
+                Supplier = string.Format(Constants.PackageSupplierFormatString, identityUtils.GetPackageSupplier(internalMetadataProvider)),
                 HasFiles = identityUtils.GetPackageFilesList(internalMetadataProvider)
             };
 

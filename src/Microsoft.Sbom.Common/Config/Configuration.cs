@@ -82,6 +82,9 @@ namespace Microsoft.Sbom.Common.Config
         /// <inheritdoc cref="IConfiguration.PackageVersion" />
         public ConfigurationSetting<string> PackageVersion { get; set; }
 
+        /// <inheritdoc cref="IConfiguration.PackageSupplier" />
+        public ConfigurationSetting<string> PackageSupplier { get; set; }
+
         /// <inheritdoc cref="IConfiguration.FilesList" />
         public ConfigurationSetting<IEnumerable<SBOMFile>> FilesList { get; set; }
 
@@ -108,6 +111,7 @@ namespace Microsoft.Sbom.Common.Config
         [ValidUri(ForAction = ManifestToolActions.Generate, UriKind = UriKind.Absolute)]
         [ValueRequired(ForAction = ManifestToolActions.Generate)]
         public ConfigurationSetting<string> NamespaceUriBase { get; set; }
+
 
         /// <inheritdoc cref="IConfiguration.GenerationTimestamp" />
         public ConfigurationSetting<string> GenerationTimestamp { get; set; }
