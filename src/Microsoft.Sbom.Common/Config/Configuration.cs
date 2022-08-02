@@ -115,5 +115,9 @@ namespace Microsoft.Sbom.Common.Config
         /// <inheritdoc cref="IConfiguration.FollowSymlinks" />
         [DefaultValue(true)]
         public ConfigurationSetting<bool> FollowSymlinks { get; set; }
+
+        /// <inheritdoc cref="IConfiguration.DeleteManifestDirIfPresent" />
+        [DefaultValue(false)]
+        public ConfigurationSetting<bool> DeleteManifestDirIfPresent { get; set; }
     }
 }

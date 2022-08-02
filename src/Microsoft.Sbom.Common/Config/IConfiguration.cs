@@ -171,8 +171,14 @@ namespace Microsoft.Sbom.Common.Config
         ConfigurationSetting<string> GenerationTimestamp { get; set; }
 
         /// <summary>
-        /// Gets or sets if set to false, we will not follow symlinks while traversing the build drop folder. Default is set to 'true'.
+        /// If set to false, we will not follow symlinks while traversing the build drop folder. Default is set to 'true'.
         /// </summary>
         ConfigurationSetting<bool> FollowSymlinks { get; set; }
+
+        /// <summary>
+        /// If set to true, we will delete any previous manifest directories that are already present in the ManifestDirPath without asking the user
+        /// for confirmation. The new manifest directory will then be created at this location and the generated SBOM will be stored there.
+        /// </summary>
+        ConfigurationSetting<bool> DeleteManifestDirIfPresent { get; set; }
     }
 }

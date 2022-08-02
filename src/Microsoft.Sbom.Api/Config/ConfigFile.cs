@@ -155,5 +155,11 @@ namespace Microsoft.Sbom.Api.Config
         /// Gets or sets if set to false, we will not follow symlinks while traversing the build drop folder.
         /// </summary>
         public bool? FollowSymlinks { get; set; }
+
+        /// <summary>
+        /// If set to true, we will delete any previous manifest directories that are already present in the ManifestDirPath without asking the user
+        /// for confirmation. The new manifest directory will then be created at this location and the generated SBOM will be stored there.
+        /// </summary>
+        public bool? DeleteManifestDirIfPresent { get; set; }
     }
 }
