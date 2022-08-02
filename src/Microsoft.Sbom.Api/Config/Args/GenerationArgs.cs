@@ -96,5 +96,14 @@ namespace Microsoft.Sbom.Api.Config.Args
         [ArgShortcut("gt")]
         [ArgDescription("A timestamp in the format 'yyyy-MM-ddTHH:mm:ssZ' that will be used as the generated timestamp for the SBOM.")]
         public string GenerationTimestamp { get; set; }
+
+        /// <summary>
+        /// If set to true, we will delete any previous manifest directories that are already present in the ManifestDirPath without asking the user
+        /// for confirmation. The new manifest directory will then be created at this location and the generated SBOM will be stored there.
+        /// </summary>
+        [ArgDescription("If set to true, we will delete any previous manifest directories that are already present in the ManifestDirPath without " +
+            "asking the user for confirmation. The new manifest directory will then be created at this location and the generated SBOM " +
+            "will be stored there.")]
+        public bool? DeleteManifestDirIfPresent { get; set; }
     }
 }

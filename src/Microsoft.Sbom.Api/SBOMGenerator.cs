@@ -56,11 +56,6 @@ namespace Microsoft.Sbom.Api
             string manifestDirPath = null,
             string externalDocumentReferenceListFile = null)
         {
-            if (string.IsNullOrWhiteSpace(manifestDirPath))
-            {
-                manifestDirPath = fileSystemUtils.JoinPaths(rootPath, Constants.ManifestFolder);
-            }
-
             // Get scan configuration
             var config = configurationBuilder.GetConfiguration(
                 rootPath,
