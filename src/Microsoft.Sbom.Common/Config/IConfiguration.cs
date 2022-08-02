@@ -170,6 +170,7 @@ namespace Microsoft.Sbom.Common.Config
             Justification = "Code element in comment.")]
         ConfigurationSetting<string> GenerationTimestamp { get; set; }
 
+
         /// <summary>
         /// If set to false, we will not follow symlinks while traversing the build drop folder. Default is set to 'true'.
         /// </summary>
