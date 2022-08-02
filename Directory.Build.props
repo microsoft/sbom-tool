@@ -22,7 +22,8 @@
     <ItemGroup Label="Package References"> 
         <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" PrivateAssets="all"/>
         <PackageReference Include="MinVer" PrivateAssets="all"/>
-        <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all"/>    
+        <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
     </ItemGroup>
 
     <PropertyGroup>
