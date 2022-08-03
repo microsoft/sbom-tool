@@ -26,6 +26,10 @@
         <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
     </ItemGroup>
 
+    <PropertyGroup Label="SourceLink Configuration">
+      <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    </PropertyGroup>
+
     <PropertyGroup>
         <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)analyzers.ruleset</CodeAnalysisRuleSet>
         <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
