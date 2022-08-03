@@ -39,6 +39,7 @@ namespace Microsoft.Sbom.Api
                 .ForMember(nameof(Configuration.GenerationTimestamp), o => o.Ignore())
                 .ForMember(nameof(Configuration.NamespaceUriUniquePart), o => o.Ignore())
                 .ForMember(nameof(Configuration.NamespaceUriBase), o => o.Ignore())
+                .ForMember(nameof(Configuration.DeleteManifestDirIfPresent), o => o.Ignore())
                 .ForMember(nameof(Configuration.PackageSupplier), o => o.Ignore());
 
             // Create config for the generation args, ignoring other action members

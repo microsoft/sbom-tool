@@ -202,7 +202,7 @@ namespace Microsoft.Sbom.Api.Workflows
 
                     Recorder.RecordSwitch(Constants.DeleteManifestDirBoolVariableName, deleteSbomDirSwitch);
 
-                    if (!deleteSbomDirSwitch)
+                    if (!deleteSbomDirSwitch && !(Configuration.DeleteManifestDirIfPresent?.Value ?? false))
                     {
                         throw new ManifestFolderExistsException(
                             $"The BuildDropRoot folder already contains a _manifest folder. Please" +
