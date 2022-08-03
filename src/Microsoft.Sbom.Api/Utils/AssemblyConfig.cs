@@ -22,6 +22,8 @@ namespace Microsoft.Sbom.Api.Utils
         /// <inheritdoc/>
         public ManifestInfo DefaultManifestInfoForValidationAction => DefaultManifestInfoForValidationActionValue.Value;
 
+        public string DefaultPackageSupplier => PackageSupplier.Value;
+
         /// <inheritdoc/>
         public string AssemblyDirectory => AssemblyDirectoryValue.Value;
 
@@ -33,6 +35,8 @@ namespace Microsoft.Sbom.Api.Utils
 
         private static readonly Lazy<ManifestInfo> DefaultManifestInfoForValidationActionValue
             = GetCustomAttributeValue<DefaultManifestInfoArgForValidationAttribute, ManifestInfo>(a => a?.ManifestInfo);
+
+        private static readonly Lazy<string> PackageSupplier = GetCustomAttributeValue<PackageSupplierAttribute, string>(a => a?.PackageSupplier);
 
         private static readonly Lazy<string> AssemblyDirectoryValue = new Lazy<string>(() =>
         {

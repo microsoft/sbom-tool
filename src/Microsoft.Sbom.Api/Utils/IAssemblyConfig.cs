@@ -31,5 +31,10 @@ namespace Microsoft.Sbom.Api.Utils
         /// Gets the directory where the current executing assembly is located.
         /// </summary>
         public string AssemblyDirectory { get; }
+
+        /// <summary>
+        /// Gets the package supplier derived from current assembly.
+        /// </summary>
+        public string DefaultPackageSupplier { get; }
     }
 }

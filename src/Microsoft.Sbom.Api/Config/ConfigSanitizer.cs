@@ -48,6 +48,9 @@ namespace Microsoft.Sbom.Api.Config
             // Set default ManifestInfo for validation in case user doesn't provide a value.
             configuration.ManifestInfo = GetDefaultManifestInfoForValidationAction(configuration);
 
+            // Set default package supplier if not provided in configuration.
+            configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration);
+
             return configuration;
         }
 
@@ -112,6 +115,26 @@ namespace Microsoft.Sbom.Api.Config
             {
                 Source = SettingSource.Default,
                 Value = assemblyConfig.DefaultSBOMNamespaceBaseUri
+            };
+        }
+
+        private ConfigurationSetting<string> GetPackageSupplierFromAssembly(Configuration configuration)
+        {
+            if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultPackageSupplier))
+            {
+                return configuration.PackageSupplier;
+            }
+
+            // Give priority to package supplier provided as an argument.
+            if (!string.IsNullOrWhiteSpace(configuration.PackageSupplier?.Value))
+            {
+                return configuration.PackageSupplier;
+            }
+
+            return new ConfigurationSetting<string> 
+            { 
+                Source = SettingSource.Default,
+                Value = assemblyConfig.DefaultPackageSupplier
             };
         }
 
