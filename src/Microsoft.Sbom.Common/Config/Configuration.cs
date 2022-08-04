@@ -112,7 +112,6 @@ namespace Microsoft.Sbom.Common.Config
         [ValueRequired(ForAction = ManifestToolActions.Generate)]
         public ConfigurationSetting<string> NamespaceUriBase { get; set; }
 
-
         /// <inheritdoc cref="IConfiguration.GenerationTimestamp" />
         public ConfigurationSetting<string> GenerationTimestamp { get; set; }
 
