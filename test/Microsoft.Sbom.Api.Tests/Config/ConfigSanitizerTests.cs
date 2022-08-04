@@ -220,7 +220,6 @@ namespace Microsoft.Sbom.Api.Tests.Config
             Assert.AreEqual("http://base.uri", config.NamespaceUriBase.Value);
 
             mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
-            mockAssemblyConfig.VerifyNoOtherCalls();
         }
 
         [TestMethod]
@@ -243,7 +242,40 @@ namespace Microsoft.Sbom.Api.Tests.Config
 
             mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
             mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUriWarningMessage);
-            mockAssemblyConfig.VerifyNoOtherCalls();
+        }
+
+        [TestMethod]
+        public void ShouldGetPackageSupplierFromAsseblyConfig_Succeeds()
+        {
+            var organization = "Contoso International";
+            mockAssemblyConfig.SetupGet(a => a.DefaultPackageSupplier).Returns(organization);
+            var config = GetConfigurationBaseObject();
+
+            config.ManifestToolAction = ManifestToolActions.Validate;
+            configSanitizer.SanitizeConfig(config);
+
+            Assert.AreEqual(organization, config.PackageSupplier.Value);
+
+            mockAssemblyConfig.VerifyGet(a => a.DefaultPackageSupplier);
+        }
+
+        [TestMethod]
+        public void ShouldNotOverridePackageSupplierIfProvided_Succeeds()
+        {
+            var organization = "Contoso International";
+            var actualOrg = "Contoso";
+            mockAssemblyConfig.SetupGet(a => a.DefaultPackageSupplier).Returns(organization);
+            var config = GetConfigurationBaseObject();
+            config.PackageSupplier = new ConfigurationSetting<string>
+            {
+                Source = SettingSource.CommandLine,
+                Value = actualOrg
+            };
+
+            config.ManifestToolAction = ManifestToolActions.Validate;
+            configSanitizer.SanitizeConfig(config);
+
+            Assert.AreEqual(actualOrg, config.PackageSupplier.Value);
         }
     }
 }
