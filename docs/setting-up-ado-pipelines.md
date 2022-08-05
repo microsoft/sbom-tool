@@ -52,7 +52,7 @@ steps:
 - script: |
     curl -Lo $(Agent.TempDirectory)/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
     chmod +x $(Agent.TempDirectory)/sbom-tool
-    $(Agent.TempDirectory)/sbom-tool generate -b $(Build.ArtifactStagingDirectory) -bc $(Build.SourcesDirectory) -pn Test -pv 1.0.0 -nsb https://sbom.mycompany.com -V Verbose
+    $(Agent.TempDirectory)/sbom-tool generate -b $(Build.ArtifactStagingDirectory) -bc $(Build.SourcesDirectory) -pn Test -pv 1.0.0 -ps MyCompany -nsb https://sbom.mycompany.com -V Verbose
   displayName: Generate SBOM
 
 - task: PublishBuildArtifacts@1

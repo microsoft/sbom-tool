@@ -24,7 +24,7 @@ dotnet build --output c:\outputDrop
 Now, you will generate the SBOM for the above project by running the tool you just downloaded.
 
 ```
-./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -nsb http://mycompany.com
+./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com
 ```
 
 Here, you configured the tool to generte an SBOM for all the files in the `c:\outputDrop` folder, the `c:\Users\test\TestProject` path will be searched for *.csproj or packages.config files to get a list of dependency packages that will be added to the SBOM. The package name and version were configured using the -pn and -pv parameter, and the -nsb parameter specifices the namespace base uri which will be used to generate the document namespace in the final SPDX 2.2 SBOM.
@@ -40,7 +40,7 @@ The above is the most minimal set of parameters you can provide to generate the 
 By default the generated SBOM will be placed in a newly created folder called `_manifest` inside the BuildDropPath (-b), but in case you want to place the SBOM in a different path, you can specify the `ManifestDirPath -m` parameter like so.
 
 ```
-./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -nsb http://mycompany.com -m c:\sboms
+./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -m c:\sboms
 ```
 
 This will cause the SBOM tool to generate the SBOM inside the `c:\sboms` folder. A new `_manifest\spdx_2.2` folder will be created and the SBOM will be stored here. So, the SBOM can be found at the path `c:\sboms\_manifest\spdx_2.2\manifest.spdx.json`.
@@ -52,7 +52,7 @@ This will cause the SBOM tool to generate the SBOM inside the `c:\sboms` folder.
 You can specify verbose logging just by specifying the -V parameter, like so
 
 ```
-./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -nsb http://mycompany.com -V Verbose
+./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -V Verbose
 ```
 
 ### Scan docker images for dependency packages
@@ -61,13 +61,13 @@ We can scan docker images to scan them for dependency packages. Say for our exam
 
 
 ```
-./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -nsb http://mycompany.com -di testImage:0.0.1
+./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1
 ```
 
 Say, in addition to the test image, we also want to gather all dependencies in our build machine which say is `ubuntu:1.9`, we can specify multiple image arguments for this parameter by seperating them with a comma.
 
 ```
-./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -nsb http://mycompany.com -di testImage:0.0.1,ubuntu:1.9
+./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1,ubuntu:1.9
 ```
 
 ### Write telemetry to a file
@@ -75,5 +75,5 @@ Say, in addition to the test image, we also want to gather all dependencies in o
 By default, we just log telemetry to the console output. In order to get the telemetry logged to a file, specify the `-t` parameter 
 
 ```
-./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -nsb http://mycompany.com -t c:\telemetry
+./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -t c:\telemetry
 ```

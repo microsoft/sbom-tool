@@ -66,7 +66,7 @@ jobs:
       run: |
         curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
         chmod +x $RUNNER_TEMP/sbom-tool
-        $RUNNER_TEMP/sbom-tool generate -b ./buildOutput -bc . -pn Test -pv 1.0.0 -nsb https://sbom.mycompany.com -V Verbose
+        $RUNNER_TEMP/sbom-tool generate -b ./buildOutput -bc . -pn Test -pv 1.0.0 -ps MyCompany -nsb https://sbom.mycompany.com -V Verbose
         ls ./buildOutput/_manifest/spdx_2.2/
         cat ./buildOutput/_manifest/spdx_2.2/manifest.spdx.json
 

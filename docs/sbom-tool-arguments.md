@@ -33,6 +33,7 @@ PackageName (-pn)                         The name of the package this SBOM repr
 PackageVersion (-pv)                      The version of the package this SBOM represents. If this is not provided,
                                           we will try to infer the version from the build that generated this
                                           package, if that also fails, the SBOM generation fails.
+PackageSupplier (-ps)                     Supplier of the package this SBOM represents.
 DockerImagesToScan (-di)                  Comma separated list of docker image names or hashes to be scanned for
                                           packages, ex: ubuntu:16.04, 56bab49eef2ef07505f6a1b0d5bd3a601dfc3c76ad4460
                                           f24c91d6fa298369ab.

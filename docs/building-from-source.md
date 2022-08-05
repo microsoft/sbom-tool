@@ -31,7 +31,7 @@ Start Visual Studio 2022, and open the Microsoft.Sbom.sln file in the root of th
 
 1. Set the Microsoft.Sbom.Tool project as the startup project (rightclick-> Set as Startup Project)
 1. Set Run arguments for the Microsoft.Sbom.Tool project (rightclick->properties->Debug)  
-	*Minimum:* `generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -nsb <namespace uri base>`
+	*Minimum:* `generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -ps <company name> -nsb <namespace uri base>`
 1. Now, any time you make a change, you can press `F5`. This will build the changes, and start the process in debug mode (hitting any breakpoints you set)
 
 You can follow [this](https://www.youtube.com/watch?v=iC3CJcYxkl0&t=31s) small tutorial to get started with Visual Studio.
@@ -47,7 +47,7 @@ dotnet build
 You can run the tool using this minimal command
 
 ```
-dotnet run --project src/Microsoft.Sbom.Tool generate -- -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -nsb <namespace uri base>
+dotnet run --project src/Microsoft.Sbom.Tool generate -- -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -ps <company name> -nsb <namespace uri base>
 ```
 
 ## Building using Codespaces
