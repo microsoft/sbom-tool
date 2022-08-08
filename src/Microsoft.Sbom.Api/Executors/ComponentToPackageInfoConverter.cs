@@ -52,16 +52,7 @@ namespace Microsoft.Sbom.Api.Executors
                     try
                     {
                         var sbom = scannedComponent.ToSbomPackage(report);
-
-                        if (sbom == null)
-                        {
-                            log.Debug($"Unable to serialize component '{scannedComponent.Component.Id}' of type '{scannedComponent.DetectorId}'. " +
-                                $"This component won't be included in the generated SBOM.");
-                        }
-                        else
-                        {
-                            await output.Writer.WriteAsync(sbom);
-                        }
+                        await output.Writer.WriteAsync(sbom);
                     }
                     catch (Exception e)
                     {
