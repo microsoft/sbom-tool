@@ -35,6 +35,7 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
                 PipComponent pipComponent => pipComponent.ToSbomPackage(),
                 PodComponent podComponent => podComponent.ToSbomPackage(),
                 RubyGemsComponent rubyGemsComponent => rubyGemsComponent.ToSbomPackage(),
+                DockerReferenceComponent dockerReferenceComponent => dockerReferenceComponent.ToSbomPackage(),
                 null => Error(report => report.LogNullComponent(nameof(ToSbomPackage))),
                 _ => Error(report => report.LogNoConversionFound(component.Component.GetType(), component.Component))
             };
