@@ -7,7 +7,7 @@
         </PackageVersion>
     </ItemDefinitionGroup>
     <PropertyGroup>
-        <ComponentDetectionPackageVersion>1.2.0</ComponentDetectionPackageVersion>
+        <ComponentDetectionPackageVersion>1.1.12</ComponentDetectionPackageVersion>
     </PropertyGroup>
     <ItemGroup>
         <PackageVersion Include="MinVer" Version="2.5.0"/>

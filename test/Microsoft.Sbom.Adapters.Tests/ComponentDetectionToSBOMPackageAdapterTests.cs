@@ -219,21 +219,6 @@ namespace Microsoft.Sbom.Adapters.Tests
             Assert.IsNull(sbomPackage.Supplier);
         }
 
-        [TestMethod]
-        public void DockerReferenceComponent_ToSbomPackage()
-        {
-            var dockerRefComponent = new DockerReferenceComponent("hash", "name", "tag") { Digest = "digest" };
-            var scannedComponent = new ScannedComponent { Component = dockerRefComponent };
-
-            var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
-
-            Assert.AreEqual(dockerRefComponent.Id, sbomPackage.Id);
-            Assert.AreEqual(dockerRefComponent.Name, sbomPackage.PackageName);
-            Assert.AreEqual(dockerRefComponent.PackageUrl?.ToString(), sbomPackage.PackageUrl);
-            Assert.AreEqual(AlgorithmName.SHA256, sbomPackage.Checksum.First().Algorithm);
-            Assert.AreEqual(dockerRefComponent.Digest, sbomPackage.Checksum.First().ChecksumValue);
-        }
-
         private (AdapterReport report, List<SBOMPackage> packages) GenerateJsonFileForTestAndRun(string json)
         {
             var baseDirectory = Path.Combine(testContext.TestRunDirectory, Guid.NewGuid().ToString());
