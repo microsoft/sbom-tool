@@ -59,11 +59,11 @@ namespace Microsoft.Sbom.Api.Metadata
         {
             // This is used when we can't determine the build environment. So, use a guid and package information
             // to generate the namespace.
-            var packageName = MetadataDictionary[MetadataKey.PackageName];
-            var packageVersion = MetadataDictionary[MetadataKey.PackageVersion];
-            var uniqueNsPart = configuration.NamespaceUriUniquePart?.Value ?? IdentifierUtils.GetShortGuid(Guid.NewGuid());
+            var packageName = Uri.EscapeDataString(MetadataDictionary[MetadataKey.PackageName] as string);
+            var packageVersion = Uri.EscapeDataString(MetadataDictionary[MetadataKey.PackageVersion] as string);
+            var uniqueNsPart = Uri.EscapeDataString(configuration.NamespaceUriUniquePart?.Value ?? IdentifierUtils.GetShortGuid(Guid.NewGuid()));
 
-            return Uri.EscapeUriString(string.Join("/", configuration.NamespaceUriBase.Value, packageName, packageVersion, uniqueNsPart));
+            return string.Join("/", configuration.NamespaceUriBase.Value, packageName, packageVersion, uniqueNsPart);
         }
     }
 
