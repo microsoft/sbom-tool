@@ -1,9 +1,9 @@
 # Building the SBOM tool from source.
 
-The SBOM tool is a cross-platform tool written in C# and is compiled using .NET Core 3.1. Follow the instructions below to build the tool from source.
+The SBOM tool is a cross-platform tool written in C# and is compiled using .NET 6. Follow the instructions below to build the tool from source.
 
 ## Prerequisites
-* Please download and install [Dotnet SDK](https://dotnet.microsoft.com/en-us/download/dotnet/3.1) version 3.1.300 or greater.
+* Please download and install [Dotnet SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) version 6.0.400 or greater.
 * Clone this GitHub repo (See steps to clone repo [here](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)).
 * A text editor or IDE like [Visual Studio Code](https://code.visualstudio.com) or [Visual Studio](https://visualstudio.microsoft.com).
 

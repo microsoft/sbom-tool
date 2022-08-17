@@ -1,10 +1,10 @@
 # SBOM API Reference
 
-The SBOM tool can be called using a C# API. This guide will help you integrate the SBOM tool API package in your .NET Core project.
+The SBOM tool can be called using a C# API. This guide will help you integrate the SBOM tool API package in your .NET project.
 
 ## Prerequisites
-* You have a .NET Core project that can ingest packages from nuget.org.
-* Only projects that target .NET Core 3.1 or higher are supported, we don't have a .NET Framework implementation for the SBOM API. 
+* You have a .NET project that can ingest packages from nuget.org.
+* Only projects that target .NET 6 or higher are supported, we don't have a .NET Framework implementation for the SBOM API. 
 * Add the **SBOMToolsPublic** repository to your nuget.config, you can check the steps to get it added to your project by clicking the **'Connect to Feed'** button on the feed page [here](https://dev.azure.com/mseng/PipelineTools/_artifacts/feed/SBOMToolsPublic)
 
 ## Installation
