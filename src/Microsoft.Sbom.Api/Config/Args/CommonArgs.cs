@@ -29,7 +29,7 @@ namespace Microsoft.Sbom.Api.Config.Args
         /// <summary>
         /// Gets or sets a JSON config file that can be used to specify all the arguments for an action.
         /// </summary>
-        [ArgDescription("The json file that contains the configuration for the DropValidator.")]
+        [ArgDescription("The json file that contains the configuration for the SbomTool.")]
         public string ConfigFilePath { get; set; }
 
         /// <summary>

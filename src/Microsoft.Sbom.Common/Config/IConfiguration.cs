@@ -62,7 +62,7 @@ namespace Microsoft.Sbom.Common.Config
         ConfigurationSetting<LogEventLevel> Verbosity { get; set; }
 
         /// <summary>
-        /// Gets or sets the json file that contains the configuration for the DropValidator.
+        /// Gets or sets the json file that contains the configuration for the SbomTool.
         /// </summary>
         ConfigurationSetting<string> ConfigFilePath { get; set; }
 

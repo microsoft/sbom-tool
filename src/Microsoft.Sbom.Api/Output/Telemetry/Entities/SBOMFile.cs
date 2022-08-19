@@ -3,7 +3,7 @@
 
 using Microsoft.Sbom.Extensions.Entities;
 
-namespace DropValidator.Api.Output.Telemetry.Entities
+namespace Microsoft.Sbom.Api.Output.Telemetry.Entities
 {
     /// <summary>
     /// Represents a SBOM file object and contains additional properties 
