@@ -235,7 +235,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 DirectoryWalker = new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 FileHasher = new FileHasher(
                     hashCodeGeneratorMock.Object,
-                    new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
+                    new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
                     mockLogger.Object,
                     configurationMock.Object,
                     sbomConfigs,
@@ -257,7 +257,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ChannelUtils = new ChannelUtils(),
                 FileHasher = new FileHasher(
                     hashCodeGeneratorMock.Object,
-                    new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
+                    new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
                     mockLogger.Object,
                     configurationMock.Object,
                     sbomConfigs,
