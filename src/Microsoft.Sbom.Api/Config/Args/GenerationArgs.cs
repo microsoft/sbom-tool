@@ -60,7 +60,7 @@ namespace Microsoft.Sbom.Api.Config.Args
         public string PackageVersion { get; set; }
 
         [ArgShortcut("ps")]
-        [ArgDescription("Supplier of the package this SBOM represents.")]
+        [ArgDescription("Supplier of the package that this SBOM represents.")]
         public string PackageSupplier { get; set; }
 
         [ArgDescription("Comma separated list of docker image names or hashes to be scanned for packages, ex: ubuntu:16.04, 56bab49eef2ef07505f6a1b0d5bd3a601dfc3c76ad4460f24c91d6fa298369ab.")]
