@@ -21,11 +21,8 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
     /// </summary>
     public class Generator : IManifestGenerator
     {
-        private readonly IdentityUtils identityUtils;
-
         public Generator()
         {
-            identityUtils = new IdentityUtils();
         }
 
         public AlgorithmName[] RequiredHashAlgorithms => new[] { AlgorithmName.SHA256, AlgorithmName.SHA1 };
@@ -119,17 +116,17 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
 
             var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolName);
             var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
-            var packageName = identityUtils.GetPackageName(internalMetadataProvider);
-            var packageVersion = identityUtils.GetPackageVersion(internalMetadataProvider);
+            var packageName = internalMetadataProvider.GetPackageName();
+            var packageVersion = internalMetadataProvider.GetPackageVersion();
 
             var documentName = string.Format(Constants.SPDXDocumentNameFormatString, packageName, packageVersion);
 
             var creationInfo = new CreationInfo
             {
-                Created = identityUtils.GetGenerationTimestamp(internalMetadataProvider),
+                Created = internalMetadataProvider.GetGenerationTimestamp(),
                 Creators = new List<string>
                 {
-                    $"Organization: {identityUtils.GetPackageSupplier(internalMetadataProvider)}",
+                    $"Organization: {internalMetadataProvider.GetPackageSupplier()}",
                     $"Tool: {sbomToolName}-{sbomToolVersion}"
                 }
             };
@@ -140,7 +137,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
                 { Constants.DataLicenseHeaderName, Constants.DataLicenceValue },
                 { Constants.SPDXIDHeaderName, Constants.SPDXDocumentIdValue },
                 { Constants.DocumentNameHeaderName, documentName },
-                { Constants.DocumentNamespaceHeaderName,  identityUtils.GetDocumentNamespace(internalMetadataProvider) },
+                { Constants.DocumentNamespaceHeaderName,  internalMetadataProvider.GetDocumentNamespace() },
                 { Constants.CreationInfoHeaderName, creationInfo },
                 { Constants.DocumentDescribesHeaderName, new string[] { generationData.RootPackageId } }
             };
@@ -206,17 +203,17 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
             var spdxPackage = new SPDXPackage
             {
                 SpdxId = Constants.RootPackageIdValue,
-                Name = identityUtils.GetPackageName(internalMetadataProvider),
-                VersionInfo = identityUtils.GetPackageVersion(internalMetadataProvider),
+                Name = internalMetadataProvider.GetPackageName(),
+                VersionInfo = internalMetadataProvider.GetPackageVersion(),
                 DownloadLocation = Constants.NoAssertionValue,
                 CopyrightText = Constants.NoAssertionValue,
                 LicenseConcluded = Constants.NoAssertionValue,
                 LicenseDeclared = Constants.NoAssertionValue,
                 LicenseInfoFromFiles = Constants.NoAssertionListValue,
                 FilesAnalyzed = true,
-                PackageVerificationCode = identityUtils.GetPackageVerificationCode(internalMetadataProvider),
-                Supplier = string.Format(Constants.PackageSupplierFormatString, identityUtils.GetPackageSupplier(internalMetadataProvider)),
-                HasFiles = identityUtils.GetPackageFilesList(internalMetadataProvider)
+                PackageVerificationCode = internalMetadataProvider.GetPackageVerificationCode(),
+                Supplier = string.Format(Constants.PackageSupplierFormatString, internalMetadataProvider.GetPackageSupplier()),
+                HasFiles = internalMetadataProvider.GetPackageFilesList()
             };
 
             return new GenerationResult
