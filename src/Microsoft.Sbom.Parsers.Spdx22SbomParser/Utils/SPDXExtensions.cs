@@ -212,7 +212,5 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
             var spdxId = BitConverter.ToString(hash).Replace("-", string.Empty);
             return spdxId;
         }
-
-
     }
 }
