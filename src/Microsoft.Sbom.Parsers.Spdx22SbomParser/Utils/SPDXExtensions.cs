@@ -81,7 +81,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
                 // Create a new PURL external reference.
                 var extRef = new ExternalReference
                 {
-                    ReferenceCategory = ReferenceCategory.PACKAGE_MANAGER,
+                    ReferenceCategory = ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(),
                     Type = ExternalRepositoryType.purl,
                     Locator = FormatPackageUrl(packageInfo.PackageUrl)
                 };
@@ -191,6 +191,16 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
             return reference.ExternalDocumentId;
         }
 
+        /// <summary>
+        /// Extension method to normalize the string value of <see cref="ReferenceCategory"/> to be compliant with SPDX 2.2 spec.
+        /// </summary>
+        /// <param name="referenceCategory"></param>
+        /// <returns>A reference category value complaint with the SPDX 2.2 spec.</returns>
+        public static string ToNormalizedString(this ReferenceCategory referenceCategory)
+        {
+            return referenceCategory.ToString().Replace('_', '-');
+        }
+
         /// Compute the SHA256 string representation (omitting dashes) of a given string
         /// </summary>
         /// <remarks>
@@ -202,5 +212,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
             var spdxId = BitConverter.ToString(hash).Replace("-", string.Empty);
             return spdxId;
         }
+
+
     }
 }
