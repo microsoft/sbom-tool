@@ -72,7 +72,7 @@ namespace Microsoft.Sbom.Api.Config
                 var configBuilder = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
                 kernel.Bind<IConfiguration>().ToConstant(await configBuilder.GetConfiguration(validationArgs));
-                var result = await kernel.Get<IWorkflow>(nameof(SbomToolWorkflow)).RunAsync();
+                var result = await kernel.Get<IWorkflow>(nameof(SBOMValidationWorkflow)).RunAsync();
                 await kernel.Get<IRecorder>().FinalizeAndLogTelemetryAsync();
 
                 IsFailed = !result;

@@ -156,7 +156,7 @@ namespace Microsoft.Sbom.Api
 
             #region Workflows
 
-            Bind<IWorkflow>().To<SbomToolWorkflow>().Named(nameof(SbomToolWorkflow));
+            Bind<IWorkflow>().To<SBOMValidationWorkflow>().Named(nameof(SBOMValidationWorkflow));
             Bind<IWorkflow>().To<SBOMGenerationWorkflow>().Named(nameof(SBOMGenerationWorkflow));
 
             #endregion

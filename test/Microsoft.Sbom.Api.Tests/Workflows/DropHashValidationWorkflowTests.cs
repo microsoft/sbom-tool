@@ -109,7 +109,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             var recorderMock = new Mock<IRecorder>().Object;
 
-            var workflow = new SbomToolWorkflow(
+            var workflow = new SBOMValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -222,7 +222,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestData = manifestData
             };
 
-            var workflow = new SbomToolWorkflow(
+            var workflow = new SBOMValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -329,7 +329,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestData = manifestData
             };
 
-            var workflow = new SbomToolWorkflow(
+            var workflow = new SBOMValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -435,7 +435,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestData = manifestData
             };
 
-            var workflow = new SbomToolWorkflow(
+            var workflow = new SBOMValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -541,7 +541,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestData = manifestData
             };
 
-            var workflow = new SbomToolWorkflow(
+            var workflow = new SBOMValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -592,7 +592,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             signValidatorMock.Setup(s => s.Validate()).Returns(false);
             var recorderMock = new Mock<IRecorder>().Object;
 
-            var workflow = new SbomToolWorkflow(
+            var workflow = new SBOMValidationWorkflow(
                 null,
                 null,
                 null,

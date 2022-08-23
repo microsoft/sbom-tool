@@ -25,7 +25,7 @@ namespace Microsoft.Sbom.Api.Workflows
     /// <summary>
     /// Defines the workflow steps for the drop validation action.
     /// </summary>
-    public class SbomToolWorkflow : IWorkflow
+    public class SBOMValidationWorkflow : IWorkflow
     {
         private readonly IConfiguration configuration;
         private readonly DirectoryWalker directoryWalker;
@@ -41,7 +41,7 @@ namespace Microsoft.Sbom.Api.Workflows
         private readonly ManifestFileFilterer manifestFileFilterer;
         private readonly IRecorder recorder;
 
-        public SbomToolWorkflow(
+        public SBOMValidationWorkflow(
             IConfiguration configuration,
             DirectoryWalker directoryWalker,
             ManifestFolderFilterer fileFilterer,
