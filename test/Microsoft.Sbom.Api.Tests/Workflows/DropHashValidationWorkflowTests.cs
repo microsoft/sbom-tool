@@ -97,7 +97,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             manifestFilterMock.Init();
             var fileHasher = new FileHasher(
                                hashCodeGeneratorMock.Object,
-                               new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
+                               new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
                                mockLogger.Object,
                                configurationMock.Object,
                                new Mock<ISbomConfigProvider>().Object,
@@ -109,7 +109,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             var recorderMock = new Mock<IRecorder>().Object;
 
-            var workflow = new DropValidatorWorkflow(
+            var workflow = new SBOMValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -212,7 +212,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             manifestFilterMock.Init();
             var fileHasher = new FileHasher(
                 hashCodeGeneratorMock.Object,
-                new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
+                new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
                 mockLogger.Object,
                 configurationMock.Object,
                 new Mock<ISbomConfigProvider>().Object,
@@ -222,7 +222,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestData = manifestData
             };
 
-            var workflow = new DropValidatorWorkflow(
+            var workflow = new SBOMValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -319,7 +319,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             manifestFilterMock.Init();
             var fileHasher = new FileHasher(
                 hashCodeGeneratorMock.Object,
-                new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
+                new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
                 mockLogger.Object,
                 configurationMock.Object,
                 new Mock<ISbomConfigProvider>().Object,
@@ -329,7 +329,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestData = manifestData
             };
 
-            var workflow = new DropValidatorWorkflow(
+            var workflow = new SBOMValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -425,7 +425,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             manifestFilterMock.Init();
             var fileHasher = new FileHasher(
                 hashCodeGeneratorMock.Object,
-                new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
+                new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
                 mockLogger.Object,
                 configurationMock.Object,
                 new Mock<ISbomConfigProvider>().Object,
@@ -435,7 +435,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestData = manifestData
             };
 
-            var workflow = new DropValidatorWorkflow(
+            var workflow = new SBOMValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -531,7 +531,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             manifestFilterMock.Init();
             var fileHasher = new FileHasher(
                 hashCodeGeneratorMock.Object,
-                new DropValidatorManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
+                new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemExtension.Object),
                 mockLogger.Object,
                 configurationMock.Object,
                 new Mock<ISbomConfigProvider>().Object,
@@ -541,7 +541,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestData = manifestData
             };
 
-            var workflow = new DropValidatorWorkflow(
+            var workflow = new SBOMValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -592,7 +592,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             signValidatorMock.Setup(s => s.Validate()).Returns(false);
             var recorderMock = new Mock<IRecorder>().Object;
 
-            var workflow = new DropValidatorWorkflow(
+            var workflow = new SBOMValidationWorkflow(
                 null,
                 null,
                 null,

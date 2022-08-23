@@ -13,13 +13,13 @@ using Microsoft.Sbom.Common;
 namespace Microsoft.Sbom.Api.Convertors.Tests
 {
     [TestClass]
-    public class DropValidatorManifestPathConverterTests
+    public class SbomToolManifestPathConverterTests
     {
         private Mock<IOSUtils> osUtils;
         private Mock<IFileSystemUtils> fileSystemUtils;
         private Mock<IFileSystemUtilsExtension> fileSystemExtensionUtils;
         private Mock<IConfiguration> configurationMock;
-        private DropValidatorManifestPathConverter converter;
+        private SbomToolManifestPathConverter converter;
 
         [TestInitialize]
         public void Setup()
@@ -29,7 +29,7 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
             fileSystemExtensionUtils = new Mock<IFileSystemUtilsExtension>();
             configurationMock = new Mock<IConfiguration>();
 
-            converter = new DropValidatorManifestPathConverter(configurationMock.Object, osUtils.Object, fileSystemUtils.Object, fileSystemExtensionUtils.Object);
+            converter = new SbomToolManifestPathConverter(configurationMock.Object, osUtils.Object, fileSystemUtils.Object, fileSystemExtensionUtils.Object);
 
             fileSystemUtils.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
@@ -37,7 +37,7 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
         }
 
         [TestMethod]
-        public void DropValidatorManifestPathConverterTests_ValidPath_Succeeds()
+        public void SbomToolManifestPathConverterTests_ValidPath_Succeeds()
         {
             var rootPath = @"C:\Sample\Root";
             var operatingSystems = new List<OSPlatform>() {
@@ -59,7 +59,7 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
         }
 
         [TestMethod]
-        public void DropValidatorManifestPathConverterTests_ValidPathWithDot_Succeeds()
+        public void SbomToolManifestPathConverterTests_ValidPathWithDot_Succeeds()
         {
             var rootPath = @"C:\Sample\Root\.";
             var operatingSystems = new List<OSPlatform>() {
@@ -79,7 +79,7 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
         }
 
         [TestMethod]
-        public void DropValidatorManifestPathConverterTests_BuildDropPathRelative_Succeeds()
+        public void SbomToolManifestPathConverterTests_BuildDropPathRelative_Succeeds()
         {
             var rootPath = @"Sample\.\Root\";
             var operatingSystems = new List<OSPlatform>() {
@@ -99,7 +99,7 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
         }
 
         [TestMethod]
-        public void DropValidatorManifestPathConverterTests_CaseSensitive_Windows_FreeBSD_Succeeds()
+        public void SbomToolManifestPathConverterTests_CaseSensitive_Windows_FreeBSD_Succeeds()
         {
             var rootPath = @"C:\Sample\Root";
             var operatingSystems = new List<OSPlatform>() {
@@ -120,7 +120,7 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
 
         [TestMethod]
         [ExpectedException(typeof(InvalidPathException))]
-        public void DropValidatorManifestPathConverterTests_CaseSensitive_OSX_Fails()
+        public void SbomToolManifestPathConverterTests_CaseSensitive_OSX_Fails()
         {
             var rootPath = @"C:\Sample\Root";
             configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = rootPath });
@@ -132,7 +132,7 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
 
         [TestMethod]
         [ExpectedException(typeof(InvalidPathException))]
-        public void DropValidatorManifestPathConverterTests_CaseSensitive_Linux_Fails()
+        public void SbomToolManifestPathConverterTests_CaseSensitive_Linux_Fails()
         {
             var rootPath = @"C:\Sample\Root";
             configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = rootPath });
@@ -144,7 +144,7 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
 
         [TestMethod]
         [ExpectedException(typeof(InvalidPathException))]
-        public void DropValidatorManifestPathConverterTests_RootPathOutside_Fails()
+        public void SbomToolManifestPathConverterTests_RootPathOutside_Fails()
         {
             var rootPath = @"C:\Sample\Root";
 
@@ -156,7 +156,7 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
         }
 
         [TestMethod]
-        public void DropValidatorManifestPathConverterTests_RootPathOutside_SbomOnDifferentDrive_Succeeds()
+        public void SbomToolManifestPathConverterTests_RootPathOutside_SbomOnDifferentDrive_Succeeds()
         {
             var rootPath = @"C:\Sample\Root";
             var filePath = @"d:\Root\hello\World.spdx.json";
@@ -169,7 +169,7 @@ namespace Microsoft.Sbom.Api.Convertors.Tests
         }
 
         [TestMethod]
-        public void DropValidatorManifestPathConverterTests_RootPathOutside_SbomOnSameDrive_Succeeds()
+        public void SbomToolManifestPathConverterTests_RootPathOutside_SbomOnSameDrive_Succeeds()
         {
             var rootPath = @"C:\Sample\Root";
             var filePath = @"C:\Sample\hello\World.spdx.json";
