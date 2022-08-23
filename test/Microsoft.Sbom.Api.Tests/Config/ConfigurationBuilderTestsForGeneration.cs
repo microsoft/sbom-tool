@@ -196,13 +196,12 @@ namespace Microsoft.Sbom.Api.Config.Tests
         }
 
         [TestMethod]
-        public async Task ConfigurationBuilderTest_Generation_BadNSBaseUriWithDefaultValu_Succeds()
+        public async Task ConfigurationBuilderTest_Generation_BadNSBaseUriWithDefaultValue_Succeds()
         {
             var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
             var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
             mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns("https://uri");
-            mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUriWarningMessage).Returns("Test");
 
             fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
             fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
@@ -224,7 +223,6 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             fileSystemUtilsMock.VerifyAll();
             mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
-            mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUriWarningMessage);
         }
 
         [TestMethod]

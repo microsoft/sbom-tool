@@ -17,9 +17,6 @@ namespace Microsoft.Sbom.Api.Utils
         public string DefaultSBOMNamespaceBaseUri => DefaultSBOMBaseNamespaceUri.Value;
 
         /// <inheritdoc/>
-        public string DefaultSBOMNamespaceBaseUriWarningMessage => DefaultSBOMBaseNamespaceUriWarningMessage.Value;
-
-        /// <inheritdoc/>
         public ManifestInfo DefaultManifestInfoForValidationAction => DefaultManifestInfoForValidationActionValue.Value;
 
         public string DefaultPackageSupplier => PackageSupplier.Value;
@@ -29,9 +26,6 @@ namespace Microsoft.Sbom.Api.Utils
 
         private static readonly Lazy<string> DefaultSBOMBaseNamespaceUri
             = GetCustomAttributeValue<DefaultNamespaceBaseUriAttribute, string>(a => a?.DefaultBaseNamespaceUri);
-
-        private static readonly Lazy<string> DefaultSBOMBaseNamespaceUriWarningMessage
-            = GetCustomAttributeValue<DefaultNamespaceBaseUriAttribute, string>(a => a?.WarningMessage);
 
         private static readonly Lazy<ManifestInfo> DefaultManifestInfoForValidationActionValue
             = GetCustomAttributeValue<DefaultManifestInfoArgForValidationAttribute, ManifestInfo>(a => a?.ManifestInfo);

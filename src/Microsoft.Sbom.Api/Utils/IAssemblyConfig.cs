@@ -16,12 +16,6 @@ namespace Microsoft.Sbom.Api.Utils
         public string DefaultSBOMNamespaceBaseUri { get; }
 
         /// <summary>
-        /// Gets the warning message to show in case the assembly defined namespace base URI is used instead
-        /// of the user provided one.
-        /// </summary>
-        public string DefaultSBOMNamespaceBaseUriWarningMessage { get; }
-
-        /// <summary>
         /// Gets the default value to use for ManifestInfo for validation action in case the user doesn't provide a
         /// value.
         /// </summary>

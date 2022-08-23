@@ -5,6 +5,7 @@ using Microsoft.Sbom.Common.Config;
 using Ninject.Activation;
 using Serilog;
 using Serilog.Core;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Logging
 {
@@ -24,7 +25,7 @@ namespace Microsoft.Sbom.Api.Logging
         {
             return new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = configuration.Verbosity.Value })
-                .WriteTo.Console(outputTemplate: "##[{Level:w}]{Message}{NewLine}{Exception}")
+                .WriteTo.Console(outputTemplate: Constants.LoggerTemplate)
                 .CreateLogger();
         }
     }

@@ -13,27 +13,14 @@ namespace Microsoft.Sbom.Common.Config.Attributes
         /// </summary>
         public string DefaultBaseNamespaceUri { get; set; }
 
-        /// <summary>
-        /// Gets or sets the warning to display to the user if they provide a value in the 
-        /// NamespaceUriBase parameter in IConfiguration, since we will be overriding
-        /// this value.
-        /// </summary>
-        public string WarningMessage { get; set; }
-
-        public DefaultNamespaceBaseUriAttribute(string defaultBaseNamespaceUri, string warningMessage)
+        public DefaultNamespaceBaseUriAttribute(string defaultBaseNamespaceUri)
         {
             if (string.IsNullOrEmpty(defaultBaseNamespaceUri))
             {
                 throw new ArgumentException($"'{nameof(defaultBaseNamespaceUri)}' cannot be null or empty.", nameof(defaultBaseNamespaceUri));
             }
 
-            if (string.IsNullOrEmpty(warningMessage))
-            {
-                throw new ArgumentException($"'{nameof(warningMessage)}' cannot be null or empty.", nameof(warningMessage));
-            }
-
             DefaultBaseNamespaceUri = defaultBaseNamespaceUri;
-            WarningMessage = warningMessage;
         }
     }
 }
