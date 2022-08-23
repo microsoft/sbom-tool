@@ -11,23 +11,23 @@ namespace Microsoft.Sbom.Api.Convertors
 {
     /// <summary>
     /// Converts a regular file path to a relative file path in the format the 
-    /// DropValidator expects. The expected format looks like this:
+    /// SbomTool expects. The expected format looks like this:
     /// 
     /// Root                  : C:\dropRoot
     /// Absolute path         : C:\dropRoot\folder1\file1.txt
     /// Relative path         : folder1\file1.txt
-    /// DropValidator Format  : /folder1/file1.txt
+    /// SbomTool Format  : /folder1/file1.txt
     /// 
     /// Throws a <see cref="InvalidPathException"/> if the file is outside the root folder.
     /// </summary>
-    public class DropValidatorManifestPathConverter : IManifestPathConverter
+    public class SbomToolManifestPathConverter : IManifestPathConverter
     {
         private readonly IConfiguration configuration;
         private readonly IOSUtils osUtils;
         private readonly IFileSystemUtils fileSystemUtils;
         private readonly IFileSystemUtilsExtension fileSystemUtilsExtension;
 
-        public DropValidatorManifestPathConverter(IConfiguration configuration, IOSUtils osUtils, IFileSystemUtils fileSystemUtils, IFileSystemUtilsExtension fileSystemUtilsExtension)
+        public SbomToolManifestPathConverter(IConfiguration configuration, IOSUtils osUtils, IFileSystemUtils fileSystemUtils, IFileSystemUtilsExtension fileSystemUtilsExtension)
         {
             this.configuration = configuration;
             this.osUtils = osUtils;

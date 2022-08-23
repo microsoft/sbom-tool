@@ -141,7 +141,7 @@ namespace Microsoft.Sbom.Api
 
             #region QuickBuild Manifest workflow bindings
             Bind<IHashCodeGenerator>().To<HashCodeGenerator>();
-            Bind<IManifestPathConverter>().To<DropValidatorManifestPathConverter>();
+            Bind<IManifestPathConverter>().To<SbomToolManifestPathConverter>();
             #endregion
 
             #region AutoMapper bindings
@@ -155,7 +155,7 @@ namespace Microsoft.Sbom.Api
 
             #region Workflows
 
-            Bind<IWorkflow>().To<DropValidatorWorkflow>().Named(nameof(DropValidatorWorkflow));
+            Bind<IWorkflow>().To<SBOMValidationWorkflow>().Named(nameof(SBOMValidationWorkflow));
             Bind<IWorkflow>().To<SBOMGenerationWorkflow>().Named(nameof(SBOMGenerationWorkflow));
 
             #endregion
