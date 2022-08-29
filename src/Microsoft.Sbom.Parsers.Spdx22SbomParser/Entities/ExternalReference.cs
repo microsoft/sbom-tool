@@ -17,7 +17,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities
         /// Gets or sets the category for the external reference.
         /// </summary>
         [JsonPropertyName("referenceCategory")]
-        public ReferenceCategory ReferenceCategory { get; set; }
+        public string ReferenceCategory { get; set; }
 
         /// <summary>
         /// Gets or sets type of the external reference. These are definined in an appendix in the SPDX specification.
