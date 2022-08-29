@@ -63,7 +63,8 @@ namespace Microsoft.Sbom.Api.Tests.Config
             var args = new GenerationArgs
             {
                 BuildDropPath = "BuildDropPath",
-                NamespaceUriBase = "https://base.uri"
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
             };
 
             await runner.Generate(args);

@@ -62,7 +62,12 @@ namespace Microsoft.Sbom.Api.Tests
             mockRecorder.Setup(c => c.Errors).Returns(fileValidationResults).Verifiable();
             mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
 
-            var result = await generator.GenerateSBOMAsync("rootPath", "compPath", new SBOMMetadata(), configuration: runtimeConfiguration);
+            var metadata = new SBOMMetadata()
+            {
+                PackageSupplier = "Contoso"
+            };
+
+            var result = await generator.GenerateSBOMAsync("rootPath", "compPath", metadata, configuration: runtimeConfiguration);
 
             Assert.AreEqual(1, result.Errors.Count);
             Assert.AreEqual(EntityErrorType.Other, result.Errors[0].ErrorType);
@@ -79,7 +84,12 @@ namespace Microsoft.Sbom.Api.Tests
             mockRecorder.Setup(c => c.Errors).Returns(new List<FileValidationResult>()).Verifiable();
             mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
 
-            var result = await generator.GenerateSBOMAsync("rootPath", "compPath", new SBOMMetadata(), configuration: runtimeConfiguration);
+            var metadata = new SBOMMetadata()
+            {
+                PackageSupplier = "Contoso"
+            };
+
+            var result = await generator.GenerateSBOMAsync("rootPath", "compPath", metadata, configuration: runtimeConfiguration);
 
             Assert.AreEqual(0, result.Errors.Count);
             mockRecorder.Verify();

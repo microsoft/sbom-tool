@@ -38,7 +38,8 @@ namespace Microsoft.Sbom.Api.Config.Tests
             {
                 BuildDropPath = "BuildDropPath",
                 ConfigFilePath = "config.json",
-                NamespaceUriBase = "https://base.uri"
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
             };
 
             var configuration = await cb.GetConfiguration(args);
@@ -65,7 +66,8 @@ namespace Microsoft.Sbom.Api.Config.Tests
             {
                 BuildDropPath = "BuildDropPath",
                 ConfigFilePath = "config.json",
-                NamespaceUriBase = "https://base.uri"
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
             };
 
             var configuration = await cb.GetConfiguration(args);
@@ -89,7 +91,8 @@ namespace Microsoft.Sbom.Api.Config.Tests
             var args = new GenerationArgs
             {
                 BuildDropPath = "BuildDropPath",
-                NamespaceUriBase = "https://base.uri"
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
             };
 
             var configuration = await cb.GetConfiguration(args);
@@ -109,7 +112,8 @@ namespace Microsoft.Sbom.Api.Config.Tests
             var args = new GenerationArgs
             {
                 BuildDropPath = "BuildDropPath",
-                NamespaceUriBase = "https://base.uri"
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
             };
 
             var configuration = await cb.GetConfiguration(args);
@@ -129,7 +133,8 @@ namespace Microsoft.Sbom.Api.Config.Tests
             var args = new GenerationArgs
             {
                 BuildDropPath = "BuildDropPath",
-                NamespaceUriBase = "https://base.uri"
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
             };
 
             var config = await cb.GetConfiguration(args);
@@ -156,7 +161,8 @@ namespace Microsoft.Sbom.Api.Config.Tests
             {
                 BuildDropPath = "BuildDropPath",
                 ManifestDirPath = "ManifestDirPath",
-                NamespaceUriBase = "https://base.uri"
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
             };
 
             var config = await cb.GetConfiguration(args);
@@ -183,7 +189,8 @@ namespace Microsoft.Sbom.Api.Config.Tests
             {
                 BuildDropPath = "BuildDropPath",
                 ManifestDirPath = "ManifestDirPath",
-                NamespaceUriBase = "https://base.uri"
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
             };
 
             var config = await cb.GetConfiguration(args);
@@ -212,7 +219,8 @@ namespace Microsoft.Sbom.Api.Config.Tests
             {
                 BuildDropPath = "BuildDropPath",
                 ManifestDirPath = "ManifestDirPath",
-                NamespaceUriBase = "baduri"
+                NamespaceUriBase = "baduri",
+                PackageSupplier = "Contoso"
             };
 
             var config = await cb.GetConfiguration(args);
@@ -251,7 +259,8 @@ namespace Microsoft.Sbom.Api.Config.Tests
                 {
                     BuildDropPath = "BuildDropPath",
                     ManifestDirPath = "ManifestDirPath",
-                    NamespaceUriBase = badNsUri
+                    NamespaceUriBase = badNsUri,
+                    PackageSupplier = "Contoso"
                 };
 
                 try
