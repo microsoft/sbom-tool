@@ -43,7 +43,7 @@ namespace SPDX22SBOMParserTest
         {
             spdxPackage.AddPackageUrls(packageInfo);
             var externalRef = spdxPackage.ExternalReferences.First();
-            Assert.AreEqual(ReferenceCategory.PACKAGE_MANAGER, externalRef.ReferenceCategory);
+            Assert.AreEqual(ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(), externalRef.ReferenceCategory);
             Assert.AreEqual(ExternalRepositoryType.purl, externalRef.Type);
             Assert.AreEqual(PackageUrl, externalRef.Locator);
         }
@@ -83,7 +83,7 @@ namespace SPDX22SBOMParserTest
 
             var externalRef = spdxPackage.ExternalReferences.First();
 
-            Assert.AreEqual(ReferenceCategory.PACKAGE_MANAGER, externalRef.ReferenceCategory);
+            Assert.AreEqual(ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(), externalRef.ReferenceCategory);
             Assert.AreEqual(ExternalRepositoryType.purl, externalRef.Type);
             Assert.AreEqual(expectedUrl, externalRef.Locator);
         }
@@ -132,6 +132,18 @@ namespace SPDX22SBOMParserTest
             var spdxId = spdxFile.AddSpdxId(fileName, checksums);
 
             Assert.AreEqual(spdxId, spdxFile.SPDXId);
+        }
+
+        [TestMethod]
+        public void ReferenceCategoryToNormalizedString_DoesNotContainUnderscore()
+        {
+            foreach (ReferenceCategory referenceCategory in Enum.GetValues(typeof(ReferenceCategory)))
+            {
+                var value = referenceCategory.ToNormalizedString();
+                Assert.IsFalse(
+                    value.Contains('_'), 
+                    $"The value {value} of the {nameof(ReferenceCategory)} enum contains an underscore character.");
+            }
         }
     }
 }
