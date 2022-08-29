@@ -32,7 +32,6 @@ namespace Microsoft.Sbom.Api.Utils
         public const string DocumentDescribesString = "documentDescribes";
         public const string SpdxVersionString = "spdxVersion";
         public const string DefaultRootElement = "SPDXRef-Document";
-        public const string NamespaceUriBasePropertyName = "NamespaceUriBase";
 
         #region Configuration switches
 

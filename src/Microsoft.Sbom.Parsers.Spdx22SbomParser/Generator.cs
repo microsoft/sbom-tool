@@ -21,10 +21,6 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
     /// </summary>
     public class Generator : IManifestGenerator
     {
-        public Generator()
-        {
-        }
-
         public AlgorithmName[] RequiredHashAlgorithms => new[] { AlgorithmName.SHA256, AlgorithmName.SHA1 };
 
         public string Version { get; set; } = string.Join("-", Constants.SPDXName, Constants.SPDXVersion);
