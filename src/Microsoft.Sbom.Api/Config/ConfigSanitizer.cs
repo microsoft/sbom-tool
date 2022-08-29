@@ -1,13 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
+using Serilog;
+using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
@@ -37,16 +39,27 @@ namespace Microsoft.Sbom.Api.Config
                 throw new ArgumentNullException(nameof(configuration));
             }
 
+            // Create temporary logger to show logs during config sanitizing
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = configuration.Verbosity.Value })
+                .WriteTo.Console(outputTemplate: Constants.LoggerTemplate)
+                .CreateLogger();
+
             configuration.HashAlgorithm = GetHashAlgorithmName(configuration);
 
             // set ManifestDirPath after validation of DirectoryExist and DirectoryPathIsWritable, this wouldn't exist because it needs to be created by the tool.
             configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath.Value, configuration.ManifestToolAction);
 
             // Set namespace value if provided in the assembly
-            configuration.NamespaceUriBase = GetNamespaceBaseUriFromAssembly(configuration);
+            configuration.NamespaceUriBase = GetNamespaceBaseUriFromAssembly(configuration, logger);
 
             // Set default ManifestInfo for validation in case user doesn't provide a value.
             configuration.ManifestInfo = GetDefaultManifestInfoForValidationAction(configuration);
+
+            // Set default package supplier if not provided in configuration.
+            configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
+
+            logger.Dispose();
 
             return configuration;
         }
@@ -93,7 +106,7 @@ namespace Microsoft.Sbom.Api.Config
             };
         }
 
-        private ConfigurationSetting<string> GetNamespaceBaseUriFromAssembly(Configuration configuration)
+        private ConfigurationSetting<string> GetNamespaceBaseUriFromAssembly(Configuration configuration, ILogger logger)
         {
             // If assembly name is not defined returned the current value.
             if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri))
@@ -105,13 +118,43 @@ namespace Microsoft.Sbom.Api.Config
             // show a warning on the console.
             if (!string.IsNullOrWhiteSpace(configuration.NamespaceUriBase?.Value))
             {
-                Console.WriteLine(assemblyConfig.DefaultSBOMNamespaceBaseUriWarningMessage);
+                if (!string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri))
+                {
+                    logger.Information("Custom namespace URI base provided, using provided value instead of default");
+                }
+
+                return configuration.NamespaceUriBase;
             }
 
             return new ConfigurationSetting<string>
             {
                 Source = SettingSource.Default,
                 Value = assemblyConfig.DefaultSBOMNamespaceBaseUri
+            };
+        }
+
+        private ConfigurationSetting<string> GetPackageSupplierFromAssembly(Configuration configuration, ILogger logger)
+        {
+            if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultPackageSupplier))
+            {
+                return configuration.PackageSupplier;
+            }
+
+            // Give priority to package supplier provided as an argument.
+            if (!string.IsNullOrWhiteSpace(configuration.PackageSupplier?.Value))
+            {
+                if (!string.IsNullOrWhiteSpace(assemblyConfig.DefaultPackageSupplier))
+                {
+                    logger.Information("Custom package supplier value provided, using provided value instead of default");
+                }
+
+                return configuration.PackageSupplier;
+            }
+
+            return new ConfigurationSetting<string> 
+            { 
+                Source = SettingSource.Default,
+                Value = assemblyConfig.DefaultPackageSupplier
             };
         }
 

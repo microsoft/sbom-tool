@@ -79,6 +79,11 @@ namespace Microsoft.Sbom.Api.Tests.Config
                     Source = SettingSource.Default,
                     Value = new List<ManifestInfo>
                     { Constants.TestManifestInfo }
+                },
+                Verbosity = new ConfigurationSetting<Serilog.Events.LogEventLevel>
+                {
+                    Source = SettingSource.Default,
+                    Value = Serilog.Events.LogEventLevel.Information
                 }
             };
         }
@@ -220,30 +225,61 @@ namespace Microsoft.Sbom.Api.Tests.Config
             Assert.AreEqual("http://base.uri", config.NamespaceUriBase.Value);
 
             mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
-            mockAssemblyConfig.VerifyNoOtherCalls();
         }
 
         [TestMethod]
-        public void UserProviderNamespaceUriBaseShouldReturnDefaultValue_Succeeds()
+        public void UserProviderNamespaceUriBaseShouldReturnProvidedValue_Succeeds()
         {
             mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns("http://internal.base.uri");
-            mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUriWarningMessage).Returns("test");
+            var providedNamespaceValue = "http://base.uri";
             var config = GetConfigurationBaseObject();
             config.NamespaceUriBase = new ConfigurationSetting<string>
             {
                 Source = SettingSource.CommandLine,
-                Value = "http://base.uri"
+                Value = providedNamespaceValue
             };
 
             config.ManifestToolAction = ManifestToolActions.Validate;
             configSanitizer.SanitizeConfig(config);
 
-            Assert.AreEqual("http://internal.base.uri", config.NamespaceUriBase.Value);
-            Assert.AreEqual(SettingSource.Default, config.NamespaceUriBase.Source);
+            Assert.AreEqual(providedNamespaceValue, config.NamespaceUriBase.Value);
+            Assert.AreEqual(SettingSource.CommandLine, config.NamespaceUriBase.Source);
 
             mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
-            mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUriWarningMessage);
-            mockAssemblyConfig.VerifyNoOtherCalls();
+        }
+
+        [TestMethod]
+        public void ShouldGetPackageSupplierFromAsseblyConfig_Succeeds()
+        {
+            var organization = "Contoso International";
+            mockAssemblyConfig.SetupGet(a => a.DefaultPackageSupplier).Returns(organization);
+            var config = GetConfigurationBaseObject();
+
+            config.ManifestToolAction = ManifestToolActions.Validate;
+            configSanitizer.SanitizeConfig(config);
+
+            Assert.AreEqual(organization, config.PackageSupplier.Value);
+
+            mockAssemblyConfig.VerifyGet(a => a.DefaultPackageSupplier);
+        }
+
+        [TestMethod]
+        public void ShouldNotOverridePackageSupplierIfProvided_Succeeds()
+        {
+            var organization = "Contoso International";
+            var actualOrg = "Contoso";
+            mockAssemblyConfig.SetupGet(a => a.DefaultPackageSupplier).Returns(organization);
+            var config = GetConfigurationBaseObject();
+            config.PackageSupplier = new ConfigurationSetting<string>
+            {
+                Source = SettingSource.CommandLine,
+                Value = actualOrg
+            };
+
+            config.ManifestToolAction = ManifestToolActions.Validate;
+            configSanitizer.SanitizeConfig(config);
+
+            Assert.AreEqual(actualOrg, config.PackageSupplier.Value);
         }
     }
 }

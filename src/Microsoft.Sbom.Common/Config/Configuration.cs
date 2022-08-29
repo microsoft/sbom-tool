@@ -82,6 +82,10 @@ namespace Microsoft.Sbom.Common.Config
         /// <inheritdoc cref="IConfiguration.PackageVersion" />
         public ConfigurationSetting<string> PackageVersion { get; set; }
 
+        /// <inheritdoc cref="IConfiguration.PackageSupplier" />
+        [ValueRequired(ForAction = ManifestToolActions.Generate)]
+        public ConfigurationSetting<string> PackageSupplier { get; set; }
+
         /// <inheritdoc cref="IConfiguration.FilesList" />
         public ConfigurationSetting<IEnumerable<SBOMFile>> FilesList { get; set; }
 

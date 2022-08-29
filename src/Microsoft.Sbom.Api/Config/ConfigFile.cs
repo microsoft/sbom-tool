@@ -105,6 +105,11 @@ namespace Microsoft.Sbom.Api.Config
         public string PackageVersion { get; set; }
 
         /// <summary>
+        /// Gets or sets the supplier of the package this SBOM represents.
+        /// </summary>
+        public string PackageSupplier { get; set; }
+
+        /// <summary>
         /// Gets or sets a JSON config file that can be used to specify all the arguments for an action.
         /// </summary>
         [JsonIgnore]

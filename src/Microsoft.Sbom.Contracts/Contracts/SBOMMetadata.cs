@@ -51,5 +51,11 @@ namespace Microsoft.Sbom.Contracts
         /// try to generate a unique package name based on the build name and id.
         /// </summary>
         public string PackageVersion { get; set; }
+
+        /// <summary>
+        /// Gets or sets the version of the package this SBOM represents. If this is not provided we will 
+        /// try to generate a unique package name based on the build name and id.
+        /// </summary>
+        public string PackageSupplier { get; set; }
     }
 }

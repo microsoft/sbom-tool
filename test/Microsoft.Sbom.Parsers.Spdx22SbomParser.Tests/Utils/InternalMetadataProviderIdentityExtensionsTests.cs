@@ -10,7 +10,7 @@ using System.ComponentModel;
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
 {
     [TestClass]
-    public class IdentityUtilsTests
+    public class InternalMetadataProviderIdentityExtensionsTests
     {
         [TestMethod]
         public void GetGenerationTimestamp_Default_Test()
@@ -20,8 +20,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
             mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.GenerationTimestamp, out time))
                 .Returns(false);
 
-            var identityUtils = new IdentityUtils();
-            var timestamp = identityUtils.GetGenerationTimestamp(mdProviderMock.Object);
+            var timestamp = mdProviderMock.Object.GetGenerationTimestamp();
 
             Assert.IsNotNull(timestamp);
             var parsedDate = new DateTimeOffsetConverter().ConvertFromString(timestamp);
@@ -36,8 +35,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
             mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.GenerationTimestamp, out time))
                 .Returns(true);
 
-            var identityUtils = new IdentityUtils();
-            var timestamp = identityUtils.GetGenerationTimestamp(mdProviderMock.Object);
+            var timestamp = mdProviderMock.Object.GetGenerationTimestamp();
 
             Assert.IsNotNull(timestamp);
             Assert.IsTrue(timestamp.Equals("time"));

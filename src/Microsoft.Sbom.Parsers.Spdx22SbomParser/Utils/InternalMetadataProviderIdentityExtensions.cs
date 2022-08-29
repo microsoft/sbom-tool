@@ -16,7 +16,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
     /// <summary>
     /// Provides helper functions to generate identity strings for SPDX.
     /// </summary>
-    public class IdentityUtils
+    public static class InternalMetadataProviderIdentityExtensions
     {
         /// <summary>
         /// Get the name of the package. This can be provided directly be the user, or
@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
         /// exception.
         /// </summary>
         /// <returns>The string package name.</returns>
-        public string GetPackageName(IInternalMetadataProvider internalMetadataProvider)
+        public static string GetPackageName(this IInternalMetadataProvider internalMetadataProvider)
         {
             if (internalMetadataProvider is null)
             {
@@ -58,7 +58,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
         /// </summary>
         /// <param name="internalMetadataProvider"></param>
         /// <returns></returns>
-        public PackageVerificationCode GetPackageVerificationCode(IInternalMetadataProvider internalMetadataProvider)
+        public static PackageVerificationCode GetPackageVerificationCode(this IInternalMetadataProvider internalMetadataProvider)
         {
             if (internalMetadataProvider is null)
             {
@@ -96,7 +96,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
         /// </summary>
         /// <param name="internalMetadataProvider"></param>
         /// <returns></returns>
-        public List<string> GetPackageFilesList(IInternalMetadataProvider internalMetadataProvider)
+        public static List<string> GetPackageFilesList(this IInternalMetadataProvider internalMetadataProvider)
         {
             if (internalMetadataProvider is null)
             {
@@ -114,7 +114,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
         /// exception.
         /// </summary>
         /// <returns>The string package version.</returns>
-        public string GetPackageVersion(IInternalMetadataProvider internalMetadataProvider)
+        public static string GetPackageVersion(this IInternalMetadataProvider internalMetadataProvider)
         {
             if (internalMetadataProvider is null)
             {
@@ -138,8 +138,27 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
             throw new ArgumentException($"Unable to generate a package version based on provided parameters. " +
                 $"Please provide the package version in the 'PackageVersion' parameter.");
         }
+
+        public static string GetPackageSupplier(this IInternalMetadataProvider internalMetadataProvider)
+        {
+            if (internalMetadataProvider is null)
+            {
+                throw new ArgumentNullException(nameof(internalMetadataProvider));
+            }
+
+            // First check if the user provided a package version.
+            if (internalMetadataProvider.TryGetMetadata(MetadataKey.PackageSupplier, out object packageSupplier))
+            {
+                return packageSupplier as string;
+            }
+
+            // Right now we don't have any better way to version the package. Throw an exception for the user to 
+            // provide a package version.
+            throw new ArgumentException($"Unable to generate a package supplier based on provided parameters. " +
+                $"Please provide the package supplier in the 'PackageSupplier' parameter.");
+        }
  
-        public string GetDocumentNamespace(IInternalMetadataProvider internalMetadataProvider)
+        public static string GetDocumentNamespace(this IInternalMetadataProvider internalMetadataProvider)
         {
             if (internalMetadataProvider is null)
             {
@@ -149,7 +168,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
             return internalMetadataProvider.GetSBOMNamespaceUri();
         }
 
-        public string GetGenerationTimestamp(IInternalMetadataProvider internalMetadataProvider)
+        public static string GetGenerationTimestamp(this IInternalMetadataProvider internalMetadataProvider)
         {
             if (internalMetadataProvider is null)
             {

@@ -9,6 +9,7 @@ namespace Microsoft.Sbom.Api.Utils
     public static class Constants
     {
         public const string ManifestFolder = "_manifest";
+        public const string LoggerTemplate = "##[{Level:w}]{Message}{NewLine}{Exception}";
 
         public static ManifestInfo SPDX22ManifestInfo = new ManifestInfo
         {
@@ -31,7 +32,6 @@ namespace Microsoft.Sbom.Api.Utils
         public const string DocumentDescribesString = "documentDescribes";
         public const string SpdxVersionString = "spdxVersion";
         public const string DefaultRootElement = "SPDXRef-Document";
-        public const string NamespaceUriBasePropertyName = "NamespaceUriBase";
 
         #region Configuration switches
 

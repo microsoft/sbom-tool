@@ -54,7 +54,7 @@ Please check the [API Reference](docs/sbom-tool-api-reference.md) document for a
 Once you have installed the command line tool for your OS, run the tool using this command:
 
 ```
-generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -nsb <namespace uri base>
+generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -ps <package supplier> -nsb <namespace uri base>
 ```
 
 The drop path is the folder where all the files to be shipped are located. All these files will be hashed and added to the files section of the SBOM. The build components path is usually your source folder, tool will scan this folder to search for project files like *.csproj or package.json to see what components were used to build the package. Tool uses [component-detection](https://github.com/microsoft/component-detection) to scan for components and dependencies, visit its Github page to get more information about supported components. The package name and version represent the package the SBOM is describing. 

@@ -89,6 +89,7 @@ SBOMMetadata metadata = new SBOMMetadata()
 {
     PackageName = "MyProject", //Required
     PackageVersion = "0.0.1", // Required
+    PackageSupplier = "Contoso", // Required
     BuildId = "2344", // Optional
     BuildEnvironmentName = "Github Actions" // Optional
 };

@@ -115,6 +115,11 @@ namespace Microsoft.Sbom.Common.Config
         ConfigurationSetting<string> PackageVersion { get; set; }
 
         /// <summary>
+        /// Gets or sets supplier information of the package this SBOM represents.
+        /// </summary>
+        ConfigurationSetting<string> PackageSupplier { get; set; }
+
+        /// <summary>
         /// Gets or sets a list of <see cref="SBOMFile"/> files provided to us from the API.
         /// We won't traverse the build root path to get a list of files if this is set, and 
         /// use the list provided here instead.

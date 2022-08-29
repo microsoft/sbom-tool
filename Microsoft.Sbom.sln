@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
 		Directory.Packages.props = Directory.Packages.props
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Contracts", "src\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj", "{AA73B697-C992-4940-8375-17B9B77AB351}"
@@ -29,6 +30,16 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Api.Tests", "test\Microsoft.Sbom.Api.Tests\Microsoft.Sbom.Api.Tests.csproj", "{4F94EA4F-CC6B-4FA0-8A7E-654EAA26B625}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Tool", "src\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj", "{3B51DBCC-7305-42B9-8CBB-422F4291AF8E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{1A9688BD-D306-4091-A319-FDE110A48CBD}"
+	ProjectSection(SolutionItems) = preProject
+		docs\building-from-source.md = docs\building-from-source.md
+		docs\sbom-tool-api-reference.md = docs\sbom-tool-api-reference.md
+		docs\sbom-tool-arguments.md = docs\sbom-tool-arguments.md
+		docs\sbom-tool-cli-reference.md = docs\sbom-tool-cli-reference.md
+		docs\setting-up-ado-pipelines.md = docs\setting-up-ado-pipelines.md
+		docs\setting-up-github-actions.md = docs\setting-up-github-actions.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +90,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1A9688BD-D306-4091-A319-FDE110A48CBD} = {B4BFDF6F-4AFB-40AB-B2CE-3027FE04DBCD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7A5A6B45-3C4A-410E-B020-8972CD745155}

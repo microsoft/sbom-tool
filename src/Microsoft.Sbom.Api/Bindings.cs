@@ -60,7 +60,6 @@ namespace Microsoft.Sbom.Api
 
             Bind<IFilter>().To<DownloadedRootPathFilter>().Named(nameof(DownloadedRootPathFilter)).OnActivation(f => f.Init());
             Bind<IFilter>().To<ManifestFolderFilter>().Named(nameof(ManifestFolderFilter)).OnActivation(f => f.Init());
-
             Bind<ILogger>().ToProvider<LoggerProvider>();
 
             #region Bind all manifest parsers
