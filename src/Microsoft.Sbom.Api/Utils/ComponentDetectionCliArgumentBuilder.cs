@@ -49,11 +49,11 @@ namespace Microsoft.Sbom.Api.Utils
         {
             Validate();
 
-            var command = $"{action} --{VerbosityParamName} {verbosity} --{SourceDirectoryParamName} {sourceDirectory}";
+            var command = $"{action} --{VerbosityParamName} {AsArgumentValue(verbosity.ToString())} --{SourceDirectoryParamName} {AsArgumentValue(sourceDirectory)}";
 
             if (detectorArgs.Any())
             {
-                var args = string.Join(",", detectorArgs.Select(arg => $"{arg.Key}={arg.Value}"));
+                var args = string.Join(",", detectorArgs.Select(arg => $"{arg.Key}={AsArgumentValue(arg.Value)}"));
                 var detectorArgsCommand = $"--{DetectorArgsParamName} {args}";
                 command += $" {detectorArgsCommand}";
             }
@@ -61,7 +61,7 @@ namespace Microsoft.Sbom.Api.Utils
             if (keyValueArgs.Any())
             {
                 var argsList = keyValueArgs
-                    .Select(x => new List<string>() { $"--{x.Key}", x.Value.Contains(" ") ? $"\"{x.Value}\"" : x.Value })
+                    .Select(x => new List<string>() { $"--{x.Key}", AsArgumentValue(x.Value) })
                     .SelectMany(x => x)
                     .ToList();
                 var argsCommand = string.Join(" ", argsList);
@@ -70,7 +70,7 @@ namespace Microsoft.Sbom.Api.Utils
 
             if (keyArgs.Any())
             {
-                var keyArgsCommand = string.Join(" ", keyArgs);
+                var keyArgsCommand = string.Join(" ", keyArgs.Select(x => AsArgumentValue(x)));
                 command += $" {keyArgsCommand}";
             }
 
@@ -85,7 +85,7 @@ namespace Microsoft.Sbom.Api.Utils
 
         public ComponentDetectionCliArgumentBuilder AddDetectorArg(string name, string value)
         {
-            detectorArgs.TryAdd(name, value);
+            detectorArgs[name] = value;
             return this;
         }
 
@@ -202,6 +202,16 @@ namespace Microsoft.Sbom.Api.Utils
             }
 
             return this;
+        }
+
+        private string AsArgumentValue(string arg)
+        {
+            if (arg.Contains(' '))
+            {
+                return $"\"{arg}\"";
+            }
+
+            return arg;
         }
     }
 }

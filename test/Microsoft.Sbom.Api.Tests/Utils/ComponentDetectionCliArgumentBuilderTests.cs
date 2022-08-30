@@ -4,6 +4,7 @@
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Microsoft.Sbom.Api.Tests.Utils
 {
@@ -13,29 +14,35 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void Build_Simple()
         {
+            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/" };
+
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
                 .SourceDirectory("X:/");
 
             var result = builder.Build();
-            Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/", string.Join(" ", result));
+            CollectionAssert.AreEqual(expected, result);
         }
 
         [TestMethod]
         public void Build_Verbosity()
         {
+            var expected = new string[] { "scan", "--Verbosity", "Verbose", "--SourceDirectory", "X:/hello/world" };
+
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
                 .Verbosity(ComponentDetection.Common.VerbosityMode.Verbose)
                 .SourceDirectory("X:/hello/world");
 
             var result = builder.Build();
-            Assert.AreEqual("scan --Verbosity Verbose --SourceDirectory X:/hello/world", string.Join(" ", result));
+            CollectionAssert.AreEqual(expected, result);
         }
 
         [TestMethod]
         public void Build_WithDetectorArgs()
         {
+            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/", "--DetectorArgs", "Hello=World,world=hello" };
+
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
                 .SourceDirectory("X:/")
@@ -43,12 +50,14 @@ namespace Microsoft.Sbom.Api.Tests.Utils
                 .AddDetectorArg("world", "hello");
 
             var result = builder.Build();
-            Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --DetectorArgs Hello=World,world=hello", string.Join(" ", result));
+            CollectionAssert.AreEqual(expected, result);
         }
 
         [TestMethod]
         public void Build_WithArgs()
         {
+            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/", "--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello" };
+
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
                 .SourceDirectory("X:/")
@@ -56,12 +65,14 @@ namespace Microsoft.Sbom.Api.Tests.Utils
                 .AddArg("--DirectoryExclusionList", "X:/hello");
 
             var result = builder.Build();
-            Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --ManifestFile Hello --DirectoryExclusionList X:/hello", string.Join(" ", result));
+            CollectionAssert.AreEqual(expected, result);
         }
 
         [TestMethod]
         public void Build_WithArgsDuplicate()
         {
+            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/", "--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello" };
+
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
                 .SourceDirectory("X:/")
@@ -71,24 +82,28 @@ namespace Microsoft.Sbom.Api.Tests.Utils
                 .AddArg("--DirectoryExclusionList", "X:/hello");
 
             var result = builder.Build();
-            Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --ManifestFile Hello --DirectoryExclusionList X:/hello", string.Join(" ", result));
+            CollectionAssert.AreEqual(expected, result);
         }
 
         [TestMethod]
         public void Build_ParseAndAddArgs()
         {
+            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/", "--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello" };
+
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
                 .SourceDirectory("X:/")
                 .ParseAndAddArgs("--ManifestFile Hello --DirectoryExclusionList X:/hello");
 
             var result = builder.Build();
-            Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --ManifestFile Hello --DirectoryExclusionList X:/hello", string.Join(" ", result));
+            CollectionAssert.AreEqual(expected, result);
         }
 
         [TestMethod]
         public void Build_ParseAndAddArgsDuplicate()
         {
+            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/", "--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello" };
+
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
                 .SourceDirectory("X:/")
@@ -98,12 +113,14 @@ namespace Microsoft.Sbom.Api.Tests.Utils
                 .AddArg("--DirectoryExclusionList", "X:/hello");
 
             var result = builder.Build();
-            Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --ManifestFile Hello --DirectoryExclusionList X:/hello", string.Join(" ", result));
+            CollectionAssert.AreEqual(expected, result);
         }
 
         [TestMethod]
         public void Build_AddNoValueArgs()
         {
+            var expected = new string[] { "scan", "--Verbosity", "Normal", "--SourceDirectory", "X:/", "--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello", "--Help" };
+
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
                 .Verbosity(ComponentDetection.Common.VerbosityMode.Normal)
@@ -112,12 +129,14 @@ namespace Microsoft.Sbom.Api.Tests.Utils
                 .AddArg("Help");
 
             var result = builder.Build();
-            Assert.AreEqual("scan --Verbosity Normal --SourceDirectory X:/ --ManifestFile Hello --DirectoryExclusionList X:/hello --Help", string.Join(" ", result));
+            CollectionAssert.AreEqual(expected, result);
         }
 
         [TestMethod]
-        public void Build_AddDetectorArgsWeirdWay()
+        public void Build_AddDetectorArgsViaAddArgCombineWithOtherDetectorArgs()
         {
+            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/", "--DetectorArgs", "SPDX=hello,Hello=World,world=hello" };
+
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
                 .SourceDirectory("X:/")
@@ -126,7 +145,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
                 .AddDetectorArg("world", "hello");
 
             var result = builder.Build();
-            Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --DetectorArgs SPDX=hello,Hello=World,world=hello", string.Join(" ", result));
+            CollectionAssert.AreEqual(expected, result);
         }
 
         [TestMethod]
@@ -153,6 +172,48 @@ namespace Microsoft.Sbom.Api.Tests.Utils
                 .AddArg("--", "X:/hello");
 
             builder.Build();
+        }
+
+        [TestMethod]
+        public void Build_WithSpacesSourceDirectory()
+        {
+            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/path with spaces/" };
+
+            var build = new ComponentDetectionCliArgumentBuilder()
+                .Scan()
+                .SourceDirectory("X:/path with spaces/");
+            
+            var result = build.Build();
+            CollectionAssert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Build_WithSpacesInArgument()
+        {
+            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/path with spaces/", "--MyArguemnt", "value with spaces" };
+
+            var build = new ComponentDetectionCliArgumentBuilder()
+                .Scan()
+                .SourceDirectory("X:/path with spaces/")
+                .AddArg("MyArguemnt", "value with spaces");
+
+            var result = build.Build();
+            CollectionAssert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Build_WithSpacesInDetectorArgs()
+        {
+            var expected = new string[] { "scan", "--Verbosity", "Verbose", "--SourceDirectory", "X:/path with spaces/", "--DetectorArgs", "DetectorName=X:/complex/path with spaces" };
+
+            var build = new ComponentDetectionCliArgumentBuilder()
+                .Scan()
+                .Verbosity(ComponentDetection.Common.VerbosityMode.Verbose)
+                .SourceDirectory("X:/path with spaces/")
+                .AddDetectorArg("DetectorName", "X:/complex/path with spaces");
+
+            var result = build.Build();
+            CollectionAssert.AreEqual(expected, result);
         }
     }
 }
