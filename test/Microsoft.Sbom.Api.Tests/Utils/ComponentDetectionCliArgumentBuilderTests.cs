@@ -4,7 +4,6 @@
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Microsoft.Sbom.Api.Tests.Utils
 {
