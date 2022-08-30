@@ -85,7 +85,7 @@ namespace Microsoft.Sbom.Api.Utils
 
         public ComponentDetectionCliArgumentBuilder AddDetectorArg(string name, string value)
         {
-            detectorArgs.Add(name, value);
+            detectorArgs.TryAdd(name, value);
             return this;
         }
 
