@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.Sbom.Common.Config
+namespace Microsoft.Sbom.Api.Config
 {
     /// <summary>
     /// Encapsulates a configuration setting to provide metadata about

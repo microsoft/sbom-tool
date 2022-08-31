@@ -5,7 +5,6 @@ using AutoMapper;
 using PowerArgs;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config.Args;
-using Microsoft.Sbom.Common.Config;
 
 namespace Microsoft.Sbom.Api.Config
 {

@@ -2,9 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Runtime.InteropServices;
+using Microsoft.Sbom.Common;
 using Ninject.Activation;
 
-namespace Microsoft.Sbom.Common
+namespace Microsoft.Sbom.Api.Utils.FileSystem
 {
     /// <summary>
     /// Provides the <see cref="IFileSystemUtils"/> for a given OS.

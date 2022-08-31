@@ -3,13 +3,12 @@
 
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Common.Config;
+
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Serilog;
@@ -17,6 +16,8 @@ using System;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Converters;
+using Microsoft.Sbom.Api.Config;
 
 namespace Microsoft.Sbom.Api.Executors
 {

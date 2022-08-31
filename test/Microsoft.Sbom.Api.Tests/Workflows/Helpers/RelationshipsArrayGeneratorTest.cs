@@ -1,24 +1,25 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Recorder;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MoreLinq;
 using Serilog;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers

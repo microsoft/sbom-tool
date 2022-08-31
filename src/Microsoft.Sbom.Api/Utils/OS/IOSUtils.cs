@@ -4,12 +4,12 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.Sbom.Common
+namespace Microsoft.Sbom.Api.Utils.OS
 {
     public interface IOSUtils
     {
         OSPlatform GetCurrentOSPlatform();
-       
+
         string GetEnvironmentVariable(string variableName);
 
         StringComparer GetFileSystemStringComparer();

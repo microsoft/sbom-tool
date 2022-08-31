@@ -5,6 +5,7 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Common;
 using System;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 
 namespace Microsoft.Sbom.Api.Manifest.Configuration
 {

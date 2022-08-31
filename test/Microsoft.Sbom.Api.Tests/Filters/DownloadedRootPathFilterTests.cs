@@ -3,9 +3,11 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Microsoft.Sbom.Common.Config;
+
 using Serilog;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 
 namespace Microsoft.Sbom.Api.Filters.Tests
 {

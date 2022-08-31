@@ -1,18 +1,19 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
+using System.Collections.Generic;
+using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers;
 using Microsoft.Sbom.Api.Tests;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Ninject.Activation;
 using PowerArgs;
-using System.Collections.Generic;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Manifest.Tests

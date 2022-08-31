@@ -8,8 +8,11 @@ using Microsoft.Sbom.Contracts;
 using Ninject;
 using Ninject.Activation;
 using System.Collections.Concurrent;
-using Microsoft.Sbom.Common.Config;
+
 using System.Linq;
+using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Utils.FileSystem;
+using Microsoft.Sbom.Api.Utils.OS;
 
 namespace Microsoft.Sbom.Api.Manifest
 {

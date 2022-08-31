@@ -10,6 +10,7 @@ using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using System.Collections.Generic;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 
 namespace Microsoft.Sbom.Api.Executors
 {

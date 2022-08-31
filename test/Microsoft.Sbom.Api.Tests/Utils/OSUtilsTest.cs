@@ -7,6 +7,7 @@ using Serilog;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Api.Utils.OS;
 
 namespace Microsoft.Sbom.Api.Tests.Utils
 {

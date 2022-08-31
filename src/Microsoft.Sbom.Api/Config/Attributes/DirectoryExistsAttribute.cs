@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.Sbom.Common.Config.Attributes
+namespace Microsoft.Sbom.Api.Config.Attributes
 {
     /// <summary>
     /// Checks if the path specified by the string property is a valid directory, and 

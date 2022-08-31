@@ -8,12 +8,13 @@ using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Common.Config;
+
 using Ninject;
 using Serilog;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Config;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers
 {

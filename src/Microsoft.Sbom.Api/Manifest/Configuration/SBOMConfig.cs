@@ -8,6 +8,7 @@ using Microsoft.Sbom.Common;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 
 namespace Microsoft.Sbom.Api.Manifest.Configuration
 {

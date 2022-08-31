@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 
-namespace Microsoft.Sbom.Common
+namespace Microsoft.Sbom.Api.Utils.FileSystem
 {
     /// <summary>
     /// A wrapper class to make the filesystem methods unit testable.
@@ -127,16 +127,16 @@ namespace Microsoft.Sbom.Common
                 foreach (FileSystemAccessRule rule in accessRules)
                 {
                     if ((FileSystemRights.Write & rule.FileSystemRights) != FileSystemRights.Write)
-                        {
+                    {
                         continue;
                     }
 
                     if (rule.AccessControlType == AccessControlType.Allow)
-                        {
+                    {
                         writeAllow = true;
                     }
                     else if (rule.AccessControlType == AccessControlType.Deny)
-                        {
+                    {
                         writeDeny = true;
                     }
                 }

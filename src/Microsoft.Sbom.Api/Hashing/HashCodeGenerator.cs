@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;

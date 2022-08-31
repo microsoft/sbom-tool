@@ -6,10 +6,11 @@ using Serilog;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
-using Microsoft.Sbom.Common.Config;
+
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Api.Config;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders
 {

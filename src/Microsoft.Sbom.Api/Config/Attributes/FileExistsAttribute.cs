@@ -3,20 +3,20 @@
 
 using System;
 
-namespace Microsoft.Sbom.Common.Config.Attributes
+namespace Microsoft.Sbom.Api.Config.Attributes
 {
     /// <summary>
-    /// Checks if the directory path specified by the string parameter is writable by the current user.
+    /// Checks if the path specified by the string property is a valid file.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
-    public sealed class DirectoryPathIsWritableAttribute : Attribute
+    public sealed class FileExistsAttribute : Attribute
     {
         /// <summary>
         /// Gets or sets the action for which this validation should run. Default is all.
         /// </summary>
         public ManifestToolActions ForAction { get; set; }
 
-        public DirectoryPathIsWritableAttribute()
+        public FileExistsAttribute()
         {
             ForAction = ManifestToolActions.All;
         }

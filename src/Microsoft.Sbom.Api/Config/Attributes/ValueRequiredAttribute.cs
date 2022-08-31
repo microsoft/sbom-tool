@@ -3,20 +3,20 @@
 
 using System;
 
-namespace Microsoft.Sbom.Common.Config.Attributes
+namespace Microsoft.Sbom.Api.Config.Attributes
 {
     /// <summary>
-    /// Checks if the path specified by the string property is a valid file.
+    /// Checks if the value of the property is not null or empty.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
-    public sealed class FileExistsAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+    public sealed class ValueRequiredAttribute : Attribute
     {
         /// <summary>
         /// Gets or sets the action for which this validation should run. Default is all.
         /// </summary>
         public ManifestToolActions ForAction { get; set; }
 
-        public FileExistsAttribute()
+        public ValueRequiredAttribute()
         {
             ForAction = ManifestToolActions.All;
         }

@@ -3,7 +3,7 @@
 
 using System;
 using System.Runtime.Serialization;
-using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Api.Config;
 
 namespace Microsoft.Sbom.Api.Exceptions
 {

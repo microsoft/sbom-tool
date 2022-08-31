@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Common.Config;
+
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Contracts;
@@ -12,6 +12,7 @@ using Moq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Microsoft.Sbom.Api.Config;
 
 namespace Microsoft.Sbom.Api.Entities.Output.Tests
 {

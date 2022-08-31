@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 
 namespace Microsoft.Sbom.Api.Executors.Tests
 {

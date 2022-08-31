@@ -5,7 +5,8 @@ using Microsoft.Sbom.Extensions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Sbom.Common.Config;
+
+using Microsoft.Sbom.Api.Config;
 
 namespace Microsoft.Sbom.Api.Entities.Output
 {

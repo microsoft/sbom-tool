@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Api.Utils.FileSystem;
+using Microsoft.Sbom.Api.Utils.FileSystem.Extensions;
+using Microsoft.Sbom.Api.Utils.OS;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

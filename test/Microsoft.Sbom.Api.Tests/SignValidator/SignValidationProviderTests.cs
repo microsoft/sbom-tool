@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Api.Utils.OS;
 
 namespace Microsoft.Sbom.Api.SignValidator.Tests
 {

@@ -4,7 +4,7 @@
 using Microsoft.Sbom.Extensions.Entities;
 using System;
 
-namespace Microsoft.Sbom.Common.Config.Attributes
+namespace Microsoft.Sbom.Api.Config.Attributes
 {
     [AttributeUsage(AttributeTargets.Assembly)]
     public class DefaultManifestInfoArgForValidationAttribute : Attribute

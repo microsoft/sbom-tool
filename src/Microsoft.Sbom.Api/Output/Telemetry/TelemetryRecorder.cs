@@ -11,13 +11,15 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Microsoft.Sbom.Common.Config;
+
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Output.Telemetry.Entities;
 using PowerArgs;
 using System.IO;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 
 namespace Microsoft.Sbom.Api.Output.Telemetry
 {

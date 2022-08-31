@@ -3,7 +3,7 @@
 
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Config;
-using Microsoft.Sbom.Common.Config;
+
 using Microsoft.Sbom.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;

@@ -8,8 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Serilog.Sinks.Console" />
-    <PackageReference Include="Ninject" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" />
     <PackageReference Include="Mono.Posix.NETStandard" />
   </ItemGroup>

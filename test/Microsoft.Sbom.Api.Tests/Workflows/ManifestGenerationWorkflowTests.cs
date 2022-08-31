@@ -4,6 +4,8 @@
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
@@ -21,9 +23,11 @@ using Microsoft.Sbom.Api.Providers.PackagesProviders;
 using Microsoft.Sbom.Api.Recorder;
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.Utils.FileSystem;
+using Microsoft.Sbom.Api.Utils.OS;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
+
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;

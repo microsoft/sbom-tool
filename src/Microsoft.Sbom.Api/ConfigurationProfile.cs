@@ -6,7 +6,6 @@ using Microsoft.Sbom.Extensions.Entities;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Config.ValueConverters;
 using Microsoft.Sbom.Contracts.Enums;

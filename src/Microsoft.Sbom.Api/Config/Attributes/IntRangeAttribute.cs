@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.Sbom.Common.Config.Attributes
+namespace Microsoft.Sbom.Api.Config.Attributes
 {
     /// <summary>
     /// Checks if the numeric value is equal to or between the min and max range.
@@ -28,8 +28,8 @@ namespace Microsoft.Sbom.Common.Config.Attributes
 
         public IntRangeAttribute(int minRange, int maxRange)
         {
-            this.MinRange = minRange;
-            this.MaxRange = maxRange;
+            MinRange = minRange;
+            MaxRange = maxRange;
             ForAction = ManifestToolActions.All;
         }
     }

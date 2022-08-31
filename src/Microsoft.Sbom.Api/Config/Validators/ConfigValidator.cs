@@ -5,7 +5,7 @@ using Microsoft.Sbom.Api.Utils;
 using System;
 using System.ComponentModel;
 
-namespace Microsoft.Sbom.Common.Config.Validators
+namespace Microsoft.Sbom.Api.Config.Validators
 {
     /// <summary>
     /// Abstract class from which all validators must inherit. 
@@ -55,7 +55,7 @@ namespace Microsoft.Sbom.Common.Config.Validators
             {
                 return;
             }
-            
+
             if (propertyName == nameof(IConfiguration.PackageSupplier) && !string.IsNullOrEmpty(assemblyConfig.DefaultPackageSupplier))
             {
                 return;

@@ -3,7 +3,7 @@
 
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Api.Config;
 
 namespace Microsoft.Sbom.Api.Output
 {

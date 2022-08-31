@@ -7,14 +7,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Config.Validators;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Common.Config.Validators;
+
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Ninject;

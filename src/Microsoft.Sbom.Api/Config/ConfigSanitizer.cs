@@ -3,8 +3,8 @@
 
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;

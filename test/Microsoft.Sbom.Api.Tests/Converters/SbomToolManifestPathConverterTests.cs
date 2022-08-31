@@ -5,10 +5,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Microsoft.Sbom.Common.Config;
+
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Api.Converters;
+using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Utils.FileSystem;
+using Microsoft.Sbom.Api.Utils.OS;
 
 namespace Microsoft.Sbom.Api.Convertors.Tests
 {

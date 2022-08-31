@@ -1,16 +1,16 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Common.Config.Attributes;
+using Microsoft.Sbom.Api.Config.Attributes;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions.Entities;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Microsoft.Sbom.Common.Config
+namespace Microsoft.Sbom.Api.Config
 {
     /// <summary>
     /// This holds the configuration for the ManifestTool. The values in this

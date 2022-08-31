@@ -5,7 +5,6 @@ using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PowerArgs;

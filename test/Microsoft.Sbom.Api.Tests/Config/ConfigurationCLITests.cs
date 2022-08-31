@@ -2,10 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Api.Config.Extensions;
-using Microsoft.Sbom.Common.Config;
+
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Microsoft.Sbom.Api.Config;
 
 namespace Microsoft.Sbom.Api.Tests.Config
 {

@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.Sbom.Common.Config.Attributes
+namespace Microsoft.Sbom.Api.Config.Attributes
 {
     /// <summary>
     /// Checks if the filepath specified by the string parameter is writable by the current user.

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.Sbom.Api
+namespace Microsoft.Sbom.Api.Entities
 {
     /// <summary>
     /// Defines the exit code returned by the ManifestTool executable. 

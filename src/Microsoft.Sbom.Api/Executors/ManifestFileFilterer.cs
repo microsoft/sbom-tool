@@ -11,7 +11,9 @@ using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
+
+using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 
 namespace Microsoft.Sbom.Api.Executors
 {

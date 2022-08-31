@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 using Microsoft.Sbom.Common;
 
 namespace Microsoft.Sbom.Api.Config

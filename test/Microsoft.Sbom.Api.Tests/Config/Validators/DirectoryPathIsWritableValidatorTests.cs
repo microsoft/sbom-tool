@@ -4,6 +4,7 @@
 using Microsoft.Sbom.Api.Config.Validators;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 using Microsoft.Sbom.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

@@ -3,11 +3,19 @@
 
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Contracts.Enums;
+using Serilog.Events;
 
 namespace Microsoft.Sbom.Api.Utils
 {
     public static class Constants
     {
+        public const int DefaultStreamBufferSize = 4096;
+
+        public const int MinParallelism = 2;
+        public const int DefaultParallelism = 8;
+        public const int MaxParallelism = 48;
+
+        public const LogEventLevel DefaultLogLevel = LogEventLevel.Warning;
         public const string ManifestFolder = "_manifest";
         public const string LoggerTemplate = "##[{Level:w}]{Message}{NewLine}{Exception}";
 

@@ -4,11 +4,12 @@
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.Internal;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Common.Config;
+
 using Microsoft.Sbom.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

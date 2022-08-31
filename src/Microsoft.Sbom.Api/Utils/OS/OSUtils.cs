@@ -7,8 +7,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Linq;
+using Microsoft.Sbom.Common;
 
-namespace Microsoft.Sbom.Common
+namespace Microsoft.Sbom.Api.Utils.OS
 {
     public class OSUtils : IOSUtils
     {

@@ -6,8 +6,8 @@ using Serilog;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Entities;
 
 namespace Microsoft.Sbom.Tool
 {

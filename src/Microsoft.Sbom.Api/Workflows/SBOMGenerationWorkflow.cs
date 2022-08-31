@@ -1,14 +1,17 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Hashing.Algorithms;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.Utils.FileSystem;
+using Microsoft.Sbom.Api.Utils.OS;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
+
 using Microsoft.Sbom.Extensions;
 using Ninject;
 using PowerArgs;

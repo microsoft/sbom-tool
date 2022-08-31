@@ -3,7 +3,6 @@
 
 using AutoMapper;
 using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
 
 namespace Microsoft.Sbom.Api.Config.ValueConverters

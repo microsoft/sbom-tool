@@ -1,13 +1,14 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Exceptions;
-using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.Utils.FileSystem;
+using Microsoft.Sbom.Api.Utils.OS;
 using System;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
-namespace Microsoft.Sbom.Api.Convertors
+namespace Microsoft.Sbom.Api.Converters
 {
     /// <summary>
     /// Converts a regular file path to a relative file path in the format the 

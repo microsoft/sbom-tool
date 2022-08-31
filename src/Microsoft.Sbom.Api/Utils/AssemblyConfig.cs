@@ -2,11 +2,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Common.Config.Attributes;
+
 using System;
 using System.IO;
 using System.Reflection;
 using System.Linq;
+using Microsoft.Sbom.Api.Config.Attributes;
 
 namespace Microsoft.Sbom.Api.Utils
 {

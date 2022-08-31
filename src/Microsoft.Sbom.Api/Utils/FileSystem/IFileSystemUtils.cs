@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.AccessControl;
 
-namespace Microsoft.Sbom.Common
+namespace Microsoft.Sbom.Api.Utils.FileSystem
 {
     /// <summary>
     /// Wrapper around file system functions. Used for unit testing.
@@ -15,17 +15,17 @@ namespace Microsoft.Sbom.Common
         bool DirectoryExists(string path);
 
         DirectoryInfo CreateDirectory(string path);
-        
+
         IEnumerable<string> GetFilesInDirectory(string path, bool followSymlinks = true);
-        
+
         IEnumerable<string> GetDirectories(string path, bool followSymlinks = true);
-        
+
         Stream OpenRead(string filePath);
-        
+
         Stream OpenWrite(string filePath);
-        
+
         string ReadAllText(string filePath);
-        
+
         string JoinPaths(string root, string relativePath);
 
         string JoinPaths(string root, string relativePath, string secondRelativePath);
@@ -43,13 +43,13 @@ namespace Microsoft.Sbom.Common
         bool FileExists(string path);
 
         string GetDirectoryName(string filePath);
-        
+
         DirectorySecurity GetDirectorySecurity(string directoryPath);
-        
+
         bool DirectoryHasReadPermissions(string directoryPath);
-        
+
         bool DirectoryHasWritePermissions(string directoryPath);
-        
+
         void DeleteFile(string filePath);
 
         /// <summary>

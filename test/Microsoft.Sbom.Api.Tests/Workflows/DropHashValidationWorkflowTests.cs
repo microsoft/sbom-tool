@@ -1,8 +1,14 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Executors;
@@ -13,19 +19,16 @@ using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.Utils.FileSystem;
+using Microsoft.Sbom.Api.Utils.OS;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ErrorType = Microsoft.Sbom.Api.Entities.ErrorType;
 

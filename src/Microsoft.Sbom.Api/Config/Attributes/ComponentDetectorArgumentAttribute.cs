@@ -3,10 +3,10 @@
 
 using System;
 
-namespace Microsoft.Sbom.Common.Config.Attributes
+namespace Microsoft.Sbom.Api.Config.Attributes
 {
     /// <summary>
-    /// Attribute denoting that an <see cref="Microsoft.Sbom.Api.Config.Configuration" /> property is a Component Detector argument.
+    /// Attribute denoting that an <see cref="Configuration" /> property is a Component Detector argument.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class ComponentDetectorArgumentAttribute : Attribute

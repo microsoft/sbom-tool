@@ -4,7 +4,6 @@
 using AutoMapper;
 using Microsoft.Sbom.Extensions.Entities;
 using System.Collections.Generic;
-using Microsoft.Sbom.Common.Config;
 
 namespace Microsoft.Sbom.Api.Config.ValueConverters
 {

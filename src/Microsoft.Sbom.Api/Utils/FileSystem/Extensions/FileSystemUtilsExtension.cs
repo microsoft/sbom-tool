@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Api.Utils.OS;
 using Ninject;
 using System;
 
-namespace Microsoft.Sbom.Common.Extensions
+namespace Microsoft.Sbom.Api.Utils.FileSystem.Extensions
 {
     /// <summary>
     /// FileSystemUtilsExtension class uses FileSystemUtils class to run additional more complex

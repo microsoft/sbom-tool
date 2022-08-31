@@ -2,15 +2,16 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Microsoft.Sbom.Api.Config.Attributes;
+using Microsoft.Sbom.Api.Utils;
 
-namespace Microsoft.Sbom.Common.Config
+namespace Microsoft.Sbom.Api.Config
 {
     public class Configuration : IConfiguration
     {

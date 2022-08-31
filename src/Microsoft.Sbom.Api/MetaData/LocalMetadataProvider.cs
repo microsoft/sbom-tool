@@ -3,12 +3,13 @@
 
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Common.Config;
+
 using Microsoft.Sbom.Common.Extensions;
 using Microsoft.Sbom.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Microsoft.Sbom.Api.Config;
 
 namespace Microsoft.Sbom.Api.Metadata
 {

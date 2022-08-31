@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.Sbom.Common.Config
+namespace Microsoft.Sbom.Api.Config
 {
     [Flags]
     public enum ManifestToolActions

@@ -4,7 +4,6 @@
 using AutoMapper;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Tests;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -50,7 +49,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
             Assert.AreEqual(configuration.ConfigFilePath.Source, SettingSource.CommandLine);
             Assert.AreEqual(configuration.OutputPath.Source, SettingSource.CommandLine);
             Assert.AreEqual(configuration.Parallelism.Source, SettingSource.Default);
-            Assert.AreEqual(configuration.Parallelism.Value, Common.Constants.DefaultParallelism);
+            Assert.AreEqual(configuration.Parallelism.Value, Constants.DefaultParallelism);
             Assert.AreEqual(configuration.HashAlgorithm.Source, SettingSource.CommandLine);
             Assert.AreEqual(configuration.HashAlgorithm.Value, AlgorithmName.SHA512);
 

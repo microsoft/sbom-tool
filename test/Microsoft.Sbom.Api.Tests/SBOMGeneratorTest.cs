@@ -3,6 +3,7 @@
 
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Contracts;

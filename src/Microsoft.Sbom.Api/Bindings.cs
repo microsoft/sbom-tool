@@ -5,7 +5,6 @@ using AutoMapper;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Converters;
-using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Filters;
@@ -27,8 +26,11 @@ using Ninject.Extensions.Conventions;
 using Ninject.Modules;
 using Serilog;
 using Microsoft.Sbom.Api.Config;
-using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Common.Extensions;
+using Microsoft.Sbom.Api.Config.Validators;
+using Microsoft.Sbom.Api.Utils.OS;
+using Microsoft.Sbom.Api.Utils.FileSystem;
+using Microsoft.Sbom.Api.Utils.FileSystem.Extensions;
 
 namespace Microsoft.Sbom.Api
 {

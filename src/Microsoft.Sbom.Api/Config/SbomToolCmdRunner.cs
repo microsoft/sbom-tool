@@ -11,7 +11,6 @@ using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
-using Microsoft.Sbom.Common.Config;
 
 namespace Microsoft.Sbom.Api.Config
 {

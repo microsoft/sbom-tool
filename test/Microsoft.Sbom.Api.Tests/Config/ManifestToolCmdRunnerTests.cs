@@ -9,6 +9,7 @@ using Moq;
 using Ninject;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 
 namespace Microsoft.Sbom.Api.Tests.Config
 {

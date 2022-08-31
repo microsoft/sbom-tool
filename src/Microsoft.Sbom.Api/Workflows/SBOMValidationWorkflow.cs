@@ -9,7 +9,7 @@ using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Common.Config;
+
 using PowerArgs;
 using Serilog;
 using System;
@@ -19,6 +19,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Config;
 
 namespace Microsoft.Sbom.Api.Workflows
 {

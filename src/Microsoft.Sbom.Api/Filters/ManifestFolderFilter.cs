@@ -3,8 +3,11 @@
 
 using System;
 using System.IO;
-using Microsoft.Sbom.Common.Config;
+
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Utils.FileSystem;
+using Microsoft.Sbom.Api.Utils.OS;
 
 namespace Microsoft.Sbom.Api.Filters
 {

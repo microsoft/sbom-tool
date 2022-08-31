@@ -4,7 +4,7 @@
 using Mono.Unix;
 using Mono.Unix.Native;
 
-namespace Microsoft.Sbom.Common
+namespace Microsoft.Sbom.Api.Utils.FileSystem
 {
     internal class UnixFileSystemUtils : FileSystemUtils
     {

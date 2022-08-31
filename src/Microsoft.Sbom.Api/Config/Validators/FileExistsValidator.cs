@@ -3,10 +3,11 @@
 
 using PowerArgs;
 using System;
-using Microsoft.Sbom.Common.Config.Attributes;
+
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.Config.Attributes;
+using Microsoft.Sbom.Api.Utils.FileSystem;
 
 namespace Microsoft.Sbom.Api.Config.Validators
 {
