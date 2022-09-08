@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <NoWarn>$(NoWarn);NU1605</NoWarn>
+    <AssemblyName>Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,0 +1,199 @@
+﻿namespace Microsoft.Sbom.Parser;
+
+internal struct JsonStrings
+{
+    public JsonStrings()
+    {
+    }
+
+    public const string GoodJsonWith3FilesString = @"[
+            {
+                ""fileName"": ""./file1"",
+                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
+                ""checksums"": [
+                {
+                    ""algorithm"": ""SHA256"",
+                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad5""
+                },
+                {
+                    ""algorithm"": ""SHA1"",
+                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
+                }
+                ],
+                ""licenseConcluded"": ""NOASSERTION"",
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ],
+                ""copyrightText"": ""NOASSERTION""
+            },
+            {
+                ""fileName"": ""./file2"",
+                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993E"",
+                ""checksums"": [
+                {
+                    ""algorithm"": ""SHA256"",
+                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad2""
+                },
+                {
+                    ""algorithm"": ""SHA1"",
+                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd49932""
+                }
+                ],
+                ""licenseConcluded"": ""NOASSERTION"",
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ],
+                ""copyrightText"": ""NOASSERTION""
+            }
+        ]";
+
+    public const string MalformedJson = @"[sdf";
+
+    public const string GoodJsonWith1FileAdditionalPropertiesString = @"[
+            {
+                ""fileName"": ""./file1"",
+                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
+                ""additionalProperty"": ""Additional property value"",
+                ""checksums"": [
+                {
+                    ""algorithm"": ""SHA256"",
+                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad5""
+                },
+                {
+                    ""algorithm"": ""SHA1"",
+                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
+                }
+                ],
+                ""licenseConcluded"": ""NOASSERTION"",
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ],
+                ""copyrightText"": ""NOASSERTION""
+            }]";
+
+    public const string JsonWith1FileMissingNameString = @"[
+            {
+                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
+                ""checksums"": [
+                {
+                    ""algorithm"": ""SHA256"",
+                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad5""
+                },
+                {
+                    ""algorithm"": ""SHA1"",
+                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
+                }
+                ],
+                ""licenseConcluded"": ""NOASSERTION"",
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ],
+                ""copyrightText"": ""NOASSERTION""
+            }]";
+
+    public const string JsonWith1FileMissingIDString = @"[
+            {                
+                ""fileName"": ""./file1"",
+                ""checksums"": [
+                {
+                    ""algorithm"": ""SHA256"",
+                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad5""
+                },
+                {
+                    ""algorithm"": ""SHA1"",
+                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
+                }
+                ],
+                ""licenseConcluded"": ""NOASSERTION"",
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ],
+                ""copyrightText"": ""NOASSERTION""
+            }]";
+
+    public const string JsonWith1FileMissingChecksumsString = @"[
+            {
+                ""fileName"": ""./file1"",
+                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
+                ""licenseConcluded"": ""NOASSERTION"",
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ],
+                ""copyrightText"": ""NOASSERTION""
+            }]";
+
+    public const string JsonWith1FileMissingSHA256ChecksumsString = @"[
+            {
+                ""fileName"": ""./file1"",
+                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
+                ""checksums"": [
+                {
+                    ""algorithm"": ""SHA1"",
+                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
+                }
+                ],
+                ""licenseConcluded"": ""NOASSERTION"",
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ],
+                ""copyrightText"": ""NOASSERTION""
+            }]";
+
+    public const string JsonWith1FileMissingLicenseConcludedString = @"[
+            {
+                ""fileName"": ""./file1"",
+                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
+                ""checksums"": [
+                {
+                    ""algorithm"": ""SHA256"",
+                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad5""
+                },
+                {
+                    ""algorithm"": ""SHA1"",
+                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
+                }
+                ],
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ],
+                ""copyrightText"": ""NOASSERTION""
+            }]";
+
+    public const string JsonWith1FileMissingLicenseInfoInFilesString = @"[
+            {
+                ""fileName"": ""./file1"",
+                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
+                ""checksums"": [
+                {
+                    ""algorithm"": ""SHA256"",
+                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad5""
+                },
+                {
+                    ""algorithm"": ""SHA1"",
+                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
+                }
+                ],
+                ""licenseConcluded"": ""NOASSERTION"",
+                ""copyrightText"": ""NOASSERTION""
+            }]";
+    
+    public const string JsonWith1FileMissingCopyrightString = @"[
+            {
+                ""fileName"": ""./file1"",
+                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
+                ""checksums"": [
+                {
+                    ""algorithm"": ""SHA256"",
+                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad5""
+                },
+                {
+                    ""algorithm"": ""SHA1"",
+                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
+                }
+                ],
+                ""licenseConcluded"": ""NOASSERTION"",
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ]
+            }]";
+}

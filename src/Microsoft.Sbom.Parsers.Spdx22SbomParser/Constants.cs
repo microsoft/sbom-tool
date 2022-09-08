@@ -61,5 +61,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
                                                             Name = Constants.SPDXName,
                                                             Version = Constants.SPDXVersion
                                                         };
+
+        internal const int ReadBufferSize = 4096;
     }
 }
