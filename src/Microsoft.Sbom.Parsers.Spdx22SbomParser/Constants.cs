@@ -63,5 +63,6 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
                                                         };
 
         internal const int ReadBufferSize = 4096;
+        internal const int MaxReadBufferSize = 32768;
     }
 }

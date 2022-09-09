@@ -34,5 +34,10 @@ namespace Microsoft.Sbom.Contracts
         /// Gets or sets the relative path to the BuildDropPath of the file in the SBOM.
         /// </summary>
         public string Path { get; set; }
+
+        /// <summary>
+        /// Gets or sets unique Identifier for the file.
+        /// </summary>
+        public string SPDXId { get; set; }
     }
 }

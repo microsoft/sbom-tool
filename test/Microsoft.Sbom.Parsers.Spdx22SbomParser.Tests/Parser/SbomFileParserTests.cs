@@ -4,7 +4,9 @@ using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Reflection.PortableExecutable;
 using System.Text;
+using System.Text.Json;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -14,27 +16,39 @@ public class SbomFileParserTests
     [TestMethod]
     public void ParseSbomFilesTest()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(JsonStrings.GoodJsonWith3FilesString);
+        byte[] bytes = Encoding.UTF8.GetBytes(JsonStrings.GoodJsonWith2FilesString);
         var stream = new MemoryStream(bytes);
 
         var buffer = new byte[Constants.ReadBufferSize];
 
         stream.Read(buffer);
 
-        var parser = new SbomFileParser(buffer, stream);
-        var result = parser.GetSbomFile(out SBOMFile sbomFile);
+        var parser1 = new SbomFileParser(buffer, stream);
+        var result = parser1.GetSbomFile(out SBOMFile sbomFile);
 
-        Assert.IsTrue(result);
+        Assert.IsTrue(result != 0);
         Assert.IsNotNull(sbomFile);
 
-        result = parser.GetSbomFile(out SBOMFile sbomFile2);
+        // Remove bytes consumed
+        var newBuffer = new byte[4096];
+        Array.Copy(buffer, result, newBuffer, 0, newBuffer.Length - result);
+        buffer = newBuffer;
 
-        Assert.IsTrue(result);
+        var parser2 = new SbomFileParser(buffer, stream, parser1.CurrentState);
+        result = parser2.GetSbomFile(out SBOMFile sbomFile2);
+
+        Assert.IsTrue(result != 0);
         Assert.IsNotNull(sbomFile2);
 
-        result = parser.GetSbomFile(out SBOMFile sbomFile3);
+        // Remove bytes consumed
+        var newBuffer2 = new byte[4096];
+        Array.Copy(buffer, result, newBuffer, 0, newBuffer2.Length - result);
+        buffer = newBuffer2;
 
-        Assert.IsFalse(result);
+        var parser3 = new SbomFileParser(buffer, stream, parser2.CurrentState);
+        result = parser3.GetSbomFile(out SBOMFile sbomFile3);
+
+        Assert.IsTrue(result == 0);
         Assert.IsNull(sbomFile3);
     }
 
@@ -55,38 +69,66 @@ public class SbomFileParserTests
     [TestMethod]
     public void EmptyByteArrayReadsStreamToArrayBeforeStart()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(JsonStrings.GoodJsonWith3FilesString);
+        byte[] bytes = Encoding.UTF8.GetBytes(JsonStrings.GoodJsonWith2FilesString);
         var stream = new MemoryStream(bytes);
 
         var buffer = new byte[Constants.ReadBufferSize];
 
-        var parser = new SbomFileParser(buffer, stream);
-        var result = parser.GetSbomFile(out SBOMFile sbomFile);
+        var parser1 = new SbomFileParser(buffer, stream);
+        var result = parser1.GetSbomFile(out SBOMFile sbomFile);
 
-        Assert.IsTrue(result);
+        Assert.IsTrue(result != 0);
         Assert.IsNotNull(sbomFile);
 
-        result = parser.GetSbomFile(out SBOMFile sbomFile2);
+        // Remove bytes consumed
+        var newBuffer = new byte[4096];
+        Array.Copy(buffer, result, newBuffer, 0, newBuffer.Length - result);
+        buffer = newBuffer;
 
-        Assert.IsTrue(result);
+        var parser2 = new SbomFileParser(buffer, stream, parser1.CurrentState);
+        result = parser2.GetSbomFile(out SBOMFile sbomFile2);
+
+        Assert.IsTrue(result != 0);
         Assert.IsNotNull(sbomFile2);
 
-        result = parser.GetSbomFile(out SBOMFile sbomFile3);
+        // Remove bytes consumed
+        var newBuffer2 = new byte[4096];
+        Array.Copy(buffer, result, newBuffer, 0, newBuffer2.Length - result);
+        buffer = newBuffer2;
 
-        Assert.IsFalse(result);
+        var parser3 = new SbomFileParser(buffer, stream, parser2.CurrentState);
+        result = parser3.GetSbomFile(out SBOMFile sbomFile3);
+
+        Assert.IsTrue(result == 0);
         Assert.IsNull(sbomFile3);
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ParserError))]
-    public void StreamClosedTest_Throws()
+    public void StreamClosedTestReturnsNull()
     {
         var stream = new MemoryStream();
         stream.Close();
         var buffer = new byte[Constants.ReadBufferSize];
 
         var parser = new SbomFileParser(buffer, stream);
-        parser.GetSbomFile(out SBOMFile _);
+        var result = parser.GetSbomFile(out SBOMFile file);
+
+        Assert.IsTrue(result == 0);
+        Assert.IsNull(file);
+    }
+
+    [TestMethod]
+    public void StreamEmptyTestReturnsNull()
+    {
+        var stream = new MemoryStream();
+        stream.Read(new byte[Constants.ReadBufferSize]);
+        var buffer = new byte[Constants.ReadBufferSize];
+
+        var parser = new SbomFileParser(buffer, stream);
+        var result = parser.GetSbomFile(out SBOMFile file);
+
+        Assert.IsTrue(result == 0);
+        Assert.IsNull(file);
     }
 
     [DataTestMethod]
@@ -112,10 +154,14 @@ public class SbomFileParserTests
         parser.GetSbomFile(out SBOMFile _);
     }
 
+    [DataTestMethod]
+    [DataRow(JsonStrings.GoodJsonWith1FileAdditionalObjectPropertyString)]
+    [DataRow(JsonStrings.GoodJsonWith1FileAdditionalArrayPropertyString)]
+    [DataRow(JsonStrings.GoodJsonWith1FileAdditionalStringPropertyString)]
     [TestMethod]
-    public void IgnoresAdditionalPropertiesTest()
+    public void IgnoresAdditionalPropertiesTest(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(JsonStrings.GoodJsonWith1FileAdditionalPropertiesString);
+        byte[] bytes = Encoding.UTF8.GetBytes(json);
         var stream = new MemoryStream(bytes);
 
         var buffer = new byte[Constants.ReadBufferSize];
@@ -125,7 +171,7 @@ public class SbomFileParserTests
         var parser = new SbomFileParser(buffer, stream);
         var result = parser.GetSbomFile(out SBOMFile sbomFile);
 
-        Assert.IsTrue(result);
+        Assert.IsTrue(result != 0);
         Assert.IsNotNull(sbomFile);
     }
 
@@ -139,6 +185,32 @@ public class SbomFileParserTests
         var buffer = new byte[Constants.ReadBufferSize];
 
         var parser = new SbomFileParser(buffer, stream);
+        parser.GetSbomFile(out SBOMFile _);
+    }
+
+
+    [TestMethod]
+    [ExpectedException(typeof(ParserError))]
+    public void BadStateJsonTest_Throws()
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(JsonStrings.GoodJsonWith2FilesString);
+        var stream = new MemoryStream(bytes);
+
+        var buffer = new byte[Constants.ReadBufferSize];
+        var bufferCopy = new byte[Constants.ReadBufferSize];
+
+        stream.Read(buffer);
+
+        Array.Copy(buffer, bufferCopy, bufferCopy.Length);
+
+        var reader = new Utf8JsonReader(buffer, isFinalBlock: false, state: default);
+
+        while (reader.TokenType != JsonTokenType.String)
+        {
+            ParserUtils.Read(stream, ref buffer, ref reader);
+        }
+
+        var parser = new SbomFileParser(buffer, stream, reader.CurrentState);
         parser.GetSbomFile(out SBOMFile _);
     }
 }
