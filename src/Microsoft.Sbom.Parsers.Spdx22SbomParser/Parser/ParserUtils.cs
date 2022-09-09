@@ -13,10 +13,30 @@ internal class ParserUtils
 {
     public static void Read(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
+        // If the buffer is empty, refill the buffer.
+        if (buffer[0] == 0)
+        {
+            if (!stream.CanRead || stream.Read(buffer) == 0)
+            {
+                throw new EndOfStreamException();
+            }
+        }
+
         if (!reader.Read())
         {
             // Not enough of the JSON is in the buffer to complete a read.
             GetMoreBytesFromStream(stream, ref buffer, ref reader);
+        }
+    }
+
+    public static void RemoveBytesRead(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
+    {
+        if (reader.BytesConsumed > 0)
+        {
+            ReadOnlySpan<byte> leftover = buffer.AsSpan((int)reader.BytesConsumed);
+
+            leftover.CopyTo(buffer);
+            stream.Read(buffer.AsSpan(leftover.Length));
         }
     }
 

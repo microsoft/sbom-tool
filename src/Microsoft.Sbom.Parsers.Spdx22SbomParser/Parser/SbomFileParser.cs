@@ -24,7 +24,7 @@ internal ref struct SbomFileParser
 
     public JsonReaderState CurrentState => state;
 
-    public SbomFileParser(byte[] buffer, Stream stream, JsonReaderState state = default)
+    public SbomFileParser(Stream stream, ref byte[] buffer, JsonReaderState state = default)
     {
         this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
@@ -35,23 +35,6 @@ internal ref struct SbomFileParser
 
     public long GetSbomFile(out SBOMFile sbomFile)
     {
-        // Fill buffer if empty
-        if (buffer.All(b => b == 0))
-        {
-            if (!stream.CanRead)
-            {
-                sbomFile = null;
-                return 0;
-            }
-
-            var bytesRead = stream.Read(buffer, 0, buffer.Length);
-            if (bytesRead == 0)
-            {
-                sbomFile = null;
-                return 0;
-            }
-        }
-
         var reader = new Utf8JsonReader(buffer, isFinalBlock: false, state: state);
 
         try
@@ -68,19 +51,25 @@ internal ref struct SbomFileParser
             }
 
             ParserUtils.Read(stream, ref buffer, ref reader);
+
+            // Validate the created object
+            ValidateSbomFile(this.sbomFile);
+
+            ParserUtils.RemoveBytesRead(stream, ref buffer, ref reader);
+            state = reader.CurrentState;
+            sbomFile = this.sbomFile;
+            return reader.BytesConsumed;
+        }
+        catch (EndOfStreamException)
+        {
+            sbomFile = null;
+            return 0;
         }
         catch (JsonException e)
         {
             sbomFile = null;
             throw new ParserError($"Error while parsing JSON, addtional details: ${e.Message}");
         }
-
-        // Validate the created object
-        ValidateSbomFile(this.sbomFile);
-
-        state = reader.CurrentState;
-        sbomFile = this.sbomFile;
-        return reader.BytesConsumed;
     }
 
     private void ValidateSbomFile(SBOMFile sbomFile)

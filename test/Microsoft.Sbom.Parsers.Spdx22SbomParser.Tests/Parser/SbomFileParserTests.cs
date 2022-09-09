@@ -4,7 +4,6 @@ using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
-using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.Json;
 
@@ -23,29 +22,19 @@ public class SbomFileParserTests
 
         stream.Read(buffer);
 
-        var parser1 = new SbomFileParser(buffer, stream);
+        var parser1 = new SbomFileParser(stream, ref buffer);
         var result = parser1.GetSbomFile(out SBOMFile sbomFile);
 
         Assert.IsTrue(result != 0);
         Assert.IsNotNull(sbomFile);
 
-        // Remove bytes consumed
-        var newBuffer = new byte[4096];
-        Array.Copy(buffer, result, newBuffer, 0, newBuffer.Length - result);
-        buffer = newBuffer;
-
-        var parser2 = new SbomFileParser(buffer, stream, parser1.CurrentState);
+        var parser2 = new SbomFileParser(stream, ref buffer, parser1.CurrentState);
         result = parser2.GetSbomFile(out SBOMFile sbomFile2);
 
         Assert.IsTrue(result != 0);
         Assert.IsNotNull(sbomFile2);
 
-        // Remove bytes consumed
-        var newBuffer2 = new byte[4096];
-        Array.Copy(buffer, result, newBuffer, 0, newBuffer2.Length - result);
-        buffer = newBuffer2;
-
-        var parser3 = new SbomFileParser(buffer, stream, parser2.CurrentState);
+        var parser3 = new SbomFileParser(stream, ref buffer, parser2.CurrentState);
         result = parser3.GetSbomFile(out SBOMFile sbomFile3);
 
         Assert.IsTrue(result == 0);
@@ -56,14 +45,16 @@ public class SbomFileParserTests
     [ExpectedException(typeof(ArgumentNullException))]
     public void NullByteBufferThrows()
     {
-        new SbomFileParser(null, new MemoryStream());
+        byte[] buffer = null;
+        new SbomFileParser(new MemoryStream(), ref buffer);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
     public void NullStreamThrows()
     {
-        new SbomFileParser(new byte[3], null);
+        var buffer = new byte[2];
+        new SbomFileParser(null, ref buffer);
     }
 
     [TestMethod]
@@ -74,29 +65,19 @@ public class SbomFileParserTests
 
         var buffer = new byte[Constants.ReadBufferSize];
 
-        var parser1 = new SbomFileParser(buffer, stream);
+        var parser1 = new SbomFileParser(stream, ref buffer);
         var result = parser1.GetSbomFile(out SBOMFile sbomFile);
 
         Assert.IsTrue(result != 0);
         Assert.IsNotNull(sbomFile);
 
-        // Remove bytes consumed
-        var newBuffer = new byte[4096];
-        Array.Copy(buffer, result, newBuffer, 0, newBuffer.Length - result);
-        buffer = newBuffer;
-
-        var parser2 = new SbomFileParser(buffer, stream, parser1.CurrentState);
+        var parser2 = new SbomFileParser(stream, ref buffer, parser1.CurrentState);
         result = parser2.GetSbomFile(out SBOMFile sbomFile2);
 
         Assert.IsTrue(result != 0);
         Assert.IsNotNull(sbomFile2);
 
-        // Remove bytes consumed
-        var newBuffer2 = new byte[4096];
-        Array.Copy(buffer, result, newBuffer, 0, newBuffer2.Length - result);
-        buffer = newBuffer2;
-
-        var parser3 = new SbomFileParser(buffer, stream, parser2.CurrentState);
+        var parser3 = new SbomFileParser(stream, ref buffer, parser2.CurrentState);
         result = parser3.GetSbomFile(out SBOMFile sbomFile3);
 
         Assert.IsTrue(result == 0);
@@ -110,7 +91,7 @@ public class SbomFileParserTests
         stream.Close();
         var buffer = new byte[Constants.ReadBufferSize];
 
-        var parser = new SbomFileParser(buffer, stream);
+        var parser = new SbomFileParser(stream, ref buffer);
         var result = parser.GetSbomFile(out SBOMFile file);
 
         Assert.IsTrue(result == 0);
@@ -124,7 +105,7 @@ public class SbomFileParserTests
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
 
-        var parser = new SbomFileParser(buffer, stream);
+        var parser = new SbomFileParser(stream, ref buffer);
         var result = parser.GetSbomFile(out SBOMFile file);
 
         Assert.IsTrue(result == 0);
@@ -151,7 +132,7 @@ public class SbomFileParserTests
 
         stream.Read(buffer);
 
-        var parser = new SbomFileParser(buffer, stream);
+        var parser = new SbomFileParser(stream, ref buffer);
         parser.GetSbomFile(out SBOMFile _);
     }
 
@@ -169,7 +150,7 @@ public class SbomFileParserTests
 
         stream.Read(buffer);
 
-        var parser = new SbomFileParser(buffer, stream);
+        var parser = new SbomFileParser(stream, ref buffer);
         var result = parser.GetSbomFile(out SBOMFile sbomFile);
 
         Assert.IsTrue(result != 0);
@@ -185,10 +166,9 @@ public class SbomFileParserTests
 
         var buffer = new byte[Constants.ReadBufferSize];
 
-        var parser = new SbomFileParser(buffer, stream);
+        var parser = new SbomFileParser(stream, ref buffer);
         parser.GetSbomFile(out SBOMFile _);
     }
-
 
     [TestMethod]
     [ExpectedException(typeof(ParserError))]
@@ -211,7 +191,7 @@ public class SbomFileParserTests
             ParserUtils.Read(stream, ref buffer, ref reader);
         }
 
-        var parser = new SbomFileParser(buffer, stream, reader.CurrentState);
+        var parser = new SbomFileParser(stream, ref buffer, reader.CurrentState);
         parser.GetSbomFile(out SBOMFile _);
     }
 }
