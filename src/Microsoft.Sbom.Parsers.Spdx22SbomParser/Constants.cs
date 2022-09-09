@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Extensions.Entities;
+using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
 {
@@ -62,7 +64,27 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
                                                             Version = Constants.SPDXVersion
                                                         };
 
-        internal const int ReadBufferSize = 4096;
+        internal const int ReadBufferSize = 30;
         internal const int MaxReadBufferSize = 32768;
+
+        /// <summary>
+        /// Converts a <see cref="System.Text.Json.JsonTokenType"/> enum to the actual string
+        /// representation of the token.
+        /// </summary>
+        internal static readonly string[] JsonTokenStrings = new string[]
+        {
+            string.Empty, // None
+            "{", // StartObject
+            "}", // EndObject
+            "[", // StartArray
+            "]", // EndArray
+            "PropertyName", // PropertyName
+            "Comment", // Comment
+            "String", // String
+            "Number", // Number
+            "True", // True
+            "False", // False
+            "Null", // Null
+        };
     }
 }

@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text;
 using System;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
+using Microsoft.Sbom.Exceptions;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -21,22 +22,46 @@ internal class ParserUtils
                 throw new EndOfStreamException();
             }
         }
-
-        if (!reader.Read())
+        
+        Console.WriteLine($"In Read, buffer {buffer.GetHashCode()} is: {Encoding.UTF8.GetString(buffer)}");
+        while (!reader.Read())
         {
             // Not enough of the JSON is in the buffer to complete a read.
             GetMoreBytesFromStream(stream, ref buffer, ref reader);
+            Console.WriteLine($"Getting more bytes, buffer {buffer.GetHashCode()} now is: {Encoding.UTF8.GetString(buffer)}");
+
         }
     }
 
     public static void RemoveBytesRead(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
+        Console.WriteLine($"In remove bytes, buffer {buffer.GetHashCode()} is: {Encoding.UTF8.GetString(buffer)}");
+
         if (reader.BytesConsumed > 0)
         {
             ReadOnlySpan<byte> leftover = buffer.AsSpan((int)reader.BytesConsumed);
 
             leftover.CopyTo(buffer);
-            stream.Read(buffer.AsSpan(leftover.Length));
+            var bytesRead = stream.Read(buffer.AsSpan(leftover.Length));
+            reader = new Utf8JsonReader(buffer, isFinalBlock: bytesRead == 0, reader.CurrentState);
+
+            Console.WriteLine($"In remove bytes, buffer {buffer.GetHashCode()} now is: {Encoding.UTF8.GetString(buffer)}");
+        }
+    }
+
+    internal static void AssertTokenType(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader, JsonTokenType expectedTokenType)
+    {
+        if (reader.TokenType != expectedTokenType)
+        {
+            throw new ParserError($"Expected a '{Constants.JsonTokenStrings[(byte)expectedTokenType]}' at position {stream.Position}");
+        }
+    }
+
+    internal static void SkipNoneTokens(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
+    {
+        while (reader.TokenType == JsonTokenType.None)
+        {
+            Read(stream, ref buffer, ref reader);
         }
     }
 
