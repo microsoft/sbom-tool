@@ -72,9 +72,55 @@ internal ref struct SbomFileParser
             throw new ParserError($"Error while parsing JSON, addtional details: ${e.Message}");
         }
 
+        // Validate the created object
+        ValidateSbomFile(this.sbomFile);
+
         state = reader.CurrentState;
         sbomFile = this.sbomFile;
         return reader.BytesConsumed;
+    }
+
+    private void ValidateSbomFile(SBOMFile sbomFile)
+    {
+        /// I want to use the DataAnnotations Validator here, but will check with CB first
+        /// before adding a new dependency.
+
+        var missingProps = new List<string>();
+
+        if (sbomFile.Checksum == null || sbomFile.Checksum.Where(c => c.Algorithm.Name == "SHA256").Count() == 0)
+        {
+            missingProps.Add(nameof(sbomFile.Checksum));
+        }
+
+        if (string.IsNullOrEmpty(sbomFile.Path))
+        {
+            missingProps.Add(nameof(sbomFile.Path));
+        }
+
+        if (string.IsNullOrEmpty(sbomFile.SPDXId))
+        {
+            missingProps.Add(nameof(sbomFile.SPDXId));
+        }
+
+        if (string.IsNullOrEmpty(sbomFile.FileCopyrightText))
+        {
+            missingProps.Add(nameof(sbomFile.FileCopyrightText));
+        }
+
+        if (string.IsNullOrEmpty(sbomFile.LicenseConcluded))
+        {
+            missingProps.Add(nameof(sbomFile.LicenseConcluded));
+        }
+
+        if (sbomFile.LicenseInfoInFiles == null || sbomFile.LicenseInfoInFiles.Count == 0)
+        {
+            missingProps.Add(nameof(sbomFile.LicenseInfoInFiles));
+        }
+
+        if (missingProps.Count() > 0)
+        {
+            throw new ParserError($"Missing required value(s) for file object at position {stream.Position}: {string.Join(",", missingProps)}");
+        }
     }
 
     private void ParseProperty(ref Utf8JsonReader reader)
@@ -196,7 +242,8 @@ internal ref struct SbomFileParser
             ParserUtils.Read(stream, ref buffer, ref reader);
         }
 
-        return reader.GetString();
+        var value = reader.GetString();
+        return value;
     }
 
     private void SkipProperty(ref Utf8JsonReader reader)
@@ -211,7 +258,7 @@ internal ref struct SbomFileParser
         {
             int arrayCount = 0;
             int objectCount = 0;
-            do
+            while (true)
             {
                 arrayCount = reader.TokenType switch
                 {
@@ -224,12 +271,18 @@ internal ref struct SbomFileParser
                 {
                     JsonTokenType.StartObject => objectCount + 1,
                     JsonTokenType.EndObject => objectCount - 1,
-                    _ => arrayCount,
+                    _ => objectCount,
                 };
 
-                ParserUtils.Read(stream, ref buffer, ref reader);
-
-            } while (arrayCount + objectCount != 0);
+                if (arrayCount + objectCount != 0)
+                {
+                    ParserUtils.Read(stream, ref buffer, ref reader);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 }

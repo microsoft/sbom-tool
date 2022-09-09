@@ -243,10 +243,29 @@ internal struct JsonStrings
                 ""licenseConcluded"": ""NOASSERTION"",
                 ""copyrightText"": ""NOASSERTION""
             }]";
-    
+
     public const string JsonWith1FileMissingCopyrightString = @"[
             {
                 ""fileName"": ""./file1"",
+                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
+                ""checksums"": [
+                {
+                    ""algorithm"": ""SHA256"",
+                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad5""
+                },
+                {
+                    ""algorithm"": ""SHA1"",
+                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
+                }
+                ],
+                ""licenseConcluded"": ""NOASSERTION"",
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ]
+            }]";
+
+    public const string JsonWith1FileMissingCopyrightAndPathString = @"[
+            {
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
                 ""checksums"": [
                 {

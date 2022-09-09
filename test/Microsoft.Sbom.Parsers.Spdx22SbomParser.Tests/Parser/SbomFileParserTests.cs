@@ -139,6 +139,7 @@ public class SbomFileParserTests
     [DataRow(JsonStrings.JsonWith1FileMissingLicenseConcludedString)]
     [DataRow(JsonStrings.JsonWith1FileMissingLicenseInfoInFilesString)]
     [DataRow(JsonStrings.JsonWith1FileMissingCopyrightString)]
+    [DataRow(JsonStrings.JsonWith1FileMissingCopyrightAndPathString)]
     [TestMethod]
     [ExpectedException(typeof(ParserError))]
     public void MissingPropertiesTest_Throws(string json)
