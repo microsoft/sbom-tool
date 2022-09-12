@@ -49,7 +49,7 @@ internal ref struct SbomFileParser
     /// <returns>The total number of bytes read consumed from the stream to parse the object.
     /// This value will be 0 if the parsing fails or the end of the stream has been reached.
     /// </returns>
-    /// <exception cref="ParserError"></exception>
+    /// <exception cref="ParserException"></exception>
     public long GetSbomFile(ref byte[] buffer, ref Utf8JsonReader reader, out SBOMFile sbomFile)
     {
         if (buffer is null || buffer.Length == 0)
@@ -96,7 +96,7 @@ internal ref struct SbomFileParser
         catch (JsonException e)
         {
             sbomFile = null;
-            throw new ParserError($"Error while parsing JSON, addtional details: ${e.Message}", e);
+            throw new ParserException($"Error while parsing JSON, addtional details: ${e.Message}", e);
         }
     }
 
@@ -138,7 +138,7 @@ internal ref struct SbomFileParser
 
         if (missingProps.Count() > 0)
         {
-            throw new ParserError($"Missing required value(s) for file object at position {stream.Position}: {string.Join(",", missingProps)}");
+            throw new ParserException($"Missing required value(s) for file object at position {stream.Position}: {string.Join(",", missingProps)}");
         }
     }
 

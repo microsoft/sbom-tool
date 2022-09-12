@@ -52,7 +52,7 @@ internal class ParserUtils
     /// <summary>
     /// Asserts if the reader is at the current expected token.
     /// </summary>
-    /// <exception cref="ParserError"></exception>
+    /// <exception cref="ParserException"></exception>
     internal static void AssertTokenType(Stream stream, ref Utf8JsonReader reader, JsonTokenType expectedTokenType)
     {
         if (stream is null)
@@ -62,7 +62,7 @@ internal class ParserUtils
 
         if (reader.TokenType != expectedTokenType)
         {
-            throw new ParserError($"Expected a '{Constants.JsonTokenStrings[(byte)expectedTokenType]}' at position {stream.Position}");
+            throw new ParserException($"Expected a '{Constants.JsonTokenStrings[(byte)expectedTokenType]}' at position {stream.Position}");
         }
     }
 

@@ -72,7 +72,7 @@ public class SbomFileParserTests
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingCopyrightString)]
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingCopyrightAndPathString)]
     [TestMethod]
-    [ExpectedException(typeof(ParserError))]
+    [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
@@ -106,7 +106,7 @@ public class SbomFileParserTests
     [DataRow(SbomFileJsonStrings.MalformedJsonEmptyObject)]
     [DataRow(SbomFileJsonStrings.MalformedJsonEmptyObjectNoArrayEnd)]
     [TestMethod]
-    [ExpectedException(typeof(ParserError))]
+    [ExpectedException(typeof(ParserException))]
     public void MalformedJsonTest_Throws(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
