@@ -17,6 +17,16 @@ namespace Microsoft.Sbom.Parser;
 /// </summary>
 internal ref struct SbomFileParser
 {
+    // Internal properties.
+    private const string LicenseInfoInFilesProperty = "licenseInfoInFiles";
+    private const string FileNameProperty = "fileName";
+    private const string SPDXIdProperty = "SPDXID";
+    private const string ChecksumsProperty = "checksums";
+    private const string LicenseConcludedProperty = "licenseConcluded";
+    private const string CopyrightTextProperty = "copyrightText";
+    private const string AlgorithmProperty = "algorithm";
+    private const string ChecksumValueProperty = "checksumValue";
+
     private readonly Stream stream;
     private readonly SBOMFile sbomFile;
 
@@ -28,12 +38,17 @@ internal ref struct SbomFileParser
     }
 
     /// <summary>
-    /// Returns an iterator of <see cref="SBOMFile"/> objects by parsing the SPDX JSON files section.
+    /// Parses the SPDX SBOM 'files' array section and generates a <see cref="SBOMFile"/> object for it.
+    /// 
+    /// If an object is parsed successfully, the <see cref="sbomFile"/> parameter will have the newly created
+    /// object.
     /// </summary>
     /// <param name="buffer">The buffer where the stream will be read.</param>
     /// <param name="reader">The UTF8 reader used to parse the JSON.</param>
     /// <param name="sbomFile">The object that eventually will be assigned.</param>
-    /// <returns></returns>
+    /// <returns>The total number of bytes read consumed from the stream to parse the object.
+    /// This value will be 0 if the parsing fails or the end of the stream has been reached.
+    /// </returns>
     /// <exception cref="ParserError"></exception>
     public long GetSbomFile(ref byte[] buffer, ref Utf8JsonReader reader, out SBOMFile sbomFile)
     {
@@ -81,7 +96,7 @@ internal ref struct SbomFileParser
         catch (JsonException e)
         {
             sbomFile = null;
-            throw new ParserError($"Error while parsing JSON, addtional details: ${e.Message}");
+            throw new ParserError($"Error while parsing JSON, addtional details: ${e.Message}", e);
         }
     }
 
@@ -90,8 +105,8 @@ internal ref struct SbomFileParser
         // I want to use the DataAnnotations Validator here, but will check with CB first
         // before adding a new dependency.
         var missingProps = new List<string>();
-
-        if (sbomFile.Checksum == null || sbomFile.Checksum.Where(c => c.Algorithm.Name == "SHA256").Count() == 0)
+       
+        if (sbomFile.Checksum == null || sbomFile.Checksum.Where(c => c.Algorithm == AlgorithmName.SHA256).Count() == 0)
         {
             missingProps.Add(nameof(sbomFile.Checksum));
         }
@@ -101,9 +116,9 @@ internal ref struct SbomFileParser
             missingProps.Add(nameof(sbomFile.Path));
         }
 
-        if (string.IsNullOrEmpty(sbomFile.SPDXId))
+        if (string.IsNullOrEmpty(sbomFile.Id))
         {
-            missingProps.Add(nameof(sbomFile.SPDXId));
+            missingProps.Add(nameof(sbomFile.Id));
         }
 
         if (string.IsNullOrEmpty(sbomFile.FileCopyrightText))
@@ -131,32 +146,32 @@ internal ref struct SbomFileParser
     {
         switch (reader.GetString())
         {
-            case "fileName":
+            case FileNameProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
                 sbomFile.Path = ParseNextString(ref reader, ref buffer);
                 break;
 
-            case "SPDXID":
+            case SPDXIdProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.SPDXId = ParseNextString(ref reader, ref buffer);
+                sbomFile.Id = ParseNextString(ref reader, ref buffer);
                 break;
 
-            case "checksums":
+            case ChecksumsProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
                 sbomFile.Checksum = ParseChecksumsArray(ref reader, ref buffer);
                 break;
 
-            case "licenseConcluded":
+            case LicenseConcludedProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
                 sbomFile.LicenseConcluded = ParseNextString(ref reader, ref buffer);
                 break;
 
-            case "copyrightText": 
+            case CopyrightTextProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
                 sbomFile.FileCopyrightText = ParseNextString(ref reader, ref buffer);
                 break;
 
-            case "licenseInfoInFiles":
+            case LicenseInfoInFilesProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
                 sbomFile.LicenseInfoInFiles = ParseLicenseInfoInFilesArray(ref reader, ref buffer);
                 break;
@@ -227,12 +242,12 @@ internal ref struct SbomFileParser
         {
             switch (reader.GetString())
             {
-                case "algorithm":
+                case AlgorithmProperty:
                     ParserUtils.Read(stream, ref buffer, ref reader);
                     checksum.Algorithm = new AlgorithmName(ParseNextString(ref reader, ref buffer), null);
                     break;
 
-                case "checksumValue":
+                case ChecksumValueProperty:
                     ParserUtils.Read(stream, ref buffer, ref reader);
                     checksum.ChecksumValue = ParseNextString(ref reader, ref buffer);
                     break;

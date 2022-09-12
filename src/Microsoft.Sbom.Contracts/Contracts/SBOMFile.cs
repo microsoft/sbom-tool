@@ -38,6 +38,6 @@ namespace Microsoft.Sbom.Contracts
         /// <summary>
         /// Gets or sets unique Identifier for the file.
         /// </summary>
-        public string SPDXId { get; set; }
+        public string Id { get; set; }
     }
 }

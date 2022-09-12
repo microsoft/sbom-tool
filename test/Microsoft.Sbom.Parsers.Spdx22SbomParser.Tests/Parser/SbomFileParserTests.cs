@@ -101,11 +101,26 @@ public class SbomFileParserTests
         }
     }
 
+    [DataTestMethod]
+    [DataRow(SbomFileJsonStrings.MalformedJson)]
+    [DataRow(SbomFileJsonStrings.MalformedJsonEmptyObject)]
+    [DataRow(SbomFileJsonStrings.MalformedJsonEmptyObjectNoArrayEnd)]
     [TestMethod]
     [ExpectedException(typeof(ParserError))]
-    public void MalformedJsonTest_Throws()
+    public void MalformedJsonTest_Throws(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
+        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        using var stream = new MemoryStream(bytes);
+
+        TestParser parser = new ();
+
+        parser.GetFiles(stream).GetEnumerator().MoveNext();
+    }
+
+    [TestMethod]
+    public void EmptyArray_ValidJson()
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
         TestParser parser = new ();
