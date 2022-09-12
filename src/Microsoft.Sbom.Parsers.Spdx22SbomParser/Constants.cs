@@ -63,7 +63,6 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
                                                         };
 
         internal const int ReadBufferSize = 4096;
-        internal const int MaxReadBufferSize = 4096 * 16;
 
         /// <summary>
         /// Converts a <see cref="System.Text.Json.JsonTokenType"/> enum to the actual string

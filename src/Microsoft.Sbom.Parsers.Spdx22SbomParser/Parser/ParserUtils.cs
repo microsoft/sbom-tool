@@ -116,11 +116,6 @@ internal class ParserUtils
 
             if (leftover.Length == buffer.Length)
             {
-                if (buffer.Length >= Constants.MaxReadBufferSize)
-                {
-                    throw new ParserError($"");
-                }
-                // TODO log change in size.
                 Array.Resize(ref buffer, buffer.Length * 2);
             }
 
