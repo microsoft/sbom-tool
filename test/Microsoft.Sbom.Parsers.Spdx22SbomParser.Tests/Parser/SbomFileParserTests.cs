@@ -78,11 +78,7 @@ public class SbomFileParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var buffer = new byte[Constants.ReadBufferSize];
-
-        stream.Read(buffer);
-
-        TestParser parser = new ();
+        TestParser parser = new (40);
 
         parser.GetFiles(stream).GetEnumerator().MoveNext();
     }

@@ -10,7 +10,12 @@ namespace Microsoft.Sbom.Parser
     {
         private bool isFirstToken = true;
         private JsonReaderState readerState;
-        private byte[] buffer = new byte[Constants.ReadBufferSize];
+        private byte[] buffer;
+
+        public TestParser(int bufferSize = Constants.ReadBufferSize)
+        {
+            buffer = new byte[bufferSize];
+        }
 
         public IEnumerable<SBOMFile> GetFiles(Stream stream)
         {        
