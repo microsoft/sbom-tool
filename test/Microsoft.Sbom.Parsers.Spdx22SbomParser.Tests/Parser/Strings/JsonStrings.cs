@@ -68,9 +68,9 @@ internal struct SbomFileJsonStrings
                 ""copyrightText"": ""NOASSERTION""
             }]";
 
-    public const string GoodJsonWith1FileAdditionalStringPropertyString = @"
+    public const string GoodJsonWith1FileAdditionalStringPropertyString = @"[
             {
-                ""fileName"": ""./file1"",
+                ""fileName"": ""./additional"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
                 ""additionalProperty"": ""Additional property value"",
                 ""checksums"": [
@@ -90,7 +90,7 @@ internal struct SbomFileJsonStrings
                 ""copyrightText"": ""NOASSERTION""
             }]";
 
-    public const string GoodJsonWith1FileAdditionalArrayPropertyString = @"
+    public const string GoodJsonWith1FileAdditionalArrayPropertyString = @"[
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -114,7 +114,7 @@ internal struct SbomFileJsonStrings
                 ""copyrightText"": ""NOASSERTION""
             }]";
 
-    public const string GoodJsonWith1FileAdditionalObjectPropertyString = @"
+    public const string GoodJsonWith1FileAdditionalObjectPropertyString = @"[
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -138,7 +138,7 @@ internal struct SbomFileJsonStrings
                 ""copyrightText"": ""NOASSERTION""
             }]";
 
-    public const string JsonWith1FileMissingNameString = @"
+    public const string JsonWith1FileMissingNameString = @"[
             {
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
                 ""checksums"": [
@@ -158,7 +158,7 @@ internal struct SbomFileJsonStrings
                 ""copyrightText"": ""NOASSERTION""
             }]";
 
-    public const string JsonWith1FileMissingIDString = @"
+    public const string JsonWith1FileMissingIDString = @"[
             {                
                 ""fileName"": ""./file1"",
                 ""checksums"": [
@@ -178,7 +178,7 @@ internal struct SbomFileJsonStrings
                 ""copyrightText"": ""NOASSERTION""
             }]";
 
-    public const string JsonWith1FileMissingChecksumsString = @"
+    public const string JsonWith1FileMissingChecksumsString = @"[
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -189,7 +189,7 @@ internal struct SbomFileJsonStrings
                 ""copyrightText"": ""NOASSERTION""
             }]";
 
-    public const string JsonWith1FileMissingSHA256ChecksumsString = @"
+    public const string JsonWith1FileMissingSHA256ChecksumsString = @"[
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -206,27 +206,7 @@ internal struct SbomFileJsonStrings
                 ""copyrightText"": ""NOASSERTION""
             }]";
 
-    public const string JsonWith1FileMissingLicenseConcludedString = @"
-            {
-                ""fileName"": ""./file1"",
-                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
-                ""checksums"": [
-                {
-                    ""algorithm"": ""SHA256"",
-                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad5""
-                },
-                {
-                    ""algorithm"": ""SHA1"",
-                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
-                }
-                ],
-                ""licenseInfoInFiles"": [
-                    ""NOASSERTION""
-                ],
-                ""copyrightText"": ""NOASSERTION""
-            }]";
-
-    public const string JsonWith1FileMissingLicenseInfoInFilesString = @"
+    public const string JsonWith1FileMissingLicenseConcludedString = @"[
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -240,11 +220,31 @@ internal struct SbomFileJsonStrings
                     ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
                 }
                 ],
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ],
+                ""copyrightText"": ""NOASSERTION""
+            }]";
+
+    public const string JsonWith1FileMissingLicenseInfoInFilesString = @"[
+            {
+                ""fileName"": ""./file1"",
+                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
+                ""checksums"": [
+                {
+                    ""algorithm"": ""SHA256"",
+                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad5""
+                },
+                {
+                    ""algorithm"": ""SHA1"",
+                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
+                }
+                ],
                 ""licenseConcluded"": ""NOASSERTION"",
                 ""copyrightText"": ""NOASSERTION""
             }]";
 
-    public const string JsonWith1FileMissingCopyrightString = @"
+    public const string JsonWith1FileMissingCopyrightString = @"[
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -264,7 +264,7 @@ internal struct SbomFileJsonStrings
                 ]
             }]";
 
-    public const string JsonWith1FileMissingCopyrightAndPathString = @"
+    public const string JsonWith1FileMissingCopyrightAndPathString = @"[
             {
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
                 ""checksums"": [

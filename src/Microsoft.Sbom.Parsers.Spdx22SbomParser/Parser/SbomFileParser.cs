@@ -17,26 +17,26 @@ namespace Microsoft.Sbom.Parser;
 /// </summary>
 internal ref struct SbomFileParser
 {
-    private byte[] buffer;
-    private Stream stream;
-    private JsonReaderState state;
-    private SBOMFile sbomFile;
+    private readonly Stream stream;
+    private readonly SBOMFile sbomFile;
 
-    public JsonReaderState CurrentState => state;
-
-    public SbomFileParser(Stream stream, ref byte[] buffer, JsonReaderState state = default)
+    public SbomFileParser(Stream stream)
     {
-        this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
-        this.state = state;
 
         sbomFile = new ();
     }
 
-    public long GetSbomFile(out SBOMFile sbomFile)
+    /// <summary>
+    /// Returns an iterator of <see cref="SBOMFile"/> objects by parsing the SPDX JSON files section.
+    /// </summary>
+    /// <param name="buffer">The buffer where the stream will be read.</param>
+    /// <param name="reader">The UTF8 reader used to parse the JSON.</param>
+    /// <param name="sbomFile">The object that eventually will be assigned.</param>
+    /// <returns></returns>
+    /// <exception cref="ParserError"></exception>
+    public long GetSbomFile(ref byte[] buffer, ref Utf8JsonReader reader, out SBOMFile sbomFile)
     {
-        var reader = new Utf8JsonReader(buffer, isFinalBlock: false, state: state);
-
         try
         {
             // If the end of the array is reached, return with null value to signal end of the array.
@@ -56,7 +56,7 @@ internal ref struct SbomFileParser
 
             while (reader.TokenType != JsonTokenType.EndObject)
             {
-                ParseProperty(ref reader);
+                ParseProperty(ref reader, ref buffer);
                 
                 // Read the end } of this object or the next property name.
                 ParserUtils.Read(stream, ref buffer, ref reader);
@@ -65,7 +65,6 @@ internal ref struct SbomFileParser
             // Validate the created object
             ValidateSbomFile(this.sbomFile);
 
-            state = reader.CurrentState;
             sbomFile = this.sbomFile;
             return reader.BytesConsumed;
         }
@@ -124,47 +123,47 @@ internal ref struct SbomFileParser
         }
     }
 
-    private void ParseProperty(ref Utf8JsonReader reader)
+    private void ParseProperty(ref Utf8JsonReader reader, ref byte[] buffer)
     {
         switch (reader.GetString())
         {
             case "fileName":
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.Path = ParseNextString(ref reader);
+                sbomFile.Path = ParseNextString(ref reader, ref buffer);
                 break;
 
             case "SPDXID":
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.SPDXId = ParseNextString(ref reader);
+                sbomFile.SPDXId = ParseNextString(ref reader, ref buffer);
                 break;
 
             case "checksums":
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.Checksum = ParseChecksumsArray(ref reader);
+                sbomFile.Checksum = ParseChecksumsArray(ref reader, ref buffer);
                 break;
 
             case "licenseConcluded":
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.LicenseConcluded = ParseNextString(ref reader);
+                sbomFile.LicenseConcluded = ParseNextString(ref reader, ref buffer);
                 break;
 
             case "copyrightText": 
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.FileCopyrightText = ParseNextString(ref reader);
+                sbomFile.FileCopyrightText = ParseNextString(ref reader, ref buffer);
                 break;
 
             case "licenseInfoInFiles":
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.LicenseInfoInFiles = ParseLicenseInfoInFilesArray(ref reader);
+                sbomFile.LicenseInfoInFiles = ParseLicenseInfoInFilesArray(ref reader, ref buffer);
                 break;
 
             default:
-                SkipProperty(ref reader);
+                SkipProperty(ref reader, ref buffer);
                 break;
         }
     }
 
-    private List<string> ParseLicenseInfoInFilesArray(ref Utf8JsonReader reader)
+    private List<string> ParseLicenseInfoInFilesArray(ref Utf8JsonReader reader, ref byte[] buffer)
     {
         var licenses = new List<string>();
 
@@ -186,7 +185,7 @@ internal ref struct SbomFileParser
         return licenses;
     }
 
-    private IEnumerable<Checksum> ParseChecksumsArray(ref Utf8JsonReader reader)
+    private IEnumerable<Checksum> ParseChecksumsArray(ref Utf8JsonReader reader, ref byte[] buffer)
     {
         var checksums = new List<Checksum>();
 
@@ -201,7 +200,7 @@ internal ref struct SbomFileParser
                 break;
             }
 
-            checksums.Add(ParseChecksumObject(ref reader));
+            checksums.Add(ParseChecksumObject(ref reader, ref buffer));
         }
 
         ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.EndArray);
@@ -209,7 +208,7 @@ internal ref struct SbomFileParser
         return checksums;
     }
 
-    private Checksum ParseChecksumObject(ref Utf8JsonReader reader)
+    private Checksum ParseChecksumObject(ref Utf8JsonReader reader, ref byte[] buffer)
     {
         var checksum = new Checksum();
 
@@ -226,16 +225,16 @@ internal ref struct SbomFileParser
             {
                 case "algorithm":
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    checksum.Algorithm = new AlgorithmName(ParseNextString(ref reader), null);
+                    checksum.Algorithm = new AlgorithmName(ParseNextString(ref reader, ref buffer), null);
                     break;
 
                 case "checksumValue":
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    checksum.ChecksumValue = ParseNextString(ref reader);
+                    checksum.ChecksumValue = ParseNextString(ref reader, ref buffer);
                     break;
                 
                 default:
-                    SkipProperty(ref reader);
+                    SkipProperty(ref reader, ref buffer);
                     break;
             }
 
@@ -248,13 +247,13 @@ internal ref struct SbomFileParser
         return checksum;
     }
 
-    private string ParseNextString(ref Utf8JsonReader reader)
+    private string ParseNextString(ref Utf8JsonReader reader, ref byte[] buffer)
     {
         ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.String);
         return reader.GetString();
     }
 
-    private void SkipProperty(ref Utf8JsonReader reader)
+    private void SkipProperty(ref Utf8JsonReader reader, ref byte[] buffer)
     {
         if (reader.TokenType == JsonTokenType.PropertyName)
         {
