@@ -10,8 +10,17 @@ using Microsoft.Sbom.Exceptions;
 
 namespace Microsoft.Sbom.Parser;
 
+/// <summary>
+/// Utility methods for parsing that are shared by all parsers.
+/// </summary>
 internal class ParserUtils
 {
+    /// <summary>
+    /// Read the next JSON token in the reader from the input buffer.
+    /// If the buffer is small and doesn't contain all the text for the next token, 
+    /// a call to GetMoreBytesFromStream is made to read more data into the buffer.
+    /// </summary>
+    /// <exception cref="EndOfStreamException"></exception>
     public static void Read(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
         // If the buffer is empty, refill the buffer.
@@ -30,7 +39,11 @@ internal class ParserUtils
         }
     }
 
-    internal static void AssertTokenType(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader, JsonTokenType expectedTokenType)
+    /// <summary>
+    /// Asserts if the reader is at the current expected token.
+    /// </summary>
+    /// <exception cref="ParserError"></exception>
+    internal static void AssertTokenType(Stream stream, ref Utf8JsonReader reader, JsonTokenType expectedTokenType)
     {
         if (reader.TokenType != expectedTokenType)
         {
@@ -38,6 +51,12 @@ internal class ParserUtils
         }
     }
 
+    /// <summary>
+    /// Helper method to move the reader from a None token type to the next available token.
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="buffer"></param>
+    /// <param name="reader"></param>
     internal static void SkipNoneTokens(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
         while (reader.TokenType == JsonTokenType.None)
@@ -46,11 +65,23 @@ internal class ParserUtils
         }
     }
 
+    /// <summary>
+    /// Helper method that can be used to display a byte readonlyspan for logging.
+    /// </summary>
+    /// <returns></returns>
     internal static string GetStringValue(ReadOnlySpan<byte> valueSpan)
     {
         return Encoding.UTF8.GetString(valueSpan.ToArray());
     }
 
+    /// <summary>
+    /// If the buffer still has some space left, reads the stream into the remaining buffer space.
+    /// If the buffer is full, doubles the size of the buffer and then performs the read.
+    /// If the buffer is empty, reads the stream into the buffer fully.
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="buffer"></param>
+    /// <param name="reader"></param>
     public static void GetMoreBytesFromStream(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
         int bytesRead;

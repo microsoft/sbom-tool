@@ -1,9 +1,7 @@
 ﻿using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Text.Json;
 
 namespace Microsoft.Sbom.Parser
@@ -31,14 +29,12 @@ namespace Microsoft.Sbom.Parser
                 {
                     // Ensure first value is an array and read that so that we are the { token.
                     ParserUtils.SkipNoneTokens(stream, ref buffer, ref reader);
-                    ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.StartArray);
+                    ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
                     ParserUtils.Read(stream, ref buffer, ref reader);
                     ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
 
                     isFirstToken = false;
                 }
-
-                Console.WriteLine($"String in buffer is: {Encoding.UTF8.GetString(buffer)}");
 
                 var parser = new SbomFileParser(stream);
                 var result = parser.GetSbomFile(ref buffer, ref reader, out sbomFile);

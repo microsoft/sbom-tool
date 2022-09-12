@@ -6,6 +6,9 @@ using System.Runtime.Serialization;
 
 namespace Microsoft.Sbom.Exceptions;
 
+/// <summary>
+/// Thrown when the SPDX parser detects an error in the JSON file.
+/// </summary>
 [Serializable]
 public class ParserError : Exception
 {

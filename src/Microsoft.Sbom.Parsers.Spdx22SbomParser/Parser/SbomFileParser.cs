@@ -48,11 +48,11 @@ internal ref struct SbomFileParser
 
             // Read the start { of this object.
             ParserUtils.SkipNoneTokens(stream, ref buffer, ref reader);
-            ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.StartObject);
+            ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.StartObject);
 
             // Move to the first property name token.
             ParserUtils.Read(stream, ref buffer, ref reader);
-            ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.PropertyName);
+            ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);
 
             while (reader.TokenType != JsonTokenType.EndObject)
             {
@@ -168,7 +168,7 @@ internal ref struct SbomFileParser
         var licenses = new List<string>();
 
         // Read the opening [ of the array
-        ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.StartArray);
+        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
 
         while (reader.TokenType != JsonTokenType.EndArray)
         {
@@ -181,7 +181,7 @@ internal ref struct SbomFileParser
             licenses.Add(reader.GetString());
         }
 
-        ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.EndArray);
+        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.EndArray);
         return licenses;
     }
 
@@ -190,7 +190,7 @@ internal ref struct SbomFileParser
         var checksums = new List<Checksum>();
 
         // Read the opening [ of the array
-        ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.StartArray);
+        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
 
         while (reader.TokenType != JsonTokenType.EndArray)
         {
@@ -203,7 +203,7 @@ internal ref struct SbomFileParser
             checksums.Add(ParseChecksumObject(ref reader, ref buffer));
         }
 
-        ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.EndArray);
+        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.EndArray);
 
         return checksums;
     }
@@ -213,11 +213,11 @@ internal ref struct SbomFileParser
         var checksum = new Checksum();
 
         // Read the opening { of the object
-        ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.StartObject);
+        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.StartObject);
 
         // Move to the first property token
         ParserUtils.Read(stream, ref buffer, ref reader);
-        ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.PropertyName);
+        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);
 
         while (reader.TokenType != JsonTokenType.EndObject)
         {
@@ -242,14 +242,14 @@ internal ref struct SbomFileParser
             ParserUtils.Read(stream, ref buffer, ref reader);
         }
 
-        ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.EndObject);
+        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.EndObject);
 
         return checksum;
     }
 
     private string ParseNextString(ref Utf8JsonReader reader, ref byte[] buffer)
     {
-        ParserUtils.AssertTokenType(stream, ref buffer, ref reader, JsonTokenType.String);
+        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.String);
         return reader.GetString();
     }
 
