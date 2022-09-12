@@ -135,7 +135,7 @@ public class SbomFileParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new(0);
+        TestParser parser = new (0);
 
         parser.GetFiles(stream).GetEnumerator().MoveNext();
     }
