@@ -37,6 +37,11 @@ internal ref struct SbomFileParser
     /// <exception cref="ParserError"></exception>
     public long GetSbomFile(ref byte[] buffer, ref Utf8JsonReader reader, out SBOMFile sbomFile)
     {
+        if (buffer is null || buffer.Length == 0)
+        {
+            throw new ArgumentException($"The {nameof(buffer)} value can't be null or of 0 length.");
+        }
+
         try
         {
             // If the end of the array is reached, return with null value to signal end of the array.

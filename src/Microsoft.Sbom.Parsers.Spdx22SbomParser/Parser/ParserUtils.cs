@@ -23,6 +23,16 @@ internal class ParserUtils
     /// <exception cref="EndOfStreamException"></exception>
     public static void Read(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
+        if (stream is null)
+        {
+            throw new ArgumentNullException(nameof(stream));
+        }
+
+        if (buffer is null || buffer.Length == 0)
+        {
+            throw new ArgumentException($"The {nameof(buffer)} value can't be null or of 0 length.");
+        }
+
         // If the buffer is empty, refill the buffer.
         if (buffer[0] == 0)
         {
@@ -45,6 +55,11 @@ internal class ParserUtils
     /// <exception cref="ParserError"></exception>
     internal static void AssertTokenType(Stream stream, ref Utf8JsonReader reader, JsonTokenType expectedTokenType)
     {
+        if (stream is null)
+        {
+            throw new ArgumentNullException(nameof(stream));
+        }
+
         if (reader.TokenType != expectedTokenType)
         {
             throw new ParserError($"Expected a '{Constants.JsonTokenStrings[(byte)expectedTokenType]}' at position {stream.Position}");
@@ -84,6 +99,16 @@ internal class ParserUtils
     /// <param name="reader"></param>
     public static void GetMoreBytesFromStream(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
+        if (stream is null)
+        {
+            throw new ArgumentNullException(nameof(stream));
+        }
+
+        if (buffer is null || buffer.Length == 0)
+        {
+            throw new ArgumentException($"The {nameof(buffer)} value can't be null or of 0 length.");
+        }
+
         int bytesRead;
         if (reader.BytesConsumed < buffer.Length)
         {

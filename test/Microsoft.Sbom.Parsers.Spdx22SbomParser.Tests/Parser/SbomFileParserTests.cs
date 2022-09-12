@@ -93,8 +93,6 @@ public class SbomFileParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var buffer = new byte[Constants.ReadBufferSize];
-
         TestParser parser = new ();
 
         foreach (var file in parser.GetFiles(stream))
@@ -110,9 +108,19 @@ public class SbomFileParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        var buffer = new byte[Constants.ReadBufferSize];
-
         TestParser parser = new ();
+
+        parser.GetFiles(stream).GetEnumerator().MoveNext();
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void NullOrEmptyBuffer_Throws()
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
+        using var stream = new MemoryStream(bytes);
+
+        TestParser parser = new(0);
 
         parser.GetFiles(stream).GetEnumerator().MoveNext();
     }
