@@ -82,9 +82,8 @@ internal ref struct SbomFileParser
 
     private void ValidateSbomFile(SBOMFile sbomFile)
     {
-        /// I want to use the DataAnnotations Validator here, but will check with CB first
-        /// before adding a new dependency.
-
+        // I want to use the DataAnnotations Validator here, but will check with CB first
+        // before adding a new dependency.
         var missingProps = new List<string>();
 
         if (sbomFile.Checksum == null || sbomFile.Checksum.Where(c => c.Algorithm.Name == "SHA256").Count() == 0)
