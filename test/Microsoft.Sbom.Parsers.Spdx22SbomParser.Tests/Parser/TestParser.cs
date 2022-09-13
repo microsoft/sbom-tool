@@ -8,7 +8,8 @@ namespace Microsoft.Sbom.Parser
 {
     internal class TestParser
     {
-        private bool isFirstToken = true;
+        private bool isFileArrayParsingStarted = false;
+        private bool isPackageArrayParsingStarted = false;
         private JsonReaderState readerState;
         private byte[] buffer;
 
@@ -19,7 +20,36 @@ namespace Microsoft.Sbom.Parser
 
         public IEnumerable<SBOMPackage> GetPackages(Stream stream)
         {
-            return null;
+            stream.Read(buffer);
+
+            while (GetPackages(stream, out SBOMPackage sbomPackage) != 0)
+            {
+                yield return sbomPackage;
+            }
+
+            long GetPackages(Stream stream, out SBOMPackage sbomPackage)
+            {
+                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+
+                if (!isPackageArrayParsingStarted)
+                {
+                    ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
+                    isPackageArrayParsingStarted = true;
+                }
+
+                var parser = new SbomPackageParser(stream);
+                var result = parser.GetSbomPackage(ref buffer, ref reader, out sbomPackage);
+
+                // The caller always closes the ending }
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    ParserUtils.Read(stream, ref buffer, ref reader);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                }
+
+                readerState = reader.CurrentState;
+                return result;
+            }
         }
 
         public IEnumerable<SBOMFile> GetFiles(Stream stream)
@@ -35,15 +65,10 @@ namespace Microsoft.Sbom.Parser
             {
                 var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
 
-                if (isFirstToken)
+                if (!isFileArrayParsingStarted)
                 {
-                    // Ensure first value is an array and read that so that we are the { token.
-                    ParserUtils.SkipNoneTokens(stream, ref buffer, ref reader);
-                    ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
-                    ParserUtils.Read(stream, ref buffer, ref reader);
-                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
-
-                    isFirstToken = false;
+                    ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
+                    isFileArrayParsingStarted = true;
                 }
 
                 var parser = new SbomFileParser(stream);
