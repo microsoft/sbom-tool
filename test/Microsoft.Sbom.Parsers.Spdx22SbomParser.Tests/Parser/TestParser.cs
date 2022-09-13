@@ -17,6 +17,11 @@ namespace Microsoft.Sbom.Parser
             buffer = new byte[bufferSize];
         }
 
+        public IEnumerable<SBOMPackage> GetPackages(Stream stream)
+        {
+            return null;
+        }
+
         public IEnumerable<SBOMFile> GetFiles(Stream stream)
         {        
             stream.Read(buffer);
