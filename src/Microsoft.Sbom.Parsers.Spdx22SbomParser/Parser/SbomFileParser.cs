@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Exceptions;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +13,7 @@ using System.Text.Json;
 namespace Microsoft.Sbom.Parser;
 
 /// <summary>
-/// Parses <see cref="SBOMFile"/> object from a 'files' array.
+/// Parses <see cref="SPDXFile"/> object from a 'files' array.
 /// </summary>
 internal ref struct SbomFileParser
 {
@@ -28,7 +28,7 @@ internal ref struct SbomFileParser
     private const string ChecksumValueProperty = "checksumValue";
 
     private readonly Stream stream;
-    private readonly SBOMFile sbomFile = new ();
+    private readonly SPDXFile sbomFile = new ();
 
     public SbomFileParser(Stream stream)
     {
@@ -48,7 +48,7 @@ internal ref struct SbomFileParser
     /// This value will be 0 if the parsing fails or the end of the stream has been reached.
     /// </returns>
     /// <exception cref="ParserException"></exception>
-    public long GetSbomFile(ref byte[] buffer, ref Utf8JsonReader reader, out SBOMFile sbomFile)
+    public long GetSbomFile(ref byte[] buffer, ref Utf8JsonReader reader, out SPDXFile sbomFile)
     {
         if (buffer is null || buffer.Length == 0)
         {
@@ -98,25 +98,25 @@ internal ref struct SbomFileParser
         }
     }
 
-    private void ValidateSbomFile(SBOMFile sbomFile)
+    private void ValidateSbomFile(SPDXFile sbomFile)
     {
         // I want to use the DataAnnotations Validator here, but will check with CB first
         // before adding a new dependency.
         var missingProps = new List<string>();
        
-        if (sbomFile.Checksum == null || sbomFile.Checksum.Where(c => c.Algorithm == AlgorithmName.SHA256).Count() == 0)
+        if (sbomFile.FileChecksums == null || sbomFile.FileChecksums.Where(c => c.Algorithm == AlgorithmName.SHA256.Name).Count() == 0)
         {
-            missingProps.Add(nameof(sbomFile.Checksum));
+            missingProps.Add(nameof(sbomFile.FileChecksums));
         }
 
-        if (string.IsNullOrEmpty(sbomFile.Path))
+        if (string.IsNullOrEmpty(sbomFile.FileName))
         {
-            missingProps.Add(nameof(sbomFile.Path));
+            missingProps.Add(nameof(sbomFile.FileName));
         }
 
-        if (string.IsNullOrEmpty(sbomFile.Id))
+        if (string.IsNullOrEmpty(sbomFile.SPDXId))
         {
-            missingProps.Add(nameof(sbomFile.Id));
+            missingProps.Add(nameof(sbomFile.SPDXId));
         }
 
         if (string.IsNullOrEmpty(sbomFile.FileCopyrightText))
@@ -146,17 +146,17 @@ internal ref struct SbomFileParser
         {
             case FileNameProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.Path = ParserUtils.ParseNextString(stream, ref reader);
+                sbomFile.FileName = ParserUtils.ParseNextString(stream, ref reader);
                 break;
 
             case SPDXIdProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.Id = ParserUtils.ParseNextString(stream, ref reader);
+                sbomFile.SPDXId = ParserUtils.ParseNextString(stream, ref reader);
                 break;
 
             case ChecksumsProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.Checksum = ParseChecksumsArray(ref reader, ref buffer);
+                sbomFile.FileChecksums = ParseChecksumsArray(ref reader, ref buffer);
                 break;
 
             case LicenseConcludedProperty:
@@ -180,7 +180,7 @@ internal ref struct SbomFileParser
         }
     }
 
-    private IEnumerable<Checksum> ParseChecksumsArray(ref Utf8JsonReader reader, ref byte[] buffer)
+    private List<Checksum> ParseChecksumsArray(ref Utf8JsonReader reader, ref byte[] buffer)
     {
         var checksums = new List<Checksum>();
 
@@ -220,7 +220,7 @@ internal ref struct SbomFileParser
             {
                 case AlgorithmProperty:
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    checksum.Algorithm = new AlgorithmName(ParserUtils.ParseNextString(stream, ref reader), null);
+                    checksum.Algorithm = ParserUtils.ParseNextString(stream, ref reader);
                     break;
 
                 case ChecksumValueProperty:
