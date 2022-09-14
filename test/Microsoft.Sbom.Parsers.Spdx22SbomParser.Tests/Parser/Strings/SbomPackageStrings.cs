@@ -123,6 +123,94 @@ internal struct SbomPackageStrings
       ""supplier"": ""Organization: testa""
     }]";
 
+    public const string PackageJsonWith1PackageMissingPackageVerificationCode = @"[{
+      ""name"": ""pest"",
+      ""SPDXID"": ""SPDXRef-RootPackage"",
+      ""downloadLocation"": ""NOASSERTION"",
+      ""packageVerificationCode"": {
+        ""packageVerificationCodeValue"": """"
+      },
+      ""filesAnalyzed"": true,
+      ""licenseConcluded"": ""NOASSERTION"",
+      ""licenseInfoFromFiles"": [
+        ""NOASSERTION""
+      ],
+      ""licenseDeclared"": ""NOASSERTION"",
+      ""copyrightText"": ""NOASSERTION"",
+      ""versionInfo"": ""1208"",
+      ""supplier"": ""Organization: Microsoft"",
+      ""hasFiles"": [
+        ""SPDXRef-File--package-services-metadata-core-properties-16e5bdb646ef44f485b1227d6d005f14.psmdcp-81EC7E121D7F03CDE59C8A4570A7D75C7EBB063A"",
+        ""SPDXRef-File--packages.config-69B7910C6FC95DB019934AA3BE0CDFDC3F3F2D8E"",
+        ""SPDXRef-File--pest.nuspec-A2EBA85861EAFD340496A9A7948D193284A19408"",
+        ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
+        ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
+      ]
+    }]";
+
+    public const string PackageJsonWith1PackageMissingReferenceLocator = @"[{
+      ""name"": ""pest"",
+      ""SPDXID"": ""SPDXRef-RootPackage"",
+      ""downloadLocation"": ""NOASSERTION"",
+      ""packageVerificationCode"": {
+        ""packageVerificationCodeValue"": ""a2f8875f69c1b3814120e98bd3c0864e3c586a24""
+      },
+      ""filesAnalyzed"": true,
+      ""licenseConcluded"": ""NOASSERTION"",
+      ""licenseInfoFromFiles"": [
+        ""NOASSERTION""
+      ],
+      ""licenseDeclared"": ""NOASSERTION"",
+      ""copyrightText"": ""NOASSERTION"",
+      ""versionInfo"": ""1208"",
+      ""supplier"": ""Organization: Microsoft"",
+      ""hasFiles"": [
+        ""SPDXRef-File--package-services-metadata-core-properties-16e5bdb646ef44f485b1227d6d005f14.psmdcp-81EC7E121D7F03CDE59C8A4570A7D75C7EBB063A"",
+        ""SPDXRef-File--packages.config-69B7910C6FC95DB019934AA3BE0CDFDC3F3F2D8E"",
+        ""SPDXRef-File--pest.nuspec-A2EBA85861EAFD340496A9A7948D193284A19408"",
+        ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
+        ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
+      ],
+      ""externalRefs"": [
+        {
+          ""referenceCategory"": ""PACKAGE_MANAGER"",
+          ""referenceType"": ""purl"",
+        }
+      ],
+    }]";
+
+    public const string PackageJsonWith1PackageBadReferenceType = @"[{
+      ""name"": ""pest"",
+      ""SPDXID"": ""SPDXRef-RootPackage"",
+      ""downloadLocation"": ""NOASSERTION"",
+      ""packageVerificationCode"": {
+        ""packageVerificationCodeValue"": ""a2f8875f69c1b3814120e98bd3c0864e3c586a24""
+      },
+      ""filesAnalyzed"": true,
+      ""licenseConcluded"": ""NOASSERTION"",
+      ""licenseInfoFromFiles"": [
+        ""NOASSERTION""
+      ],
+      ""licenseDeclared"": ""NOASSERTION"",
+      ""copyrightText"": ""NOASSERTION"",
+      ""versionInfo"": ""1208"",
+      ""supplier"": ""Organization: Microsoft"",
+      ""hasFiles"": [
+        ""SPDXRef-File--package-services-metadata-core-properties-16e5bdb646ef44f485b1227d6d005f14.psmdcp-81EC7E121D7F03CDE59C8A4570A7D75C7EBB063A"",
+        ""SPDXRef-File--packages.config-69B7910C6FC95DB019934AA3BE0CDFDC3F3F2D8E"",
+        ""SPDXRef-File--pest.nuspec-A2EBA85861EAFD340496A9A7948D193284A19408"",
+        ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
+        ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
+      ],
+      ""externalRefs"": [
+        {
+          ""referenceCategory"": ""PACKAGE_MANAGER"",
+          ""referenceType"": ""testss"",
+          ""referenceLocator"": ""pkg:nuget/System.Runtime.InteropServices.WindowsRuntime%404.3.0""
+        }
+      ],
+    }]";
+
     public const string PackageJsonWith1PackageMissingName = @"[{
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""downloadLocation"": ""NOASSERTION"",

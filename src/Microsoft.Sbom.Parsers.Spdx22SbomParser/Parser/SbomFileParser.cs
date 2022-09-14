@@ -171,35 +171,13 @@ internal ref struct SbomFileParser
 
             case LicenseInfoInFilesProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.LicenseInfoInFiles = ParseLicenseInfoInFilesArray(ref reader, ref buffer);
+                sbomFile.LicenseInfoInFiles = ParserUtils.ParseListOfStrings(stream, ref reader, ref buffer);
                 break;
 
             default:
-                ParserUtils.SkipProperty(stream, ref reader, ref buffer);
+                ParserUtils.SkipProperty(stream, ref buffer, ref reader);
                 break;
         }
-    }
-
-    private List<string> ParseLicenseInfoInFilesArray(ref Utf8JsonReader reader, ref byte[] buffer)
-    {
-        var licenses = new List<string>();
-
-        // Read the opening [ of the array
-        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
-
-        while (reader.TokenType != JsonTokenType.EndArray)
-        {
-            ParserUtils.Read(stream, ref buffer, ref reader);
-            if (reader.TokenType == JsonTokenType.EndArray)
-            {
-                break;
-            }
-
-            licenses.Add(reader.GetString());
-        }
-
-        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.EndArray);
-        return licenses;
     }
 
     private IEnumerable<Checksum> ParseChecksumsArray(ref Utf8JsonReader reader, ref byte[] buffer)
@@ -251,7 +229,7 @@ internal ref struct SbomFileParser
                     break;
                 
                 default:
-                    ParserUtils.SkipProperty(stream, ref reader, ref buffer);
+                    ParserUtils.SkipProperty(stream, ref buffer, ref reader);
                     break;
             }
 

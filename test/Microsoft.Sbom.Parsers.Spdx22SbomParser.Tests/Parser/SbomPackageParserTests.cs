@@ -68,11 +68,13 @@ public class SbomPackageParserTests
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingVersionInfo)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingLicenseInfoFromFiles)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingSupplier)]
-    [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingFilesAnalyzed)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingId)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingLicenseConcluded)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingLicenseDeclared)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingName)]
+    [DataRow(SbomPackageStrings.PackageJsonWith1PackageBadReferenceType)]
+    [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingReferenceLocator)]
+    [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingPackageVerificationCode)]
     [TestMethod]
     [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
@@ -86,9 +88,10 @@ public class SbomPackageParserTests
     }
 
     [DataTestMethod]
-    [DataRow(SbomFileJsonStrings.GoodJsonWith1FileAdditionalObjectPropertyString)]
-    [DataRow(SbomFileJsonStrings.GoodJsonWith1FileAdditionalArrayPropertyString)]
-    [DataRow(SbomFileJsonStrings.GoodJsonWith1FileAdditionalStringPropertyString)]
+    [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalString)]
+    [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalArray)]
+    [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalObject)]
+    [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalArrayNoKey)]
     [TestMethod]
     public void IgnoresAdditionalPropertiesTest(string json)
     {

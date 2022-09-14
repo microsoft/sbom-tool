@@ -9,6 +9,8 @@ using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.Sbom.Exceptions;
 using System.Runtime.InteropServices.ComTypes;
 using System.Linq;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using System.Collections.Generic;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -143,7 +145,7 @@ internal class ParserUtils
     /// </summary>
     /// <param name="reader"></param>
     /// <param name="buffer"></param>
-    internal static void SkipProperty(Stream stream, ref Utf8JsonReader reader, ref byte[] buffer)
+    internal static void SkipProperty(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
         if (reader.TokenType == JsonTokenType.PropertyName)
         {
@@ -238,5 +240,27 @@ internal class ParserUtils
     {
         AssertEitherTokenTypes(stream, ref reader, new JsonTokenType[] { JsonTokenType.True, JsonTokenType.False });
         return reader.GetBoolean();
+    }
+
+    internal static List<string> ParseListOfStrings(Stream stream, ref Utf8JsonReader reader, ref byte[] buffer)
+    {
+        var strings = new List<string>();
+
+        // Read the opening [ of the array
+        AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
+
+        while (reader.TokenType != JsonTokenType.EndArray)
+        {
+            Read(stream, ref buffer, ref reader);
+            if (reader.TokenType == JsonTokenType.EndArray)
+            {
+                break;
+            }
+
+            strings.Add(reader.GetString());
+        }
+
+        AssertTokenType(stream, ref reader, JsonTokenType.EndArray);
+        return strings;
     }
 }
