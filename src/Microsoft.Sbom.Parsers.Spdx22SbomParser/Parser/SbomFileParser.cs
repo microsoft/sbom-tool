@@ -28,13 +28,11 @@ internal ref struct SbomFileParser
     private const string ChecksumValueProperty = "checksumValue";
 
     private readonly Stream stream;
-    private readonly SBOMFile sbomFile;
+    private readonly SBOMFile sbomFile = new ();
 
     public SbomFileParser(Stream stream)
     {
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
-
-        sbomFile = new ();
     }
 
     /// <summary>
@@ -148,12 +146,12 @@ internal ref struct SbomFileParser
         {
             case FileNameProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.Path = ParseNextString(ref reader, ref buffer);
+                sbomFile.Path = ParserUtils.ParseNextString(stream, ref reader);
                 break;
 
             case SPDXIdProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.Id = ParseNextString(ref reader, ref buffer);
+                sbomFile.Id = ParserUtils.ParseNextString(stream, ref reader);
                 break;
 
             case ChecksumsProperty:
@@ -163,12 +161,12 @@ internal ref struct SbomFileParser
 
             case LicenseConcludedProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.LicenseConcluded = ParseNextString(ref reader, ref buffer);
+                sbomFile.LicenseConcluded = ParserUtils.ParseNextString(stream, ref reader);
                 break;
 
             case CopyrightTextProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.FileCopyrightText = ParseNextString(ref reader, ref buffer);
+                sbomFile.FileCopyrightText = ParserUtils.ParseNextString(stream, ref reader);
                 break;
 
             case LicenseInfoInFilesProperty:
@@ -177,7 +175,7 @@ internal ref struct SbomFileParser
                 break;
 
             default:
-                SkipProperty(ref reader, ref buffer);
+                ParserUtils.SkipProperty(stream, ref reader, ref buffer);
                 break;
         }
     }
@@ -244,16 +242,16 @@ internal ref struct SbomFileParser
             {
                 case AlgorithmProperty:
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    checksum.Algorithm = new AlgorithmName(ParseNextString(ref reader, ref buffer), null);
+                    checksum.Algorithm = new AlgorithmName(ParserUtils.ParseNextString(stream, ref reader), null);
                     break;
 
                 case ChecksumValueProperty:
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    checksum.ChecksumValue = ParseNextString(ref reader, ref buffer);
+                    checksum.ChecksumValue = ParserUtils.ParseNextString(stream, ref reader);
                     break;
                 
                 default:
-                    SkipProperty(ref reader, ref buffer);
+                    ParserUtils.SkipProperty(stream, ref reader, ref buffer);
                     break;
             }
 
@@ -264,51 +262,5 @@ internal ref struct SbomFileParser
         ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.EndObject);
 
         return checksum;
-    }
-
-    private string ParseNextString(ref Utf8JsonReader reader, ref byte[] buffer)
-    {
-        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.String);
-        return reader.GetString();
-    }
-
-    private void SkipProperty(ref Utf8JsonReader reader, ref byte[] buffer)
-    {
-        if (reader.TokenType == JsonTokenType.PropertyName)
-        {
-            ParserUtils.Read(stream, ref buffer, ref reader);
-        }
-
-        if (reader.TokenType == JsonTokenType.StartObject
-            || reader.TokenType == JsonTokenType.StartArray)
-        {
-            int arrayCount = 0;
-            int objectCount = 0;
-            while (true)
-            {
-                arrayCount = reader.TokenType switch
-                {
-                    JsonTokenType.StartArray => arrayCount + 1,
-                    JsonTokenType.EndArray => arrayCount - 1,
-                    _ => arrayCount,
-                };
-
-                objectCount = reader.TokenType switch
-                {
-                    JsonTokenType.StartObject => objectCount + 1,
-                    JsonTokenType.EndObject => objectCount - 1,
-                    _ => objectCount,
-                };
-
-                if (arrayCount + objectCount != 0)
-                {
-                    ParserUtils.Read(stream, ref buffer, ref reader);
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
     }
 }

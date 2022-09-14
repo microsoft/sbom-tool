@@ -7,6 +7,7 @@ using System.Text;
 using System;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.Sbom.Exceptions;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -80,7 +81,6 @@ internal class ParserUtils
         }
     }
 
-
     internal static void SkipFirstArrayToken(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
         // Ensure first value is an array and read that so that we are the { token.
@@ -97,6 +97,68 @@ internal class ParserUtils
     internal static string GetStringValue(ReadOnlySpan<byte> valueSpan)
     {
         return Encoding.UTF8.GetString(valueSpan.ToArray());
+    }
+
+    /// <summary>
+    /// Returns the next string value for a given property, for example:
+    /// 
+    /// { "TestProperty": "TestProperty Value" }
+    /// 
+    /// Will return "TestProperty Value".
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <param name="buffer"></param>
+    /// <returns>The next string value.</returns>
+    internal static string ParseNextString(Stream stream, ref Utf8JsonReader reader)
+    {
+        AssertTokenType(stream, ref reader, JsonTokenType.String);
+        return reader.GetString();
+    }
+
+    /// <summary>
+    /// Reads and discards any given value for a property. If the value is an arry or object
+    /// it reads and discards the whole array or object
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <param name="buffer"></param>
+    internal static void SkipProperty(Stream stream, ref Utf8JsonReader reader, ref byte[] buffer)
+    {
+        if (reader.TokenType == JsonTokenType.PropertyName)
+        {
+            ParserUtils.Read(stream, ref buffer, ref reader);
+        }
+
+        if (reader.TokenType == JsonTokenType.StartObject
+            || reader.TokenType == JsonTokenType.StartArray)
+        {
+            int arrayCount = 0;
+            int objectCount = 0;
+            while (true)
+            {
+                arrayCount = reader.TokenType switch
+                {
+                    JsonTokenType.StartArray => arrayCount + 1,
+                    JsonTokenType.EndArray => arrayCount - 1,
+                    _ => arrayCount,
+                };
+
+                objectCount = reader.TokenType switch
+                {
+                    JsonTokenType.StartObject => objectCount + 1,
+                    JsonTokenType.EndObject => objectCount - 1,
+                    _ => objectCount,
+                };
+
+                if (arrayCount + objectCount != 0)
+                {
+                    Read(stream, ref buffer, ref reader);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
     }
 
     /// <summary>
