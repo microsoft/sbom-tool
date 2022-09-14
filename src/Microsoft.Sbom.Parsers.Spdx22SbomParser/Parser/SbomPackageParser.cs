@@ -73,7 +73,7 @@ internal ref struct SbomPackageParser
             }
 
             // Validate the created object
-            ValidateSbomFile(this.sbomPackage);
+            ValidateSbomPackage(this.sbomPackage);
 
             sbomPackage = this.sbomPackage;
             return reader.BytesConsumed;
@@ -90,7 +90,7 @@ internal ref struct SbomPackageParser
         }
     }
 
-    private void ValidateSbomFile(SPDXPackage sbomPackage)
+    private void ValidateSbomPackage(SPDXPackage sbomPackage)
     {
         var missingProps = new List<string>();
 

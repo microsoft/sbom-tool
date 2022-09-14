@@ -1,16 +1,14 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.IO;
-using System.Text.Json;
-using System.Text;
-using System;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.Sbom.Exceptions;
-using System.Runtime.InteropServices.ComTypes;
-using System.Linq;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -70,6 +68,15 @@ internal class ParserUtils
         }
     }
 
+    /// <summary>
+    /// Assert that the current token is either one of the tokens specified 
+    /// in the <paramref name="expectedTokenTypes"/>.
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="reader"></param>
+    /// <param name="expectedTokenTypes"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ParserException"></exception>
     internal static void AssertEitherTokenTypes(Stream stream, ref Utf8JsonReader reader, JsonTokenType[] expectedTokenTypes)
     {
         if (stream is null)
@@ -105,6 +112,12 @@ internal class ParserUtils
         }
     }
 
+    /// <summary>
+    /// Skips the first [ token from the stream.
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="buffer"></param>
+    /// <param name="reader"></param>
     internal static void SkipFirstArrayToken(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
         // Ensure first value is an array and read that so that we are the { token.
@@ -149,7 +162,7 @@ internal class ParserUtils
     {
         if (reader.TokenType == JsonTokenType.PropertyName)
         {
-            ParserUtils.Read(stream, ref buffer, ref reader);
+            Read(stream, ref buffer, ref reader);
         }
 
         if (reader.TokenType == JsonTokenType.StartObject
@@ -242,6 +255,14 @@ internal class ParserUtils
         return reader.GetBoolean();
     }
 
+    /// <summary>
+    /// Parse an array of strings. For example
+    /// "prop": ["Value1", "Value2", "Value3"].
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="reader"></param>
+    /// <param name="buffer"></param>
+    /// <returns></returns>
     internal static List<string> ParseListOfStrings(Stream stream, ref Utf8JsonReader reader, ref byte[] buffer)
     {
         var strings = new List<string>();

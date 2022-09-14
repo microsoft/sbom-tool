@@ -10,12 +10,47 @@ namespace Microsoft.Sbom.Parser
     {
         private bool isFileArrayParsingStarted = false;
         private bool isPackageArrayParsingStarted = false;
+        private bool isRelationshipArrayParsingStarted = false;
         private JsonReaderState readerState;
         private byte[] buffer;
 
         public TestParser(int bufferSize = Constants.ReadBufferSize)
         {
             buffer = new byte[bufferSize];
+        }
+
+        public IEnumerable<SPDXRelationship> GetRelationships(Stream stream)
+        {
+            stream.Read(buffer);
+
+            while (GetPackages(stream, out SPDXRelationship sbomRelationship) != 0)
+            {
+                yield return sbomRelationship;
+            }
+
+            long GetPackages(Stream stream, out SPDXRelationship sbomRelationship)
+            {
+                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+
+                if (!isRelationshipArrayParsingStarted)
+                {
+                    ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
+                    isRelationshipArrayParsingStarted = true;
+                }
+
+                var parser = new SbomRelationshipParser(stream);
+                var result = parser.GetSbomRelationship(ref buffer, ref reader, out sbomRelationship);
+
+                // The caller always closes the ending }
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    ParserUtils.Read(stream, ref buffer, ref reader);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                }
+
+                readerState = reader.CurrentState;
+                return result;
+            }
         }
 
         public IEnumerable<SPDXPackage> GetPackages(Stream stream)
