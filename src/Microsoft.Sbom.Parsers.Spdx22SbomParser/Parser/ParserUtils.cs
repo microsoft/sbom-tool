@@ -8,6 +8,7 @@ using System;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.Sbom.Exceptions;
 using System.Runtime.InteropServices.ComTypes;
+using System.Linq;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -63,8 +64,29 @@ internal class ParserUtils
 
         if (reader.TokenType != expectedTokenType)
         {
-            throw new ParserException($"Expected a '{Constants.JsonTokenStrings[(byte)expectedTokenType]}' at position {stream.Position}");
+            throw new ParserException($"Expected a '{Constants.JsonTokenStrings[(byte)expectedTokenType]}' token at position {stream.Position}");
         }
+    }
+
+    internal static void AssertEitherTokenTypes(Stream stream, ref Utf8JsonReader reader, JsonTokenType[] expectedTokenTypes)
+    {
+        if (stream is null)
+        {
+            throw new ArgumentNullException(nameof(stream));
+        }
+
+        foreach (var tokenType in expectedTokenTypes)
+        {
+            if (reader.TokenType == tokenType)
+            {
+                // Found at least one of the expected tokens.
+                return;
+            }
+        }
+
+        // If control ends up here, no expected tokens matched.
+        var expectedTokenTypesStr = string.Join(",", expectedTokenTypes.Select(t => Constants.JsonTokenStrings[(byte)t]));
+        throw new ParserException($"Expected either one of a '{expectedTokenTypesStr}' token at position {stream.Position}");
     }
 
     /// <summary>
@@ -200,5 +222,21 @@ internal class ParserUtils
         }
 
         reader = new Utf8JsonReader(buffer, isFinalBlock: bytesRead == 0, reader.CurrentState);
+    }
+
+    /// <summary>
+    /// Returns the next boolean value for a given property, for example:
+    /// 
+    /// { "TestProperty": false }
+    /// 
+    /// Will return false.
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <param name="buffer"></param>
+    /// <returns>The next boolean value.</returns>
+    internal static bool ParseNextBoolean(Stream stream, ref Utf8JsonReader reader)
+    {
+        AssertEitherTokenTypes(stream, ref reader, new JsonTokenType[] { JsonTokenType.True, JsonTokenType.False });
+        return reader.GetBoolean();
     }
 }

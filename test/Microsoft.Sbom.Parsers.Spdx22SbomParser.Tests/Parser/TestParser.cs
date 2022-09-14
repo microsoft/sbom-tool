@@ -1,5 +1,6 @@
 ﻿using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -18,16 +19,16 @@ namespace Microsoft.Sbom.Parser
             buffer = new byte[bufferSize];
         }
 
-        public IEnumerable<SBOMPackage> GetPackages(Stream stream)
+        public IEnumerable<SPDXPackage> GetPackages(Stream stream)
         {
             stream.Read(buffer);
 
-            while (GetPackages(stream, out SBOMPackage sbomPackage) != 0)
+            while (GetPackages(stream, out SPDXPackage sbomPackage) != 0)
             {
                 yield return sbomPackage;
             }
 
-            long GetPackages(Stream stream, out SBOMPackage sbomPackage)
+            long GetPackages(Stream stream, out SPDXPackage sbomPackage)
             {
                 var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
 

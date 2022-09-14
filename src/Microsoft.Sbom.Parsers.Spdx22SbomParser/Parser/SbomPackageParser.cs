@@ -3,6 +3,7 @@
 
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Exceptions;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -10,21 +11,24 @@ using System.Text.Json;
 namespace Microsoft.Sbom.Parser;
 
 /// <summary>
-/// Parses a <see cref="SBOMPackage"/> object from a 'packages' array.
+/// Parses a <see cref="SPDXPackage"/> object from a 'packages' array.
 /// </summary>
 internal ref struct SbomPackageParser
 {
     private const string NameProperty = "name";
+    private const string SPDXIDProperty = "SPDXID";
+    private const string DownloadLocationProperty = "downloadLocation";
+    private const string FilesAnalyzedProperty = "filesAnalyzed";
 
     private readonly Stream stream;
-    private readonly SBOMPackage sbomPackage = new ();
+    private readonly SPDXPackage sbomPackage = new ();
 
     public SbomPackageParser(Stream stream)
     {
-        this.stream = stream ?? throw new System.ArgumentNullException(nameof(stream));
+        this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
     }
 
-    internal long GetSbomPackage(ref byte[] buffer, ref Utf8JsonReader reader, out SBOMPackage sbomPackage)
+    internal long GetSbomPackage(ref byte[] buffer, ref Utf8JsonReader reader, out SPDXPackage sbomPackage)
     {
         if (buffer is null || buffer.Length == 0)
         {
@@ -74,9 +78,9 @@ internal ref struct SbomPackageParser
         }
     }
 
-    private void ValidateSbomFile(SBOMPackage sbomPackage)
+    private void ValidateSbomFile(SPDXPackage sbomPackage)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     private void ParseProperty(ref Utf8JsonReader reader, ref byte[] buffer)
@@ -85,7 +89,26 @@ internal ref struct SbomPackageParser
         {
             case NameProperty:
                  ParserUtils.Read(stream, ref buffer, ref reader);
-                 sbomPackage.PackageName = ParserUtils.ParseNextString(stream, ref reader);
+                 sbomPackage.Name = ParserUtils.ParseNextString(stream, ref reader);
+                 break;
+
+            case SPDXIDProperty:
+                 ParserUtils.Read(stream, ref buffer, ref reader);
+                 sbomPackage.SpdxId = ParserUtils.ParseNextString(stream, ref reader);
+                 break;
+
+            case DownloadLocationProperty:
+                 ParserUtils.Read(stream, ref buffer, ref reader);
+                 sbomPackage.DownloadLocation = ParserUtils.ParseNextString(stream, ref reader);
+                 break;
+
+            case FilesAnalyzedProperty:
+                 ParserUtils.Read(stream, ref buffer, ref reader);
+                 sbomPackage.FilesAnalyzed = ParserUtils.ParseNextBoolean(stream, ref reader);
+                 break;
+
+            default:
+                 ParserUtils.SkipProperty(stream, ref reader, ref buffer);
                  break;
         }
     }
