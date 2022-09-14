@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using System;
@@ -19,6 +18,11 @@ internal ref struct SbomPackageParser
     private const string SPDXIDProperty = "SPDXID";
     private const string DownloadLocationProperty = "downloadLocation";
     private const string FilesAnalyzedProperty = "filesAnalyzed";
+    private const string LicenseConcludedProperty = "licenseConcluded";
+    private const string LicenseDeclaredProperty = "licenseDeclared";
+    private const string CopyrightTextProperty = "copyrightText";
+    private const string VersionInfoProperty = "versionInfo";
+    private const string SupplierProperty = "supplier";
 
     private readonly Stream stream;
     private readonly SPDXPackage sbomPackage = new ();
@@ -88,28 +92,53 @@ internal ref struct SbomPackageParser
         switch (reader.GetString())
         {
             case NameProperty:
-                 ParserUtils.Read(stream, ref buffer, ref reader);
-                 sbomPackage.Name = ParserUtils.ParseNextString(stream, ref reader);
-                 break;
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                sbomPackage.Name = ParserUtils.ParseNextString(stream, ref reader);
+                break;
 
             case SPDXIDProperty:
-                 ParserUtils.Read(stream, ref buffer, ref reader);
-                 sbomPackage.SpdxId = ParserUtils.ParseNextString(stream, ref reader);
-                 break;
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                sbomPackage.SpdxId = ParserUtils.ParseNextString(stream, ref reader);
+                break;
 
             case DownloadLocationProperty:
-                 ParserUtils.Read(stream, ref buffer, ref reader);
-                 sbomPackage.DownloadLocation = ParserUtils.ParseNextString(stream, ref reader);
-                 break;
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                sbomPackage.DownloadLocation = ParserUtils.ParseNextString(stream, ref reader);
+                break;
 
             case FilesAnalyzedProperty:
-                 ParserUtils.Read(stream, ref buffer, ref reader);
-                 sbomPackage.FilesAnalyzed = ParserUtils.ParseNextBoolean(stream, ref reader);
-                 break;
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                sbomPackage.FilesAnalyzed = ParserUtils.ParseNextBoolean(stream, ref reader);
+                break;
+
+            case LicenseConcludedProperty:
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                sbomPackage.LicenseConcluded = ParserUtils.ParseNextString(stream, ref reader);
+                break;
+
+            case LicenseDeclaredProperty:
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                sbomPackage.LicenseDeclared = ParserUtils.ParseNextString(stream, ref reader);
+                break;
+
+            case CopyrightTextProperty:
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                sbomPackage.LicenseDeclared = ParserUtils.ParseNextString(stream, ref reader);
+                break;
+
+            case VersionInfoProperty:
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                sbomPackage.LicenseDeclared = ParserUtils.ParseNextString(stream, ref reader);
+                break;
+
+            case SupplierProperty:
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                sbomPackage.LicenseDeclared = ParserUtils.ParseNextString(stream, ref reader);
+                break;
 
             default:
-                 ParserUtils.SkipProperty(stream, ref reader, ref buffer);
-                 break;
+                ParserUtils.SkipProperty(stream, ref reader, ref buffer);
+                break;
         }
     }
 }
