@@ -118,7 +118,6 @@ internal ref struct SbomExternalDocumentReferenceParser
             missingProps.Add(nameof(spdxExternalDocumentReference.ExternalDocumentId));
         }
 
-
         if (spdxExternalDocumentReference.Checksum == null 
             || spdxExternalDocumentReference.Checksum.Algorithm != AlgorithmName.SHA1.Name)
         {
