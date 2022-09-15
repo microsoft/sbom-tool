@@ -3,6 +3,7 @@
 
 using Microsoft.Sbom.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,9 @@ namespace Microsoft.Sbom.Parser;
 /// </summary>
 internal class ParserUtils
 {
+    private const string AlgorithmProperty = "algorithm";
+    private const string ChecksumValueProperty = "checksumValue";
+
     /// <summary>
     /// Read the next JSON token in the reader from the input buffer.
     /// If the buffer is small and doesn't contain all the text for the next token, 
@@ -283,5 +287,50 @@ internal class ParserUtils
 
         AssertTokenType(stream, ref reader, JsonTokenType.EndArray);
         return strings;
+    }
+
+    /// <summary>
+    /// Parse a <see cref="Checksum"/> object.
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <param name="buffer"></param>
+    /// <returns></returns>
+    internal static Checksum ParseChecksumObject(Stream stream, ref Utf8JsonReader reader, ref byte[] buffer)
+    {
+        var checksum = new Checksum();
+
+        // Read the opening { of the object
+        AssertTokenType(stream, ref reader, JsonTokenType.StartObject);
+
+        // Move to the first property token
+        Read(stream, ref buffer, ref reader);
+        AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);
+
+        while (reader.TokenType != JsonTokenType.EndObject)
+        {
+            switch (reader.GetString())
+            {
+                case AlgorithmProperty:
+                    Read(stream, ref buffer, ref reader);
+                    checksum.Algorithm = ParseNextString(stream, ref reader);
+                    break;
+
+                case ChecksumValueProperty:
+                    Read(stream, ref buffer, ref reader);
+                    checksum.ChecksumValue = ParseNextString(stream, ref reader);
+                    break;
+
+                default:
+                    SkipProperty(stream, ref buffer, ref reader);
+                    break;
+            }
+
+            // Read the end } of this object or the next property name.
+            Read(stream, ref buffer, ref reader);
+        }
+
+        AssertTokenType(stream, ref reader, JsonTokenType.EndObject);
+
+        return checksum;
     }
 }

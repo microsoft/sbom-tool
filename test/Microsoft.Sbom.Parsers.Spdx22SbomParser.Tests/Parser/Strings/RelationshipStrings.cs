@@ -1,12 +1,12 @@
-﻿namespace Microsoft.Sbom.Parser.Strings
-{
-    internal readonly struct RelationshipStrings
-    {
-        public RelationshipStrings()
-        {
-        }
+﻿namespace Microsoft.Sbom.Parser.Strings;
 
-        public const string GoodJsonWith2RelationshipsString = @"[
+internal readonly struct RelationshipStrings
+{
+    public RelationshipStrings()
+    {
+    }
+
+    public const string GoodJsonWith2RelationshipsString = @"[
             {
               ""relationshipType"": ""DEPENDS_ON"",
               ""relatedSpdxElement"": ""SPDXRef-Package-342BA5C11805FDDCAF3A2BF48BFDCAB5C0240793089F89196209A39C580902E6"",
@@ -18,19 +18,19 @@
               ""spdxElementId"": ""SPDXRef-RootPackage""
             }]";
 
-        public const string JsonRelationshipsStringMissingElementId = @"[
+    public const string JsonRelationshipsStringMissingElementId = @"[
             {
               ""relationshipType"": ""DEPENDS_ON"",
               ""relatedSpdxElement"": ""SPDXRef-Package-342BA5C11805FDDCAF3A2BF48BFDCAB5C0240793089F89196209A39C580902E6"",
             }]";
 
-        public const string JsonRelationshipsStringMissingRelatedElement = @"[
+    public const string JsonRelationshipsStringMissingRelatedElement = @"[
             {
               ""relationshipType"": ""DEPENDS_ON"",
               ""spdxElementId"": ""SPDXRef-RootPackage""
             }]";
 
-        public const string GoodJsonWithRelationshipsStringAdditionalString = @"[
+    public const string GoodJsonWithRelationshipsStringAdditionalString = @"[
             {
               ""relationshipType"": ""DEPENDS_ON"",
               ""relatedSpdxElement"": ""SPDXRef-Package-342BA5C11805FDDCAF3A2BF48BFDCAB5C0240793089F89196209A39C580902E6"",
@@ -38,7 +38,7 @@
               ""additionalElement"": ""Additional value""
             }]";
 
-        public const string GoodJsonWithRelationshipsStringAdditionalObject = @"[
+    public const string GoodJsonWithRelationshipsStringAdditionalObject = @"[
             {
               ""relationshipType"": ""DEPENDS_ON"",
               ""relatedSpdxElement"": ""SPDXRef-Package-342BA5C11805FDDCAF3A2BF48BFDCAB5C0240793089F89196209A39C580902E6"",
@@ -48,7 +48,7 @@
                   }
             }]";
 
-        public const string GoodJsonWithRelationshipsStringAdditionalArray = @"[
+    public const string GoodJsonWithRelationshipsStringAdditionalArray = @"[
             {
               ""relationshipType"": ""DEPENDS_ON"",
               ""relatedSpdxElement"": ""SPDXRef-Package-342BA5C11805FDDCAF3A2BF48BFDCAB5C0240793089F89196209A39C580902E6"",
@@ -57,7 +57,7 @@
                     {""childAddtionalProperty"": ""Additional property value"" }]
             }]";
 
-        public const string GoodJsonWithRelationshipsStringAdditionalArrayNoKey = @"[
+    public const string GoodJsonWithRelationshipsStringAdditionalArrayNoKey = @"[
             {
               ""relationshipType"": ""DEPENDS_ON"",
               ""relatedSpdxElement"": ""SPDXRef-Package-342BA5C11805FDDCAF3A2BF48BFDCAB5C0240793089F89196209A39C580902E6"",
@@ -65,18 +65,17 @@
               ""additionalProperty"": [""Additional value 1"", ""Additional value 2""]
             }]";
 
-        public const string MalformedJsonRelationshipsString = @"[
+    public const string MalformedJsonRelationshipsString = @"[
             {
               ""relationshipType"": ""DEPENDS_ON"",
               ""relatedSpdxElement"": ""SPDXRef-Package-342BA5C11805FDDCAF3A2BF48BFDCAB5C0240793089F89196209A39C580902E6"",
               ""spdxElementId"" ""SPDXRef-RootPackage""
             }]";
 
-        public const string MalformedJsonRelationshipsStringBadRelationshipType = @"[
+    public const string MalformedJsonRelationshipsStringBadRelationshipType = @"[
             {
               ""relationshipType"": ""None"",
               ""relatedSpdxElement"": ""SPDXRef-Package-342BA5C11805FDDCAF3A2BF48BFDCAB5C0240793089F89196209A39C580902E6"",
               ""spdxElementId"": ""SPDXRef-RootPackage""
             }]";
-    }
 }

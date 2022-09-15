@@ -9,21 +9,21 @@ using System.Text;
 namespace Microsoft.Sbom.Parser;
 
 [TestClass]
-public class SbomRelationshipParserTests
+public class SbomExternalDocumentReferenceParserTests
 {
     [TestMethod]
     public void ParseSbomRelationshipsTest()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
+        byte[] bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.GoodJsonWith2ExtDocumentRefsString);
         using var stream = new MemoryStream(bytes);
 
         TestParser parser = new ();
         var count = 0;
 
-        foreach (var relationship in parser.GetRelationships(stream))
+        foreach (var externalDocumentReference in parser.GetExternalDocumentReferences(stream))
         {
             count++;
-            Assert.IsNotNull(relationship);
+            Assert.IsNotNull(externalDocumentReference);
         }
 
         Assert.AreEqual(2, count);
@@ -33,20 +33,20 @@ public class SbomRelationshipParserTests
     [ExpectedException(typeof(ArgumentNullException))]
     public void NullStreamThrows()
     {
-        new SbomRelationshipParser(null);
+        new SbomExternalDocumentReferenceParser(null);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ObjectDisposedException))]
     public void StreamClosedTestReturnsNull()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
+        byte[] bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.GoodJsonWith2ExtDocumentRefsString);
         using var stream = new MemoryStream(bytes);
 
         TestParser parser = new ();
         stream.Close();
 
-        parser.GetRelationships(stream).GetEnumerator().MoveNext();
+        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -59,12 +59,14 @@ public class SbomRelationshipParserTests
 
         TestParser parser = new ();
 
-        parser.GetRelationships(stream).GetEnumerator().MoveNext();
+        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
     }
 
     [DataTestMethod]
-    [DataRow(RelationshipStrings.JsonRelationshipsStringMissingElementId)]
-    [DataRow(RelationshipStrings.JsonRelationshipsStringMissingRelatedElement)]
+    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingChecksum)]
+    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingSHA1Checksum)]
+    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingDocument)]
+    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingDocumentId)]
     [TestMethod]
     [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
@@ -74,14 +76,14 @@ public class SbomRelationshipParserTests
 
         TestParser parser = new (40);
 
-        parser.GetRelationships(stream).GetEnumerator().MoveNext();
+        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
     }
 
     [DataTestMethod]
-    [DataRow(RelationshipStrings.GoodJsonWithRelationshipsStringAdditionalString)]
-    [DataRow(RelationshipStrings.GoodJsonWithRelationshipsStringAdditionalObject)]
-    [DataRow(RelationshipStrings.GoodJsonWithRelationshipsStringAdditionalArray)]
-    [DataRow(RelationshipStrings.GoodJsonWithRelationshipsStringAdditionalArrayNoKey)]
+    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringAdditionalObject)]
+    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringAdditionalString)]
+    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringAdditionalArray)]
+    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringAdditionalArrayNoKey)]
     [TestMethod]
     public void IgnoresAdditionalPropertiesTest(string json)
     {
@@ -90,15 +92,14 @@ public class SbomRelationshipParserTests
 
         TestParser parser = new ();
 
-        foreach (var relationship in parser.GetRelationships(stream))
+        foreach (var package in parser.GetExternalDocumentReferences(stream))
         {
-            Assert.IsNotNull(relationship);
+            Assert.IsNotNull(package);
         }
     }
 
     [DataTestMethod]
-    [DataRow(RelationshipStrings.MalformedJsonRelationshipsStringBadRelationshipType)]
-    [DataRow(RelationshipStrings.MalformedJsonRelationshipsString)]
+    [DataRow(ExternalDocumentReferenceStrings.MalformedJson)]
     [TestMethod]
     [ExpectedException(typeof(ParserException))]
     public void MalformedJsonTest_Throws(string json)
@@ -108,7 +109,7 @@ public class SbomRelationshipParserTests
 
         TestParser parser = new ();
 
-        parser.GetRelationships(stream).GetEnumerator().MoveNext();
+        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -119,7 +120,7 @@ public class SbomRelationshipParserTests
 
         TestParser parser = new ();
 
-        parser.GetRelationships(stream).GetEnumerator().MoveNext();
+        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -131,6 +132,6 @@ public class SbomRelationshipParserTests
 
         TestParser parser = new (0);
 
-        parser.GetRelationships(stream).GetEnumerator().MoveNext();
+        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
     }
 }

@@ -4,121 +4,154 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
-namespace Microsoft.Sbom.Parser
+namespace Microsoft.Sbom.Parser;
+
+internal class TestParser
 {
-    internal class TestParser
+    private bool isFileArrayParsingStarted = false;
+    private bool isPackageArrayParsingStarted = false;
+    private bool isRelationshipArrayParsingStarted = false;
+    private JsonReaderState readerState;
+    private byte[] buffer;
+
+    public TestParser(int bufferSize = Constants.ReadBufferSize)
     {
-        private bool isFileArrayParsingStarted = false;
-        private bool isPackageArrayParsingStarted = false;
-        private bool isRelationshipArrayParsingStarted = false;
-        private JsonReaderState readerState;
-        private byte[] buffer;
+        buffer = new byte[bufferSize];
+    }
 
-        public TestParser(int bufferSize = Constants.ReadBufferSize)
+    public IEnumerable<SpdxExternalDocumentReference> GetExternalDocumentReferences(Stream stream)
+    {
+        stream.Read(buffer);
+
+        while (GetExternalDocumentReferences(stream, out SpdxExternalDocumentReference spdxExternalDocumentReference) != 0)
         {
-            buffer = new byte[bufferSize];
+            yield return spdxExternalDocumentReference;
         }
 
-        public IEnumerable<SPDXRelationship> GetRelationships(Stream stream)
+        long GetExternalDocumentReferences(Stream stream, out SpdxExternalDocumentReference spdxExternalDocumentReference)
         {
-            stream.Read(buffer);
+            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
 
-            while (GetPackages(stream, out SPDXRelationship sbomRelationship) != 0)
+            if (!isRelationshipArrayParsingStarted)
             {
-                yield return sbomRelationship;
+                ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
+                isRelationshipArrayParsingStarted = true;
             }
 
-            long GetPackages(Stream stream, out SPDXRelationship sbomRelationship)
+            var parser = new SbomExternalDocumentReferenceParser(stream);
+            var result = parser.GetSbomExternalDocumentReference(ref buffer, ref reader, out spdxExternalDocumentReference);
+
+            // The caller always closes the ending }
+            if (reader.TokenType == JsonTokenType.EndObject)
             {
-                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
-
-                if (!isRelationshipArrayParsingStarted)
-                {
-                    ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
-                    isRelationshipArrayParsingStarted = true;
-                }
-
-                var parser = new SbomRelationshipParser(stream);
-                var result = parser.GetSbomRelationship(ref buffer, ref reader, out sbomRelationship);
-
-                // The caller always closes the ending }
-                if (reader.TokenType == JsonTokenType.EndObject)
-                {
-                    ParserUtils.Read(stream, ref buffer, ref reader);
-                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
-                }
-
-                readerState = reader.CurrentState;
-                return result;
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
             }
+
+            readerState = reader.CurrentState;
+            return result;
+        }
+    }
+
+    public IEnumerable<SPDXRelationship> GetRelationships(Stream stream)
+    {
+        stream.Read(buffer);
+
+        while (GetPackages(stream, out SPDXRelationship sbomRelationship) != 0)
+        {
+            yield return sbomRelationship;
         }
 
-        public IEnumerable<SPDXPackage> GetPackages(Stream stream)
+        long GetPackages(Stream stream, out SPDXRelationship sbomRelationship)
         {
-            stream.Read(buffer);
+            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
 
-            while (GetPackages(stream, out SPDXPackage sbomPackage) != 0)
+            if (!isRelationshipArrayParsingStarted)
             {
-                yield return sbomPackage;
+                ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
+                isRelationshipArrayParsingStarted = true;
             }
 
-            long GetPackages(Stream stream, out SPDXPackage sbomPackage)
+            var parser = new SbomRelationshipParser(stream);
+            var result = parser.GetSbomRelationship(ref buffer, ref reader, out sbomRelationship);
+
+            // The caller always closes the ending }
+            if (reader.TokenType == JsonTokenType.EndObject)
             {
-                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
-
-                if (!isPackageArrayParsingStarted)
-                {
-                    ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
-                    isPackageArrayParsingStarted = true;
-                }
-
-                var parser = new SbomPackageParser(stream);
-                var result = parser.GetSbomPackage(ref buffer, ref reader, out sbomPackage);
-
-                // The caller always closes the ending }
-                if (reader.TokenType == JsonTokenType.EndObject)
-                {
-                    ParserUtils.Read(stream, ref buffer, ref reader);
-                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
-                }
-
-                readerState = reader.CurrentState;
-                return result;
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
             }
+
+            readerState = reader.CurrentState;
+            return result;
+        }
+    }
+
+    public IEnumerable<SPDXPackage> GetPackages(Stream stream)
+    {
+        stream.Read(buffer);
+
+        while (GetPackages(stream, out SPDXPackage sbomPackage) != 0)
+        {
+            yield return sbomPackage;
         }
 
-        public IEnumerable<SPDXFile> GetFiles(Stream stream)
-        {        
-            stream.Read(buffer);
+        long GetPackages(Stream stream, out SPDXPackage sbomPackage)
+        {
+            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
 
-            while (GetFiles(stream, out SPDXFile sbomFile) != 0)
+            if (!isPackageArrayParsingStarted)
             {
-                yield return sbomFile;
+                ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
+                isPackageArrayParsingStarted = true;
             }
 
-            long GetFiles(Stream stream, out SPDXFile sbomFile)
+            var parser = new SbomPackageParser(stream);
+            var result = parser.GetSbomPackage(ref buffer, ref reader, out sbomPackage);
+
+            // The caller always closes the ending }
+            if (reader.TokenType == JsonTokenType.EndObject)
             {
-                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
-
-                if (!isFileArrayParsingStarted)
-                {
-                    ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
-                    isFileArrayParsingStarted = true;
-                }
-
-                var parser = new SbomFileParser(stream);
-                var result = parser.GetSbomFile(ref buffer, ref reader, out sbomFile);
-
-                // The caller always closes the ending }
-                if (reader.TokenType == JsonTokenType.EndObject)
-                {
-                    ParserUtils.Read(stream, ref buffer, ref reader);
-                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
-                }
-
-                readerState = reader.CurrentState;
-                return result;
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
             }
+
+            readerState = reader.CurrentState;
+            return result;
+        }
+    }
+
+    public IEnumerable<SPDXFile> GetFiles(Stream stream)
+    {        
+        stream.Read(buffer);
+
+        while (GetFiles(stream, out SPDXFile sbomFile) != 0)
+        {
+            yield return sbomFile;
+        }
+
+        long GetFiles(Stream stream, out SPDXFile sbomFile)
+        {
+            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+
+            if (!isFileArrayParsingStarted)
+            {
+                ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
+                isFileArrayParsingStarted = true;
+            }
+
+            var parser = new SbomFileParser(stream);
+            var result = parser.GetSbomFile(ref buffer, ref reader, out sbomFile);
+
+            // The caller always closes the ending }
+            if (reader.TokenType == JsonTokenType.EndObject)
+            {
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+            }
+
+            readerState = reader.CurrentState;
+            return result;
         }
     }
 }

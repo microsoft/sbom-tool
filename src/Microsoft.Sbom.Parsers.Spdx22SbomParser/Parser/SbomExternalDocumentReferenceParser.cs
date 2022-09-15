@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,23 +13,23 @@ using System.Text.Json;
 namespace Microsoft.Sbom.Parser;
 
 /// <summary>
-/// Parses a <see cref="SPDXRelationship"/> object from a 'packages' array.
+/// Parses <see cref="SpdxExternalDocumentReference"/> object from a 'files' array.
 /// </summary>
-internal ref struct SbomRelationshipParser
+internal ref struct SbomExternalDocumentReferenceParser
 {
-    private const string SpdxElementIdProperty = "spdxElementId";
-    private const string RelatedSpdxElementProperty = "relatedSpdxElement";
-    private const string RelationshipTypeProperty = "relationshipType";
+    private const string ExternalDocumentIdProperty = "externalDocumentId";
+    private const string SpdxDocumentProperty = "spdxDocument";
+    private const string ChecksumProperty = "checksum";
 
     private readonly Stream stream;
-    private readonly SPDXRelationship sbomRelationship = new ();
+    private readonly SpdxExternalDocumentReference spdxExternalDocumentReference = new ();
 
-    public SbomRelationshipParser(Stream stream)
+    public SbomExternalDocumentReferenceParser(Stream stream)
     {
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
     }
 
-    internal long GetSbomRelationship(ref byte[] buffer, ref Utf8JsonReader reader, out SPDXRelationship sbomRelationship)
+    internal long GetSbomExternalDocumentReference(ref byte[] buffer, ref Utf8JsonReader reader, out SpdxExternalDocumentReference spdxExternalDocumentReference)
     {
         if (buffer is null || buffer.Length == 0)
         {
@@ -41,7 +41,7 @@ internal ref struct SbomRelationshipParser
             // If the end of the array is reached, return with null value to signal end of the array.
             if (reader.TokenType == JsonTokenType.EndArray)
             {
-                sbomRelationship = null;
+                spdxExternalDocumentReference = null;
                 return 0;
             }
 
@@ -62,19 +62,19 @@ internal ref struct SbomRelationshipParser
             }
 
             // Validate the created object
-            ValidateSbomRelationship(this.sbomRelationship);
+            ValidateSbomExternalDocumentReference(this.spdxExternalDocumentReference);
 
-            sbomRelationship = this.sbomRelationship;
+            spdxExternalDocumentReference = this.spdxExternalDocumentReference;
             return reader.BytesConsumed;
         }
         catch (EndOfStreamException)
         {
-            sbomRelationship = null;
+            spdxExternalDocumentReference = null;
             return 0;
         }
         catch (JsonException e)
         {
-            sbomRelationship = null;
+            spdxExternalDocumentReference = null;
             throw new ParserException($"Error while parsing JSON, addtional details: ${e.Message}", e);
         }
     }
@@ -83,28 +83,19 @@ internal ref struct SbomRelationshipParser
     {
         switch (reader.GetString())
         {
-            case SpdxElementIdProperty:
+            case ExternalDocumentIdProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomRelationship.SourceElementId = ParserUtils.ParseNextString(stream, ref reader);
+                spdxExternalDocumentReference.ExternalDocumentId = ParserUtils.ParseNextString(stream, ref reader);
                 break;
 
-            case RelatedSpdxElementProperty:
+            case SpdxDocumentProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomRelationship.TargetElementId = ParserUtils.ParseNextString(stream, ref reader);
+                spdxExternalDocumentReference.SpdxDocument = ParserUtils.ParseNextString(stream, ref reader);
                 break;
 
-            case RelationshipTypeProperty:
+            case ChecksumProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                var relationshipTypeStr = ParserUtils.ParseNextString(stream, ref reader);
-                if (Enum.TryParse(relationshipTypeStr, true, out SPDXRelationshipType relationshipType))
-                {
-                    sbomRelationship.RelationshipType = relationshipType;
-                }
-                else
-                {
-                    throw new ParserException($"Illegal value '{relationshipType}' found for 'relationshipType' at stream position {stream.Position}");
-                }
-
+                spdxExternalDocumentReference.Checksum = ParserUtils.ParseChecksumObject(stream, ref reader, ref buffer);
                 break;
 
             default:
@@ -113,18 +104,25 @@ internal ref struct SbomRelationshipParser
         }
     }
 
-    private void ValidateSbomRelationship(SPDXRelationship sbomRelationship)
+    private void ValidateSbomExternalDocumentReference(SpdxExternalDocumentReference spdxExternalDocumentReference)
     {
         var missingProps = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(sbomRelationship.TargetElementId))
+        if (string.IsNullOrWhiteSpace(spdxExternalDocumentReference.SpdxDocument))
         {
-            missingProps.Add(nameof(sbomRelationship.TargetElementId));
+            missingProps.Add(nameof(spdxExternalDocumentReference.SpdxDocument));
         }
 
-        if (string.IsNullOrWhiteSpace(sbomRelationship.SourceElementId))
+        if (string.IsNullOrWhiteSpace(spdxExternalDocumentReference.ExternalDocumentId))
         {
-            missingProps.Add(nameof(sbomRelationship.SourceElementId));
+            missingProps.Add(nameof(spdxExternalDocumentReference.ExternalDocumentId));
+        }
+
+
+        if (spdxExternalDocumentReference.Checksum == null 
+            || spdxExternalDocumentReference.Checksum.Algorithm != AlgorithmName.SHA1.Name)
+        {
+            missingProps.Add(nameof(spdxExternalDocumentReference.Checksum));
         }
 
         if (missingProps.Count() > 0)
