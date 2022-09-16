@@ -77,7 +77,7 @@ internal static class SPDXToSbomFormatConverterExtensions
 
     internal static string ToPurl(this IList<ExternalReference> externalReference)
     {
-        var packageManagerReference = externalReference?.Where(e => e.ReferenceCategory == "PACKAGE-MANAGER")?.First();
+        var packageManagerReference = externalReference?.Where(e => e.ReferenceCategory.Replace("_", "-") == "PACKAGE-MANAGER")?.First();
         return packageManagerReference?.Locator;
     }
 

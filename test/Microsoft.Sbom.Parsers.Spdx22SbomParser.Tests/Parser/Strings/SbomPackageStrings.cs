@@ -6,7 +6,8 @@ internal struct SbomPackageStrings
     {
     }
 
-    public const string PackageJsonWith1PackageAdditionalString = @"[{
+    public const string PackageJsonWith1PackageAdditionalString = @"{
+       ""packages"": [{
       ""name"": ""pest"",
       ""other"": ""tt"",
       ""SPDXID"": ""SPDXRef-Package-1C4595D6D70121622649BB913859B18A3C0A2D49EC7D36279777025C4AC92303"",
@@ -27,9 +28,10 @@ internal struct SbomPackageStrings
         }
       ],
       ""supplier"": ""Organization: testa""
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageAdditionalArray = @"[{
+    public const string PackageJsonWith1PackageAdditionalArray = @"{
+       ""packages"": [{
       ""name"": ""pest"",
       ""SPDXID"": ""SPDXRef-Package-1C4595D6D70121622649BB913859B18A3C0A2D49EC7D36279777025C4AC92303"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -51,9 +53,10 @@ internal struct SbomPackageStrings
         }
       ],
       ""supplier"": ""Organization: testa""
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageAdditionalArrayNoKey = @"[{
+    public const string PackageJsonWith1PackageAdditionalArrayNoKey = @"{
+       ""packages"": [{
       ""name"": ""pest"",
       ""SPDXID"": ""SPDXRef-Package-1C4595D6D70121622649BB913859B18A3C0A2D49EC7D36279777025C4AC92303"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -74,9 +77,10 @@ internal struct SbomPackageStrings
         }
       ],
       ""supplier"": ""Organization: testa""
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageAdditionalObject = @"[{
+    public const string PackageJsonWith1PackageAdditionalObject = @"{
+       ""packages"": [{
       ""name"": ""pest"",
       ""SPDXID"": ""SPDXRef-Package-1C4595D6D70121622649BB913859B18A3C0A2D49EC7D36279777025C4AC92303"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -99,9 +103,10 @@ internal struct SbomPackageStrings
         }
       ],
       ""supplier"": ""Organization: testa""
-    }]";
+    }]}";
 
-    public const string MalformedJson = @"[{
+    public const string MalformedJson = @"{
+       ""packages"": [{
       ""name"": ""pest"",
       ""SPDXID"": ""SPDXRef-Package-1C4595D6D70121622649BB913859B18A3C0A2D49EC7D36279777025C4AC92303"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -121,9 +126,10 @@ internal struct SbomPackageStrings
         }
       ],
       ""supplier"": ""Organization: testa""
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageMissingPackageVerificationCode = @"[{
+    public const string PackageJsonWith1PackageMissingPackageVerificationCode = @"{
+       ""packages"": [{
       ""name"": ""pest"",
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -146,9 +152,10 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageMissingReferenceLocator = @"[{
+    public const string PackageJsonWith1PackageMissingReferenceLocator = @"{
+       ""packages"": [{
       ""name"": ""pest"",
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -177,9 +184,10 @@ internal struct SbomPackageStrings
           ""referenceType"": ""purl"",
         }
       ],
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageBadReferenceType = @"[{
+    public const string PackageJsonWith1PackageBadReferenceType = @"{
+       ""packages"": [{
       ""name"": ""pest"",
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -209,9 +217,10 @@ internal struct SbomPackageStrings
           ""referenceLocator"": ""pkg:nuget/System.Runtime.InteropServices.WindowsRuntime%404.3.0""
         }
       ],
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageMissingName = @"[{
+    public const string PackageJsonWith1PackageMissingName = @"{
+       ""packages"": [{
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""downloadLocation"": ""NOASSERTION"",
       ""packageVerificationCode"": {
@@ -233,9 +242,10 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageMissingId = @"[{
+    public const string PackageJsonWith1PackageMissingId = @"{
+       ""packages"": [{
       ""name"": ""Testing cross platform signing"",
       ""downloadLocation"": ""NOASSERTION"",
       ""packageVerificationCode"": {
@@ -257,9 +267,10 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageMissingDownloadLocation = @"[{
+    public const string PackageJsonWith1PackageMissingDownloadLocation = @"{
+       ""packages"": [{
       ""name"": ""Testing cross platform signing"",
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""packageVerificationCode"": {
@@ -281,9 +292,10 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageMissingFilesAnalyzed = @"[{
+    public const string PackageJsonWith1PackageMissingFilesAnalyzed = @"{
+       ""packages"": [{
       ""name"": ""Testing cross platform signing"",
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -305,9 +317,10 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageMissingLicenseConcluded = @"[{
+    public const string PackageJsonWith1PackageMissingLicenseConcluded = @"{
+       ""packages"": [{
       ""name"": ""Testing cross platform signing"",
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -329,9 +342,10 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageMissingLicenseInfoFromFiles = @"[{
+    public const string PackageJsonWith1PackageMissingLicenseInfoFromFiles = @"{
+       ""packages"": [{
       ""name"": ""Testing cross platform signing"",
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -351,9 +365,10 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageMissingLicenseDeclared = @"[{
+    public const string PackageJsonWith1PackageMissingLicenseDeclared = @"{
+       ""packages"": [{
       ""name"": ""Testing cross platform signing"",
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -375,9 +390,10 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageMissingCopyrightText = @"[{
+    public const string PackageJsonWith1PackageMissingCopyrightText = @"{
+       ""packages"": [{
       ""name"": ""Testing cross platform signing"",
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -399,9 +415,10 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageMissingVersionInfo = @"[{
+    public const string PackageJsonWith1PackageMissingVersionInfo = @"{
+       ""packages"": [{
       ""name"": ""Testing cross platform signing"",
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -423,9 +440,10 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]";
+    }]}";
 
-    public const string PackageJsonWith1PackageMissingSupplier = @"[{
+    public const string PackageJsonWith1PackageMissingSupplier = @"{
+       ""packages"": [{
       ""name"": ""Testing cross platform signing"",
       ""SPDXID"": ""SPDXRef-RootPackage"",
       ""downloadLocation"": ""NOASSERTION"",
@@ -447,9 +465,12 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]";
+    }]}";
 
-    public const string GoodJsonWith3PackagesString = @"[
+    public const string MalformedJsonEmptyArray = @"{""packages"": []}";
+
+    public const string GoodJsonWith3PackagesString = @"{
+       ""packages"": [
     {
       ""name"": ""pest"",
       ""SPDXID"": ""SPDXRef-Package-1C4595D6D70121622649BB913859B18A3C0A2D49EC7D36279777025C4AC92303"",
@@ -515,5 +536,5 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]";
+    }]}";
 }
