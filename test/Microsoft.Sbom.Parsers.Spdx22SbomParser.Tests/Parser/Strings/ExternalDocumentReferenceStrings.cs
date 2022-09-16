@@ -20,7 +20,7 @@ internal readonly struct ExternalDocumentReferenceStrings
           ""checksum"": {
             ""algorithm"": ""SHA1"",
             ""checksumValue"": ""08ec1a34d5dsfasdf3234f4f432gd23ds2f432f""
-        }}]";
+        }}]}";
 
     public const string JsonExtDocumentRefsStringMissingDocumentId = @"[{
           ""spdxDocument"": ""https://sbom.microsoft/1:VF6zo7ndBEakT2mCbPwGug:mbFNG7JcLkCOpUAYBLp6Fw/28:1049/VUbyIvB6E0awQIFGAOI3Ug"",

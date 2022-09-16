@@ -142,9 +142,7 @@ internal class ParserUtils
         // Ensure first value is an array and read that so that we are the { token.
         SkipNoneTokens(stream, ref buffer, ref reader);
         AssertTokenType(stream, ref reader, JsonTokenType.StartObject);
-        Read(stream, ref buffer, ref reader);
-        GetMoreBytesFromStream(stream, ref buffer, ref reader);
-    }
+     }
 
     /// <summary>
     /// Helper method that can be used to display a byte readonlyspan for logging.

@@ -1,4 +1,5 @@
-﻿using Microsoft.Sbom.Exceptions;
+﻿using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,7 +13,7 @@ namespace Microsoft.Sbom.Parser;
 public class SbomExternalDocumentReferenceParserTests
 {
     [TestMethod]
-    public void ParseSbomRelationshipsTest()
+    public void ParseSbomExternalDocumentReferenceTest()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.GoodJsonWith2ExtDocumentRefsString);
         using var stream = new MemoryStream(bytes);
@@ -20,10 +21,10 @@ public class SbomExternalDocumentReferenceParserTests
         TestParser parser = new ();
         var count = 0;
 
-        foreach (var externalDocumentReference in parser.GetExternalDocumentReferences(stream))
+        foreach (var extReference in parser.GetExternalDocumentReferences(stream))
         {
             count++;
-            Assert.IsNotNull(externalDocumentReference);
+            Assert.IsNotNull(extReference);
         }
 
         Assert.AreEqual(2, count);
@@ -64,9 +65,9 @@ public class SbomExternalDocumentReferenceParserTests
 
     [DataTestMethod]
     [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingChecksum)]
-    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingSHA1Checksum)]
-    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingDocument)]
     [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingDocumentId)]
+    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingDocument)]
+    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingSHA1Checksum)]
     [TestMethod]
     [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)

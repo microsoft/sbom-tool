@@ -40,6 +40,9 @@ namespace Microsoft.Sbom.Parser
                     return ParserState.FINISHED;
                 }
 
+                // Read the property token.
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                
                 ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);
                 return ParseNextPropertyAsParserState(ref reader, ref buffer);
             }
@@ -55,7 +58,7 @@ namespace Microsoft.Sbom.Parser
 
         private ParserState ParseNextPropertyAsParserState(ref Utf8JsonReader reader, ref byte[] buffer)
         {
-            var parserState = reader.GetString() switch
+            var nextState = reader.GetString() switch
             {
                 FilesProperty => ParserState.FILES,
                 PackagesProperty => ParserState.PACKAGES,
@@ -63,12 +66,10 @@ namespace Microsoft.Sbom.Parser
                 ExternalDocumentRefsProperty => ParserState.REFERENCES,
                 _ => ParserState.INTERNAL_SKIP,
             };
-
-            // Read the property token and consume the bytes we've read.
-            ParserUtils.Read(stream, ref buffer, ref reader);
+            
+            // Consume the bytes we have read.
             ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
-
-            return parserState;
+            return nextState;
         }
     }
 }

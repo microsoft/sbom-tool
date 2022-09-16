@@ -1,4 +1,5 @@
-﻿using Microsoft.Sbom.Exceptions;
+﻿using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,9 +17,12 @@ public class SbomRelationshipParserTests
     {
         byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
         using var stream = new MemoryStream(bytes);
-
-        TestParser parser = new ();
         var count = 0;
+
+        SPDXParser parser = new ();
+
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
         foreach (var relationship in parser.GetRelationships(stream))
         {
@@ -43,7 +47,11 @@ public class SbomRelationshipParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new ();
+        SPDXParser parser = new ();
+
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
+        
         stream.Close();
 
         parser.GetRelationships(stream).GetEnumerator().MoveNext();
@@ -56,9 +64,12 @@ public class SbomRelationshipParserTests
         using var stream = new MemoryStream();
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
+         
+        SPDXParser parser = new ();
 
-        TestParser parser = new ();
-
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
+        
         parser.GetRelationships(stream).GetEnumerator().MoveNext();
     }
 
@@ -72,7 +83,10 @@ public class SbomRelationshipParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new (40);
+        SPDXParser parser = new (50);
+
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
         parser.GetRelationships(stream).GetEnumerator().MoveNext();
     }
@@ -88,7 +102,10 @@ public class SbomRelationshipParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new ();
+        SPDXParser parser = new ();
+
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
         foreach (var relationship in parser.GetRelationships(stream))
         {
@@ -106,7 +123,10 @@ public class SbomRelationshipParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new ();
+        SPDXParser parser = new ();
+
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
         parser.GetRelationships(stream).GetEnumerator().MoveNext();
     }
@@ -114,10 +134,13 @@ public class SbomRelationshipParserTests
     [TestMethod]
     public void EmptyArray_ValidJson()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJsonEmptyArray);
+        byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.MalformedJsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new ();
+        SPDXParser parser = new ();
+
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
         parser.GetRelationships(stream).GetEnumerator().MoveNext();
     }
@@ -129,7 +152,10 @@ public class SbomRelationshipParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new (0);
+        SPDXParser parser = new (0);
+
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
         parser.GetRelationships(stream).GetEnumerator().MoveNext();
     }

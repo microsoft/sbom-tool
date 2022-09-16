@@ -30,6 +30,14 @@ public class SPDXParser : ISbomParser
     private JsonReaderState readerState;
     private byte[] buffer;
 
+    public ParserState CurrentState => parserState;
+
+    // Used in unit tests
+    public SPDXParser(int bufferSize = Constants.ReadBufferSize)
+    {
+        buffer = new byte[bufferSize];
+    }
+
     private readonly ManifestInfo spdxManifestInfo = new ManifestInfo
     {
         Name = Constants.SPDXName,
@@ -52,11 +60,13 @@ public class SPDXParser : ISbomParser
         {
             while (nextState == ParserState.INTERNAL_SKIP)
             {
-                // TODO skip property.
+                SkipProperty(stream);
+                nextState = MoveToNextState(stream);
             }
         }
 
         parserState = nextState;
+        readerState = default;
         return nextState;
         
         ParserState MoveToNextState(Stream stream)
@@ -83,6 +93,12 @@ public class SPDXParser : ISbomParser
 
             readerState = reader.CurrentState;
             return result;
+        }
+        
+        void SkipProperty(Stream stream)
+        {
+            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+            ParserUtils.SkipProperty(stream, ref buffer, ref reader);
         }
     }
 
