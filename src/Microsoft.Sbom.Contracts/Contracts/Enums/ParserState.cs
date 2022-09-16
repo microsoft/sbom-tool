@@ -39,6 +39,13 @@ public enum ParserState
     METADATA,
 
     /// <summary>
+    /// The parser is in a state where its returned a property that needs to be skipped.
+    /// This parser will never be in this state externally, internally we will try to move 
+    /// to the next available state when we reach this state.
+    /// </summary>
+    INTERNAL_SKIP,
+
+    /// <summary>
     /// The parser has completed parsing the SBOM.
     /// </summary>
     FINISHED

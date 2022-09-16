@@ -24,6 +24,9 @@ public class SPDXParser : ISbomParser
     private bool isPackageArrayParsingStarted = false;
     private bool isRelationshipArrayParsingStarted = false;
     private bool isExternalReferencesArrayParsingStarted = false;
+    private bool isParsingStarted = false;
+
+    private ParserState parserState = ParserState.NONE;
     private JsonReaderState readerState;
     private byte[] buffer;
 
@@ -42,7 +45,45 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public ParserState Next(Stream stream)
     {
-        throw new NotImplementedException();
+        stream.Read(buffer);
+        var nextState = MoveToNextState(stream);
+
+        if (nextState == ParserState.INTERNAL_SKIP)
+        {
+            while (nextState == ParserState.INTERNAL_SKIP)
+            {
+                // TODO skip property.
+            }
+        }
+
+        parserState = nextState;
+        return nextState;
+        
+        ParserState MoveToNextState(Stream stream)
+        {
+            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+
+            if (!isParsingStarted)
+            {
+                ParserUtils.SkipFirstObjectToken(stream, ref buffer, ref reader);
+                isParsingStarted = true;
+            }
+
+            var parser = new RootPropertiesParser(stream);
+            var result = parser.MoveNext(ref buffer, ref reader);
+
+            // The caller always closes the ending }
+            if (reader.TokenType == JsonTokenType.EndObject)
+            {
+                // TODO read to the end
+                ParserUtils.Read(stream, ref buffer, ref reader);
+                ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                result = ParserState.FINISHED;
+            }
+
+            readerState = reader.CurrentState;
+            return result;
+        }
     }
 
     /// <inheritdoc/>

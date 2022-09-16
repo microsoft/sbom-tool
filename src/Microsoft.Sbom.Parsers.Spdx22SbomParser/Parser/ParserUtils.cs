@@ -132,6 +132,21 @@ internal class ParserUtils
     }
 
     /// <summary>
+    /// Skips the first { token from the stream.
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="buffer"></param>
+    /// <param name="reader"></param>
+    internal static void SkipFirstObjectToken(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
+    {
+        // Ensure first value is an array and read that so that we are the { token.
+        SkipNoneTokens(stream, ref buffer, ref reader);
+        AssertTokenType(stream, ref reader, JsonTokenType.StartObject);
+        Read(stream, ref buffer, ref reader);
+        GetMoreBytesFromStream(stream, ref buffer, ref reader);
+    }
+
+    /// <summary>
     /// Helper method that can be used to display a byte readonlyspan for logging.
     /// </summary>
     /// <returns></returns>
