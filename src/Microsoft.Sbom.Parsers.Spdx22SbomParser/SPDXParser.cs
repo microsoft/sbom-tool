@@ -3,6 +3,7 @@
 
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Exceptions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Parser;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
@@ -71,28 +72,35 @@ public class SPDXParser : ISbomParser
         
         ParserState MoveToNextState(Stream stream)
         {
-            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
-
-            if (!isParsingStarted)
+            try
             {
-                ParserUtils.SkipFirstObjectToken(stream, ref buffer, ref reader);
-                isParsingStarted = true;
+                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+
+                if (!isParsingStarted)
+                {
+                    ParserUtils.SkipFirstObjectToken(stream, ref buffer, ref reader);
+                    isParsingStarted = true;
+                }
+
+                var parser = new RootPropertiesParser(stream);
+                var result = parser.MoveNext(ref buffer, ref reader);
+
+                // The caller always closes the ending }
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    // TODO read to the end
+                    ParserUtils.Read(stream, ref buffer, ref reader);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                    result = ParserState.FINISHED;
+                }
+
+                readerState = reader.CurrentState;
+                return result;
             }
-
-            var parser = new RootPropertiesParser(stream);
-            var result = parser.MoveNext(ref buffer, ref reader);
-
-            // The caller always closes the ending }
-            if (reader.TokenType == JsonTokenType.EndObject)
+            catch (JsonException e)
             {
-                // TODO read to the end
-                ParserUtils.Read(stream, ref buffer, ref reader);
-                ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
-                result = ParserState.FINISHED;
+                throw new ParserException($"Error while parsing JSON at position {stream.Position}, addtional details: ${e.Message}", e);
             }
-
-            readerState = reader.CurrentState;
-            return result;
         }
         
         void SkipProperty(Stream stream)
@@ -114,26 +122,33 @@ public class SPDXParser : ISbomParser
 
         long GetExternalDocumentReferences(Stream stream, out SpdxExternalDocumentReference spdxExternalDocumentReference)
         {
-            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
-
-            if (!isExternalReferencesArrayParsingStarted)
+            try
             {
-                ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
-                isExternalReferencesArrayParsingStarted = true;
+                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+
+                if (!isExternalReferencesArrayParsingStarted)
+                {
+                    ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
+                    isExternalReferencesArrayParsingStarted = true;
+                }
+
+                var parser = new SbomExternalDocumentReferenceParser(stream);
+                var result = parser.GetSbomExternalDocumentReference(ref buffer, ref reader, out spdxExternalDocumentReference);
+
+                // The caller always closes the ending }
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    ParserUtils.Read(stream, ref buffer, ref reader);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                }
+
+                readerState = reader.CurrentState;
+                return result;
             }
-
-            var parser = new SbomExternalDocumentReferenceParser(stream);
-            var result = parser.GetSbomExternalDocumentReference(ref buffer, ref reader, out spdxExternalDocumentReference);
-
-            // The caller always closes the ending }
-            if (reader.TokenType == JsonTokenType.EndObject)
+            catch (JsonException e)
             {
-                ParserUtils.Read(stream, ref buffer, ref reader);
-                ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                throw new ParserException($"Error while parsing JSON at position {stream.Position}, addtional details: ${e.Message}", e);
             }
-
-            readerState = reader.CurrentState;
-            return result;
         }
     }
 
@@ -149,26 +164,33 @@ public class SPDXParser : ISbomParser
 
         long GetPackages(Stream stream, out SPDXRelationship sbomRelationship)
         {
-            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
-
-            if (!isRelationshipArrayParsingStarted)
+            try
             {
-                ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
-                isRelationshipArrayParsingStarted = true;
+                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+
+                if (!isRelationshipArrayParsingStarted)
+                {
+                    ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
+                    isRelationshipArrayParsingStarted = true;
+                }
+
+                var parser = new SbomRelationshipParser(stream);
+                var result = parser.GetSbomRelationship(ref buffer, ref reader, out sbomRelationship);
+
+                // The caller always closes the ending }
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    ParserUtils.Read(stream, ref buffer, ref reader);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                }
+
+                readerState = reader.CurrentState;
+                return result;
             }
-
-            var parser = new SbomRelationshipParser(stream);
-            var result = parser.GetSbomRelationship(ref buffer, ref reader, out sbomRelationship);
-
-            // The caller always closes the ending }
-            if (reader.TokenType == JsonTokenType.EndObject)
+            catch (JsonException e)
             {
-                ParserUtils.Read(stream, ref buffer, ref reader);
-                ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                throw new ParserException($"Error while parsing JSON at position {stream.Position}, addtional details: ${e.Message}", e);
             }
-
-            readerState = reader.CurrentState;
-            return result;
         }
     }
 
@@ -176,7 +198,7 @@ public class SPDXParser : ISbomParser
     public IEnumerable<SBOMPackage> GetPackages(Stream stream)
     {
         stream.Read(buffer);
-
+        
         while (GetPackages(stream, out SPDXPackage sbomPackage) != 0)
         {
             yield return sbomPackage.ToSbomPackage();
@@ -184,26 +206,33 @@ public class SPDXParser : ISbomParser
 
         long GetPackages(Stream stream, out SPDXPackage sbomPackage)
         {
-            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
-
-            if (!isPackageArrayParsingStarted)
+            try
             {
-                ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
-                isPackageArrayParsingStarted = true;
+                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+
+                if (!isPackageArrayParsingStarted)
+                {
+                    ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
+                    isPackageArrayParsingStarted = true;
+                }
+
+                var parser = new SbomPackageParser(stream);
+                var result = parser.GetSbomPackage(ref buffer, ref reader, out sbomPackage);
+
+                // The caller always closes the ending }
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    ParserUtils.Read(stream, ref buffer, ref reader);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                }
+
+                readerState = reader.CurrentState;
+                return result;
             }
-
-            var parser = new SbomPackageParser(stream);
-            var result = parser.GetSbomPackage(ref buffer, ref reader, out sbomPackage);
-
-            // The caller always closes the ending }
-            if (reader.TokenType == JsonTokenType.EndObject)
+            catch (JsonException e)
             {
-                ParserUtils.Read(stream, ref buffer, ref reader);
-                ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                throw new ParserException($"Error while parsing JSON at position {stream.Position}, addtional details: ${e.Message}", e);
             }
-
-            readerState = reader.CurrentState;
-            return result;
         }
     }
 
@@ -219,26 +248,33 @@ public class SPDXParser : ISbomParser
 
         long GetFiles(Stream stream, out SPDXFile sbomFile)
         {
-            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
-
-            if (!isFileArrayParsingStarted)
+            try
             {
-                ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
-                isFileArrayParsingStarted = true;
+                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+
+                if (!isFileArrayParsingStarted)
+                {
+                    ParserUtils.SkipFirstArrayToken(stream, ref buffer, ref reader);
+                    isFileArrayParsingStarted = true;
+                }
+
+                var parser = new SbomFileParser(stream);
+                var result = parser.GetSbomFile(ref buffer, ref reader, out sbomFile);
+
+                // The caller always closes the ending }
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    ParserUtils.Read(stream, ref buffer, ref reader);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                }
+
+                readerState = reader.CurrentState;
+                return result;
             }
-
-            var parser = new SbomFileParser(stream);
-            var result = parser.GetSbomFile(ref buffer, ref reader, out sbomFile);
-
-            // The caller always closes the ending }
-            if (reader.TokenType == JsonTokenType.EndObject)
+            catch (JsonException e)
             {
-                ParserUtils.Read(stream, ref buffer, ref reader);
-                ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                throw new ParserException($"Error while parsing JSON at position {stream.Position}, addtional details: ${e.Message}", e);
             }
-
-            readerState = reader.CurrentState;
-            return result;
         }
     }
 

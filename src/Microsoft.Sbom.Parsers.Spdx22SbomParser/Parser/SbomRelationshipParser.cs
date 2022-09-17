@@ -72,11 +72,6 @@ internal ref struct SbomRelationshipParser
             sbomRelationship = null;
             return 0;
         }
-        catch (JsonException e)
-        {
-            sbomRelationship = null;
-            throw new ParserException($"Error while parsing JSON, addtional details: ${e.Message}", e);
-        }
     }
 
     private void ParseProperty(ref Utf8JsonReader reader, ref byte[] buffer)

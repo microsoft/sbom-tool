@@ -72,11 +72,6 @@ internal ref struct SbomExternalDocumentReferenceParser
             spdxExternalDocumentReference = null;
             return 0;
         }
-        catch (JsonException e)
-        {
-            spdxExternalDocumentReference = null;
-            throw new ParserException($"Error while parsing JSON, addtional details: ${e.Message}", e);
-        }
     }
 
     private void ParseProperty(ref Utf8JsonReader reader, ref byte[] buffer)

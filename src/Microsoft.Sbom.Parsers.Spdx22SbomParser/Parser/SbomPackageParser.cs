@@ -83,11 +83,6 @@ internal ref struct SbomPackageParser
             sbomPackage = null;
             return 0;
         }
-        catch (JsonException e)
-        {
-            sbomPackage = null;
-            throw new ParserException($"Error while parsing JSON, addtional details: ${e.Message}", e);
-        }
     }
 
     private void ValidateSbomPackage(SPDXPackage sbomPackage)
