@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace Microsoft.Sbom.Parser;
 
-internal class TestParser
+internal class TestParser2
 {
     private bool isFileArrayParsingStarted = false;
     private bool isPackageArrayParsingStarted = false;
@@ -14,7 +14,7 @@ internal class TestParser
     private JsonReaderState readerState;
     private byte[] buffer;
 
-    public TestParser(int bufferSize = Constants.ReadBufferSize)
+    public TestParser2(int bufferSize = Constants.ReadBufferSize)
     {
         buffer = new byte[bufferSize];
     }

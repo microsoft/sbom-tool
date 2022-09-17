@@ -17,11 +17,14 @@ public class SbomExternalDocumentReferenceParserTests
     {
         byte[] bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.GoodJsonWith2ExtDocumentRefsString);
         using var stream = new MemoryStream(bytes);
-
-        TestParser parser = new ();
         var count = 0;
 
-        foreach (var extReference in parser.GetExternalDocumentReferences(stream))
+        SPDXParser parser = new ();
+
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        foreach (var extReference in parser.GetReferences(stream))
         {
             count++;
             Assert.IsNotNull(extReference);
@@ -44,10 +47,13 @@ public class SbomExternalDocumentReferenceParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.GoodJsonWith2ExtDocumentRefsString);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new ();
+        SPDXParser parser = new ();
+
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.REFERENCES, state);
         stream.Close();
 
-        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
+        parser.GetReferences(stream).GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -58,9 +64,12 @@ public class SbomExternalDocumentReferenceParserTests
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
 
-        TestParser parser = new ();
+        SPDXParser parser = new ();
 
-        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        parser.GetReferences(stream).GetEnumerator().MoveNext();
     }
 
     [DataTestMethod]
@@ -75,9 +84,12 @@ public class SbomExternalDocumentReferenceParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new (40);
+        SPDXParser parser = new ();
 
-        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        parser.GetReferences(stream).GetEnumerator().MoveNext();
     }
 
     [DataTestMethod]
@@ -91,9 +103,12 @@ public class SbomExternalDocumentReferenceParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new ();
+        SPDXParser parser = new ();
 
-        foreach (var package in parser.GetExternalDocumentReferences(stream))
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        foreach (var package in parser.GetReferences(stream))
         {
             Assert.IsNotNull(package);
         }
@@ -108,9 +123,12 @@ public class SbomExternalDocumentReferenceParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new ();
+        SPDXParser parser = new ();
 
-        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        parser.GetReferences(stream).GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -119,9 +137,12 @@ public class SbomExternalDocumentReferenceParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new ();
+        SPDXParser parser = new ();
 
-        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        parser.GetReferences(stream).GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -131,8 +152,11 @@ public class SbomExternalDocumentReferenceParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new (0);
+        SPDXParser parser = new ();
 
-        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
+        var state = parser.Next(stream);
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        parser.GetReferences(stream).GetEnumerator().MoveNext();
     }
 }

@@ -124,8 +124,8 @@ public class SbomPackageParserTests
 
     [DataTestMethod]
     [DataRow(SbomPackageStrings.MalformedJson)]
-    [DataRow(SbomFileJsonStrings.MalformedJsonEmptyObject)]
-    [DataRow(SbomFileJsonStrings.MalformedJsonEmptyObjectNoArrayEnd)]
+    [DataRow(SbomPackageStrings.MalformedJsonEmptyObject)]
+    [DataRow(SbomPackageStrings.MalformedJsonEmptyObjectNoArrayEnd)]
     [TestMethod]
     [ExpectedException(typeof(ParserException))]
     public void MalformedJsonTest_Throws(string json)

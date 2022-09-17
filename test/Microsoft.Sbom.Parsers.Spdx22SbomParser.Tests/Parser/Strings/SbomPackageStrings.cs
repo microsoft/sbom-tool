@@ -105,6 +105,12 @@ internal struct SbomPackageStrings
       ""supplier"": ""Organization: testa""
     }]}";
 
+    public const string MalformedJsonEmptyObject = @"{
+      ""packages"":{}}";
+
+    public const string MalformedJsonEmptyObjectNoArrayEnd = @"{
+      ""packages"":[}";
+
     public const string MalformedJson = @"{
        ""packages"": [{
       ""name"": ""pest"",

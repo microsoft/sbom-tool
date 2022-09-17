@@ -89,10 +89,10 @@ internal ref struct SbomFileParser
             sbomFile = null;
             return 0;
         }
-        catch (JsonException e)
+        catch (Exception e) when (e is JsonException)
         {
-            sbomFile = null;
-            throw new ParserException($"Error while parsing JSON, addtional details: ${e.Message}", e);
+             sbomFile = null;
+             throw new ParserException($"Error while parsing JSON, addtional details: ${e.Message}", e);
         }
     }
 
