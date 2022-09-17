@@ -134,7 +134,7 @@ public class SbomExternalDocumentReferenceParserTests
     [TestMethod]
     public void EmptyArray_ValidJson()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJsonEmptyArray);
+        byte[] bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.EmptyArray);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new ();
@@ -152,7 +152,7 @@ public class SbomExternalDocumentReferenceParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new ();
+        SPDXParser parser = new (0);
 
         var state = parser.Next(stream);
         Assert.AreEqual(ParserState.REFERENCES, state);
