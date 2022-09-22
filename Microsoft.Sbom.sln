@@ -41,7 +41,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{1A9688BD-D
 		docs\setting-up-github-actions.md = docs\setting-up-github-actions.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.DotNetTool", "src\Microsoft.Sbom.Tool\Microsoft.Sbom.DotNetTool.csproj", "{6C27560E-B0B0-44E3-B4AE-6FB92CE9FE4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.DotNetTool", "src\Microsoft.Sbom.DotNetTool\Microsoft.Sbom.DotNetTool.csproj", "{6C27560E-B0B0-44E3-B4AE-6FB92CE9FE4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
