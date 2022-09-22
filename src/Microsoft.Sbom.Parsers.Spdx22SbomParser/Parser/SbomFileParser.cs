@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Exceptions;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +13,7 @@ using System.Text.Json;
 namespace Microsoft.Sbom.Parser;
 
 /// <summary>
-/// Parses <see cref="SBOMFile"/> object from a 'files' array.
+/// Parses <see cref="SPDXFile"/> object from a 'files' array.
 /// </summary>
 internal ref struct SbomFileParser
 {
@@ -28,13 +28,11 @@ internal ref struct SbomFileParser
     private const string ChecksumValueProperty = "checksumValue";
 
     private readonly Stream stream;
-    private readonly SBOMFile sbomFile;
+    private readonly SPDXFile sbomFile = new ();
 
     public SbomFileParser(Stream stream)
     {
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
-
-        sbomFile = new ();
     }
 
     /// <summary>
@@ -50,7 +48,7 @@ internal ref struct SbomFileParser
     /// This value will be 0 if the parsing fails or the end of the stream has been reached.
     /// </returns>
     /// <exception cref="ParserException"></exception>
-    public long GetSbomFile(ref byte[] buffer, ref Utf8JsonReader reader, out SBOMFile sbomFile)
+    public long GetSbomFile(ref byte[] buffer, ref Utf8JsonReader reader, out SPDXFile sbomFile)
     {
         if (buffer is null || buffer.Length == 0)
         {
@@ -100,25 +98,25 @@ internal ref struct SbomFileParser
         }
     }
 
-    private void ValidateSbomFile(SBOMFile sbomFile)
+    private void ValidateSbomFile(SPDXFile sbomFile)
     {
         // I want to use the DataAnnotations Validator here, but will check with CB first
         // before adding a new dependency.
         var missingProps = new List<string>();
        
-        if (sbomFile.Checksum == null || sbomFile.Checksum.Where(c => c.Algorithm == AlgorithmName.SHA256).Count() == 0)
+        if (sbomFile.FileChecksums == null || sbomFile.FileChecksums.Where(c => c.Algorithm == AlgorithmName.SHA256.Name).Count() == 0)
         {
-            missingProps.Add(nameof(sbomFile.Checksum));
+            missingProps.Add(nameof(sbomFile.FileChecksums));
         }
 
-        if (string.IsNullOrEmpty(sbomFile.Path))
+        if (string.IsNullOrEmpty(sbomFile.FileName))
         {
-            missingProps.Add(nameof(sbomFile.Path));
+            missingProps.Add(nameof(sbomFile.FileName));
         }
 
-        if (string.IsNullOrEmpty(sbomFile.Id))
+        if (string.IsNullOrEmpty(sbomFile.SPDXId))
         {
-            missingProps.Add(nameof(sbomFile.Id));
+            missingProps.Add(nameof(sbomFile.SPDXId));
         }
 
         if (string.IsNullOrEmpty(sbomFile.FileCopyrightText))
@@ -148,63 +146,41 @@ internal ref struct SbomFileParser
         {
             case FileNameProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.Path = ParseNextString(ref reader, ref buffer);
+                sbomFile.FileName = ParserUtils.ParseNextString(stream, ref reader);
                 break;
 
             case SPDXIdProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.Id = ParseNextString(ref reader, ref buffer);
+                sbomFile.SPDXId = ParserUtils.ParseNextString(stream, ref reader);
                 break;
 
             case ChecksumsProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.Checksum = ParseChecksumsArray(ref reader, ref buffer);
+                sbomFile.FileChecksums = ParseChecksumsArray(ref reader, ref buffer);
                 break;
 
             case LicenseConcludedProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.LicenseConcluded = ParseNextString(ref reader, ref buffer);
+                sbomFile.LicenseConcluded = ParserUtils.ParseNextString(stream, ref reader);
                 break;
 
             case CopyrightTextProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.FileCopyrightText = ParseNextString(ref reader, ref buffer);
+                sbomFile.FileCopyrightText = ParserUtils.ParseNextString(stream, ref reader);
                 break;
 
             case LicenseInfoInFilesProperty:
                 ParserUtils.Read(stream, ref buffer, ref reader);
-                sbomFile.LicenseInfoInFiles = ParseLicenseInfoInFilesArray(ref reader, ref buffer);
+                sbomFile.LicenseInfoInFiles = ParserUtils.ParseListOfStrings(stream, ref reader, ref buffer);
                 break;
 
             default:
-                SkipProperty(ref reader, ref buffer);
+                ParserUtils.SkipProperty(stream, ref buffer, ref reader);
                 break;
         }
     }
 
-    private List<string> ParseLicenseInfoInFilesArray(ref Utf8JsonReader reader, ref byte[] buffer)
-    {
-        var licenses = new List<string>();
-
-        // Read the opening [ of the array
-        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
-
-        while (reader.TokenType != JsonTokenType.EndArray)
-        {
-            ParserUtils.Read(stream, ref buffer, ref reader);
-            if (reader.TokenType == JsonTokenType.EndArray)
-            {
-                break;
-            }
-
-            licenses.Add(reader.GetString());
-        }
-
-        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.EndArray);
-        return licenses;
-    }
-
-    private IEnumerable<Checksum> ParseChecksumsArray(ref Utf8JsonReader reader, ref byte[] buffer)
+    private List<Checksum> ParseChecksumsArray(ref Utf8JsonReader reader, ref byte[] buffer)
     {
         var checksums = new List<Checksum>();
 
@@ -244,16 +220,16 @@ internal ref struct SbomFileParser
             {
                 case AlgorithmProperty:
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    checksum.Algorithm = new AlgorithmName(ParseNextString(ref reader, ref buffer), null);
+                    checksum.Algorithm = ParserUtils.ParseNextString(stream, ref reader);
                     break;
 
                 case ChecksumValueProperty:
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    checksum.ChecksumValue = ParseNextString(ref reader, ref buffer);
+                    checksum.ChecksumValue = ParserUtils.ParseNextString(stream, ref reader);
                     break;
                 
                 default:
-                    SkipProperty(ref reader, ref buffer);
+                    ParserUtils.SkipProperty(stream, ref buffer, ref reader);
                     break;
             }
 
@@ -264,51 +240,5 @@ internal ref struct SbomFileParser
         ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.EndObject);
 
         return checksum;
-    }
-
-    private string ParseNextString(ref Utf8JsonReader reader, ref byte[] buffer)
-    {
-        ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.String);
-        return reader.GetString();
-    }
-
-    private void SkipProperty(ref Utf8JsonReader reader, ref byte[] buffer)
-    {
-        if (reader.TokenType == JsonTokenType.PropertyName)
-        {
-            ParserUtils.Read(stream, ref buffer, ref reader);
-        }
-
-        if (reader.TokenType == JsonTokenType.StartObject
-            || reader.TokenType == JsonTokenType.StartArray)
-        {
-            int arrayCount = 0;
-            int objectCount = 0;
-            while (true)
-            {
-                arrayCount = reader.TokenType switch
-                {
-                    JsonTokenType.StartArray => arrayCount + 1,
-                    JsonTokenType.EndArray => arrayCount - 1,
-                    _ => arrayCount,
-                };
-
-                objectCount = reader.TokenType switch
-                {
-                    JsonTokenType.StartObject => objectCount + 1,
-                    JsonTokenType.EndObject => objectCount - 1,
-                    _ => objectCount,
-                };
-
-                if (arrayCount + objectCount != 0)
-                {
-                    ParserUtils.Read(stream, ref buffer, ref reader);
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
     }
 }

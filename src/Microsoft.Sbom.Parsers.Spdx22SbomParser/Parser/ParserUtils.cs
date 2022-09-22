@@ -7,6 +7,10 @@ using System.Text;
 using System;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.Sbom.Exceptions;
+using System.Runtime.InteropServices.ComTypes;
+using System.Linq;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using System.Collections.Generic;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -62,8 +66,29 @@ internal class ParserUtils
 
         if (reader.TokenType != expectedTokenType)
         {
-            throw new ParserException($"Expected a '{Constants.JsonTokenStrings[(byte)expectedTokenType]}' at position {stream.Position}");
+            throw new ParserException($"Expected a '{Constants.JsonTokenStrings[(byte)expectedTokenType]}' token at position {stream.Position}");
         }
+    }
+
+    internal static void AssertEitherTokenTypes(Stream stream, ref Utf8JsonReader reader, JsonTokenType[] expectedTokenTypes)
+    {
+        if (stream is null)
+        {
+            throw new ArgumentNullException(nameof(stream));
+        }
+
+        foreach (var tokenType in expectedTokenTypes)
+        {
+            if (reader.TokenType == tokenType)
+            {
+                // Found at least one of the expected tokens.
+                return;
+            }
+        }
+
+        // If control ends up here, no expected tokens matched.
+        var expectedTokenTypesStr = string.Join(",", expectedTokenTypes.Select(t => Constants.JsonTokenStrings[(byte)t]));
+        throw new ParserException($"Expected either one of a '{expectedTokenTypesStr}' token at position {stream.Position}");
     }
 
     /// <summary>
@@ -80,6 +105,15 @@ internal class ParserUtils
         }
     }
 
+    internal static void SkipFirstArrayToken(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
+    {
+        // Ensure first value is an array and read that so that we are the { token.
+        SkipNoneTokens(stream, ref buffer, ref reader);
+        AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
+        Read(stream, ref buffer, ref reader);
+        GetMoreBytesFromStream(stream, ref buffer, ref reader);
+    }
+
     /// <summary>
     /// Helper method that can be used to display a byte readonlyspan for logging.
     /// </summary>
@@ -87,6 +121,68 @@ internal class ParserUtils
     internal static string GetStringValue(ReadOnlySpan<byte> valueSpan)
     {
         return Encoding.UTF8.GetString(valueSpan.ToArray());
+    }
+
+    /// <summary>
+    /// Returns the next string value for a given property, for example:
+    /// 
+    /// { "TestProperty": "TestProperty Value" }
+    /// 
+    /// Will return "TestProperty Value".
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <param name="buffer"></param>
+    /// <returns>The next string value.</returns>
+    internal static string ParseNextString(Stream stream, ref Utf8JsonReader reader)
+    {
+        AssertTokenType(stream, ref reader, JsonTokenType.String);
+        return reader.GetString();
+    }
+
+    /// <summary>
+    /// Reads and discards any given value for a property. If the value is an arry or object
+    /// it reads and discards the whole array or object
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <param name="buffer"></param>
+    internal static void SkipProperty(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
+    {
+        if (reader.TokenType == JsonTokenType.PropertyName)
+        {
+            ParserUtils.Read(stream, ref buffer, ref reader);
+        }
+
+        if (reader.TokenType == JsonTokenType.StartObject
+            || reader.TokenType == JsonTokenType.StartArray)
+        {
+            int arrayCount = 0;
+            int objectCount = 0;
+            while (true)
+            {
+                arrayCount = reader.TokenType switch
+                {
+                    JsonTokenType.StartArray => arrayCount + 1,
+                    JsonTokenType.EndArray => arrayCount - 1,
+                    _ => arrayCount,
+                };
+
+                objectCount = reader.TokenType switch
+                {
+                    JsonTokenType.StartObject => objectCount + 1,
+                    JsonTokenType.EndObject => objectCount - 1,
+                    _ => objectCount,
+                };
+
+                if (arrayCount + objectCount != 0)
+                {
+                    Read(stream, ref buffer, ref reader);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -128,5 +224,43 @@ internal class ParserUtils
         }
 
         reader = new Utf8JsonReader(buffer, isFinalBlock: bytesRead == 0, reader.CurrentState);
+    }
+
+    /// <summary>
+    /// Returns the next boolean value for a given property, for example:
+    /// 
+    /// { "TestProperty": false }
+    /// 
+    /// Will return false.
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <param name="buffer"></param>
+    /// <returns>The next boolean value.</returns>
+    internal static bool ParseNextBoolean(Stream stream, ref Utf8JsonReader reader)
+    {
+        AssertEitherTokenTypes(stream, ref reader, new JsonTokenType[] { JsonTokenType.True, JsonTokenType.False });
+        return reader.GetBoolean();
+    }
+
+    internal static List<string> ParseListOfStrings(Stream stream, ref Utf8JsonReader reader, ref byte[] buffer)
+    {
+        var strings = new List<string>();
+
+        // Read the opening [ of the array
+        AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
+
+        while (reader.TokenType != JsonTokenType.EndArray)
+        {
+            Read(stream, ref buffer, ref reader);
+            if (reader.TokenType == JsonTokenType.EndArray)
+            {
+                break;
+            }
+
+            strings.Add(reader.GetString());
+        }
+
+        AssertTokenType(stream, ref reader, JsonTokenType.EndArray);
+        return strings;
     }
 }
