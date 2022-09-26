@@ -3,6 +3,7 @@
 
 using Microsoft.Sbom.Extensions.Entities;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
 {
@@ -83,5 +84,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
             "False", // False
             "Null", // Null
         };
+
+        internal static readonly byte StartObjectToken = Encoding.UTF8.GetBytes("{")[0];
     }
 }

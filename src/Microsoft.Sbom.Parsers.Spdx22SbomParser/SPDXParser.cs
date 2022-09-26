@@ -82,9 +82,12 @@ public class SPDXParser : ISbomParser
                     isParsingStarted = true;
                 }
 
-                if (buffer.AsSpan<byte>().StartsWith(System.Text.Encoding.UTF8.GetBytes(",")))
+                // Since we don't preserve the state between the parsing (files, packages, etc),
+                // we need to trick the parser into thinking that we are parsing a new object in case
+                // we are scanning the next property (this will be true if the next token is a comma).
+                if (buffer.AsSpan().StartsWith(Encoding.UTF8.GetBytes(",")))
                 {
-                    buffer[0] = Encoding.UTF8.GetBytes("{")[0];
+                    buffer[0] = Constants.StartObjectToken;
                     ParserUtils.SkipFirstObjectToken(stream, ref buffer, ref reader);
                 }
 
