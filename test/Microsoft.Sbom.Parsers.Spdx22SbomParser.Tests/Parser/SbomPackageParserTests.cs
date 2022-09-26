@@ -1,4 +1,4 @@
-﻿using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;

@@ -1,4 +1,4 @@
-﻿namespace Microsoft.Sbom.Parser.Strings;
+﻿﻿namespace Microsoft.Sbom.Parser.Strings;
 
 internal readonly struct RelationshipStrings
 {
