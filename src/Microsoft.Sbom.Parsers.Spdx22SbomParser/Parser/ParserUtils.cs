@@ -162,7 +162,7 @@ internal class ParserUtils
     {
         if (reader.TokenType == JsonTokenType.PropertyName)
         {
-            Read(stream, ref buffer, ref reader);
+            ParserUtils.Read(stream, ref buffer, ref reader);
         }
 
         if (reader.TokenType == JsonTokenType.StartObject
