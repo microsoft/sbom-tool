@@ -108,7 +108,7 @@ public class SPDXParser : ISbomParser
             }
             catch (JsonException e)
             {
-                throw new ParserException($"Error while parsing JSON at position {stream.Position}, addtional details: ${e.Message}", e);
+                throw new ParserException($"Error while parsing JSON at position {stream.Position}, additional details: ${e.Message}", e);
             }
         }
         
@@ -158,7 +158,7 @@ public class SPDXParser : ISbomParser
             }
             catch (JsonException e)
             {
-                throw new ParserException($"Error while parsing JSON at position {stream.Position}, addtional details: ${e.Message}", e);
+                throw new ParserException($"Error while parsing JSON at position {stream.Position}, additional details: ${e.Message}", e);
             }
         }
     }
@@ -202,7 +202,7 @@ public class SPDXParser : ISbomParser
             }
             catch (JsonException e)
             {
-                throw new ParserException($"Error while parsing JSON at position {stream.Position}, addtional details: ${e.Message}", e);
+                throw new ParserException($"Error while parsing JSON at position {stream.Position}, additional details: ${e.Message}", e);
             }
         }
     }
@@ -246,7 +246,7 @@ public class SPDXParser : ISbomParser
             }
             catch (JsonException e)
             {
-                throw new ParserException($"Error while parsing JSON at position {stream.Position}, addtional details: ${e.Message}", e);
+                throw new ParserException($"Error while parsing JSON at position {stream.Position}, additional details: ${e.Message}", e);
             }
         }
     }
@@ -290,7 +290,7 @@ public class SPDXParser : ISbomParser
             }
             catch (JsonException e)
             {
-                throw new ParserException($"Error while parsing JSON at position {stream.Position}, addtional details: ${e.Message}", e);
+                throw new ParserException($"Error while parsing JSON at position {stream.Position}, additional details: ${e.Message}", e);
             }
         }
     }

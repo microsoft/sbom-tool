@@ -108,9 +108,9 @@ public class SbomExternalDocumentReferenceParserTests
         var state = parser.Next(stream);
         Assert.AreEqual(ParserState.REFERENCES, state);
 
-        foreach (var package in parser.GetReferences(stream))
+        foreach (var reference in parser.GetReferences(stream))
         {
-            Assert.IsNotNull(package);
+            Assert.IsNotNull(reference);
         }
     }
 

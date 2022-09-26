@@ -52,7 +52,7 @@ namespace Microsoft.Sbom.Parser
             }
             catch (JsonException e)
             {
-                throw new ParserException($"Error while parsing JSON, addtional details: ${e.Message}", e);
+                throw new ParserException($"Error while parsing JSON, additional details: ${e.Message}", e);
             }
         }
 
