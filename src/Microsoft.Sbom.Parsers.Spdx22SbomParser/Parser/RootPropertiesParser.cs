@@ -40,7 +40,7 @@ namespace Microsoft.Sbom.Parser
                     return ParserState.FINISHED;
                 }
 
-                // Read the property token.
+                // Read the next token.
                 ParserUtils.Read(stream, ref buffer, ref reader);
                 
                 ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);

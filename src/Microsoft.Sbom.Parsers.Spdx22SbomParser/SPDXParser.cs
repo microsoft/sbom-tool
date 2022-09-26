@@ -12,6 +12,7 @@ using Microsoft.Sbom.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 
 namespace Microsoft.Sbom;
@@ -28,7 +29,6 @@ public class SPDXParser : ISbomParser
     private bool isParsingStarted = false;
 
     private ParserState parserState = ParserState.NONE;
-    private JsonReaderState readerState;
     private byte[] buffer;
 
     public ParserState CurrentState => parserState;
@@ -54,6 +54,7 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public ParserState Next(Stream stream)
     {
+        JsonReaderState readerState = default;
         stream.Read(buffer);
         var nextState = MoveToNextState(stream);
 
@@ -67,7 +68,6 @@ public class SPDXParser : ISbomParser
         }
 
         parserState = nextState;
-        readerState = default;
         return nextState;
         
         ParserState MoveToNextState(Stream stream)
@@ -80,6 +80,12 @@ public class SPDXParser : ISbomParser
                 {
                     ParserUtils.SkipFirstObjectToken(stream, ref buffer, ref reader);
                     isParsingStarted = true;
+                }
+
+                if (buffer.AsSpan<byte>().StartsWith(System.Text.Encoding.UTF8.GetBytes(",")))
+                {
+                    buffer[0] = Encoding.UTF8.GetBytes("{")[0];
+                    ParserUtils.SkipFirstObjectToken(stream, ref buffer, ref reader);
                 }
 
                 var parser = new RootPropertiesParser(stream);
@@ -113,6 +119,8 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public IEnumerable<SBOMReference> GetReferences(Stream stream)
     {
+        JsonReaderState readerState = default;
+
         stream.Read(buffer);
 
         while (GetExternalDocumentReferences(stream, out SpdxExternalDocumentReference spdxExternalDocumentReference) != 0)
@@ -155,6 +163,8 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public IEnumerable<SBOMRelationship> GetRelationships(Stream stream)
     {
+        JsonReaderState readerState = default;
+
         stream.Read(buffer);
 
         while (GetPackages(stream, out SPDXRelationship sbomRelationship) != 0)
@@ -197,6 +207,8 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public IEnumerable<SBOMPackage> GetPackages(Stream stream)
     {
+        JsonReaderState readerState = default;
+
         stream.Read(buffer);
         
         while (GetPackages(stream, out SPDXPackage sbomPackage) != 0)
@@ -239,6 +251,8 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public IEnumerable<SBOMFile> GetFiles(Stream stream)
     {
+        JsonReaderState readerState = default;
+
         stream.Read(buffer);
 
         while (GetFiles(stream, out SPDXFile sbomFile) != 0)
