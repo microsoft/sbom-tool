@@ -228,6 +228,7 @@ internal ref struct SbomPackageParser
                 break;
 
             default:
+                ParserUtils.Read(stream, ref buffer, ref reader);
                 ParserUtils.SkipProperty(stream, ref buffer, ref reader);
                 break;
         }
