@@ -72,14 +72,19 @@ namespace Microsoft.Sbom.Common
             {   
                 WindowsIdentity current = WindowsIdentity.GetCurrent();
                 var directoryInfo = new DirectoryInfo(directoryPath);
-                
-                var readAccessRules = directoryInfo.GetAccessControl().GetAccessRules(true, true, typeof(SecurityIdentifier))
-                    .Cast<FileSystemAccessRule>()
-                    .Where(rule => current.Groups.Contains(rule.IdentityReference) || current.User.Equals(rule.IdentityReference))
-                    .Where(rule => (fileSystemRights & rule.FileSystemRights) == fileSystemRights)
-                    .Where(rule => rule.AccessControlType == AccessControlType.Allow);
 
-                return readAccessRules.Any();
+                return HasAccessControlType(AccessControlType.Allow) && !HasAccessControlType(AccessControlType.Deny);
+                
+                // Check if the current user has or does not have the specified rights (either Allow or Deny)
+                bool HasAccessControlType(AccessControlType accessControlType)
+                { 
+                    var accessRules = directoryInfo.GetAccessControl().GetAccessRules(true, true, typeof(SecurityIdentifier))
+                    .Cast<FileSystemAccessRule>()
+                    .Any((rule => current.Groups.Contains(rule.IdentityReference) || current.User.Equals(rule.IdentityReference)
+                        && ((fileSystemRights & rule.FileSystemRights) == fileSystemRights)
+                        && (rule.AccessControlType == accessControlType)));
+                    return accessRules;
+                }
             }
             catch (Exception)
             {
