@@ -43,7 +43,7 @@ namespace Microsoft.Sbom.Parser
                     return ParserState.FINISHED;
                 }
 
-                //ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);
+                ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);
                 return ParseNextPropertyAsParserState(ref reader, ref buffer);
             }
             catch (EndOfStreamException)

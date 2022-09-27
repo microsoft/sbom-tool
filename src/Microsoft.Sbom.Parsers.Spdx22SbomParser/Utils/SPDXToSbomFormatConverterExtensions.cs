@@ -34,6 +34,11 @@ internal static class SPDXToSbomFormatConverterExtensions
         };
     }
 
+    /// <summary>
+    /// Converts a <see cref="SPDXPackage"/> to a <see cref="SBOMPackage"/> object.
+    /// </summary>
+    /// <param name="spdxPackage"></param>
+    /// <returns></returns>
     internal static SBOMPackage ToSbomPackage(this SPDXPackage spdxPackage)
     {
         return new SBOMPackage
@@ -55,6 +60,11 @@ internal static class SPDXToSbomFormatConverterExtensions
         };
     }
 
+    /// <summary>
+    /// Converts a <see cref="SPDXRelationship"/> object to a <see cref="SBOMRelationship"/> object.
+    /// </summary>
+    /// <param name="spdxRelationship"></param>
+    /// <returns></returns>
     internal static SBOMRelationship ToSbomRelationship(this SPDXRelationship spdxRelationship)
     {
         return new SBOMRelationship
@@ -65,6 +75,11 @@ internal static class SPDXToSbomFormatConverterExtensions
         };
     }
 
+    /// <summary>
+    /// Converts a <see cref="SpdxExternalDocumentReference"/> object to a <see cref="SBOMReference"/> object.
+    /// </summary>
+    /// <param name="spdxExternalDocumentReference"></param>
+    /// <returns></returns>
     internal static SBOMReference ToSbomReference(this SpdxExternalDocumentReference spdxExternalDocumentReference)
     {
         return new SBOMReference
@@ -75,12 +90,22 @@ internal static class SPDXToSbomFormatConverterExtensions
         };
     }
 
+    /// <summary>
+    /// Gets the PURL from a <see cref="ExternalReference"/> object using the Locator property. 
+    /// </summary>
+    /// <param name="externalReference"></param>
+    /// <returns></returns>
     internal static string ToPurl(this IList<ExternalReference> externalReference)
     {
         var packageManagerReference = externalReference?.Where(e => e.ReferenceCategory.Replace("_", "-") == "PACKAGE-MANAGER")?.First();
         return packageManagerReference?.Locator;
     }
 
+    /// <summary>
+    /// Convert a <see cref="SPDXChecksum"/> object to a <see cref="SbomChecksum"/> object.
+    /// </summary>
+    /// <param name="spdxChecksums"></param>
+    /// <returns></returns>
     internal static SbomChecksum ToSbomChecksum(this SPDXChecksum spdxChecksums)
     {
         return new SbomChecksum
