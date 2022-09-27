@@ -163,5 +163,4 @@ internal readonly struct SbomParserStrings
                 ""externalDocumentRefs"":[],
                 ""testSkip4"":{
                     ""test"":{""rr"":22}}}";
-
 }
