@@ -20,15 +20,17 @@ public class SbomFileParserTests
 
         SPDXParser parser = new ();
 
-        var state = parser.Next(stream);
-        Assert.AreEqual(ParserState.FILES, state);
-
         var count = 0;
 
-        foreach (var file in parser.GetFiles(stream))
+        while (parser.Next(stream) != ParserState.FINISHED)
         {
-            count++;
-            Assert.IsNotNull(file);
+            Assert.AreEqual(ParserState.FILES, parser.CurrentState);
+
+            foreach (var file in parser.GetFiles(stream))
+            {
+                count++;
+                Assert.IsNotNull(file);
+            }
         }
 
         Assert.AreEqual(2, count);
@@ -142,7 +144,7 @@ public class SbomFileParserTests
     [TestMethod]
     public void EmptyArray_ValidJson()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJsonEmptyArray);
+        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.JsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new ();

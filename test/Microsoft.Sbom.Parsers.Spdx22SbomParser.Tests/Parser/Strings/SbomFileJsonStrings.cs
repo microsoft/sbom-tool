@@ -71,6 +71,7 @@ internal struct SbomFileJsonStrings
 
     public const string MalformedJsonEmptyObject = @"{""files"":{}";
     public const string MalformedJsonEmptyArray = @"{""files"": []";
+    public const string JsonEmptyArray = @"{""files"": []}";
     public const string MalformedJson = @"{
             ""files"": [
             {
