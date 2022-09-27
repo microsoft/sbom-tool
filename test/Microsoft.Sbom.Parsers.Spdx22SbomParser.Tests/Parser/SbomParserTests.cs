@@ -1,14 +1,10 @@
 ﻿using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
-using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Parser
 {
