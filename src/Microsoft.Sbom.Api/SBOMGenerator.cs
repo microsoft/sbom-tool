@@ -36,7 +36,7 @@ namespace Microsoft.Sbom.Api
         {
             kernel = new StandardKernel(new Bindings());
             configurationBuilder = new ApiConfigurationBuilder();
-            fileSystemUtils = new FileSystemUtils();
+            fileSystemUtils = new WindowsFileSystemUtils();
         }
 
         public SBOMGenerator(StandardKernel kernel, IFileSystemUtils fileSystemUtils)

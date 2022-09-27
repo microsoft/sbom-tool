@@ -6,13 +6,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
+using System.Security.Principal;
 
 namespace Microsoft.Sbom.Common
 {
     /// <summary>
     /// A wrapper class to make the filesystem methods unit testable.
     /// </summary>
-    public class FileSystemUtils : IFileSystemUtils
+    public class WindowsFileSystemUtils : IFileSystemUtils
     {
         private readonly EnumerationOptions dontFollowSymlinks = new EnumerationOptions
         {
@@ -60,88 +61,25 @@ namespace Microsoft.Sbom.Common
             Constants.DefaultStreamBufferSize,
             FileOptions.Asynchronous);
 
-        virtual public bool DirectoryHasReadPermissions(string directoryPath)
+        virtual public bool DirectoryHasReadPermissions(string directoryPath) => DirectoryHasRights(directoryPath, FileSystemRights.Read);
+
+        virtual public bool DirectoryHasWritePermissions(string directoryPath) => DirectoryHasRights(directoryPath, FileSystemRights.Write);
+
+        // Get the collection of authorization rules that apply to the directory
+        private bool DirectoryHasRights(string directoryPath, FileSystemRights fileSystemRights)
         {
             try
-            {
-                var readAllow = false;
-                var readDeny = false;
-                var accessControlList = GetDirectorySecurity(directoryPath);
-                if (accessControlList == null)
-                {
-                    return false;
-                }
+            {   
+                WindowsIdentity current = WindowsIdentity.GetCurrent();
+                var directoryInfo = new DirectoryInfo(directoryPath);
+                
+                var readAccessRules = directoryInfo.GetAccessControl().GetAccessRules(true, true, typeof(SecurityIdentifier))
+                    .Cast<FileSystemAccessRule>()
+                    .Where(rule => current.Groups.Contains(rule.IdentityReference) || current.User.Equals(rule.IdentityReference))
+                    .Where(rule => (fileSystemRights & rule.FileSystemRights) == fileSystemRights)
+                    .Where(rule => rule.AccessControlType == AccessControlType.Allow);
 
-                //get the access rules that pertain to a valid SID/NTAccount.
-                var accessRules = accessControlList.GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
-                if (accessRules == null)
-                {
-                    return false;
-                }
-
-                //we want to go over these rules to ensure a valid SID has access
-                foreach (FileSystemAccessRule rule in accessRules)
-                {
-                    if ((FileSystemRights.Read & rule.FileSystemRights) != FileSystemRights.Read)
-                    {
-                        continue;
-                    }
-
-                    if (rule.AccessControlType == AccessControlType.Allow)
-                    {
-                        readAllow = true;
-                    }
-                    else if (rule.AccessControlType == AccessControlType.Deny)
-                    {
-                        readDeny = true;
-                    }
-                }
-
-                return readAllow && !readDeny;
-            }
-            catch (Exception)
-            {
-                // TODO Add logger with debug
-                return false;
-            }
-        }
-
-        virtual public bool DirectoryHasWritePermissions(string directoryPath)
-        {
-            try
-            {
-                var writeAllow = false;
-                var writeDeny = false;
-                var accessControlList = GetDirectorySecurity(directoryPath);
-                if (accessControlList == null)
-                {
-                    return false;
-                }
-
-                var accessRules = accessControlList.GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
-                if (accessRules == null)
-                {
-                    return false;
-                }
-
-                foreach (FileSystemAccessRule rule in accessRules)
-                {
-                    if ((FileSystemRights.Write & rule.FileSystemRights) != FileSystemRights.Write)
-                        {
-                        continue;
-                    }
-
-                    if (rule.AccessControlType == AccessControlType.Allow)
-                        {
-                        writeAllow = true;
-                    }
-                    else if (rule.AccessControlType == AccessControlType.Deny)
-                        {
-                        writeDeny = true;
-                    }
-                }
-
-                return writeAllow && !writeDeny;
+                return readAccessRules.Any();
             }
             catch (Exception)
             {
