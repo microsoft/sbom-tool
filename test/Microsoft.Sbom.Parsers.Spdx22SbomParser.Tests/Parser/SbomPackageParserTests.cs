@@ -85,7 +85,6 @@ public class SbomPackageParserTests
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageBadReferenceType)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingReferenceLocator)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingPackageVerificationCode)]
-    [TestMethod]
     [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
     {
@@ -105,7 +104,6 @@ public class SbomPackageParserTests
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalArray)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalObject)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalArrayNoKey)]
-    [TestMethod]
     public void IgnoresAdditionalPropertiesTest(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
