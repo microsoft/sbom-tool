@@ -62,10 +62,20 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public ParserState Next(Stream stream)
     {
+        ParserState nextState;
         if (stateChangedInPreviousOperation)
         {
+            if (CurrentState != ParserState.INTERNAL_SKIP)
+            {
+                return CurrentState;
+            }
+
             stateChangedInPreviousOperation = false;
-            return CurrentState;
+            nextState = CurrentState;
+        }
+        else
+        {
+            nextState = MoveToNextState(stream);
         }
 
         if (CurrentState == ParserState.FINISHED)
@@ -73,15 +83,10 @@ public class SPDXParser : ISbomParser
             return CurrentState;
         }
 
-        var nextState = MoveToNextState(stream);
-
         if (nextState == ParserState.INTERNAL_SKIP)
         {
-            while (nextState == ParserState.INTERNAL_SKIP)
-            {
-                SkipProperty(stream);
-                nextState = MoveToNextState(stream);
-            }
+            SkipProperty(stream);
+            return CurrentState;
         }
 
         parserState = nextState;
@@ -131,11 +136,30 @@ public class SPDXParser : ISbomParser
                 throw new ParserException($"Error while parsing JSON at position {stream.Position}, additional details: ${e.Message}", e);
             }
         }
-        
-        void SkipProperty(Stream stream)
+    }
+
+    private void SkipProperty(Stream stream)
+    {
+        while (parserState == ParserState.INTERNAL_SKIP)
+        {
+            SkipPropertyInternal(stream);
+        }
+
+        stateChangedInPreviousOperation = true;
+        return;
+
+        void SkipPropertyInternal(Stream stream)
         {
             var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
+            //ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
             ParserUtils.SkipProperty(stream, ref buffer, ref reader);
+
+            var rootPropertiesParser = new RootPropertiesParser(stream);
+            parserState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
+            ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
+
+            isFinalBlock = reader.IsFinalBlock;
+            readerState = reader.CurrentState;
         }
     }
 
