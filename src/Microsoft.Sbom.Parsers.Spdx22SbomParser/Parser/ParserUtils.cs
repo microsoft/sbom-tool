@@ -6,6 +6,7 @@ using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -219,43 +220,6 @@ internal class ParserUtils
                 }
             }
         }
-
-        //if (reader.TokenType == JsonTokenType.PropertyName)
-        //{
-        //    Read(stream, ref buffer, ref reader);
-        //}
-
-        //if (reader.TokenType == JsonTokenType.StartObject
-        //    || reader.TokenType == JsonTokenType.StartArray)
-        //{
-        //    int arrayCount = 0;
-        //    int objectCount = 0;
-        //    while (true)
-        //    {
-        //        arrayCount = reader.TokenType switch
-        //        {
-        //            JsonTokenType.StartArray => arrayCount + 1,
-        //            JsonTokenType.EndArray => arrayCount - 1,
-        //            _ => arrayCount,
-        //        };
-
-        //        objectCount = reader.TokenType switch
-        //        {
-        //            JsonTokenType.StartObject => objectCount + 1,
-        //            JsonTokenType.EndObject => objectCount - 1,
-        //            _ => objectCount,
-        //        };
-
-        //        if (arrayCount + objectCount != 0)
-        //        {
-        //            Read(stream, ref buffer, ref reader);
-        //        }
-        //        else
-        //        {
-        //            break;
-        //        }
-        //    }
-        //}
     }
 
     /// <summary>
