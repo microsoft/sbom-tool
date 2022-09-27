@@ -118,7 +118,7 @@ public class SPDXParser : ISbomParser
 
                 if (!isParsingStarted)
                 {
-                    ParserUtils.SkipFirstObjectToken(stream, ref buffer, ref reader);
+                    ParserUtils.SkipNoneTokens(stream, ref buffer, ref reader);
                     ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
 
                     isParsingStarted = true;
