@@ -119,7 +119,7 @@ public class SPDXParser : ISbomParser
                 if (!isParsingStarted)
                 {
                     ParserUtils.SkipFirstObjectToken(stream, ref buffer, ref reader);
-                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
 
                     isParsingStarted = true;
                 }
@@ -131,7 +131,6 @@ public class SPDXParser : ISbomParser
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
                     result = ParserState.FINISHED;
                 }
 
@@ -201,7 +200,7 @@ public class SPDXParser : ISbomParser
 
             var rootPropertiesParser = new RootPropertiesParser(stream);
             var parserState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
-            ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
+            ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
 
             isFinalBlock = reader.IsFinalBlock;
             readerState = reader.CurrentState;
@@ -247,7 +246,7 @@ public class SPDXParser : ISbomParser
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
                 }
 
                 if (reader.TokenType == JsonTokenType.EndArray)
@@ -307,7 +306,7 @@ public class SPDXParser : ISbomParser
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
                 }
 
                 if (reader.TokenType == JsonTokenType.EndArray)
@@ -367,7 +366,7 @@ public class SPDXParser : ISbomParser
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
                 }
 
                 if (reader.TokenType == JsonTokenType.EndArray)
@@ -427,7 +426,7 @@ public class SPDXParser : ISbomParser
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
                 }
 
                 if (reader.TokenType == JsonTokenType.EndArray)

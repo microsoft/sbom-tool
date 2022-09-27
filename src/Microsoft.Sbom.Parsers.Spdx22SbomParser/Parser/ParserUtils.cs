@@ -51,7 +51,7 @@ internal class ParserUtils
         while (!reader.Read())
         {
             // Not enough of the JSON is in the buffer to complete a read.
-            GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
+            GetMoreBytesFromStream(stream, ref buffer, ref reader);
         }
     }
 
@@ -126,9 +126,7 @@ internal class ParserUtils
     {
         // Ensure first value is an array and read that so that we are the { token.
         SkipNoneTokens(stream, ref buffer, ref reader);
-        //AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
         Read(stream, ref buffer, ref reader);
-        GetMoreBytesFromStream(stream, ref buffer, ref reader);
     }
 
     /// <summary>
@@ -268,13 +266,8 @@ internal class ParserUtils
     /// <param name="stream"></param>
     /// <param name="buffer"></param>
     /// <param name="reader"></param>
-    public static void GetMoreBytesFromStream(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader, bool shouldExecute = false)
+    public static void GetMoreBytesFromStream(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
-        if (!shouldExecute)
-        {
-            return;
-        }
-
         if (stream is null)
         {
             throw new ArgumentNullException(nameof(stream));

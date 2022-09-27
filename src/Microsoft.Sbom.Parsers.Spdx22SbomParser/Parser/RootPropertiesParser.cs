@@ -69,7 +69,7 @@ namespace Microsoft.Sbom.Parser
 
             // Consume the PropertyName token.
             ParserUtils.Read(stream, ref buffer, ref reader);
-            ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
+            ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
             return nextState;
         }
     }
