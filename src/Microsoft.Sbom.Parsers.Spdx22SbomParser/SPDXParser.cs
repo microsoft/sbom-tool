@@ -68,33 +68,19 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public ParserState Next(Stream stream)
     {
-        ParserState nextState;
-        if (stateChangedInPreviousOperation)
+        if (parserState == ParserState.FINISHED ||
+            (stateChangedInPreviousOperation && parserState != ParserState.INTERNAL_SKIP))
         {
-            if (CurrentState != ParserState.INTERNAL_SKIP)
-            {
-                return CurrentState;
-            }
-
-            stateChangedInPreviousOperation = false;
-            nextState = CurrentState;
-        }
-        else
-        {
-            nextState = MoveToNextState(stream);
+            return parserState;
         }
 
-        if (CurrentState == ParserState.FINISHED)
-        {
-            return CurrentState;
-        }
-
+        var nextState = stateChangedInPreviousOperation ? parserState : MoveToNextState(stream);
         if (nextState == ParserState.INTERNAL_SKIP)
         {
-            SkipProperty(stream);
-            return CurrentState;
+            nextState = SkipInternalProperties(stream);
         }
 
+        stateChangedInPreviousOperation = false;
         parserState = nextState;
         return nextState;
         
@@ -127,7 +113,6 @@ public class SPDXParser : ISbomParser
                 // The caller always closes the ending }
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
-                    // TODO read to the end
                     ParserUtils.Read(stream, ref buffer, ref reader);
                     ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
                     result = ParserState.FINISHED;
@@ -144,27 +129,29 @@ public class SPDXParser : ISbomParser
         }
     }
 
-    private void SkipProperty(Stream stream)
+    private ParserState SkipInternalProperties(Stream stream)
     {
-        while (parserState == ParserState.INTERNAL_SKIP)
+        ParserState internalParserState;
+        do
         {
-            SkipPropertyInternal(stream);
+            internalParserState = SkipPropertyInternal(stream);
         }
+        while (internalParserState == ParserState.INTERNAL_SKIP);
 
-        stateChangedInPreviousOperation = true;
-        return;
+        return internalParserState;
 
-        void SkipPropertyInternal(Stream stream)
+        ParserState SkipPropertyInternal(Stream stream)
         {
             var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
             ParserUtils.SkipProperty(stream, ref buffer, ref reader);
 
             var rootPropertiesParser = new RootPropertiesParser(stream);
-            parserState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
+            var parserState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
             ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
 
             isFinalBlock = reader.IsFinalBlock;
             readerState = reader.CurrentState;
+            return parserState;
         }
     }
 
