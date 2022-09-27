@@ -79,6 +79,18 @@ public class SPDXParser : ISbomParser
         stateChangedInPreviousOperation = false;
         this.ignoreValidation = ignoreValidation;
         this.stream = stream;
+
+        // Validate buffer is not of 0 length.
+        if (buffer is null || buffer.Length == 0)
+        {
+            throw new ArgumentException($"The {nameof(buffer)} value can't be null or of 0 length.");
+        }
+
+        // Fill up the buffer.
+        if (!stream.CanRead || stream.Read(buffer) == 0)
+        {
+            throw new EndOfStreamException();
+        }
     }
 
     private readonly ManifestInfo spdxManifestInfo = new ManifestInfo

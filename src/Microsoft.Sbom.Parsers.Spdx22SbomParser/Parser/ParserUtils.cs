@@ -35,20 +35,6 @@ internal class ParserUtils
             throw new ArgumentNullException(nameof(stream));
         }
 
-        if (buffer is null || buffer.Length == 0)
-        {
-            throw new ArgumentException($"The {nameof(buffer)} value can't be null or of 0 length.");
-        }
-
-        // If the buffer is empty, refill the buffer.
-        if (buffer[0] == 0)
-        {
-            if (!stream.CanRead || stream.Read(buffer) == 0)
-            {
-                throw new EndOfStreamException();
-            }
-        }
-
         while (!reader.Read())
         {
             // Not enough of the JSON is in the buffer to complete a read.
