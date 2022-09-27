@@ -19,7 +19,7 @@ public interface ISbomParser
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    ParserState Next(Stream stream);
+    ParserState Next();
 
     /// <summary>
     /// Returns a list of <see cref="SBOMFile"/> objects defined in the
@@ -27,7 +27,7 @@ public interface ISbomParser
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    IEnumerable<SBOMFile> GetFiles(Stream stream);
+    IEnumerable<SBOMFile> GetFiles();
 
     /// <summary>
     /// Returns a list of <see cref="SBOMPackage"/> objects defined in the
@@ -35,7 +35,7 @@ public interface ISbomParser
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    IEnumerable<SBOMPackage> GetPackages(Stream stream);
+    IEnumerable<SBOMPackage> GetPackages();
 
     /// <summary>
     /// Returns a list of <see cref="SBOMRelationship"/> objects defined in the
@@ -43,7 +43,7 @@ public interface ISbomParser
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    IEnumerable<SBOMRelationship> GetRelationships(Stream stream);
+    IEnumerable<SBOMRelationship> GetRelationships();
 
     /// <summary>
     /// Returns a list of <see cref="SBOMReference"/> objects defined in the
@@ -51,7 +51,7 @@ public interface ISbomParser
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    IEnumerable<SBOMReference> GetReferences(Stream stream);
+    IEnumerable<SBOMReference> GetReferences();
 
     /// <summary>
     /// Returns a <see cref="SBOMMetadata"/> object using the metadata defined in the 
@@ -59,7 +59,7 @@ public interface ISbomParser
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    SBOMMetadata GetMetadata(Stream stream);
+    SBOMMetadata GetMetadata();
 
     /// <summary>
     /// This function is called by the sbom tool upon initialization to get all the 

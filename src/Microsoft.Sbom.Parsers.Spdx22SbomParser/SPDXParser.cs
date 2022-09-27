@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 
 namespace Microsoft.Sbom;
@@ -37,6 +36,8 @@ public class SPDXParser : ISbomParser
 
     private bool isParsingStarted = false;
     private bool stateChangedInPreviousOperation = true;
+
+    private readonly Stream stream;
 
     private ParserState parserState = ParserState.NONE;
     private byte[] buffer;
@@ -64,19 +65,20 @@ public class SPDXParser : ISbomParser
         }
     }
 
-    public SPDXParser()
-        : this(Constants.ReadBufferSize, false)
+    public SPDXParser(Stream stream)
+        : this(stream, Constants.ReadBufferSize, false)
     {
     }
 
     // Used in unit tests
-    internal SPDXParser(int bufferSize = Constants.ReadBufferSize, bool ignoreValidation = false)
+    internal SPDXParser(Stream stream, int bufferSize = Constants.ReadBufferSize, bool ignoreValidation = false)
     {
         buffer = new byte[bufferSize];
         readerState = default;
         isFinalBlock = false;
         stateChangedInPreviousOperation = false;
         this.ignoreValidation = ignoreValidation;
+        this.stream = stream;
     }
 
     private readonly ManifestInfo spdxManifestInfo = new ManifestInfo
@@ -86,13 +88,13 @@ public class SPDXParser : ISbomParser
     };
 
     /// <inheritdoc/>
-    public SBOMMetadata GetMetadata(Stream stream)
+    public SBOMMetadata GetMetadata()
     {
         throw new NotImplementedException();
     }
 
     /// <inheritdoc/>
-    public ParserState Next(Stream stream)
+    public ParserState Next()
     {
         if (parserState == ParserState.FINISHED
             || (stateChangedInPreviousOperation && parserState != ParserState.INTERNAL_SKIP))
@@ -100,17 +102,17 @@ public class SPDXParser : ISbomParser
             return parserState;
         }
 
-        var nextState = stateChangedInPreviousOperation ? parserState : MoveToNextState(stream);
+        var nextState = stateChangedInPreviousOperation ? parserState : MoveToNextState();
         if (nextState == ParserState.INTERNAL_SKIP)
         {
-            nextState = SkipInternalProperties(stream);
+            nextState = SkipInternalProperties();
         }
 
         stateChangedInPreviousOperation = false;
         CurrentState = nextState;
         return nextState;
         
-        ParserState MoveToNextState(Stream stream)
+        ParserState MoveToNextState()
         {
             try
             {
@@ -182,18 +184,18 @@ public class SPDXParser : ISbomParser
         }
     }
 
-    private ParserState SkipInternalProperties(Stream stream)
+    private ParserState SkipInternalProperties()
     {
         ParserState internalParserState;
         do
         {
-            internalParserState = SkipPropertyInternal(stream);
+            internalParserState = SkipPropertyInternal();
         }
         while (internalParserState == ParserState.INTERNAL_SKIP);
 
         return internalParserState;
 
-        ParserState SkipPropertyInternal(Stream stream)
+        ParserState SkipPropertyInternal()
         {
             var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
             ParserUtils.SkipProperty(stream, ref buffer, ref reader);
@@ -209,7 +211,7 @@ public class SPDXParser : ISbomParser
     }
 
     /// <inheritdoc/>
-    public IEnumerable<SBOMReference> GetReferences(Stream stream)
+    public IEnumerable<SBOMReference> GetReferences()
     {
         if (parserState != ParserState.REFERENCES)
         {
@@ -269,7 +271,7 @@ public class SPDXParser : ISbomParser
     }
 
     /// <inheritdoc/>
-    public IEnumerable<SBOMRelationship> GetRelationships(Stream stream)
+    public IEnumerable<SBOMRelationship> GetRelationships()
     {
         if (parserState != ParserState.RELATIONSHIPS)
         {
@@ -329,7 +331,7 @@ public class SPDXParser : ISbomParser
     }
 
     /// <inheritdoc/>
-    public IEnumerable<SBOMPackage> GetPackages(Stream stream)
+    public IEnumerable<SBOMPackage> GetPackages()
     {
         if (parserState != ParserState.PACKAGES)
         {
@@ -389,7 +391,7 @@ public class SPDXParser : ISbomParser
     }
 
     /// <inheritdoc/>
-    public IEnumerable<SBOMFile> GetFiles(Stream stream)
+    public IEnumerable<SBOMFile> GetFiles()
     {
         if (parserState != ParserState.FILES)
         {

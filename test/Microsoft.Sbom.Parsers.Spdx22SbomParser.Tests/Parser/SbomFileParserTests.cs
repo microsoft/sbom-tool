@@ -18,15 +18,15 @@ public class SbomFileParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
         var count = 0;
 
-        while (parser.Next(stream) != ParserState.FINISHED)
+        while (parser.Next() != ParserState.FINISHED)
         {
             Assert.AreEqual(ParserState.FILES, parser.CurrentState);
 
-            foreach (var file in parser.GetFiles(stream))
+            foreach (var file in parser.GetFiles())
             {
                 count++;
                 Assert.IsNotNull(file);
@@ -50,14 +50,14 @@ public class SbomFileParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.FILES, state);
 
         stream.Close();
 
-        parser.GetFiles(stream).GetEnumerator().MoveNext(); 
+        parser.GetFiles().GetEnumerator().MoveNext(); 
     }
 
     [TestMethod]
@@ -68,12 +68,12 @@ public class SbomFileParserTests
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
 
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.FILES, state);
 
-        parser.GetFiles(stream).GetEnumerator().MoveNext();
+        parser.GetFiles().GetEnumerator().MoveNext();
     }
 
     [DataTestMethod]
@@ -92,12 +92,12 @@ public class SbomFileParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.FILES, state);
 
-        parser.GetFiles(stream).GetEnumerator().MoveNext();
+        parser.GetFiles().GetEnumerator().MoveNext();
     }
 
     [DataTestMethod]
@@ -111,12 +111,12 @@ public class SbomFileParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.FILES, state);
 
-        foreach (var file in parser.GetFiles(stream))
+        foreach (var file in parser.GetFiles())
         {
             Assert.IsNotNull(file);
         }
@@ -133,12 +133,12 @@ public class SbomFileParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.FILES, state);
 
-        parser.GetFiles(stream).GetEnumerator().MoveNext();
+        parser.GetFiles().GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -147,12 +147,12 @@ public class SbomFileParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.JsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.FILES, state);
 
-        parser.GetFiles(stream).GetEnumerator().MoveNext();
+        parser.GetFiles().GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -162,11 +162,11 @@ public class SbomFileParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (0, ignoreValidation: true);
+        SPDXParser parser = new (stream, 0, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.FILES, state);
 
-        parser.GetFiles(stream).GetEnumerator().MoveNext();
+        parser.GetFiles().GetEnumerator().MoveNext();
     }
 }

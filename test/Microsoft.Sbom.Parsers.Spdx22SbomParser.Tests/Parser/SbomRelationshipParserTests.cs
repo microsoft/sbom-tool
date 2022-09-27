@@ -19,12 +19,12 @@ public class SbomRelationshipParserTests
         using var stream = new MemoryStream(bytes);
         var count = 0;
 
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
-        foreach (var relationship in parser.GetRelationships(stream))
+        foreach (var relationship in parser.GetRelationships())
         {
             count++;
             Assert.IsNotNull(relationship);
@@ -47,14 +47,14 @@ public class SbomRelationshipParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.RELATIONSHIPS, state);
         
         stream.Close();
 
-        parser.GetRelationships(stream).GetEnumerator().MoveNext();
+        parser.GetRelationships().GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -65,12 +65,12 @@ public class SbomRelationshipParserTests
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
          
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.RELATIONSHIPS, state);
         
-        parser.GetRelationships(stream).GetEnumerator().MoveNext();
+        parser.GetRelationships().GetEnumerator().MoveNext();
     }
 
     [DataTestMethod]
@@ -83,12 +83,12 @@ public class SbomRelationshipParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (50);
+        SPDXParser parser = new (stream, 50);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
-        parser.GetRelationships(stream).GetEnumerator().MoveNext();
+        parser.GetRelationships().GetEnumerator().MoveNext();
     }
 
     [DataTestMethod]
@@ -102,12 +102,12 @@ public class SbomRelationshipParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
-        foreach (var relationship in parser.GetRelationships(stream))
+        foreach (var relationship in parser.GetRelationships())
         {
             Assert.IsNotNull(relationship);
         }
@@ -123,12 +123,12 @@ public class SbomRelationshipParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
-        parser.GetRelationships(stream).GetEnumerator().MoveNext();
+        parser.GetRelationships().GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -137,12 +137,12 @@ public class SbomRelationshipParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.MalformedJsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
-        parser.GetRelationships(stream).GetEnumerator().MoveNext();
+        parser.GetRelationships().GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -152,11 +152,11 @@ public class SbomRelationshipParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (0, ignoreValidation: true);
+        SPDXParser parser = new (stream, 0, ignoreValidation: true);
 
-        var state = parser.Next(stream);
+        var state = parser.Next();
         Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
-        parser.GetRelationships(stream).GetEnumerator().MoveNext();
+        parser.GetRelationships().GetEnumerator().MoveNext();
     }
 }

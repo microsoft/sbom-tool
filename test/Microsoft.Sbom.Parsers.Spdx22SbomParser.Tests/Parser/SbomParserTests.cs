@@ -17,31 +17,31 @@ namespace Microsoft.Sbom.Parser
             byte[] bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithAll4Properties);
             using var stream = new MemoryStream(bytes);
 
-            SPDXParser parser = new ();
+            SPDXParser parser = new (stream);
 
             Assert.AreEqual(ParserState.NONE, parser.CurrentState);
 
-            var state = parser.Next(stream);
+            var state = parser.Next();
             Assert.AreEqual(ParserState.FILES, state);
 
-            Assert.AreEqual(0, parser.GetFiles(stream).Count());
+            Assert.AreEqual(0, parser.GetFiles().Count());
 
-            state = parser.Next(stream);
+            state = parser.Next();
             Assert.AreEqual(ParserState.PACKAGES, state);
 
-            Assert.AreEqual(0, parser.GetPackages(stream).Count());
+            Assert.AreEqual(0, parser.GetPackages().Count());
 
-            state = parser.Next(stream);
+            state = parser.Next();
             Assert.AreEqual(ParserState.RELATIONSHIPS, state);
 
-            Assert.AreEqual(0, parser.GetRelationships(stream).Count());
+            Assert.AreEqual(0, parser.GetRelationships().Count());
 
-            state = parser.Next(stream);
+            state = parser.Next();
             Assert.AreEqual(ParserState.REFERENCES, state);
 
-            Assert.AreEqual(0, parser.GetReferences(stream).Count());
+            Assert.AreEqual(0, parser.GetReferences().Count());
 
-            state = parser.Next(stream);
+            state = parser.Next();
             Assert.AreEqual(ParserState.FINISHED, state);
         }
 
@@ -84,31 +84,31 @@ namespace Microsoft.Sbom.Parser
 
         private void IterateAllProperties(Stream stream)
         {
-            SPDXParser parser = new ();
-            while (parser.Next(stream) != ParserState.FINISHED)
+            SPDXParser parser = new (stream);
+            while (parser.Next() != ParserState.FINISHED)
             {
                 if (parser.CurrentState == ParserState.PACKAGES)
                 {
                     // Do nothing.
-                    parser.GetPackages(stream).ToList();
+                    parser.GetPackages().ToList();
                 }
 
                 if (parser.CurrentState == ParserState.FILES)
                 {
                     // Do nothing.
-                    parser.GetFiles(stream).ToList();
+                    parser.GetFiles().ToList();
                 }
 
                 if (parser.CurrentState == ParserState.REFERENCES)
                 {
                     // Do nothing.
-                    parser.GetReferences(stream).ToList();
+                    parser.GetReferences().ToList();
                 }
 
                 if (parser.CurrentState == ParserState.RELATIONSHIPS)
                 {
                     // Do nothing.
-                    parser.GetRelationships(stream).ToList();
+                    parser.GetRelationships().ToList();
                 }
             }
         }
