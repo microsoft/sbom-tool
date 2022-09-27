@@ -54,7 +54,7 @@ internal readonly struct ExternalDocumentReferenceStrings
         }}]}";
 
     public const string EmptyArray = @"{
-        ""externalDocumentRefs"": []";
+        ""externalDocumentRefs"": []}";
 
     public const string JsonExtDocumentRefsStringAdditionalString = @"{
         ""externalDocumentRefs"": [

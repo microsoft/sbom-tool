@@ -24,16 +24,21 @@ public class SPDXParser : ISbomParser
 {
     private bool isFileArrayParsingStarted = false;
     private bool isFileArrayParsingFinished = false;
-    private bool isPackageArrayParsingStarted = false;
-    private bool isRelationshipArrayParsingStarted = false;
-    private bool isExternalReferencesArrayParsingStarted = false;
-    private bool isParsingStarted = false;
 
+    private bool isPackageArrayParsingStarted = false;
+    private bool isPackageArrayParsingFinished = false;
+
+    private bool isRelationshipArrayParsingStarted = false;
+    private bool isRelationshipArrayParsingFinished = false;
+
+    private bool isExternalReferencesArrayParsingStarted = false;
+    private bool isExternalReferencesArrayParsingFinished = false;
+
+    private bool isParsingStarted = false;
     private bool stateChangedInPreviousOperation = true;
 
     private ParserState parserState = ParserState.NONE;
     private byte[] buffer;
-
     private JsonReaderState readerState;
     private bool isFinalBlock;
 
@@ -152,7 +157,6 @@ public class SPDXParser : ISbomParser
         void SkipPropertyInternal(Stream stream)
         {
             var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
-            //ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
             ParserUtils.SkipProperty(stream, ref buffer, ref reader);
 
             var rootPropertiesParser = new RootPropertiesParser(stream);
@@ -167,6 +171,11 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public IEnumerable<SBOMReference> GetReferences(Stream stream)
     {
+        if (parserState != ParserState.REFERENCES)
+        {
+            throw new ParserException($"The parser is not currently enumerating references. Current state: {CurrentState}");
+        }
+
         while (GetExternalDocumentReferences(stream, out SpdxExternalDocumentReference spdxExternalDocumentReference) != 0)
         {
             yield return spdxExternalDocumentReference.ToSbomReference();
@@ -176,6 +185,12 @@ public class SPDXParser : ISbomParser
         {
             try
             {
+                if (isExternalReferencesArrayParsingFinished)
+                {
+                    spdxExternalDocumentReference = null;
+                    return 0;
+                }
+
                 var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
 
                 if (!isExternalReferencesArrayParsingStarted)
@@ -199,6 +214,7 @@ public class SPDXParser : ISbomParser
                     var rootPropertiesParser = new RootPropertiesParser(stream);
                     parserState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
                     stateChangedInPreviousOperation = true;
+                    isExternalReferencesArrayParsingFinished = true;
                 }
 
                 isFinalBlock = reader.IsFinalBlock;
@@ -215,6 +231,11 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public IEnumerable<SBOMRelationship> GetRelationships(Stream stream)
     {
+        if (parserState != ParserState.RELATIONSHIPS)
+        {
+            throw new ParserException($"The parser is not currently enumerating relationships. Current state: {CurrentState}");
+        }
+
         while (GetPackages(stream, out SPDXRelationship sbomRelationship) != 0)
         {
             yield return sbomRelationship.ToSbomRelationship();
@@ -224,7 +245,7 @@ public class SPDXParser : ISbomParser
         {
             try
             {
-                if (parserState != ParserState.RELATIONSHIPS)
+                if (isRelationshipArrayParsingFinished)
                 {
                     sbomRelationship = null;
                     return 0;
@@ -253,6 +274,7 @@ public class SPDXParser : ISbomParser
                     var rootPropertiesParser = new RootPropertiesParser(stream);
                     parserState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
                     stateChangedInPreviousOperation = true;
+                    isRelationshipArrayParsingFinished = true;
                 }
 
                 isFinalBlock = reader.IsFinalBlock;
@@ -269,6 +291,11 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public IEnumerable<SBOMPackage> GetPackages(Stream stream)
     {
+        if (parserState != ParserState.PACKAGES)
+        {
+            throw new ParserException($"The parser is not currently enumerating packages. Current state: {CurrentState}");
+        }
+
         while (GetPackages(stream, out SPDXPackage sbomPackage) != 0)
         {
             yield return sbomPackage.ToSbomPackage();
@@ -278,7 +305,7 @@ public class SPDXParser : ISbomParser
         {
             try
             {
-                if (parserState != ParserState.PACKAGES)
+                if (isPackageArrayParsingFinished)
                 {
                     sbomPackage = null;
                     return 0;
@@ -307,6 +334,7 @@ public class SPDXParser : ISbomParser
                     var rootPropertiesParser = new RootPropertiesParser(stream);
                     parserState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
                     stateChangedInPreviousOperation = true;
+                    isPackageArrayParsingFinished = true;
                 }
 
                 isFinalBlock = reader.IsFinalBlock;
