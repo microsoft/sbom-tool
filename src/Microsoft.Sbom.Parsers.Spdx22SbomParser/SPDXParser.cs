@@ -246,6 +246,12 @@ public class SPDXParser : ISbomParser
         {
             try
             {
+                if (parserState != ParserState.PACKAGES)
+                {
+                    sbomPackage = null;
+                    return 0;
+                }
+
                 var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
 
                 if (!isPackageArrayParsingStarted)
@@ -261,7 +267,7 @@ public class SPDXParser : ISbomParser
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
                 }
 
                 if (reader.TokenType == JsonTokenType.EndArray)
