@@ -34,16 +34,16 @@ namespace Microsoft.Sbom.Parser
 
             try
             {
+                // Read the next token.
+                ParserUtils.Read(stream, ref buffer, ref reader);
+
                 // If the end of the Json Object is reached, return parser Finished state.
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
                     return ParserState.FINISHED;
                 }
 
-                // Read the next token.
-                ParserUtils.Read(stream, ref buffer, ref reader);
-                
-                ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);
+                //ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);
                 return ParseNextPropertyAsParserState(ref reader, ref buffer);
             }
             catch (EndOfStreamException)
@@ -66,9 +66,10 @@ namespace Microsoft.Sbom.Parser
                 ExternalDocumentRefsProperty => ParserState.REFERENCES,
                 _ => ParserState.INTERNAL_SKIP,
             };
-            
-            // Consume the bytes we have read.
-            ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+
+            // Consume the PropertyName token.
+            ParserUtils.Read(stream, ref buffer, ref reader);
+            ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
             return nextState;
         }
     }

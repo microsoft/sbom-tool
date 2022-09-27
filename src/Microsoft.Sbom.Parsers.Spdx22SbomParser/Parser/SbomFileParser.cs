@@ -59,6 +59,9 @@ internal ref struct SbomFileParser
             // If the end of the array is reached, return with null value to signal end of the array.
             if (reader.TokenType == JsonTokenType.EndArray)
             {
+                //ParserUtils.Read(stream, ref buffer, ref reader);
+                //ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
+
                 sbomFile = null;
                 return 0;
             }

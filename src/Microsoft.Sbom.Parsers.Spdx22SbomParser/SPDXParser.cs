@@ -28,8 +28,13 @@ public class SPDXParser : ISbomParser
     private bool isExternalReferencesArrayParsingStarted = false;
     private bool isParsingStarted = false;
 
+    private bool stateChangedInPreviousOperation = true;
+
     private ParserState parserState = ParserState.NONE;
     private byte[] buffer;
+
+    private JsonReaderState readerState;
+    private bool isFinalBlock;
 
     public ParserState CurrentState => parserState;
 
@@ -37,6 +42,9 @@ public class SPDXParser : ISbomParser
     public SPDXParser(int bufferSize = Constants.ReadBufferSize)
     {
         buffer = new byte[bufferSize];
+        readerState = default;
+        isFinalBlock = false;
+        stateChangedInPreviousOperation = false;
     }
 
     private readonly ManifestInfo spdxManifestInfo = new ManifestInfo
@@ -54,8 +62,17 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public ParserState Next(Stream stream)
     {
-        JsonReaderState readerState = default;
-        stream.Read(buffer);
+        if (stateChangedInPreviousOperation)
+        {
+            stateChangedInPreviousOperation = false;
+            return CurrentState;
+        }
+
+        if (CurrentState == ParserState.FINISHED)
+        {
+            return CurrentState;
+        }
+
         var nextState = MoveToNextState(stream);
 
         if (nextState == ParserState.INTERNAL_SKIP)
@@ -74,11 +91,13 @@ public class SPDXParser : ISbomParser
         {
             try
             {
-                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+                var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
 
                 if (!isParsingStarted)
                 {
                     ParserUtils.SkipFirstObjectToken(stream, ref buffer, ref reader);
+                    ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader, true);
+
                     isParsingStarted = true;
                 }
 
@@ -103,6 +122,7 @@ public class SPDXParser : ISbomParser
                     result = ParserState.FINISHED;
                 }
 
+                isFinalBlock = reader.IsFinalBlock;
                 readerState = reader.CurrentState;
                 return result;
             }
@@ -114,7 +134,7 @@ public class SPDXParser : ISbomParser
         
         void SkipProperty(Stream stream)
         {
-            var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+            var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
             ParserUtils.SkipProperty(stream, ref buffer, ref reader);
         }
     }
@@ -122,10 +142,6 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public IEnumerable<SBOMReference> GetReferences(Stream stream)
     {
-        JsonReaderState readerState = default;
-
-        stream.Read(buffer);
-
         while (GetExternalDocumentReferences(stream, out SpdxExternalDocumentReference spdxExternalDocumentReference) != 0)
         {
             yield return spdxExternalDocumentReference.ToSbomReference();
@@ -135,7 +151,7 @@ public class SPDXParser : ISbomParser
         {
             try
             {
-                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+                var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
 
                 if (!isExternalReferencesArrayParsingStarted)
                 {
@@ -153,6 +169,14 @@ public class SPDXParser : ISbomParser
                     ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
                 }
 
+                if (reader.TokenType == JsonTokenType.EndArray)
+                {
+                    var rootPropertiesParser = new RootPropertiesParser(stream);
+                    parserState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
+                    stateChangedInPreviousOperation = true;
+                }
+
+                isFinalBlock = reader.IsFinalBlock;
                 readerState = reader.CurrentState;
                 return result;
             }
@@ -166,10 +190,6 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public IEnumerable<SBOMRelationship> GetRelationships(Stream stream)
     {
-        JsonReaderState readerState = default;
-
-        stream.Read(buffer);
-
         while (GetPackages(stream, out SPDXRelationship sbomRelationship) != 0)
         {
             yield return sbomRelationship.ToSbomRelationship();
@@ -179,7 +199,7 @@ public class SPDXParser : ISbomParser
         {
             try
             {
-                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+                var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
 
                 if (!isRelationshipArrayParsingStarted)
                 {
@@ -197,6 +217,13 @@ public class SPDXParser : ISbomParser
                     ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
                 }
 
+                if (reader.TokenType == JsonTokenType.EndArray)
+                {
+                    var rootPropertiesParser = new RootPropertiesParser(stream);
+                    parserState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
+                    stateChangedInPreviousOperation = true;
+                }
+                isFinalBlock = reader.IsFinalBlock;
                 readerState = reader.CurrentState;
                 return result;
             }
@@ -210,10 +237,6 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public IEnumerable<SBOMPackage> GetPackages(Stream stream)
     {
-        JsonReaderState readerState = default;
-
-        stream.Read(buffer);
-        
         while (GetPackages(stream, out SPDXPackage sbomPackage) != 0)
         {
             yield return sbomPackage.ToSbomPackage();
@@ -223,7 +246,7 @@ public class SPDXParser : ISbomParser
         {
             try
             {
-                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+                var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
 
                 if (!isPackageArrayParsingStarted)
                 {
@@ -241,6 +264,14 @@ public class SPDXParser : ISbomParser
                     ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
                 }
 
+                if (reader.TokenType == JsonTokenType.EndArray)
+                {
+                    var rootPropertiesParser = new RootPropertiesParser(stream);
+                    parserState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
+                    stateChangedInPreviousOperation = true;
+                }
+
+                isFinalBlock = reader.IsFinalBlock;
                 readerState = reader.CurrentState;
                 return result;
             }
@@ -254,10 +285,6 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public IEnumerable<SBOMFile> GetFiles(Stream stream)
     {
-        JsonReaderState readerState = default;
-
-        stream.Read(buffer);
-
         while (GetFiles(stream, out SPDXFile sbomFile) != 0)
         {
             yield return sbomFile.ToSbomFile();
@@ -267,7 +294,7 @@ public class SPDXParser : ISbomParser
         {
             try
             {
-                var reader = new Utf8JsonReader(buffer, isFinalBlock: false, readerState);
+                var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
 
                 if (!isFileArrayParsingStarted)
                 {
@@ -285,6 +312,14 @@ public class SPDXParser : ISbomParser
                     ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
                 }
 
+                if (reader.TokenType == JsonTokenType.EndArray)
+                {
+                    var rootPropertiesParser = new RootPropertiesParser(stream);
+                    parserState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
+                    stateChangedInPreviousOperation = true;
+                }
+
+                isFinalBlock = reader.IsFinalBlock;
                 readerState = reader.CurrentState;
                 return result;
             }

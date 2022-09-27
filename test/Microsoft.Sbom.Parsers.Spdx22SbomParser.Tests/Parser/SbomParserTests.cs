@@ -42,6 +42,8 @@ namespace Microsoft.Sbom.Parser
             Assert.AreEqual(ParserState.REFERENCES, state);
 
             Assert.AreEqual(0, parser.GetReferences(stream).Count());
+
+            state = parser.Next(stream);
         }
     }
 }
