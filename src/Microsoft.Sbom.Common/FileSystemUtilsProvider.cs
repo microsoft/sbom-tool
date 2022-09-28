@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Common
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             if (isWindows)
             {
-                return new FileSystemUtils();
+                return new WindowsFileSystemUtils();
             }
 
             return new UnixFileSystemUtils();
