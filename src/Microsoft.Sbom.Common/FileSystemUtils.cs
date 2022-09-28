@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +11,7 @@ namespace Microsoft.Sbom.Common
     /// <summary>
     /// A wrapper class to make the filesystem methods unit testable.
     /// </summary>
-    public class FileSystemUtils : IFileSystemUtils
+    public abstract class FileSystemUtils : IFileSystemUtils
     {
         private readonly EnumerationOptions dontFollowSymlinks = new EnumerationOptions
         {
@@ -60,95 +59,9 @@ namespace Microsoft.Sbom.Common
             Constants.DefaultStreamBufferSize,
             FileOptions.Asynchronous);
 
-        virtual public bool DirectoryHasReadPermissions(string directoryPath)
-        {
-            try
-            {
-                var readAllow = false;
-                var readDeny = false;
-                var accessControlList = GetDirectorySecurity(directoryPath);
-                if (accessControlList == null)
-                {
-                    return false;
-                }
+        abstract public bool DirectoryHasReadPermissions(string directoryPath);
 
-                //get the access rules that pertain to a valid SID/NTAccount.
-                var accessRules = accessControlList.GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
-                if (accessRules == null)
-                {
-                    return false;
-                }
-
-                //we want to go over these rules to ensure a valid SID has access
-                foreach (FileSystemAccessRule rule in accessRules)
-                {
-                    if ((FileSystemRights.Read & rule.FileSystemRights) != FileSystemRights.Read)
-                    {
-                        continue;
-                    }
-
-                    if (rule.AccessControlType == AccessControlType.Allow)
-                    {
-                        readAllow = true;
-                    }
-                    else if (rule.AccessControlType == AccessControlType.Deny)
-                    {
-                        readDeny = true;
-                    }
-                }
-
-                return readAllow && !readDeny;
-            }
-            catch (Exception)
-            {
-                // TODO Add logger with debug
-                return false;
-            }
-        }
-
-        virtual public bool DirectoryHasWritePermissions(string directoryPath)
-        {
-            try
-            {
-                var writeAllow = false;
-                var writeDeny = false;
-                var accessControlList = GetDirectorySecurity(directoryPath);
-                if (accessControlList == null)
-                {
-                    return false;
-                }
-
-                var accessRules = accessControlList.GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
-                if (accessRules == null)
-                {
-                    return false;
-                }
-
-                foreach (FileSystemAccessRule rule in accessRules)
-                {
-                    if ((FileSystemRights.Write & rule.FileSystemRights) != FileSystemRights.Write)
-                        {
-                        continue;
-                    }
-
-                    if (rule.AccessControlType == AccessControlType.Allow)
-                        {
-                        writeAllow = true;
-                    }
-                    else if (rule.AccessControlType == AccessControlType.Deny)
-                        {
-                        writeDeny = true;
-                    }
-                }
-
-                return writeAllow && !writeDeny;
-            }
-            catch (Exception)
-            {
-                // TODO Add logger with debug
-                return false;
-            }
-        }
+        abstract public bool DirectoryHasWritePermissions(string directoryPath);
 
         public DirectoryInfo CreateDirectory(string path) => Directory.CreateDirectory(path);
 
