@@ -80,9 +80,9 @@ namespace Microsoft.Sbom.Common
                 { 
                     var accessRules = directoryInfo.GetAccessControl().GetAccessRules(true, true, typeof(SecurityIdentifier))
                     .Cast<FileSystemAccessRule>()
-                    .Any((rule => current.Groups.Contains(rule.IdentityReference) || current.User.Equals(rule.IdentityReference)
+                    .Any(rule => (current.Groups.Contains(rule.IdentityReference) || current.User.Equals(rule.IdentityReference))
                         && ((fileSystemRights & rule.FileSystemRights) == fileSystemRights)
-                        && (rule.AccessControlType == accessControlType)));
+                        && (rule.AccessControlType == accessControlType));
                     return accessRules;
                 }
             }
