@@ -6,7 +6,7 @@ using Mono.Unix.Native;
 
 namespace Microsoft.Sbom.Common
 {
-    internal class UnixFileSystemUtils : WindowsFileSystemUtils
+    internal class UnixFileSystemUtils : FileSystemUtils
     {
         override public bool DirectoryHasReadPermissions(string directoryPath)
         {
