@@ -42,6 +42,11 @@ curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/downlo
 chmod +x sbom-tool
 ```
 
+### SBOM .NET Tool
+The sbom-tool can also be installed as a .NET tool using the following command:
+```powershell
+dotnet tool install --global Microsoft.Sbom.DotNetTool
+```
 ### SBOM API NuGet package
 Please add and authenticate the Microsoft GitHub NuGet package [registry](https://github.com/orgs/microsoft/packages?repo_name=sbom-tool) to your nuget.config. Then install the `Microsoft.Sbom.Api` package to your project using these [instructions](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry#installing-a-package)
 
