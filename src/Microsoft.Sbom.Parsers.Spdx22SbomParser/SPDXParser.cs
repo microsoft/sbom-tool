@@ -78,7 +78,7 @@ public class SPDXParser : ISbomParser
         isFinalBlock = false;
         stateChangedInPreviousOperation = false;
         this.ignoreValidation = ignoreValidation;
-        this.stream = stream;
+        this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
 
         // Validate buffer is not of 0 length.
         if (buffer is null || buffer.Length == 0)
