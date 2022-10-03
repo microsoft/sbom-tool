@@ -76,13 +76,13 @@ namespace Microsoft.Sbom.Api.Tests.Executors
 
                 Assert.IsNotNull(root);
 
-                if (root.TryGetProperty("SpdxDocument", out JsonElement documentNamespace))
+                if (root.TryGetProperty("Document", out JsonElement documentNamespace))
                 {
                     Assert.AreEqual("namespace", documentNamespace.GetString());
                 }
                 else
                 {
-                    Assert.Fail("SpdxDocument property not found");
+                    Assert.Fail("Document property not found");
                 }
 
                 if (root.TryGetProperty("ExternalDocumentId", out JsonElement externalDocumentId))

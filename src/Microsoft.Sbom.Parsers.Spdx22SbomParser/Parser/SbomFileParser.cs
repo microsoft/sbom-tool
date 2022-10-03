@@ -89,11 +89,6 @@ internal ref struct SbomFileParser
             sbomFile = null;
             return 0;
         }
-        catch (JsonException e)
-        {
-            sbomFile = null;
-            throw new ParserException($"Error while parsing JSON, addtional details: ${e.Message}", e);
-        }
     }
 
     private void ValidateSbomFile(SPDXFile sbomFile)
@@ -173,6 +168,7 @@ internal ref struct SbomFileParser
                 break;
 
             default:
+                ParserUtils.Read(stream, ref buffer, ref reader);
                 ParserUtils.SkipProperty(stream, ref buffer, ref reader);
                 break;
         }

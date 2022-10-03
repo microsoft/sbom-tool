@@ -6,7 +6,8 @@ internal struct SbomFileJsonStrings
     {
     }
 
-    public const string GoodJsonWith2FilesString = @"[
+    public const string GoodJsonWith2FilesString = @"{
+            ""files"": [
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -45,9 +46,10 @@ internal struct SbomFileJsonStrings
                 ],
                 ""copyrightText"": ""NOASSERTION""
             }
-        ]";
+        ]}";
 
-    public const string MalformedJsonEmptyObjectNoArrayEnd = @"[{
+    public const string MalformedJsonEmptyObjectNoArrayEnd = @"{
+            ""files"": [{
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
                 ""checksums"": [
@@ -65,11 +67,13 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ,
                 ""copyrightText"": ""NOASSERTION""
-            }]";
+            }]}";
 
-    public const string MalformedJsonEmptyObject = @"[{}";
-    public const string MalformedJsonEmptyArray = @"[]";
-    public const string MalformedJson = @"
+    public const string MalformedJsonEmptyObject = @"{""files"":{}";
+    public const string MalformedJsonEmptyArray = @"{""files"": []";
+    public const string JsonEmptyArray = @"{""files"": []}";
+    public const string MalformedJson = @"{
+            ""files"": [
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -88,9 +92,10 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]";
+            }]}";
 
-    public const string GoodJsonWith1FileAdditionalStringPropertyString = @"[
+    public const string GoodJsonWith1FileAdditionalStringPropertyString = @"{
+            ""files"": [
             {
                 ""fileName"": ""./additional"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -110,9 +115,10 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]";
+            }]}";
           
-    public const string GoodJsonWith1FileAdditionalValueArrayPropertyString = @"[
+    public const string GoodJsonWith1FileAdditionalValueArrayPropertyString = @"{
+            ""files"": [
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -132,9 +138,10 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]";
+            }]}";
 
-    public const string GoodJsonWith1FileAdditionalArrayPropertyString = @"[
+    public const string GoodJsonWith1FileAdditionalArrayPropertyString = @"{
+            ""files"": [
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -156,9 +163,10 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]";
+            }]}";
 
-    public const string GoodJsonWith1FileAdditionalObjectPropertyString = @"[
+    public const string GoodJsonWith1FileAdditionalObjectPropertyString = @"{
+            ""files"": [
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -180,9 +188,10 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]";
+            }]}";
 
-    public const string JsonWith1FileMissingNameString = @"[
+    public const string JsonWith1FileMissingNameString = @"{
+            ""files"": [
             {
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
                 ""checksums"": [
@@ -200,9 +209,10 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]";
+            }]}";
 
-    public const string JsonWith1FileMissingIDString = @"[
+    public const string JsonWith1FileMissingIDString = @"{
+            ""files"": [
             {                
                 ""fileName"": ""./file1"",
                 ""checksums"": [
@@ -220,9 +230,10 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]";
+            }]}";
 
-    public const string JsonWith1FileMissingChecksumsString = @"[
+    public const string JsonWith1FileMissingChecksumsString = @"{
+            ""files"": [
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -231,9 +242,10 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]";
+            }]}";
 
-    public const string JsonWith1FileMissingSHA256ChecksumsString = @"[
+    public const string JsonWith1FileMissingSHA256ChecksumsString = @"{
+            ""files"": [
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -248,29 +260,10 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]";
+            }]}";
 
-    public const string JsonWith1FileMissingLicenseConcludedString = @"[
-            {
-                ""fileName"": ""./file1"",
-                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
-                ""checksums"": [
-                {
-                    ""algorithm"": ""SHA256"",
-                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad5""
-                },
-                {
-                    ""algorithm"": ""SHA1"",
-                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
-                }
-                ],
-                ""licenseInfoInFiles"": [
-                    ""NOASSERTION""
-                ],
-                ""copyrightText"": ""NOASSERTION""
-            }]";
-
-    public const string JsonWith1FileMissingLicenseInfoInFilesString = @"[
+    public const string JsonWith1FileMissingLicenseConcludedString = @"{
+            ""files"": [
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -284,11 +277,14 @@ internal struct SbomFileJsonStrings
                     ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
                 }
                 ],
-                ""licenseConcluded"": ""NOASSERTION"",
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ],
                 ""copyrightText"": ""NOASSERTION""
-            }]";
+            }]}";
 
-    public const string JsonWith1FileMissingCopyrightString = @"[
+    public const string JsonWith1FileMissingLicenseInfoInFilesString = @"{
+            ""files"": [
             {
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
@@ -303,13 +299,13 @@ internal struct SbomFileJsonStrings
                 }
                 ],
                 ""licenseConcluded"": ""NOASSERTION"",
-                ""licenseInfoInFiles"": [
-                    ""NOASSERTION""
-                ]
-            }]";
+                ""copyrightText"": ""NOASSERTION""
+            }]}";
 
-    public const string JsonWith1FileMissingCopyrightAndPathString = @"[
+    public const string JsonWith1FileMissingCopyrightString = @"{
+            ""files"": [
             {
+                ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
                 ""checksums"": [
                 {
@@ -325,5 +321,25 @@ internal struct SbomFileJsonStrings
                 ""licenseInfoInFiles"": [
                     ""NOASSERTION""
                 ]
-            }]";
+            }]}";
+
+    public const string JsonWith1FileMissingCopyrightAndPathString = @"{
+            ""files"": [
+            {
+                ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
+                ""checksums"": [
+                {
+                    ""algorithm"": ""SHA256"",
+                    ""checksumValue"": ""56624d8ab67ac0e323bcac0ae1ec0656f1721c6bb60640ecf9b30e861062aad5""
+                },
+                {
+                    ""algorithm"": ""SHA1"",
+                    ""checksumValue"": ""e55f25e239d8d3572d75d5cdc5ca24899fd4993f""
+                }
+                ],
+                ""licenseConcluded"": ""NOASSERTION"",
+                ""licenseInfoInFiles"": [
+                    ""NOASSERTION""
+                ]
+            }]}";
 }

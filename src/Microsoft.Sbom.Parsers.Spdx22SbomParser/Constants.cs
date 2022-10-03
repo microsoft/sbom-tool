@@ -3,6 +3,7 @@
 
 using Microsoft.Sbom.Extensions.Entities;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
 {

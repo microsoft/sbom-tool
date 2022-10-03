@@ -96,7 +96,7 @@ namespace Microsoft.Sbom.Api.Tests
             var jsonString = $@"
             {{
                 ""ExternalDocumentId"":""{externalDocumentReferenceInfo.ExternalDocumentName}"",
-                ""SpdxDocument"":""{externalDocumentReferenceInfo.DocumentNamespace}""
+                ""Document"":""{externalDocumentReferenceInfo.DocumentNamespace}""
             }}
             ";
 

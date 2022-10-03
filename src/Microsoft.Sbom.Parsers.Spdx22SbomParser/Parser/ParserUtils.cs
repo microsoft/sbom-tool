@@ -6,6 +6,7 @@ using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -32,20 +33,6 @@ internal class ParserUtils
         if (stream is null)
         {
             throw new ArgumentNullException(nameof(stream));
-        }
-
-        if (buffer is null || buffer.Length == 0)
-        {
-            throw new ArgumentException($"The {nameof(buffer)} value can't be null or of 0 length.");
-        }
-
-        // If the buffer is empty, refill the buffer.
-        if (buffer[0] == 0)
-        {
-            if (!stream.CanRead || stream.Read(buffer) == 0)
-            {
-                throw new EndOfStreamException();
-            }
         }
 
         while (!reader.Read())
@@ -128,7 +115,6 @@ internal class ParserUtils
         SkipNoneTokens(stream, ref buffer, ref reader);
         AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
         Read(stream, ref buffer, ref reader);
-        GetMoreBytesFromStream(stream, ref buffer, ref reader);
     }
 
     /// <summary>
@@ -164,39 +150,47 @@ internal class ParserUtils
     /// <param name="buffer"></param>
     internal static void SkipProperty(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
-        if (reader.TokenType == JsonTokenType.PropertyName)
+        if (reader.TokenType == JsonTokenType.StartArray)
         {
-            Read(stream, ref buffer, ref reader);
-        }
-
-        if (reader.TokenType == JsonTokenType.StartObject
-            || reader.TokenType == JsonTokenType.StartArray)
-        {
-            int arrayCount = 0;
-            int objectCount = 0;
+            int arrayCount = 1;
             while (true)
             {
-                arrayCount = reader.TokenType switch
+                if (reader.TokenType == JsonTokenType.EndArray)
                 {
-                    JsonTokenType.StartArray => arrayCount + 1,
-                    JsonTokenType.EndArray => arrayCount - 1,
-                    _ => arrayCount,
-                };
-
-                objectCount = reader.TokenType switch
-                {
-                    JsonTokenType.StartObject => objectCount + 1,
-                    JsonTokenType.EndObject => objectCount - 1,
-                    _ => objectCount,
-                };
-
-                if (arrayCount + objectCount != 0)
-                {
-                    Read(stream, ref buffer, ref reader);
+                    arrayCount--;
+                    if (arrayCount == 0)
+                    {
+                        return;
+                    }
                 }
-                else
+
+                Read(stream, ref buffer, ref reader);
+
+                if (reader.TokenType == JsonTokenType.StartArray)
                 {
-                    break;
+                    arrayCount++;
+                }
+            }
+        }
+        else if (reader.TokenType == JsonTokenType.StartObject)
+        {
+            int objectCount = 1;
+            while (true)
+            {
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    objectCount--;
+                    if (objectCount == 0)
+                    {
+                        return;
+                    }
+                }
+
+                Read(stream, ref buffer, ref reader);
+                
+                if (reader.TokenType == JsonTokenType.StartObject)
+                {
+                    objectCount++;
                 }
             }
         }

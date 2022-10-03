@@ -1,4 +1,5 @@
-﻿using Microsoft.Sbom.Exceptions;
+using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,18 +13,21 @@ namespace Microsoft.Sbom.Parser;
 public class SbomExternalDocumentReferenceParserTests
 {
     [TestMethod]
-    public void ParseSbomRelationshipsTest()
+    public void ParseSbomExternalDocumentReferenceTest()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.GoodJsonWith2ExtDocumentRefsString);
         using var stream = new MemoryStream(bytes);
-
-        TestParser parser = new ();
         var count = 0;
 
-        foreach (var externalDocumentReference in parser.GetExternalDocumentReferences(stream))
+        SPDXParser parser = new (stream, ignoreValidation: true);
+
+        var state = parser.Next();
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        foreach (var extReference in parser.GetReferences())
         {
             count++;
-            Assert.IsNotNull(externalDocumentReference);
+            Assert.IsNotNull(extReference);
         }
 
         Assert.AreEqual(2, count);
@@ -43,10 +47,13 @@ public class SbomExternalDocumentReferenceParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.GoodJsonWith2ExtDocumentRefsString);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new ();
+        SPDXParser parser = new (stream, ignoreValidation: true);
+
+        var state = parser.Next();
+        Assert.AreEqual(ParserState.REFERENCES, state);
         stream.Close();
 
-        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
+        parser.GetReferences().GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -57,16 +64,19 @@ public class SbomExternalDocumentReferenceParserTests
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
 
-        TestParser parser = new ();
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
+        var state = parser.Next();
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        parser.GetReferences().GetEnumerator().MoveNext();
     }
 
     [DataTestMethod]
     [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingChecksum)]
-    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingSHA1Checksum)]
-    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingDocument)]
     [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingDocumentId)]
+    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingDocument)]
+    [DataRow(ExternalDocumentReferenceStrings.JsonExtDocumentRefsStringMissingSHA1Checksum)]
     [TestMethod]
     [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
@@ -74,9 +84,12 @@ public class SbomExternalDocumentReferenceParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new (40);
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
+        var state = parser.Next();
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        parser.GetReferences().GetEnumerator().MoveNext();
     }
 
     [DataTestMethod]
@@ -90,11 +103,14 @@ public class SbomExternalDocumentReferenceParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new ();
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        foreach (var package in parser.GetExternalDocumentReferences(stream))
+        var state = parser.Next();
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        foreach (var reference in parser.GetReferences())
         {
-            Assert.IsNotNull(package);
+            Assert.IsNotNull(reference);
         }
     }
 
@@ -107,20 +123,26 @@ public class SbomExternalDocumentReferenceParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new ();
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
+        var state = parser.Next();
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        parser.GetReferences().GetEnumerator().MoveNext();
     }
 
     [TestMethod]
     public void EmptyArray_ValidJson()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJsonEmptyArray);
+        byte[] bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.EmptyArray);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new ();
+        SPDXParser parser = new (stream, ignoreValidation: true);
 
-        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
+        var state = parser.Next();
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        parser.GetReferences().GetEnumerator().MoveNext();
     }
 
     [TestMethod]
@@ -130,8 +152,11 @@ public class SbomExternalDocumentReferenceParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        TestParser parser = new (0);
+        SPDXParser parser = new (stream, 0, ignoreValidation: true);
 
-        parser.GetExternalDocumentReferences(stream).GetEnumerator().MoveNext();
+        var state = parser.Next();
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        parser.GetReferences().GetEnumerator().MoveNext();
     }
 }
