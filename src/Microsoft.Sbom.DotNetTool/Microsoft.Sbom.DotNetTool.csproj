@@ -7,6 +7,8 @@
 
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>sbom-tool</ToolCommandName>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
