@@ -30,6 +30,11 @@
       <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 
+    <PropertyGroup Label="Strong Name Signing Variables">
+        <StrongNameSigningKeyFilePath>$(MSBuildThisFileDirectory)snsKey.snk</StrongNameSigningKeyFilePath>
+        <StrongNameSigningPublicKey>0024000004800000940000000602000000240000525341310004000001000100c1f8987b4994a7ec30c5ba8253a8a6322b40642ef9d5dbc96828bda61a5a8bf1fa1667ee6fdda72fc29b00686a2e8d37984c37ef90b2d51a5c8767c5e6fb35ff9d4516a77929626db1d06297f90c2950e87e1fcd335bd82d73e1c37d1da42afb1e41397be50aac74895b873a8bad90c2caee9d7c9e34b94ff255cb040630ad94</StrongNameSigningPublicKey>
+    </PropertyGroup>
+
     <PropertyGroup>
         <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)analyzers.ruleset</CodeAnalysisRuleSet>
         <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>

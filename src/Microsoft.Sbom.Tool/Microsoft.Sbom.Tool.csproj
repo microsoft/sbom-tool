@@ -8,6 +8,8 @@
     <IsPublishable>true</IsPublishable>
     <GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
     <Description>Highly scalable and enterprise ready tool to create SBOMs for any variety of artifacts.</Description>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup>
