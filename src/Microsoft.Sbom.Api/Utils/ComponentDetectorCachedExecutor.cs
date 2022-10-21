@@ -5,6 +5,7 @@ using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Utils
 {
@@ -31,7 +32,7 @@ namespace Microsoft.Sbom.Api.Utils
         /// </summary>
         /// <param name="args">CD arguments.</param>
         /// <returns>Result of CD scan.</returns>
-        public virtual ScanResult Scan(string[] args)
+        public virtual async Task<ScanResult> ScanAsync(string[] args)
         {
             if (args is null)
             {
@@ -45,7 +46,7 @@ namespace Microsoft.Sbom.Api.Utils
                 return results[argsHashCode];
             }
 
-            var result = detector.Scan(args);
+            var result = await detector.ScanAsync(args);
             results.TryAdd(argsHashCode, result);
             return result;
         }

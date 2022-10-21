@@ -3,6 +3,7 @@
 
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Orchestrator;
+using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Utils
 {
@@ -11,10 +12,10 @@ namespace Microsoft.Sbom.Api.Utils
     /// </summary>
     public class ComponentDetector
     {
-        public virtual ScanResult Scan(string[] args)
+        public virtual async Task<ScanResult> ScanAsync(string[] args)
         {
             var orchestrator = new Orchestrator();
-            return orchestrator.Load(args);
+            return await orchestrator.LoadAsync(args);
         }
     }
 }
