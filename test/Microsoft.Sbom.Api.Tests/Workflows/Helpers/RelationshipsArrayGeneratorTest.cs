@@ -13,7 +13,6 @@ using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using MoreLinq;
 using Serilog;
 using System.Collections.Generic;
 using System.IO;

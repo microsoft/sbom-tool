@@ -63,7 +63,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
                 ComponentsFound = scannedComponents
             };
 
-            mockDetector.Setup(o => o.Scan(It.IsAny<string[]>())).Returns(scanResult);
+            mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
             var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object);
             var packagesChannelReader = walker.GetComponents("root");
 
@@ -108,7 +108,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
                 ComponentsFound = scannedComponents
             };
 
-            mockDetector.Setup(o => o.Scan(It.IsAny<string[]>())).Returns(scanResult);
+            mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
             var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object);
             var packagesChannelReader = walker.GetComponents("root");
 

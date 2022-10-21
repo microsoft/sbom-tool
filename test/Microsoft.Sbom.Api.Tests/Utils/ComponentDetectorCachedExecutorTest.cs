@@ -6,6 +6,7 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
+using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Tests.Utils
 {
@@ -23,28 +24,28 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         }
 
         [TestMethod]
-        public void Scan()
+        public async Task Scan()
         {
             var executor = new ComponentDetectorCachedExecutor(logger.Object, detector.Object);
             var arguments = new string[] { "a", "b", "c" };
             var expectedResult = new ScanResult();
 
-            detector.Setup(x => x.Scan(arguments)).Returns(expectedResult);
-            var result = executor.Scan(arguments);
+            detector.Setup(x => x.ScanAsync(arguments)).Returns(Task.FromResult(expectedResult));
+            var result = await executor.ScanAsync(arguments);
             Assert.AreEqual(result, expectedResult);
             Assert.IsTrue(detector.Invocations.Count == 1);
         }
 
         [TestMethod]
-        public void ScanWithCache()
+        public async Task ScanWithCache()
         {
             var executor = new ComponentDetectorCachedExecutor(logger.Object, detector.Object);
             var arguments = new string[] { "a", "b", "c" };
             var expectedResult = new ScanResult();
 
-            detector.Setup(x => x.Scan(arguments)).Returns(expectedResult);
-            executor.Scan(arguments);
-            var result = executor.Scan(arguments);
+            detector.Setup(x => x.ScanAsync(arguments)).Returns(Task.FromResult(expectedResult));
+            await executor.ScanAsync(arguments);
+            var result = await executor.ScanAsync(arguments);
             Assert.AreEqual(result, expectedResult);
             Assert.IsTrue(detector.Invocations.Count == 1);
         }

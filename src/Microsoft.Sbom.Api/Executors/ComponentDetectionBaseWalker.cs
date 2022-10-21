@@ -87,7 +87,7 @@ namespace Microsoft.Sbom.Api.Executors
                 cliArgumentBuilder.SourceDirectory(buildComponentDirPath);
                 var cmdLineParams = configuration.ToComponentDetectorCommandLineParams(cliArgumentBuilder);
 
-                var scanResult = await Task.Run(() => componentDetector.Scan(cmdLineParams));
+                var scanResult = await componentDetector.ScanAsync(cmdLineParams);
 
                 if (scanResult.ResultCode != ProcessingResultCode.Success)
                 {

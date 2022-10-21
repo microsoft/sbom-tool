@@ -198,7 +198,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ComponentsFound = scannedComponents
             };
 
-            mockDetector.Setup(o => o.Scan(It.IsAny<string[]>())).Returns(scanResult);
+            mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
 
             var packagesChannel = Channel.CreateUnbounded<SBOMPackage>();
             var errorsChannel = Channel.CreateUnbounded<FileValidationResult>();
