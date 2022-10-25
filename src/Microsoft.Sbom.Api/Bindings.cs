@@ -29,6 +29,7 @@ using Serilog;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Common.Extensions;
+using Microsoft.Sbom.Api.Manifest.FileHashes;
 
 namespace Microsoft.Sbom.Api
 {
@@ -80,6 +81,7 @@ namespace Microsoft.Sbom.Api
 
             Bind<ManifestData>().ToProvider<ManifestDataProvider>().InSingletonScope();
             Bind<ManifestParserProvider>().ToSelf().InSingletonScope().OnActivation<ManifestParserProvider>(m => m.Init());
+            Bind<FileHashesDictionary>().ToProvider<FileHashesDictionaryProvider>().InSingletonScope();
 
             #endregion
 
@@ -243,6 +245,7 @@ namespace Microsoft.Sbom.Api
             Bind<InternalSBOMFileInfoDeduplicator>().ToSelf().InSingletonScope();
             Bind<IFileTypeUtils>().To<FileTypeUtils>().InSingletonScope();
             Bind<IFileSystemUtilsExtension>().To<FileSystemUtilsExtension>().InSingletonScope();
+
         }
     }
 }

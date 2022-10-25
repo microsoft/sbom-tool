@@ -46,12 +46,11 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                 // Generate hash code for each file.
                 var (fileHashes, hashingErrors) = fileHasher.Run(filteredFiles);
                 errors.Add(hashingErrors);
+
+
                 filesWithHashes.Add(fileHashes);
             }
-
-
-
-
+            
             return null;
         }
     }
