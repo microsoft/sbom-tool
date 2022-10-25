@@ -157,6 +157,7 @@ namespace Microsoft.Sbom.Api
 
             Bind<IWorkflow>().To<SBOMValidationWorkflow>().Named(nameof(SBOMValidationWorkflow));
             Bind<IWorkflow>().To<SBOMGenerationWorkflow>().Named(nameof(SBOMGenerationWorkflow));
+            Bind<IWorkflow>().To<SBOMValidationWorkflow2>().Named(nameof(SBOMValidationWorkflow2));
 
             #endregion
 
@@ -210,6 +211,7 @@ namespace Microsoft.Sbom.Api
             Bind<SBOMPackageToPackageInfoConverter>().ToSelf().InThreadScope();
             Bind<ExternalDocumentReferenceWriter>().ToSelf().InThreadScope();
             Bind<ISBOMReaderForExternalDocumentReference>().To<SPDXSBOMReaderForExternalDocumentReference>().InThreadScope();
+            Bind<NullExecutor>().ToSelf().InThreadScope();
 
             #endregion
 

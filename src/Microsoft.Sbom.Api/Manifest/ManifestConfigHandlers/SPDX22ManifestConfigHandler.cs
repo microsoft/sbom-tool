@@ -76,9 +76,14 @@ namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers
             if (configuration.ManifestToolAction == ManifestToolActions.Validate
                && fileSystemUtils.FileExists(sbomFilePath))
             {
-                // Even if we find a valid SPDX 2.2 SBOM, we should not return
-                // the SPDX validator as it is not implemented yet.
-                sbomConfig = null;
+                // We can only validate one format at a time, so check if its this one and return true/false.
+                if (configuration.ManifestInfo?.Value != null
+                   && configuration.ManifestInfo.Value.Count == 1
+                   && configuration.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
+                {
+                    return true;
+                }
+
                 return false;
             }
 

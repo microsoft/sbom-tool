@@ -4,6 +4,7 @@
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using System;
+using System.IO;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
 {
@@ -22,9 +23,14 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
 
         public ManifestData ParseManifest(string manifest)
         {
-            throw new NotImplementedException($"Currently we don't support validating SPDX 2.2 SBOMs");
+            throw new NotImplementedException($"Currently we don't support parsing complete SPDX 2.2 SBOMs");
         }
 
         public ManifestInfo[] RegisterManifest() => new[] { spdxManifestInfo };
+
+        public ISbomParser CreateParser(Stream stream)
+        {
+            return new SPDXParser(stream);
+        }
     }
 }
