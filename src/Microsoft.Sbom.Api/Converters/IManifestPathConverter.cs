@@ -11,6 +11,6 @@ namespace Microsoft.Sbom.Api.Convertors
         /// </summary>
         /// <param name="path">The relative path of the file.</param>
         /// <returns>The file path in the manifest format and boolean for if the path is outside the BuildDropPath.</returns>
-        (string, bool) Convert(string path);
+        (string, bool) Convert(string path, bool prependDotToPath = false);
     }
 }

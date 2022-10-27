@@ -47,21 +47,32 @@ namespace Microsoft.Sbom.Api.Executors
             var sha256Checksum = internalFileInfo.Checksum.Where(c => c.Algorithm == AlgorithmName.SHA256).FirstOrDefault();
             var fileHashes = new FileHashes();
             fileHashes.SetHash(internalFileInfo.FileLocation, sha256Checksum);
-
+            FileValidationResult failureResult = null;
             var newValue = fileHashesDictionary.FileHashes.AddOrUpdate(internalFileInfo.Path, fileHashes, (key, oldValue) =>
             {
                 if (oldValue.GetHash(internalFileInfo.FileLocation) != null)
                 {
-                    throw new Exception($"Duplicate file found in {internalFileInfo.FileLocation} file: {internalFileInfo.Path}.");
+                    failureResult = new FileValidationResult
+                    {
+                        ErrorType = Entities.ErrorType.AdditionalFile,
+                        Path = internalFileInfo.Path
+                    };
+                    return null;
                 }
 
                 oldValue.SetHash(internalFileInfo.FileLocation, sha256Checksum);
                 return oldValue;
             });
 
+            if (newValue == null && failureResult != null)
+            {
+                await errors.Writer.WriteAsync(failureResult);
+                return;
+            }
+
             if (newValue.FileLocation == Sbom.Entities.FileLocation.All)
             {
-                if (newValue.OnDiskHash == newValue.SBOMFileHash)
+                if (string.Equals(newValue.OnDiskHash.ChecksumValue, newValue.SBOMFileHash.ChecksumValue, StringComparison.InvariantCultureIgnoreCase))
                 {
                     await output.Writer.WriteAsync(new FileValidationResult { Path = internalFileInfo.Path });
                 }

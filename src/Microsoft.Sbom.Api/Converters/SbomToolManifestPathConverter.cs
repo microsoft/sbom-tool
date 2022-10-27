@@ -35,8 +35,9 @@ namespace Microsoft.Sbom.Api.Convertors
             this.fileSystemUtilsExtension = fileSystemUtilsExtension;
         }
 
-        public (string, bool) Convert(string path)
+        public (string, bool) Convert(string path, bool prependDotToPath = false)
         {
+            string dotString = prependDotToPath ? "." : string.Empty;
             //relativeTo 
             string buildDropPath = configuration.BuildDropPath.Value;
             bool isOutsideDropPath = false;
@@ -58,7 +59,7 @@ namespace Microsoft.Sbom.Api.Convertors
             }
 
             string relativePath = fileSystemUtils.GetRelativePath(buildDropPath, path);
-            string formattedRelativePath = $"/{relativePath.Replace("\\", "/")}";
+            string formattedRelativePath = $"{dotString}/{relativePath.Replace("\\", "/")}";
 
             return (formattedRelativePath, isOutsideDropPath);
         }

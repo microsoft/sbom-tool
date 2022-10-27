@@ -43,7 +43,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             results.AddRange(onDiskFileResults);
             errors.AddRange(onDiskFileErrors);
 
-            var (inSbomFileResults, inSbomFileErrors) = GetOnDiskFiles();
+            var (inSbomFileResults, inSbomFileErrors) = GetInsideSbomFiles(sbomParser);
             results.AddRange(inSbomFileResults);
             errors.AddRange(inSbomFileErrors);
 
@@ -59,7 +59,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
 
             await foreach (FileValidationResult error in workflowErrors.ReadAllAsync())
             {
-                Console.WriteLine($"Error {error}");
+                Console.WriteLine($"Error {error.ErrorType}");
             }
 
             return (results, errors);
@@ -89,7 +89,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                 errors.Add(filteringErrors);
 
                 // Generate hash code for each file.
-                var (fileHashes, hashingErrors) = fileHasher.Run(filteredFiles, Sbom.Entities.FileLocation.OnDisk);
+                var (fileHashes, hashingErrors) = fileHasher.Run(filteredFiles, Sbom.Entities.FileLocation.OnDisk, true);
                 errors.Add(hashingErrors);
 
                 var (validationResults, validationErrors) = hashValidator.Validate(fileHashes);

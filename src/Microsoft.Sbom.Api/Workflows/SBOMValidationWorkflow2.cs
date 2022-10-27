@@ -60,7 +60,6 @@ namespace Microsoft.Sbom.Api.Workflows
                         return false;
                     }
 
-                    await filesValidator.Validate(sbomParser);
 
                     while (sbomParser.Next() != Contracts.Enums.ParserState.FINISHED)
                     {
@@ -68,8 +67,7 @@ namespace Microsoft.Sbom.Api.Workflows
                         switch (sbomParser.CurrentState)
                         {
                             case Contracts.Enums.ParserState.FILES:
-
-                                sbomParser.GetFiles().ToList();
+                                await filesValidator.Validate(sbomParser);
                                 break;
                             case Contracts.Enums.ParserState.PACKAGES:
                                 sbomParser.GetPackages().ToList();

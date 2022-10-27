@@ -83,7 +83,7 @@ namespace Microsoft.Sbom.Api.Executors
             }
         }
 
-        public (ChannelReader<InternalSBOMFileInfo>, ChannelReader<FileValidationResult>) Run(ChannelReader<string> fileInfo, FileLocation fileLocation = FileLocation.OnDisk)
+        public (ChannelReader<InternalSBOMFileInfo>, ChannelReader<FileValidationResult>) Run(ChannelReader<string> fileInfo, FileLocation fileLocation = FileLocation.OnDisk, bool prependDotToPath = false)
         {
             var output = Channel.CreateUnbounded<InternalSBOMFileInfo>();
             var errors = Channel.CreateUnbounded<FileValidationResult>();
@@ -92,7 +92,7 @@ namespace Microsoft.Sbom.Api.Executors
             {
                 await foreach (string file in fileInfo.ReadAllAsync())
                 {
-                    await GenerateHash(file, output, errors, fileLocation);
+                    await GenerateHash(file, output, errors, fileLocation, prependDotToPath);
                 }
 
                 output.Writer.Complete();
@@ -102,13 +102,13 @@ namespace Microsoft.Sbom.Api.Executors
             return (output, errors);
         }
 
-        private async Task GenerateHash(string file, Channel<InternalSBOMFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation)
+        private async Task GenerateHash(string file, Channel<InternalSBOMFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation, bool prependDotToPath = false)
         {
             string relativeFilePath = null;
             bool isOutsideDropPath = false;
             try
             {
-                (relativeFilePath, isOutsideDropPath) = manifestPathConverter.Convert(file);
+                (relativeFilePath, isOutsideDropPath) = manifestPathConverter.Convert(file, prependDotToPath);
                 Checksum[] fileHashes = hashCodeGenerator.GenerateHashes(file, hashAlgorithmNames);
                 if (fileHashes == null || fileHashes.Length == 0 || fileHashes.Any(f => string.IsNullOrEmpty(f.ChecksumValue)))
                 {
