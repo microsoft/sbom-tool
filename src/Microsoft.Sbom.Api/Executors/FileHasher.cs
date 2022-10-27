@@ -17,6 +17,7 @@ using System;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Entities;
 
 namespace Microsoft.Sbom.Api.Executors
 {
@@ -82,7 +83,7 @@ namespace Microsoft.Sbom.Api.Executors
             }
         }
 
-        public (ChannelReader<InternalSBOMFileInfo>, ChannelReader<FileValidationResult>) Run(ChannelReader<string> fileInfo)
+        public (ChannelReader<InternalSBOMFileInfo>, ChannelReader<FileValidationResult>) Run(ChannelReader<string> fileInfo, FileLocation fileLocation = FileLocation.OnDisk)
         {
             var output = Channel.CreateUnbounded<InternalSBOMFileInfo>();
             var errors = Channel.CreateUnbounded<FileValidationResult>();
@@ -91,7 +92,7 @@ namespace Microsoft.Sbom.Api.Executors
             {
                 await foreach (string file in fileInfo.ReadAllAsync())
                 {
-                    await GenerateHash(file, output, errors);
+                    await GenerateHash(file, output, errors, fileLocation);
                 }
 
                 output.Writer.Complete();
@@ -101,7 +102,7 @@ namespace Microsoft.Sbom.Api.Executors
             return (output, errors);
         }
 
-        private async Task GenerateHash(string file, Channel<InternalSBOMFileInfo> output, Channel<FileValidationResult> errors)
+        private async Task GenerateHash(string file, Channel<InternalSBOMFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation)
         {
             string relativeFilePath = null;
             bool isOutsideDropPath = false;
@@ -124,6 +125,7 @@ namespace Microsoft.Sbom.Api.Executors
                         IsOutsideDropPath = isOutsideDropPath,
                         Checksum = fileHashes,
                         FileTypes = fileTypeUtils.GetFileTypesBy(file),
+                        FileLocation = fileLocation
                     });
             }
             catch (Exception e)

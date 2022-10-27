@@ -3,6 +3,7 @@ using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using PowerArgs;
@@ -24,8 +25,9 @@ namespace Microsoft.Sbom.Api.Workflows
         private readonly IConfiguration configuration;
         private readonly ISbomConfigProvider sbomConfigs;
         private readonly NullExecutor nullExecutor;
+        private readonly FilesValidator filesValidator;
 
-        public SBOMValidationWorkflow2(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, NullExecutor nullExecutor)
+        public SBOMValidationWorkflow2(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, NullExecutor nullExecutor, FilesValidator filesValidator)
         {
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
             this.signValidator = signValidator ?? throw new ArgumentNullException(nameof(signValidator));
@@ -34,9 +36,10 @@ namespace Microsoft.Sbom.Api.Workflows
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
             this.nullExecutor = nullExecutor ?? throw new ArgumentNullException(nameof(nullExecutor));
+            this.filesValidator = filesValidator;
         }
 
-        public Task<bool> RunAsync()
+        public async Task<bool> RunAsync()
         {
             ValidationResult validationResultOutput = null;
             IEnumerable<FileValidationResult> validFailures = null;
@@ -54,8 +57,10 @@ namespace Microsoft.Sbom.Api.Workflows
                     if (!signValidator.Validate())
                     {
                         log.Error("Sign validation failed.");
-                        return null;
+                        return false;
                     }
+
+                    await filesValidator.Validate(sbomParser);
 
                     while (sbomParser.Next() != Contracts.Enums.ParserState.FINISHED)
                     {
@@ -89,7 +94,7 @@ namespace Microsoft.Sbom.Api.Workflows
 
 
 
-                    return null;
+                    return true;
 
                 }
                 catch (Exception e)
@@ -97,7 +102,7 @@ namespace Microsoft.Sbom.Api.Workflows
                     recorder.RecordException(e);
                     log.Error("Encountered an error while validating the drop.");
                     log.Error($"Error details: {e.Message}");
-                    return null;
+                    return false;
                 }
                 finally
                 {

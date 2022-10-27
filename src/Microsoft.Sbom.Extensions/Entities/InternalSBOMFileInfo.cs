@@ -3,6 +3,7 @@
 
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Entities;
 using System.Collections.Generic;
 
 namespace Microsoft.Sbom.Extensions.Entities
@@ -46,5 +47,7 @@ namespace Microsoft.Sbom.Extensions.Entities
         /// Gets or sets contains the list of file types for this file.
         /// </summary>
         public List<FileType> FileTypes { get; set; }
+
+        public FileLocation FileLocation { get; set; }
     }
 }

@@ -1,11 +1,7 @@
 ﻿using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Common;
 using Ninject.Activation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace Microsoft.Sbom.Api.Manifest
 {
@@ -20,7 +16,7 @@ namespace Microsoft.Sbom.Api.Manifest
 
         protected override FileHashesDictionary CreateInstance(IContext context)
         {
-            throw new NotImplementedException();
+            return new FileHashesDictionary(new ConcurrentDictionary<string, FileHashes.FileHashes>());
         }
     }
 }
