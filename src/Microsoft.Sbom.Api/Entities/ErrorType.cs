@@ -38,6 +38,9 @@ namespace Microsoft.Sbom.Api.Entities
         JsonSerializationError = 8,
 
         [EnumMember(Value = "Unsupported hash algorithm")]
-        UnsupportedHashAlgorithm = 9
+        UnsupportedHashAlgorithm = 9,
+
+        [EnumMember(Value = "Referenced SBOM file")]
+        ReferencedSbomFile = 10
     }
 }

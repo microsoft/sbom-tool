@@ -23,8 +23,9 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
         private readonly EnumeratorChannel enumeratorChannel;
         private readonly SBOMFileToFileInfoConverter fileConverter;
         private readonly FileHashesDictionary fileHashesDictionary;
+        private readonly SPDXFileTypeFilterer spdxFileFilterer;
 
-        public FilesValidator(DirectoryWalker directoryWalker, IConfiguration configuration, ChannelUtils channelUtils, ILogger log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, HashValidator2 hashValidator, EnumeratorChannel enumeratorChannel, SBOMFileToFileInfoConverter fileConverter, FileHashesDictionary fileHashesDictionary)
+        public FilesValidator(DirectoryWalker directoryWalker, IConfiguration configuration, ChannelUtils channelUtils, ILogger log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, HashValidator2 hashValidator, EnumeratorChannel enumeratorChannel, SBOMFileToFileInfoConverter fileConverter, FileHashesDictionary fileHashesDictionary, SPDXFileTypeFilterer spdxFileFilterer)
         {
             this.directoryWalker = directoryWalker;
             this.configuration = configuration;
@@ -36,6 +37,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             this.enumeratorChannel = enumeratorChannel;
             this.fileConverter = fileConverter;
             this.fileHashesDictionary = fileHashesDictionary;
+            this.spdxFileFilterer = spdxFileFilterer;
         }
 
         public async Task<(int, List<FileValidationResult>)> Validate(ISbomParser sbomParser)
@@ -140,10 +142,13 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             log.Debug("Waiting for the workflow to finish...");
             foreach (var fileChannel in splitFilesChannels)
             {
-                var (internalSbomFiles, converterErrors) = fileConverter.Convert(fileChannel, Sbom.Entities.FileLocation.InSbomFile);
+                var (internalSbomFiles, converterErrors) = fileConverter.Convert(fileChannel, FileLocation.InSbomFile);
                 errors.Add(converterErrors);
 
-                var (validationResults, validationErrors) = hashValidator.Validate(internalSbomFiles);
+                var (filteredSbomFiles, filterErrors) = spdxFileFilterer.FilterSPDXFiles(internalSbomFiles);
+                errors.Add(filterErrors);
+
+                var (validationResults, validationErrors) = hashValidator.Validate(filteredSbomFiles);
                 errors.Add(validationErrors);
 
                 filesWithHashes.Add(validationResults);

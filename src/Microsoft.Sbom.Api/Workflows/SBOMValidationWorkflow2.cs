@@ -120,8 +120,8 @@ namespace Microsoft.Sbom.Api.Workflows
                         }
                     };
                     await outputWriter.WriteAsync(JsonSerializer.Serialize(validationResultOutput, options));
-                    validFailures = fileValidationFailures.Where(a => a.ErrorType != ErrorType.ManifestFolder
-                                                 && a.ErrorType != ErrorType.FilteredRootPath);
+                    
+                    validFailures = fileValidationFailures.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType));
 
                     if (configuration.IgnoreMissing.Value)
                     {
@@ -140,7 +140,7 @@ namespace Microsoft.Sbom.Api.Workflows
                 }
                 finally
                 {
-                    if (validFailures != null)
+                    if (validFailures != null && validFailures.Any())
                     {
                         recorder.RecordTotalErrors(validFailures.ToList());
                     }

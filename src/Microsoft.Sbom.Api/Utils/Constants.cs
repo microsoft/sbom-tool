@@ -3,6 +3,7 @@
 
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Contracts.Enums;
+using System.Collections.Generic;
 
 namespace Microsoft.Sbom.Api.Utils
 {
@@ -22,6 +23,13 @@ namespace Microsoft.Sbom.Api.Utils
         {
             Name = "TestManifest",
             Version = "1.0.0"
+        };
+
+        public static List<Entities.ErrorType> SkipFailureReportingForErrors = new()
+        {
+                        Entities.ErrorType.ManifestFolder,
+                        Entities.ErrorType.FilteredRootPath,
+                        Entities.ErrorType.ReferencedSbomFile,
         };
 
         public static AlgorithmName DefaultHashAlgorithmName = AlgorithmName.SHA256;

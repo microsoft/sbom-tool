@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using System;
 using System.Collections.Generic;
@@ -69,15 +70,14 @@ namespace Microsoft.Sbom.Api.Entities.Output
         {
             List<FileValidationResult> validationErrors;
             List<FileValidationResult> skippedErrors;
+
+            validationErrors = NodeValidationResults.Where(r => !Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
+            skippedErrors = NodeValidationResults.Where(r => Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
+            
             if (configuration.IgnoreMissing.Value)
             {
-                validationErrors = NodeValidationResults.Where(n => n.ErrorType != ErrorType.FilteredRootPath && n.ErrorType != ErrorType.ManifestFolder && n.ErrorType != ErrorType.MissingFile).ToList();
-                skippedErrors = NodeValidationResults.Where(n => n.ErrorType == ErrorType.FilteredRootPath || n.ErrorType == ErrorType.ManifestFolder || n.ErrorType == ErrorType.MissingFile).ToList();
-            }
-            else
-            {
-                validationErrors = NodeValidationResults.Where(n => n.ErrorType != ErrorType.FilteredRootPath && n.ErrorType != ErrorType.ManifestFolder).ToList();
-                skippedErrors = NodeValidationResults.Where(n => n.ErrorType == ErrorType.FilteredRootPath || n.ErrorType == ErrorType.ManifestFolder).ToList();
+                validationErrors.AddRange(NodeValidationResults.Where(r => r.ErrorType != ErrorType.MissingFile));
+                skippedErrors.AddRange(NodeValidationResults.Where(r => r.ErrorType == ErrorType.MissingFile));
             }
 
             return new ValidationResult
