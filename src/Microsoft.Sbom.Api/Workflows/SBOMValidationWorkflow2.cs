@@ -60,10 +60,8 @@ namespace Microsoft.Sbom.Api.Workflows
                         return false;
                     }
 
-
                     while (sbomParser.Next() != Contracts.Enums.ParserState.FINISHED)
                     {
-
                         switch (sbomParser.CurrentState)
                         {
                             case Contracts.Enums.ParserState.FILES:
@@ -89,8 +87,6 @@ namespace Microsoft.Sbom.Api.Workflows
                             default: break;
                         }
                     }
-
-
 
                     return true;
 
