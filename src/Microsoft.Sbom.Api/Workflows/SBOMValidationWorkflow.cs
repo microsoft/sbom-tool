@@ -163,6 +163,7 @@ namespace Microsoft.Sbom.Api.Workflows
 
                     // 6. Generate JSON output
                     validationResultOutput = validationResultGenerator
+                                        .WithTotalFilesInManifest(manifestData.Count)
                                         .WithSuccessCount(successCount)
                                         .WithTotalDuration(end - start)
                                         .WithValidationResults(failures)
@@ -172,9 +173,9 @@ namespace Microsoft.Sbom.Api.Workflows
                     var options = new JsonSerializerOptions
                     {
                         Converters =
-                    {
-                        new JsonStringEnumConverter()
-                    }
+                        {
+                            new JsonStringEnumConverter()
+                        }
                     };
                     await outputWriter.WriteAsync(JsonSerializer.Serialize(validationResultOutput, options));
                     validFailures = failures.Where(a => a.ErrorType != ErrorType.ManifestFolder

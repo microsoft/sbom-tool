@@ -1,6 +1,7 @@
 ﻿using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Executors;
+using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows.Helpers;
@@ -12,7 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Microsoft.Sbom.Api.Workflows
 {
@@ -26,8 +30,10 @@ namespace Microsoft.Sbom.Api.Workflows
         private readonly ISbomConfigProvider sbomConfigs;
         private readonly NullExecutor nullExecutor;
         private readonly FilesValidator filesValidator;
+        private readonly ValidationResultGenerator validationResultGenerator;
+        private readonly IOutputWriter outputWriter;
 
-        public SBOMValidationWorkflow2(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, NullExecutor nullExecutor, FilesValidator filesValidator)
+        public SBOMValidationWorkflow2(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, NullExecutor nullExecutor, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter)
         {
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
             this.signValidator = signValidator ?? throw new ArgumentNullException(nameof(signValidator));
@@ -37,6 +43,8 @@ namespace Microsoft.Sbom.Api.Workflows
             this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
             this.nullExecutor = nullExecutor ?? throw new ArgumentNullException(nameof(nullExecutor));
             this.filesValidator = filesValidator;
+            this.validationResultGenerator = validationResultGenerator;
+            this.outputWriter = outputWriter;
         }
 
         public async Task<bool> RunAsync()
@@ -48,6 +56,8 @@ namespace Microsoft.Sbom.Api.Workflows
             {
                 try
                 {
+                    var sw = Stopwatch.StartNew();
+
                     var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo.Value.FirstOrDefault());
 
                     using Stream stream = File.OpenRead(sbomConfig.ManifestJsonFilePath);
@@ -60,12 +70,15 @@ namespace Microsoft.Sbom.Api.Workflows
                         return false;
                     }
 
+                    int successfullyValidatedFiles = 0;
+                    List<FileValidationResult> fileValidationFailures = null;
+
                     while (sbomParser.Next() != Contracts.Enums.ParserState.FINISHED)
                     {
                         switch (sbomParser.CurrentState)
                         {
                             case Contracts.Enums.ParserState.FILES:
-                                await filesValidator.Validate(sbomParser);
+                                (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(sbomParser);
                                 break;
                             case Contracts.Enums.ParserState.PACKAGES:
                                 sbomParser.GetPackages().ToList();
@@ -88,8 +101,35 @@ namespace Microsoft.Sbom.Api.Workflows
                         }
                     }
 
-                    return true;
+                    log.Debug("Finished workflow, gathering results.");
+                    
+                    // Generate JSON output
+                    validationResultOutput = validationResultGenerator
+                                        .WithTotalFilesInManifest(sbomConfig.Recorder.GetGenerationData().Checksums.Count())
+                                        .WithSuccessCount(successfullyValidatedFiles)
+                                        .WithTotalDuration(sw.Elapsed)
+                                        .WithValidationResults(fileValidationFailures)
+                                        .Build();
 
+                    // Write JSON output to file.
+                    var options = new JsonSerializerOptions
+                    {
+                        Converters =
+                        {
+                            new JsonStringEnumConverter()
+                        }
+                    };
+                    await outputWriter.WriteAsync(JsonSerializer.Serialize(validationResultOutput, options));
+                    validFailures = fileValidationFailures.Where(a => a.ErrorType != ErrorType.ManifestFolder
+                                                 && a.ErrorType != ErrorType.FilteredRootPath);
+
+                    if (configuration.IgnoreMissing.Value)
+                    {
+                        log.Warning("Not including missing files on disk as -IgnoreMissing switch is on.");
+                        validFailures = validFailures.Where(a => a.ErrorType != ErrorType.MissingFile);
+                    }
+
+                    return !validFailures.Any();
                 }
                 catch (Exception e)
                 {

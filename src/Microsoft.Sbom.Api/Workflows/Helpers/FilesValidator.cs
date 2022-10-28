@@ -1,6 +1,8 @@
 ﻿using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
+using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Entities;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -20,8 +22,9 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
         private readonly HashValidator2 hashValidator;
         private readonly EnumeratorChannel enumeratorChannel;
         private readonly SBOMFileToFileInfoConverter fileConverter;
+        private readonly FileHashesDictionary fileHashesDictionary;
 
-        public FilesValidator(DirectoryWalker directoryWalker, IConfiguration configuration, ChannelUtils channelUtils, ILogger log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, HashValidator2 hashValidator, EnumeratorChannel enumeratorChannel, SBOMFileToFileInfoConverter fileConverter)
+        public FilesValidator(DirectoryWalker directoryWalker, IConfiguration configuration, ChannelUtils channelUtils, ILogger log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, HashValidator2 hashValidator, EnumeratorChannel enumeratorChannel, SBOMFileToFileInfoConverter fileConverter, FileHashesDictionary fileHashesDictionary)
         {
             this.directoryWalker = directoryWalker;
             this.configuration = configuration;
@@ -32,12 +35,14 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             this.hashValidator = hashValidator;
             this.enumeratorChannel = enumeratorChannel;
             this.fileConverter = fileConverter;
+            this.fileHashesDictionary = fileHashesDictionary;
         }
 
-        public async Task<(List<ChannelReader<FileValidationResult>>, List<ChannelReader<FileValidationResult>>)> Validate(ISbomParser sbomParser)
+        public async Task<(int, List<FileValidationResult>)> Validate(ISbomParser sbomParser)
         {
             var errors = new List<ChannelReader<FileValidationResult>>();
             var results = new List<ChannelReader<FileValidationResult>>();
+            var failures = new List<FileValidationResult>();
 
             var (onDiskFileResults, onDiskFileErrors) = GetOnDiskFiles();
             results.AddRange(onDiskFileResults);
@@ -46,7 +51,6 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             var (inSbomFileResults, inSbomFileErrors) = GetInsideSbomFiles(sbomParser);
             results.AddRange(inSbomFileResults);
             errors.AddRange(inSbomFileErrors);
-
 
             int successCount = 0;
             ChannelReader<FileValidationResult> resultChannel = channelUtils.Merge(results.ToArray());
@@ -59,10 +63,31 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
 
             await foreach (FileValidationResult error in workflowErrors.ReadAllAsync())
             {
-                Console.WriteLine($"Error {error.ErrorType}");
+                failures.Add(error);
             }
 
-            return (results, errors);
+            foreach (var file in fileHashesDictionary.FileHashes)
+            {
+                switch (file.Value.FileLocation)
+                {
+                    case FileLocation.OnDisk:
+                        failures.Add(new FileValidationResult
+                        {
+                            ErrorType = ErrorType.AdditionalFile,
+                            Path = file.Key,
+                        });
+                        break;
+                    case FileLocation.InSbomFile:
+                        failures.Add(new FileValidationResult
+                        {
+                            ErrorType = ErrorType.MissingFile,
+                            Path = file.Key,
+                        });
+                        break;
+                }
+            }
+
+            return (successCount, failures);
         }
 
         private (List<ChannelReader<FileValidationResult>>, List<ChannelReader<FileValidationResult>>) GetOnDiskFiles()

@@ -1,11 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.Common.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Sbom.Common.Config;
 
 namespace Microsoft.Sbom.Api.Entities.Output
 {
@@ -15,16 +14,15 @@ namespace Microsoft.Sbom.Api.Entities.Output
     public class ValidationResultGenerator
     {
         private int successCount;
+        private int totalFiles;
         private TimeSpan duration;
         private readonly IConfiguration configuration;
-        private readonly ManifestData manifestData;
 
         public IList<FileValidationResult> NodeValidationResults { get; set; }
 
-        public ValidationResultGenerator(IConfiguration configuration, ManifestData manifestData)
+        public ValidationResultGenerator(IConfiguration configuration)
         {
             this.configuration = configuration;
-            this.manifestData = manifestData;
         }
 
         /// <summary>
@@ -99,11 +97,17 @@ namespace Microsoft.Sbom.Api.Entities.Output
                         FilesValidatedCount = NodeValidationResults.Count + successCount,
                         FilesFailedCount = validationErrors.Count,
                         FilesSkippedCount = skippedErrors.Count,
-                        TotalFilesInManifest = manifestData.Count
+                        TotalFilesInManifest = totalFiles,
                     },
                     Parameters = configuration
                 }
             };
+        }
+
+        public ValidationResultGenerator WithTotalFilesInManifest(int totalFiles)
+        {
+            this.totalFiles = totalFiles;
+            return this;
         }
     }
 }
