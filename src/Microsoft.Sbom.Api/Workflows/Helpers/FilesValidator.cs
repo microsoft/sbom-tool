@@ -18,7 +18,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
     {
         private readonly DirectoryWalker directoryWalker;
         private readonly IConfiguration configuration;
-        private readonly ChannelUtils channelUtils;
+        private readonly ChannelUtils channelUtils = new ();
         private readonly ILogger log;
         private readonly FileHasher fileHasher;
         private readonly ManifestFolderFilterer fileFilterer;
@@ -28,19 +28,28 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
         private readonly FileHashesDictionary fileHashesDictionary;
         private readonly SPDXFileTypeFilterer spdxFileFilterer;
 
-        public FilesValidator(DirectoryWalker directoryWalker, IConfiguration configuration, ChannelUtils channelUtils, ILogger log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, HashValidator2 hashValidator, EnumeratorChannel enumeratorChannel, SBOMFileToFileInfoConverter fileConverter, FileHashesDictionary fileHashesDictionary, SPDXFileTypeFilterer spdxFileFilterer)
+        public FilesValidator(
+            DirectoryWalker directoryWalker,
+            IConfiguration configuration,
+            ILogger log,
+            FileHasher fileHasher,
+            ManifestFolderFilterer fileFilterer,
+            HashValidator2 hashValidator,
+            EnumeratorChannel enumeratorChannel,
+            SBOMFileToFileInfoConverter fileConverter,
+            FileHashesDictionary fileHashesDictionary,
+            SPDXFileTypeFilterer spdxFileFilterer)
         {
-            this.directoryWalker = directoryWalker;
-            this.configuration = configuration;
-            this.channelUtils = channelUtils;
-            this.log = log;
-            this.fileHasher = fileHasher;
-            this.fileFilterer = fileFilterer;
-            this.hashValidator = hashValidator;
-            this.enumeratorChannel = enumeratorChannel;
-            this.fileConverter = fileConverter;
-            this.fileHashesDictionary = fileHashesDictionary;
-            this.spdxFileFilterer = spdxFileFilterer;
+            this.directoryWalker = directoryWalker ?? throw new ArgumentNullException(nameof(directoryWalker));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.log = log ?? throw new ArgumentNullException(nameof(log));
+            this.fileHasher = fileHasher ?? throw new ArgumentNullException(nameof(fileHasher));
+            this.fileFilterer = fileFilterer ?? throw new ArgumentNullException(nameof(fileFilterer));
+            this.hashValidator = hashValidator ?? throw new ArgumentNullException(nameof(hashValidator));
+            this.enumeratorChannel = enumeratorChannel ?? throw new ArgumentNullException(nameof(enumeratorChannel));
+            this.fileConverter = fileConverter ?? throw new ArgumentNullException(nameof(fileConverter));
+            this.fileHashesDictionary = fileHashesDictionary ?? throw new ArgumentNullException(nameof(fileHashesDictionary));
+            this.spdxFileFilterer = spdxFileFilterer ?? throw new ArgumentNullException(nameof(spdxFileFilterer));
         }
 
         public async Task<(int, List<FileValidationResult>)> Validate(ISbomParser sbomParser)

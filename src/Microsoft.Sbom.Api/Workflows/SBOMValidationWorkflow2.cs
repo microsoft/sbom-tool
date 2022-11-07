@@ -3,23 +3,24 @@
 
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
-using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows.Helpers;
+using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using PowerArgs;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Diagnostics;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows
 {
@@ -34,8 +35,9 @@ namespace Microsoft.Sbom.Api.Workflows
         private readonly FilesValidator filesValidator;
         private readonly ValidationResultGenerator validationResultGenerator;
         private readonly IOutputWriter outputWriter;
+        private readonly IFileSystemUtils fileSystemUtils;
 
-        public SBOMValidationWorkflow2(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter)
+        public SBOMValidationWorkflow2(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
         {
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
             this.signValidator = signValidator ?? throw new ArgumentNullException(nameof(signValidator));
@@ -43,9 +45,10 @@ namespace Microsoft.Sbom.Api.Workflows
             this.manifestInterface = manifestInterface ?? throw new ArgumentNullException(nameof(manifestInterface));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
-            this.filesValidator = filesValidator;
-            this.validationResultGenerator = validationResultGenerator;
-            this.outputWriter = outputWriter;
+            this.filesValidator = filesValidator ?? throw new ArgumentNullException(nameof(filesValidator));
+            this.validationResultGenerator = validationResultGenerator ?? throw new ArgumentNullException(nameof(validationResultGenerator));
+            this.outputWriter = outputWriter ?? throw new ArgumentNullException(nameof(outputWriter));
+            this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         }
 
         public async Task<bool> RunAsync()
@@ -61,7 +64,7 @@ namespace Microsoft.Sbom.Api.Workflows
 
                     var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo.Value.FirstOrDefault());
 
-                    using Stream stream = File.OpenRead(sbomConfig.ManifestJsonFilePath);
+                    using Stream stream = fileSystemUtils.OpenRead(sbomConfig.ManifestJsonFilePath);
                     var sbomParser = manifestInterface.CreateParser(stream);
 
                     // Validate signature
@@ -120,6 +123,7 @@ namespace Microsoft.Sbom.Api.Workflows
                             new JsonStringEnumConverter()
                         }
                     };
+
                     await outputWriter.WriteAsync(JsonSerializer.Serialize(validationResultOutput, options));
                     
                     validFailures = fileValidationFailures.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType));
