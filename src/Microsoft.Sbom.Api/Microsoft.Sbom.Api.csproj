@@ -17,7 +17,6 @@
         <PackageReference Include="Microsoft.ComponentDetection.Orchestrator" />
         <PackageReference Include="Microsoft.ComponentDetection.Detectors" />
         <PackageReference Include="Ninject" />
-        <PackageReference Include="Ninject.Extensions.Conventions" />
         <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="packageurl-dotnet" />
         <PackageReference Include="PowerArgs" />
