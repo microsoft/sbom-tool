@@ -4,13 +4,12 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Executors
-{ 
+{
     public class HashValidator2
     {
         private readonly IConfiguration configuration;

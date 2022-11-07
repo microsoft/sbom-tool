@@ -86,7 +86,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(true);
 
-            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object, manifestData);
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
             var outputWriterMock = new Mock<IOutputWriter>();
 
@@ -201,7 +201,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(true);
 
-            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object, manifestData);
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
             var outputWriterMock = new Mock<IOutputWriter>();
 
@@ -308,7 +308,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(true);
 
-            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object, manifestData);
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
             var outputWriterMock = new Mock<IOutputWriter>();
 
@@ -414,7 +414,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(true);
 
-            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object, manifestData);
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
             var outputWriterMock = new Mock<IOutputWriter>();
 
@@ -520,7 +520,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(true);
 
-            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object, manifestData);
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
             var outputWriterMock = new Mock<IOutputWriter>();
 

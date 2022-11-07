@@ -76,7 +76,7 @@ namespace Microsoft.Sbom.Api.Entities.Output
             
             if (configuration.IgnoreMissing.Value)
             {
-                validationErrors.AddRange(NodeValidationResults.Where(r => r.ErrorType != ErrorType.MissingFile));
+                validationErrors.RemoveAll(e => e.ErrorType == ErrorType.MissingFile);
                 skippedErrors.AddRange(NodeValidationResults.Where(r => r.ErrorType == ErrorType.MissingFile));
             }
 

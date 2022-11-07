@@ -28,12 +28,11 @@ namespace Microsoft.Sbom.Api.Workflows
         private readonly IManifestInterface manifestInterface;
         private readonly IConfiguration configuration;
         private readonly ISbomConfigProvider sbomConfigs;
-        private readonly NullExecutor nullExecutor;
         private readonly FilesValidator filesValidator;
         private readonly ValidationResultGenerator validationResultGenerator;
         private readonly IOutputWriter outputWriter;
 
-        public SBOMValidationWorkflow2(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, NullExecutor nullExecutor, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter)
+        public SBOMValidationWorkflow2(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter)
         {
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
             this.signValidator = signValidator ?? throw new ArgumentNullException(nameof(signValidator));
@@ -41,7 +40,6 @@ namespace Microsoft.Sbom.Api.Workflows
             this.manifestInterface = manifestInterface ?? throw new ArgumentNullException(nameof(manifestInterface));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
-            this.nullExecutor = nullExecutor ?? throw new ArgumentNullException(nameof(nullExecutor));
             this.filesValidator = filesValidator;
             this.validationResultGenerator = validationResultGenerator;
             this.outputWriter = outputWriter;
