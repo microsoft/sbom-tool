@@ -102,8 +102,8 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             errors.Add(dirErrors);
 
             // Filter root path matching files from the manifest map.
-            //var manifestFilterErrors = manifestFileFilterer.FilterManifestFiles();
-            //errors.Add(manifestFilterErrors);
+            var manifestFilterErrors = manifestFileFilterer.FilterManifestFiles();
+            errors.Add(manifestFilterErrors);
 
             log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
             var splitFilesChannels = channelUtils.Split(files, configuration.Parallelism.Value);
