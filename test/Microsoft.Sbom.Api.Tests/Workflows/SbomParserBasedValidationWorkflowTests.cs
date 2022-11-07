@@ -133,7 +133,7 @@ namespace Microsoft.Sbom.Workflows
             manifestFilterMock.Init();
             var fileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object);
 
-            var hashValidator = new HashValidator2(configurationMock.Object, FileHashesDictionarySingleton.Instance);
+            var hashValidator = new HashValidator2(FileHashesDictionarySingleton.Instance);
             var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
             var fileConverter = new SBOMFileToFileInfoConverter(new FileTypeUtils());
             var spdxFileFilterer = new SPDXFileTypeFilterer(mockLogger.Object);
@@ -170,9 +170,9 @@ namespace Microsoft.Sbom.Workflows
             Assert.AreEqual(1, additionalFileErrors.Count);
             Assert.AreEqual("./child2/grandchild1/file7", additionalFileErrors.First().Path);
 
-            //var missingFileErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.MissingFile).ToList();
-            //Assert.AreEqual(1, missingFileErrors.Count);
-            //Assert.AreEqual("./child2/grandchild2/file10", missingFileErrors.First().Path);
+            var missingFileErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.MissingFile).ToList();
+            Assert.AreEqual(1, missingFileErrors.Count);
+            Assert.AreEqual("./child2/grandchild2/file10", missingFileErrors.First().Path);
 
             var invalidHashErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.InvalidHash).ToList();
             Assert.AreEqual(1, invalidHashErrors.Count);

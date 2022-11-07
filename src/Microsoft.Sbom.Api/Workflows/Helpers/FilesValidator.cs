@@ -3,9 +3,11 @@
 
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
+using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Entities;
+using Ninject;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -113,10 +115,6 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             var (files, dirErrors) = directoryWalker.GetFilesRecursively(configuration.BuildDropPath.Value);
             errors.Add(dirErrors);
 
-            // TODO: Filter root path matching files from the manifest map.
-            // var manifestFilterErrors = manifestFileFilterer.FilterManifestFiles();
-            // errors.Add(manifestFilterErrors);
-
             log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
             var splitFilesChannels = channelUtils.Split(files, configuration.Parallelism.Value);
 
@@ -128,7 +126,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                 errors.Add(filteringErrors);
 
                 // Generate hash code for each file.
-                var (fileHashes, hashingErrors) = fileHasher.Run(filteredFiles, Sbom.Entities.FileLocation.OnDisk, true);
+                var (fileHashes, hashingErrors) = fileHasher.Run(filteredFiles, FileLocation.OnDisk, true);
                 errors.Add(hashingErrors);
 
                 var (validationResults, validationErrors) = hashValidator.Validate(fileHashes);

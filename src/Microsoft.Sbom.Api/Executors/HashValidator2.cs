@@ -3,7 +3,6 @@
 
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest.FileHashes;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using System;
@@ -15,12 +14,10 @@ namespace Microsoft.Sbom.Api.Executors
 {
     public class HashValidator2
     {
-        private readonly IConfiguration configuration;
         private readonly FileHashesDictionary fileHashesDictionary;
 
-        public HashValidator2(IConfiguration configuration, FileHashesDictionary fileHashesDictionary)
+        public HashValidator2(FileHashesDictionary fileHashesDictionary)        
         {
-            this.configuration = configuration;
             this.fileHashesDictionary = fileHashesDictionary;
         }
 
