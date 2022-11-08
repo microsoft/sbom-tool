@@ -159,7 +159,7 @@ namespace Microsoft.Sbom.Api
 
             Bind<IWorkflow>().To<SBOMValidationWorkflow>().Named(nameof(SBOMValidationWorkflow));
             Bind<IWorkflow>().To<SBOMGenerationWorkflow>().Named(nameof(SBOMGenerationWorkflow));
-            Bind<IWorkflow>().To<SBOMValidationWorkflow2>().Named(nameof(SBOMValidationWorkflow2));
+            Bind<IWorkflow>().To<SBOMParserBasedValidationWorkflow>().Named(nameof(SBOMParserBasedValidationWorkflow));
 
             #endregion
 

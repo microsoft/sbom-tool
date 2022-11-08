@@ -76,7 +76,7 @@ namespace Microsoft.Sbom.Api.Config
                 bool result = default;
                 if (config.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
                 {
-                    result = await kernel.Get<IWorkflow>(nameof(SBOMValidationWorkflow2)).RunAsync();
+                    result = await kernel.Get<IWorkflow>(nameof(SBOMParserBasedValidationWorkflow)).RunAsync();
                 }
                 else
                 {
