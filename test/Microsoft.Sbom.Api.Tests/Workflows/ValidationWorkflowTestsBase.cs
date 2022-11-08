@@ -34,7 +34,7 @@ namespace Microsoft.Sbom.Workflows
             return fileSystemMock;
         }
 
-        private IDictionary<string, Checksum[]> GetFilesDictionary() => new Dictionary<string, Checksum[]>
+        protected IDictionary<string, Checksum[]> GetFilesDictionary() => new Dictionary<string, Checksum[]>
         {
             ["/child1/file1"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child1/file1hash" } },
             ["/child1/file2"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child1/file2hash" } },
@@ -54,7 +54,7 @@ namespace Microsoft.Sbom.Workflows
             HashesMap = new ConcurrentDictionary<string, Checksum[]>(GetFilesDictionary(), StringComparer.InvariantCultureIgnoreCase)
         };
 
-        protected IEnumerable<SBOMFile> GetSBOMFiles() => GetFilesDictionary()
+        protected IEnumerable<SBOMFile> GetSBOMFiles(IDictionary<string, Checksum[]> dictionary) => dictionary
             .Select(file => new SBOMFile
             {
                 Path = $".{file.Key}", // Prepend .

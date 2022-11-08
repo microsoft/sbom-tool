@@ -157,7 +157,6 @@ namespace Microsoft.Sbom.Api.Workflows
             }
         }
 
-
         private void LogIndividualFileResults(IEnumerable<FileValidationResult> validFailures)
         {
             if (validFailures == null)

@@ -1,13 +1,6 @@
 ﻿using Microsoft.Sbom.Api.Manifest.FileHashes;
-using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Contracts;
-using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Extensions.Entities;
-using Moq;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Microsoft.Sbom.Utils
 {
@@ -16,7 +9,7 @@ namespace Microsoft.Sbom.Utils
     /// </summary>
     public sealed class FileHashesDictionarySingleton
     {
-        private readonly FileHashesDictionary dictionary;
+        private FileHashesDictionary dictionary;
 
         private FileHashesDictionarySingleton()
         {
@@ -32,6 +25,11 @@ namespace Microsoft.Sbom.Utils
             {
                 return Lazy.Value.dictionary;
             }
+        }
+
+        public static void Reset()
+        {
+            Lazy.Value.dictionary = new FileHashesDictionary(new ConcurrentDictionary<string, FileHashes>());
         }
     }
 }
