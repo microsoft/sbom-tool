@@ -213,7 +213,7 @@ namespace Microsoft.Sbom.Api
             Bind<SBOMPackageToPackageInfoConverter>().ToSelf().InThreadScope();
             Bind<ExternalDocumentReferenceWriter>().ToSelf().InThreadScope();
             Bind<ISBOMReaderForExternalDocumentReference>().To<SPDXSBOMReaderForExternalDocumentReference>().InThreadScope();
-            Bind<SPDXFileTypeFilterer>().ToSelf().InThreadScope();
+            Bind<FileFilterer>().ToSelf().InThreadScope();
 
             #endregion
 

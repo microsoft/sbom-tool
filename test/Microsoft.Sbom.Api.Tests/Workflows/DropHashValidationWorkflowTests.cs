@@ -54,7 +54,6 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
-            fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string r, string p) => $"{r}/{p}");
 
             var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
             hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
@@ -166,7 +165,6 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
-            fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string r, string p) => $"{r}/{p}");
 
             var recorderMock = new Mock<IRecorder>().Object;
             var manifestData = GetDefaultManifestData();
@@ -276,7 +274,6 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
-            fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string r, string p) => $"{r}/{p}");
 
             var recorderMock = new Mock<IRecorder>().Object;
             var manifestData = GetDefaultManifestData();
@@ -383,7 +380,6 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             Mock<IFileSystemUtils> fileSystemMock = GetDefaultFileSystemMock();
             fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
-            fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string r, string p) => $"{r}/{p}");
 
             var recorderMock = new Mock<IRecorder>().Object;
             var manifestData = GetDefaultManifestData();
@@ -490,7 +486,6 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             Mock<IFileSystemUtils> fileSystemMock = GetDefaultFileSystemMock();
             fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
-            fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string r, string p) => $"{r}/{p}");
 
             var recorderMock = new Mock<IRecorder>().Object;
             var manifestData = GetDefaultManifestData();

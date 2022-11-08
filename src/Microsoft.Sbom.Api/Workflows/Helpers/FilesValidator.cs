@@ -28,7 +28,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
         private readonly EnumeratorChannel enumeratorChannel;
         private readonly SBOMFileToFileInfoConverter fileConverter;
         private readonly FileHashesDictionary fileHashesDictionary;
-        private readonly SPDXFileTypeFilterer spdxFileFilterer;
+        private readonly FileFilterer spdxFileFilterer;
 
         public FilesValidator(
             DirectoryWalker directoryWalker,
@@ -40,7 +40,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             EnumeratorChannel enumeratorChannel,
             SBOMFileToFileInfoConverter fileConverter,
             FileHashesDictionary fileHashesDictionary,
-            SPDXFileTypeFilterer spdxFileFilterer)
+            FileFilterer spdxFileFilterer)
         {
             this.directoryWalker = directoryWalker ?? throw new ArgumentNullException(nameof(directoryWalker));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));

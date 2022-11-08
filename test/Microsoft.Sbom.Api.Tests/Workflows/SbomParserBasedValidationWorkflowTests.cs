@@ -133,10 +133,13 @@ namespace Microsoft.Sbom.Workflows
             manifestFilterMock.Init();
             var fileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object);
 
+            var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
+            rootFileFilterMock.Init();
+
             var hashValidator = new HashValidator2(FileHashesDictionarySingleton.Instance);
             var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
             var fileConverter = new SBOMFileToFileInfoConverter(new FileTypeUtils());
-            var spdxFileFilterer = new SPDXFileTypeFilterer(mockLogger.Object);
+            var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
 
             var filesValidator = new FilesValidator(
                 directoryWalker,
