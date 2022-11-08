@@ -73,5 +73,4 @@ public interface ISbomParser
     /// Get the current state of the parser.
     /// </summary>
     public ParserState CurrentState { get; }
-
 }
