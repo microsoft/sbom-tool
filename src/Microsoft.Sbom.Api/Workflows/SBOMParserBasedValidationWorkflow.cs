@@ -45,7 +45,7 @@ namespace Microsoft.Sbom.Api.Workflows
         public SBOMParserBasedValidationWorkflow(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
         {
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
-            this.signValidator = signValidator ?? new NullSignValidator();
+            this.signValidator = signValidator ?? throw new ArgumentNullException(nameof(signValidator));
             this.log = log ?? throw new ArgumentNullException(nameof(log));
             this.manifestInterface = manifestInterface ?? throw new ArgumentNullException(nameof(manifestInterface));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));

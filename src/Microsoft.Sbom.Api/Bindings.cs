@@ -112,6 +112,13 @@ namespace Microsoft.Sbom.Api
                                 .InheritedFrom<ISignValidator>()
                                 .BindAllInterfaces());
 
+            // Search this assembly in case --self-contained is used with dotnet publish
+            Kernel.Bind(scan => scan
+                                .FromThisAssembly()
+                                .SelectAllClasses()
+                                .InheritedFrom<ISignValidator>()
+                                .BindAllInterfaces());
+
             Bind<SignValidationProvider>().ToSelf().InSingletonScope().OnActivation<SignValidationProvider>(s => s.Init());
 
             #endregion
