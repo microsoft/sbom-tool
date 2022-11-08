@@ -39,7 +39,14 @@ namespace Microsoft.Sbom.Workflows
         private readonly Mock<ILogger> mockLogger = new ();
         private readonly Mock<IOSUtils> mockOSUtils = new ();
         private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new ();
+        private readonly Mock<ISignValidator> signValidatorMock = new ();
 
+        [TestInitialize]
+        public void Init()
+        {
+            signValidatorMock.Setup(s => s.Validate()).Returns(true);
+        }
+       
         [TestCleanup]
         public void Reset()
         {
@@ -158,7 +165,7 @@ namespace Microsoft.Sbom.Workflows
 
             var validator = new SBOMParserBasedValidationWorkflow(
                 recorder.Object,
-                null,
+                signValidatorMock.Object,
                 mockLogger.Object,
                 manifestInterface.Object,
                 configurationMock.Object,
@@ -301,7 +308,7 @@ namespace Microsoft.Sbom.Workflows
             
             var validator = new SBOMParserBasedValidationWorkflow(
                 recorder.Object,
-                null,
+                signValidatorMock.Object,
                 mockLogger.Object,
                 manifestInterface.Object,
                 configurationMock.Object,
