@@ -84,8 +84,7 @@ namespace Microsoft.Sbom.Api.Executors
                     return;
                 }
 
-                await output.Writer.WriteAsync(file);
-                
+                await output.Writer.WriteAsync(file);   
             }
             catch (Exception e)
             {

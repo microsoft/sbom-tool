@@ -246,7 +246,6 @@ namespace Microsoft.Sbom.Api
             Bind<InternalSBOMFileInfoDeduplicator>().ToSelf().InSingletonScope();
             Bind<IFileTypeUtils>().To<FileTypeUtils>().InSingletonScope();
             Bind<IFileSystemUtilsExtension>().To<FileSystemUtilsExtension>().InSingletonScope();
-
         }
     }
 }

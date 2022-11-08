@@ -1,17 +1,16 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
-using Serilog.Events;
-using Constants = Microsoft.Sbom.Common.Constants;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.ComponentDetection.Detectors.Linux.Contracts;
+using Microsoft.Sbom.Extensions.Entities;
+using Serilog.Events;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Constants = Microsoft.Sbom.Common.Constants;
 
 namespace Microsoft.Sbom.Api.Config
 {

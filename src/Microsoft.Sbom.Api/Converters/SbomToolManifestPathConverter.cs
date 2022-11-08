@@ -38,7 +38,8 @@ namespace Microsoft.Sbom.Api.Convertors
         public (string, bool) Convert(string path, bool prependDotToPath = false)
         {
             string dotString = prependDotToPath ? "." : string.Empty;
-            //relativeTo 
+            
+            // relativeTo 
             string buildDropPath = configuration.BuildDropPath.Value;
             bool isOutsideDropPath = false;
             if (path == null)
