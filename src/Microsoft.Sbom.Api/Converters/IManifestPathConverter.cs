@@ -10,6 +10,7 @@ namespace Microsoft.Sbom.Api.Convertors
         /// that the manifest implements.
         /// </summary>
         /// <param name="path">The relative path of the file.</param>
+        /// <param name="prependDotToPath">If true we will prepend a . before the path.</param>
         /// <returns>The file path in the manifest format and boolean for if the path is outside the BuildDropPath.</returns>
         (string, bool) Convert(string path, bool prependDotToPath = false);
     }
