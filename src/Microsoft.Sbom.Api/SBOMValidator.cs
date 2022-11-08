@@ -4,12 +4,14 @@
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
-using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Ninject;
-using System;
+using PowerArgs;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,8 +19,8 @@ namespace Microsoft.Sbom.Api
 {
     public class SBOMValidator : ISBOMValidator
     {
-        private StandardKernel kernel;
-        private ApiConfigurationBuilder configurationBuilder;
+        private readonly StandardKernel kernel;
+        private readonly ApiConfigurationBuilder configurationBuilder;
 
         public SBOMValidator()
         {
@@ -30,16 +32,18 @@ namespace Microsoft.Sbom.Api
             string buildDropPath,
             string outputPath,
             AlgorithmName algorithmName,
-            string manifestDirPath,
-            string catalogFilePath,
-            bool validateSignature,
-            bool ignoreMissing,
-            string rootPathFilter,
-            RuntimeConfiguration runtimeConfiguration)
+            IList<SBOMSpecification> specifications = null,
+            string manifestDirPath = default,
+            string catalogFilePath = default,
+            bool validateSignature = false,
+            bool ignoreMissing = false,
+            string rootPathFilter = default,
+            RuntimeConfiguration runtimeConfiguration = default)
         {
             var configuration = configurationBuilder.GetConfiguration(
                 buildDropPath,
                 outputPath,
+                specifications,
                 algorithmName,
                 manifestDirPath,
                 catalogFilePath,
@@ -47,6 +51,8 @@ namespace Microsoft.Sbom.Api
                 ignoreMissing,
                 rootPathFilter,
                 runtimeConfiguration);
+
+            configuration = ValidateConfig(configuration);
 
             kernel.Bind<IConfiguration>().ToConstant(configuration);
 
@@ -60,6 +66,24 @@ namespace Microsoft.Sbom.Api
             var entityErrors = ((TelemetryRecorder)recorder).Errors.Select(error => error.ToEntityError()).ToList();
 
             return isSuccess;
+        }
+
+        private Configuration ValidateConfig(Configuration config)
+        {
+            var configValidators = kernel.GetAll<ConfigValidator>();
+            var configSanitizer = kernel.Get<ConfigSanitizer>();
+
+            foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(config))
+            {
+                configValidators.ForEach(v =>
+                {
+                    v.CurrentAction = config.ManifestToolAction;
+                    v.Validate(property.DisplayName, property.GetValue(config), property.Attributes);
+                });
+            }
+
+            configSanitizer.SanitizeConfig(config);
+            return config;
         }
     }
 }

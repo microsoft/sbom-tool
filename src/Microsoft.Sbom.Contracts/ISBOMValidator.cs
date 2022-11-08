@@ -3,6 +3,7 @@
 
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Microsoft.Sbom
@@ -19,6 +20,7 @@ namespace Microsoft.Sbom
         /// <param name="buildDropPath">The root path of the drop to validate.</param>
         /// <param name="outputPath">The path of the JSON file where the result JSON will be written.</param>
         /// <param name="algorithmName">The algorithm to be used to validate checksums. Default value is SHA256.</param>
+        /// <param name="specifications">A list of SBOM formats to validate.</param>
         /// <param name="manifestDirPath">If provided will use this value for the SBOM. Default will search for the _manifest directory in the build drop path.</param>
         /// <param name="catalogFilePath">Optional path of the catalog file used to verify the SBOM.</param>
         /// <param name="validateSignature">If true, we will try to validate the signature of the SBOM using the catalog file.</param>
@@ -31,6 +33,7 @@ namespace Microsoft.Sbom
             string buildDropPath,
             string outputPath,
             AlgorithmName algorithmName,
+            IList<SBOMSpecification> specifications,
             string manifestDirPath,
             string catalogFilePath,
             bool validateSignature,
