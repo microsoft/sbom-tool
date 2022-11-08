@@ -24,7 +24,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
         private readonly ILogger log;
         private readonly FileHasher fileHasher;
         private readonly ManifestFolderFilterer fileFilterer;
-        private readonly HashValidator2 hashValidator;
+        private readonly ConcurrentHashValidator hashValidator;
         private readonly EnumeratorChannel enumeratorChannel;
         private readonly SBOMFileToFileInfoConverter fileConverter;
         private readonly FileHashesDictionary fileHashesDictionary;
@@ -36,7 +36,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             ILogger log,
             FileHasher fileHasher,
             ManifestFolderFilterer fileFilterer,
-            HashValidator2 hashValidator,
+            ConcurrentHashValidator hashValidator,
             EnumeratorChannel enumeratorChannel,
             SBOMFileToFileInfoConverter fileConverter,
             FileHashesDictionary fileHashesDictionary,
@@ -155,7 +155,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                 var (internalSbomFiles, converterErrors) = fileConverter.Convert(fileChannel, FileLocation.InSbomFile);
                 errors.Add(converterErrors);
 
-                var (filteredSbomFiles, filterErrors) = spdxFileFilterer.FilterSPDXFiles(internalSbomFiles);
+                var (filteredSbomFiles, filterErrors) = spdxFileFilterer.Filter(internalSbomFiles);
                 errors.Add(filterErrors);
 
                 var (validationResults, validationErrors) = hashValidator.Validate(filteredSbomFiles);

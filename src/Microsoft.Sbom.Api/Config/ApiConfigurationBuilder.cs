@@ -10,6 +10,8 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Serilog.Events;
 using Constants = Microsoft.Sbom.Common.Constants;
+using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.ComponentDetection.Detectors.Linux.Contracts;
 
 namespace Microsoft.Sbom.Api.Config
 {
@@ -103,6 +105,46 @@ namespace Microsoft.Sbom.Api.Config
 
                 configuration.ManifestInfo = GetConfigurationSetting(manifestInfos);
             }
+
+            return configuration;
+        }
+
+        public Configuration GetConfiguration(
+            string buildDropPath,
+            string outputPath,
+            AlgorithmName algorithmName,
+            string manifestDirPath,
+            string catalogFilePath,
+            bool validateSignature,
+            bool ignoreMissing,
+            string rootPathFilter,
+            RuntimeConfiguration runtimeConfiguration)
+        {
+            if (string.IsNullOrWhiteSpace(buildDropPath))
+            {
+                throw new ArgumentException($"'{nameof(buildDropPath)}' cannot be null or whitespace.", nameof(buildDropPath));
+            }
+
+            if (string.IsNullOrWhiteSpace(outputPath))
+            {
+                throw new ArgumentException($"'{nameof(outputPath)}' cannot be null or whitespace.", nameof(outputPath));
+            }
+
+            var sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
+
+            var configuration = new Configuration();
+            configuration.BuildDropPath = GetConfigurationSetting(buildDropPath);
+            configuration.ManifestDirPath = GetConfigurationSetting(manifestDirPath);
+            configuration.ManifestToolAction = ManifestToolActions.Validate;   
+            configuration.OutputPath = GetConfigurationSetting(outputPath);
+            configuration.HashAlgorithm = GetConfigurationSetting(algorithmName ?? AlgorithmName.SHA256);
+            configuration.RootPathFilter = GetConfigurationSetting(rootPathFilter);
+            configuration.CatalogFilePath = GetConfigurationSetting(catalogFilePath);
+            configuration.ValidateSignature = GetConfigurationSetting(validateSignature);
+            configuration.IgnoreMissing = GetConfigurationSetting(ignoreMissing);
+            configuration.Parallelism = GetConfigurationSetting(sanitizedRuntimeConfiguration.WorkflowParallelism);
+         
+            SetVerbosity(sanitizedRuntimeConfiguration, configuration);
 
             return configuration;
         }

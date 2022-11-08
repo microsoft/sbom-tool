@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Executors
 {
+    /// <summary>
+    /// Filter files that match various filter criteria from the channel stream.
+    /// </summary>
     public class FileFilterer
     {
         private readonly IFilter rootPathFilter;
@@ -33,7 +36,7 @@ namespace Microsoft.Sbom.Api.Executors
             this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         }
 
-        public (ChannelReader<InternalSBOMFileInfo> files, ChannelReader<FileValidationResult> errors) FilterSPDXFiles(ChannelReader<InternalSBOMFileInfo> files)
+        public (ChannelReader<InternalSBOMFileInfo> files, ChannelReader<FileValidationResult> errors) Filter(ChannelReader<InternalSBOMFileInfo> files)
         {
             var output = Channel.CreateUnbounded<InternalSBOMFileInfo>();
             var errors = Channel.CreateUnbounded<FileValidationResult>();

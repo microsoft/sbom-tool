@@ -12,11 +12,15 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Executors
 {
-    public class HashValidator2
+    /// <summary>
+    /// Validates hashes from multiple file locations (on disk and inside SBOM) simulatenously using
+    /// a conncurrent dictionary.
+    /// </summary>
+    public class ConcurrentHashValidator
     {
         private readonly FileHashesDictionary fileHashesDictionary;
 
-        public HashValidator2(FileHashesDictionary fileHashesDictionary)        
+        public ConcurrentHashValidator(FileHashesDictionary fileHashesDictionary)        
         {
             this.fileHashesDictionary = fileHashesDictionary;
         }
@@ -47,8 +51,10 @@ namespace Microsoft.Sbom.Api.Executors
             var fileHashes = new FileHashes();
             fileHashes.SetHash(internalFileInfo.FileLocation, sha256Checksum);
             FileValidationResult failureResult = null;
+
             var newValue = fileHashesDictionary.FileHashes.AddOrUpdate(internalFileInfo.Path, fileHashes, (key, oldValue) =>
             {
+                // This means a file with the same location was already added to the dictionary.
                 if (oldValue.GetHash(internalFileInfo.FileLocation) != null)
                 {
                     failureResult = new FileValidationResult
@@ -56,6 +62,7 @@ namespace Microsoft.Sbom.Api.Executors
                         ErrorType = Entities.ErrorType.AdditionalFile,
                         Path = internalFileInfo.Path
                     };
+
                     return null;
                 }
 
@@ -63,12 +70,13 @@ namespace Microsoft.Sbom.Api.Executors
                 return oldValue;
             });
 
-            if (newValue == null && failureResult != null)
+            if (failureResult != null)
             {
                 await errors.Writer.WriteAsync(failureResult);
                 return;
             }
 
+            // If we have the files from both locations present in the hash, validate if the hashes match.
             if (newValue.FileLocation == Sbom.Entities.FileLocation.All)
             {
                 if (string.Equals(newValue.OnDiskHash.ChecksumValue, newValue.SBOMFileHash.ChecksumValue, StringComparison.InvariantCultureIgnoreCase))

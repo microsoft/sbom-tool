@@ -2,18 +2,17 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Contracts;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Executors
 {
+    /// <summary>
+    /// A executor that enumerates over objects in an enumerator.
+    /// </summary>
     public class EnumeratorChannel
     {
         private readonly ILogger log;
@@ -23,6 +22,12 @@ namespace Microsoft.Sbom.Api.Executors
             this.log = log;
         }
 
+        /// <summary>
+        /// Takes in an enumerator delegate that enumerates over objects of <typeparamref name="T"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="enumerator"></param>
+        /// <returns></returns>
         public (ChannelReader<T>, ChannelReader<FileValidationResult>) Enumerate<T>(Func<IEnumerable<T>> enumerator)
         {
             var output = Channel.CreateUnbounded<T>();
@@ -39,7 +44,7 @@ namespace Microsoft.Sbom.Api.Executors
                 }
                 catch (Exception e)
                 {
-                    log.Debug($"Encountered an unknown error: {e.Message}");
+                    log.Debug($"Encountered an unknown error while enumerating: {e.Message}");
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
                         ErrorType = ErrorType.Other

@@ -24,7 +24,7 @@ using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows
 {
-    public class SBOMValidationWorkflow2 : IWorkflow
+    public class SBOMParserBasedValidationWorkflow : IWorkflow
     {
         private readonly IRecorder recorder;
         private readonly ISignValidator signValidator;
@@ -37,7 +37,7 @@ namespace Microsoft.Sbom.Api.Workflows
         private readonly IOutputWriter outputWriter;
         private readonly IFileSystemUtils fileSystemUtils;
 
-        public SBOMValidationWorkflow2(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
+        public SBOMParserBasedValidationWorkflow(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
         {
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
             this.signValidator = signValidator ?? throw new ArgumentNullException(nameof(signValidator));
