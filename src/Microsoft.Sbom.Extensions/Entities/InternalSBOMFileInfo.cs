@@ -48,6 +48,9 @@ namespace Microsoft.Sbom.Extensions.Entities
         /// </summary>
         public List<FileType> FileTypes { get; set; }
 
+        /// <summary>
+        /// Gets or sets the source location type of this file.
+        /// </summary>
         public FileLocation FileLocation { get; set; }
     }
 }

@@ -2,15 +2,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.SignValidator
 {
+    /// <summary>
+    /// A NoOp sign validator that always returns true.
+    /// </summary>
     public class NullSignValidator : ISignValidator
     {
         public OSPlatform SupportedPlatform => OSPlatform.Windows;

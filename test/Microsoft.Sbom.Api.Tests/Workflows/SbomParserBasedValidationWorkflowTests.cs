@@ -51,7 +51,6 @@ namespace Microsoft.Sbom.Workflows
         {
             var manifestInterface = new Mock<IManifestInterface>();
             var sbomParser = new Mock<ISbomParser>();
-            var signValidatorMock = new Mock<ISignValidator>();
             var configurationMock = new Mock<IConfiguration>();
             var sbomConfigs = new Mock<ISbomConfigProvider>();
             var fileSystemMock = GetDefaultFileSystemMock();
@@ -90,8 +89,6 @@ namespace Microsoft.Sbom.Workflows
             {
                 Value = new List<ManifestInfo>() { Constants.SPDX22ManifestInfo }
             });
-
-            signValidatorMock.Setup(s => s.Validate()).Returns(true);
 
             ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
             {
@@ -161,7 +158,7 @@ namespace Microsoft.Sbom.Workflows
 
             var validator = new SBOMParserBasedValidationWorkflow(
                 recorder.Object,
-                signValidatorMock.Object,
+                null,
                 mockLogger.Object,
                 manifestInterface.Object,
                 configurationMock.Object,
@@ -189,7 +186,6 @@ namespace Microsoft.Sbom.Workflows
             Assert.AreEqual(0, otherErrors.Count);
 
             configurationMock.VerifyAll();
-            signValidatorMock.VerifyAll();
             fileSystemMock.VerifyAll();
         }
 
@@ -198,7 +194,6 @@ namespace Microsoft.Sbom.Workflows
         {
             var manifestInterface = new Mock<IManifestInterface>();
             var sbomParser = new Mock<ISbomParser>();
-            var signValidatorMock = new Mock<ISignValidator>();
             var configurationMock = new Mock<IConfiguration>();
             var sbomConfigs = new Mock<ISbomConfigProvider>();
             var fileSystemMock = GetDefaultFileSystemMock();
@@ -232,8 +227,6 @@ namespace Microsoft.Sbom.Workflows
             {
                 Value = new List<ManifestInfo>() { Constants.SPDX22ManifestInfo }
             });
-
-            signValidatorMock.Setup(s => s.Validate()).Returns(true);
 
             ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
             {
@@ -308,7 +301,7 @@ namespace Microsoft.Sbom.Workflows
             
             var validator = new SBOMParserBasedValidationWorkflow(
                 recorder.Object,
-                signValidatorMock.Object,
+                null,
                 mockLogger.Object,
                 manifestInterface.Object,
                 configurationMock.Object,
@@ -339,7 +332,6 @@ namespace Microsoft.Sbom.Workflows
             Assert.AreEqual("./child2/grandchild1/file10", otherErrors.First().Path);
 
             configurationMock.VerifyAll();
-            signValidatorMock.VerifyAll();
             fileSystemMock.VerifyAll();
         }
     }

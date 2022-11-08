@@ -5,6 +5,7 @@ using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.SignValidator;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
@@ -24,6 +25,10 @@ using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows
 {
+    /// <summary>
+    /// Validates a SBOM against a given drop path. Uses the <see cref="ISbomParser"/> to read
+    /// objects inside a SBOM.
+    /// </summary>
     public class SBOMParserBasedValidationWorkflow : IWorkflow
     {
         private readonly IRecorder recorder;
@@ -40,7 +45,7 @@ namespace Microsoft.Sbom.Api.Workflows
         public SBOMParserBasedValidationWorkflow(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
         {
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
-            this.signValidator = signValidator ?? throw new ArgumentNullException(nameof(signValidator));
+            this.signValidator = signValidator ?? new NullSignValidator();
             this.log = log ?? throw new ArgumentNullException(nameof(log));
             this.manifestInterface = manifestInterface ?? throw new ArgumentNullException(nameof(manifestInterface));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -61,7 +66,6 @@ namespace Microsoft.Sbom.Api.Workflows
                 try
                 {
                     var sw = Stopwatch.StartNew();
-
                     var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo.Value.FirstOrDefault());
 
                     using Stream stream = fileSystemUtils.OpenRead(sbomConfig.ManifestJsonFilePath);

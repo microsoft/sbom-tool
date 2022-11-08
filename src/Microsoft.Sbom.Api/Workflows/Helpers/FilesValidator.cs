@@ -16,6 +16,9 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers
 {
+    /// <summary>
+    /// Validates over files present in the SBOM file and on disk.
+    /// </summary>
     public class FilesValidator
     {
         private readonly DirectoryWalker directoryWalker;
@@ -143,6 +146,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             var errors = new List<ChannelReader<FileValidationResult>>();
             var filesWithHashes = new List<ChannelReader<FileValidationResult>>();
 
+            // Enumerate files from SBOM
             var (sbomFiles, sbomFileErrors) = enumeratorChannel.Enumerate(sbomParser.GetFiles);
             errors.Add(sbomFileErrors);
 
@@ -152,9 +156,11 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             log.Debug("Waiting for the workflow to finish...");
             foreach (var fileChannel in splitFilesChannels)
             {
+                // Convert files to internal SBOM format.
                 var (internalSbomFiles, converterErrors) = fileConverter.Convert(fileChannel, FileLocation.InSbomFile);
                 errors.Add(converterErrors);
 
+                // Filter files.
                 var (filteredSbomFiles, filterErrors) = spdxFileFilterer.Filter(internalSbomFiles);
                 errors.Add(filterErrors);
 
@@ -166,6 +172,5 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
 
             return (filesWithHashes, errors);
         }
-
     }
 }

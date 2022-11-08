@@ -11,25 +11,18 @@ namespace Microsoft.Sbom.Utils
     {
         private FileHashesDictionary dictionary;
 
-        private FileHashesDictionarySingleton()
-        {
-            dictionary = new FileHashesDictionary(new ConcurrentDictionary<string, FileHashes>());
-        }
+        private FileHashesDictionarySingleton() 
+            => dictionary = new FileHashesDictionary(new ConcurrentDictionary<string, FileHashes>());
 
         private static readonly Lazy<FileHashesDictionarySingleton> Lazy = 
             new (() => new FileHashesDictionarySingleton());
 
-        public static FileHashesDictionary Instance
-        {
-            get
-            {
-                return Lazy.Value.dictionary;
-            }
-        }
+        public static FileHashesDictionary Instance => Lazy.Value.dictionary;
 
-        public static void Reset()
-        {
-            Lazy.Value.dictionary = new FileHashesDictionary(new ConcurrentDictionary<string, FileHashes>());
-        }
+        /// <summary>
+        /// Resets the underlying dictionary.
+        /// </summary>
+        public static void Reset() 
+            => Lazy.Value.dictionary = new FileHashesDictionary(new ConcurrentDictionary<string, FileHashes>());
     }
 }

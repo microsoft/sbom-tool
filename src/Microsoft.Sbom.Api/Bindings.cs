@@ -112,12 +112,6 @@ namespace Microsoft.Sbom.Api
                                 .InheritedFrom<ISignValidator>()
                                 .BindAllInterfaces());
 
-            Kernel.Bind(scan => scan
-                                .FromThisAssembly()
-                                .SelectAllClasses()
-                                .InheritedFrom<ISignValidator>()
-                                .BindAllInterfaces());
-
             Bind<SignValidationProvider>().ToSelf().InSingletonScope().OnActivation<SignValidationProvider>(s => s.Init());
 
             #endregion
