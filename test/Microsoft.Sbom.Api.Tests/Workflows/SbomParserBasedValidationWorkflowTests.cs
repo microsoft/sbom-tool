@@ -146,7 +146,7 @@ namespace Microsoft.Sbom.Workflows
             var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
             rootFileFilterMock.Init();
 
-            var hashValidator = new ConcurrentHashValidator(FileHashesDictionarySingleton.Instance);
+            var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
             var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
             var fileConverter = new SBOMFileToFileInfoConverter(new FileTypeUtils());
             var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
@@ -289,7 +289,7 @@ namespace Microsoft.Sbom.Workflows
             var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
             rootFileFilterMock.Init();
 
-            var hashValidator = new ConcurrentHashValidator(FileHashesDictionarySingleton.Instance);
+            var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
             var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
             var fileConverter = new SBOMFileToFileInfoConverter(new FileTypeUtils());
             var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);

@@ -19,11 +19,11 @@ namespace Microsoft.Sbom.Api.Executors
 
         public EnumeratorChannel(ILogger log)
         {
-            this.log = log;
+            this.log = log ?? throw new ArgumentNullException(nameof(log));
         }
 
         /// <summary>
-        /// Takes in an enumerator delegate that enumerates over objects of <typeparamref name="T"/>
+        /// Takes in an enumerator delegate that enumerates over objects of <typeparamref name="T"/>.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="enumerator"></param>

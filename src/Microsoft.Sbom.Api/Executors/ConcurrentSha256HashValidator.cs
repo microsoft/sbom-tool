@@ -16,13 +16,13 @@ namespace Microsoft.Sbom.Api.Executors
     /// Validates hashes from multiple file locations (on disk and inside SBOM) simulatenously using
     /// a conncurrent dictionary.
     /// </summary>
-    public class ConcurrentHashValidator
+    public class ConcurrentSha256HashValidator
     {
         private readonly FileHashesDictionary fileHashesDictionary;
 
-        public ConcurrentHashValidator(FileHashesDictionary fileHashesDictionary)        
+        public ConcurrentSha256HashValidator(FileHashesDictionary fileHashesDictionary)
         {
-            this.fileHashesDictionary = fileHashesDictionary;
+            this.fileHashesDictionary = fileHashesDictionary ?? throw new ArgumentNullException(nameof(fileHashesDictionary));
         }
 
         public (ChannelReader<FileValidationResult> output, ChannelReader<FileValidationResult> errors)
