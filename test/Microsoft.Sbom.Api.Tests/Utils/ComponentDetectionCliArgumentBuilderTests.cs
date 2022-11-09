@@ -214,5 +214,33 @@ namespace Microsoft.Sbom.Api.Tests.Utils
             var result = build.Build();
             CollectionAssert.AreEqual(expected, result);
         }
+
+        [TestMethod]
+        public void Build_DetectorArgs_DefaultTimeout()
+        {
+            var expected = new string[] { "--DetectorArgs", "Timeout=900" };
+
+            var build = new ComponentDetectionCliArgumentBuilder()
+                .Scan()
+                .SourceDirectory("X:/");
+
+            var result = build.Build();
+            CollectionAssert.AreEquivalent(expected, result[^2..]);
+        }
+
+        [TestMethod]
+        public void Build_DetectorArgs_Timeout()
+        {
+            var timeout = 32789;
+            var expected = new string[] { "--DetectorArgs", $"Timeout={timeout}" };
+
+            var build = new ComponentDetectionCliArgumentBuilder()
+                .Scan()
+                .SourceDirectory("X:/")
+                .AddDetectorArg("Timeout", timeout.ToString());
+
+            var result = build.Build();
+            CollectionAssert.AreEquivalent(expected, result[^2..]);
+        }
     }
 }

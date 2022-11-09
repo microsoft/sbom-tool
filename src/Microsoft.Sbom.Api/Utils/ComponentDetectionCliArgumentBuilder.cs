@@ -17,13 +17,18 @@ namespace Microsoft.Sbom.Api.Utils
         private string action;
         private VerbosityMode verbosity = VerbosityMode.Quiet;
         private string sourceDirectory;
-        private Dictionary<string, string> detectorArgs = new Dictionary<string, string>();
+        private Dictionary<string, string> detectorArgs = new Dictionary<string, string>() { 
+            { TimeoutArgsParamName, TimeoutDefaultSeconds.ToString() } 
+        };
+
         private Dictionary<string, string> keyValueArgs = new Dictionary<string, string>();
         private List<string> keyArgs = new List<string>();
 
         private const string VerbosityParamName = "Verbosity";
         private const string SourceDirectoryParamName = "SourceDirectory";
         private const string DetectorArgsParamName = "DetectorArgs";
+        private const string TimeoutArgsParamName = "Timeout";
+        private const int TimeoutDefaultSeconds = 15 * 60; // 15 minutes
 
         private const string ScanAction = "scan";
 
