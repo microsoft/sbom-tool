@@ -75,7 +75,7 @@ namespace Microsoft.Sbom.Api.Filters
             logger.Verbose("Adding root path filter valid paths");
             skipValidation = true;
 
-            if (configuration.RootPathFilter != null)
+            if (configuration.RootPathFilter != null && !string.IsNullOrWhiteSpace(configuration.RootPathFilter.Value))
             {
                 skipValidation = false;
                 validPaths = new HashSet<string>();

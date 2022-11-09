@@ -68,4 +68,9 @@ public interface ISbomParser
     /// <returns>An version sorted array in ascending order of 
     /// <see cref="ManifestInfo">manifests</see> this library can parse.</returns>
     ManifestInfo[] RegisterManifest();
+
+    /// <summary>
+    /// Get the current state of the parser.
+    /// </summary>
+    public ParserState CurrentState { get; }
 }

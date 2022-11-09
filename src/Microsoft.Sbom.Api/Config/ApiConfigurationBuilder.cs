@@ -4,11 +4,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions.Entities;
 using Serilog.Events;
+using ApiConstants = Microsoft.Sbom.Api.Utils.Constants;
 using Constants = Microsoft.Sbom.Common.Constants;
 
 namespace Microsoft.Sbom.Api.Config
@@ -92,19 +94,83 @@ namespace Microsoft.Sbom.Api.Config
             // Convert sbom specifications to manifest info.
             if (specifications != null)
             {
-                if (specifications.Count == 0)
-                {
-                    throw new ArgumentException($"'{nameof(specifications)}' must have at least 1 specification.", nameof(specifications));
-                }
-
-                IList<ManifestInfo> manifestInfos = specifications
-                                                        .Select(s => s.ToManifestInfo())
-                                                        .ToList();
-
-                configuration.ManifestInfo = GetConfigurationSetting(manifestInfos);
+                configuration.ManifestInfo = ConvertSbomSpecificationToManifestInfo(specifications);
             }
 
             return configuration;
+        }
+
+        public Configuration GetConfiguration(
+            string buildDropPath,
+            string outputPath,
+            IList<SBOMSpecification> specifications,
+            AlgorithmName algorithmName,
+            string manifestDirPath,
+            string catalogFilePath,
+            bool validateSignature,
+            bool ignoreMissing,
+            string rootPathFilter,
+            RuntimeConfiguration runtimeConfiguration)
+        {
+            if (string.IsNullOrWhiteSpace(buildDropPath))
+            {
+                throw new ArgumentException($"'{nameof(buildDropPath)}' cannot be null or whitespace.", nameof(buildDropPath));
+            }
+
+            if (string.IsNullOrWhiteSpace(outputPath))
+            {
+                throw new ArgumentException($"'{nameof(outputPath)}' cannot be null or whitespace.", nameof(outputPath));
+            }
+
+            if (specifications is null || specifications.Count == 0)
+            {
+                specifications = new List<SBOMSpecification>() { ApiConstants.SPDX22Specification };
+            }
+
+            var sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
+
+            var configuration = new Configuration();
+            configuration.BuildDropPath = GetConfigurationSetting(buildDropPath);
+            configuration.ManifestDirPath = GetConfigurationSetting(manifestDirPath);
+            configuration.ManifestToolAction = ManifestToolActions.Validate;
+            configuration.OutputPath = GetConfigurationSetting(outputPath);
+            configuration.HashAlgorithm = GetConfigurationSetting(algorithmName ?? AlgorithmName.SHA256);
+            configuration.RootPathFilter = GetConfigurationSetting(rootPathFilter);
+            configuration.CatalogFilePath = GetConfigurationSetting(catalogFilePath);
+            configuration.ValidateSignature = GetConfigurationSetting(validateSignature);
+            configuration.IgnoreMissing = GetConfigurationSetting(ignoreMissing);
+            configuration.Parallelism = GetConfigurationSetting(sanitizedRuntimeConfiguration.WorkflowParallelism);
+            configuration.ManifestInfo = ConvertSbomSpecificationToManifestInfo(specifications);
+
+            SetVerbosity(sanitizedRuntimeConfiguration, configuration);
+
+            return configuration;
+        }
+
+        /// <summary>
+        /// Convert sbom specifications to manifest info.
+        /// </summary>
+        /// <param name="specifications"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        private ConfigurationSetting<IList<ManifestInfo>> ConvertSbomSpecificationToManifestInfo(IList<SBOMSpecification> specifications)
+        {
+            if (specifications is null)
+            {
+                throw new ArgumentNullException(nameof(specifications));
+            }
+
+            if (specifications.Count == 0)
+            {
+                throw new ArgumentException($"'{nameof(specifications)}' must have at least 1 specification.", nameof(specifications));
+            }
+
+            IList<ManifestInfo> manifestInfos = specifications
+                                                    .Select(s => s.ToManifestInfo())
+                                                    .ToList();
+
+            return GetConfigurationSetting(manifestInfos);
         }
 
         private void SetVerbosity(RuntimeConfiguration sanitizedRuntimeConfiguration, Configuration configuration)

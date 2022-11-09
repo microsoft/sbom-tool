@@ -1,93 +1,75 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
-using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.SignValidator;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.Workflows.Helpers;
+using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions;
 using PowerArgs;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Channels;
 using System.Threading.Tasks;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows
 {
     /// <summary>
-    /// Defines the workflow steps for the drop validation action.
+    /// Validates a SBOM against a given drop path. Uses the <see cref="ISbomParser"/> to read
+    /// objects inside a SBOM.
     /// </summary>
-    public class SBOMValidationWorkflow : IWorkflow
+    public class SBOMParserBasedValidationWorkflow : IWorkflow
     {
+        private readonly IRecorder recorder;
+        private readonly ISignValidator signValidator;
+        private readonly ILogger log;
+        private readonly IManifestInterface manifestInterface;
         private readonly IConfiguration configuration;
-        private readonly DirectoryWalker directoryWalker;
-        private readonly ChannelUtils channelUtils;
-        private readonly FileHasher fileHasher;
-        private readonly HashValidator hashValidator;
-        private readonly ManifestData manifestData;
-        private readonly ManifestFolderFilterer fileFilterer;
+        private readonly ISbomConfigProvider sbomConfigs;
+        private readonly FilesValidator filesValidator;
         private readonly ValidationResultGenerator validationResultGenerator;
         private readonly IOutputWriter outputWriter;
-        private readonly ILogger log;
-        private readonly ISignValidator signValidator;
-        private readonly ManifestFileFilterer manifestFileFilterer;
-        private readonly IRecorder recorder;
+        private readonly IFileSystemUtils fileSystemUtils;
 
-        public SBOMValidationWorkflow(
-            IConfiguration configuration,
-            DirectoryWalker directoryWalker,
-            ManifestFolderFilterer fileFilterer,
-            ChannelUtils channelUtils,
-            FileHasher fileHasher,
-            HashValidator hashValidator,
-            ManifestData manifestData,
-            ValidationResultGenerator validationResultGenerator,
-            IOutputWriter outputWriter,
-            ILogger log,
-            ISignValidator signValidator,
-            ManifestFileFilterer manifestFileFilterer,
-            IRecorder recorder)
+        public SBOMParserBasedValidationWorkflow(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
         {
-            this.configuration = configuration;
-            this.directoryWalker = directoryWalker;
-            this.channelUtils = channelUtils;
-            this.hashValidator = hashValidator;
-            this.manifestData = manifestData;
-            this.log = log;
-            this.fileFilterer = fileFilterer;
-            this.signValidator = signValidator;
-            this.validationResultGenerator = validationResultGenerator;
-            this.outputWriter = outputWriter;
-            this.manifestFileFilterer = manifestFileFilterer;
-            this.recorder = recorder;
-            this.fileHasher = fileHasher;
-            if (this.fileHasher != null)
-            {
-                this.fileHasher.ManifestData = manifestData;
-            }
+            this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+            this.signValidator = signValidator ?? throw new ArgumentNullException(nameof(signValidator));
+            this.log = log ?? throw new ArgumentNullException(nameof(log));
+            this.manifestInterface = manifestInterface ?? throw new ArgumentNullException(nameof(manifestInterface));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+            this.filesValidator = filesValidator ?? throw new ArgumentNullException(nameof(filesValidator));
+            this.validationResultGenerator = validationResultGenerator ?? throw new ArgumentNullException(nameof(validationResultGenerator));
+            this.outputWriter = outputWriter ?? throw new ArgumentNullException(nameof(outputWriter));
+            this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         }
 
         public async Task<bool> RunAsync()
         {
             ValidationResult validationResultOutput = null;
             IEnumerable<FileValidationResult> validFailures = null;
+
             using (recorder.TraceEvent(Events.SBOMValidationWorkflow))
             {
                 try
                 {
-                    log.Debug("Starting validation workflow.");
-                    DateTime start = DateTime.Now;
+                    var sw = Stopwatch.StartNew();
+                    var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo.Value.FirstOrDefault());
 
-                    IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
-                    IList<ChannelReader<FileValidationResult>> results = new List<ChannelReader<FileValidationResult>>();
+                    using Stream stream = fileSystemUtils.OpenRead(sbomConfig.ManifestJsonFilePath);
+                    var sbomParser = manifestInterface.CreateParser(stream);
 
                     // Validate signature
                     if (!signValidator.Validate())
@@ -96,80 +78,48 @@ namespace Microsoft.Sbom.Api.Workflows
                         return false;
                     }
 
-                    // Workflow
-                    // Read all files
-                    var (files, dirErrors) = directoryWalker.GetFilesRecursively(configuration.BuildDropPath.Value);
-                    errors.Add(dirErrors);
+                    int successfullyValidatedFiles = 0;
+                    List<FileValidationResult> fileValidationFailures = null;
 
-                    // Filter root path matching files from the manifest map.
-                    var manifestFilterErrors = manifestFileFilterer.FilterManifestFiles();
-                    errors.Add(manifestFilterErrors);
-
-                    log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
-                    var splitFilesChannels = channelUtils.Split(files, configuration.Parallelism.Value);
-
-                    log.Debug("Waiting for the workflow to finish...");
-                    foreach (var fileChannel in splitFilesChannels)
+                    while (sbomParser.Next() != Contracts.Enums.ParserState.FINISHED)
                     {
-                        // Filter files
-                        var (filteredFiles, filteringErrors) = fileFilterer.FilterFiles(fileChannel);
-                        errors.Add(filteringErrors);
-
-                        // Generate hash code for each file.
-                        var (fileHashes, hashingErrors) = fileHasher.Run(filteredFiles);
-                        errors.Add(hashingErrors);
-
-                        // Validate hashes for each file.
-                        var (validationResults, validationErrors) = hashValidator.Validate(fileHashes);
-                        errors.Add(validationErrors);
-                        results.Add(validationResults);
-                    }
-
-                    // 4. Wait for the pipeline to finish.
-                    int successCount = 0;
-                    var failures = new List<FileValidationResult>();
-
-                    ChannelReader<FileValidationResult> resultChannel = channelUtils.Merge(results.ToArray());
-                    await foreach (FileValidationResult validationResult in resultChannel.ReadAllAsync())
-                    {
-                        successCount++;
-                    }
-
-                    ChannelReader<FileValidationResult> workflowErrors = channelUtils.Merge(errors.ToArray());
-
-                    await foreach (FileValidationResult error in workflowErrors.ReadAllAsync())
-                    {
-                        failures.Add(error);
-                    }
-
-                    // 5. Collect remaining entries in ManifestMap
-                    failures.AddRange(
-                        from manifestItem in manifestData.HashesMap
-                        select new FileValidationResult
+                        switch (sbomParser.CurrentState)
                         {
-                            ErrorType = ErrorType.MissingFile,
-                            Path = manifestItem.Key
-                        });
-
-                    // Failure
-                    if (successCount < 0)
-                    {
-                        log.Error("Error running the workflow, failing without publishing results.");
-                        return false;
+                            case Contracts.Enums.ParserState.FILES:
+                                (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(sbomParser);
+                                break;
+                            case Contracts.Enums.ParserState.PACKAGES:
+                                sbomParser.GetPackages().ToList();
+                                break;
+                            case Contracts.Enums.ParserState.RELATIONSHIPS:
+                                sbomParser.GetRelationships().ToList();
+                                break;
+                            case Contracts.Enums.ParserState.REFERENCES:
+                                sbomParser.GetReferences().ToList();
+                                break;
+                            case Contracts.Enums.ParserState.NONE:
+                                break;
+                            case Contracts.Enums.ParserState.METADATA:
+                                break;
+                            case Contracts.Enums.ParserState.INTERNAL_SKIP:
+                                break;
+                            case Contracts.Enums.ParserState.FINISHED:
+                                break;
+                            default: break;
+                        }
                     }
 
-                    DateTime end = DateTime.Now;
                     log.Debug("Finished workflow, gathering results.");
-
-                    // 6. Generate JSON output
+                    
+                    // Generate JSON output
                     validationResultOutput = validationResultGenerator
-                                        .WithTotalFilesInManifest(manifestData.Count)
-                                        .WithSuccessCount(successCount)
-                                        .WithTotalDuration(end - start)
-                                        .WithValidationResults(failures)
+                                        .WithTotalFilesInManifest(sbomConfig.Recorder.GetGenerationData().Checksums.Count())
+                                        .WithSuccessCount(successfullyValidatedFiles)
+                                        .WithTotalDuration(sw.Elapsed)
+                                        .WithValidationResults(fileValidationFailures)
                                         .Build();
 
-                    // 7. Write JSON output to file.
+                    // Write JSON output to file.
                     var options = new JsonSerializerOptions
                     {
                         Converters =
@@ -177,9 +127,10 @@ namespace Microsoft.Sbom.Api.Workflows
                             new JsonStringEnumConverter()
                         }
                     };
+
                     await outputWriter.WriteAsync(JsonSerializer.Serialize(validationResultOutput, options));
-                    validFailures = failures.Where(a => a.ErrorType != ErrorType.ManifestFolder
-                                                 && a.ErrorType != ErrorType.FilteredRootPath);
+                    
+                    validFailures = fileValidationFailures.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType));
 
                     if (configuration.IgnoreMissing.Value)
                     {
@@ -198,7 +149,7 @@ namespace Microsoft.Sbom.Api.Workflows
                 }
                 finally
                 {
-                    if (validFailures != null)
+                    if (validFailures != null && validFailures.Any())
                     {
                         recorder.RecordTotalErrors(validFailures.ToList());
                     }

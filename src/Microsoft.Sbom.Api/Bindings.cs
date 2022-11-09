@@ -12,6 +12,7 @@ using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Logging;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Manifest.Configuration;
+using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
@@ -91,6 +92,7 @@ namespace Microsoft.Sbom.Api
 
             Bind<ManifestData>().ToProvider<ManifestDataProvider>().InSingletonScope();
             Bind<ManifestParserProvider>().ToSelf().InSingletonScope().OnActivation<ManifestParserProvider>(m => m.Init());
+            Bind<FileHashesDictionary>().ToProvider<FileHashesDictionaryProvider>().InSingletonScope();
 
             #endregion
 
@@ -136,6 +138,7 @@ namespace Microsoft.Sbom.Api
 
             Bind<IWorkflow>().To<SBOMValidationWorkflow>().Named(nameof(SBOMValidationWorkflow));
             Bind<IWorkflow>().To<SBOMGenerationWorkflow>().Named(nameof(SBOMGenerationWorkflow));
+            Bind<IWorkflow>().To<SBOMParserBasedValidationWorkflow>().Named(nameof(SBOMParserBasedValidationWorkflow));
 
             #endregion
 
@@ -179,6 +182,7 @@ namespace Microsoft.Sbom.Api
             Bind<SBOMPackageToPackageInfoConverter>().ToSelf().InThreadScope();
             Bind<ExternalDocumentReferenceWriter>().ToSelf().InThreadScope();
             Bind<ISBOMReaderForExternalDocumentReference>().To<SPDXSBOMReaderForExternalDocumentReference>().InThreadScope();
+            Bind<FileFilterer>().ToSelf().InThreadScope();
 
             #endregion
 

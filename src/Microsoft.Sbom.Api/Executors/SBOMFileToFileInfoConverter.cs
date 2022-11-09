@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.Entities;
 
 namespace Microsoft.Sbom.Api.Executors
 {
@@ -25,7 +26,7 @@ namespace Microsoft.Sbom.Api.Executors
             this.fileTypeUtils = fileTypeUtils ?? throw new ArgumentNullException(nameof(fileTypeUtils));
         }
 
-        public (ChannelReader<InternalSBOMFileInfo> output, ChannelReader<FileValidationResult> error) Convert(ChannelReader<SBOMFile> componentReader)
+        public (ChannelReader<InternalSBOMFileInfo> output, ChannelReader<FileValidationResult> error) Convert(ChannelReader<SBOMFile> componentReader, FileLocation fileLocation = FileLocation.OnDisk)
         {
             if (componentReader is null)
             {
@@ -39,7 +40,7 @@ namespace Microsoft.Sbom.Api.Executors
             {
                 await foreach (SBOMFile component in componentReader.ReadAllAsync())
                 {
-                    await Convert(component, output, errors);
+                    await Convert(component, output, errors, fileLocation);
                 }
 
                 output.Writer.Complete();
@@ -49,7 +50,7 @@ namespace Microsoft.Sbom.Api.Executors
             return (output, errors);
         }
 
-        private async Task Convert(SBOMFile component, Channel<InternalSBOMFileInfo> output, Channel<FileValidationResult> errors)
+        private async Task Convert(SBOMFile component, Channel<InternalSBOMFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation)
         {
             try
             {
@@ -72,6 +73,7 @@ namespace Microsoft.Sbom.Api.Executors
                     LicenseInfoInFiles = component.LicenseInfoInFiles,
                     FileTypes = fileTypeUtils.GetFileTypesBy(component.Path),
                     IsOutsideDropPath = false, // assumption from SBOMApi is that Files are in dropPath
+                    FileLocation = fileLocation,
                 };
 
                 await output.Writer.WriteAsync(fileInfo);

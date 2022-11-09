@@ -67,7 +67,7 @@ namespace Microsoft.Sbom.Api.Config
         private ConfigurationSetting<IList<ManifestInfo>> GetDefaultManifestInfoForValidationAction(Configuration configuration)
         {
             if (configuration.ManifestToolAction != ManifestToolActions.Validate
-                || (configuration.ManifestInfo.Value != null && configuration.ManifestInfo.Value.Count != 0))
+                || (configuration.ManifestInfo?.Value != null && configuration.ManifestInfo?.Value?.Count != 0))
             {
                 return configuration.ManifestInfo;
             }

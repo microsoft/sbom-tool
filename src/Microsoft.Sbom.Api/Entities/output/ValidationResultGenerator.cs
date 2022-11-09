@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Common.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Sbom.Common.Config;
 
 namespace Microsoft.Sbom.Api.Entities.Output
 {
@@ -15,16 +15,15 @@ namespace Microsoft.Sbom.Api.Entities.Output
     public class ValidationResultGenerator
     {
         private int successCount;
+        private int totalFiles;
         private TimeSpan duration;
         private readonly IConfiguration configuration;
-        private readonly ManifestData manifestData;
 
         public IList<FileValidationResult> NodeValidationResults { get; set; }
 
-        public ValidationResultGenerator(IConfiguration configuration, ManifestData manifestData)
+        public ValidationResultGenerator(IConfiguration configuration)
         {
             this.configuration = configuration;
-            this.manifestData = manifestData;
         }
 
         /// <summary>
@@ -71,15 +70,14 @@ namespace Microsoft.Sbom.Api.Entities.Output
         {
             List<FileValidationResult> validationErrors;
             List<FileValidationResult> skippedErrors;
+
+            validationErrors = NodeValidationResults.Where(r => !Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
+            skippedErrors = NodeValidationResults.Where(r => Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
+            
             if (configuration.IgnoreMissing.Value)
             {
-                validationErrors = NodeValidationResults.Where(n => n.ErrorType != ErrorType.FilteredRootPath && n.ErrorType != ErrorType.ManifestFolder && n.ErrorType != ErrorType.MissingFile).ToList();
-                skippedErrors = NodeValidationResults.Where(n => n.ErrorType == ErrorType.FilteredRootPath || n.ErrorType == ErrorType.ManifestFolder || n.ErrorType == ErrorType.MissingFile).ToList();
-            }
-            else
-            {
-                validationErrors = NodeValidationResults.Where(n => n.ErrorType != ErrorType.FilteredRootPath && n.ErrorType != ErrorType.ManifestFolder).ToList();
-                skippedErrors = NodeValidationResults.Where(n => n.ErrorType == ErrorType.FilteredRootPath || n.ErrorType == ErrorType.ManifestFolder).ToList();
+                validationErrors.RemoveAll(e => e.ErrorType == ErrorType.MissingFile);
+                skippedErrors.AddRange(NodeValidationResults.Where(r => r.ErrorType == ErrorType.MissingFile));
             }
 
             return new ValidationResult
@@ -99,11 +97,17 @@ namespace Microsoft.Sbom.Api.Entities.Output
                         FilesValidatedCount = NodeValidationResults.Count + successCount,
                         FilesFailedCount = validationErrors.Count,
                         FilesSkippedCount = skippedErrors.Count,
-                        TotalFilesInManifest = manifestData.Count
+                        TotalFilesInManifest = totalFiles,
                     },
                     Parameters = configuration
                 }
             };
+        }
+
+        public ValidationResultGenerator WithTotalFilesInManifest(int totalFiles)
+        {
+            this.totalFiles = totalFiles;
+            return this;
         }
     }
 }

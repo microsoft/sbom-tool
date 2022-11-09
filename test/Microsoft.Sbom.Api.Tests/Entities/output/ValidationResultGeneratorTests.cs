@@ -24,7 +24,7 @@ namespace Microsoft.Sbom.Api.Entities.Output.Tests
             var manifestData = GetDefaultManifestData();
             Mock<IConfiguration> configurationMock = GetDefaultConfigurationMock(ignoreMissing: false);
 
-            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object, manifestData);
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
             var failures = new List<FileValidationResult>();
 
             failures.Add(new FileValidationResult()
@@ -40,6 +40,7 @@ namespace Microsoft.Sbom.Api.Entities.Output.Tests
             });
 
             var validationResultOutput = validationResultGenerator
+                    .WithTotalFilesInManifest(manifestData.Count)
                     .WithSuccessCount(12)
                     .WithTotalDuration(TimeSpan.FromSeconds(5))
                     .WithValidationResults(failures)
@@ -59,7 +60,7 @@ namespace Microsoft.Sbom.Api.Entities.Output.Tests
             var manifestData = GetDefaultManifestData();
             Mock<IConfiguration> configurationMock = GetDefaultConfigurationMock(ignoreMissing: true);
 
-            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object, manifestData);
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
             var failures = new List<FileValidationResult>();
 
             failures.Add(new FileValidationResult()
@@ -75,6 +76,7 @@ namespace Microsoft.Sbom.Api.Entities.Output.Tests
             });
 
             var validationResultOutput = validationResultGenerator
+                    .WithTotalFilesInManifest(manifestData.Count)
                     .WithSuccessCount(12)
                     .WithTotalDuration(TimeSpan.FromSeconds(5))
                     .WithValidationResults(failures)
@@ -94,7 +96,7 @@ namespace Microsoft.Sbom.Api.Entities.Output.Tests
             var manifestData = GetDefaultManifestData();
             Mock<IConfiguration> configurationMock = GetDefaultConfigurationMock(ignoreMissing: false);
 
-            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object, manifestData);
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
             var failures = new List<FileValidationResult>();
 
             failures.Add(new FileValidationResult()
@@ -116,6 +118,7 @@ namespace Microsoft.Sbom.Api.Entities.Output.Tests
             });
 
             var validationResultOutput = validationResultGenerator
+                    .WithTotalFilesInManifest(manifestData.Count)
                     .WithSuccessCount(11)
                     .WithTotalDuration(TimeSpan.FromSeconds(5))
                     .WithValidationResults(failures)
@@ -135,7 +138,7 @@ namespace Microsoft.Sbom.Api.Entities.Output.Tests
             var manifestData = GetDefaultManifestData();
             Mock<IConfiguration> configurationMock = GetDefaultConfigurationMock(ignoreMissing: false);
 
-            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object, manifestData);
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
             var failures = new List<FileValidationResult>();
 
             failures.Add(new FileValidationResult()
@@ -157,6 +160,7 @@ namespace Microsoft.Sbom.Api.Entities.Output.Tests
             });
 
             var validationResultOutput = validationResultGenerator
+                    .WithTotalFilesInManifest(manifestData.Count)
                     .WithSuccessCount(11)
                     .WithTotalDuration(TimeSpan.FromSeconds(5))
                     .WithValidationResults(failures)
@@ -176,7 +180,7 @@ namespace Microsoft.Sbom.Api.Entities.Output.Tests
             var manifestData = GetDefaultManifestData();
             Mock<IConfiguration> configurationMock = GetDefaultConfigurationMock(ignoreMissing: true);
 
-            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object, manifestData);
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
             var failures = new List<FileValidationResult>();
 
             failures.Add(new FileValidationResult()
@@ -198,6 +202,7 @@ namespace Microsoft.Sbom.Api.Entities.Output.Tests
             });
 
             var validationResultOutput = validationResultGenerator
+                    .WithTotalFilesInManifest(manifestData.Count)
                     .WithSuccessCount(12)
                     .WithTotalDuration(TimeSpan.FromSeconds(5))
                     .WithValidationResults(failures)
@@ -217,7 +222,7 @@ namespace Microsoft.Sbom.Api.Entities.Output.Tests
             var manifestData = GetDefaultManifestData();
             Mock<IConfiguration> configurationMock = GetDefaultConfigurationMock(ignoreMissing: true);
 
-            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object, manifestData);
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
             var failures = new List<FileValidationResult>();
 
             failures.Add(new FileValidationResult()
@@ -245,6 +250,7 @@ namespace Microsoft.Sbom.Api.Entities.Output.Tests
             });
 
             var validationResultOutput = validationResultGenerator
+                    .WithTotalFilesInManifest(manifestData.Count)
                     .WithSuccessCount(11)
                     .WithTotalDuration(TimeSpan.FromSeconds(5))
                     .WithValidationResults(failures)

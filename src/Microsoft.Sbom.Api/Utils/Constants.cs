@@ -3,6 +3,8 @@
 
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Contracts.Enums;
+using System.Collections.Generic;
+using Microsoft.Sbom.Contracts;
 
 namespace Microsoft.Sbom.Api.Utils
 {
@@ -17,11 +19,20 @@ namespace Microsoft.Sbom.Api.Utils
             Version = "2.2"
         };
 
+        public static SBOMSpecification SPDX22Specification = SPDX22ManifestInfo.ToSBOMSpecification();
+
         // TODO: move to test csproj
         public static ManifestInfo TestManifestInfo = new ManifestInfo
         {
             Name = "TestManifest",
             Version = "1.0.0"
+        };
+
+        public static List<Entities.ErrorType> SkipFailureReportingForErrors = new ()
+        {
+                        Entities.ErrorType.ManifestFolder,
+                        Entities.ErrorType.FilteredRootPath,
+                        Entities.ErrorType.ReferencedSbomFile,
         };
 
         public static AlgorithmName DefaultHashAlgorithmName = AlgorithmName.SHA256;
