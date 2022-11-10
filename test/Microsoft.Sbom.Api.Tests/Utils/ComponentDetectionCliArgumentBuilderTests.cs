@@ -265,6 +265,22 @@ namespace Microsoft.Sbom.Api.Tests.Utils
             var result = build.Build();
             CollectionAssert.AreEquivalent(expected, result[^2..]);
         }
+
+        [TestMethod]
+        public void Build_MultipleDetectorArgs_Timeout()
+        {
+            var timeout = 32789;
+            var expected = ExpectedArgs().WithDetectorArgs($"Timeout={timeout},Foo=bar");
+
+            var build = new ComponentDetectionCliArgumentBuilder()
+                .Scan()
+                .SourceDirectory("X:/")
+                .AddDetectorArg("Foo", "bar")
+                .AddDetectorArg("Timeout", timeout.ToString());
+
+            var result = build.Build();
+            CollectionAssert.AreEquivalent(expected, result[^2..]);
+        }
     }
 
 #pragma warning disable SA1402 // File may only contain a single type
