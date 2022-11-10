@@ -99,8 +99,8 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         public void Build_ParseAndAddArgs()
         {
             var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
-            .WithDetectorArgs()
-            .WithArgs("--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello");
+                    .WithDetectorArgs()
+                    .WithArgs("--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello");
 
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
@@ -162,7 +162,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
                 .AddDetectorArg("world", "hello");
 
             var result = builder.Build();
-            CollectionAssert.IsSubsetOf(expected, result);
+            CollectionAssert.AreEqual(expected, result);
         }
 
         [TestMethod]
