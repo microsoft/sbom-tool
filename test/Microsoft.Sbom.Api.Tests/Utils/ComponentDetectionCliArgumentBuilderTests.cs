@@ -4,16 +4,21 @@
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
+using static Microsoft.Sbom.Api.Tests.Utils.ComponentDetectionCliArgumentBuilderTestsExtensions;
 
 namespace Microsoft.Sbom.Api.Tests.Utils
 {
     [TestClass]
     public class ComponentDetectionCliArgumentBuilderTests
     {
+        public const int DefaultTimeout = 900;
+
         [TestMethod]
         public void Build_Simple()
         {
-            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/" };
+            var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+                .WithDetectorArgs();
 
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
@@ -26,7 +31,8 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void Build_Verbosity()
         {
-            var expected = new string[] { "scan", "--Verbosity", "Verbose", "--SourceDirectory", "X:/hello/world" };
+            var expected = ExpectedArgs("scan", "--Verbosity", "Verbose", "--SourceDirectory", "X:/hello/world")
+                .WithDetectorArgs();
 
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
@@ -40,7 +46,8 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void Build_WithDetectorArgs()
         {
-            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/", "--DetectorArgs", "Hello=World,world=hello" };
+            var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+                .WithDetectorArgs("Hello=World,world=hello");
 
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
@@ -55,7 +62,9 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void Build_WithArgs()
         {
-            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/", "--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello" };
+            var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+                .WithDetectorArgs()
+                .WithArgs("--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello");
 
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
@@ -70,7 +79,9 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void Build_WithArgsDuplicate()
         {
-            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/", "--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello" };
+            var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+                .WithDetectorArgs()
+                .WithArgs("--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello");
 
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
@@ -87,7 +98,9 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void Build_ParseAndAddArgs()
         {
-            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/", "--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello" };
+            var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+                    .WithDetectorArgs()
+                    .WithArgs("--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello");
 
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
@@ -101,7 +114,9 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void Build_ParseAndAddArgsDuplicate()
         {
-            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/", "--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello" };
+            var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+                .WithDetectorArgs()
+                .WithArgs("--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello");
 
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
@@ -118,7 +133,9 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void Build_AddNoValueArgs()
         {
-            var expected = new string[] { "scan", "--Verbosity", "Normal", "--SourceDirectory", "X:/", "--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello", "--Help" };
+            var expected = ExpectedArgs("scan", "--Verbosity", "Normal", "--SourceDirectory", "X:/")
+                .WithDetectorArgs()
+                .WithArgs("--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello", "--Help");
 
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
@@ -134,7 +151,8 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void Build_AddDetectorArgsViaAddArgCombineWithOtherDetectorArgs()
         {
-            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/", "--DetectorArgs", "SPDX=hello,Hello=World,world=hello" };
+            var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+                .WithDetectorArgs("SPDX=hello,Hello=World,world=hello");
 
             var builder = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
@@ -176,12 +194,13 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void Build_WithSpacesSourceDirectory()
         {
-            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/path with spaces/" };
+            var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/path with spaces/")
+                .WithDetectorArgs();
 
             var build = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
                 .SourceDirectory("X:/path with spaces/");
-            
+
             var result = build.Build();
             CollectionAssert.AreEqual(expected, result);
         }
@@ -189,7 +208,9 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void Build_WithSpacesInArgument()
         {
-            var expected = new string[] { "scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/path with spaces/", "--MyArguemnt", "value with spaces" };
+            var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/path with spaces/")
+                .WithDetectorArgs()
+                .WithArgs("--MyArguemnt", "value with spaces");
 
             var build = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
@@ -203,7 +224,8 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public void Build_WithSpacesInDetectorArgs()
         {
-            var expected = new string[] { "scan", "--Verbosity", "Verbose", "--SourceDirectory", "X:/path with spaces/", "--DetectorArgs", "DetectorName=X:/complex/path with spaces" };
+            var expected = ExpectedArgs("scan", "--Verbosity", "Verbose", "--SourceDirectory", "X:/path with spaces/")
+                .WithDetectorArgs("DetectorName=X:/complex/path with spaces");
 
             var build = new ComponentDetectionCliArgumentBuilder()
                 .Scan()
@@ -213,6 +235,76 @@ namespace Microsoft.Sbom.Api.Tests.Utils
 
             var result = build.Build();
             CollectionAssert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Build_DetectorArgs_DefaultTimeout()
+        {
+            var expected = ExpectedArgs()
+                .WithDetectorArgs($"Timeout={DefaultTimeout}");
+
+            var build = new ComponentDetectionCliArgumentBuilder()
+                .Scan()
+                .SourceDirectory("X:/");
+
+            var result = build.Build();
+            CollectionAssert.AreEquivalent(expected, result[^2..]);
+        }
+
+        [TestMethod]
+        public void Build_DetectorArgs_Timeout()
+        {
+            var timeout = 32789;
+            var expected = ExpectedArgs().WithDetectorArgs($"Timeout={timeout}");
+
+            var build = new ComponentDetectionCliArgumentBuilder()
+                .Scan()
+                .SourceDirectory("X:/")
+                .AddDetectorArg("Timeout", timeout.ToString());
+
+            var result = build.Build();
+            CollectionAssert.AreEquivalent(expected, result[^2..]);
+        }
+
+        [TestMethod]
+        public void Build_MultipleDetectorArgs_Timeout()
+        {
+            var timeout = 32789;
+            var expected = ExpectedArgs().WithDetectorArgs($"Timeout={timeout},Foo=bar");
+
+            var build = new ComponentDetectionCliArgumentBuilder()
+                .Scan()
+                .SourceDirectory("X:/")
+                .AddDetectorArg("Foo", "bar")
+                .AddDetectorArg("Timeout", timeout.ToString());
+
+            var result = build.Build();
+            CollectionAssert.AreEquivalent(expected, result[^2..]);
+        }
+    }
+
+#pragma warning disable SA1402 // File may only contain a single type
+    internal static class ComponentDetectionCliArgumentBuilderTestsExtensions
+#pragma warning restore SA1402 // File may only contain a single type
+    {
+        internal static string[] ExpectedArgs(params string[] args) => args;
+
+        internal static string[] WithArgs(this string[] args, params string[] moreArgs) =>
+            Enumerable.Concat(args, moreArgs).ToArray();
+
+        internal static string[] WithDetectorArgs(this string[] args, string detectorArgs = "")
+        {
+            var defaultTimeoutArg = $"Timeout={ComponentDetectionCliArgumentBuilderTests.DefaultTimeout}";
+            if (string.IsNullOrEmpty(detectorArgs))
+            {
+                detectorArgs = defaultTimeoutArg;
+            }
+            else if (!detectorArgs.Contains("Timeout="))
+            {
+                detectorArgs = string.Join(",", defaultTimeoutArg, detectorArgs);
+            }
+
+            return args.WithArgs("--DetectorArgs", detectorArgs);
         }
     }
 }
