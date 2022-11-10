@@ -74,7 +74,7 @@ namespace Microsoft.Sbom.Api
                 var dlls = Directory
                     .GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll")
                     .Select(x => Assembly.Load(AssemblyName.GetAssemblyName(x))).ToArray();
-                
+
                 var types = names
                 .Select(name => dlls.Where(a => a.FullName.Contains(name))
                 .Select(assembly => assembly.GetTypes())
@@ -179,7 +179,6 @@ namespace Microsoft.Sbom.Api
             Bind<ComponentToPackageInfoConverter>().ToSelf().InThreadScope();
             Bind<RelationshipGenerator>().ToSelf().InThreadScope();
             Bind<SBOMFileToFileInfoConverter>().ToSelf().InThreadScope();
-            Bind<SBOMPackageToPackageInfoConverter>().ToSelf().InThreadScope();
             Bind<ExternalDocumentReferenceWriter>().ToSelf().InThreadScope();
             Bind<ISBOMReaderForExternalDocumentReference>().To<SPDXSBOMReaderForExternalDocumentReference>().InThreadScope();
             Bind<FileFilterer>().ToSelf().InThreadScope();
