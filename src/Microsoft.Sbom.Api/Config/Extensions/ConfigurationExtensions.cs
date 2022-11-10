@@ -16,7 +16,7 @@ namespace Microsoft.Sbom.Api.Config.Extensions
     public static class ConfigurationExtensions
     {
         /// <summary>
-        /// Get the name and value of each IConfiguration property that is annotated with <see cref=ComponentDetectorArgumentAttribute />..
+        /// Get the name and value of each IConfiguration property that is annotated with <see cref=ComponentDetectorArgumentAttribute />.
         /// </summary>
         /// <param name="configuration"></param>
         /// <returns></returns>
