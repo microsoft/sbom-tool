@@ -16,6 +16,7 @@
         <PackageReference Include="Microsoft.ComponentDetection.Contracts" />
         <PackageReference Include="Microsoft.ComponentDetection.Orchestrator" />
         <PackageReference Include="Microsoft.ComponentDetection.Detectors" />
+        <PackageReference Include="System.Private.Uri" />
         <PackageReference Include="Ninject" />
         <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="packageurl-dotnet" />
