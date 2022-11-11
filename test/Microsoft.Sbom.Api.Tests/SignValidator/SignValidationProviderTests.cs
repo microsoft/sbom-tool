@@ -32,7 +32,7 @@ namespace Microsoft.Sbom.Api.SignValidator.Tests
             var mockOSUtils = new Mock<IOSUtils>();
             mockOSUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(OSPlatform.Windows);
 
-            var signValidator = new SignValidationProvider(new ISignValidator[] { mockSignValidator.Object }, mockLogger.Object, mockOSUtils.Object);
+            var signValidator = new SignValidationProvider(new ISignValidator[] { mockSignValidator.Object }, mockOSUtils.Object);
             signValidator.Init();
             Assert.IsTrue(signValidator.Get().Equals(mockSignValidator.Object));
 
@@ -47,14 +47,13 @@ namespace Microsoft.Sbom.Api.SignValidator.Tests
             var mockOSUtils = new Mock<IOSUtils>();
             mockOSUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(OSPlatform.Windows);
 
-            var signValidator = new SignValidationProvider(null, mockLogger.Object, mockOSUtils.Object);
+            var signValidator = new SignValidationProvider(null, mockOSUtils.Object);
             signValidator.Init();
             signValidator.Get();
         }
 
         [TestMethod]
-        [ExpectedException(typeof(SignValidatorNotFoundException))]
-        public void SignValidationProvider_NotFoundValidators_Throws()
+        public void SignValidationProvider_NotFoundValidators_ReturnsNull()
         {
             var mockSignValidator = new Mock<ISignValidator>();
             mockSignValidator.SetupGet(s => s.SupportedPlatform).Returns(OSPlatform.Windows);
@@ -62,9 +61,9 @@ namespace Microsoft.Sbom.Api.SignValidator.Tests
             var mockOSUtils = new Mock<IOSUtils>();
             mockOSUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(OSPlatform.Linux);
 
-            var signValidator = new SignValidationProvider(new ISignValidator[] { mockSignValidator.Object }, mockLogger.Object, mockOSUtils.Object);
+            var signValidator = new SignValidationProvider(new ISignValidator[] { mockSignValidator.Object }, mockOSUtils.Object);
             signValidator.Init();
-            signValidator.Get();
+            Assert.IsNull(signValidator.Get());
         }
     }
 }

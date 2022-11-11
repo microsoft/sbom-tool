@@ -108,7 +108,7 @@ namespace Microsoft.Sbom.Api
 
             BindAllTypesThatImplement<ISignValidator>("Parsers");
 
-            Bind<SignValidationProvider>().ToSelf().InSingletonScope().OnActivation<SignValidationProvider>(s => s.Init());
+            Bind<ISignValidationProvider>().To<SignValidationProvider>().InSingletonScope().OnActivation<SignValidationProvider>(s => s.Init());
 
             #endregion
 

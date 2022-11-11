@@ -9,6 +9,7 @@ using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.SignValidator;
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
@@ -79,9 +80,13 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             configurationMock.SetupGet(c => c.IgnoreMissing).Returns(new ConfigurationSetting<bool> { Value = false });
             configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
             configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
+            configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
 
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(true);
+
+            var signValidationProviderMock = new Mock<ISignValidationProvider>();
+            signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
 
             var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
@@ -119,7 +124,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 validationResultGenerator,
                 outputWriterMock.Object,
                 mockLogger.Object,
-                signValidatorMock.Object,
+                signValidationProviderMock.Object,
                 new ManifestFileFilterer(
                     manifestData,
                     rootFileFilterMock,
@@ -194,9 +199,13 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             configurationMock.SetupGet(c => c.IgnoreMissing).Returns(new ConfigurationSetting<bool> { Value = false });
             configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
             configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
+            configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
 
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(true);
+
+            var signValidationProviderMock = new Mock<ISignValidationProvider>();
+            signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
 
             var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
@@ -232,7 +241,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 validationResultGenerator,
                 outputWriterMock.Object,
                 mockLogger.Object,
-                signValidatorMock.Object,
+                signValidationProviderMock.Object,
                 new ManifestFileFilterer(
                     manifestData,
                     rootFileFilterMock,
@@ -301,9 +310,13 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             configurationMock.SetupGet(c => c.IgnoreMissing).Returns(new ConfigurationSetting<bool> { Value = true });
             configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
             configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
+            configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
 
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(true);
+
+            var signValidationProviderMock = new Mock<ISignValidationProvider>();
+            signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
 
             var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
@@ -339,7 +352,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 validationResultGenerator,
                 outputWriterMock.Object,
                 mockLogger.Object,
-                signValidatorMock.Object,
+                signValidationProviderMock.Object,
                 new ManifestFileFilterer(
                     manifestData,
                     rootFileFilterMock,
@@ -407,9 +420,13 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             configurationMock.SetupGet(c => c.IgnoreMissing).Returns(new ConfigurationSetting<bool> { Value = true });
             configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
             configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
+            configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
 
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(true);
+
+            var signValidationProviderMock = new Mock<ISignValidationProvider>();
+            signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
 
             var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
@@ -445,7 +462,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 validationResultGenerator,
                 outputWriterMock.Object,
                 mockLogger.Object,
-                signValidatorMock.Object,
+                signValidationProviderMock.Object,
                 new ManifestFileFilterer(
                     manifestData,
                     rootFileFilterMock,
@@ -513,9 +530,13 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             configurationMock.SetupGet(c => c.IgnoreMissing).Returns(new ConfigurationSetting<bool> { Value = false });
             configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
             configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
+            configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
 
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(true);
+
+            var signValidationProviderMock = new Mock<ISignValidationProvider>();
+            signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
 
             var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
@@ -551,7 +572,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 validationResultGenerator,
                 outputWriterMock.Object,
                 mockLogger.Object,
-                signValidatorMock.Object,
+                signValidationProviderMock.Object,
                 new ManifestFileFilterer(
                     manifestData,
                     rootFileFilterMock,
@@ -587,10 +608,17 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
         {
             var signValidatorMock = new Mock<ISignValidator>();
             signValidatorMock.Setup(s => s.Validate()).Returns(false);
+
+            var signValidationProviderMock = new Mock<ISignValidationProvider>();
+            signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
+            
             var recorderMock = new Mock<IRecorder>().Object;
 
+            var configurationMock = new Mock<IConfiguration>();
+            configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
+
             var workflow = new SBOMValidationWorkflow(
-                null,
+                configurationMock.Object,
                 null,
                 null,
                 null,
@@ -600,7 +628,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 null,
                 null,
                 mockLogger.Object,
-                signValidatorMock.Object,
+                signValidationProviderMock.Object,
                 null,
                 recorderMock);
 

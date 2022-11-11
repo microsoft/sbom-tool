@@ -40,13 +40,15 @@ namespace Microsoft.Sbom.Workflows
         private readonly Mock<IOSUtils> mockOSUtils = new ();
         private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new ();
         private readonly Mock<ISignValidator> signValidatorMock = new ();
+        private readonly Mock<ISignValidationProvider> signValidationProviderMock = new ();
 
         [TestInitialize]
         public void Init()
         {
             signValidatorMock.Setup(s => s.Validate()).Returns(true);
+            signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
         }
-       
+
         [TestCleanup]
         public void Reset()
         {
@@ -92,6 +94,7 @@ namespace Microsoft.Sbom.Workflows
             configurationMock.SetupGet(c => c.IgnoreMissing).Returns(new ConfigurationSetting<bool> { Value = true });
             configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
             configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
+            configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
             configurationMock.SetupGet(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
             {
                 Value = new List<ManifestInfo>() { Constants.SPDX22ManifestInfo }
@@ -165,7 +168,7 @@ namespace Microsoft.Sbom.Workflows
 
             var validator = new SBOMParserBasedValidationWorkflow(
                 recorder.Object,
-                signValidatorMock.Object,
+                signValidationProviderMock.Object,
                 mockLogger.Object,
                 manifestInterface.Object,
                 configurationMock.Object,
@@ -193,6 +196,7 @@ namespace Microsoft.Sbom.Workflows
             Assert.AreEqual(0, otherErrors.Count);
 
             configurationMock.VerifyAll();
+            signValidatorMock.VerifyAll();
             fileSystemMock.VerifyAll();
         }
 
@@ -230,6 +234,7 @@ namespace Microsoft.Sbom.Workflows
             configurationMock.SetupGet(c => c.IgnoreMissing).Returns(new ConfigurationSetting<bool> { Value = false });
             configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
             configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
+            configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
             configurationMock.SetupGet(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
             {
                 Value = new List<ManifestInfo>() { Constants.SPDX22ManifestInfo }
@@ -308,7 +313,7 @@ namespace Microsoft.Sbom.Workflows
             
             var validator = new SBOMParserBasedValidationWorkflow(
                 recorder.Object,
-                signValidatorMock.Object,
+                signValidationProviderMock.Object,
                 mockLogger.Object,
                 manifestInterface.Object,
                 configurationMock.Object,
@@ -339,6 +344,7 @@ namespace Microsoft.Sbom.Workflows
             Assert.AreEqual("./child2/grandchild1/file10", otherErrors.First().Path);
 
             configurationMock.VerifyAll();
+            signValidatorMock.VerifyAll();
             fileSystemMock.VerifyAll();
         }
     }

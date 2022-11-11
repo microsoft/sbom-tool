@@ -32,7 +32,7 @@ namespace Microsoft.Sbom.Api.Workflows
     public class SBOMParserBasedValidationWorkflow : IWorkflow
     {
         private readonly IRecorder recorder;
-        private readonly SignValidationProvider signValidationProvider;
+        private readonly ISignValidationProvider signValidationProvider;
         private readonly ILogger log;
         private readonly IManifestInterface manifestInterface;
         private readonly IConfiguration configuration;
@@ -42,7 +42,7 @@ namespace Microsoft.Sbom.Api.Workflows
         private readonly IOutputWriter outputWriter;
         private readonly IFileSystemUtils fileSystemUtils;
 
-        public SBOMParserBasedValidationWorkflow(IRecorder recorder, SignValidationProvider signValidationProvider, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
+        public SBOMParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
         {
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
             this.signValidationProvider = signValidationProvider ?? throw new ArgumentNullException(nameof(signValidationProvider));
@@ -74,17 +74,19 @@ namespace Microsoft.Sbom.Api.Workflows
                     // Validate signature
                     if (configuration.ValidateSignature != null && configuration.ValidateSignature.Value)
                     {
-                        if (signValidationProvider.TryGet(out ISignValidator signValidator))
+                        var signValidator = signValidationProvider.Get();
+
+                        if (signValidator == null)
+                        {
+                            log.Warning($"ValidateSignature switch is true, but couldn't find a sign validator for the current OS, skipping validation.");
+                        }
+                        else
                         {
                             if (!signValidator.Validate())
                             {
                                 log.Error("Sign validation failed.");
                                 return false;
                             }
-                        }
-                        else
-                        {
-                            log.Warning($"ValidateSignature switch is true, but couldn't find a sign validator for the current OS, skipping validation.");
                         }
                     }
 
