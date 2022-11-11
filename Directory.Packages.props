@@ -23,7 +23,7 @@
         <PackageVersion Include="System.Composition.TypedParts" Version="1.4.1"/>
         <PackageVersion Include="System.Memory" Version="4.5.5"/>
         <PackageVersion Include="System.Reactive" Version="5.0.0"/>
-        <PackageVersion Include="System.Runtime.Loader" Version="4.3.0"/>
+        <PackageVersion Include="System.Runtime.Loader" Version="4.3.2"/>
         <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.11.1"/>
         <PackageVersion Include="Serilog.Sinks.Console" Version="4.0.0" />
         <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
