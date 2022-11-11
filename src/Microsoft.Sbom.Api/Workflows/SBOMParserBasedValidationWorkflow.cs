@@ -32,7 +32,7 @@ namespace Microsoft.Sbom.Api.Workflows
     public class SBOMParserBasedValidationWorkflow : IWorkflow
     {
         private readonly IRecorder recorder;
-        private readonly ISignValidator signValidator;
+        private readonly SignValidationProvider signValidationProvider;
         private readonly ILogger log;
         private readonly IManifestInterface manifestInterface;
         private readonly IConfiguration configuration;
@@ -42,10 +42,10 @@ namespace Microsoft.Sbom.Api.Workflows
         private readonly IOutputWriter outputWriter;
         private readonly IFileSystemUtils fileSystemUtils;
 
-        public SBOMParserBasedValidationWorkflow(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
+        public SBOMParserBasedValidationWorkflow(IRecorder recorder, SignValidationProvider signValidationProvider, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
         {
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
-            this.signValidator = signValidator ?? throw new ArgumentNullException(nameof(signValidator));
+            this.signValidationProvider = signValidationProvider ?? throw new ArgumentNullException(nameof(signValidationProvider));
             this.log = log ?? throw new ArgumentNullException(nameof(log));
             this.manifestInterface = manifestInterface ?? throw new ArgumentNullException(nameof(manifestInterface));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -72,10 +72,20 @@ namespace Microsoft.Sbom.Api.Workflows
                     var sbomParser = manifestInterface.CreateParser(stream);
 
                     // Validate signature
-                    if (!signValidator.Validate())
+                    if (configuration.ValidateSignature != null && configuration.ValidateSignature.Value)
                     {
-                        log.Error("Sign validation failed.");
-                        return false;
+                        if (signValidationProvider.TryGet(out ISignValidator signValidator))
+                        {
+                            if (!signValidator.Validate())
+                            {
+                                log.Error("Sign validation failed.");
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            log.Warning($"ValidateSignature switch is true, but couldn't find a sign validator for the current OS, skipping validation.");
+                        }
                     }
 
                     int successfullyValidatedFiles = 0;
