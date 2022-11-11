@@ -42,7 +42,7 @@ namespace Microsoft.Sbom.Api.Tests.Config
 
             var commandLineParams = config.ToComponentDetectorCommandLineParams(argBuilder);
 
-            Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --defaultArg1 val1 --defaultArg2 val2 --DockerImagesToScan the_docker_image --arg1 val1 --arg2 val2", string.Join(" ", commandLineParams));
+            Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --DetectorArgs Timeout=900 --defaultArg1 val1 --defaultArg2 val2 --DockerImagesToScan the_docker_image --arg1 val1 --arg2 val2", string.Join(" ", commandLineParams));
         }
 
         [TestMethod]
@@ -58,7 +58,7 @@ namespace Microsoft.Sbom.Api.Tests.Config
 
             var commandLineParams = config.ToComponentDetectorCommandLineParams(argBuilder);
 
-            Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --defaultArg1 val1 --defaultArg2 val2", string.Join(" ", commandLineParams));
+            Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --DetectorArgs Timeout=900 --defaultArg1 val1 --defaultArg2 val2", string.Join(" ", commandLineParams));
         }
     }
 }
