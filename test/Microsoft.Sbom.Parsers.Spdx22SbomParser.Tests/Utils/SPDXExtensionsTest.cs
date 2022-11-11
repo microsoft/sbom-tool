@@ -73,10 +73,10 @@ namespace SPDX22SBOMParserTest
         }
 
         [DataTestMethod]
-        [DataRow("pkg:npm/glob@7.1.6", "pkg:npm/glob%407.1.6")]
+        [DataRow("pkg:npm/glob@7.1.6", "pkg:npm/glob@7.1.6")]
         [DataRow("https://github.com/actions/virtual-environments", "https://github.com/actions/virtual-environments")]
 
-        public void AddPackageUrlsTest_WithEncoding_Success(string inputUrl, string expectedUrl)
+        public void AddPackageUrlsTest_WithSpecialCharacter_Success(string inputUrl, string expectedUrl)
         {
             spdxPackage = new SPDXPackage();
             spdxPackage.AddPackageUrls(new SBOMPackage { PackageUrl = inputUrl });

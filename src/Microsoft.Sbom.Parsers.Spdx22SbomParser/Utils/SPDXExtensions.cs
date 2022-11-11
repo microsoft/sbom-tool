@@ -26,11 +26,6 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
         private static readonly Regex SpdxIdAllowedCharsRegex = new Regex("[^a-zA-Z0-9.-]");
 
         /// <summary>
-        ///  "@" chars in the namespace should be url encoded, SPDX SBOM recommendation.
-        /// </summary>
-        private static readonly Regex PUrlEncodingRegex = new Regex("@", RegexOptions.Compiled);
-
-        /// <summary>
         /// Returns the SPDX-compliant package ID.
         /// </summary>
         public static string GenerateSpdxPackageId(string id) => $"SPDXRef-Package-{GetStringHash(id)}";
@@ -83,21 +78,11 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
                 {
                     ReferenceCategory = ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(),
                     Type = ExternalRepositoryType.purl,
-                    Locator = FormatPackageUrl(packageInfo.PackageUrl)
+                    Locator = packageInfo.PackageUrl,
                 };
 
                 spdxPackage.ExternalReferences.Add(extRef);
             }
-        }
-
-        /// <summary>
-        /// Used to encode and format packageurl, specifcally for @ to %40.
-        /// </summary>
-        /// <param name="packageUrl"></param>
-        /// <returns></returns>
-        private static string FormatPackageUrl(string packageUrl)
-        {
-            return PUrlEncodingRegex.Replace(packageUrl, "%40");
         }
 
         /// <summary>

@@ -17,14 +17,6 @@ The `Microsoft.Sbom.Common` project contains any common code, constants, etc tha
 
 The `Microsoft.Sbom.Contracts` project defines the interfaces that are used to call the SBOM tool through a C# API. The `ISBOMGenerator` class defines two methods that can be used to directly call the SBOM tool from C# code directly. The `Microsoft.Sbom.Tool` project defines a CLI interface to talk to the SBOM tool.
 
-### Package management using a public ADO feed
-
-The SBOM tool project uses the **SBOMToolPublic** feed as a package source to pull the required packages that are used to build the tool. The feed is a public Azure Artifacts feed, and can be accessed without authentication.
-
-All the packages that are needed to build the SBOM tool are already present in the feed, and most of the time you shouldn't have any issues pulling these packages from the feed. Occasionally, you might be building for a new environment that might require some additional packages that are not in the feed, in this case your build will fail as it won't be able to pull the required packages. If you are in this situation, please open an issue [here](https://github.com/microsoft/sbom-tool/issues) with the package and version for which the build failed. We will manually add those pacakges to the feed to unblock you right away.
-
-In the future, we will remove this feed and directly consume packages from nuget.org, when that happens, this additional steps won't be needed.
-
 ## Building on Visual Studio 
 
 Start Visual Studio 2022, and open the Microsoft.Sbom.sln file in the root of the repository. You can press `Ctrl + Shift + b` or select Build from the menu to build the application.
