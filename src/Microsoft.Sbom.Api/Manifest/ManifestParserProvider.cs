@@ -11,7 +11,7 @@ namespace Microsoft.Sbom.Api.Manifest
     /// <summary>
     /// Builds a map of <see cref="ManifestInfo"/>s to the actual <see cref="ManifestInterface"/> objects.
     /// </summary>
-    public class ManifestParserProvider
+    public class ManifestParserProvider : IManifestParserProvider
     {
         private readonly IManifestInterface[] manifestInterfaces;
         private readonly IDictionary<string, IManifestInterface> manifestMap;

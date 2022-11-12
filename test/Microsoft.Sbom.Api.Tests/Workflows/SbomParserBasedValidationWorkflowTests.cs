@@ -58,6 +58,7 @@ namespace Microsoft.Sbom.Workflows
         [TestMethod]
         public async Task SbomParserBasedValidationWorkflowTests_ReturnsSuccessAndValidationFailures_IgnoreMissingTrue_Succeeds()
         {
+            var manifestParserProvider = new Mock<IManifestParserProvider>();
             var manifestInterface = new Mock<IManifestInterface>();
             var sbomParser = new Mock<ISbomParser>();
             var configurationMock = new Mock<IConfiguration>();
@@ -85,6 +86,7 @@ namespace Microsoft.Sbom.Workflows
 
             manifestInterface.Setup(m => m.CreateParser(It.IsAny<Stream>()))
                 .Returns(sbomParser.Object);
+            manifestParserProvider.Setup(m => m.Get(It.IsAny<ManifestInfo>())).Returns(manifestInterface.Object);
 
             configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
             configurationMock.SetupGet(c => c.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest") });
@@ -170,7 +172,7 @@ namespace Microsoft.Sbom.Workflows
                 recorder.Object,
                 signValidationProviderMock.Object,
                 mockLogger.Object,
-                manifestInterface.Object,
+                manifestParserProvider.Object,
                 configurationMock.Object,
                 sbomConfigs.Object,
                 filesValidator,
@@ -203,6 +205,7 @@ namespace Microsoft.Sbom.Workflows
         [TestMethod]
         public async Task SbomParserBasedValidationWorkflowTests_ReturnsSuccessAndValidationFailures_Succeeds()
         {
+            var manifestParserProvider = new Mock<IManifestParserProvider>();
             var manifestInterface = new Mock<IManifestInterface>();
             var sbomParser = new Mock<ISbomParser>();
             var configurationMock = new Mock<IConfiguration>();
@@ -225,6 +228,7 @@ namespace Microsoft.Sbom.Workflows
 
             manifestInterface.Setup(m => m.CreateParser(It.IsAny<Stream>()))
                 .Returns(sbomParser.Object);
+            manifestParserProvider.Setup(m => m.Get(It.IsAny<ManifestInfo>())).Returns(manifestInterface.Object);
 
             configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
             configurationMock.SetupGet(c => c.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest") });
@@ -315,7 +319,7 @@ namespace Microsoft.Sbom.Workflows
                 recorder.Object,
                 signValidationProviderMock.Object,
                 mockLogger.Object,
-                manifestInterface.Object,
+                manifestParserProvider.Object,
                 configurationMock.Object,
                 sbomConfigs.Object,
                 filesValidator, 

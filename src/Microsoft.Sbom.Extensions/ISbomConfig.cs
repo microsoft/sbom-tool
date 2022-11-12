@@ -23,6 +23,21 @@ namespace Microsoft.Sbom.Extensions
         public string ManifestJsonFilePath { get; set; }
 
         /// <summary>
+        /// Gets or sets the absolute path of the manifest json sha256 hash file.
+        /// </summary>
+        public string ManifestJsonFileSha256FilePath { get; set; }
+
+        /// <summary>
+        /// Gets or sets the absolute path of the signed catalog file.
+        /// </summary>
+        public string CatalogFilePath { get; set; }
+
+        /// <summary>
+        /// Gets or sets the absolute path of the build session information file.
+        /// </summary>
+        public string BsiFilePath { get; set; }
+
+        /// <summary>
         /// Gets or sets derived manifestInfo or from configurations.
         /// </summary>
         public ManifestInfo ManifestInfo { get; set; }

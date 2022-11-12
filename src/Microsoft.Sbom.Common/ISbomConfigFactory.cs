@@ -17,7 +17,10 @@ namespace Microsoft.Sbom.Common
         public ISbomConfig Get(
             ManifestInfo manifestInfo,
             string manifestDirPath,
-            string manifestFilePath,
+            string manifestFilePath, 
+            string manifestFileSha256HashPath,
+            string catalogFilePath,
+            string bsiFilePath,
             ISbomPackageDetailsRecorder recorder,
             IMetadataBuilder metadataBuilder);
     }
