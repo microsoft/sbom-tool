@@ -4,12 +4,9 @@
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Common.Config;
-using Ninject;
 using Serilog;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,23 +19,21 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
     /// </summary>
     public class PackageArrayGenerator : IJsonArrayGenerator
     {
-        [Inject]
-        public IConfiguration Configuration { get; set; }
+        private ILogger Log { get; }
 
-        [Inject]
-        public ChannelUtils ChannelUtils { get; set; }
+        private ISbomConfigProvider SBOMConfigs { get; }
 
-        [Inject]
-        public ILogger Log { get; set; }
+        private IList<ISourcesProvider> SourcesProviders { get; }
 
-        [Inject]
-        public ISbomConfigProvider SBOMConfigs { get; set; }
+        private IRecorder Recorder { get; }
 
-        [Inject]
-        public IList<ISourcesProvider> SourcesProviders { get; set; }
-
-        [Inject]
-        public IRecorder Recorder { get; set; }
+        public PackageArrayGenerator(ILogger log, ISbomConfigProvider sBOMConfigs, IList<ISourcesProvider> sourcesProviders, IRecorder recorder)
+        {
+            Log = log;
+            SBOMConfigs = sBOMConfigs;
+            SourcesProviders = sourcesProviders;
+            Recorder = recorder;
+        }
 
         public async Task<IList<FileValidationResult>> GenerateAsync()
         {

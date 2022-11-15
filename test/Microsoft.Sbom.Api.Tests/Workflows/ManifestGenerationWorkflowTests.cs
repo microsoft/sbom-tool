@@ -308,33 +308,11 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 { externalDocumentReferenceProvider }
             };
 
-            var fileArrayGenerator = new FileArrayGenerator
-            {
-                SourcesProviders = sourcesProvider,
-                Log = mockLogger.Object,
-                Configuration = configurationMock.Object,
-                SBOMConfigs = sbomConfigs,
-                Recorder = recorderMock.Object
-            };
+            var fileArrayGenerator = new FileArrayGenerator(configurationMock.Object, mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
-            var packageArrayGenerator = new PackageArrayGenerator
-            {
-                ChannelUtils = new ChannelUtils(),
-                Configuration = configurationMock.Object,
-                Log = mockLogger.Object,
-                SBOMConfigs = sbomConfigs,
-                SourcesProviders = sourcesProvider,
-                Recorder = recorderMock.Object
-            };
+            var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
-            var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator
-            {
-                SourcesProviders = sourcesProvider,
-                Log = mockLogger.Object,
-                Configuration = configurationMock.Object,
-                SBOMConfigs = sbomConfigs,
-                Recorder = recorderMock.Object
-            };
+            var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(configurationMock.Object, mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
             relationshipArrayGenerator
                 .Setup(r => r.GenerateAsync())

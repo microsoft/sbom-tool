@@ -3,11 +3,9 @@
 
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
-using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Entities;
-using Ninject;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -145,7 +143,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
         {
             var errors = new List<ChannelReader<FileValidationResult>>();
             var filesWithHashes = new List<ChannelReader<FileValidationResult>>();
-
+            
             // Enumerate files from SBOM
             var (sbomFiles, sbomFileErrors) = enumeratorChannel.Enumerate(sbomParser.GetFiles);
             errors.Add(sbomFileErrors);
