@@ -28,16 +28,12 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
 
         private IRecorder Recorder { get; }
 
-        public PackageArrayGenerator(
-            ILogger log,
-            ISbomConfigProvider sbomConfigs,
-            IList<ISourcesProvider> sourcesProviders,
-            IRecorder recorder)
+        public PackageArrayGenerator(ILogger log, ISbomConfigProvider sBOMConfigs, IList<ISourcesProvider> sourcesProviders, IRecorder recorder)
         {
-            Log = log ?? throw new ArgumentNullException(nameof(log));
-            SBOMConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
-            SourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
-            Recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+            Log = log;
+            SBOMConfigs = sBOMConfigs;
+            SourcesProviders = sourcesProviders;
+            Recorder = recorder;
         }
 
         public async Task<IList<FileValidationResult>> GenerateAsync()
