@@ -3,6 +3,7 @@
 
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
+using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.SignValidator;
@@ -32,9 +33,9 @@ namespace Microsoft.Sbom.Api.Workflows
     public class SBOMParserBasedValidationWorkflow : IWorkflow
     {
         private readonly IRecorder recorder;
-        private readonly ISignValidator signValidator;
+        private readonly ISignValidationProvider signValidationProvider;
         private readonly ILogger log;
-        private readonly IManifestInterface manifestInterface;
+        private readonly IManifestParserProvider manifestParserProvider;
         private readonly IConfiguration configuration;
         private readonly ISbomConfigProvider sbomConfigs;
         private readonly FilesValidator filesValidator;
@@ -42,12 +43,12 @@ namespace Microsoft.Sbom.Api.Workflows
         private readonly IOutputWriter outputWriter;
         private readonly IFileSystemUtils fileSystemUtils;
 
-        public SBOMParserBasedValidationWorkflow(IRecorder recorder, ISignValidator signValidator, ILogger log, IManifestInterface manifestInterface, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
+        public SBOMParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ILogger log, IManifestParserProvider manifestParserProvider, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
         {
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
-            this.signValidator = signValidator ?? throw new ArgumentNullException(nameof(signValidator));
+            this.signValidationProvider = signValidationProvider ?? throw new ArgumentNullException(nameof(signValidationProvider));
             this.log = log ?? throw new ArgumentNullException(nameof(log));
-            this.manifestInterface = manifestInterface ?? throw new ArgumentNullException(nameof(manifestInterface));
+            this.manifestParserProvider = manifestParserProvider ?? throw new ArgumentNullException(nameof(manifestParserProvider));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
             this.filesValidator = filesValidator ?? throw new ArgumentNullException(nameof(filesValidator));
@@ -69,13 +70,26 @@ namespace Microsoft.Sbom.Api.Workflows
                     var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo.Value.FirstOrDefault());
 
                     using Stream stream = fileSystemUtils.OpenRead(sbomConfig.ManifestJsonFilePath);
+                    var manifestInterface = manifestParserProvider.Get(sbomConfig.ManifestInfo);
                     var sbomParser = manifestInterface.CreateParser(stream);
 
                     // Validate signature
-                    if (!signValidator.Validate())
+                    if (configuration.ValidateSignature != null && configuration.ValidateSignature.Value)
                     {
-                        log.Error("Sign validation failed.");
-                        return false;
+                        var signValidator = signValidationProvider.Get();
+
+                        if (signValidator == null)
+                        {
+                            log.Warning($"ValidateSignature switch is true, but couldn't find a sign validator for the current OS, skipping validation.");
+                        }
+                        else
+                        {
+                            if (!signValidator.Validate())
+                            {
+                                log.Error("Sign validation failed.");
+                                return false;
+                            }
+                        }
                     }
 
                     int successfullyValidatedFiles = 0;

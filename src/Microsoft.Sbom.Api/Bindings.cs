@@ -91,7 +91,7 @@ namespace Microsoft.Sbom.Api
             BindAllTypesThatImplement<IManifestInterface>("Parsers");
 
             Bind<ManifestData>().ToProvider<ManifestDataProvider>().InSingletonScope();
-            Bind<ManifestParserProvider>().ToSelf().InSingletonScope().OnActivation<ManifestParserProvider>(m => m.Init());
+            Bind<IManifestParserProvider>().To<ManifestParserProvider>().InSingletonScope().OnActivation(m => m.Init());
             Bind<FileHashesDictionary>().ToProvider<FileHashesDictionaryProvider>().InSingletonScope();
 
             #endregion
@@ -108,7 +108,7 @@ namespace Microsoft.Sbom.Api
 
             BindAllTypesThatImplement<ISignValidator>("Parsers");
 
-            Bind<SignValidationProvider>().ToSelf().InSingletonScope().OnActivation<SignValidationProvider>(s => s.Init());
+            Bind<ISignValidationProvider>().To<SignValidationProvider>().InSingletonScope().OnActivation(s => s.Init());
 
             #endregion
 

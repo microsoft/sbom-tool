@@ -19,6 +19,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.SignValidator;
 
 namespace Microsoft.Sbom.Api.Workflows
 {
@@ -37,7 +38,7 @@ namespace Microsoft.Sbom.Api.Workflows
         private readonly ValidationResultGenerator validationResultGenerator;
         private readonly IOutputWriter outputWriter;
         private readonly ILogger log;
-        private readonly ISignValidator signValidator;
+        private readonly ISignValidationProvider signValidationProvider;
         private readonly ManifestFileFilterer manifestFileFilterer;
         private readonly IRecorder recorder;
 
@@ -52,7 +53,7 @@ namespace Microsoft.Sbom.Api.Workflows
             ValidationResultGenerator validationResultGenerator,
             IOutputWriter outputWriter,
             ILogger log,
-            ISignValidator signValidator,
+            ISignValidationProvider signValidationProvider,
             ManifestFileFilterer manifestFileFilterer,
             IRecorder recorder)
         {
@@ -63,7 +64,7 @@ namespace Microsoft.Sbom.Api.Workflows
             this.manifestData = manifestData;
             this.log = log;
             this.fileFilterer = fileFilterer;
-            this.signValidator = signValidator;
+            this.signValidationProvider = signValidationProvider;
             this.validationResultGenerator = validationResultGenerator;
             this.outputWriter = outputWriter;
             this.manifestFileFilterer = manifestFileFilterer;
@@ -90,10 +91,22 @@ namespace Microsoft.Sbom.Api.Workflows
                     IList<ChannelReader<FileValidationResult>> results = new List<ChannelReader<FileValidationResult>>();
 
                     // Validate signature
-                    if (!signValidator.Validate())
+                    if (configuration.ValidateSignature != null && configuration.ValidateSignature.Value)
                     {
-                        log.Error("Sign validation failed.");
-                        return false;
+                        var signValidator = signValidationProvider.Get();
+
+                        if (signValidator == null)
+                        {
+                            log.Warning($"ValidateSignature switch is true, but couldn't find a sign validator for the current OS, skipping validation.");
+                        } 
+                        else
+                        {
+                            if (!signValidator.Validate())
+                            {
+                                log.Error("Sign validation failed.");
+                                return false;
+                            }
+                        }
                     }
 
                     // Workflow

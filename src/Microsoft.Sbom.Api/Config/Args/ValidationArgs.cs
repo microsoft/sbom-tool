@@ -3,6 +3,7 @@
 
 using PowerArgs;
 using Microsoft.Sbom.Contracts.Enums;
+using System;
 
 namespace Microsoft.Sbom.Api.Config.Args
 {
@@ -38,7 +39,10 @@ namespace Microsoft.Sbom.Api.Config.Args
         /// <summary>
         /// Gets or sets the path of the signed catalog file used to validate the manifest.json.
         /// </summary>
-        [ArgDescription("The path of signed catalog file that is used to verify the signature of the manifest json file.")]
+        [ArgDescription("This parameter is deprecated and will not be used, we will automatically detect the catalog file " +
+            "using our standard directory structure." +
+            "The path of signed catalog file that is used to verify the signature of the manifest json file.")]
+        [Obsolete]
         public string CatalogFilePath { get; set; }
 
         /// <summary>

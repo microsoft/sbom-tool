@@ -42,7 +42,7 @@ namespace Microsoft.Sbom.Api.Manifest
         protected override ManifestData CreateInstance(IContext context)
         {
             var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo?.Value?.FirstOrDefault());
-            var parserProvider = context.Kernel.Get<ManifestParserProvider>();
+            var parserProvider = context.Kernel.Get<IManifestParserProvider>();
             var manifestValue = fileSystemUtils.ReadAllText(sbomConfig.ManifestJsonFilePath);
             var manifestData = parserProvider.Get(sbomConfig.ManifestInfo).ParseManifest(manifestValue);
             manifestData.HashesMap = new ConcurrentDictionary<string, Checksum[]>(manifestData.HashesMap, osUtils.GetFileSystemStringComparer());

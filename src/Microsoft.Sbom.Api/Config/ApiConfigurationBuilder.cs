@@ -106,7 +106,6 @@ namespace Microsoft.Sbom.Api.Config
             IList<SBOMSpecification> specifications,
             AlgorithmName algorithmName,
             string manifestDirPath,
-            string catalogFilePath,
             bool validateSignature,
             bool ignoreMissing,
             string rootPathFilter,
@@ -136,7 +135,6 @@ namespace Microsoft.Sbom.Api.Config
             configuration.OutputPath = GetConfigurationSetting(outputPath);
             configuration.HashAlgorithm = GetConfigurationSetting(algorithmName ?? AlgorithmName.SHA256);
             configuration.RootPathFilter = GetConfigurationSetting(rootPathFilter);
-            configuration.CatalogFilePath = GetConfigurationSetting(catalogFilePath);
             configuration.ValidateSignature = GetConfigurationSetting(validateSignature);
             configuration.IgnoreMissing = GetConfigurationSetting(ignoreMissing);
             configuration.Parallelism = GetConfigurationSetting(sanitizedRuntimeConfiguration.WorkflowParallelism);
