@@ -31,7 +31,14 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
 
         public ExternalReferenceDeduplicator ExternalReferenceDeduplicator { get; }
 
-        public CGExternalDocumentReferenceProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger, ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter, ExternalDocumentReferenceWriter externalDocumentReferenceWriter, SBOMComponentsWalker sbomComponentsWalker, ExternalReferenceDeduplicator externalReferenceDeduplicator)
+        public CGExternalDocumentReferenceProvider(
+            IConfiguration configuration,
+            ChannelUtils channelUtils,
+            ILogger logger,
+            ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter,
+            ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
+            SBOMComponentsWalker sbomComponentsWalker,
+            ExternalReferenceDeduplicator externalReferenceDeduplicator)
             : base(configuration, channelUtils, logger)
         {
             ComponentToExternalReferenceInfoConverter = componentToExternalReferenceInfoConverter ?? throw new ArgumentNullException(nameof(componentToExternalReferenceInfoConverter));

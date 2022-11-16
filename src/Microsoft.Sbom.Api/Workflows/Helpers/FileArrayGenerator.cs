@@ -30,7 +30,12 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
 
         public IRecorder Recorder { get; }
 
-        public FileArrayGenerator(IConfiguration configuration, ILogger log, ISbomConfigProvider sbomConfigs, IList<ISourcesProvider> sourcesProviders, IRecorder recorder)
+        public FileArrayGenerator(
+            IConfiguration configuration,
+            ILogger log,
+            ISbomConfigProvider sbomConfigs,
+            IList<ISourcesProvider> sourcesProviders,
+            IRecorder recorder)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             Log = log ?? throw new ArgumentNullException(nameof(log));

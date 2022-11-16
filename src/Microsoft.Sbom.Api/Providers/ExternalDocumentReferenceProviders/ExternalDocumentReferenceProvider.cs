@@ -28,7 +28,14 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
 
         public ExternalReferenceDeduplicator ExternalReferenceDeduplicator { get; }
 
-        public ExternalDocumentReferenceProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger, FileListEnumerator listWalker, ISBOMReaderForExternalDocumentReference spdxSbomReaderForExternalDocumentReference, ExternalDocumentReferenceWriter externalDocumentReferenceWriter, ExternalReferenceDeduplicator externalReferenceDeduplicator)
+        public ExternalDocumentReferenceProvider(
+            IConfiguration configuration,
+            ChannelUtils channelUtils,
+            ILogger logger,
+            FileListEnumerator listWalker,
+            ISBOMReaderForExternalDocumentReference spdxSbomReaderForExternalDocumentReference,
+            ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
+            ExternalReferenceDeduplicator externalReferenceDeduplicator)
             : base(configuration, channelUtils, logger)
         {
             ListWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));

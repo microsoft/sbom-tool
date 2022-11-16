@@ -25,7 +25,12 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
 
         public PackageInfoJsonWriter PackageInfoJsonWriter { get; }
 
-        protected CommonPackagesProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger, ISbomConfigProvider sbomConfigs, PackageInfoJsonWriter packageInfoJsonWriter)
+        protected CommonPackagesProvider(
+            IConfiguration configuration,
+            ChannelUtils channelUtils,
+            ILogger logger,
+            ISbomConfigProvider sbomConfigs,
+            PackageInfoJsonWriter packageInfoJsonWriter)
             : base(configuration, channelUtils, logger)
         {
             SBOMConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
