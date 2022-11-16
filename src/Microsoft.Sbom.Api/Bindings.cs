@@ -50,24 +50,13 @@ namespace Microsoft.Sbom.Api
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1123:Do not place regions within elements", Justification = "Enable documentation of code")]
         public override void Load()
         {
-            Bind<IFileSystemUtils>().ToProvider<FileSystemUtilsProvider>().InSingletonScope();
-
             Bind<ValidationResultGenerator>().ToSelf();
             Bind<IOutputWriter>().To<FileOutputWriter>();
             Bind<IOSUtils>().To<OSUtils>().InSingletonScope();
             Bind<IEnvironmentWrapper>().To<EnvironmentWrapper>().InSingletonScope();
             Bind<ConfigFileParser>().ToSelf();
-            Bind<IJsonArrayGenerator>().To<FileArrayGenerator>().Named(nameof(FileArrayGenerator));
-            Bind<IJsonArrayGenerator>().To<PackageArrayGenerator>().Named(nameof(PackageArrayGenerator));
-            Bind<IJsonArrayGenerator>().To<RelationshipsArrayGenerator>().Named(nameof(RelationshipsArrayGenerator));
-            Bind<IJsonArrayGenerator>().To<ExternalDocumentReferenceGenerator>().Named(nameof(ExternalDocumentReferenceGenerator));
             Bind<ComponentDetector>().ToSelf();
             Bind<IAssemblyConfig>().To<AssemblyConfig>().InSingletonScope();
-
-            Bind<IFilter>().To<DownloadedRootPathFilter>().Named(nameof(DownloadedRootPathFilter)).OnActivation(f => f.Init());
-            Bind<IFilter>().To<ManifestFolderFilter>().Named(nameof(ManifestFolderFilter)).OnActivation(f => f.Init());
-            Bind<ILogger>().ToProvider<LoggerProvider>();
-
             IEnumerable<Type> BindAllTypesThatImplement<T>(params string[] partialAssemblyNames)
             {
                 var names = partialAssemblyNames.Append(Assembly.GetExecutingAssembly().GetName().Name);
@@ -148,9 +137,9 @@ namespace Microsoft.Sbom.Api
 
             #region Workflows
 
-            Bind<IWorkflow>().To<SBOMValidationWorkflow>().Named(nameof(SBOMValidationWorkflow));
-            Bind<IWorkflow>().To<SBOMGenerationWorkflow>().Named(nameof(SBOMGenerationWorkflow));
-            Bind<IWorkflow>().To<SBOMParserBasedValidationWorkflow>().Named(nameof(SBOMParserBasedValidationWorkflow));
+            Bind<IWorkflow<SBOMValidationWorkflow>>().To<SBOMValidationWorkflow>().Named(nameof(SBOMValidationWorkflow));
+            Bind<IWorkflow<SBOMGenerationWorkflow>>().To<SBOMGenerationWorkflow>().Named(nameof(SBOMGenerationWorkflow));
+            Bind<IWorkflow<SBOMParserBasedValidationWorkflow>>().To<SBOMParserBasedValidationWorkflow>().Named(nameof(SBOMParserBasedValidationWorkflow));
 
             #endregion
 

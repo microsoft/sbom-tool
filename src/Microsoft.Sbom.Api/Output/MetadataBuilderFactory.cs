@@ -8,6 +8,7 @@ using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Extensions;
+using System.Collections.Generic;
 
 namespace Microsoft.Sbom.Api.Output
 {
@@ -16,13 +17,13 @@ namespace Microsoft.Sbom.Api.Output
     /// </summary>
     public class MetadataBuilderFactory : IMetadataBuilderFactory
     {
-        private readonly IMetadataProvider[] metadataProviders;
+        private readonly IEnumerable<IMetadataProvider> metadataProviders;
         private readonly ILogger logger;
         private readonly ManifestGeneratorProvider manifestGeneratorProvider;
         private readonly IRecorder recorder;
 
         public MetadataBuilderFactory(
-            IMetadataProvider[] metadataProviders,
+            IEnumerable<IMetadataProvider> metadataProviders,
             ILogger logger,
             ManifestGeneratorProvider manifestGeneratorProvider,
             IRecorder recorder)

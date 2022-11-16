@@ -2,34 +2,24 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Runtime.InteropServices;
-using Ninject.Activation;
 
 namespace Microsoft.Sbom.Common
 {
     /// <summary>
     /// Provides the <see cref="IFileSystemUtils"/> for a given OS.
     /// </summary>
-    public class FileSystemUtilsProvider : Provider<IFileSystemUtils>
+    public static class FileSystemUtilsProvider //: Provider<IFileSystemUtils>
     {
-        public FileSystemUtilsProvider()
-        {
-        }
-
         /// <summary>
         /// Checks the OS to provide the correct <see cref="IFileSystemUtils"/>.
         /// This is important due to the different file systems of operating systems.
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        protected override IFileSystemUtils CreateInstance(IContext context)
+        public static IFileSystemUtils CreateInstance()
         {
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-            if (isWindows)
-            {
-                return new WindowsFileSystemUtils();
-            }
-
-            return new UnixFileSystemUtils();
+            return isWindows ? new WindowsFileSystemUtils() : new UnixFileSystemUtils();
         }
     }
 }

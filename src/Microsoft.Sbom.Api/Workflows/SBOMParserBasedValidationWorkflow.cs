@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Manifest;
@@ -30,7 +31,7 @@ namespace Microsoft.Sbom.Api.Workflows
     /// Validates a SBOM against a given drop path. Uses the <see cref="ISbomParser"/> to read
     /// objects inside a SBOM.
     /// </summary>
-    public class SBOMParserBasedValidationWorkflow : IWorkflow
+    public class SBOMParserBasedValidationWorkflow : IWorkflow<SBOMParserBasedValidationWorkflow>
     {
         private readonly IRecorder recorder;
         private readonly ISignValidationProvider signValidationProvider;

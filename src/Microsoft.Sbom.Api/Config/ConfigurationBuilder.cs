@@ -16,7 +16,7 @@ namespace Microsoft.Sbom.Api.Config
     /// Throws an error if the same parameters are defined in both the config file and command line.
     /// </summary>
     /// <typeparam name="T">The action args parameter.</typeparam>
-    public class ConfigurationBuilder<T>
+    public class ConfigurationBuilder<T> : IConfigurationBuilder<T>
     {
         private readonly IMapper mapper;
         private readonly ConfigFileParser configFileParser;
@@ -57,5 +57,10 @@ namespace Microsoft.Sbom.Api.Config
             // Combine both configs, include defaults.
             return mapper.Map(commandLineArgs, configFileArgs);
         }
+    }
+
+    public interface IConfigurationBuilder<T>
+    {
+        Task<IConfiguration> GetConfiguration(T args);
     }
 }

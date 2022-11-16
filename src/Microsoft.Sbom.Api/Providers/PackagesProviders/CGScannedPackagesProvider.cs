@@ -21,9 +21,9 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
     /// </summary>
     public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent>
     {
-        public ComponentToPackageInfoConverter PackageInfoConverter { get; }
+        private readonly ComponentToPackageInfoConverter packageInfoConverter;
 
-        public PackagesWalker PackagesWalker { get; }
+        private readonly PackagesWalker packagesWalker;
 
         public CGScannedPackagesProvider(
             IConfiguration configuration,
@@ -35,8 +35,8 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
             PackagesWalker packagesWalker)
             : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter)
         {
-            PackageInfoConverter = packageInfoConverter ?? throw new ArgumentNullException(nameof(packageInfoConverter));
-            PackagesWalker = packagesWalker ?? throw new ArgumentNullException(nameof(packagesWalker));
+            this.packageInfoConverter = packageInfoConverter ?? throw new ArgumentNullException(nameof(packageInfoConverter));
+            this.packagesWalker = packagesWalker ?? throw new ArgumentNullException(nameof(packagesWalker));
         }
 
         public override bool IsSupported(ProviderType providerType)
@@ -61,7 +61,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
         {
             IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
 
-            var (packageInfos, packageErrors) = PackageInfoConverter.Convert(sourceChannel);
+            var (packageInfos, packageErrors) = packageInfoConverter.Convert(sourceChannel);
             errors.Add(packageErrors);
 
             var (jsonResults, jsonErrors) = PackageInfoJsonWriter.Write(packageInfos, requiredConfigs);
@@ -72,7 +72,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
 
         protected override (ChannelReader<ScannedComponent> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            var (output, cdErrors) = PackagesWalker.GetComponents(Configuration.BuildComponentPath?.Value);
+            var (output, cdErrors) = packagesWalker.GetComponents(Configuration.BuildComponentPath?.Value);
 
             if (cdErrors.TryRead(out ComponentDetectorException e))
             {

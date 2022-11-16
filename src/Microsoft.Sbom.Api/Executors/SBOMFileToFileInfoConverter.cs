@@ -21,7 +21,7 @@ namespace Microsoft.Sbom.Api.Executors
     {
         private readonly IFileTypeUtils fileTypeUtils;
 
-        public SBOMFileToFileInfoConverter(FileTypeUtils fileTypeUtils)
+        public SBOMFileToFileInfoConverter(IFileTypeUtils fileTypeUtils)
         {
             this.fileTypeUtils = fileTypeUtils ?? throw new ArgumentNullException(nameof(fileTypeUtils));
         }

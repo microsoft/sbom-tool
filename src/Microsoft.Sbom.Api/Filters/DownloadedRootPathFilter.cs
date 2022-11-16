@@ -15,7 +15,7 @@ namespace Microsoft.Sbom.Api.Filters
     /// This filter checks if the path of a file matches the provided 
     /// root path filter, and returns true if it does. 
     /// </summary>
-    public class DownloadedRootPathFilter : IFilter
+    public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
     {
         private readonly IConfiguration configuration;
         private readonly IFileSystemUtils fileSystemUtils;

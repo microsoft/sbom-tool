@@ -6,6 +6,7 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Validators;
 using PowerArgs;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Microsoft.Sbom.Api.Config
@@ -15,10 +16,10 @@ namespace Microsoft.Sbom.Api.Config
     /// </summary>
     public class ConfigPostProcessor : IMappingAction<Configuration, Configuration>
     {
-        private readonly ConfigValidator[] configValidators;
+        private readonly IEnumerable<ConfigValidator> configValidators;
         private readonly ConfigSanitizer configSanitizer;
 
-        public ConfigPostProcessor(ConfigValidator[] configValidators, ConfigSanitizer configSanitizer)
+        public ConfigPostProcessor(IEnumerable<ConfigValidator> configValidators, ConfigSanitizer configSanitizer)
         {
             this.configValidators = configValidators ?? throw new ArgumentNullException(nameof(configValidators));
             this.configSanitizer = configSanitizer ?? throw new ArgumentNullException(nameof(configSanitizer));

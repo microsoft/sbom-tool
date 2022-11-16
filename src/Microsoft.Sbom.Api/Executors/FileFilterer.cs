@@ -6,7 +6,6 @@ using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.Entities;
-using Ninject;
 using Serilog;
 using System;
 using System.Threading.Channels;
@@ -19,13 +18,13 @@ namespace Microsoft.Sbom.Api.Executors
     /// </summary>
     public class FileFilterer
     {
-        private readonly IFilter rootPathFilter;
+        private readonly IFilter<DownloadedRootPathFilter> rootPathFilter;
         private readonly ILogger log;
         private readonly IFileSystemUtils fileSystemUtils;
         private readonly IConfiguration configuration;
 
         public FileFilterer(
-            [Named(nameof(DownloadedRootPathFilter))] IFilter rootPathFilter,
+            IFilter<DownloadedRootPathFilter> rootPathFilter,
             ILogger log,
             IConfiguration configuration,
             IFileSystemUtils fileSystemUtils)

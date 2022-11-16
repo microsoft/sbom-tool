@@ -57,7 +57,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
         private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>();
         private readonly Mock<IMetadataProvider> mockMetadataProvider = new Mock<IMetadataProvider>();
         private readonly Mock<ComponentDetectorCachedExecutor> mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
-        private readonly Mock<IJsonArrayGenerator> relationshipArrayGenerator = new Mock<IJsonArrayGenerator>();
+        private readonly Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>> relationshipArrayGenerator = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>();
         private readonly Mock<ComponentToPackageInfoConverter> packageInfoConverterMock = new Mock<ComponentToPackageInfoConverter>();
         private readonly Mock<ISBOMReaderForExternalDocumentReference> sBOMReaderForExternalDocumentReferenceMock = new Mock<ISBOMReaderForExternalDocumentReference>();
         private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new Mock<IFileSystemUtilsExtension>();
@@ -365,10 +365,10 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 configurationMock.Object,
                 fileSystemMock.Object,
                 mockLogger.Object,
-                new Mock<IJsonArrayGenerator>().Object,
-                new Mock<IJsonArrayGenerator>().Object,
-                new Mock<IJsonArrayGenerator>().Object,
-                new Mock<IJsonArrayGenerator>().Object,
+                new Mock<IJsonArrayGenerator<FileArrayGenerator>>().Object,
+                new Mock<IJsonArrayGenerator<PackageArrayGenerator>>().Object,
+                new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>().Object,
+                new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>().Object,
                 new Mock<ISbomConfigProvider>().Object,
                 mockOSUtils.Object,
                 recorderMock.Object);
@@ -390,7 +390,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             configurationMock.SetupGet(x => x.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.CommandLine });
             fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
             fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
-            var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator>();
+            var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
             fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(new List<FileValidationResult> { new FileValidationResult() });
 
             var workflow = new SBOMGenerationWorkflow(
@@ -398,9 +398,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 fileSystemMock.Object,
                 mockLogger.Object,
                 fileArrayGeneratorMock.Object,
-                new Mock<IJsonArrayGenerator>().Object,
-                new Mock<IJsonArrayGenerator>().Object,
-                new Mock<IJsonArrayGenerator>().Object,
+                new Mock<IJsonArrayGenerator<PackageArrayGenerator>>().Object,
+                new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>().Object,
+                new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>().Object,
                 new Mock<ISbomConfigProvider>().Object,
                 mockOSUtils.Object,
                 recorderMock.Object);

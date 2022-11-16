@@ -23,21 +23,28 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
     /// </summary>
     public class CGExternalDocumentReferenceProvider : EntityToJsonProviderBase<ScannedComponent>
     {
-        public ComponentToExternalReferenceInfoConverter ComponentToExternalReferenceInfoConverter { get; }
+        private readonly ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter;
 
-        public ExternalDocumentReferenceWriter ExternalDocumentReferenceWriter { get; }
+        private readonly ExternalDocumentReferenceWriter externalDocumentReferenceWriter;
 
-        public SBOMComponentsWalker SBOMComponentsWalker { get; }
+        private readonly SBOMComponentsWalker sbomComponentsWalker;
 
-        public ExternalReferenceDeduplicator ExternalReferenceDeduplicator { get; }
+        private readonly ExternalReferenceDeduplicator externalReferenceDeduplicator;
 
-        public CGExternalDocumentReferenceProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger, ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter, ExternalDocumentReferenceWriter externalDocumentReferenceWriter, SBOMComponentsWalker sbomComponentsWalker, ExternalReferenceDeduplicator externalReferenceDeduplicator)
+        public CGExternalDocumentReferenceProvider(
+            IConfiguration configuration,
+            ChannelUtils channelUtils,
+            ILogger logger,
+            ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter,
+            ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
+            SBOMComponentsWalker sbomComponentsWalker,
+            ExternalReferenceDeduplicator externalReferenceDeduplicator)
             : base(configuration, channelUtils, logger)
         {
-            ComponentToExternalReferenceInfoConverter = componentToExternalReferenceInfoConverter ?? throw new ArgumentNullException(nameof(componentToExternalReferenceInfoConverter));
-            ExternalDocumentReferenceWriter = externalDocumentReferenceWriter ?? throw new ArgumentNullException(nameof(externalDocumentReferenceWriter));
-            SBOMComponentsWalker = sbomComponentsWalker ?? throw new ArgumentNullException(nameof(sbomComponentsWalker));
-            ExternalReferenceDeduplicator = externalReferenceDeduplicator ?? throw new ArgumentNullException(nameof(externalReferenceDeduplicator));
+            this.componentToExternalReferenceInfoConverter = componentToExternalReferenceInfoConverter ?? throw new ArgumentNullException(nameof(componentToExternalReferenceInfoConverter));
+            this.externalDocumentReferenceWriter = externalDocumentReferenceWriter ?? throw new ArgumentNullException(nameof(externalDocumentReferenceWriter));
+            this.sbomComponentsWalker = sbomComponentsWalker ?? throw new ArgumentNullException(nameof(sbomComponentsWalker));
+            this.externalReferenceDeduplicator = externalReferenceDeduplicator ?? throw new ArgumentNullException(nameof(externalReferenceDeduplicator));
         }
 
         public override bool IsSupported(ProviderType providerType)
@@ -55,11 +62,11 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
         {
             IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
 
-            var (output, convertErrors) = ComponentToExternalReferenceInfoConverter.Convert(sourceChannel);
+            var (output, convertErrors) = componentToExternalReferenceInfoConverter.Convert(sourceChannel);
             errors.Add(convertErrors);
-            output = ExternalReferenceDeduplicator.Deduplicate(output);
+            output = externalReferenceDeduplicator.Deduplicate(output);
 
-            var (jsonDoc, jsonErrors) = ExternalDocumentReferenceWriter.Write(output, requiredConfigs);
+            var (jsonDoc, jsonErrors) = externalDocumentReferenceWriter.Write(output, requiredConfigs);
             errors.Add(jsonErrors);
 
             return (jsonDoc, ChannelUtils.Merge(errors.ToArray()));
@@ -67,7 +74,7 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
 
         protected override (ChannelReader<ScannedComponent> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            var (output, cdErrors) = SBOMComponentsWalker.GetComponents(Configuration.BuildComponentPath?.Value);
+            var (output, cdErrors) = sbomComponentsWalker.GetComponents(Configuration.BuildComponentPath?.Value);
 
             if (cdErrors.TryRead(out ComponentDetectorException e))
             {

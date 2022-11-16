@@ -10,6 +10,7 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Ninject;
 using PowerArgs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -20,12 +21,19 @@ namespace Microsoft.Sbom.Api
     public class SBOMValidator : ISBOMValidator
     {
         private readonly StandardKernel kernel;
-        private readonly ApiConfigurationBuilder configurationBuilder;
 
-        public SBOMValidator()
+        private readonly IWorkflow<SBOMParserBasedValidationWorkflow> sbomParserBasedValidationWorkflow;
+
+        private readonly IRecorder recorder;
+
+        public SBOMValidator(
+            IWorkflow<SBOMParserBasedValidationWorkflow>
+            sbomParserBasedValidationWorkflow,
+            IRecorder recorder)
         {
             kernel = new StandardKernel(new Bindings());
-            configurationBuilder = new ApiConfigurationBuilder();            
+            this.sbomParserBasedValidationWorkflow = sbomParserBasedValidationWorkflow ?? throw new ArgumentNullException(nameof(sbomParserBasedValidationWorkflow));
+            this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         }
 
         public async Task<SBOMValidationResult> ValidateSbomAsync(
@@ -39,7 +47,7 @@ namespace Microsoft.Sbom.Api
             string rootPathFilter = default,
             RuntimeConfiguration runtimeConfiguration = default)
         {
-            var configuration = configurationBuilder.GetConfiguration(
+            var configuration = ApiConfigurationBuilder.GetConfiguration(
                 buildDropPath,
                 outputPath,
                 specifications,
@@ -55,14 +63,12 @@ namespace Microsoft.Sbom.Api
             kernel.Bind<IConfiguration>().ToConstant(configuration);
 
             // This is the generate workflow
-            IWorkflow workflow = kernel.Get<IWorkflow>(nameof(SBOMParserBasedValidationWorkflow));
-            bool isSuccess = await workflow.RunAsync();
-
-            IRecorder recorder = kernel.Get<IRecorder>();
+            bool isSuccess = await sbomParserBasedValidationWorkflow.RunAsync();
             await recorder.FinalizeAndLogTelemetryAsync();
 
-            var entityErrors = ((TelemetryRecorder)recorder).Errors.Select(error => error.ToEntityError()).ToList();
-            return isSuccess ? new SbomValidationSuccess() : new SBOMValidationFailure(entityErrors);
+            var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
+
+            return isSuccess;
         }
 
         private Configuration ValidateConfig(Configuration config)
