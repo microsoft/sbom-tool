@@ -21,15 +21,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
     {
         public FileListEnumerator ListWalker { get; }
 
-        public ExternalDocumentReferenceFileProvider(
-            IConfiguration configuration,
-            ChannelUtils channelUtils,
-            ILogger log,
-            FileHasher fileHasher,
-            ManifestFolderFilterer fileFilterer,
-            FileInfoWriter fileHashWriter,
-            InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
-            FileListEnumerator listWalker)
+        public ExternalDocumentReferenceFileProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, FileInfoWriter fileHashWriter, InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator, FileListEnumerator listWalker)
             : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
         {
             ListWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));

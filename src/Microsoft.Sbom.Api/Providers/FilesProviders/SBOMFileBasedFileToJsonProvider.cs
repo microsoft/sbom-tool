@@ -35,13 +35,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
         /// </summary>
         public InternalSBOMFileInfoDeduplicator FileInfoDeduplicator { get; }
 
-        public SBOMFileBasedFileToJsonProvider(
-            IConfiguration configuration,
-            ChannelUtils channelUtils,
-            ILogger logger,
-            FileInfoWriter fileHashWriter,
-            SBOMFileToFileInfoConverter sbomFileToFileInfoConverter,
-            InternalSBOMFileInfoDeduplicator fileInfo)
+        public SBOMFileBasedFileToJsonProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger, FileInfoWriter fileHashWriter, SBOMFileToFileInfoConverter sbomFileToFileInfoConverter, InternalSBOMFileInfoDeduplicator fileInfo)
             : base(configuration, channelUtils, logger)
         {
             FileHashWriter = fileHashWriter ?? throw new ArgumentNullException(nameof(fileHashWriter));

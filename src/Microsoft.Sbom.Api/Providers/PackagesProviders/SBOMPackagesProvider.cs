@@ -18,12 +18,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
     /// </summary>
     public class SBOMPackagesProvider : CommonPackagesProvider<SBOMPackage>
     {
-        public SBOMPackagesProvider(
-            IConfiguration configuration,
-            ChannelUtils channelUtils,
-            ILogger logger,
-            ISbomConfigProvider sbomConfigs,
-            PackageInfoJsonWriter packageInfoJsonWriter)
+        public SBOMPackagesProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger, ISbomConfigProvider sbomConfigs, PackageInfoJsonWriter packageInfoJsonWriter)
             : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter)
         {
         }
