@@ -31,13 +31,13 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
 
         public IRecorder Recorder { get; }
 
-        public ExternalDocumentReferenceGenerator(IConfiguration configuration, ILogger log, ISbomConfigProvider sBOMConfigs, IList<ISourcesProvider> sourcesProviders, IRecorder recorder)
+        public ExternalDocumentReferenceGenerator(IConfiguration configuration, ILogger log, ISbomConfigProvider sbomConfigs, IList<ISourcesProvider> sourcesProviders, IRecorder recorder)
         {
-            Configuration = configuration;
-            Log = log;
-            SBOMConfigs = sBOMConfigs;
-            SourcesProviders = sourcesProviders;
-            Recorder = recorder;
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            Log = log ?? throw new ArgumentNullException(nameof(log));
+            SBOMConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+            SourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
+            Recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         }
 
         public async Task<IList<FileValidationResult>> GenerateAsync()
