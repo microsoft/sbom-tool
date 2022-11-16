@@ -8,7 +8,6 @@ using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Utils;
-using Ninject;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
@@ -32,7 +31,14 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
 
         public ExternalReferenceDeduplicator ExternalReferenceDeduplicator { get; }
 
-        public CGExternalDocumentReferenceProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger, ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter, ExternalDocumentReferenceWriter externalDocumentReferenceWriter, SBOMComponentsWalker sbomComponentsWalker, ExternalReferenceDeduplicator externalReferenceDeduplicator)
+        public CGExternalDocumentReferenceProvider(
+            IConfiguration configuration,
+            ChannelUtils channelUtils,
+            ILogger logger,
+            ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter,
+            ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
+            SBOMComponentsWalker sbomComponentsWalker,
+            ExternalReferenceDeduplicator externalReferenceDeduplicator)
             : base(configuration, channelUtils, logger)
         {
             ComponentToExternalReferenceInfoConverter = componentToExternalReferenceInfoConverter ?? throw new ArgumentNullException(nameof(componentToExternalReferenceInfoConverter));

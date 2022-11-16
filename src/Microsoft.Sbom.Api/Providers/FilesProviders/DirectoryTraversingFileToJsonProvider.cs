@@ -20,7 +20,15 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
     {
         public DirectoryWalker DirectoryWalker { get; }
 
-        public DirectoryTraversingFileToJsonProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, FileInfoWriter fileHashWriter, InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator, DirectoryWalker directoryWalker)
+        public DirectoryTraversingFileToJsonProvider(
+            IConfiguration configuration,
+            ChannelUtils channelUtils,
+            ILogger log,
+            FileHasher fileHasher,
+            ManifestFolderFilterer fileFilterer,
+            FileInfoWriter fileHashWriter,
+            InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
+            DirectoryWalker directoryWalker)
             : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
         {
             DirectoryWalker = directoryWalker ?? throw new ArgumentNullException(nameof(directoryWalker));

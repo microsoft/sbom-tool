@@ -30,7 +30,12 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
 
         public IRecorder Recorder { get; }
 
-        public RelationshipsArrayGenerator(RelationshipGenerator generator, ChannelUtils channelUtils, ILogger log, ISbomConfigProvider sbomConfigs, IRecorder recorder)
+        public RelationshipsArrayGenerator(
+            RelationshipGenerator generator,
+            ChannelUtils channelUtils,
+            ILogger log,
+            ISbomConfigProvider sbomConfigs,
+            IRecorder recorder)
         {
             Generator = generator;
             ChannelUtils = channelUtils;
