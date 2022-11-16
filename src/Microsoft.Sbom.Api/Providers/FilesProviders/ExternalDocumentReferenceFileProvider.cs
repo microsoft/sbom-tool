@@ -1,12 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Ninject;
+using System;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Common.Config;
+using Serilog;
+using Microsoft.Sbom.Api.Utils;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders
 {
@@ -16,8 +19,13 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
     /// </summary>
     public class ExternalDocumentReferenceFileProvider : PathBasedFileToJsonProviderBase
     {
-        [Inject]
-        public FileListEnumerator ListWalker { get; set; }
+        public FileListEnumerator ListWalker { get; }
+
+        public ExternalDocumentReferenceFileProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, FileInfoWriter fileHashWriter, InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator, FileListEnumerator listWalker)
+            : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
+        {
+            ListWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));
+        }
 
         public override bool IsSupported(ProviderType providerType)
         {

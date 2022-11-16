@@ -12,6 +12,9 @@ using Ninject;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
+using System;
+using Serilog;
+using Microsoft.Sbom.Common.Config;
 
 namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
 {
@@ -21,17 +24,22 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
     /// </summary>
     public class CGExternalDocumentReferenceProvider : EntityToJsonProviderBase<ScannedComponent>
     {
-        [Inject]
-        public ComponentToExternalReferenceInfoConverter ComponentToExternalReferenceInfoConverter { get; set; }
+        public ComponentToExternalReferenceInfoConverter ComponentToExternalReferenceInfoConverter { get; }
 
-        [Inject]
-        public ExternalDocumentReferenceWriter ExternalDocumentReferenceWriter { get; set; }
+        public ExternalDocumentReferenceWriter ExternalDocumentReferenceWriter { get; }
 
-        [Inject]
-        public SBOMComponentsWalker SBOMComponentsWalker { get; set; }
+        public SBOMComponentsWalker SBOMComponentsWalker { get; }
 
-        [Inject]
-        public ExternalReferenceDeduplicator ExternalReferenceDeduplicator { get; set; }
+        public ExternalReferenceDeduplicator ExternalReferenceDeduplicator { get; }
+
+        public CGExternalDocumentReferenceProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger, ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter, ExternalDocumentReferenceWriter externalDocumentReferenceWriter, SBOMComponentsWalker sbomComponentsWalker, ExternalReferenceDeduplicator externalReferenceDeduplicator)
+            : base(configuration, channelUtils, logger)
+        {
+            ComponentToExternalReferenceInfoConverter = componentToExternalReferenceInfoConverter ?? throw new ArgumentNullException(nameof(componentToExternalReferenceInfoConverter));
+            ExternalDocumentReferenceWriter = externalDocumentReferenceWriter ?? throw new ArgumentNullException(nameof(externalDocumentReferenceWriter));
+            SBOMComponentsWalker = sbomComponentsWalker ?? throw new ArgumentNullException(nameof(sbomComponentsWalker));
+            ExternalReferenceDeduplicator = externalReferenceDeduplicator ?? throw new ArgumentNullException(nameof(externalReferenceDeduplicator));
+        }
 
         public override bool IsSupported(ProviderType providerType)
         {

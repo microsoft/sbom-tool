@@ -23,8 +23,8 @@ namespace Microsoft.Sbom.Api.Tests
         private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
         private SBOMGenerator generator;
         private StandardKernel kernel;
-        private Mock<SBOMGenerationWorkflow> mockWorkflow;
-        private Mock<TelemetryRecorder> mockRecorder;
+        private Mock<IWorkflow> mockWorkflow;
+        private Mock<IRecorder> mockRecorder;
         private RuntimeConfiguration runtimeConfiguration;
 
         [TestInitialize]
@@ -42,8 +42,8 @@ namespace Microsoft.Sbom.Api.Tests
 
             kernel.Bind<IFileSystemUtils>().ToConstant(fileSystemMock.Object);
             generator = new SBOMGenerator(kernel, fileSystemMock.Object);
-            mockWorkflow = new Mock<SBOMGenerationWorkflow>();
-            mockRecorder = new Mock<TelemetryRecorder>();
+            mockWorkflow = new Mock<IWorkflow>();
+            mockRecorder = new Mock<IRecorder>();
 
             runtimeConfiguration = new RuntimeConfiguration
             {

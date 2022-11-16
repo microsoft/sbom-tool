@@ -229,11 +229,11 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             .Setup(p => p.ParseSBOMFile(It.IsAny<ChannelReader<string>>()))
             .Returns((externalDocumentReferenceChannel, externalDocumentReferenceErrorsChannel));
 
-            var directoryTraversingProvider = new DirectoryTraversingFileToJsonProvider
-            {
-                ChannelUtils = new ChannelUtils(),
-                DirectoryWalker = new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
-                FileHasher = new FileHasher(
+            var directoryTraversingProvider = new DirectoryTraversingFileToJsonProvider(
+                configurationMock.Object,
+                new ChannelUtils(),
+                mockLogger.Object,
+                new FileHasher(
                     hashCodeGeneratorMock.Object,
                     new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
                     mockLogger.Object,
@@ -241,21 +241,20 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     sbomConfigs,
                     manifestGeneratorProvider,
                     new FileTypeUtils()),
-                FileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
-                FileHashWriter = new FileInfoWriter(
+                new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
+                new FileInfoWriter(
                     manifestGeneratorProvider,
                     mockLogger.Object,
                     fileSystemUtilsExtensionMock.Object,
                     configurationMock.Object),
-                Log = mockLogger.Object,
-                Configuration = configurationMock.Object,
-                InternalSBOMFileInfoDeduplicator = new InternalSBOMFileInfoDeduplicator()
-            };
+                new InternalSBOMFileInfoDeduplicator(),
+                new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object));
 
-            var fileListBasedProvider = new FileListBasedFileToJsonProvider
-            {
-                ChannelUtils = new ChannelUtils(),
-                FileHasher = new FileHasher(
+            var fileListBasedProvider = new FileListBasedFileToJsonProvider(
+                configurationMock.Object,
+                new ChannelUtils(),
+                mockLogger.Object,
+                new FileHasher(
                     hashCodeGeneratorMock.Object,
                     new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
                     mockLogger.Object,
@@ -263,42 +262,36 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     sbomConfigs,
                     manifestGeneratorProvider,
                     new FileTypeUtils()),
-                FileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
-                FileHashWriter = new FileInfoWriter(
+                new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
+                new FileInfoWriter(
                     manifestGeneratorProvider,
                     mockLogger.Object,
                     fileSystemUtilsExtensionMock.Object,
                     configurationMock.Object),
+                new InternalSBOMFileInfoDeduplicator(),
+                new FileListEnumerator(fileSystemMock.Object, mockLogger.Object));
 
-                Log = mockLogger.Object,
-                Configuration = configurationMock.Object,
-                ListWalker = new FileListEnumerator(fileSystemMock.Object, mockLogger.Object)
-            };
-
-            var cgPackagesProvider = new CGScannedPackagesProvider
-            {
-                ChannelUtils = new ChannelUtils(),
-                Log = mockLogger.Object,
-                Configuration = configurationMock.Object,
-                PackageInfoConverter = packageInfoConverterMock.Object,
-                PackageInfoJsonWriter = new PackageInfoJsonWriter(
+            var cgPackagesProvider = new CGScannedPackagesProvider(
+                configurationMock.Object,
+                new ChannelUtils(),
+                mockLogger.Object,
+                sbomConfigs,
+                new PackageInfoJsonWriter(
                     manifestGeneratorProvider,
                     mockLogger.Object),
-                PackagesWalker = new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs),
-                SBOMConfigs = sbomConfigs
-            };
+                packageInfoConverterMock.Object,
+                new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs));
 
-            var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider
-            {
-                ChannelUtils = new ChannelUtils(),
-                ExternalDocumentReferenceWriter = new ExternalDocumentReferenceWriter(
+            var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider(
+                configurationMock.Object,
+                new ChannelUtils(),
+                mockLogger.Object,
+                new FileListEnumerator(fileSystemMock.Object, mockLogger.Object),
+                sBOMReaderForExternalDocumentReferenceMock.Object,
+                new ExternalDocumentReferenceWriter(
                     manifestGeneratorProvider,
                     mockLogger.Object),
-                SPDXSBOMReaderForExternalDocumentReference = sBOMReaderForExternalDocumentReferenceMock.Object,
-                Log = mockLogger.Object,
-                Configuration = configurationMock.Object,
-                ListWalker = new FileListEnumerator(fileSystemMock.Object, mockLogger.Object)
-            };
+                new ExternalReferenceDeduplicator());
 
             var sourcesProvider = new List<ISourcesProvider>
             {
@@ -318,19 +311,17 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 .Setup(r => r.GenerateAsync())
                 .ReturnsAsync(await Task.FromResult(new List<FileValidationResult>()));
 
-            var workflow = new SBOMGenerationWorkflow
-            {
-                Configuration = configurationMock.Object,
-                FileSystemUtils = fileSystemMock.Object,
-                Log = mockLogger.Object,
-                FileArrayGenerator = fileArrayGenerator,
-                PackageArrayGenerator = packageArrayGenerator,
-                RelationshipsArrayGenerator = relationshipArrayGenerator.Object,
-                ExternalDocumentReferenceGenerator = externalDocumentReferenceGenerator,
-                SBOMConfigs = sbomConfigs,
-                OSUtils = mockOSUtils.Object,
-                Recorder = recorderMock.Object,
-            };
+            var workflow = new SBOMGenerationWorkflow(
+                configurationMock.Object,
+                fileSystemMock.Object,
+                mockLogger.Object,
+                fileArrayGenerator,
+                packageArrayGenerator,
+                relationshipArrayGenerator.Object,
+                externalDocumentReferenceGenerator,
+                sbomConfigs,
+                mockOSUtils.Object,
+                recorderMock.Object);
 
             Assert.IsTrue(await workflow.RunAsync());
 
@@ -370,15 +361,17 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestJsonDirPath = "/root/_manifest",
                 ManifestJsonFilePath = "/root/_manifest/manifest.json"
             };
-            var workflow = new SBOMGenerationWorkflow
-            {
-                Configuration = configurationMock.Object,
-                FileSystemUtils = fileSystemMock.Object,
-                Log = mockLogger.Object,
-                SBOMConfigs = new Mock<ISbomConfigProvider>().Object,
-                Recorder = recorderMock.Object,
-                OSUtils = mockOSUtils.Object
-            };
+            var workflow = new SBOMGenerationWorkflow(
+                configurationMock.Object,
+                fileSystemMock.Object,
+                mockLogger.Object,
+                new Mock<IJsonArrayGenerator>().Object,
+                new Mock<IJsonArrayGenerator>().Object,
+                new Mock<IJsonArrayGenerator>().Object,
+                new Mock<IJsonArrayGenerator>().Object,
+                new Mock<ISbomConfigProvider>().Object,
+                mockOSUtils.Object,
+                recorderMock.Object);
 
             Assert.IsFalse(await workflow.RunAsync());
             recorderMock.Verify(r => r.RecordException(It.IsAny<ManifestFolderExistsException>()), Times.Once);
@@ -400,15 +393,17 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator>();
             fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(new List<FileValidationResult> { new FileValidationResult() });
 
-            var workflow = new SBOMGenerationWorkflow
-            {
-                Configuration = configurationMock.Object,
-                FileSystemUtils = fileSystemMock.Object,
-                Log = mockLogger.Object,
-                SBOMConfigs = new Mock<ISbomConfigProvider>().Object,
-                Recorder = recorderMock.Object,
-                FileArrayGenerator = fileArrayGeneratorMock.Object
-            };
+            var workflow = new SBOMGenerationWorkflow(
+                configurationMock.Object,
+                fileSystemMock.Object,
+                mockLogger.Object,
+                fileArrayGeneratorMock.Object,
+                new Mock<IJsonArrayGenerator>().Object,
+                new Mock<IJsonArrayGenerator>().Object,
+                new Mock<IJsonArrayGenerator>().Object,
+                new Mock<ISbomConfigProvider>().Object,
+                mockOSUtils.Object,
+                recorderMock.Object);
 
             var result = await workflow.RunAsync();
 

@@ -19,7 +19,6 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Ninject;
 using PowerArgs;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api
 {
@@ -74,7 +73,7 @@ namespace Microsoft.Sbom.Api
             IRecorder recorder = kernel.Get<IRecorder>();
             await recorder.FinalizeAndLogTelemetryAsync();
 
-            var entityErrors = ((TelemetryRecorder)recorder).Errors.Select(error => error.ToEntityError()).ToList();
+            var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
 
             return new SBOMGenerationResult(isSuccess, entityErrors);
         }

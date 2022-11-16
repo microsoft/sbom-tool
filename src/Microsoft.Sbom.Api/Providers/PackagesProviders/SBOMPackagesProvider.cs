@@ -8,6 +8,8 @@ using System.Threading.Channels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Common.Config;
+using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.PackagesProviders
 {
@@ -16,6 +18,11 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
     /// </summary>
     public class SBOMPackagesProvider : CommonPackagesProvider<SBOMPackage>
     {
+        public SBOMPackagesProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger, ISbomConfigProvider sbomConfigs, PackageInfoJsonWriter packageInfoJsonWriter)
+            : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter)
+        {
+        }
+
         public override bool IsSupported(ProviderType providerType)
         {
             if (providerType == ProviderType.Packages)

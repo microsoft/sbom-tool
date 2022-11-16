@@ -10,6 +10,9 @@ using Ninject;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
+using Microsoft.Sbom.Common.Config;
+using Serilog;
+using System;
 
 namespace Microsoft.Sbom.Api.Providers.PackagesProviders
 {
@@ -18,11 +21,23 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
     /// </summary>
     public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent>
     {
-        [Inject]
-        public ComponentToPackageInfoConverter PackageInfoConverter { get; set; }
+        public ComponentToPackageInfoConverter PackageInfoConverter { get; }
 
-        [Inject]
-        public PackagesWalker PackagesWalker { get; set; }
+        public PackagesWalker PackagesWalker { get; }
+
+        public CGScannedPackagesProvider(
+            IConfiguration configuration,
+            ChannelUtils channelUtils,
+            ILogger logger,
+            ISbomConfigProvider sbomConfigs,
+            PackageInfoJsonWriter packageInfoJsonWriter,
+            ComponentToPackageInfoConverter packageInfoConverter,
+            PackagesWalker packagesWalker)
+            : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter)
+        {
+            PackageInfoConverter = packageInfoConverter ?? throw new ArgumentNullException(nameof(packageInfoConverter));
+            PackagesWalker = packagesWalker ?? throw new ArgumentNullException(nameof(packagesWalker));
+        }
 
         public override bool IsSupported(ProviderType providerType)
         {

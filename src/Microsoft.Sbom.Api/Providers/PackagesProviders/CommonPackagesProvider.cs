@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Ninject;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -10,6 +9,9 @@ using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.Common.Config;
+using Serilog;
+using System;
 
 namespace Microsoft.Sbom.Api.Providers.PackagesProviders
 {
@@ -19,11 +21,16 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
     /// </summary>
     public abstract class CommonPackagesProvider<T> : EntityToJsonProviderBase<T>
     {
-        [Inject]
-        public ISbomConfigProvider SBOMConfigs { get; set; }
+        public ISbomConfigProvider SBOMConfigs { get; }
 
-        [Inject]
-        public PackageInfoJsonWriter PackageInfoJsonWriter { get; set; }
+        public PackageInfoJsonWriter PackageInfoJsonWriter { get; }
+
+        protected CommonPackagesProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger, ISbomConfigProvider sbomConfigs, PackageInfoJsonWriter packageInfoJsonWriter)
+            : base(configuration, channelUtils, logger)
+        {
+            SBOMConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+            PackageInfoJsonWriter = packageInfoJsonWriter ?? throw new ArgumentNullException(nameof(packageInfoJsonWriter));
+        }
 
         /// <summary>
         /// Get common packages that are provided by the build engine.

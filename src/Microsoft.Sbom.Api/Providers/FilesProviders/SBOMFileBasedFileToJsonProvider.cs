@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Ninject;
 using Microsoft.Sbom.Contracts;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +9,9 @@ using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Common.Config;
+using Serilog;
+using System;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders
 {
@@ -21,20 +23,25 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
         /// <summary>
         /// Gets or sets serializes a <see cref="FileInfo"/> object to Json.
         /// </summary>
-        [Inject]
-        public FileInfoWriter FileHashWriter { get; set; }
+        public FileInfoWriter FileHashWriter { get; }
 
         /// <summary>
         /// Gets or sets converts a <see cref="SBOMFile"/> object to a <see cref="FileInfo"/>.
         /// </summary>
-        [Inject]
-        public SBOMFileToFileInfoConverter SBOMFileToFileInfoConverter { get; set; }
+        public SBOMFileToFileInfoConverter SBOMFileToFileInfoConverter { get; }
 
         /// <summary>
         /// Gets or sets deduplicate FileInfo due to duplications of other providers.
         /// </summary>
-        [Inject]
-        public InternalSBOMFileInfoDeduplicator FileInfoDeduplicator { get; set; }
+        public InternalSBOMFileInfoDeduplicator FileInfoDeduplicator { get; }
+
+        public SBOMFileBasedFileToJsonProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger, FileInfoWriter fileHashWriter, SBOMFileToFileInfoConverter sbomFileToFileInfoConverter, InternalSBOMFileInfoDeduplicator fileInfo)
+            : base(configuration, channelUtils, logger)
+        {
+            FileHashWriter = fileHashWriter ?? throw new ArgumentNullException(nameof(fileHashWriter));
+            SBOMFileToFileInfoConverter = sbomFileToFileInfoConverter ?? throw new ArgumentNullException(nameof(sbomFileToFileInfoConverter));
+            FileInfoDeduplicator = fileInfo ?? throw new ArgumentNullException(nameof(fileInfo));
+        }
 
         /// <summary>
         /// Returns true only if the fileslist parameter is provided.

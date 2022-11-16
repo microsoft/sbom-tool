@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Ninject;
 using System;
 
 namespace Microsoft.Sbom.Common.Extensions
@@ -12,11 +11,15 @@ namespace Microsoft.Sbom.Common.Extensions
     /// </summary>
     public class FileSystemUtilsExtension : IFileSystemUtilsExtension
     {
-        [Inject]
-        public IFileSystemUtils FileSystemUtils { get; set; }
+        public IFileSystemUtils FileSystemUtils { get; }
 
-        [Inject]
-        public IOSUtils OsUtils { get; set; }
+        public IOSUtils OsUtils { get; }
+
+        public FileSystemUtilsExtension(IFileSystemUtils fileSystemUtils, IOSUtils osUtils)
+        {
+            FileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+            OsUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
+        }
 
         /// <summary>
         /// Determines if the targetPath is a child of the sourcePath.

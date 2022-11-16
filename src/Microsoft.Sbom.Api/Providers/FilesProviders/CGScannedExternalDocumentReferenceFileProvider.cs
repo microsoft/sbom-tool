@@ -6,10 +6,13 @@ using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Executors;
-using Ninject;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
+using Microsoft.Sbom.Common.Config;
+using Serilog;
+using Microsoft.Sbom.Api.Utils;
+using System;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders
 {
@@ -19,17 +22,32 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
     /// </summary>
     public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJsonProviderBase
     {
-        [Inject]
-        public ComponentToExternalReferenceInfoConverter ComponentToExternalReferenceInfoConverter { get; set; }
+        public ComponentToExternalReferenceInfoConverter ComponentToExternalReferenceInfoConverter { get; }
 
-        [Inject]
-        public ExternalReferenceInfoToPathConverter ExternalReferenceInfoToPathConverter { get; set; }
+        public ExternalReferenceInfoToPathConverter ExternalReferenceInfoToPathConverter { get; }
 
-        [Inject]
-        public ExternalDocumentReferenceWriter ExternalDocumentReferenceWriter { get; set; }
+        public ExternalDocumentReferenceWriter ExternalDocumentReferenceWriter { get; }
 
-        [Inject]
-        public SBOMComponentsWalker SBOMComponentsWalker { get; set; }
+        public SBOMComponentsWalker SBOMComponentsWalker { get; }
+
+        public CGScannedExternalDocumentReferenceFileProvider(
+            IConfiguration configuration,
+            ChannelUtils channelUtils,
+            ILogger log, FileHasher fileHasher,
+            ManifestFolderFilterer fileFilterer,
+            FileInfoWriter fileHashWriter,
+            InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
+            ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter,
+            ExternalReferenceInfoToPathConverter externalReferenceInfoToPathConverter,
+            ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
+            SBOMComponentsWalker sbomComponentsWalker)
+            : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
+        {
+            ComponentToExternalReferenceInfoConverter = componentToExternalReferenceInfoConverter ?? throw new ArgumentNullException(nameof(componentToExternalReferenceInfoConverter));
+            ExternalReferenceInfoToPathConverter = externalReferenceInfoToPathConverter ?? throw new ArgumentNullException(nameof(externalReferenceInfoToPathConverter));
+            ExternalDocumentReferenceWriter = externalDocumentReferenceWriter ?? throw new ArgumentNullException(nameof(externalDocumentReferenceWriter));
+            SBOMComponentsWalker = sbomComponentsWalker ?? throw new ArgumentNullException(nameof(sbomComponentsWalker));
+        }
 
         public override bool IsSupported(ProviderType providerType)
         {
