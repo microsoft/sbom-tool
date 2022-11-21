@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Ninject;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -23,17 +22,21 @@ namespace Microsoft.Sbom.Api.Providers
         /// <summary>
         /// Gets or sets the configuration that is used to generate the SBOM.
         /// </summary>
-        [Inject]
-        public IConfiguration Configuration { get; set; }
+        public IConfiguration Configuration { get; }
 
         /// <summary>
         /// Gets or sets provides utilities for splitting and merging channel streams.
         /// </summary>
-        [Inject]
-        public ChannelUtils ChannelUtils { get; set; }
+        public ChannelUtils ChannelUtils { get; }
 
-        [Inject]
-        public ILogger Log { get; set; }
+        public ILogger Log { get; }
+
+        public EntityToJsonProviderBase(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger)
+        {
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            ChannelUtils = channelUtils ?? throw new ArgumentNullException(nameof(channelUtils));
+            Log = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
 
         /// <summary>
         /// Generate a <see cref="JsonDocWithSerializer"/> stream for all the entities for each of the required configuration.

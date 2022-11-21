@@ -56,5 +56,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
         /// Finalize the recorder, and log the telemetry.
         /// </summary>
         public Task FinalizeAndLogTelemetryAsync();
+
+        public IList<FileValidationResult> Errors { get; }
     }
 }

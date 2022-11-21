@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Extensions.Entities;
-using Ninject;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
@@ -34,19 +33,20 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
         private IList<FileValidationResult> errors = new List<FileValidationResult>();
         private Result result = Result.Success;
 
-        [Inject]
-        public IFileSystemUtils FileSystemUtils { get; set; }
+        public IFileSystemUtils FileSystemUtils { get; }
 
-        [Inject]
-        public IConfiguration Configuration { get; set; }
+        public IConfiguration Configuration { get; }
 
-        [Inject]
-        public ILogger Log { get; set; }
+        public ILogger Log { get; }
 
-        public virtual IList<FileValidationResult> Errors
+        public TelemetryRecorder(IFileSystemUtils fileSystemUtils, IConfiguration configuration, ILogger log)
         {
-            get { return errors; }
+            FileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            Log = log ?? throw new ArgumentNullException(nameof(log));
         }
+
+        public IList<FileValidationResult> Errors => errors;
 
         /// <summary>
         /// Start recording the duration of exeuction of the given event.

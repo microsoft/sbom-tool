@@ -29,39 +29,49 @@ namespace Microsoft.Sbom.Api.Workflows
     /// </summary>
     public class SBOMGenerationWorkflow : IWorkflow
     {
-        [Inject]
-        public IFileSystemUtils FileSystemUtils { get; set; }
+        public IFileSystemUtils FileSystemUtils { get; }
 
-        [Inject]
-        public IConfiguration Configuration { get; set; }
+        public IConfiguration Configuration { get; }
 
-        [Inject]
-        public ILogger Log { get; set; }
+        public ILogger Log { get; }
 
-        [Inject]
-        [Named(nameof(FileArrayGenerator))]
-        public IJsonArrayGenerator FileArrayGenerator { get; set; }
+        public IJsonArrayGenerator FileArrayGenerator { get; }
+        
+        public IJsonArrayGenerator PackageArrayGenerator { get; }
+        
+        public IJsonArrayGenerator RelationshipsArrayGenerator { get; }
 
-        [Inject]
-        [Named(nameof(PackageArrayGenerator))]
-        public IJsonArrayGenerator PackageArrayGenerator { get; set; }
+        public IJsonArrayGenerator ExternalDocumentReferenceGenerator { get; }
 
-        [Inject]
-        [Named(nameof(RelationshipsArrayGenerator))]
-        public IJsonArrayGenerator RelationshipsArrayGenerator { get; set; }
+        public ISbomConfigProvider SBOMConfigs { get; }
 
-        [Inject]
-        [Named(nameof(ExternalDocumentReferenceGenerator))]
-        public IJsonArrayGenerator ExternalDocumentReferenceGenerator { get; set; }
+        public IOSUtils OSUtils { get; }
 
-        [Inject]
-        public ISbomConfigProvider SBOMConfigs { get; set; }
+        public IRecorder Recorder { get; }
 
-        [Inject]
-        public IOSUtils OSUtils { get; set; }
-
-        [Inject]
-        public IRecorder Recorder { get; set; }
+        public SBOMGenerationWorkflow(
+            IConfiguration configuration,
+            IFileSystemUtils fileSystemUtils,
+            ILogger log,
+            [Named(nameof(FileArrayGenerator))] IJsonArrayGenerator fileArrayGenerator,
+            [Named(nameof(PackageArrayGenerator))] IJsonArrayGenerator packageArrayGenerator,
+            [Named(nameof(RelationshipsArrayGenerator))] IJsonArrayGenerator relationshipsArrayGenerator,
+            [Named(nameof(ExternalDocumentReferenceGenerator))] IJsonArrayGenerator externalDocumentReferenceGenerator,
+            ISbomConfigProvider sbomConfigs,
+            IOSUtils osUtils,
+            IRecorder recorder)
+        {
+            FileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            Log = log ?? throw new ArgumentNullException(nameof(log));
+            FileArrayGenerator = fileArrayGenerator ?? throw new ArgumentNullException(nameof(fileArrayGenerator));
+            PackageArrayGenerator = packageArrayGenerator ?? throw new ArgumentNullException(nameof(packageArrayGenerator));
+            RelationshipsArrayGenerator = relationshipsArrayGenerator ?? throw new ArgumentNullException(nameof(relationshipsArrayGenerator));
+            ExternalDocumentReferenceGenerator = externalDocumentReferenceGenerator ?? throw new ArgumentNullException(nameof(externalDocumentReferenceGenerator));
+            SBOMConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+            OSUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
+            Recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+        }
 
         public virtual async Task<bool> RunAsync()
         {

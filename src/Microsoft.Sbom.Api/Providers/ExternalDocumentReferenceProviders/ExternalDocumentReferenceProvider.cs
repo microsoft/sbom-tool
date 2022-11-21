@@ -5,10 +5,12 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Utils;
-using Ninject;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
+using Microsoft.Sbom.Common.Config;
+using Serilog;
+using System;
 
 namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
 {
@@ -18,17 +20,29 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
     /// </summary>
     public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string>
     {
-        [Inject]
-        public FileListEnumerator ListWalker { get; set; }
+        public FileListEnumerator ListWalker { get; }
 
-        [Inject]
-        public ISBOMReaderForExternalDocumentReference SPDXSBOMReaderForExternalDocumentReference { get; set; }
+        public ISBOMReaderForExternalDocumentReference SPDXSBOMReaderForExternalDocumentReference { get; }
 
-        [Inject]
-        public ExternalDocumentReferenceWriter ExternalDocumentReferenceWriter { get; set; }
+        public ExternalDocumentReferenceWriter ExternalDocumentReferenceWriter { get; }
 
-        [Inject]
-        public ExternalReferenceDeduplicator ExternalReferenceDeduplicator { get; set; }
+        public ExternalReferenceDeduplicator ExternalReferenceDeduplicator { get; }
+
+        public ExternalDocumentReferenceProvider(
+            IConfiguration configuration,
+            ChannelUtils channelUtils,
+            ILogger logger,
+            FileListEnumerator listWalker,
+            ISBOMReaderForExternalDocumentReference spdxSbomReaderForExternalDocumentReference,
+            ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
+            ExternalReferenceDeduplicator externalReferenceDeduplicator)
+            : base(configuration, channelUtils, logger)
+        {
+            ListWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));
+            SPDXSBOMReaderForExternalDocumentReference = spdxSbomReaderForExternalDocumentReference ?? throw new ArgumentNullException(nameof(spdxSbomReaderForExternalDocumentReference));
+            ExternalDocumentReferenceWriter = externalDocumentReferenceWriter ?? throw new ArgumentNullException(nameof(externalDocumentReferenceWriter));
+            ExternalReferenceDeduplicator = externalReferenceDeduplicator ?? throw new ArgumentNullException(nameof(externalReferenceDeduplicator));
+        }
 
         public override bool IsSupported(ProviderType providerType)
         {

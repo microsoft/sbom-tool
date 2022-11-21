@@ -20,11 +20,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestInitialize]
         public void Setup()
         {
-            fileSystemUtilsExtension = new FileSystemUtilsExtension()
-            {
-                FileSystemUtils = fileSystemUtilMock.Object,
-                OsUtils = osUtilMock.Object,
-            };
+            fileSystemUtilsExtension = new FileSystemUtilsExtension(fileSystemUtilMock.Object, osUtilMock.Object);
             osUtilMock.Setup(o => o.GetFileSystemStringComparisonType()).Returns(System.StringComparison.InvariantCultureIgnoreCase);
             fileSystemUtilMock.Setup(f => f.AbsolutePath(SourcePath)).Returns($"C:{SourcePath}");
         }
