@@ -73,7 +73,19 @@ namespace Microsoft.Sbom.Api
                 var names = partialAssemblyNames.Append(Assembly.GetExecutingAssembly().GetName().Name);
                 var dlls = Directory
                     .GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll")
-                    .Select(x => Assembly.Load(AssemblyName.GetAssemblyName(x))).ToArray();
+                    .Select(x =>
+                    {
+                        try
+                        {
+                            return Assembly.Load(AssemblyName.GetAssemblyName(x));
+                        }
+                        catch (Exception)
+                        {
+                            return default;
+                        }
+                    })
+                    .Where(a => a != null)
+                    .ToArray();
 
                 var types = names
                 .Select(name => dlls.Where(a => a.FullName.Contains(name))
