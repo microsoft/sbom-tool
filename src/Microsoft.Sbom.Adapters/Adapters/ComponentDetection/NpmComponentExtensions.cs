@@ -16,19 +16,16 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
         /// <summary>
         /// Converts a <see cref="NpmComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this NpmComponent npmComponent) => new SBOMPackage
+        public static SBOMPackage? ToSbomPackage(this NpmComponent npmComponent) => new ()
         {
             Id = npmComponent.Id,
             PackageUrl = npmComponent.PackageUrl?.ToString(),
             PackageName = npmComponent.Name,
             PackageVersion = npmComponent.Version,
-            Checksum = new List<Checksum>()
-                {
-                    new Checksum()
-                    {
-                        ChecksumValue = npmComponent.Hash
-                    },
-                },
+            Checksum = new[]
+            {
+                new Checksum { ChecksumValue = npmComponent.Hash },
+            },
             Supplier = npmComponent.Author?.AsSupplier(),
             FilesAnalyzed = false,
             Type = "npm"

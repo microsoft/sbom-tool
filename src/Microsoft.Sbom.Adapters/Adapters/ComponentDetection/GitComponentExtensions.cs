@@ -16,20 +16,20 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
         /// <summary>
         /// Converts a <see cref="GitComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this GitComponent gitComponent) => new SBOMPackage
+        public static SBOMPackage? ToSbomPackage(this GitComponent gitComponent) => new ()
         {
             Id = gitComponent.Id,
             PackageName = gitComponent.Id,
             PackageUrl = gitComponent.PackageUrl?.ToString(),
             PackageSource = gitComponent.RepositoryUrl?.ToString(),
-            Checksum = new List<Checksum>()
+            Checksum = new[]
+            {
+                new Checksum
                 {
-                    new Checksum()
-                    {
-                        Algorithm = AlgorithmName.SHA1,
-                        ChecksumValue = gitComponent.CommitHash
-                    },
+                    Algorithm = AlgorithmName.SHA1,
+                    ChecksumValue = gitComponent.CommitHash
                 },
+            },
             FilesAnalyzed = false,
             Type = "git-package"
         };

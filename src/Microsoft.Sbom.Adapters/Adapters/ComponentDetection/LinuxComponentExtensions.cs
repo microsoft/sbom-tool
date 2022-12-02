@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
         /// <summary>
         /// Converts a <see cref="LinuxComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this LinuxComponent linuxComponent) => new SBOMPackage
+        public static SBOMPackage? ToSbomPackage(this LinuxComponent linuxComponent) => new ()
         {
             Id = linuxComponent.Id,
             PackageUrl = linuxComponent.PackageUrl?.ToString(),
