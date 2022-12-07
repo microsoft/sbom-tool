@@ -16,21 +16,21 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
         /// <summary>
         /// Converts a <see cref="CondaComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this CondaComponent condaComponent) => new SBOMPackage
+        public static SBOMPackage? ToSbomPackage(this CondaComponent condaComponent) => new ()
         {
             Id = condaComponent.Id,
             PackageUrl = condaComponent.PackageUrl?.ToString(),
             PackageName = condaComponent.Name,
             PackageVersion = condaComponent.Version,
             PackageSource = condaComponent.Url,
-            Checksum = new List<Checksum>()
+            Checksum = new List<Checksum>
+            {
+                new Checksum
                 {
-                    new Checksum()
-                    {
-                        Algorithm = AlgorithmName.MD5,
-                        ChecksumValue = condaComponent.MD5
-                    },
+                    Algorithm = AlgorithmName.MD5,
+                    ChecksumValue = condaComponent.MD5
                 },
+            },
             FilesAnalyzed = false,
             Type = "conda"
         };

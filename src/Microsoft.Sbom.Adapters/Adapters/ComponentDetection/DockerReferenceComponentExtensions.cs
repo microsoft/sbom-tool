@@ -9,24 +9,24 @@ using System.Collections.Generic;
 namespace Microsoft.Sbom.Adapters.ComponentDetection
 {
     /// <summary>
-    /// Extensions methods for <see cref="DockerImageComponent"/>.
+    /// Extensions methods for <see cref="DockerReferenceComponent"/>.
     /// </summary>
-    internal static class DockerImageComponentExtensions
+    internal static class DockerReferenceComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="DockerImageComponent"/> to an <see cref="SBOMPackage"/>.
+        /// Converts a <see cref="DockerReferenceComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this DockerImageComponent dockerImageComponent) => new ()
+        public static SBOMPackage? ToSbomPackage(this DockerReferenceComponent dockerReferenceComponent) => new ()
         {
-            Id = dockerImageComponent.Id,
-            PackageUrl = dockerImageComponent.PackageUrl?.ToString(),
-            PackageName = dockerImageComponent.Name,
+            Id = dockerReferenceComponent.Id,
+            PackageUrl = dockerReferenceComponent.PackageUrl?.ToString(),
+            PackageName = dockerReferenceComponent.Digest,
             Checksum = new[]
             {
                 new Checksum
                 {
                     Algorithm = AlgorithmName.SHA256,
-                    ChecksumValue = dockerImageComponent.Digest
+                    ChecksumValue = dockerReferenceComponent.Digest
                 },
             },
             FilesAnalyzed = false,

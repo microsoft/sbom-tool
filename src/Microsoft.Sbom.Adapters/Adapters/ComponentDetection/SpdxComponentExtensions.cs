@@ -4,34 +4,33 @@
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
-using System.Collections.Generic;
 
 namespace Microsoft.Sbom.Adapters.ComponentDetection
 {
     /// <summary>
-    /// Extensions methods for <see cref="GitComponent"/>.
+    /// Extensions methods for <see cref="SpdxComponent"/>.
     /// </summary>
-    internal static class GitComponentExtensions
+    internal static class SpdxComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="GitComponent"/> to an <see cref="SBOMPackage"/>.
+        /// Converts a <see cref="SpdxComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this GitComponent gitComponent) => new ()
+        public static SBOMPackage? ToSbomPackage(this SpdxComponent spdxComponent) => new ()
         {
-            Id = gitComponent.Id,
-            PackageName = gitComponent.Id,
-            PackageUrl = gitComponent.PackageUrl?.ToString(),
-            PackageSource = gitComponent.RepositoryUrl?.ToString(),
+            Id = spdxComponent.Id,
+            PackageName = spdxComponent.Name,
+            PackageUrl = spdxComponent.PackageUrl?.ToString(),
+            PackageVersion = spdxComponent.SpdxVersion,
             Checksum = new[]
             {
                 new Checksum
                 {
                     Algorithm = AlgorithmName.SHA1,
-                    ChecksumValue = gitComponent.CommitHash
+                    ChecksumValue = spdxComponent.Checksum
                 },
             },
             FilesAnalyzed = false,
-            Type = "git-package"
+            Type = "spdx"
         };
     }
 }
