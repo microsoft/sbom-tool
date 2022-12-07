@@ -15,18 +15,17 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
         /// <summary>
         /// Converts a <see cref="OtherComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this OtherComponent otherComponent) => new SBOMPackage
+        public static SBOMPackage? ToSbomPackage(this OtherComponent otherComponent) => new ()
         {
             Id = otherComponent.Id,
             PackageUrl = otherComponent.PackageUrl?.ToString(),
             PackageName = otherComponent.Name,
             PackageVersion = otherComponent.Version,
             PackageSource = otherComponent.DownloadUrl?.ToString(),
-            Checksum = new List<Checksum>() {
-                        new Checksum() {
-                            ChecksumValue = otherComponent.Hash
-                        },
-                    },
+            Checksum = new[] 
+            {
+                new Checksum { ChecksumValue = otherComponent.Hash },
+            },
             FilesAnalyzed = false,
             Type = "other"
         };

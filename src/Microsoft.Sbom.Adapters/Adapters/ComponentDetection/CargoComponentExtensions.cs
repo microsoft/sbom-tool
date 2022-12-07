@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
         /// <summary>
         /// Converts a <see cref="CargoComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this CargoComponent cargoComponent) => new SBOMPackage
+        public static SBOMPackage? ToSbomPackage(this CargoComponent cargoComponent) => new ()
         {
             Id = cargoComponent.Id,
             PackageUrl = cargoComponent.PackageUrl?.ToString(),

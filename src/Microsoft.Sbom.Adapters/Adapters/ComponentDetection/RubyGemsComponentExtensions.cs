@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
         /// <summary>
         /// Converts a <see cref="RubyGemsComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this RubyGemsComponent rubyGemsComponent) => new SBOMPackage
+        public static SBOMPackage? ToSbomPackage(this RubyGemsComponent rubyGemsComponent) => new ()
         {
             Id = rubyGemsComponent.Id,
             PackageUrl = rubyGemsComponent.PackageUrl?.ToString(),

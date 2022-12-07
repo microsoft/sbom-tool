@@ -219,6 +219,33 @@ namespace Microsoft.Sbom.Adapters.Tests
             Assert.IsNull(sbomPackage.Supplier);
         }
 
+        [TestMethod]
+        public void PipComponent_ToSbomPackage()
+        {
+            var pipComponent = new PipComponent("name", "version");
+            var scannedComponent = new ScannedComponent() { Component = pipComponent };
+
+            var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+
+            Assert.AreEqual(pipComponent.Id, sbomPackage.Id);
+            Assert.AreEqual(pipComponent.PackageUrl?.ToString(), sbomPackage.PackageUrl);
+            Assert.AreEqual(pipComponent.Name, sbomPackage.PackageName);
+            Assert.AreEqual(pipComponent.Version, sbomPackage.PackageVersion);
+        }
+
+        [TestMethod]
+        public void GitComponent_ToSbomPackage()
+        {
+            var uri = new Uri("https://microsoft.com");
+            var gitComponent = new GitComponent(uri, "version");
+            var scannedComponent = new ScannedComponent() { Component = gitComponent };
+
+            var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+
+            Assert.AreEqual(gitComponent.Id, sbomPackage.Id);
+            Assert.AreEqual(gitComponent.PackageUrl?.ToString(), sbomPackage.PackageUrl);
+        }
+
         private (AdapterReport report, List<SBOMPackage> packages) GenerateJsonFileForTestAndRun(string json)
         {
             var baseDirectory = Path.Combine(testContext.TestRunDirectory, Guid.NewGuid().ToString());
