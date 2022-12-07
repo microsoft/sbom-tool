@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Contracts
         /// <param name="manifestDirPath">Output directory. If null defaults to rootPath.</param>
         /// <returns>The result object that indicates if the generation succeeded, and a list of 
         /// errors if it failed along with telemetry.</returns>
-        Task<SBOMResult> GenerateSBOMAsync(
+        Task<SBOMGenerationResult> GenerateSBOMAsync(
                                           string rootPath,
                                           IEnumerable<SBOMFile> files,
                                           IEnumerable<SBOMPackage> packages,
@@ -48,7 +48,7 @@ namespace Microsoft.Sbom.Contracts
         /// <param name="manifestDirPath">Output directory. If null defaults to rootPath joined to _manifest.</param>
         /// <returns>The result object that indicates if the generation succeeded, and a list of 
         /// errors if it failed along with telemetry.</returns>
-        Task<SBOMResult> GenerateSBOMAsync(
+        Task<SBOMGenerationResult> GenerateSBOMAsync(
             string rootPath,
             string componentPath,
             SBOMMetadata metadata,

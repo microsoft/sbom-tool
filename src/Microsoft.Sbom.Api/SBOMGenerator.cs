@@ -46,7 +46,7 @@ namespace Microsoft.Sbom.Api
         }
 
         /// <inheritdoc />
-        public async Task<SBOMResult> GenerateSBOMAsync(
+        public async Task<SBOMGenerationResult> GenerateSBOMAsync(
             string rootPath,
             string componentPath,
             SBOMMetadata metadata,
@@ -75,11 +75,11 @@ namespace Microsoft.Sbom.Api
 
             var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
 
-            return new SBOMResult(isSuccess, entityErrors);
+            return new SBOMGenerationResult(isSuccess, entityErrors);
         }
 
         /// <inheritdoc />
-        public async Task<SBOMResult> GenerateSBOMAsync(
+        public async Task<SBOMGenerationResult> GenerateSBOMAsync(
             string rootPath,
             IEnumerable<SBOMFile> files,
             IEnumerable<SBOMPackage> packages,
@@ -123,7 +123,7 @@ namespace Microsoft.Sbom.Api
 
             kernel.Bind<SBOMMetadata>().ToConstant(metadata);
             bool result = await kernel.Get<IWorkflow>(nameof(SBOMGenerationWorkflow)).RunAsync();
-            return new SBOMResult(result, new List<EntityError>());
+            return new SBOMGenerationResult(result, new List<EntityError>());
         }
 
         /// <inheritdoc />
