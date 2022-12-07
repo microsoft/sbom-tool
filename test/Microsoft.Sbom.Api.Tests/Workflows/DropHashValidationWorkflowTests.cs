@@ -133,8 +133,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     fileSystemMock.Object),
                 recorderMock);
 
-            var result = await workflow.RunAsync();
-            Assert.IsFalse(result);
+            Assert.AreEqual(Result.Failure, (await workflow.RunAsync()).Result);
 
             var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
@@ -250,8 +249,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     fileSystemMock.Object),
                 recorderMock);
 
-            var result = await workflow.RunAsync();
-            Assert.IsTrue(result);
+            Assert.AreEqual(Result.Success, (await workflow.RunAsync()).Result);
 
             var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
@@ -361,8 +359,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     fileSystemMock.Object),
                 recorderMock);
 
-            var result = await workflow.RunAsync();
-            Assert.IsTrue(result);
+            Assert.AreEqual(Result.Success, (await workflow.RunAsync()).Result);
 
             var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
@@ -471,8 +468,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     fileSystemMock.Object),
                 recorderMock);
 
-            var result = await workflow.RunAsync();
-            Assert.IsTrue(result);
+            Assert.AreEqual(Result.Success, (await workflow.RunAsync()).Result);
 
             var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
@@ -581,8 +577,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     fileSystemMock.Object),
                 recorderMock);
 
-            var result = await workflow.RunAsync();
-            Assert.IsFalse(result);
+            Assert.AreEqual(Result.Failure, (await workflow.RunAsync()).Result);
 
             var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
@@ -617,6 +612,8 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var configurationMock = new Mock<IConfiguration>();
             configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
 
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
+
             var workflow = new SBOMValidationWorkflow(
                 configurationMock.Object,
                 null,
@@ -625,15 +622,15 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 null,
                 null,
                 GetDefaultManifestData(),
-                null,
+                validationResultGenerator,
                 null,
                 mockLogger.Object,
                 signValidationProviderMock.Object,
                 null,
                 recorderMock);
 
-            var result = await workflow.RunAsync();
-            Assert.IsFalse(result);
+            Assert.AreEqual(Result.Failure, (await workflow.RunAsync()).Result);
+
             signValidatorMock.VerifyAll();
         }
     }

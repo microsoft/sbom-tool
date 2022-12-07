@@ -57,7 +57,7 @@ namespace Microsoft.Sbom.Api.Workflows
             this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         }
 
-        public async Task<bool> RunAsync()
+        public async Task<ValidationResult> RunAsync()
         {
             ValidationResult validationResultOutput = null;
             IEnumerable<FileValidationResult> validFailures = null;
@@ -87,7 +87,7 @@ namespace Microsoft.Sbom.Api.Workflows
                             if (!signValidator.Validate())
                             {
                                 log.Error("Sign validation failed.");
-                                return false;
+                                return validationResultGenerator.FailureResult;
                             }
                         }
                     }
@@ -152,14 +152,14 @@ namespace Microsoft.Sbom.Api.Workflows
                         validFailures = validFailures.Where(a => a.ErrorType != ErrorType.MissingFile);
                     }
 
-                    return !validFailures.Any();
+                    return validationResultOutput;
                 }
                 catch (Exception e)
                 {
                     recorder.RecordException(e);
                     log.Error("Encountered an error while validating the drop.");
                     log.Error($"Error details: {e.Message}");
-                    return false;
+                    return validationResultGenerator.FailureResult;
                 }
                 finally
                 {

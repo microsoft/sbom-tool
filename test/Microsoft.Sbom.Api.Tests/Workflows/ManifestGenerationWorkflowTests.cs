@@ -6,6 +6,7 @@ using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Filters;
@@ -139,6 +140,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             configurationMock.SetupGet(c => c.Verbosity).Returns(new ConfigurationSetting<LogEventLevel> { Value = LogEventLevel.Information });
             configurationMock.SetupGet(c => c.BuildComponentPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
             configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
+            configurationMock.SetupGet(c => c.IgnoreMissing).Returns(new ConfigurationSetting<bool> { Value = false });
 
             fileSystemMock
                 .Setup(f => f.CreateDirectory(
@@ -311,6 +313,8 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 .Setup(r => r.GenerateAsync())
                 .ReturnsAsync(await Task.FromResult(new List<FileValidationResult>()));
 
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
+
             var workflow = new SBOMGenerationWorkflow(
                 configurationMock.Object,
                 fileSystemMock.Object,
@@ -321,9 +325,10 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 externalDocumentReferenceGenerator,
                 sbomConfigs,
                 mockOSUtils.Object,
-                recorderMock.Object);
+                recorderMock.Object,
+                validationResultGenerator);
 
-            Assert.IsTrue(await workflow.RunAsync());
+            Assert.AreEqual(Result.Success, (await workflow.RunAsync()).Result);
 
             var result = Encoding.UTF8.GetString(manifestStream.ToArray());
             var resultJson = JObject.Parse(result);
@@ -361,6 +366,9 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestJsonDirPath = "/root/_manifest",
                 ManifestJsonFilePath = "/root/_manifest/manifest.json"
             };
+
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
+
             var workflow = new SBOMGenerationWorkflow(
                 configurationMock.Object,
                 fileSystemMock.Object,
@@ -371,9 +379,10 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 new Mock<IJsonArrayGenerator>().Object,
                 new Mock<ISbomConfigProvider>().Object,
                 mockOSUtils.Object,
-                recorderMock.Object);
+                recorderMock.Object,
+                validationResultGenerator);
 
-            Assert.IsFalse(await workflow.RunAsync());
+            Assert.AreEqual(Result.Failure, (await workflow.RunAsync()).Result);
             recorderMock.Verify(r => r.RecordException(It.IsAny<ManifestFolderExistsException>()), Times.Once);
         }
 
@@ -392,6 +401,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
             var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator>();
             fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(new List<FileValidationResult> { new FileValidationResult() });
+            var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
             var workflow = new SBOMGenerationWorkflow(
                 configurationMock.Object,
@@ -403,12 +413,13 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 new Mock<IJsonArrayGenerator>().Object,
                 new Mock<ISbomConfigProvider>().Object,
                 mockOSUtils.Object,
-                recorderMock.Object);
+                recorderMock.Object,
+                validationResultGenerator);
 
             var result = await workflow.RunAsync();
 
             fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Never);
-            Assert.IsFalse(result);
+            Assert.AreEqual(Result.Failure, (await workflow.RunAsync()).Result);
         }
     }
 }

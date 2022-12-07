@@ -180,8 +180,8 @@ namespace Microsoft.Sbom.Workflows
                 outputWriterMock.Object,
                 fileSystemMock.Object);
 
-            var result = await validator.RunAsync();
-            Assert.IsTrue(result);
+            Assert.AreEqual(Result.Success, (await validator.RunAsync()).Result);
+
             var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
             var additionalFileErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.AdditionalFile).ToList();
@@ -327,8 +327,7 @@ namespace Microsoft.Sbom.Workflows
                 outputWriterMock.Object, 
                 fileSystemMock.Object);
 
-            var result = await validator.RunAsync();
-            Assert.IsFalse(result);
+            Assert.AreEqual(Result.Failure, (await validator.RunAsync()).Result);
             var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
             var additionalFileErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.AdditionalFile).ToList();

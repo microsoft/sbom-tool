@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Output.Telemetry;
@@ -67,7 +68,7 @@ namespace Microsoft.Sbom.Api
 
             // This is the generate workflow
             IWorkflow workflow = kernel.Get<IWorkflow>(nameof(SBOMGenerationWorkflow));
-            bool isSuccess = await workflow.RunAsync();
+            var result = await workflow.RunAsync();
 
             // TODO: Telemetry?
             IRecorder recorder = kernel.Get<IRecorder>();
@@ -75,7 +76,7 @@ namespace Microsoft.Sbom.Api
 
             var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
 
-            return new SBOMGenerationResult(isSuccess, entityErrors);
+            return new SBOMGenerationResult(result.Result == Result.Success, entityErrors);
         }
 
         /// <inheritdoc />
@@ -122,8 +123,14 @@ namespace Microsoft.Sbom.Api
             kernel.Bind<IConfiguration>().ToConstant(configuration);
 
             kernel.Bind<SBOMMetadata>().ToConstant(metadata);
-            bool result = await kernel.Get<IWorkflow>(nameof(SBOMGenerationWorkflow)).RunAsync();
-            return new SBOMGenerationResult(result, new List<EntityError>());
+            var result = await kernel.Get<IWorkflow>(nameof(SBOMGenerationWorkflow)).RunAsync();
+
+            IRecorder recorder = kernel.Get<IRecorder>();
+            await recorder.FinalizeAndLogTelemetryAsync();
+
+            var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
+
+            return new SBOMGenerationResult(result.Result == Result.Success, entityErrors);
         }
 
         /// <inheritdoc />

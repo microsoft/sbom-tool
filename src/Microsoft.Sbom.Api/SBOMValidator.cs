@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common.Config;
@@ -56,14 +57,12 @@ namespace Microsoft.Sbom.Api
 
             // This is the generate workflow
             IWorkflow workflow = kernel.Get<IWorkflow>(nameof(SBOMParserBasedValidationWorkflow));
-            bool isSuccess = await workflow.RunAsync();
+            var validationResult = await workflow.RunAsync();
 
             IRecorder recorder = kernel.Get<IRecorder>();
             await recorder.FinalizeAndLogTelemetryAsync();
 
-            var entityErrors = ((TelemetryRecorder)recorder).Errors.Select(error => error.ToEntityError()).ToList();
-
-            return isSuccess;
+            return validationResult.Result == Result.Success;
         }
 
         private Configuration ValidateConfig(Configuration config)

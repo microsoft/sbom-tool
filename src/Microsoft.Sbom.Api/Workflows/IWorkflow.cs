@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Api.Entities.Output;
 using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Workflows
@@ -10,6 +11,7 @@ namespace Microsoft.Sbom.Api.Workflows
     /// </summary>
     public interface IWorkflow
     {
-        public Task<bool> RunAsync();
+        public Task<ValidationResult> RunAsync();
+
     }
 }

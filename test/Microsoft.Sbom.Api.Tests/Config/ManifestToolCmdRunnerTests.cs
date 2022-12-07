@@ -9,6 +9,7 @@ using Moq;
 using Ninject;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Entities.Output;
 
 namespace Microsoft.Sbom.Api.Tests.Config
 {
@@ -55,7 +56,7 @@ namespace Microsoft.Sbom.Api.Tests.Config
                 .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
 
             var workflowMock = new Mock<IWorkflow>();
-            workflowMock.Setup(f => f.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
+            workflowMock.Setup(f => f.RunAsync()).Returns(Task.FromResult(new ValidationResult { Result = Api.Entities.Output.Result.Success })).Verifiable();
 
             bindings.Rebind<IFileSystemUtils>().ToConstant(fileSystemUtilsMock.Object).InSingletonScope();
             bindings.Rebind<IWorkflow>().ToConstant(workflowMock.Object).Named(nameof(SBOMGenerationWorkflow));

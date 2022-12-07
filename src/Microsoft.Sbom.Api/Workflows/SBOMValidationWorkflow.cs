@@ -76,7 +76,7 @@ namespace Microsoft.Sbom.Api.Workflows
             }
         }
 
-        public async Task<bool> RunAsync()
+        public async Task<ValidationResult> RunAsync()
         {
             ValidationResult validationResultOutput = null;
             IEnumerable<FileValidationResult> validFailures = null;
@@ -104,7 +104,7 @@ namespace Microsoft.Sbom.Api.Workflows
                             if (!signValidator.Validate())
                             {
                                 log.Error("Sign validation failed.");
-                                return false;
+                                return validationResultGenerator.FailureResult;
                             }
                         }
                     }
@@ -168,7 +168,7 @@ namespace Microsoft.Sbom.Api.Workflows
                     if (successCount < 0)
                     {
                         log.Error("Error running the workflow, failing without publishing results.");
-                        return false;
+                        return validationResultGenerator.FailureResult;
                     }
 
                     DateTime end = DateTime.Now;
@@ -200,14 +200,14 @@ namespace Microsoft.Sbom.Api.Workflows
                         validFailures = validFailures.Where(a => a.ErrorType != ErrorType.MissingFile);
                     }
 
-                    return !validFailures.Any();
+                    return validationResultOutput;
                 }
                 catch (Exception e)
                 {
                     recorder.RecordException(e);
                     log.Error("Encountered an error while validating the drop.");
                     log.Error($"Error details: {e.Message}");
-                    return false;
+                    return validationResultGenerator.FailureResult;
                 }
                 finally
                 {

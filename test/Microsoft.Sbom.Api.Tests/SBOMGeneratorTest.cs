@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common;
@@ -54,13 +55,15 @@ namespace Microsoft.Sbom.Api.Tests
         [TestMethod]
         public async Task When_GenerateSbomAsync_WithRecordedErrors_Then_PopulateEntityErrors()
         {
-            var fileValidationResults = new List<FileValidationResult>();
-            fileValidationResults.Add(new FileValidationResult() { Path = "random", ErrorType = ErrorType.Other });
+            var fileValidationResults = new List<FileValidationResult>
+            {
+                new FileValidationResult() { Path = "random", ErrorType = ErrorType.Other }
+            };
 
             kernel.Bind<IWorkflow>().ToMethod(x => mockWorkflow.Object).Named(nameof(SBOMGenerationWorkflow));
             kernel.Bind<IRecorder>().ToMethod(x => mockRecorder.Object).InSingletonScope();
             mockRecorder.Setup(c => c.Errors).Returns(fileValidationResults).Verifiable();
-            mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
+            mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(new ValidationResult { Result = Result.Success })).Verifiable();
 
             var metadata = new SBOMMetadata()
             {
@@ -82,7 +85,7 @@ namespace Microsoft.Sbom.Api.Tests
             kernel.Bind<IWorkflow>().ToMethod(x => mockWorkflow.Object).Named(nameof(SBOMGenerationWorkflow));
             kernel.Bind<IRecorder>().ToMethod(x => mockRecorder.Object).InSingletonScope();
             mockRecorder.Setup(c => c.Errors).Returns(new List<FileValidationResult>()).Verifiable();
-            mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
+            mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(new ValidationResult { Result = Result.Success })).Verifiable();
 
             var metadata = new SBOMMetadata()
             {

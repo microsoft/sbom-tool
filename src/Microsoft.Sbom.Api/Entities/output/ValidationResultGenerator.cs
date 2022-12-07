@@ -66,7 +66,7 @@ namespace Microsoft.Sbom.Api.Entities.Output
         /// Finalizes the validation generation and returns a new <see cref="ValidationResult"/> object.
         /// </summary>
         /// <returns></returns>
-        public ValidationResult Build()
+        public ValidationResult Build(bool generateValidationTelemetry = true)
         {
             List<FileValidationResult> validationErrors;
             List<FileValidationResult> skippedErrors;
@@ -80,6 +80,19 @@ namespace Microsoft.Sbom.Api.Entities.Output
                 skippedErrors.AddRange(NodeValidationResults.Where(r => r.ErrorType == ErrorType.MissingFile));
             }
 
+            ValidationTelemetry validationTelemetry = null;
+            if (generateValidationTelemetry)
+            {
+                validationTelemetry = new ValidationTelemetry
+                {
+                    FilesSuccessfulCount = successCount,
+                    FilesValidatedCount = NodeValidationResults.Count + successCount,
+                    FilesFailedCount = validationErrors.Count,
+                    FilesSkippedCount = skippedErrors.Count,
+                    TotalFilesInManifest = totalFiles,
+                };
+            }
+
             return new ValidationResult
             {
                 Result = validationErrors.Count == 0 ? Result.Success : Result.Failure,
@@ -91,14 +104,7 @@ namespace Microsoft.Sbom.Api.Entities.Output
                 Summary = new Summary
                 {
                     TotalExecutionTimeInSeconds = duration.TotalSeconds,
-                    ValidationTelemetery = new ValidationTelemetry
-                    {
-                        FilesSuccessfulCount = successCount,
-                        FilesValidatedCount = NodeValidationResults.Count + successCount,
-                        FilesFailedCount = validationErrors.Count,
-                        FilesSkippedCount = skippedErrors.Count,
-                        TotalFilesInManifest = totalFiles,
-                    },
+                    ValidationTelemetery = validationTelemetry,
                     Parameters = configuration
                 }
             };
@@ -109,5 +115,10 @@ namespace Microsoft.Sbom.Api.Entities.Output
             this.totalFiles = totalFiles;
             return this;
         }
+
+        public ValidationResult FailureResult => new ()
+        {
+            Result = Result.Failure,
+        };
     }
 }

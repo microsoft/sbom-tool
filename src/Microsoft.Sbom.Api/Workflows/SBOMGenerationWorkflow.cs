@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Hashing.Algorithms;
 using Microsoft.Sbom.Api.Output.Telemetry;
@@ -15,6 +16,7 @@ using PowerArgs;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -29,6 +31,8 @@ namespace Microsoft.Sbom.Api.Workflows
     /// </summary>
     public class SBOMGenerationWorkflow : IWorkflow
     {
+        private readonly ValidationResultGenerator validationResultGenerator;
+
         public IFileSystemUtils FileSystemUtils { get; }
 
         public IConfiguration Configuration { get; }
@@ -59,7 +63,8 @@ namespace Microsoft.Sbom.Api.Workflows
             [Named(nameof(ExternalDocumentReferenceGenerator))] IJsonArrayGenerator externalDocumentReferenceGenerator,
             ISbomConfigProvider sbomConfigs,
             IOSUtils osUtils,
-            IRecorder recorder)
+            IRecorder recorder,
+            ValidationResultGenerator validationResultGenerator)
         {
             FileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -71,10 +76,12 @@ namespace Microsoft.Sbom.Api.Workflows
             SBOMConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
             OSUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
             Recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+            this.validationResultGenerator = validationResultGenerator ?? throw new ArgumentNullException(nameof(validationResultGenerator));
         }
 
-        public virtual async Task<bool> RunAsync()
+        public virtual async Task<ValidationResult> RunAsync()
         {
+            var sw = Stopwatch.StartNew();
             IList<FileValidationResult> validErrors = new List<FileValidationResult>();
             string sbomDir = null;
             bool deleteSBOMDir = false;
@@ -120,7 +127,10 @@ namespace Microsoft.Sbom.Api.Workflows
                     // Generate SHA256 for manifest json
                     SBOMConfigs.ApplyToEachConfig(config => GenerateHashForManifestJson(config.ManifestJsonFilePath));
 
-                    return !validErrors.Any();
+                    return validationResultGenerator
+                                            .WithValidationResults(validErrors.ToArray())
+                                            .WithTotalDuration(sw.Elapsed)
+                                            .Build(generateValidationTelemetry: false);
                 }
                 catch (Exception e)
                 {
@@ -134,7 +144,7 @@ namespace Microsoft.Sbom.Api.Workflows
                     }
 
                     // TODO: Create EntityError with exception message and record to surface unexpected exceptions to client.
-                    return false;
+                    return validationResultGenerator.FailureResult;
                 }
                 finally
                 {

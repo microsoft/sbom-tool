@@ -13,6 +13,7 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.Entities.Output;
 
 namespace Microsoft.Sbom.Api.Config
 {
@@ -73,7 +74,7 @@ namespace Microsoft.Sbom.Api.Config
                 var configBuilder = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
                 var config = await configBuilder.GetConfiguration(validationArgs);
                 kernel.Bind<IConfiguration>().ToConstant(config);
-                bool result = default;
+                ValidationResult result = default;
                 if (config.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
                 {
                     result = await kernel.Get<IWorkflow>(nameof(SBOMParserBasedValidationWorkflow)).RunAsync();
@@ -87,7 +88,7 @@ namespace Microsoft.Sbom.Api.Config
 
                 await kernel.Get<IRecorder>().FinalizeAndLogTelemetryAsync();
 
-                IsFailed = !result;
+                IsFailed = result.Result == Result.Failure;
             }
             catch (Exception e)
             {
@@ -115,7 +116,7 @@ namespace Microsoft.Sbom.Api.Config
 
                 var result = await kernel.Get<IWorkflow>(nameof(SBOMGenerationWorkflow)).RunAsync();
                 await kernel.Get<IRecorder>().FinalizeAndLogTelemetryAsync();
-                IsFailed = !result;
+                IsFailed = result.Result == Result.Failure;
             }
             catch (AccessDeniedValidationArgException e)
             {
