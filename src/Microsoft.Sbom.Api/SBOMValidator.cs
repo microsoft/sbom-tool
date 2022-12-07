@@ -28,7 +28,7 @@ namespace Microsoft.Sbom.Api
             configurationBuilder = new ApiConfigurationBuilder();            
         }
 
-        public async Task<bool> ValidateSbomAsync(
+        public async Task<SBOMValidationResult> ValidateSbomAsync(
             string buildDropPath,
             string outputPath,
             AlgorithmName algorithmName,
@@ -63,7 +63,7 @@ namespace Microsoft.Sbom.Api
 
             var entityErrors = ((TelemetryRecorder)recorder).Errors.Select(error => error.ToEntityError()).ToList();
 
-            return isSuccess;
+            return new SBOMValidationResult(isSuccess, entityErrors);
         }
 
         private Configuration ValidateConfig(Configuration config)
