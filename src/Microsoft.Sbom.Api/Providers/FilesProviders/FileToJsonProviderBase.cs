@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Ninject;
+using System;
 using Serilog;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,14 +20,18 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
     /// <typeparam name="T">The type of the files channel that is used by the provider.</typeparam>
     public abstract class FileToJsonProviderBase<T> : ISourcesProvider
     {
-        [Inject]
-        public IConfiguration Configuration { get; set; }
+        public IConfiguration Configuration { get; }
 
-        [Inject]
-        public ILogger Log { get; set; }
+        public ILogger Log { get; }
 
-        [Inject]
-        public ChannelUtils ChannelUtils { get; set; }
+        public ChannelUtils ChannelUtils { get; }
+
+        public FileToJsonProviderBase(IConfiguration configuration, ILogger log, ChannelUtils channelUtils)
+        {
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            Log = log ?? throw new ArgumentNullException(nameof(log));
+            ChannelUtils = channelUtils ?? throw new ArgumentNullException(nameof(channelUtils));
+        }
 
         public (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) Get(IList<ISbomConfig> requiredConfigs)
         {

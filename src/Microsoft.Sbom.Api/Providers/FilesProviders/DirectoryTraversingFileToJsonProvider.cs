@@ -1,12 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Ninject;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Common.Config;
+using Serilog;
+using Microsoft.Sbom.Api.Utils;
+using System;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders
 {
@@ -15,8 +18,21 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
     /// </summary>
     public class DirectoryTraversingFileToJsonProvider : PathBasedFileToJsonProviderBase
     {
-        [Inject]
-        public DirectoryWalker DirectoryWalker { get; set; }
+        public DirectoryWalker DirectoryWalker { get; }
+
+        public DirectoryTraversingFileToJsonProvider(
+            IConfiguration configuration,
+            ChannelUtils channelUtils,
+            ILogger log,
+            FileHasher fileHasher,
+            ManifestFolderFilterer fileFilterer,
+            FileInfoWriter fileHashWriter,
+            InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
+            DirectoryWalker directoryWalker)
+            : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
+        {
+            DirectoryWalker = directoryWalker ?? throw new ArgumentNullException(nameof(directoryWalker));
+        }
 
         public override bool IsSupported(ProviderType providerType)
         {

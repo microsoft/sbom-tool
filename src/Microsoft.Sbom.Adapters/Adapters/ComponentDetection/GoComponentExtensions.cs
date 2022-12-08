@@ -16,20 +16,20 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
         /// <summary>
         /// Converts a <see cref="GoComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this GoComponent goComponent) => new SBOMPackage
+        public static SBOMPackage? ToSbomPackage(this GoComponent goComponent) => new ()
         {
             Id = goComponent.Id,
             PackageUrl = goComponent.PackageUrl?.ToString(),
             PackageName = goComponent.Name,
             PackageVersion = goComponent.Version,
-            Checksum = new List<Checksum>()
+            Checksum = new List<Checksum>
+            {
+                new Checksum
                 {
-                    new Checksum()
-                    {
-                        Algorithm = AlgorithmName.SHA256,
-                        ChecksumValue = goComponent.Hash
-                    },
+                    Algorithm = AlgorithmName.SHA256,
+                    ChecksumValue = goComponent.Hash
                 },
+            },
             FilesAnalyzed = false,
             Type = "go"
         };

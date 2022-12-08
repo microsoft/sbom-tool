@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Castle.Core.Internal;
 using Microsoft.ComponentDetection.Common;
 using PowerArgs;
 using System;
@@ -18,13 +17,18 @@ namespace Microsoft.Sbom.Api.Utils
         private string action;
         private VerbosityMode verbosity = VerbosityMode.Quiet;
         private string sourceDirectory;
-        private Dictionary<string, string> detectorArgs = new Dictionary<string, string>();
+        private Dictionary<string, string> detectorArgs = new Dictionary<string, string>() { 
+            { TimeoutArgsParamName, TimeoutDefaultSeconds.ToString() } 
+        };
+
         private Dictionary<string, string> keyValueArgs = new Dictionary<string, string>();
         private List<string> keyArgs = new List<string>();
 
         private const string VerbosityParamName = "Verbosity";
         private const string SourceDirectoryParamName = "SourceDirectory";
         private const string DetectorArgsParamName = "DetectorArgs";
+        private const string TimeoutArgsParamName = "Timeout";
+        private const int TimeoutDefaultSeconds = 15 * 60; // 15 minutes
 
         private const string ScanAction = "scan";
 
@@ -34,12 +38,12 @@ namespace Microsoft.Sbom.Api.Utils
 
         private void Validate()
         {
-            if (action.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(action))
             {
                 throw new ArgumentNullException("Action should be specified.");
             }
 
-            if (sourceDirectory.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(sourceDirectory))
             {
                 throw new ArgumentNullException("Source directory should be specified.");
             }
@@ -103,19 +107,19 @@ namespace Microsoft.Sbom.Api.Utils
 
         public ComponentDetectionCliArgumentBuilder AddArg(string name, string value)
         {
-            if (name.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(name))
             {
                 throw new ArgumentNullException($"{nameof(name)} should not be null");
             }
 
-            if (value.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(value))
             {
                 throw new ArgumentNullException($"{nameof(value)} should not be null");
             }
 
             name = name.StartsWith("--") ? name.Substring(2) : name;
 
-            if (name.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(name))
             {
                 throw new ArgumentNullException($"{nameof(name)} should not be null or be empty");
             }
@@ -158,7 +162,7 @@ namespace Microsoft.Sbom.Api.Utils
 
         public ComponentDetectionCliArgumentBuilder AddArg(string value)
         {
-            if (value.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(value))
             {
                 throw new ArgumentNullException($"{nameof(value)} should not be null");
             }
@@ -181,7 +185,7 @@ namespace Microsoft.Sbom.Api.Utils
 
         public ComponentDetectionCliArgumentBuilder ParseAndAddArgs(string args)
         {
-            if (args.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(args))
             {
                 throw new ArgumentNullException($"{nameof(args)} should not be null");
             }

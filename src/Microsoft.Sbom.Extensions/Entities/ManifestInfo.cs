@@ -75,8 +75,8 @@ namespace Microsoft.Sbom.Extensions.Entities
         public override int GetHashCode()
         {
             int hashCode = 2112831277;
-            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Version);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name.ToLowerInvariant());
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Version.ToLowerInvariant());
             return hashCode;
         }
 
@@ -89,6 +89,11 @@ namespace Microsoft.Sbom.Extensions.Entities
         public override string ToString()
         {
             return $"{Name}:{Version}";
+        }
+
+        public string ToLowerString()
+        {
+            return $"{Name.ToLowerInvariant()}:{Version.ToUpperInvariant()}";
         }
     }
 }

@@ -7,7 +7,6 @@ using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
-using Ninject;
 using Serilog;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -21,20 +20,29 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
     /// </summary>
     public class RelationshipsArrayGenerator : IJsonArrayGenerator
     {
-        [Inject]
-        public RelationshipGenerator Generator { get; set; }
+        public RelationshipGenerator Generator { get; }
 
-        [Inject]
-        public ChannelUtils ChannelUtils { get; set; }
+        public ChannelUtils ChannelUtils { get; }
 
-        [Inject]
-        public ILogger Log { get; set; }
+        public ILogger Log { get; }
 
-        [Inject]
-        public ISbomConfigProvider SbomConfigs { get; set; }
+        public ISbomConfigProvider SbomConfigs { get; }
 
-        [Inject]
-        public IRecorder Recorder { get; set; }
+        public IRecorder Recorder { get; }
+
+        public RelationshipsArrayGenerator(
+            RelationshipGenerator generator,
+            ChannelUtils channelUtils,
+            ILogger log,
+            ISbomConfigProvider sbomConfigs,
+            IRecorder recorder)
+        {
+            Generator = generator;
+            ChannelUtils = channelUtils;
+            Log = log;
+            SbomConfigs = sbomConfigs;
+            Recorder = recorder;
+        }
 
         public async Task<IList<FileValidationResult>> GenerateAsync()
         {

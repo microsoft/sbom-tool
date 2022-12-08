@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Castle.Core.Internal;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Extensions;
 using Microsoft.ComponentDetection.Common;
@@ -61,7 +60,7 @@ namespace Microsoft.Sbom.Api.Executors
             if (sbomConfigs.TryGet(Constants.SPDX22ManifestInfo, out ISbomConfig spdxSbomConfig))
             {
                 var directory = Path.GetDirectoryName(spdxSbomConfig.ManifestJsonFilePath);
-                if (!directory.IsNullOrEmpty())
+                if (!string.IsNullOrEmpty(directory))
                 {
                     cliArgumentBuilder.AddArg("DirectoryExclusionList", directory);
                 }

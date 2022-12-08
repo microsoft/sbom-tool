@@ -12,6 +12,7 @@ using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Api.Utils;
 
 namespace Microsoft.Sbom.Api.Config
 {
@@ -70,9 +71,20 @@ namespace Microsoft.Sbom.Api.Config
                 var mapper = kernel.Get<IMapper>();
                 var configFileParser = kernel.Get<ConfigFileParser>();
                 var configBuilder = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
+                var config = await configBuilder.GetConfiguration(validationArgs);
+                kernel.Bind<IConfiguration>().ToConstant(config);
+                bool result = default;
+                if (config.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
+                {
+                    result = await kernel.Get<IWorkflow>(nameof(SBOMParserBasedValidationWorkflow)).RunAsync();
+                }
+                else
+                {
+                    // On deprecation path.
+                    Console.WriteLine($"This validation workflow is soon going to be deprecated. Please switch to the SPDX validation.");
+                    result = await kernel.Get<IWorkflow>(nameof(SBOMValidationWorkflow)).RunAsync();
+                }
 
-                kernel.Bind<IConfiguration>().ToConstant(await configBuilder.GetConfiguration(validationArgs));
-                var result = await kernel.Get<IWorkflow>(nameof(SBOMValidationWorkflow)).RunAsync();
                 await kernel.Get<IRecorder>().FinalizeAndLogTelemetryAsync();
 
                 IsFailed = !result;

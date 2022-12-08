@@ -15,7 +15,7 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
         /// <summary>
         /// Converts a <see cref="NuGetComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this NuGetComponent nuGetComponent) => new SBOMPackage
+        public static SBOMPackage? ToSbomPackage(this NuGetComponent nuGetComponent) => new ()
         {
             Id = nuGetComponent.Id,
             PackageUrl = nuGetComponent.PackageUrl?.ToString(),

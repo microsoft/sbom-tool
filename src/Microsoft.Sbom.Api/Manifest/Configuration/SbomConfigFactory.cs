@@ -21,6 +21,9 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
             ManifestInfo manifestInfo,
             string manifestDirPath,
             string manifestFilePath,
+            string manifestFileSha256HashPath,
+            string catalogFilePath,
+            string bsiFilePath,
             ISbomPackageDetailsRecorder recorder,
             IMetadataBuilder metadataBuilder)
         {
@@ -29,6 +32,9 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
                 ManifestInfo = manifestInfo,
                 ManifestJsonDirPath = manifestDirPath,
                 ManifestJsonFilePath = manifestFilePath,
+                BsiFilePath = bsiFilePath,
+                CatalogFilePath = catalogFilePath,
+                ManifestJsonFileSha256FilePath = manifestFileSha256HashPath,
                 MetadataBuilder = metadataBuilder,
                 Recorder = recorder
             };

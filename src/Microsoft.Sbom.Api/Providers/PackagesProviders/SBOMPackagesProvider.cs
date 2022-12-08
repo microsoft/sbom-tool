@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Ninject;
 using Microsoft.Sbom.Contracts;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +8,8 @@ using System.Threading.Channels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Common.Config;
+using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.PackagesProviders
 {
@@ -17,8 +18,15 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
     /// </summary>
     public class SBOMPackagesProvider : CommonPackagesProvider<SBOMPackage>
     {
-        [Inject]
-        public SBOMPackageToPackageInfoConverter PackageInfoConverter { get; set; }
+        public SBOMPackagesProvider(
+            IConfiguration configuration,
+            ChannelUtils channelUtils,
+            ILogger logger,
+            ISbomConfigProvider sbomConfigs,
+            PackageInfoJsonWriter packageInfoJsonWriter)
+            : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter)
+        {
+        }
 
         public override bool IsSupported(ProviderType providerType)
         {
@@ -37,10 +45,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
         protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) ConvertToJson(ChannelReader<SBOMPackage> sourceChannel, IList<ISbomConfig> requiredConfigs)
         {
             IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
-            var (convertedSource, conversionErrors) = PackageInfoConverter.Convert(sourceChannel);
-            errors.Add(conversionErrors);
-
-            var (jsonDocCount, jsonErrors) = PackageInfoJsonWriter.Write(convertedSource, requiredConfigs);
+            var (jsonDocCount, jsonErrors) = PackageInfoJsonWriter.Write(sourceChannel, requiredConfigs);
             errors.Add(jsonErrors);
 
             return (jsonDocCount, ChannelUtils.Merge(errors.ToArray()));

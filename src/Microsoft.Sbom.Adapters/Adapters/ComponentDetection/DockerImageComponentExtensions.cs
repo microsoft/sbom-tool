@@ -16,19 +16,19 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
         /// <summary>
         /// Converts a <see cref="DockerImageComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this DockerImageComponent dockerImageComponent) => new SBOMPackage
+        public static SBOMPackage? ToSbomPackage(this DockerImageComponent dockerImageComponent) => new ()
         {
             Id = dockerImageComponent.Id,
             PackageUrl = dockerImageComponent.PackageUrl?.ToString(),
             PackageName = dockerImageComponent.Name,
-            Checksum = new List<Checksum>()
+            Checksum = new[]
+            {
+                new Checksum
                 {
-                    new Checksum()
-                    {
-                        Algorithm = AlgorithmName.SHA256,
-                        ChecksumValue = dockerImageComponent.Digest
-                    },
+                    Algorithm = AlgorithmName.SHA256,
+                    ChecksumValue = dockerImageComponent.Digest
                 },
+            },
             FilesAnalyzed = false,
             Type = "docker"
         };

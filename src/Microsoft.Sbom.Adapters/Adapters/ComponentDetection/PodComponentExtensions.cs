@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
         /// <summary>
         /// Converts a <see cref="PodComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this PodComponent podComponent) => new SBOMPackage
+        public static SBOMPackage? ToSbomPackage(this PodComponent podComponent) => new ()
         {
             Id = podComponent.Id,
             PackageUrl = podComponent.PackageUrl?.ToString(),

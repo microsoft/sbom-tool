@@ -64,14 +64,7 @@ namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers
                     }
                 });
             relationshipGeneratorMock.CallBase = true;
-            relationshipsArrayGenerator = new RelationshipsArrayGenerator()
-            {
-                ChannelUtils = new ChannelUtils(),
-                Recorder = recorderMock.Object,
-                Generator = relationshipGeneratorMock.Object,
-                Log = loggerMock.Object,
-                SbomConfigs = sbomConfigsMock.Object,
-            };
+            relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), loggerMock.Object, sbomConfigsMock.Object, recorderMock.Object);
             manifestGeneratorProvider.Init();
             metadataBuilder = new MetadataBuilder(
                 mockLogger.Object,

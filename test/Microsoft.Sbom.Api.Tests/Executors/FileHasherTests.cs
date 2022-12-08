@@ -70,7 +70,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
                                  {
                                      new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
                                  });
-            manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>())).Returns((string r) => (r, true));
+            manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>(), false)).Returns((string r, bool v) => (r, true));
 
             var files = Channel.CreateUnbounded<string>();
             (ChannelReader<InternalSBOMFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
@@ -120,8 +120,8 @@ namespace Microsoft.Sbom.Api.Executors.Tests
                                      new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
                                  });
 
-            manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>())).Returns((string r) => (r, true));
-            manifestPathConverter.Setup(m => m.Convert(It.Is<string>(d => d == "test2"))).Throws(new InvalidPathException());
+            manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>(), false)).Returns((string r, bool v) => (r, true));
+            manifestPathConverter.Setup(m => m.Convert(It.Is<string>(d => d == "test2"), false)).Throws(new InvalidPathException());
 
             var fileHasher = new FileHasher(
                 hashCodeGeneratorMock.Object,
@@ -191,7 +191,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
                                      new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = string.Empty }
                                  })
                 .Throws(new UnauthorizedAccessException("Can't access file"));
-            manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>())).Returns((string r) => (r, true));
+            manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>(), false)).Returns((string r, bool v) => (r, true));
 
             var fileHasher = new FileHasher(
                 hashCodeGeneratorMock.Object,
@@ -279,7 +279,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             var sbomConfigs = new Mock<ISbomConfigProvider>();
             sbomConfigs.Setup(s => s.GetManifestInfos()).Returns(manifestInfoList);
 
-            manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>())).Returns((string r) => (r, true));
+            manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>(), It.IsAny<bool>())).Returns((string r, bool v) => (r, true));
 
             var files = Channel.CreateUnbounded<string>();
             (ChannelReader<InternalSBOMFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes

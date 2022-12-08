@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
         /// <summary>
         /// Converts a <see cref="PipComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this PipComponent pipComponent) => new SBOMPackage
+        public static SBOMPackage? ToSbomPackage(this PipComponent pipComponent) => new ()
         {
             Id = pipComponent.Id,
             PackageUrl = pipComponent.PackageUrl?.ToString(),

@@ -7,11 +7,11 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
-using Ninject;
 using Serilog;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers
 {
@@ -20,20 +20,29 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
     /// </summary>
     public class FileArrayGenerator : IJsonArrayGenerator
     {
-        [Inject]
-        public IConfiguration Configuration { get; set; }
+        public IConfiguration Configuration { get; }
 
-        [Inject]
-        public ILogger Log { get; set; }
+        public ILogger Log { get;  }
 
-        [Inject]
-        public ISbomConfigProvider SBOMConfigs { get; set; }
+        public ISbomConfigProvider SBOMConfigs { get; }
 
-        [Inject]
-        public IList<ISourcesProvider> SourcesProviders { get; set; }
+        public IList<ISourcesProvider> SourcesProviders { get; }
 
-        [Inject]
-        public IRecorder Recorder { get; set; }
+        public IRecorder Recorder { get; }
+
+        public FileArrayGenerator(
+            IConfiguration configuration,
+            ILogger log,
+            ISbomConfigProvider sbomConfigs,
+            IList<ISourcesProvider> sourcesProviders,
+            IRecorder recorder)
+        {
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            Log = log ?? throw new ArgumentNullException(nameof(log));
+            SBOMConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+            SourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
+            Recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+        }
 
         /// <summary>
         /// Traverses all the files inside the buildDropPath, and serializes the SBOM using the JSON serializer creating
