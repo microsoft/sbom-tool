@@ -149,7 +149,7 @@ namespace Microsoft.Sbom.Api.Config
         {
             if (!string.IsNullOrEmpty(Version))
             {
-                Console.WriteLine($"Sbom Tool Version: {Version}");
+                Console.WriteLine($"SBOM Tool Version: {Version}");
             }
             else
             {
