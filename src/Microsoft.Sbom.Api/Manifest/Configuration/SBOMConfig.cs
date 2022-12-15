@@ -63,7 +63,7 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
         /// <summary>
         /// Gets the generated manifest tool json serializer for this SBOM config.
         /// </summary>
-        public IManifestToolJsonSerializer JsonSerializer { get; private set; }
+        public IManifestToolJsonSerializer JsonSerializer { get; protected set; }
 
         /// <summary>
         /// Gets or sets records ids and generated package details for the current SBOM.
