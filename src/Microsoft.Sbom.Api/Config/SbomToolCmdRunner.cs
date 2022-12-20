@@ -24,7 +24,7 @@ namespace Microsoft.Sbom.Api.Config
     {
         private readonly StandardKernel kernel;
 
-        internal static string Version => VersionValue.Value;
+        internal static string SBOMToolVersion => VersionValue.Value;
 
         private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
         {
@@ -144,12 +144,13 @@ namespace Microsoft.Sbom.Api.Config
         /// Prints the version of the tool.
         /// </summary>
         [ArgActionMethod]
-        [ArgDescription("Displays information about the version of the tool being used.")]
-        public void Info()
+        [ArgShortcut("--version")]
+        [ArgDescription("Displays the version of the tool being used. Can be called with --version")]
+        public void Version()
         {
-            if (!string.IsNullOrEmpty(Version))
+            if (!string.IsNullOrEmpty(SBOMToolVersion))
             {
-                Console.WriteLine($"SBOM Tool Version: {Version}");
+                Console.WriteLine(SBOMToolVersion);
             }
             else
             {
