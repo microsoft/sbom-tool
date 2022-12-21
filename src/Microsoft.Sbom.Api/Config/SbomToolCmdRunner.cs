@@ -145,7 +145,7 @@ namespace Microsoft.Sbom.Api.Config
         /// </summary>
         [ArgActionMethod]
         [ArgShortcut("--version")]
-        [ArgDescription("Displays the version of the tool being used. Can be called with --version")]
+        [ArgDescription("Displays the version of the tool being used. Can be used as '--version'")]
         public void Version()
         {
             if (!string.IsNullOrEmpty(SBOMToolVersion))
