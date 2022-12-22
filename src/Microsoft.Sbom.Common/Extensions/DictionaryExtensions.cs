@@ -13,7 +13,7 @@ namespace Microsoft.Sbom.Common.Extensions
     {
         /// <summary>
         /// Adds the value to the dictionary only if the value is not null,
-        /// and the if dictionary already doens't contain the given key.
+        /// and the if dictionary already doesn't contain the given key.
         /// </summary>
         /// <typeparam name="Tkey"></typeparam>
         /// <typeparam name="TValue"></typeparam>
