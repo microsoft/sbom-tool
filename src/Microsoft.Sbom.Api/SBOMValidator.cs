@@ -62,8 +62,7 @@ namespace Microsoft.Sbom.Api
             await recorder.FinalizeAndLogTelemetryAsync();
 
             var entityErrors = ((TelemetryRecorder)recorder).Errors.Select(error => error.ToEntityError()).ToList();
-
-            return new SBOMValidationResult(isSuccess, entityErrors);
+            return isSuccess ? new SbomValidationSuccess() : new SBOMValidationFailure(entityErrors);
         }
 
         private Configuration ValidateConfig(Configuration config)
