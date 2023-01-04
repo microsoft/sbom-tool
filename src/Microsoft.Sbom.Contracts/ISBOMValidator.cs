@@ -28,7 +28,7 @@ namespace Microsoft.Sbom
         /// drop client, specify the same string value here in order to skip validating paths that are not downloaded.</param>
         /// <param name="runtimeConfiguration">Additional parameters to configure the SBOM .</param>
         /// <returns></returns>
-        Task<bool> ValidateSbomAsync(
+        Task<SBOMValidationResult> ValidateSbomAsync(
             string buildDropPath,
             string outputPath,
             AlgorithmName algorithmName,
