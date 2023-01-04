@@ -45,3 +45,17 @@ dotnet run --project src/Microsoft.Sbom.Tool generate -- -b <drop path> -bc <bui
 ## Building using Codespaces
 
 If you have access to [GitHub Codespaces](https://docs.github.com/en/free-pro-team@latest/github/developing-online-with-codespaces/about-codespaces), select the `Code` button from the [repository homepage](https://github.com/microsoft/sbom-tool) then select `Open with Codespaces`. That's it! You have a full developer environment that supports debugging, testing, auto complete, jump to definition, everything you would expect.
+
+## Building using Docker
+
+Make sure you use linux system.
+
+Clone this repo and build the docker image.
+
+```bash
+git clone https://github.com/microsoft/sbom-tool
+cd sbom-tool
+docker build . -t ms_sbom_tool
+```
+
+You can then use the tool, by mounting the directories to be scanned using docker bind mounts.

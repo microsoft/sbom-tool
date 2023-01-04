@@ -42,6 +42,18 @@ curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/downlo
 chmod +x sbom-tool
 ```
 
+#### Building SBOM tool as docker image
+
+Clone this repo and build the docker image.
+
+```bash
+git clone https://github.com/microsoft/sbom-tool
+cd sbom-tool
+docker build . -t ms_sbom_tool
+```
+
+You can then use the tool normally, by mounting the directories to be scanned using docker bind mounts.
+
 ### SBOM .NET Tool
 The sbom-tool can also be installed as a .NET tool using the following command:
 ```powershell
