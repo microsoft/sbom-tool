@@ -20,13 +20,13 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
     public class SbomConfigProvider : ISbomConfigProvider
     {
         private readonly IDictionary<ManifestInfo, ISbomConfig> configsDictionary = new Dictionary<ManifestInfo, ISbomConfig>();
-        private readonly IMetadataProvider[] metadataProviders;
+        private readonly IEnumerable<IMetadataProvider> metadataProviders;
         private readonly ILogger logger;
         private readonly IReadOnlyDictionary<MetadataKey, object> metadataDictionary;
 
         public SbomConfigProvider(
-            IManifestConfigHandler[] manifestConfigHandlers,
-            IMetadataProvider[] metadataProviders,
+            IEnumerable<IManifestConfigHandler> manifestConfigHandlers,
+            IEnumerable<IMetadataProvider> metadataProviders,
             ILogger logger,
             IRecorder recorder)
         {

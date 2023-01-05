@@ -19,51 +19,51 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
     /// <summary>
     /// This class generates an array of external document references. 
     /// </summary>
-    public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator
+    public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDocumentReferenceGenerator>
     {
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration configuration;
 
-        public ILogger Log { get; }
+        private readonly ILogger log;
 
-        public ISbomConfigProvider SBOMConfigs { get; }
+        private readonly ISbomConfigProvider sbomConfigs;
 
-        public IList<ISourcesProvider> SourcesProviders { get; }
+        private readonly IEnumerable<ISourcesProvider> sourcesProviders;
 
-        public IRecorder Recorder { get; }
+        private readonly IRecorder recorder;
 
         public ExternalDocumentReferenceGenerator(
             IConfiguration configuration,
             ILogger log,
             ISbomConfigProvider sbomConfigs,
-            IList<ISourcesProvider> sourcesProviders,
+            IEnumerable<ISourcesProvider> sourcesProviders,
             IRecorder recorder)
         {
-            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            Log = log ?? throw new ArgumentNullException(nameof(log));
-            SBOMConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
-            SourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
-            Recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.log = log ?? throw new ArgumentNullException(nameof(log));
+            this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+            this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
+            this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         }
 
         public async Task<IList<FileValidationResult>> GenerateAsync()
         {
-            using (Recorder.TraceEvent(Events.ExternalDocumentReferenceGeneration))
+            using (recorder.TraceEvent(Events.ExternalDocumentReferenceGeneration))
             {
                 IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
 
-                IEnumerable<ISourcesProvider> sourcesProviders = SourcesProviders
+                IEnumerable<ISourcesProvider> sourcesProviders = this.sourcesProviders
                                                     .Where(s => s.IsSupported(ProviderType.ExternalDocumentReference));
                 if (!sourcesProviders.Any())
                 {
-                    Log.Debug($"No source providers found for {ProviderType.ExternalDocumentReference}");
+                    log.Debug($"No source providers found for {ProviderType.ExternalDocumentReference}");
                     return totalErrors;
                 }
 
                 // Write the start of the array, if supported.
                 IList<ISbomConfig> externalRefArraySupportingConfigs = new List<ISbomConfig>();
-                foreach (var manifestInfo in SBOMConfigs.GetManifestInfos())
+                foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
                 {
-                    var config = SBOMConfigs.Get(manifestInfo);
+                    var config = sbomConfigs.Get(manifestInfo);
                     if (config.MetadataBuilder.TryGetExternalRefArrayHeaderName(out string externalRefArrayHeaderName))
                     {
                         externalRefArraySupportingConfigs.Add(config);

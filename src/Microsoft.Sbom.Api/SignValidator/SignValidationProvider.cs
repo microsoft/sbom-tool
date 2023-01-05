@@ -15,16 +15,18 @@ namespace Microsoft.Sbom.Api.SignValidator
     /// </summary>
     public class SignValidationProvider : ISignValidationProvider
     {
-        private readonly ISignValidator[] signValidators;
+        private readonly IEnumerable<ISignValidator> signValidators;
         private readonly Dictionary<OSPlatform, ISignValidator> signValidatorsMap;
         private readonly IOSUtils osUtils;
 
-        public SignValidationProvider(ISignValidator[] signValidators, IOSUtils osUtils)
+        public SignValidationProvider(IEnumerable<ISignValidator> signValidators, IOSUtils osUtils)
         {
             this.signValidators = signValidators ?? throw new ArgumentNullException(nameof(signValidators));
             this.osUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
 
             signValidatorsMap = new Dictionary<OSPlatform, ISignValidator>();
+
+            this.Init();
         }
 
         public void Init()

@@ -18,7 +18,6 @@ using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Ninject;
-using PowerArgs;
 
 namespace Microsoft.Sbom.Api
 {
@@ -27,21 +26,18 @@ namespace Microsoft.Sbom.Api
     /// </summary>
     public class SBOMGenerator : ISBOMGenerator
     {
-        private readonly ApiConfigurationBuilder configurationBuilder;
         private readonly StandardKernel kernel;
         private readonly IFileSystemUtils fileSystemUtils;
 
         public SBOMGenerator()
         {
             kernel = new StandardKernel(new Bindings());
-            configurationBuilder = new ApiConfigurationBuilder();
             fileSystemUtils = new WindowsFileSystemUtils();
         }
 
         public SBOMGenerator(StandardKernel kernel, IFileSystemUtils fileSystemUtils)
         {
             this.kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
-            configurationBuilder = new ApiConfigurationBuilder();
             this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         }
 
@@ -56,7 +52,7 @@ namespace Microsoft.Sbom.Api
             string externalDocumentReferenceListFile = null)
         {
             // Get scan configuration
-            var config = configurationBuilder.GetConfiguration(
+            var config = ApiConfigurationBuilder.GetConfiguration(
                 rootPath,
                 manifestDirPath, null, null, metadata, specifications,
                 configuration, externalDocumentReferenceListFile, componentPath);
@@ -66,7 +62,7 @@ namespace Microsoft.Sbom.Api
             kernel.Bind<IConfiguration>().ToConstant(config);
 
             // This is the generate workflow
-            IWorkflow workflow = kernel.Get<IWorkflow>(nameof(SBOMGenerationWorkflow));
+            IWorkflow<SBOMGenerationWorkflow> workflow = kernel.Get<IWorkflow<SBOMGenerationWorkflow>>(nameof(SBOMGenerationWorkflow));
             bool isSuccess = await workflow.RunAsync();
 
             // TODO: Telemetry?
@@ -114,7 +110,7 @@ namespace Microsoft.Sbom.Api
                 manifestDirPath = rootPath;
             }
 
-            var configuration = configurationBuilder.GetConfiguration(
+            var configuration = ApiConfigurationBuilder.GetConfiguration(
                 rootPath, manifestDirPath, files, packages, metadata, specifications,
                 runtimeConfiguration, externalDocumentReferenceListFile);
             configuration = ValidateConfig(configuration);
@@ -122,7 +118,7 @@ namespace Microsoft.Sbom.Api
             kernel.Bind<IConfiguration>().ToConstant(configuration);
 
             kernel.Bind<SBOMMetadata>().ToConstant(metadata);
-            bool result = await kernel.Get<IWorkflow>(nameof(SBOMGenerationWorkflow)).RunAsync();
+            bool result = await kernel.Get<IWorkflow<SBOMGenerationWorkflow>>(nameof(SBOMGenerationWorkflow)).RunAsync();
             return new SBOMGenerationResult(result, new List<EntityError>());
         }
 
@@ -169,11 +165,11 @@ namespace Microsoft.Sbom.Api
 
             foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(config))
             {
-                configValidators.ForEach(v =>
+                foreach (var v in configValidators)
                 {
                     v.CurrentAction = config.ManifestToolAction;
                     v.Validate(property.DisplayName, property.GetValue(config), property.Attributes);
-                });
+                }
             }
 
             configSanitizer.SanitizeConfig(config);

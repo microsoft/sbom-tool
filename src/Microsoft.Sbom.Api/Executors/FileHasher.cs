@@ -43,7 +43,7 @@ namespace Microsoft.Sbom.Api.Executors
             IConfiguration configuration,
             ISbomConfigProvider sbomConfigs,
             ManifestGeneratorProvider manifestGeneratorProvider,
-            FileTypeUtils fileTypeUtils)
+            IFileTypeUtils fileTypeUtils)
         {
             if (configuration is null)
             {

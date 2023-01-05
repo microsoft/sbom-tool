@@ -18,7 +18,7 @@ namespace Microsoft.Sbom.Api.Config
     /// <summary>
     /// Builds the configuration object for the SBOM api.
     /// </summary>
-    internal class ApiConfigurationBuilder
+    static internal class ApiConfigurationBuilder
     {
         /// <summary>
         /// Gets a generate configuration.
@@ -32,7 +32,7 @@ namespace Microsoft.Sbom.Api.Config
         /// <param name="runtimeConfiguration"></param>
         /// <param name="verbosity"></param>
         /// <returns>A generate configuration.</returns>
-        internal Configuration GetConfiguration(
+        static internal Configuration GetConfiguration(
             string rootPath,
             string manifestDirPath,
             IEnumerable<SBOMFile> files,
@@ -100,7 +100,7 @@ namespace Microsoft.Sbom.Api.Config
             return configuration;
         }
 
-        public Configuration GetConfiguration(
+        static public Configuration GetConfiguration(
             string buildDropPath,
             string outputPath,
             IList<SBOMSpecification> specifications,
@@ -152,7 +152,7 @@ namespace Microsoft.Sbom.Api.Config
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        private ConfigurationSetting<IList<ManifestInfo>> ConvertSbomSpecificationToManifestInfo(IList<SBOMSpecification> specifications)
+        static private ConfigurationSetting<IList<ManifestInfo>> ConvertSbomSpecificationToManifestInfo(IList<SBOMSpecification> specifications)
         {
             if (specifications is null)
             {
@@ -171,7 +171,7 @@ namespace Microsoft.Sbom.Api.Config
             return GetConfigurationSetting(manifestInfos);
         }
 
-        private void SetVerbosity(RuntimeConfiguration sanitizedRuntimeConfiguration, Configuration configuration)
+        static private void SetVerbosity(RuntimeConfiguration sanitizedRuntimeConfiguration, Configuration configuration)
         {
             switch (sanitizedRuntimeConfiguration.Verbosity)
             {
@@ -199,7 +199,7 @@ namespace Microsoft.Sbom.Api.Config
             }
         }
 
-        private ConfigurationSetting<T> GetConfigurationSetting<T>(T value)
+        static private ConfigurationSetting<T> GetConfigurationSetting<T>(T value)
         {
             return new ConfigurationSetting<T>
             {
@@ -208,7 +208,7 @@ namespace Microsoft.Sbom.Api.Config
             };
         }
 
-        private RuntimeConfiguration SanitiseRuntimeConfiguration(RuntimeConfiguration runtimeConfiguration)
+        static private RuntimeConfiguration SanitiseRuntimeConfiguration(RuntimeConfiguration runtimeConfiguration)
         {
             if (runtimeConfiguration == null)
             {

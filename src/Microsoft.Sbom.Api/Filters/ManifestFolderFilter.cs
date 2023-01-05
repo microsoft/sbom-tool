@@ -8,7 +8,7 @@ using Microsoft.Sbom.Common;
 
 namespace Microsoft.Sbom.Api.Filters
 {
-    public class ManifestFolderFilter : IFilter
+    public class ManifestFolderFilter : IFilter<ManifestFolderFilter>
     {
         private readonly IConfiguration configuration;
         private readonly IFileSystemUtils fileSystemUtils;

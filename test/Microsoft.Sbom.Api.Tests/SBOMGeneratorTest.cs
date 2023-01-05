@@ -23,7 +23,7 @@ namespace Microsoft.Sbom.Api.Tests
         private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
         private SBOMGenerator generator;
         private StandardKernel kernel;
-        private Mock<IWorkflow> mockWorkflow;
+        private Mock<IWorkflow<SBOMGenerationWorkflow>> mockWorkflow;
         private Mock<IRecorder> mockRecorder;
         private RuntimeConfiguration runtimeConfiguration;
 
@@ -36,13 +36,13 @@ namespace Microsoft.Sbom.Api.Tests
             fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
 
             kernel = new StandardKernel(new Bindings());
-            kernel.Unbind<IWorkflow>();
+            kernel.Unbind<IWorkflow<SBOMGenerationWorkflow>>();
             kernel.Unbind<IRecorder>();
             kernel.Unbind<IFileSystemUtils>();
 
             kernel.Bind<IFileSystemUtils>().ToConstant(fileSystemMock.Object);
             generator = new SBOMGenerator(kernel, fileSystemMock.Object);
-            mockWorkflow = new Mock<IWorkflow>();
+            mockWorkflow = new Mock<IWorkflow<SBOMGenerationWorkflow>>();
             mockRecorder = new Mock<IRecorder>();
 
             runtimeConfiguration = new RuntimeConfiguration
@@ -57,7 +57,7 @@ namespace Microsoft.Sbom.Api.Tests
             var fileValidationResults = new List<FileValidationResult>();
             fileValidationResults.Add(new FileValidationResult() { Path = "random", ErrorType = ErrorType.Other });
 
-            kernel.Bind<IWorkflow>().ToMethod(x => mockWorkflow.Object).Named(nameof(SBOMGenerationWorkflow));
+            kernel.Bind<IWorkflow<SBOMGenerationWorkflow>>().ToMethod(x => mockWorkflow.Object).Named(nameof(SBOMGenerationWorkflow));
             kernel.Bind<IRecorder>().ToMethod(x => mockRecorder.Object).InSingletonScope();
             mockRecorder.Setup(c => c.Errors).Returns(fileValidationResults).Verifiable();
             mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
@@ -79,7 +79,7 @@ namespace Microsoft.Sbom.Api.Tests
         [TestMethod]
         public async Task When_GenerateSbomAsync_WithNoRecordedErrors_Then_EmptyEntityErrors()
         {
-            kernel.Bind<IWorkflow>().ToMethod(x => mockWorkflow.Object).Named(nameof(SBOMGenerationWorkflow));
+            kernel.Bind<IWorkflow<SBOMGenerationWorkflow>>().ToMethod(x => mockWorkflow.Object).Named(nameof(SBOMGenerationWorkflow));
             kernel.Bind<IRecorder>().ToMethod(x => mockRecorder.Object).InSingletonScope();
             mockRecorder.Setup(c => c.Errors).Returns(new List<FileValidationResult>()).Verifiable();
             mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
