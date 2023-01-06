@@ -6,7 +6,6 @@ using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Executors;
-using Ninject;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;

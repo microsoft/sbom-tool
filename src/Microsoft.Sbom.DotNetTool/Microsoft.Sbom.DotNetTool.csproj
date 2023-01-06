@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Sbom.Api\Microsoft.Sbom.Api.csproj" />
+    <ProjectReference Include="..\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
 
   <ItemGroup>
