@@ -4,10 +4,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Sbom.Api;
-using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
 using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
@@ -24,16 +22,20 @@ namespace Microsoft.Sbom.Tool
 
         private readonly IRecorder recorder;
 
+        private readonly IHostApplicationLifetime hostApplicationLifetime;
+
         public ValidationService(
             IConfiguration configuration,
             IWorkflow<SBOMValidationWorkflow> validationWorkflow,
             IWorkflow<SBOMParserBasedValidationWorkflow> parserValidationWorkflow,
-            IRecorder recorder)
+            IRecorder recorder,
+            IHostApplicationLifetime hostApplicationLifetime)
         {
             this.validationWorkflow = validationWorkflow;
             this.parserValidationWorkflow = parserValidationWorkflow;
             this.configuration = configuration;
             this.recorder = recorder;
+            this.hostApplicationLifetime = hostApplicationLifetime;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -53,17 +55,20 @@ namespace Microsoft.Sbom.Tool
                 }
 
                 await recorder.FinalizeAndLogTelemetryAsync();
+                Environment.ExitCode = result ? (int)ExitCode.Success : (int)ExitCode.GeneralError;
             }
             catch (Exception e)
             {
                 var message = e.InnerException != null ? e.InnerException.Message : e.Message;
                 Console.WriteLine($"Encountered error while running ManifestTool validation workflow. Error: {message}");
+                Environment.ExitCode = (int)ExitCode.GeneralError;
             }
+
+            hostApplicationLifetime.StopApplication();
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            Environment.ExitCode = (int)ExitCode.Success;
             return Task.CompletedTask;
         }
     }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Args;
+using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Extensions.DependencyInjection;
 using PowerArgs;
@@ -52,16 +53,18 @@ namespace Microsoft.Sbom.Tool
                     {
                         var validationConfigurationBuilder = x.GetService<IConfigurationBuilder<ValidationArgs>>();
                         var generationConfigurationBuilder = x.GetService<IConfigurationBuilder<GenerationArgs>>();
-                        var configuration = result.ActionArgs switch
+                        var inputConfiguration = result.ActionArgs switch
                         {
                             ValidationArgs v => validationConfigurationBuilder.GetConfiguration(v).GetAwaiter().GetResult(),
                             GenerationArgs g => generationConfigurationBuilder.GetConfiguration(g).GetAwaiter().GetResult(),
                             _ => default
                         };
-                        return configuration;
+
+                        inputConfiguration.ToConfiguration();
+                        return inputConfiguration;
                     })
                     .AddSbomTool();
-                })
+            })
             .UseConsoleLifetime()
             .Build();
 

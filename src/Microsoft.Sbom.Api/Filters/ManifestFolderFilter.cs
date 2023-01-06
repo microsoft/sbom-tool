@@ -11,18 +11,17 @@ namespace Microsoft.Sbom.Api.Filters
     public class ManifestFolderFilter : IFilter<ManifestFolderFilter>
     {
         private readonly IConfiguration configuration;
-        private readonly IFileSystemUtils fileSystemUtils;
         private readonly IOSUtils osUtils;
         private string manifestFolderPath;
 
         public ManifestFolderFilter(
             IConfiguration configuration,
-            IFileSystemUtils fileSystemUtils,
             IOSUtils osUtils)
         {
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
             this.osUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
+
+            Init();
         }
 
         public bool IsValid(string filePath)

@@ -178,7 +178,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                                                 })
                                             .ToArray());
 
-            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
+            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
 
             var scannedComponents = new List<ScannedComponent>();
@@ -301,11 +301,11 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 { externalDocumentReferenceProvider }
             };
 
-            var fileArrayGenerator = new FileArrayGenerator(configurationMock.Object, mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
+            var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object);
 
             var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
-            var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(configurationMock.Object, mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
+            var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
             relationshipArrayGenerator
                 .Setup(r => r.GenerateAsync())

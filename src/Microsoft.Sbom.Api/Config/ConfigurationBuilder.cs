@@ -27,20 +27,20 @@ namespace Microsoft.Sbom.Api.Config
             this.configFileParser = configFileParser;
         }
 
-        public async Task<IConfiguration> GetConfiguration(T args)
+        public async Task<InputConfiguration> GetConfiguration(T args)
         {
-            Configuration commandLineArgs;
+            InputConfiguration commandLineArgs;
 
             // Set current action for the config validators and convert command line arguments to configuration
             switch (args)
             {
                 case ValidationArgs validationArgs:
                     validationArgs.ManifestToolAction = ManifestToolActions.Validate;
-                    commandLineArgs = mapper.Map<Configuration>(validationArgs);
+                    commandLineArgs = mapper.Map<InputConfiguration>(validationArgs);
                     break;
                 case GenerationArgs generationArgs:
                     generationArgs.ManifestToolAction = ManifestToolActions.Generate;
-                    commandLineArgs = mapper.Map<Configuration>(generationArgs);
+                    commandLineArgs = mapper.Map<InputConfiguration>(generationArgs);
                     break;
                 default:
                     throw new ValidationArgException($"Unsupported configuration type found {typeof(T)}");
@@ -52,7 +52,7 @@ namespace Microsoft.Sbom.Api.Config
                                         new ConfigFile();
 
             // Convert config file arguments to configuration.
-            var configFileArgs = mapper.Map<ConfigFile, Configuration>(configFromFile);
+            var configFileArgs = mapper.Map<ConfigFile, InputConfiguration>(configFromFile);
 
             // Combine both configs, include defaults.
             return mapper.Map(commandLineArgs, configFileArgs);
@@ -61,6 +61,6 @@ namespace Microsoft.Sbom.Api.Config
 
     public interface IConfigurationBuilder<T>
     {
-        Task<IConfiguration> GetConfiguration(T args);
+        Task<InputConfiguration> GetConfiguration(T args);
     }
 }

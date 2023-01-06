@@ -16,7 +16,14 @@ namespace Microsoft.Sbom.Contracts
         ///// <summary>
         ///// Generate an SBOM.
         ///// </summary>
-        Task<SBOMGenerationResult> GenerateSBOMAsync();
+        Task<SBOMGenerationResult> GenerateSBOMAsync(
+            string rootPath,
+            string componentPath,
+            SBOMMetadata metadata,
+            IList<SBOMSpecification> specifications,
+            RuntimeConfiguration configuration,
+            string manifestDirPath,
+            string externalDocumentReferenceListFile);
 
         /// <summary>
         /// Each SBOM specification requires that each file and package have a specific list of hashes 

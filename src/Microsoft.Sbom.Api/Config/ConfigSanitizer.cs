@@ -32,7 +32,7 @@ namespace Microsoft.Sbom.Api.Config
             this.assemblyConfig = assemblyConfig ?? throw new ArgumentNullException(nameof(assemblyConfig));
         }
 
-        public Configuration SanitizeConfig(Configuration configuration)
+        public InputConfiguration SanitizeConfig(InputConfiguration configuration)
         {
             if (configuration is null)
             {
@@ -64,7 +64,7 @@ namespace Microsoft.Sbom.Api.Config
             return configuration;
         }
 
-        private ConfigurationSetting<IList<ManifestInfo>> GetDefaultManifestInfoForValidationAction(Configuration configuration)
+        private ConfigurationSetting<IList<ManifestInfo>> GetDefaultManifestInfoForValidationAction(InputConfiguration configuration)
         {
             if (configuration.ManifestToolAction != ManifestToolActions.Validate
                 || (configuration.ManifestInfo?.Value != null && configuration.ManifestInfo?.Value?.Count != 0))
@@ -88,7 +88,7 @@ namespace Microsoft.Sbom.Api.Config
             };
         }
 
-        private ConfigurationSetting<AlgorithmName> GetHashAlgorithmName(Configuration configuration)
+        private ConfigurationSetting<AlgorithmName> GetHashAlgorithmName(InputConfiguration configuration)
         {
             if (configuration.ManifestToolAction != ManifestToolActions.Validate)
             {
@@ -106,7 +106,7 @@ namespace Microsoft.Sbom.Api.Config
             };
         }
 
-        private ConfigurationSetting<string> GetNamespaceBaseUriFromAssembly(Configuration configuration, ILogger logger)
+        private ConfigurationSetting<string> GetNamespaceBaseUriFromAssembly(InputConfiguration configuration, ILogger logger)
         {
             // If assembly name is not defined returned the current value.
             if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri))
@@ -133,7 +133,7 @@ namespace Microsoft.Sbom.Api.Config
             };
         }
 
-        private ConfigurationSetting<string> GetPackageSupplierFromAssembly(Configuration configuration, ILogger logger)
+        private ConfigurationSetting<string> GetPackageSupplierFromAssembly(InputConfiguration configuration, ILogger logger)
         {
             if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultPackageSupplier))
             {

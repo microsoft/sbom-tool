@@ -1,11 +1,16 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,7 +30,11 @@ namespace Microsoft.Sbom.Api.Tests
         private Mock<IWorkflow<SBOMGenerationWorkflow>> mockWorkflow;
         private Mock<IRecorder> mockRecorder;
         private Mock<ManifestGeneratorProvider> mockGeneratorProvider;
+        private Mock<ConfigSanitizer> mockSanitizer;
+        private Mock<IHashAlgorithmProvider> mockHashAlgorithmProvider;
+        private Mock<IAssemblyConfig> mockAssemblyConfig;
         private RuntimeConfiguration runtimeConfiguration;
+        private Mock<IConfiguration> mockConfiguration;
 
         [TestInitialize]
         public void Setup()
@@ -38,6 +47,11 @@ namespace Microsoft.Sbom.Api.Tests
             mockWorkflow = new Mock<IWorkflow<SBOMGenerationWorkflow>>();
             mockRecorder = new Mock<IRecorder>();
             mockGeneratorProvider = new Mock<ManifestGeneratorProvider>(null);
+            mockHashAlgorithmProvider = new Mock<IHashAlgorithmProvider>();
+            mockAssemblyConfig = new Mock<IAssemblyConfig>();
+            mockConfiguration = new Mock<IConfiguration>();
+
+            mockSanitizer = new Mock<ConfigSanitizer>(mockHashAlgorithmProvider.Object, fileSystemMock.Object, mockAssemblyConfig.Object);
 
             runtimeConfiguration = new RuntimeConfiguration
             {
@@ -61,8 +75,8 @@ namespace Microsoft.Sbom.Api.Tests
                 PackageSupplier = "Contoso"
             };
 
-            generator = new SBOMGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object);
-            var result = await generator.GenerateSBOMAsync();
+            generator = new SBOMGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
+            var result = await generator.GenerateSBOMAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
 
             Assert.AreEqual(1, result.Errors.Count);
             Assert.AreEqual(EntityErrorType.Other, result.Errors[0].ErrorType);
@@ -82,8 +96,8 @@ namespace Microsoft.Sbom.Api.Tests
                 PackageSupplier = "Contoso"
             };
 
-            generator = new SBOMGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object);
-            var result = await generator.GenerateSBOMAsync();
+            generator = new SBOMGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
+            var result = await generator.GenerateSBOMAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
 
             Assert.AreEqual(0, result.Errors.Count);
             mockRecorder.Verify();

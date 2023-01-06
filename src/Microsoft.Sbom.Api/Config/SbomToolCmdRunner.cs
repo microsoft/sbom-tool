@@ -14,26 +14,12 @@ namespace Microsoft.Sbom.Api.Config
     [ArgProductName("sbom-tool")]
     public class SbomToolCmdRunner
     {
-        private readonly StandardKernel kernel;
-
         internal static string SBOMToolVersion => VersionValue.Value;
 
         private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
         {
             return typeof(SbomToolCmdRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
         });
-
-        public SbomToolCmdRunner()
-        {
-            IsFailed = false;
-            kernel = new StandardKernel(new Bindings());
-        }
-
-        public SbomToolCmdRunner(StandardKernel kernel)
-        {
-            IsFailed = false;
-            this.kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
-        }
 
         /// <summary>
         /// Gets or sets a value indicating whether displays help info.

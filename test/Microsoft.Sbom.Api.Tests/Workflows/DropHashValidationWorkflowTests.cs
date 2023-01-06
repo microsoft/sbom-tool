@@ -95,7 +95,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
             rootFileFilterMock.Init();
 
-            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
+            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
             var fileHasher = new FileHasher(
                                hashCodeGeneratorMock.Object,
@@ -214,7 +214,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
             rootFileFilterMock.Init();
 
-            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
+            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
             var fileHasher = new FileHasher(
                 hashCodeGeneratorMock.Object,
@@ -325,7 +325,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
             rootFileFilterMock.Init();
 
-            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
+            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
             var fileHasher = new FileHasher(
                 hashCodeGeneratorMock.Object,
@@ -435,7 +435,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
             rootFileFilterMock.Init();
 
-            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
+            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
             var fileHasher = new FileHasher(
                 hashCodeGeneratorMock.Object,
@@ -545,7 +545,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
             rootFileFilterMock.Init();
 
-            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
+            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
             var fileHasher = new FileHasher(
                 hashCodeGeneratorMock.Object,

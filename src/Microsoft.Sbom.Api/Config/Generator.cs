@@ -10,7 +10,6 @@ using Microsoft.Sbom.Api.Workflows;
 
 namespace Microsoft.Sbom.Api.Config
 {
-
     public class Generator : ISbomService<GenerationArgs>
     {
         private readonly IWorkflow<SBOMGenerationWorkflow> generationWorkflow;

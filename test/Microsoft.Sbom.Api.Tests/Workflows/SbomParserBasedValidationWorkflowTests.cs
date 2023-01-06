@@ -26,7 +26,6 @@ using Serilog;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ErrorType = Microsoft.Sbom.Api.Entities.ErrorType;
@@ -144,7 +143,7 @@ namespace Microsoft.Sbom.Workflows
                               new ManifestGeneratorProvider(null),
                               new FileTypeUtils());
 
-            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
+            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
             var fileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object);
 
@@ -291,7 +290,7 @@ namespace Microsoft.Sbom.Workflows
                               new ManifestGeneratorProvider(null),
                               new FileTypeUtils());
 
-            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
+            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
             var fileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object);
 

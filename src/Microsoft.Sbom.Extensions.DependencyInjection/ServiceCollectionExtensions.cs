@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities.Output;
@@ -35,11 +37,15 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSbomConfiguration(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddSbomConfiguration(this IServiceCollection services, InputConfiguration inputConfiguration)
         {
-            ArgumentNullException.ThrowIfNull(configuration);
+            ArgumentNullException.ThrowIfNull(inputConfiguration);
             services
-                .AddSingleton(_ => configuration)
+                .AddSingleton(_ =>
+                {
+                    inputConfiguration.ToConfiguration();
+                    return inputConfiguration;
+                })
                 .AddSbomTool();
             return services;
         }
@@ -47,10 +53,11 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
         public static IServiceCollection AddSbomTool(this IServiceCollection services)
         {
             services
+            .AddSingleton<IConfiguration, Configuration>()
             .AddTransient(_ => FileSystemUtilsProvider.CreateInstance())
             .AddTransient<ILogger>(x =>
             {
-                var configuration = x.GetRequiredService<IConfiguration>();
+                var configuration = x.GetRequiredService<InputConfiguration>();
                 return new LoggerConfiguration().MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = configuration.Verbosity.Value })
                     .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
                     .CreateLogger();

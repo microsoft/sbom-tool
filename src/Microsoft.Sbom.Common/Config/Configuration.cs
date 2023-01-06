@@ -9,119 +9,311 @@ using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 
 namespace Microsoft.Sbom.Common.Config
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.NamingRules", "SA1311:Static readonly fields should begin with upper-case letter", Justification = "Private fields with the same name as public properties.")]
     public class Configuration : IConfiguration
     {
+        private static readonly AsyncLocal<ConfigurationSetting<string>> buildDropPath = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> buildComponentPath = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> buildListFile = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> manifestDirPath = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> manifestPath = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> outputPath = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<int>> parallelism = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> configFilePath = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<IList<ManifestInfo>>> manifestInfo = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<AlgorithmName>> hashAlgorithm = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> rootFilterPath = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> catalogFilePath = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<bool>> validateSignature = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<bool>> ignoreMissing = new ();
+        private static readonly AsyncLocal<ManifestToolActions> manifestToolAction = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> packageName = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> packageVersion = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> packageSupplier = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<IEnumerable<SBOMFile>>> filesList = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<IEnumerable<SBOMPackage>>> packagesList = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> telemetryFilePath = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> dockerImagesToScan = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> externalDocumentReferenceListFile = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> additionalComponentDetectorArgs = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> namespaceUriUniquePart = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> namespaceUriBase = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<string>> generationTimestamp = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<bool>> followSymlinks = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<bool>> deleteManifestDirIfPresent = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<LogEventLevel>> verbosity = new ();
+
         /// <inheritdoc cref="IConfiguration.BuildDropPath" />
         [DirectoryExists]
         [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
         [ValueRequired]
+<<<<<<< HEAD
         public ConfigurationSetting<string> BuildDropPath { get; set; }
 
         /// <inheritdoc cref="IConfiguration.BuildComponentPath" />
         [DirectoryExists]
         public ConfigurationSetting<string> BuildComponentPath { get; set; }
+=======
+        public ConfigurationSetting<string> BuildDropPath
+        {
+            get => buildDropPath.Value;
+            set => buildDropPath.Value = value;
+        }
+
+        /// <inheritdoc cref="IConfiguration.BuildComponentPath" />
+        [DirectoryExists]
+        public ConfigurationSetting<string> BuildComponentPath
+        {
+            get => buildComponentPath.Value;
+            set => buildComponentPath.Value = value;
+        }
+>>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.BuildListFile" />
         [FileExists]
-        public ConfigurationSetting<string> BuildListFile { get; set; }
+        public ConfigurationSetting<string> BuildListFile
+        {
+            get => buildListFile.Value;
+            set => buildListFile.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.ManifestPath" />
         [Obsolete("This field is not provided by the user or configFile, set by system")]
+<<<<<<< HEAD
         public ConfigurationSetting<string> ManifestPath { get; set; }
+=======
+        public ConfigurationSetting<string> ManifestPath
+        {
+            get => manifestPath.Value;
+            set => manifestPath.Value = value;
+        }
+>>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.ManifestDirPath" />
         [DirectoryExists]
         [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
+<<<<<<< HEAD
         public ConfigurationSetting<string> ManifestDirPath { get; set; }
+=======
+        public ConfigurationSetting<string> ManifestDirPath
+        {
+            get => manifestDirPath.Value;
+            set => manifestDirPath.Value = value;
+        }
+>>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.OutputPath" />
         [FilePathIsWritable]
         [ValueRequired(ForAction = ManifestToolActions.Validate)]
+<<<<<<< HEAD
         public ConfigurationSetting<string> OutputPath { get; set; }
+=======
+        public ConfigurationSetting<string> OutputPath
+        {
+            get => outputPath.Value;
+            set => outputPath.Value = value;
+        }
+>>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.Parallelism" />
         [IntRange(minRange: Constants.MinParallelism, maxRange: Constants.MaxParallelism)]
         [DefaultValue(Constants.DefaultParallelism)]
-        public ConfigurationSetting<int> Parallelism { get; set; }
+        public ConfigurationSetting<int> Parallelism
+        {
+            get => parallelism.Value;
+            set => parallelism.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.Verbosity" />
-        public ConfigurationSetting<LogEventLevel> Verbosity { get; set; }
+        public ConfigurationSetting<LogEventLevel> Verbosity
+        {
+            get => verbosity.Value;
+            set => verbosity.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.ConfigFilePath" />
+<<<<<<< HEAD
         public ConfigurationSetting<string> ConfigFilePath { get; set; }
+=======
+        public ConfigurationSetting<string> ConfigFilePath
+        {
+            get => configFilePath.Value;
+            set => configFilePath.Value = value;
+        }
+>>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.ManifestInfo" />
-        public ConfigurationSetting<IList<ManifestInfo>> ManifestInfo { get; set; }
+        public ConfigurationSetting<IList<ManifestInfo>> ManifestInfo
+        {
+            get => manifestInfo.Value;
+            set => manifestInfo.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.HashAlgorithm" />
-        public ConfigurationSetting<AlgorithmName> HashAlgorithm { get; set; }
+        public ConfigurationSetting<AlgorithmName> HashAlgorithm
+        {
+            get => hashAlgorithm.Value;
+            set => hashAlgorithm.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.RootPathFilter" />
+<<<<<<< HEAD
         public ConfigurationSetting<string> RootPathFilter { get; set; }
 
         /// <inheritdoc cref="IConfiguration.CatalogFilePath" />
         public ConfigurationSetting<string> CatalogFilePath { get; set; }
+=======
+        public ConfigurationSetting<string> RootPathFilter
+        {
+            get => rootFilterPath.Value;
+            set => rootFilterPath.Value = value;
+        }
+
+        /// <inheritdoc cref="IConfiguration.CatalogFilePath" />
+        public ConfigurationSetting<string> CatalogFilePath
+        {
+            get => catalogFilePath.Value;
+            set => catalogFilePath.Value = value;
+        }
+>>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.ValidateSignature" />
         [DefaultValue(false)]
-        public ConfigurationSetting<bool> ValidateSignature { get; set; }
+        public ConfigurationSetting<bool> ValidateSignature
+        {
+            get => validateSignature.Value;
+            set => validateSignature.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.IgnoreMissing" />
         [DefaultValue(false)]
-        public ConfigurationSetting<bool> IgnoreMissing { get; set; }
+        public ConfigurationSetting<bool> IgnoreMissing
+        {
+            get => ignoreMissing.Value;
+            set => ignoreMissing.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.ManifestToolAction" />
-        public ManifestToolActions ManifestToolAction { get; set; }
+        public ManifestToolActions ManifestToolAction
+        {
+            get => manifestToolAction.Value;
+            set => manifestToolAction.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.PackageName" />
-        public ConfigurationSetting<string> PackageName { get; set; }
+        public ConfigurationSetting<string> PackageName 
+        {
+            get => packageName.Value;
+            set => packageName.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.PackageVersion" />
-        public ConfigurationSetting<string> PackageVersion { get; set; }
+        public ConfigurationSetting<string> PackageVersion
+        {
+            get => packageVersion.Value;
+            set => packageVersion.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.PackageSupplier" />
         [ValueRequired(ForAction = ManifestToolActions.Generate)]
+<<<<<<< HEAD
         public ConfigurationSetting<string> PackageSupplier { get; set; }
+=======
+        public ConfigurationSetting<string> PackageSupplier
+        {
+            get => packageSupplier.Value;
+            set => packageSupplier.Value = value;
+        }
+>>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.FilesList" />
-        public ConfigurationSetting<IEnumerable<SBOMFile>> FilesList { get; set; }
+        public ConfigurationSetting<IEnumerable<SBOMFile>> FilesList
+        {
+            get => filesList.Value;
+            set => filesList.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.PackagesList" />
-        public ConfigurationSetting<IEnumerable<SBOMPackage>> PackagesList { get; set; }
+        public ConfigurationSetting<IEnumerable<SBOMPackage>> PackagesList
+        {
+            get => packagesList.Value;
+            set => packagesList.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.TelemetryFilePath" />
+<<<<<<< HEAD
         public ConfigurationSetting<string> TelemetryFilePath { get; set; }
+=======
+        public ConfigurationSetting<string> TelemetryFilePath
+        {
+            get => telemetryFilePath.Value;
+            set => telemetryFilePath.Value = value;
+        }
+>>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.DockerImagesToScan" />
-        public ConfigurationSetting<string> DockerImagesToScan { get; set; }
+        public ConfigurationSetting<string> DockerImagesToScan
+        {
+            get => dockerImagesToScan.Value;
+            set => dockerImagesToScan.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.ExternalDocumentReferenceListFile" />
         [FileExists]
-        public ConfigurationSetting<string> ExternalDocumentReferenceListFile { get; set; }
+        public ConfigurationSetting<string> ExternalDocumentReferenceListFile
+        {
+            get => externalDocumentReferenceListFile.Value;
+            set => externalDocumentReferenceListFile.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.AdditionalComponentDetectorArgs" />
-        public ConfigurationSetting<string> AdditionalComponentDetectorArgs { get; set; }
+        public ConfigurationSetting<string> AdditionalComponentDetectorArgs
+        {
+            get => additionalComponentDetectorArgs.Value;
+            set => additionalComponentDetectorArgs.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.NamespaceUriUniquePart" />
-        public ConfigurationSetting<string> NamespaceUriUniquePart { get; set; }
+        public ConfigurationSetting<string> NamespaceUriUniquePart
+        {
+            get => namespaceUriUniquePart.Value;
+            set => namespaceUriUniquePart.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.NamespaceUriBase" />
         [ValidUri(ForAction = ManifestToolActions.Generate, UriKind = UriKind.Absolute)]
         [ValueRequired(ForAction = ManifestToolActions.Generate)]
-        public ConfigurationSetting<string> NamespaceUriBase { get; set; }
+        public ConfigurationSetting<string> NamespaceUriBase
+        {
+            get => namespaceUriBase.Value;
+            set => namespaceUriBase.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.GenerationTimestamp" />
-        public ConfigurationSetting<string> GenerationTimestamp { get; set; }
+        public ConfigurationSetting<string> GenerationTimestamp
+        {
+            get => generationTimestamp.Value;
+            set => generationTimestamp.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.FollowSymlinks" />
         [DefaultValue(true)]
-        public ConfigurationSetting<bool> FollowSymlinks { get; set; }
+        public ConfigurationSetting<bool> FollowSymlinks
+        {
+            get => followSymlinks.Value;
+            set => followSymlinks.Value = value;
+        }
 
         /// <inheritdoc cref="IConfiguration.DeleteManifestDirIfPresent" />
         [DefaultValue(false)]
-        public ConfigurationSetting<bool> DeleteManifestDirIfPresent { get; set; }
+        public ConfigurationSetting<bool> DeleteManifestDirIfPresent
+        {
+            get => deleteManifestDirIfPresent.Value;
+            set => deleteManifestDirIfPresent.Value = value;
+        }
     }
 }

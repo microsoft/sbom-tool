@@ -20,10 +20,6 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
     /// </summary>
     public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
     {
-        private readonly IConfiguration configuration;
-
-        private readonly ILogger log;
-
         private readonly ISbomConfigProvider sbomConfigs;
 
         private readonly IEnumerable<ISourcesProvider> sourcesProviders;
@@ -31,14 +27,10 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
         private readonly IRecorder recorder;
 
         public FileArrayGenerator(
-            IConfiguration configuration,
-            ILogger log,
             ISbomConfigProvider sbomConfigs,
             IEnumerable<ISourcesProvider> sourcesProviders,
             IRecorder recorder)
         {
-            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            this.log = log ?? throw new ArgumentNullException(nameof(log));
             this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
             this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));

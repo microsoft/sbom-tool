@@ -16,7 +16,6 @@ namespace Microsoft.Sbom.Tool
     {
         private readonly IWorkflow<SBOMGenerationWorkflow> generationWorkflow;
         private readonly IRecorder recorder;
-
         private readonly IHostApplicationLifetime hostApplicationLifetime;
 
         public GenerationService(
@@ -49,6 +48,7 @@ namespace Microsoft.Sbom.Tool
                 Console.WriteLine($"Encountered error while running ManifestTool generation workflow. Error: {message}");
                 Environment.ExitCode = (int)ExitCode.GeneralError;
             }
+
             hostApplicationLifetime.StopApplication();
         }
 

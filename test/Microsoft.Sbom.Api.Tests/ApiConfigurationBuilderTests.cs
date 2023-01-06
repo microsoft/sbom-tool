@@ -123,7 +123,7 @@ namespace Microsoft.Sbom.Api.Tests
                 Verbosity = input
             };
 
-            IConfiguration config = ApiConfigurationBuilder.GetConfiguration(
+            var config = ApiConfigurationBuilder.GetConfiguration(
                 RootPath, string.Empty, null, null,
                 metadata, null, runtime);
 
