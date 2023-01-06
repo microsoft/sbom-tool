@@ -14,10 +14,6 @@ namespace Microsoft.Sbom.Tool
 {
     public class ValidationService : IHostedService
     {
-        //public IMapper Mapper { get; }
-
-        //public ConfigFileParser ConfigFileParser { get; }
-
         private readonly IWorkflow<SBOMValidationWorkflow> validationWorkflow;
 
         private readonly IWorkflow<SBOMParserBasedValidationWorkflow> parserValidationWorkflow;
@@ -30,15 +26,11 @@ namespace Microsoft.Sbom.Tool
 
         public ValidationService(
             IConfiguration configuration,
-            //IMapper mapper,
-            //ConfigFileParser configFileParser,
             IWorkflow<SBOMValidationWorkflow> validationWorkflow,
             IWorkflow<SBOMParserBasedValidationWorkflow> parserValidationWorkflow,
             IRecorder recorder,
             IHostApplicationLifetime hostApplicationLifetime)
         {
-            //Mapper = mapper;
-            //ConfigFileParser = configFileParser;
             this.validationWorkflow = validationWorkflow;
             this.parserValidationWorkflow = parserValidationWorkflow;
             this.configuration = configuration;
@@ -71,6 +63,7 @@ namespace Microsoft.Sbom.Tool
                 Console.WriteLine($"Encountered error while running ManifestTool validation workflow. Error: {message}");
                 Environment.ExitCode = (int)ExitCode.GeneralError;
             }
+
             hostApplicationLifetime.StopApplication();
         }
 

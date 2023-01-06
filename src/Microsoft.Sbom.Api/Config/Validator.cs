@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using AutoMapper;
 using System;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config.Args;
@@ -12,7 +11,6 @@ using Microsoft.Sbom.Api.Utils;
 
 namespace Microsoft.Sbom.Api.Config
 {
-
     public class Validator : ISbomService<ValidationArgs>
     {
         private readonly IWorkflow<SBOMValidationWorkflow> validationWorkflow;

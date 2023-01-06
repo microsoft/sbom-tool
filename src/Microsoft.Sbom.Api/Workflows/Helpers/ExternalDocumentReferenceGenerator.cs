@@ -21,8 +21,6 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
     /// </summary>
     public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDocumentReferenceGenerator>
     {
-        private readonly IConfiguration configuration;
-
         private readonly ILogger log;
 
         private readonly ISbomConfigProvider sbomConfigs;
@@ -32,13 +30,11 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
         private readonly IRecorder recorder;
 
         public ExternalDocumentReferenceGenerator(
-            IConfiguration configuration,
             ILogger log,
             ISbomConfigProvider sbomConfigs,
             IEnumerable<ISourcesProvider> sourcesProviders,
             IRecorder recorder)
         {
-            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.log = log ?? throw new ArgumentNullException(nameof(log));
             this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
             this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
