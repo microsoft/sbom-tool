@@ -13,49 +13,10 @@ namespace Microsoft.Sbom.Contracts
     /// </summary>
     public interface ISBOMGenerator
     {
-        /// <summary>
-        /// Generate a SBOM in the rootPath using the provided file and package lists.
-        /// </summary>
-        /// <param name="rootPath">The root path of the drop where the generated SBOM will be placed.</param>
-        /// <param name="files">The list of <see cref="SBOMFile">files</see> to include in this SBOM.</param>
-        /// <param name="packages">The list of <see cref="SBOMPackage">packages</see> to include in this SBOM.</param>
-        /// <param name="metadata">Provide any available metadata about your build environment using the SBOMMetadata object.</param>
-        /// <param name="specifications">Provide a list of <see cref="SBOMSpecification"/> that you want your SBOM to be generated
-        /// for. If this is not provided, we will generate SBOMs for all the available formats.</param>
-        /// <param name="runtimeConfiguration">Configuration to tweak the SBOM generator workflow.</param>
-        /// <param name="manifestDirPath">Output directory. If null defaults to rootPath.</param>
-        /// <returns>The result object that indicates if the generation succeeded, and a list of 
-        /// errors if it failed along with telemetry.</returns>
-        Task<SBOMGenerationResult> GenerateSBOMAsync(
-                                          string rootPath,
-                                          IEnumerable<SBOMFile> files,
-                                          IEnumerable<SBOMPackage> packages,
-                                          SBOMMetadata metadata,
-                                          IList<SBOMSpecification> specifications = null,
-                                          RuntimeConfiguration runtimeConfiguration = null,
-                                          string manifestDirPath = null,
-                                          string externalDocumentReferenceListFile = null);
-
-        /// <summary>
-        /// Generate a SBOM by traversing the rootPath folder and discovering files and packages.
-        /// </summary>
-        /// <param name="rootPath">The root path of the drop where the generated SBOM will be placed.</param>
-        /// <param name="componentPath">The path where all the build components for this drop can be found.</param>
-        /// <param name="metadata">Provide any available metadata about your build environment using the SBOMMetadata object.</param>
-        /// <param name="specifications">Provide a list of <see cref="SBOMSpecification"/> that you want your SBOM to be generated
-        /// for. If this is not provided, we will generate SBOMs for all the available formats.</param>
-        /// <param name="runtimeConfiguration">Configuration to tweak the SBOM generator workflow.</param>
-        /// <param name="manifestDirPath">Output directory. If null defaults to rootPath joined to _manifest.</param>
-        /// <returns>The result object that indicates if the generation succeeded, and a list of 
-        /// errors if it failed along with telemetry.</returns>
-        Task<SBOMGenerationResult> GenerateSBOMAsync(
-            string rootPath,
-            string componentPath,
-            SBOMMetadata metadata,
-            IList<SBOMSpecification> specifications = null,
-            RuntimeConfiguration runtimeConfiguration = null,
-            string manifestDirPath = null,
-            string externalDocumentReferenceListFile = null);
+        ///// <summary>
+        ///// Generate an SBOM.
+        ///// </summary>
+        Task<SBOMGenerationResult> GenerateSBOMAsync();
 
         /// <summary>
         /// Each SBOM specification requires that each file and package have a specific list of hashes 
