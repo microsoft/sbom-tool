@@ -5,6 +5,7 @@ using AutoMapper;
 using Ninject;
 using PowerArgs;
 using System;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config.Args;
@@ -22,6 +23,13 @@ namespace Microsoft.Sbom.Api.Config
     public class SbomToolCmdRunner
     {
         private readonly StandardKernel kernel;
+
+        internal static string SBOMToolVersion => VersionValue.Value;
+
+        private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
+        {
+            return typeof(SbomToolCmdRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
+        });
 
         public SbomToolCmdRunner()
         {
@@ -129,6 +137,24 @@ namespace Microsoft.Sbom.Api.Config
                 var message = e.InnerException != null ? e.InnerException.Message : e.Message;
                 Console.WriteLine($"Encountered error while running ManifestTool generation workflow. Error: {message}");
                 IsFailed = true;
+            }
+        }
+
+        /// <summary>
+        /// Prints the version of the tool.
+        /// </summary>
+        [ArgActionMethod]
+        [ArgShortcut("--version")]
+        [ArgDescription("Displays the version of the tool being used. Can be used as '--version'")]
+        public void Version()
+        {
+            if (!string.IsNullOrEmpty(SBOMToolVersion))
+            {
+                Console.WriteLine(SBOMToolVersion);
+            }
+            else
+            {
+                Console.WriteLine("Encountered error while getting the version of the tool.");
             }
         }
     }
