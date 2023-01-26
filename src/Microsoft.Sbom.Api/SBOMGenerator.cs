@@ -81,6 +81,40 @@ namespace Microsoft.Sbom.Api
         }
 
         /// <inheritdoc />
+        public async Task<SBOMGenerationResult> GenerateSBOMAsync(
+            string rootPath,
+            IEnumerable<SBOMFile> files,
+            IEnumerable<SBOMPackage> packages,
+            SBOMMetadata metadata,
+            IList<SBOMSpecification> specifications = null,
+            RuntimeConfiguration runtimeConfiguration = null,
+            string manifestDirPath = null,
+            string externalDocumentReferenceListFile = null)
+        {
+            if (string.IsNullOrWhiteSpace(rootPath))
+            {
+                throw new ArgumentException($"'{nameof(rootPath)}' cannot be null or whitespace.", nameof(rootPath));
+            }
+
+            ArgumentNullException.ThrowIfNull(files);
+            ArgumentNullException.ThrowIfNull(packages);
+            ArgumentNullException.ThrowIfNull(metadata);
+            ArgumentNullException.ThrowIfNull(manifestDirPath);
+
+            var inputConfiguration = ApiConfigurationBuilder.GetConfiguration(
+                rootPath, manifestDirPath, files, packages, metadata, specifications,
+                runtimeConfiguration, externalDocumentReferenceListFile);
+            inputConfiguration = ValidateConfig(inputConfiguration);
+
+            inputConfiguration.ToConfiguration();
+
+            // This is the generate workflow
+            bool result = await generationWorkflow.RunAsync();
+
+            return new SBOMGenerationResult(result, new List<EntityError>());
+        }
+
+        /// <inheritdoc />
         public IEnumerable<AlgorithmName> GetRequiredAlgorithms(SBOMSpecification specification)
         {
             ArgumentNullException.ThrowIfNull(specification);
