@@ -145,6 +145,19 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
             return false;
         }
 
+        public bool TryGetMetadata(MetadataKey key, out string value)
+        {
+            value = null;
+
+            if (TryGetMetadata(key, out object output) && !string.IsNullOrWhiteSpace(output as string))
+            {
+                value = output as string;
+                return true;
+            }
+
+            return false;
+        }
+
         public GenerationData GetGenerationData(ManifestInfo manifestInfo)
         {
             if (configsDictionary.TryGetValue(manifestInfo, out ISbomConfig sbomConfig))
