@@ -8,7 +8,7 @@ namespace Microsoft.Sbom.Contracts
     /// <summary>
     /// Represents the result of a SBOM generation action.
     /// </summary>
-    public class SBOMGenerationResult
+    public class SbomGenerationResult
     {
         /// <summary>
         /// Gets or sets a value indicating whether is set to true if the SBOM generation was successful, that is when 
@@ -21,7 +21,7 @@ namespace Microsoft.Sbom.Contracts
         /// </summary>
         public IList<EntityError> Errors { get; private set; }
 
-        public SBOMGenerationResult(bool isSuccessful, IList<EntityError> errors)
+        public SbomGenerationResult(bool isSuccessful, IList<EntityError> errors)
         {
             IsSuccessful = isSuccessful;
             Errors = errors ?? new List<EntityError>();

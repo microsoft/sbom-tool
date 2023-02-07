@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using AutoMapper;
-using AutoMapper.Configuration;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Manifest;
@@ -19,23 +17,22 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
 
 namespace Microsoft.Sbom.Api
 {
     /// <summary>
     /// Responsible for an API to generate SBOMs.
     /// </summary>
-    public class SBOMGenerator : ISBOMGenerator
+    public class SbomGenerator : ISBOMGenerator
     {
-        private readonly IWorkflow<SBOMGenerationWorkflow> generationWorkflow;
+        private readonly IWorkflow<SbomGenerationWorkflow> generationWorkflow;
         private readonly ManifestGeneratorProvider generatorProvider;
         private readonly IRecorder recorder;
         private readonly IEnumerable<ConfigValidator> configValidators;
         private readonly ConfigSanitizer configSanitizer;
 
-        public SBOMGenerator(
-            IWorkflow<SBOMGenerationWorkflow> generationWorkflow, 
+        public SbomGenerator(
+            IWorkflow<SbomGenerationWorkflow> generationWorkflow, 
             ManifestGeneratorProvider generatorProvider, 
             IRecorder recorder, 
             IEnumerable<ConfigValidator> configValidators, 
@@ -49,11 +46,11 @@ namespace Microsoft.Sbom.Api
         }
 
         /// <inheritdoc />
-        public async Task<SBOMGenerationResult> GenerateSBOMAsync(
+        public async Task<SbomGenerationResult> GenerateSbomAsync(
             string rootPath,
             string componentPath,
             SBOMMetadata metadata,
-            IList<SBOMSpecification> specifications = null,
+            IList<SbomSpecification> specifications = null,
             RuntimeConfiguration runtimeConfiguration = null,
             string manifestDirPath = null,
             string externalDocumentReferenceListFile = null)
@@ -77,16 +74,16 @@ namespace Microsoft.Sbom.Api
 
             var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
 
-            return new SBOMGenerationResult(isSuccess, entityErrors);
+            return new SbomGenerationResult(isSuccess, entityErrors);
         }
 
         /// <inheritdoc />
-        public async Task<SBOMGenerationResult> GenerateSBOMAsync(
+        public async Task<SbomGenerationResult> GenerateSbomAsync(
             string rootPath,
             IEnumerable<SBOMFile> files,
             IEnumerable<SBOMPackage> packages,
             SBOMMetadata metadata,
-            IList<SBOMSpecification> specifications = null,
+            IList<SbomSpecification> specifications = null,
             RuntimeConfiguration runtimeConfiguration = null,
             string manifestDirPath = null,
             string externalDocumentReferenceListFile = null)
@@ -111,11 +108,11 @@ namespace Microsoft.Sbom.Api
             // This is the generate workflow
             bool result = await generationWorkflow.RunAsync();
 
-            return new SBOMGenerationResult(result, new List<EntityError>());
+            return new SbomGenerationResult(result, new List<EntityError>());
         }
 
         /// <inheritdoc />
-        public IEnumerable<AlgorithmName> GetRequiredAlgorithms(SBOMSpecification specification)
+        public IEnumerable<AlgorithmName> GetRequiredAlgorithms(SbomSpecification specification)
         {
             ArgumentNullException.ThrowIfNull(specification);
 
@@ -127,7 +124,7 @@ namespace Microsoft.Sbom.Api
                     .ToList();
         }
 
-        public IEnumerable<SBOMSpecification> GetSupportedSBOMSpecifications()
+        public IEnumerable<SbomSpecification> GetSupportedSBOMSpecifications()
         {
             return generatorProvider
                     .GetSupportedManifestInfos()

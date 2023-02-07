@@ -8,7 +8,7 @@ namespace Microsoft.Sbom.Common
     /// <summary>
     /// Provides the <see cref="IFileSystemUtils"/> for a given OS.
     /// </summary>
-    public static class FileSystemUtilsProvider //: Provider<IFileSystemUtils>
+    public static class FileSystemUtilsProvider
     {
         /// <summary>
         /// Checks the OS to provide the correct <see cref="IFileSystemUtils"/>.

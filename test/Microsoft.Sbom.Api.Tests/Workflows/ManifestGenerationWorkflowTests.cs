@@ -311,7 +311,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 .Setup(r => r.GenerateAsync())
                 .ReturnsAsync(await Task.FromResult(new List<FileValidationResult>()));
 
-            var workflow = new SBOMGenerationWorkflow(
+            var workflow = new SbomGenerationWorkflow(
                 configurationMock.Object,
                 fileSystemMock.Object,
                 mockLogger.Object,
@@ -361,7 +361,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestJsonDirPath = "/root/_manifest",
                 ManifestJsonFilePath = "/root/_manifest/manifest.json"
             };
-            var workflow = new SBOMGenerationWorkflow(
+            var workflow = new SbomGenerationWorkflow(
                 configurationMock.Object,
                 fileSystemMock.Object,
                 mockLogger.Object,
@@ -393,7 +393,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
             fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(new List<FileValidationResult> { new FileValidationResult() });
 
-            var workflow = new SBOMGenerationWorkflow(
+            var workflow = new SbomGenerationWorkflow(
                 configurationMock.Object,
                 fileSystemMock.Object,
                 mockLogger.Object,

@@ -35,9 +35,9 @@ namespace Microsoft.Sbom.Api.Executors
             this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         }
 
-        public (ChannelReader<InternalSBOMFileInfo> files, ChannelReader<FileValidationResult> errors) Filter(ChannelReader<InternalSBOMFileInfo> files)
+        public (ChannelReader<InternalSbomFileInfo> files, ChannelReader<FileValidationResult> errors) Filter(ChannelReader<InternalSbomFileInfo> files)
         {
-            var output = Channel.CreateUnbounded<InternalSBOMFileInfo>();
+            var output = Channel.CreateUnbounded<InternalSbomFileInfo>();
             var errors = Channel.CreateUnbounded<FileValidationResult>();
 
             Task.Run(async () =>
@@ -54,7 +54,7 @@ namespace Microsoft.Sbom.Api.Executors
             return (output, errors);
         }
 
-        private async Task FilterFiles(InternalSBOMFileInfo file, Channel<FileValidationResult> errors, Channel<InternalSBOMFileInfo> output)
+        private async Task FilterFiles(InternalSbomFileInfo file, Channel<FileValidationResult> errors, Channel<InternalSbomFileInfo> output)
         {
             try
             {

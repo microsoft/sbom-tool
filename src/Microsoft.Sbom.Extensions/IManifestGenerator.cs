@@ -31,7 +31,7 @@ namespace Microsoft.Sbom.Extensions
         /// has the responsibility to dispose this object.
         /// </summary>
         /// <param name="fileInfo">The fileInfo object.</param>
-        GenerationResult GenerateJsonDocument(InternalSBOMFileInfo fileInfo);
+        GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo);
 
         /// <summary>
         /// Generates a JSON element representation of the <paramref name="packageInfo"/> object.

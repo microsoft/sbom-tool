@@ -49,8 +49,8 @@ namespace Microsoft.Sbom.Api.Tests
         [TestMethod]
         public void GetConfiguration_PopulateAll()
         {
-            List<SBOMSpecification> specs = new List<SBOMSpecification>();
-            specs.Add(new SBOMSpecification("spdx", "2.2"));
+            List<SbomSpecification> specs = new List<SbomSpecification>();
+            specs.Add(new SbomSpecification("spdx", "2.2"));
 
             var expectedManifestInfo = new ManifestInfo()
             {
@@ -186,7 +186,7 @@ namespace Microsoft.Sbom.Api.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void ThrowArguementExceptionOnSpecificationZero()
         {
-            ApiConfigurationBuilder.GetConfiguration("random", null, null, null, metadata, new List<SBOMSpecification>(), runtime);
+            ApiConfigurationBuilder.GetConfiguration("random", null, null, null, metadata, new List<SbomSpecification>(), runtime);
         }
     }
 }

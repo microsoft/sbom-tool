@@ -14,12 +14,12 @@ namespace Microsoft.Sbom.Tool
 {
     public class GenerationService : IHostedService
     {
-        private readonly IWorkflow<SBOMGenerationWorkflow> generationWorkflow;
+        private readonly IWorkflow<SbomGenerationWorkflow> generationWorkflow;
         private readonly IRecorder recorder;
         private readonly IHostApplicationLifetime hostApplicationLifetime;
 
         public GenerationService(
-            IWorkflow<SBOMGenerationWorkflow> generationWorkflow,
+            IWorkflow<SbomGenerationWorkflow> generationWorkflow,
             IRecorder recorder,
             IHostApplicationLifetime hostApplicationLifetime)
         {
@@ -39,13 +39,13 @@ namespace Microsoft.Sbom.Tool
             catch (AccessDeniedValidationArgException e)
             {
                 var message = e.InnerException != null ? e.InnerException.Message : e.Message;
-                Console.WriteLine($"Encountered error while running ManifestTool generation workflow. Error: {message}");
+                Console.WriteLine($"Encountered error while running SBOM Tool generation workflow. Error: {message}");
                 Environment.ExitCode = (int)ExitCode.WriteAccessError;
             }
             catch (Exception e)
             {
                 var message = e.InnerException != null ? e.InnerException.Message : e.Message;
-                Console.WriteLine($"Encountered error while running ManifestTool generation workflow. Error: {message}");
+                Console.WriteLine($"Encountered error while running SBOM Tool generation workflow. Error: {message}");
                 Environment.ExitCode = (int)ExitCode.GeneralError;
             }
 

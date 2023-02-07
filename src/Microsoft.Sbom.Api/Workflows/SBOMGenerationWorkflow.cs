@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Api.Workflows
     /// The SBOM tool workflow class that is used to generate a SBOM
     /// file for a given build root path.
     /// </summary>
-    public class SBOMGenerationWorkflow : IWorkflow<SBOMGenerationWorkflow>
+    public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
     {
         private readonly IFileSystemUtils fileSystemUtils;
 
@@ -48,7 +48,7 @@ namespace Microsoft.Sbom.Api.Workflows
 
         private readonly IRecorder recorder;
 
-        public SBOMGenerationWorkflow(
+        public SbomGenerationWorkflow(
             IConfiguration configuration,
             IFileSystemUtils fileSystemUtils,
             ILogger log,

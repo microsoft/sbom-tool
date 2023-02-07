@@ -19,7 +19,7 @@ namespace Microsoft.Sbom.Api.Utils
             Version = "2.2"
         };
 
-        public static SBOMSpecification SPDX22Specification = SPDX22ManifestInfo.ToSBOMSpecification();
+        public static SbomSpecification SPDX22Specification = SPDX22ManifestInfo.ToSBOMSpecification();
 
         // TODO: move to test csproj
         public static ManifestInfo TestManifestInfo = new ManifestInfo

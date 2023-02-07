@@ -12,12 +12,12 @@ namespace Microsoft.Sbom.Api.Config
 {
     public class Generator : ISbomService<GenerationArgs>
     {
-        private readonly IWorkflow<SBOMGenerationWorkflow> generationWorkflow;
+        private readonly IWorkflow<SbomGenerationWorkflow> generationWorkflow;
 
         private readonly IRecorder recorder;
 
         public Generator(
-            IWorkflow<SBOMGenerationWorkflow> generationWorkflow,
+            IWorkflow<SbomGenerationWorkflow> generationWorkflow,
             IRecorder recorder) 
         {
             this.generationWorkflow = generationWorkflow;

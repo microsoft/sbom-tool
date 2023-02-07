@@ -15,7 +15,7 @@ namespace Microsoft.Sbom.Api.Config
     {
         private readonly IWorkflow<SBOMValidationWorkflow> validationWorkflow;
 
-        private readonly IWorkflow<SBOMParserBasedValidationWorkflow> parserValidationWorkflow;
+        private readonly IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow;
 
         private readonly IConfiguration configuration;
 
@@ -24,7 +24,7 @@ namespace Microsoft.Sbom.Api.Config
         public Validator(
             IConfiguration configuration,
             IWorkflow<SBOMValidationWorkflow> validationWorkflow,
-            IWorkflow<SBOMParserBasedValidationWorkflow> parserValidationWorkflow,
+            IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow,
             IRecorder recorder) 
         { 
             this.validationWorkflow = validationWorkflow;
@@ -33,7 +33,7 @@ namespace Microsoft.Sbom.Api.Config
             this.recorder = recorder;
         }
 
-        public async Task<bool> Validate(ValidationArgs validationArgs)
+        public async Task<bool> Validate()
         {
             bool result;
             try
@@ -54,7 +54,7 @@ namespace Microsoft.Sbom.Api.Config
             catch (Exception e)
             {
                 var message = e.InnerException != null ? e.InnerException.Message : e.Message;
-                Console.WriteLine($"Encountered error while running ManifestTool validation workflow. Error: {message}");
+                Console.WriteLine($"Encountered error while running SBOM Tool validation workflow. Error: {message}");
                 result = true;
             }
 

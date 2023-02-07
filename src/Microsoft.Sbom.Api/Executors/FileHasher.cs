@@ -83,9 +83,9 @@ namespace Microsoft.Sbom.Api.Executors
             }
         }
 
-        public (ChannelReader<InternalSBOMFileInfo>, ChannelReader<FileValidationResult>) Run(ChannelReader<string> fileInfo, FileLocation fileLocation = FileLocation.OnDisk, bool prependDotToPath = false)
+        public (ChannelReader<InternalSbomFileInfo>, ChannelReader<FileValidationResult>) Run(ChannelReader<string> fileInfo, FileLocation fileLocation = FileLocation.OnDisk, bool prependDotToPath = false)
         {
-            var output = Channel.CreateUnbounded<InternalSBOMFileInfo>();
+            var output = Channel.CreateUnbounded<InternalSbomFileInfo>();
             var errors = Channel.CreateUnbounded<FileValidationResult>();
 
             Task.Run(async () =>
@@ -102,7 +102,7 @@ namespace Microsoft.Sbom.Api.Executors
             return (output, errors);
         }
 
-        private async Task GenerateHash(string file, Channel<InternalSBOMFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation, bool prependDotToPath = false)
+        private async Task GenerateHash(string file, Channel<InternalSbomFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation, bool prependDotToPath = false)
         {
             string relativeFilePath = null;
             bool isOutsideDropPath = false;
@@ -119,7 +119,7 @@ namespace Microsoft.Sbom.Api.Executors
                 sbomConfigs.ApplyToEachConfig(config => config.Recorder.RecordChecksumForFile(fileHashes));
 
                 await output.Writer.WriteAsync(
-                    new InternalSBOMFileInfo
+                    new InternalSbomFileInfo
                     {
                         Path = relativeFilePath,
                         IsOutsideDropPath = isOutsideDropPath,

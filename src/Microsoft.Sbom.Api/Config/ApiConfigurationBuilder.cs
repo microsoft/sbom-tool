@@ -38,7 +38,7 @@ namespace Microsoft.Sbom.Api.Config
             IEnumerable<SBOMFile> files,
             IEnumerable<SBOMPackage> packages,
             SBOMMetadata metadata,
-            IList<SBOMSpecification> specifications = null,
+            IList<SbomSpecification> specifications = null,
             RuntimeConfiguration runtimeConfiguration = null,
             string externalDocumentReferenceListFile = null,
             string componentPath = null)
@@ -103,7 +103,7 @@ namespace Microsoft.Sbom.Api.Config
         public static InputConfiguration GetConfiguration(
             string buildDropPath,
             string outputPath,
-            IList<SBOMSpecification> specifications,
+            IList<SbomSpecification> specifications,
             AlgorithmName algorithmName,
             string manifestDirPath,
             bool validateSignature,
@@ -123,7 +123,7 @@ namespace Microsoft.Sbom.Api.Config
 
             if (specifications is null || specifications.Count == 0)
             {
-                specifications = new List<SBOMSpecification>() { ApiConstants.SPDX22Specification };
+                specifications = new List<SbomSpecification>() { ApiConstants.SPDX22Specification };
             }
 
             var sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
@@ -152,7 +152,7 @@ namespace Microsoft.Sbom.Api.Config
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        private static ConfigurationSetting<IList<ManifestInfo>> ConvertSbomSpecificationToManifestInfo(IList<SBOMSpecification> specifications)
+        private static ConfigurationSetting<IList<ManifestInfo>> ConvertSbomSpecificationToManifestInfo(IList<SbomSpecification> specifications)
         {
             if (specifications is null)
             {

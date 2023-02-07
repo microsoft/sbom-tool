@@ -14,12 +14,12 @@ namespace Microsoft.Sbom.Tool
 {
     public class GenerationService : IHostedService
     {
-        private readonly IWorkflow<SBOMGenerationWorkflow> generationWorkflow;
+        private readonly IWorkflow<SbomGenerationWorkflow> generationWorkflow;
         private readonly IRecorder recorder;
         private readonly IHostApplicationLifetime hostApplicationLifetime;
 
         public GenerationService(
-            IWorkflow<SBOMGenerationWorkflow> generationWorkflow,
+            IWorkflow<SbomGenerationWorkflow> generationWorkflow,
             IRecorder recorder,
             IHostApplicationLifetime hostApplicationLifetime)
         {

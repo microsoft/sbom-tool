@@ -26,8 +26,8 @@ namespace Microsoft.Sbom.Api.Tests
     public class SBOMGeneratorTest
     {
         private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
-        private SBOMGenerator generator;
-        private Mock<IWorkflow<SBOMGenerationWorkflow>> mockWorkflow;
+        private SbomGenerator generator;
+        private Mock<IWorkflow<SbomGenerationWorkflow>> mockWorkflow;
         private Mock<IRecorder> mockRecorder;
         private Mock<ManifestGeneratorProvider> mockGeneratorProvider;
         private Mock<ConfigSanitizer> mockSanitizer;
@@ -44,7 +44,7 @@ namespace Microsoft.Sbom.Api.Tests
             fileSystemMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
 
-            mockWorkflow = new Mock<IWorkflow<SBOMGenerationWorkflow>>();
+            mockWorkflow = new Mock<IWorkflow<SbomGenerationWorkflow>>();
             mockRecorder = new Mock<IRecorder>();
             mockGeneratorProvider = new Mock<ManifestGeneratorProvider>(null);
             mockHashAlgorithmProvider = new Mock<IHashAlgorithmProvider>();
@@ -75,8 +75,8 @@ namespace Microsoft.Sbom.Api.Tests
                 PackageSupplier = "Contoso"
             };
 
-            generator = new SBOMGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
-            var result = await generator.GenerateSBOMAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
+            generator = new SbomGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
+            var result = await generator.GenerateSbomAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
 
             Assert.AreEqual(1, result.Errors.Count);
             Assert.AreEqual(EntityErrorType.Other, result.Errors[0].ErrorType);
@@ -96,8 +96,8 @@ namespace Microsoft.Sbom.Api.Tests
                 PackageSupplier = "Contoso"
             };
 
-            generator = new SBOMGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
-            var result = await generator.GenerateSBOMAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
+            generator = new SbomGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
+            var result = await generator.GenerateSbomAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
 
             Assert.AreEqual(0, result.Errors.Count);
             mockRecorder.Verify();

@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api
 {
-    public class SBOMValidator : ISBOMValidator
+    public class SbomValidator : ISBOMValidator
     {
-        private readonly IWorkflow<SBOMParserBasedValidationWorkflow> sbomParserBasedValidationWorkflow;
+        private readonly IWorkflow<SbomParserBasedValidationWorkflow> sbomParserBasedValidationWorkflow;
         private readonly IRecorder recorder;
 
-        public SBOMValidator(
-            IWorkflow<SBOMParserBasedValidationWorkflow> sbomParserBasedValidationWorkflow,
+        public SbomValidator(
+            IWorkflow<SbomParserBasedValidationWorkflow> sbomParserBasedValidationWorkflow,
             IRecorder recorder)
         {
             this.sbomParserBasedValidationWorkflow = sbomParserBasedValidationWorkflow ?? throw new ArgumentNullException(nameof(sbomParserBasedValidationWorkflow));

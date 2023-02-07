@@ -17,23 +17,23 @@ namespace Microsoft.Sbom.Api.Executors
     /// <summary>
     /// Takes a SBOMFile and converts it to a FileInfo object.
     /// </summary>
-    public class SBOMFileToFileInfoConverter
+    public class SbomFileToFileInfoConverter
     {
         private readonly IFileTypeUtils fileTypeUtils;
 
-        public SBOMFileToFileInfoConverter(IFileTypeUtils fileTypeUtils)
+        public SbomFileToFileInfoConverter(IFileTypeUtils fileTypeUtils)
         {
             this.fileTypeUtils = fileTypeUtils ?? throw new ArgumentNullException(nameof(fileTypeUtils));
         }
 
-        public (ChannelReader<InternalSBOMFileInfo> output, ChannelReader<FileValidationResult> error) Convert(ChannelReader<SBOMFile> componentReader, FileLocation fileLocation = FileLocation.OnDisk)
+        public (ChannelReader<InternalSbomFileInfo> output, ChannelReader<FileValidationResult> error) Convert(ChannelReader<SBOMFile> componentReader, FileLocation fileLocation = FileLocation.OnDisk)
         {
             if (componentReader is null)
             {
                 throw new ArgumentNullException(nameof(componentReader));
             }
 
-            var output = Channel.CreateUnbounded<InternalSBOMFileInfo>();
+            var output = Channel.CreateUnbounded<InternalSbomFileInfo>();
             var errors = Channel.CreateUnbounded<FileValidationResult>();
 
             Task.Run(async () =>
@@ -50,7 +50,7 @@ namespace Microsoft.Sbom.Api.Executors
             return (output, errors);
         }
 
-        private async Task Convert(SBOMFile component, Channel<InternalSBOMFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation)
+        private async Task Convert(SBOMFile component, Channel<InternalSbomFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace Microsoft.Sbom.Api.Executors
                     });
                 }
 
-                var fileInfo = new InternalSBOMFileInfo
+                var fileInfo = new InternalSbomFileInfo
                 {
                     Path = component.Path,
                     Checksum = checksums.ToArray(),

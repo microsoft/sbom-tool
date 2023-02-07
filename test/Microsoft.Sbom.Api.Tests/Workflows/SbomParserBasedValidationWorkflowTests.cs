@@ -152,7 +152,7 @@ namespace Microsoft.Sbom.Workflows
 
             var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
             var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
-            var fileConverter = new SBOMFileToFileInfoConverter(new FileTypeUtils());
+            var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
             var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
 
             var filesValidator = new FilesValidator(
@@ -167,7 +167,7 @@ namespace Microsoft.Sbom.Workflows
                 FileHashesDictionarySingleton.Instance,
                 spdxFileFilterer);
 
-            var validator = new SBOMParserBasedValidationWorkflow(
+            var validator = new SbomParserBasedValidationWorkflow(
                 recorder.Object,
                 signValidationProviderMock.Object,
                 mockLogger.Object,
@@ -299,7 +299,7 @@ namespace Microsoft.Sbom.Workflows
 
             var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
             var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
-            var fileConverter = new SBOMFileToFileInfoConverter(new FileTypeUtils());
+            var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
             var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
 
             var filesValidator = new FilesValidator(
@@ -314,7 +314,7 @@ namespace Microsoft.Sbom.Workflows
                 FileHashesDictionarySingleton.Instance,
                 spdxFileFilterer);
             
-            var validator = new SBOMParserBasedValidationWorkflow(
+            var validator = new SbomParserBasedValidationWorkflow(
                 recorder.Object,
                 signValidationProviderMock.Object,
                 mockLogger.Object,
