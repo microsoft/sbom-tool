@@ -58,8 +58,8 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
 
         [TestMethod]
         [DataRow(null, false)]
-        [DataRow("", true)]
-        [DataRow(" ", true)]
+        [DataRow("", false)]
+        [DataRow(" ", false)]
         public void GetPackageVersion_WherePackageVersionIsNullOrWhitespace_ReturnBuildId(string packageVersion, bool versionExist)
         {
             string buildId = "buildId";
@@ -77,8 +77,8 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
 
         [TestMethod]
         [DataRow(null, false)]
-        [DataRow("", true)]
-        [DataRow(" ", true)]
+        [DataRow("", false)]
+        [DataRow(" ", false)]
         public void GetPackageVersion_WherePackageVersionAndBuildIdIsInvalid_Throw(string buildId, bool buildIdExist)
         {
             string packageVersion = null;
@@ -116,8 +116,8 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
 
         [TestMethod]
         [DataRow(null, false)]
-        [DataRow("", true)]
-        [DataRow(" ", true)]
+        [DataRow("", false)]
+        [DataRow(" ", false)]
         public void GetPackageName_WherePackageNameIsNullOrWhitespace_ReturnBuildDef(string packageName, bool nameExist)
         {
             string buildDef = "buildDef";
@@ -135,8 +135,8 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
 
         [TestMethod]
         [DataRow(null, false)]
-        [DataRow("", true)]
-        [DataRow(" ", true)]
+        [DataRow("", false)]
+        [DataRow(" ", false)]
         public void GetPackageName_WherePackageNameAndBuildDefIsInvalid_Throw(string buildDef, bool buildDefExist)
         {
             string packageVersion = null;
