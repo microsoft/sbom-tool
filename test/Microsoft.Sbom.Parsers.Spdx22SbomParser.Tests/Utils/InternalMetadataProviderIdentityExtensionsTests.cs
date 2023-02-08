@@ -46,7 +46,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
         public void GetPackageVersion_WherePackageVersionIsValid_ReturnPackageVersion()
         {
             var mdProviderMock = new Mock<IInternalMetadataProvider>();
-            object packageVersion = "version";
+            string packageVersion = "version";
 
             mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageVersion, out packageVersion))
                 .Returns(true);
@@ -60,9 +60,9 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
         [DataRow(null, false)]
         [DataRow("", true)]
         [DataRow(" ", true)]
-        public void GetPackageVersion_WherePackageVersionIsNullOrWhitespace_ReturnBuildId(object packageVersion, bool versionExist)
+        public void GetPackageVersion_WherePackageVersionIsNullOrWhitespace_ReturnBuildId(string packageVersion, bool versionExist)
         {
-            object buildId = "buildId";
+            string buildId = "buildId";
             var mdProviderMock = new Mock<IInternalMetadataProvider>();
 
             mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageVersion, out packageVersion))
@@ -79,9 +79,9 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
         [DataRow(null, false)]
         [DataRow("", true)]
         [DataRow(" ", true)]
-        public void GetPackageVersion_WherePackageVersionAndBuildIdIsInvalid_Throw(object buildId, bool buildIdExist)
+        public void GetPackageVersion_WherePackageVersionAndBuildIdIsInvalid_Throw(string buildId, bool buildIdExist)
         {
-            object packageVersion = null;
+            string packageVersion = null;
             var mdProviderMock = new Mock<IInternalMetadataProvider>();
 
             mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageVersion, out packageVersion))
@@ -104,7 +104,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
         public void GetPackageName_WherePackageNameIsValid_ReturnPackageName()
         {
             var mdProviderMock = new Mock<IInternalMetadataProvider>();
-            object packageName = "name";
+            string packageName = "name";
 
             mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageName, out packageName))
                 .Returns(true);
@@ -118,9 +118,9 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
         [DataRow(null, false)]
         [DataRow("", true)]
         [DataRow(" ", true)]
-        public void GetPackageName_WherePackageNamenIsNullOrWhitespace_ReturnBuildDef(object packageName, bool nameExist)
+        public void GetPackageName_WherePackageNameIsNullOrWhitespace_ReturnBuildDef(string packageName, bool nameExist)
         {
-            object buildDef = "buildDef";
+            string buildDef = "buildDef";
             var mdProviderMock = new Mock<IInternalMetadataProvider>();
 
             mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageVersion, out packageName))
@@ -137,9 +137,9 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
         [DataRow(null, false)]
         [DataRow("", true)]
         [DataRow(" ", true)]
-        public void GetPackageName_WherePackageNameAndBuildDefIsInvalid_Throw(object buildDef, bool buildDefExist)
+        public void GetPackageName_WherePackageNameAndBuildDefIsInvalid_Throw(string buildDef, bool buildDefExist)
         {
-            object packageVersion = null;
+            string packageVersion = null;
             var mdProviderMock = new Mock<IInternalMetadataProvider>();
 
             mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageName, out packageVersion))
