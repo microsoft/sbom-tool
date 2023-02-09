@@ -22,6 +22,15 @@ namespace Microsoft.Sbom.Common.Config
         {
             Value = value;
         }
+        
+        /// <summary>
+        /// Constructs a new instance of <see cref="ConfigurationSetting"/> with the provided value and <see cref="SettingSource"/>.
+        /// </summary>
+        public ConfigurationSetting(T value, SettingSource source)
+        {
+            Value = value;
+            Source = source;
+        }
 
         /// <summary>
         /// Gets or sets the actual value of the setting.
