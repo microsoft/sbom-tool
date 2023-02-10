@@ -141,7 +141,9 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             Assert.IsNotNull(config);
             Assert.IsNotNull(config.ManifestDirPath);
-            Assert.AreEqual(Path.Join(args.BuildDropPath, Constants.ManifestFolder), config.ManifestDirPath.Value);
+
+            var expectedPath = Path.Join(args.BuildDropPath, Constants.ManifestFolder);
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
 
             fileSystemUtilsMock.VerifyAll();
         }
@@ -169,7 +171,9 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             Assert.IsNotNull(config);
             Assert.IsNotNull(config.ManifestDirPath);
-            Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+
+            var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
 
             fileSystemUtilsMock.VerifyAll();
         }
@@ -197,7 +201,9 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             Assert.IsNotNull(config);
             Assert.IsNotNull(config.ManifestDirPath);
-            Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+
+            var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
 
             fileSystemUtilsMock.VerifyAll();
         }
@@ -227,7 +233,9 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             Assert.IsNotNull(config);
             Assert.IsNotNull(config.ManifestDirPath);
-            Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+
+            var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
 
             fileSystemUtilsMock.VerifyAll();
             mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);

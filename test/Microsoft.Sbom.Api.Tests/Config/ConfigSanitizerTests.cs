@@ -1,7 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions.Entities;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Hashing;
@@ -9,13 +12,10 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PowerArgs;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Tests.Config
@@ -169,25 +169,25 @@ namespace Microsoft.Sbom.Api.Tests.Config
 
             Assert.IsNotNull(config.ManifestDirPath);
             Assert.IsNotNull(config.ManifestDirPath.Value);
-            Assert.AreEqual(Path.Join("dropPath", "_manifest"), config.ManifestDirPath.Value);
+
+            var expectedPath = Path.Join("dropPath", "_manifest");
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
         }
 
         [TestMethod]
         public void ManifestDirShouldEndWithManifestDirForGenerate_Succeeds()
         {
             var config = GetConfigurationBaseObject();
-            config.ManifestDirPath = new ConfigurationSetting<string>
-            {
-                Source = SettingSource.Default,
-                Value = "manifestDirPath"
-            };
+            config.ManifestDirPath = new ConfigurationSetting<string>("manifestDirPath");
 
             config.ManifestToolAction = ManifestToolActions.Generate;
             configSanitizer.SanitizeConfig(config);
 
             Assert.IsNotNull(config.ManifestDirPath);
             Assert.IsNotNull(config.ManifestDirPath.Value);
-            Assert.AreEqual(Path.Join("manifestDirPath", "_manifest"), config.ManifestDirPath.Value);
+
+            var expectedPath = Path.Join("manifestDirPath", "_manifest");
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
         }
 
         [TestMethod]

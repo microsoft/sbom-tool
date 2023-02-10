@@ -69,7 +69,7 @@ namespace Microsoft.Sbom.Api.Config
                 var path = pathProp.GetValue(configuration) as ConfigurationSetting<string>;
                 if (path != null)
                 {
-                    path.Value = path.Value.Replace('\\', Path.DirectorySeparatorChar);
+                    path.Value = path.Value?.Replace('\\', Path.AltDirectorySeparatorChar);
                     pathProp.SetValue(configuration, path);
                 }    
             }
