@@ -118,6 +118,7 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
             .AddSingleton<InternalSBOMFileInfoDeduplicator>()
             .AddSingleton<ExternalReferenceInfoToPathConverter>()
             .AddSingleton<ExternalReferenceDeduplicator>()
+            .AddSingleton<ISbomConfigFactory, SbomConfigFactory>()
             .AddAutoMapper(x => x.AddProfile(new ConfigurationProfile()), typeof(ConfigValidator), typeof(ConfigSanitizer))
             .Scan(scan => scan.FromApplicationDependencies()
                 .AddClasses(classes => classes.AssignableTo<ConfigValidator>())
