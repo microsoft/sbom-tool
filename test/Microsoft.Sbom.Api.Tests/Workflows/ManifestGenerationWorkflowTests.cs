@@ -200,11 +200,11 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
 
-            var packagesChannel = Channel.CreateUnbounded<SBOMPackage>();
+            var packagesChannel = Channel.CreateUnbounded<SbomPackage>();
             var errorsChannel = Channel.CreateUnbounded<FileValidationResult>();
             foreach (var component in scannedComponents)
             {
-                await packagesChannel.Writer.WriteAsync(new SBOMPackage { PackageName = component.GetHashCode().ToString() });
+                await packagesChannel.Writer.WriteAsync(new SbomPackage { PackageName = component.GetHashCode().ToString() });
             }
 
             packagesChannel.Writer.Complete();

@@ -17,8 +17,8 @@ namespace Microsoft.Sbom.Contracts
         /// Generate a SBOM in the rootPath using the provided file and package lists.
         /// </summary>
         /// <param name="rootPath">The root path of the drop where the generated SBOM will be placed.</param>
-        /// <param name="files">The list of <see cref="SBOMFile">files</see> to include in this SBOM.</param>
-        /// <param name="packages">The list of <see cref="SBOMPackage">packages</see> to include in this SBOM.</param>
+        /// <param name="files">The list of <see cref="SbomFile">files</see> to include in this SBOM.</param>
+        /// <param name="packages">The list of <see cref="SbomPackage">packages</see> to include in this SBOM.</param>
         /// <param name="metadata">Provide any available metadata about your build environment using the SBOMMetadata object.</param>
         /// <param name="specifications">Provide a list of <see cref="SbomSpecification"/> that you want your SBOM to be generated
         /// for. If this is not provided, we will generate SBOMs for all the available formats.</param>
@@ -28,8 +28,8 @@ namespace Microsoft.Sbom.Contracts
         /// errors if it failed along with telemetry.</returns>
         Task<SbomGenerationResult> GenerateSbomAsync(
                                           string rootPath,
-                                          IEnumerable<SBOMFile> files,
-                                          IEnumerable<SBOMPackage> packages,
+                                          IEnumerable<SbomFile> files,
+                                          IEnumerable<SbomPackage> packages,
                                           SBOMMetadata metadata,
                                           IList<SbomSpecification> specifications = null,
                                           RuntimeConfiguration runtimeConfiguration = null,

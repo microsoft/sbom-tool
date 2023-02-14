@@ -41,8 +41,8 @@ namespace Microsoft.Sbom.Api.Tests
         };
 
         private readonly string manifestDirPath = "manifestDirPath";
-        private readonly List<SBOMFile> files = new List<SBOMFile>();
-        private readonly List<SBOMPackage> packages = new List<SBOMPackage>();
+        private readonly List<SbomFile> files = new List<SbomFile>();
+        private readonly List<SbomPackage> packages = new List<SbomPackage>();
         private readonly string externalDocumentRefListFile = "externalDocRef";
         private readonly string componentPath = @"D:\COMPONENT";
 

@@ -35,8 +35,8 @@ namespace Microsoft.Sbom.Api.Config
         public static InputConfiguration GetConfiguration(
             string rootPath,
             string manifestDirPath,
-            IEnumerable<SBOMFile> files,
-            IEnumerable<SBOMPackage> packages,
+            IEnumerable<SbomFile> files,
+            IEnumerable<SbomPackage> packages,
             SBOMMetadata metadata,
             IList<SbomSpecification> specifications = null,
             RuntimeConfiguration runtimeConfiguration = null,

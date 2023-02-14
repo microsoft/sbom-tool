@@ -14,9 +14,9 @@ using Serilog;
 namespace Microsoft.Sbom.Api.Providers.PackagesProviders
 {
     /// <summary>
-    /// Provides a serialized list of packages given a list of <see cref="SBOMPackage"/>.
+    /// Provides a serialized list of packages given a list of <see cref="SbomPackage"/>.
     /// </summary>
-    public class SBOMPackagesProvider : CommonPackagesProvider<SBOMPackage>
+    public class SBOMPackagesProvider : CommonPackagesProvider<SbomPackage>
     {
         public SBOMPackagesProvider(
             IConfiguration configuration,
@@ -42,7 +42,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
             return false;
         }
 
-        protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) ConvertToJson(ChannelReader<SBOMPackage> sourceChannel, IList<ISbomConfig> requiredConfigs)
+        protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) ConvertToJson(ChannelReader<SbomPackage> sourceChannel, IList<ISbomConfig> requiredConfigs)
         {
             IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
             var (jsonDocCount, jsonErrors) = PackageInfoJsonWriter.Write(sourceChannel, requiredConfigs);
@@ -51,9 +51,9 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
             return (jsonDocCount, ChannelUtils.Merge(errors.ToArray()));
         }
 
-        protected override (ChannelReader<SBOMPackage> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
+        protected override (ChannelReader<SbomPackage> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            var listWalker = new ListWalker<SBOMPackage>();
+            var listWalker = new ListWalker<SbomPackage>();
             return listWalker.GetComponents(Configuration.PackagesList.Value);
         }
     }

@@ -16,9 +16,9 @@ using System;
 namespace Microsoft.Sbom.Api.Providers.FilesProviders
 {
     /// <summary>
-    /// Serializes a list of <see cref="SBOMFile"/> objects provided through the API to SBOM Json objects.
+    /// Serializes a list of <see cref="SbomFile"/> objects provided through the API to SBOM Json objects.
     /// </summary>
-    public class SbomFileBasedFileToJsonProvider : EntityToJsonProviderBase<SBOMFile>
+    public class SbomFileBasedFileToJsonProvider : EntityToJsonProviderBase<SbomFile>
     {
         private readonly FileInfoWriter fileHashWriter;
 
@@ -60,7 +60,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
         }
 
         protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors)
-            ConvertToJson(ChannelReader<SBOMFile> sourceChannel, IList<ISbomConfig> requiredConfigs)
+            ConvertToJson(ChannelReader<SbomFile> sourceChannel, IList<ISbomConfig> requiredConfigs)
         {
             IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
 
@@ -74,9 +74,9 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
             return (jsonDocCount, ChannelUtils.Merge(errors.ToArray()));
         }
 
-        protected override (ChannelReader<SBOMFile> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
+        protected override (ChannelReader<SbomFile> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            var listWalker = new ListWalker<SBOMFile>();
+            var listWalker = new ListWalker<SbomFile>();
             return listWalker.GetComponents(Configuration.FilesList.Value);
         }
 

@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Api.Executors
             this.fileTypeUtils = fileTypeUtils ?? throw new ArgumentNullException(nameof(fileTypeUtils));
         }
 
-        public (ChannelReader<InternalSbomFileInfo> output, ChannelReader<FileValidationResult> error) Convert(ChannelReader<SBOMFile> componentReader, FileLocation fileLocation = FileLocation.OnDisk)
+        public (ChannelReader<InternalSbomFileInfo> output, ChannelReader<FileValidationResult> error) Convert(ChannelReader<SbomFile> componentReader, FileLocation fileLocation = FileLocation.OnDisk)
         {
             if (componentReader is null)
             {
@@ -38,7 +38,7 @@ namespace Microsoft.Sbom.Api.Executors
 
             Task.Run(async () =>
             {
-                await foreach (SBOMFile component in componentReader.ReadAllAsync())
+                await foreach (SbomFile component in componentReader.ReadAllAsync())
                 {
                     await Convert(component, output, errors, fileLocation);
                 }
@@ -50,7 +50,7 @@ namespace Microsoft.Sbom.Api.Executors
             return (output, errors);
         }
 
-        private async Task Convert(SBOMFile component, Channel<InternalSbomFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation)
+        private async Task Convert(SbomFile component, Channel<InternalSbomFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation)
         {
             try
             {

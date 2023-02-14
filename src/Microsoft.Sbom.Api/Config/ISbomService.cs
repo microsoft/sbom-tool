@@ -5,6 +5,10 @@ using Microsoft.Sbom.Api.Config.Args;
 
 namespace Microsoft.Sbom.Api.Config
 {
+    /// <summary>
+    /// Marker interface for an SBOM service.
+    /// </summary>
+    /// <typeparam name="T">The type of arguments against which this service is run.</typeparam>
     public interface ISbomService<T>
         where T : CommonArgs
     {

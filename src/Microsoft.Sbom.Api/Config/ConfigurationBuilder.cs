@@ -9,13 +9,8 @@ using Microsoft.Sbom.Common.Config;
 
 namespace Microsoft.Sbom.Api.Config
 {
-    /// <summary>
-    /// Converts the command line arguments and config file parameters to <see cref="ConfigurationSetting{T}"/> objects.
-    /// Finally combines the two into one <see cref="IConfiguration"/> object.
-    /// 
-    /// Throws an error if the same parameters are defined in both the config file and command line.
-    /// </summary>
-    /// <typeparam name="T">The action args parameter.</typeparam>
+    /// <inheritdoc />
+    /// <remarks>Throws an error if the same parameters are defined in both the config file and command line.</remarks>
     public class ConfigurationBuilder<T> : IConfigurationBuilder<T>
     {
         private readonly IMapper mapper;
@@ -59,6 +54,11 @@ namespace Microsoft.Sbom.Api.Config
         }
     }
 
+    /// <summary>
+    /// Converts the command line arguments and config file parameters to <see cref="ConfigurationSetting{T}"/> objects.
+    /// Finally combines the two into one <see cref="IConfiguration"/> object.
+    /// </summary>
+    /// <typeparam name="T">The action args parameter.</typeparam>
     public interface IConfigurationBuilder<T>
     {
         Task<InputConfiguration> GetConfiguration(T args);

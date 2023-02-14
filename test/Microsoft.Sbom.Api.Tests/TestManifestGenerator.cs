@@ -65,7 +65,7 @@ namespace Microsoft.Sbom.Api.Tests
             };
         }
 
-        public GenerationResult GenerateJsonDocument(SBOMPackage packageInfo)
+        public GenerationResult GenerateJsonDocument(SbomPackage packageInfo)
         {
             var jsonString = $@"
 {{

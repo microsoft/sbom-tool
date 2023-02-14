@@ -12,9 +12,9 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
     internal static class LinuxComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="LinuxComponent"/> to an <see cref="SBOMPackage"/>.
+        /// Converts a <see cref="LinuxComponent"/> to an <see cref="SbomPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this LinuxComponent linuxComponent) => new ()
+        public static SbomPackage? ToSbomPackage(this LinuxComponent linuxComponent) => new ()
         {
             Id = linuxComponent.Id,
             PackageUrl = linuxComponent.PackageUrl?.ToString(),

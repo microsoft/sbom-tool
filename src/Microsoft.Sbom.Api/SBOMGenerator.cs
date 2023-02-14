@@ -61,9 +61,10 @@ namespace Microsoft.Sbom.Api
                 manifestDirPath, null, null, metadata, specifications,
                 runtimeConfiguration, externalDocumentReferenceListFile, componentPath);
 
-            // Initialize the IOC container. This varies depending on the configuration.
+            // Validate the configuration
             inputConfiguration = ValidateConfig(inputConfiguration);
 
+            // Globally update the configuration
             inputConfiguration.ToConfiguration();
 
             // This is the generate workflow
@@ -80,8 +81,8 @@ namespace Microsoft.Sbom.Api
         /// <inheritdoc />
         public async Task<SbomGenerationResult> GenerateSbomAsync(
             string rootPath,
-            IEnumerable<SBOMFile> files,
-            IEnumerable<SBOMPackage> packages,
+            IEnumerable<SbomFile> files,
+            IEnumerable<SbomPackage> packages,
             SBOMMetadata metadata,
             IList<SbomSpecification> specifications = null,
             RuntimeConfiguration runtimeConfiguration = null,
@@ -124,13 +125,10 @@ namespace Microsoft.Sbom.Api
                     .ToList();
         }
 
-        public IEnumerable<SbomSpecification> GetSupportedSBOMSpecifications()
-        {
-            return generatorProvider
+        public IEnumerable<SbomSpecification> GetSupportedSBOMSpecifications() => generatorProvider
                     .GetSupportedManifestInfos()
                     .Select(g => g.ToSBOMSpecification())
                     .ToList();
-        }
 
         private InputConfiguration ValidateConfig(InputConfiguration config)
         {

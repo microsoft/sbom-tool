@@ -89,10 +89,10 @@ namespace Microsoft.Sbom.Common.Config
         public ConfigurationSetting<string> PackageSupplier { get; set; }
 
         /// <inheritdoc cref="IConfiguration.FilesList" />
-        public ConfigurationSetting<IEnumerable<SBOMFile>> FilesList { get; set; }
+        public ConfigurationSetting<IEnumerable<SbomFile>> FilesList { get; set; }
 
         /// <inheritdoc cref="IConfiguration.PackagesList" />
-        public ConfigurationSetting<IEnumerable<SBOMPackage>> PackagesList { get; set; }
+        public ConfigurationSetting<IEnumerable<SbomPackage>> PackagesList { get; set; }
 
         /// <inheritdoc cref="IConfiguration.TelemetryFilePath" />
         public ConfigurationSetting<string> TelemetryFilePath { get; set; }

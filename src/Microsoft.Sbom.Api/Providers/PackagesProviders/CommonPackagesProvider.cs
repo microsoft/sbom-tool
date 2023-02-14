@@ -41,9 +41,9 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
         /// Get common packages that are provided by the build engine.
         /// </summary>
         /// <returns></returns>
-        private Channel<SBOMPackage> GetCommonPackages()
+        private Channel<SbomPackage> GetCommonPackages()
         {
-            var packageInfos = Channel.CreateUnbounded<SBOMPackage>();
+            var packageInfos = Channel.CreateUnbounded<SbomPackage>();
 
             Task.Run(async () =>
             {
@@ -54,7 +54,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
                     {
                         Log.Debug($"Adding the image OS package to the packages list as a dependency.");
                         string name = $"Azure Pipelines Hosted Image {imageOsObj}";
-                        await packageInfos.Writer.WriteAsync(new SBOMPackage()
+                        await packageInfos.Writer.WriteAsync(new SbomPackage()
                         {
                             PackageName = name,
                             PackageVersion = (string)imageVersionObj,

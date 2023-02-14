@@ -34,8 +34,8 @@ namespace Microsoft.Sbom.Common.Config
         private static readonly AsyncLocal<ConfigurationSetting<string>> packageName = new ();
         private static readonly AsyncLocal<ConfigurationSetting<string>> packageVersion = new ();
         private static readonly AsyncLocal<ConfigurationSetting<string>> packageSupplier = new ();
-        private static readonly AsyncLocal<ConfigurationSetting<IEnumerable<SBOMFile>>> filesList = new ();
-        private static readonly AsyncLocal<ConfigurationSetting<IEnumerable<SBOMPackage>>> packagesList = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<IEnumerable<SbomFile>>> filesList = new ();
+        private static readonly AsyncLocal<ConfigurationSetting<IEnumerable<SbomPackage>>> packagesList = new ();
         private static readonly AsyncLocal<ConfigurationSetting<string>> telemetryFilePath = new ();
         private static readonly AsyncLocal<ConfigurationSetting<string>> dockerImagesToScan = new ();
         private static readonly AsyncLocal<ConfigurationSetting<string>> externalDocumentReferenceListFile = new ();
@@ -231,14 +231,14 @@ namespace Microsoft.Sbom.Common.Config
 >>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.FilesList" />
-        public ConfigurationSetting<IEnumerable<SBOMFile>> FilesList
+        public ConfigurationSetting<IEnumerable<SbomFile>> FilesList
         {
             get => filesList.Value;
             set => filesList.Value = value;
         }
 
         /// <inheritdoc cref="IConfiguration.PackagesList" />
-        public ConfigurationSetting<IEnumerable<SBOMPackage>> PackagesList
+        public ConfigurationSetting<IEnumerable<SbomPackage>> PackagesList
         {
             get => packagesList.Value;
             set => packagesList.Value = value;

@@ -139,7 +139,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
             };
         }
 
-        public GenerationResult GenerateJsonDocument(SBOMPackage packageInfo)
+        public GenerationResult GenerateJsonDocument(SbomPackage packageInfo)
         {
             if (packageInfo is null)
             {

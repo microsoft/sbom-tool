@@ -16,9 +16,9 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
     public static class ScannedComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="ScannedComponent"/> to an <see cref="SBOMPackage"/>.
+        /// Converts a <see cref="ScannedComponent"/> to an <see cref="SbomPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this ScannedComponent component, AdapterReport report)
+        public static SbomPackage? ToSbomPackage(this ScannedComponent component, AdapterReport report)
         {
             return component.Component switch
             {
@@ -40,7 +40,7 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
             };
 
             // Logs an error prior to returning null.
-            SBOMPackage? Error(Action<AdapterReport> log)
+            SbomPackage? Error(Action<AdapterReport> log)
             {
                 log(report);
                 return null;

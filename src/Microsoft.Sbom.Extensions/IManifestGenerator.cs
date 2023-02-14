@@ -42,7 +42,7 @@ namespace Microsoft.Sbom.Extensions
         /// </summary>
         /// <param name="packageInfo">The current package that needs to be serialized.</param>
         /// <returns></returns>
-        GenerationResult GenerateJsonDocument(SBOMPackage packageInfo);
+        GenerationResult GenerateJsonDocument(SbomPackage packageInfo);
 
         /// <summary>
         /// Generate and return the package this SBOM describes. The <see cref="GenerationData"/> object can be used

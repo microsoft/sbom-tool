@@ -14,9 +14,9 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
     internal static class CondaComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="CondaComponent"/> to an <see cref="SBOMPackage"/>.
+        /// Converts a <see cref="CondaComponent"/> to an <see cref="SbomPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this CondaComponent condaComponent) => new ()
+        public static SbomPackage? ToSbomPackage(this CondaComponent condaComponent) => new ()
         {
             Id = condaComponent.Id,
             PackageUrl = condaComponent.PackageUrl?.ToString(),

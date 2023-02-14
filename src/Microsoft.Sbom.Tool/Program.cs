@@ -46,7 +46,6 @@ namespace Microsoft.Sbom.Tool
                 };
 
                 services
-                    .AddTransient(_ => FileSystemUtilsProvider.CreateInstance())
                     .AddTransient<ConfigFileParser>()
                     .AddSingleton(typeof(IConfigurationBuilder<>), typeof(ConfigurationBuilder<>))
                     .AddSingleton(x =>
