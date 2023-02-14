@@ -49,7 +49,6 @@ namespace Microsoft.Sbom.Parser
         [DataRow(SbomParserStrings.JsonWithMissingFiles)]
         [DataRow(SbomParserStrings.JsonWithMissingPackages)]
         [DataRow(SbomParserStrings.JsonWithMissingRelationships)]
-        [DataRow(SbomParserStrings.JsonWithMissingReferences)]
         [ExpectedException(typeof(ParserException))]
         public void MissingPropertyThrows(string json)
         {
@@ -78,6 +77,14 @@ namespace Microsoft.Sbom.Parser
         public void MalformedJsonEmptyValuesDoesntThrow(string json)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(json);
+            using var stream = new MemoryStream(bytes);
+            IterateAllProperties(stream);
+        }
+
+        [TestMethod]
+        public void MissingReferencesDoesntThrow()
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithMissingReferences);
             using var stream = new MemoryStream(bytes);
             IterateAllProperties(stream);
         }
