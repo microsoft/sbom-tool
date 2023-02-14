@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Tool
 {
     public class ValidationService : IHostedService
     {
-        private readonly IWorkflow<SBOMValidationWorkflow> validationWorkflow;
+        private readonly IWorkflow<SbomValidationWorkflow> validationWorkflow;
 
         private readonly IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow;
 
@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Tool
 
         public ValidationService(
             IConfiguration configuration,
-            IWorkflow<SBOMValidationWorkflow> validationWorkflow,
+            IWorkflow<SbomValidationWorkflow> validationWorkflow,
             IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow,
             IRecorder recorder,
             IHostApplicationLifetime hostApplicationLifetime)

@@ -70,7 +70,6 @@ namespace Microsoft.Sbom.Api
             // This is the generate workflow
             bool isSuccess = await generationWorkflow.RunAsync();
 
-            // TODO: Telemetry?
             await recorder.FinalizeAndLogTelemetryAsync();
 
             var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();

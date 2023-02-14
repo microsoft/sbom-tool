@@ -111,7 +111,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             var recorderMock = new Mock<IRecorder>().Object;
 
-            var workflow = new SBOMValidationWorkflow(
+            var workflow = new SbomValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -228,7 +228,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestData = manifestData
             };
 
-            var workflow = new SBOMValidationWorkflow(
+            var workflow = new SbomValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -339,7 +339,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestData = manifestData
             };
 
-            var workflow = new SBOMValidationWorkflow(
+            var workflow = new SbomValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -449,7 +449,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestData = manifestData
             };
 
-            var workflow = new SBOMValidationWorkflow(
+            var workflow = new SbomValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -559,7 +559,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestData = manifestData
             };
 
-            var workflow = new SBOMValidationWorkflow(
+            var workflow = new SbomValidationWorkflow(
                 configurationMock.Object,
                 new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object),
                 new ManifestFolderFilterer(
@@ -617,7 +617,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             var configurationMock = new Mock<IConfiguration>();
             configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
 
-            var workflow = new SBOMValidationWorkflow(
+            var workflow = new SbomValidationWorkflow(
                 configurationMock.Object,
                 null,
                 null,

@@ -13,7 +13,7 @@ namespace Microsoft.Sbom.Api.Config
 {
     public class Validator : ISbomService<ValidationArgs>
     {
-        private readonly IWorkflow<SBOMValidationWorkflow> validationWorkflow;
+        private readonly IWorkflow<SbomValidationWorkflow> validationWorkflow;
 
         private readonly IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow;
 
@@ -23,7 +23,7 @@ namespace Microsoft.Sbom.Api.Config
 
         public Validator(
             IConfiguration configuration,
-            IWorkflow<SBOMValidationWorkflow> validationWorkflow,
+            IWorkflow<SbomValidationWorkflow> validationWorkflow,
             IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow,
             IRecorder recorder) 
         { 

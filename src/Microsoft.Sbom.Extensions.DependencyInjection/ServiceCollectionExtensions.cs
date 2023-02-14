@@ -62,7 +62,7 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
                     .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
                     .CreateLogger();
             })
-            .AddTransient<IWorkflow<SBOMValidationWorkflow>, SBOMValidationWorkflow>()
+            .AddTransient<IWorkflow<SbomValidationWorkflow>, SbomValidationWorkflow>()
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
             .AddTransient<DirectoryWalker>()
