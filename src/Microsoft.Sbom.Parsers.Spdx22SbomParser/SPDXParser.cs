@@ -161,10 +161,12 @@ public class SPDXParser : ISbomParser
 
     private void ValidateParsingComplete()
     {
-        if ((isPackageArrayParsingStarted && !isPackageArrayParsingFinished)
-            || (isFileArrayParsingStarted && !isFileArrayParsingFinished)
-            || (isRelationshipArrayParsingStarted && !isRelationshipArrayParsingFinished) 
-            || (isExternalReferencesArrayParsingStarted && !isExternalReferencesArrayParsingFinished))
+        var isPackageArrayProcessing = isPackageArrayParsingStarted && !isPackageArrayParsingFinished;
+        var isFileArrayProcessing = isFileArrayParsingStarted && !isFileArrayParsingFinished;
+        var isRelationshipArrayProcessing = isRelationshipArrayParsingStarted && !isRelationshipArrayParsingFinished;
+        var isExternalRefArrayProcessing = isExternalReferencesArrayParsingStarted && !isExternalReferencesArrayParsingFinished;
+
+        if (isFileArrayProcessing || isPackageArrayProcessing || isRelationshipArrayProcessing || isExternalRefArrayProcessing)
         {
             throw new ParserException($"Parser has reached the Finished state while we are still processing some properties.");
         }
