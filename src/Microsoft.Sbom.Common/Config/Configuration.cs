@@ -18,10 +18,12 @@ namespace Microsoft.Sbom.Common.Config
         [DirectoryExists]
         [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
         [ValueRequired]
+        [Directory]
         public ConfigurationSetting<string> BuildDropPath { get; set; }
 
         /// <inheritdoc cref="IConfiguration.BuildComponentPath" />
         [DirectoryExists]
+        [Directory]
         public ConfigurationSetting<string> BuildComponentPath { get; set; }
 
         /// <inheritdoc cref="IConfiguration.BuildListFile" />
@@ -30,16 +32,19 @@ namespace Microsoft.Sbom.Common.Config
 
         /// <inheritdoc cref="IConfiguration.ManifestPath" />
         [Obsolete("This field is not provided by the user or configFile, set by system")]
+        [Directory]
         public ConfigurationSetting<string> ManifestPath { get; set; }
 
         /// <inheritdoc cref="IConfiguration.ManifestDirPath" />
         [DirectoryExists]
         [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
+        [Directory]
         public ConfigurationSetting<string> ManifestDirPath { get; set; }
 
         /// <inheritdoc cref="IConfiguration.OutputPath" />
         [FilePathIsWritable]
         [ValueRequired(ForAction = ManifestToolActions.Validate)]
+        [Directory]
         public ConfigurationSetting<string> OutputPath { get; set; }
 
         /// <inheritdoc cref="IConfiguration.Parallelism" />
@@ -51,6 +56,7 @@ namespace Microsoft.Sbom.Common.Config
         public ConfigurationSetting<LogEventLevel> Verbosity { get; set; }
 
         /// <inheritdoc cref="IConfiguration.ConfigFilePath" />
+        [Directory]
         public ConfigurationSetting<string> ConfigFilePath { get; set; }
 
         /// <inheritdoc cref="IConfiguration.ManifestInfo" />
@@ -60,9 +66,11 @@ namespace Microsoft.Sbom.Common.Config
         public ConfigurationSetting<AlgorithmName> HashAlgorithm { get; set; }
 
         /// <inheritdoc cref="IConfiguration.RootPathFilter" />
+        [Directory]
         public ConfigurationSetting<string> RootPathFilter { get; set; }
 
         /// <inheritdoc cref="IConfiguration.CatalogFilePath" />
+        [Directory]
         public ConfigurationSetting<string> CatalogFilePath { get; set; }
 
         /// <inheritdoc cref="IConfiguration.ValidateSignature" />
@@ -84,7 +92,7 @@ namespace Microsoft.Sbom.Common.Config
 
         /// <inheritdoc cref="IConfiguration.PackageSupplier" />
         [ValueRequired(ForAction = ManifestToolActions.Generate)]
-        public ConfigurationSetting<string> PackageSupplier { get; set; }
+        public ConfigurationSetting<string> PackageSupplier { get; set; }   
 
         /// <inheritdoc cref="IConfiguration.FilesList" />
         public ConfigurationSetting<IEnumerable<SBOMFile>> FilesList { get; set; }
@@ -93,6 +101,7 @@ namespace Microsoft.Sbom.Common.Config
         public ConfigurationSetting<IEnumerable<SBOMPackage>> PackagesList { get; set; }
 
         /// <inheritdoc cref="IConfiguration.TelemetryFilePath" />
+        [Directory]
         public ConfigurationSetting<string> TelemetryFilePath { get; set; }
 
         /// <inheritdoc cref="IConfiguration.DockerImagesToScan" />

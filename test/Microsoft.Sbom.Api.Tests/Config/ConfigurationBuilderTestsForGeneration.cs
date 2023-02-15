@@ -141,7 +141,9 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             Assert.IsNotNull(config);
             Assert.IsNotNull(config.ManifestDirPath);
-            Assert.AreEqual(Path.Join(args.BuildDropPath, Constants.ManifestFolder), config.ManifestDirPath.Value);
+
+            var expectedPath = Path.Join(args.BuildDropPath, Constants.ManifestFolder);
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
 
             fileSystemUtilsMock.VerifyAll();
         }
@@ -169,7 +171,9 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             Assert.IsNotNull(config);
             Assert.IsNotNull(config.ManifestDirPath);
-            Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+
+            var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
 
             fileSystemUtilsMock.VerifyAll();
         }
@@ -197,7 +201,9 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             Assert.IsNotNull(config);
             Assert.IsNotNull(config.ManifestDirPath);
-            Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+
+            var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
 
             fileSystemUtilsMock.VerifyAll();
         }
@@ -227,14 +233,21 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             Assert.IsNotNull(config);
             Assert.IsNotNull(config.ManifestDirPath);
-            Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+
+            var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
 
             fileSystemUtilsMock.VerifyAll();
             mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
         }
 
         [TestMethod]
-        public async Task ConfigurationBuilderTest_Generation_BadNSBaseUri_Fails()
+        [DataRow("baduri")]
+        [DataRow("https://")]
+        [DataRow("ww.com")]
+        [DataRow("https//test.com")]
+        [ExpectedException(typeof(ValidationArgException), "The value of NamespaceUriBase must be a valid URI.")]
+        public async Task ConfigurationBuilderTest_Generation_BadNSBaseUri_Fails(string badNsUri)
         {
             var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
             var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
@@ -244,38 +257,15 @@ namespace Microsoft.Sbom.Api.Config.Tests
             fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
             fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
 
-            var badNsUris = new string[]
+            var args = new GenerationArgs
             {
-                "baduri",
-                "https://",
-                "ww.com",
-                "https//test.com",
+                BuildDropPath = "BuildDropPath",
+                ManifestDirPath = "ManifestDirPath",
+                NamespaceUriBase = badNsUri,
+                PackageSupplier = "Contoso"
             };
-            int failedCount = 0;
 
-            foreach (var badNsUri in badNsUris)
-            {
-                var args = new GenerationArgs
-                {
-                    BuildDropPath = "BuildDropPath",
-                    ManifestDirPath = "ManifestDirPath",
-                    NamespaceUriBase = badNsUri,
-                    PackageSupplier = "Contoso"
-                };
-
-                try
-                {
-                    var config = await cb.GetConfiguration(args);
-                    Assert.Fail($"NamespaceUriBase test should fail. nsUri: {badNsUri}");
-                }
-                catch (ValidationArgException e)
-                {
-                    ++failedCount;
-                    Assert.AreEqual("The value of NamespaceUriBase must be a valid URI.", e.Message);
-                }
-            }
-
-            Assert.AreEqual(badNsUris.Length, failedCount);
+            var config = await cb.GetConfiguration(args);
         }
     }
 }
