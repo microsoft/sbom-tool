@@ -51,6 +51,7 @@ namespace Microsoft.Sbom.Common.Config
         [DirectoryExists]
         [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
         [ValueRequired]
+        [Directory]
         public ConfigurationSetting<string> BuildDropPath
         {
             get => buildDropPath.Value;
@@ -59,6 +60,7 @@ namespace Microsoft.Sbom.Common.Config
 
         /// <inheritdoc cref="IConfiguration.BuildComponentPath" />
         [DirectoryExists]
+        [Directory]
         public ConfigurationSetting<string> BuildComponentPath
         {
             get => buildComponentPath.Value;
@@ -75,6 +77,7 @@ namespace Microsoft.Sbom.Common.Config
 
         /// <inheritdoc cref="IConfiguration.ManifestPath" />
         [Obsolete("This field is not provided by the user or configFile, set by system")]
+        [Directory]
         public ConfigurationSetting<string> ManifestPath
         {
             get => manifestPath.Value;
@@ -84,6 +87,7 @@ namespace Microsoft.Sbom.Common.Config
         /// <inheritdoc cref="IConfiguration.ManifestDirPath" />
         [DirectoryExists]
         [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
+        [Directory]
         public ConfigurationSetting<string> ManifestDirPath
         {
             get => manifestDirPath.Value;
@@ -93,6 +97,7 @@ namespace Microsoft.Sbom.Common.Config
         /// <inheritdoc cref="IConfiguration.OutputPath" />
         [FilePathIsWritable]
         [ValueRequired(ForAction = ManifestToolActions.Validate)]
+        [Directory]
         public ConfigurationSetting<string> OutputPath
         {
             get => outputPath.Value;
@@ -116,6 +121,7 @@ namespace Microsoft.Sbom.Common.Config
         }
 
         /// <inheritdoc cref="IConfiguration.ConfigFilePath" />
+        [Directory]
         public ConfigurationSetting<string> ConfigFilePath
         {
             get => configFilePath.Value;
@@ -137,6 +143,7 @@ namespace Microsoft.Sbom.Common.Config
         }
 
         /// <inheritdoc cref="IConfiguration.RootPathFilter" />
+        [Directory]
         public ConfigurationSetting<string> RootPathFilter
         {
             get => rootFilterPath.Value;

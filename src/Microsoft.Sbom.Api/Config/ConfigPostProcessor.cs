@@ -27,6 +27,9 @@ namespace Microsoft.Sbom.Api.Config
 
         public void Process(IConfiguration source, IConfiguration destination, ResolutionContext context)
         {
+            // Sanitize configuration
+            destination = configSanitizer.SanitizeConfig(destination);
+
             // Set current action on config validators
             configValidators.ForEach(c => c.CurrentAction = destination.ManifestToolAction);
 
@@ -43,9 +46,6 @@ namespace Microsoft.Sbom.Api.Config
                 // Run validators on all properties.
                 configValidators.ForEach(v => v.Validate(property.DisplayName, property.GetValue(destination), property.Attributes));
             }
-
-            // Sanitize configuration
-            destination = configSanitizer.SanitizeConfig(destination);
         }
 
         private void SetDefautValue(IConfiguration destination, object value, PropertyDescriptor property)
