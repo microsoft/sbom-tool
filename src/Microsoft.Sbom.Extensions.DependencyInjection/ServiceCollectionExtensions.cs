@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
@@ -131,22 +130,8 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
                     typeof(IManifestGenerator),
                     typeof(IMetadataProvider),
                     typeof(IManifestInterface)))
-                    .AsImplementedInterfaces())
-            .AddTransient(x =>
-            {
-                IFileSystemUtils fileSystemUtils = x.GetRequiredService<IFileSystemUtils>();
-                ISbomConfigProvider sbomConfigs = x.GetRequiredService<ISbomConfigProvider>();
-                IOSUtils osUtils = x.GetRequiredService<IOSUtils>();
-                IConfiguration configuration = x.GetRequiredService<IConfiguration>();
+                .AsImplementedInterfaces());
 
-                var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo?.Value?.FirstOrDefault());
-                var parserProvider = x.GetRequiredService<IManifestParserProvider>();
-                var manifestValue = fileSystemUtils.ReadAllText(sbomConfig.ManifestJsonFilePath);
-                var manifestData = parserProvider.Get(sbomConfig.ManifestInfo).ParseManifest(manifestValue);
-                manifestData.HashesMap = new ConcurrentDictionary<string, Checksum[]>(manifestData.HashesMap, osUtils.GetFileSystemStringComparer());
-
-                return manifestData;
-            });
             return services;
         }
     }

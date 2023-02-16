@@ -51,13 +51,6 @@ namespace Microsoft.Sbom.Common.Config
         [DirectoryExists]
         [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
         [ValueRequired]
-<<<<<<< HEAD
-        public ConfigurationSetting<string> BuildDropPath { get; set; }
-
-        /// <inheritdoc cref="IConfiguration.BuildComponentPath" />
-        [DirectoryExists]
-        public ConfigurationSetting<string> BuildComponentPath { get; set; }
-=======
         public ConfigurationSetting<string> BuildDropPath
         {
             get => buildDropPath.Value;
@@ -71,7 +64,6 @@ namespace Microsoft.Sbom.Common.Config
             get => buildComponentPath.Value;
             set => buildComponentPath.Value = value;
         }
->>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.BuildListFile" />
         [FileExists]
@@ -83,41 +75,29 @@ namespace Microsoft.Sbom.Common.Config
 
         /// <inheritdoc cref="IConfiguration.ManifestPath" />
         [Obsolete("This field is not provided by the user or configFile, set by system")]
-<<<<<<< HEAD
-        public ConfigurationSetting<string> ManifestPath { get; set; }
-=======
         public ConfigurationSetting<string> ManifestPath
         {
             get => manifestPath.Value;
             set => manifestPath.Value = value;
         }
->>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.ManifestDirPath" />
         [DirectoryExists]
         [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
-<<<<<<< HEAD
-        public ConfigurationSetting<string> ManifestDirPath { get; set; }
-=======
         public ConfigurationSetting<string> ManifestDirPath
         {
             get => manifestDirPath.Value;
             set => manifestDirPath.Value = value;
         }
->>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.OutputPath" />
         [FilePathIsWritable]
         [ValueRequired(ForAction = ManifestToolActions.Validate)]
-<<<<<<< HEAD
-        public ConfigurationSetting<string> OutputPath { get; set; }
-=======
         public ConfigurationSetting<string> OutputPath
         {
             get => outputPath.Value;
             set => outputPath.Value = value;
         }
->>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.Parallelism" />
         [IntRange(minRange: Constants.MinParallelism, maxRange: Constants.MaxParallelism)]
@@ -136,15 +116,11 @@ namespace Microsoft.Sbom.Common.Config
         }
 
         /// <inheritdoc cref="IConfiguration.ConfigFilePath" />
-<<<<<<< HEAD
-        public ConfigurationSetting<string> ConfigFilePath { get; set; }
-=======
         public ConfigurationSetting<string> ConfigFilePath
         {
             get => configFilePath.Value;
             set => configFilePath.Value = value;
         }
->>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.ManifestInfo" />
         public ConfigurationSetting<IList<ManifestInfo>> ManifestInfo
@@ -161,12 +137,6 @@ namespace Microsoft.Sbom.Common.Config
         }
 
         /// <inheritdoc cref="IConfiguration.RootPathFilter" />
-<<<<<<< HEAD
-        public ConfigurationSetting<string> RootPathFilter { get; set; }
-
-        /// <inheritdoc cref="IConfiguration.CatalogFilePath" />
-        public ConfigurationSetting<string> CatalogFilePath { get; set; }
-=======
         public ConfigurationSetting<string> RootPathFilter
         {
             get => rootFilterPath.Value;
@@ -179,7 +149,6 @@ namespace Microsoft.Sbom.Common.Config
             get => catalogFilePath.Value;
             set => catalogFilePath.Value = value;
         }
->>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.ValidateSignature" />
         [DefaultValue(false)]
@@ -220,15 +189,11 @@ namespace Microsoft.Sbom.Common.Config
 
         /// <inheritdoc cref="IConfiguration.PackageSupplier" />
         [ValueRequired(ForAction = ManifestToolActions.Generate)]
-<<<<<<< HEAD
-        public ConfigurationSetting<string> PackageSupplier { get; set; }
-=======
         public ConfigurationSetting<string> PackageSupplier
         {
             get => packageSupplier.Value;
             set => packageSupplier.Value = value;
         }
->>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.FilesList" />
         public ConfigurationSetting<IEnumerable<SbomFile>> FilesList
@@ -245,15 +210,11 @@ namespace Microsoft.Sbom.Common.Config
         }
 
         /// <inheritdoc cref="IConfiguration.TelemetryFilePath" />
-<<<<<<< HEAD
-        public ConfigurationSetting<string> TelemetryFilePath { get; set; }
-=======
         public ConfigurationSetting<string> TelemetryFilePath
         {
             get => telemetryFilePath.Value;
             set => telemetryFilePath.Value = value;
         }
->>>>>>> e30f851 (Remove Ninject)
 
         /// <inheritdoc cref="IConfiguration.DockerImagesToScan" />
         public ConfigurationSetting<string> DockerImagesToScan

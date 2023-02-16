@@ -32,6 +32,8 @@ namespace Microsoft.Sbom.Api.Filters
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            Init();
         }
 
         /// <summary>

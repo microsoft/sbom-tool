@@ -33,41 +33,49 @@ namespace Microsoft.Sbom.Tool
         public static async Task Main(string[] args)
         {
             var result = await Args.InvokeActionAsync<SbomToolCmdRunner>(args);
-            if (result.HandledException != null)
+            if (result.HandledException != null || (result.ActionArgs is not CommonArgs))
             {
                 return;
             }
 
-            await Host.CreateDefaultBuilder(args)
-                .ConfigureServices((host, services) =>
-                {
-                    services = result.ActionArgs switch
+            try
+            {
+                await Host.CreateDefaultBuilder(args)
+                    .ConfigureServices((host, services) =>
                     {
-                        ValidationArgs v => services.AddHostedService<ValidationService>(),
-                        GenerationArgs g => services.AddHostedService<GenerationService>(),
-                        _ => services
-                    };
-
-                    services
-                        .AddTransient<ConfigFileParser>()
-                        .AddSingleton(typeof(IConfigurationBuilder<>), typeof(ConfigurationBuilder<>))
-                        .AddSingleton(x =>
+                        services = result.ActionArgs switch
                         {
-                            var validationConfigurationBuilder = x.GetService<IConfigurationBuilder<ValidationArgs>>();
-                            var generationConfigurationBuilder = x.GetService<IConfigurationBuilder<GenerationArgs>>();
-                            var inputConfiguration = result.ActionArgs switch
-                            {
-                                ValidationArgs v => validationConfigurationBuilder.GetConfiguration(v).GetAwaiter().GetResult(),
-                                GenerationArgs g => generationConfigurationBuilder.GetConfiguration(g).GetAwaiter().GetResult(),
-                                _ => default
-                            };
+                            ValidationArgs v => services.AddHostedService<ValidationService>(),
+                            GenerationArgs g => services.AddHostedService<GenerationService>(),
+                            _ => services
+                        };
 
-                            inputConfiguration.ToConfiguration();
-                            return inputConfiguration;
-                        })
-                        .AddSbomTool();
-                })
-            .RunConsoleAsync(x => x.SuppressStatusMessages = true);
+                        services
+                            .AddTransient<ConfigFileParser>()
+                            .AddSingleton(typeof(IConfigurationBuilder<>), typeof(ConfigurationBuilder<>))
+                            .AddSingleton(x =>
+                            {
+                                var validationConfigurationBuilder = x.GetService<IConfigurationBuilder<ValidationArgs>>();
+                                var generationConfigurationBuilder = x.GetService<IConfigurationBuilder<GenerationArgs>>();
+                                var inputConfiguration = result.ActionArgs switch
+                                {
+                                    ValidationArgs v => validationConfigurationBuilder.GetConfiguration(v).GetAwaiter().GetResult(),
+                                    GenerationArgs g => generationConfigurationBuilder.GetConfiguration(g).GetAwaiter().GetResult(),
+                                    _ => default
+                                };
+
+                                inputConfiguration.ToConfiguration();
+                                return inputConfiguration;
+                            })
+
+                            .AddSbomTool();
+                    })
+                .RunConsoleAsync(x => x.SuppressStatusMessages = true);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e.Message);
+            }
         }
     }
 }
