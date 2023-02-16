@@ -151,9 +151,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             Assert.IsNotNull(config);
             Assert.IsNotNull(config.ManifestDirPath);
-
-            var expectedPath = Path.Join("BuildDropPath", Constants.ManifestFolder);
-            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
+            Assert.AreEqual(Path.Join("BuildDropPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
 
             fileSystemUtilsMock.VerifyAll();
         }

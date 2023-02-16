@@ -161,10 +161,10 @@ public class SPDXParser : ISbomParser
 
     private void ValidateParsingComplete()
     {
-        if (!isPackageArrayParsingFinished 
-            || !isFileArrayParsingFinished 
-            || !isRelationshipArrayParsingFinished 
-            || !isExternalReferencesArrayParsingFinished)
+        if ((isPackageArrayParsingStarted && !isPackageArrayParsingFinished)
+            || (isFileArrayParsingStarted && !isFileArrayParsingFinished)
+            || (isRelationshipArrayParsingStarted && !isRelationshipArrayParsingFinished) 
+            || (isExternalReferencesArrayParsingStarted && !isExternalReferencesArrayParsingFinished))
         {
             throw new ParserException($"Parser has reached the Finished state while we are still processing some properties.");
         }
@@ -183,11 +183,6 @@ public class SPDXParser : ISbomParser
         if (!isRelationshipArrayParsingStarted)
         {
             missingProps.Add("relationships");
-        }
-
-        if (!isExternalReferencesArrayParsingStarted)
-        {
-            missingProps.Add("externalDocumentReferences");
         }
 
         if (missingProps.Any())

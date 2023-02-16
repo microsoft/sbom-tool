@@ -44,6 +44,7 @@ internal readonly struct SbomParserStrings
 
     public const string JsonWithMissingRelationships = @"{
                 ""files"":[],
+                ""packages"":[],
                 ""testSkip1"":""testValue"",
                 ""testSkip2"":[],
                 ""testSkip3"":[""test"", ""test2""],
@@ -56,6 +57,7 @@ internal readonly struct SbomParserStrings
 
     public const string JsonWithMissingReferences = @"{
                 ""files"":[],
+                ""packages"":[],
                 ""testSkip1"":""testValue"",
                 ""testSkip2"":[],
                 ""relationships"":[],
