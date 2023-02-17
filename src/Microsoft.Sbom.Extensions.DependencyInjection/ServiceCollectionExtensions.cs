@@ -130,7 +130,8 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
                     typeof(IManifestGenerator),
                     typeof(IMetadataProvider),
                     typeof(IManifestInterface)))
-                .AsImplementedInterfaces());
+                .AsImplementedInterfaces())
+            .AddScoped<ISBOMGenerator, SbomGenerator>();
 
             return services;
         }
