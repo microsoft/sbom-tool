@@ -96,7 +96,6 @@ namespace Microsoft.Sbom.Api
             ArgumentNullException.ThrowIfNull(files);
             ArgumentNullException.ThrowIfNull(packages);
             ArgumentNullException.ThrowIfNull(metadata);
-            ArgumentNullException.ThrowIfNull(manifestDirPath);
 
             var inputConfiguration = ApiConfigurationBuilder.GetConfiguration(
                 rootPath, manifestDirPath, files, packages, metadata, specifications,

@@ -144,7 +144,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
                 // Calculate SBOM file sizes.
                 var sbomFormatsUsed = sbomFormats
                                         .Where(f => File.Exists(f.Value))
-                                        .Select(f => new SBOMFile
+                                        .Select(f => new SbomFile
                                         {
                                             SbomFilePath = f.Value,
                                             SbomFormatName = f.Key,
@@ -153,7 +153,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
                                         .ToList();
 
                 // Create the telemetry object.
-                var telemetry = new SBOMTelemetry
+                var telemetry = new SbomTelemetry
                 {
                     Result = this.result,
                     Errors = new ErrorContainer<FileValidationResult>

@@ -13,7 +13,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry.Entities
     /// The telemetry that is logged to a file/console for the given SBOM execution.
     /// </summary>
     [Serializable]
-    public class SBOMTelemetry
+    public class SbomTelemetry
     {
         /// <summary>
         /// Gets or sets the result of the execution.
@@ -35,7 +35,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry.Entities
         /// Gets or sets a list of the SBOM formats and related file properties that was used in the 
         /// generation/validation of the SBOM.
         /// </summary>
-        public IList<SBOMFile> SBOMFormatsUsed { get; set; }
+        public IList<SbomFile> SBOMFormatsUsed { get; set; }
 
         /// <summary>
         /// Gets or sets a list of event time durations.

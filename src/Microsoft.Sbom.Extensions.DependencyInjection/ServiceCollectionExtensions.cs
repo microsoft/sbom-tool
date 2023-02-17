@@ -29,6 +29,7 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Interfaces;
 using Serilog;
 using Serilog.Core;
+using Serilog.Events;
 using System.Collections.Concurrent;
 using ILogger = Serilog.ILogger;
 
@@ -36,7 +37,7 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSbomConfiguration(this IServiceCollection services, InputConfiguration inputConfiguration)
+        public static IServiceCollection AddSbomConfiguration(this IServiceCollection services, InputConfiguration inputConfiguration, LogEventLevel logLevel = LogEventLevel.Information)
         {
             ArgumentNullException.ThrowIfNull(inputConfiguration);
             services
@@ -45,19 +46,18 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
                     inputConfiguration.ToConfiguration();
                     return inputConfiguration;
                 })
-                .AddSbomTool();
+                .AddSbomTool(logLevel);
             return services;
         }
 
-        public static IServiceCollection AddSbomTool(this IServiceCollection services)
+        public static IServiceCollection AddSbomTool(this IServiceCollection services, LogEventLevel logLevel = LogEventLevel.Information)
         {
             services
             .AddSingleton<IConfiguration, Configuration>()
             .AddTransient(_ => FileSystemUtilsProvider.CreateInstance())
             .AddTransient<ILogger>(x =>
             {
-                var configuration = x.GetRequiredService<InputConfiguration>();
-                return new LoggerConfiguration().MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = configuration.Verbosity.Value })
+                return new LoggerConfiguration().MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
                     .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
                     .CreateLogger();
             })
