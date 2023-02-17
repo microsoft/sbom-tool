@@ -9,7 +9,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry.Entities
     /// Represents a SBOM file object and contains additional properties 
     /// related to the file.
     /// </summary>
-    public class SbomFile
+    public class SBOMFile
     {
         /// <summary>
         /// Gets or sets the name and version of the format of the generated SBOM.
