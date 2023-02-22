@@ -12,7 +12,6 @@ namespace Microsoft.Sbom.Api.Filters
     {
         private readonly IConfiguration configuration;
         private readonly IOSUtils osUtils;
-        private string manifestFolderPath;
 
         public ManifestFolderFilter(
             IConfiguration configuration,
@@ -26,6 +25,8 @@ namespace Microsoft.Sbom.Api.Filters
 
         public bool IsValid(string filePath)
         {
+            var manifestFolderPath = new FileInfo(configuration.ManifestDirPath.Value).FullName;
+
             if (string.IsNullOrEmpty(filePath))
             {
                 return false;
@@ -38,7 +39,6 @@ namespace Microsoft.Sbom.Api.Filters
 
         public void Init()
         {
-            manifestFolderPath = new FileInfo(configuration.ManifestDirPath.Value).FullName;
         }
     }
 }

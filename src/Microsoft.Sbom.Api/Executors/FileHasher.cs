@@ -18,6 +18,8 @@ using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Entities;
+using AutoMapper.Configuration;
+using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
 
 namespace Microsoft.Sbom.Api.Executors
 {
@@ -30,9 +32,36 @@ namespace Microsoft.Sbom.Api.Executors
         private readonly IHashCodeGenerator hashCodeGenerator;
         private readonly IManifestPathConverter manifestPathConverter;
         private readonly ILogger log;
+        private readonly IConfiguration configuration;
         private readonly ISbomConfigProvider sbomConfigs;
+        private readonly ManifestGeneratorProvider manifestGeneratorProvider;
         private readonly IFileTypeUtils fileTypeUtils;
-        private readonly AlgorithmName[] hashAlgorithmNames;
+        private AlgorithmName[] hashAlgorithmNames;
+
+        private AlgorithmName[] HashAlgorithmNames
+        {
+            get
+            {
+                // Set the hash algorithms to calculate based on the action.
+                hashAlgorithmNames ??= configuration.ManifestToolAction switch
+                {
+                    ManifestToolActions.Validate => new AlgorithmName[]
+                                                    {
+                                                        configuration.HashAlgorithm.Value
+                                                    },
+                    ManifestToolActions.Generate => sbomConfigs.GetManifestInfos()
+                                                .Select(config => manifestGeneratorProvider
+                                                                    .Get(config)
+                                                                    .RequiredHashAlgorithms)
+                                                .SelectMany(h => h)
+                                                .Distinct()
+                                                .ToArray(),
+                    _ => null
+                };
+
+                return hashAlgorithmNames;
+            }
+        }
 
         public ManifestData ManifestData { get; set; }
 
@@ -58,29 +87,10 @@ namespace Microsoft.Sbom.Api.Executors
             this.hashCodeGenerator = hashCodeGenerator ?? throw new ArgumentNullException(nameof(hashCodeGenerator));
             this.manifestPathConverter = manifestPathConverter ?? throw new ArgumentNullException(nameof(manifestPathConverter));
             this.log = log ?? throw new ArgumentNullException(nameof(log));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+            this.manifestGeneratorProvider = manifestGeneratorProvider ?? throw new ArgumentNullException(nameof(manifestGeneratorProvider));
             this.fileTypeUtils = fileTypeUtils ?? throw new ArgumentNullException(nameof(fileTypeUtils));
-
-            // Set the hash algorithms to calculate based on the action.
-            switch (configuration.ManifestToolAction)
-            {
-                case ManifestToolActions.Validate:
-                    hashAlgorithmNames = new AlgorithmName[]
-                    {
-                        configuration.HashAlgorithm.Value
-                    };
-                    break;
-                case ManifestToolActions.Generate:
-
-                    hashAlgorithmNames = sbomConfigs.GetManifestInfos()
-                                            .Select(config => manifestGeneratorProvider
-                                                                .Get(config)
-                                                                .RequiredHashAlgorithms)
-                                            .SelectMany(h => h)
-                                            .Distinct()
-                                            .ToArray();
-                    break;
-            }
         }
 
         public (ChannelReader<InternalSbomFileInfo>, ChannelReader<FileValidationResult>) Run(ChannelReader<string> fileInfo, FileLocation fileLocation = FileLocation.OnDisk, bool prependDotToPath = false)
@@ -109,7 +119,7 @@ namespace Microsoft.Sbom.Api.Executors
             try
             {
                 (relativeFilePath, isOutsideDropPath) = manifestPathConverter.Convert(file, prependDotToPath);
-                Checksum[] fileHashes = hashCodeGenerator.GenerateHashes(file, hashAlgorithmNames);
+                Checksum[] fileHashes = hashCodeGenerator.GenerateHashes(file, HashAlgorithmNames);
                 if (fileHashes == null || fileHashes.Length == 0 || fileHashes.Any(f => string.IsNullOrEmpty(f.ChecksumValue)))
                 {
                     throw new HashGenerationException($"Failed to generate hashes for '{file}'.");

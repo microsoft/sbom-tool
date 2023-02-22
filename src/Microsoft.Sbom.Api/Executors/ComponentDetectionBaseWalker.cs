@@ -27,7 +27,7 @@ namespace Microsoft.Sbom.Api.Executors
         private readonly ILogger log;
         private readonly ComponentDetectorCachedExecutor componentDetector;
         private readonly IConfiguration configuration;
-        private readonly VerbosityMode verbosity;
+        private readonly ISbomConfigProvider sbomConfigs;
 
         private ComponentDetectionCliArgumentBuilder cliArgumentBuilder;
 
@@ -37,16 +37,17 @@ namespace Microsoft.Sbom.Api.Executors
             IConfiguration configuration,
             ISbomConfigProvider sbomConfigs)
         {
-            if (sbomConfigs is null)
-            {
-                throw new ArgumentNullException(nameof(sbomConfigs));
-            }
-
             this.log = log ?? throw new ArgumentNullException(nameof(log));
             this.componentDetector = componentDetector ?? throw new ArgumentNullException(nameof(componentDetector));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs)); 
+        }
 
-            verbosity = configuration.Verbosity.Value switch
+        public (ChannelReader<ScannedComponent> output, ChannelReader<ComponentDetectorException> error) GetComponents(string buildComponentDirPath)
+        {
+            log.Debug($"Scanning for packages under the root path {buildComponentDirPath}.");
+
+            var verbosity = configuration.Verbosity.Value switch
             {
                 LogEventLevel.Verbose => VerbosityMode.Verbose,
                 _ => VerbosityMode.Normal,
@@ -65,11 +66,6 @@ namespace Microsoft.Sbom.Api.Executors
                     cliArgumentBuilder.AddArg("DirectoryExclusionList", directory);
                 }
             }
-        }
-
-        public (ChannelReader<ScannedComponent> output, ChannelReader<ComponentDetectorException> error) GetComponents(string buildComponentDirPath)
-        {
-            log.Debug($"Scanning for packages under the root path {buildComponentDirPath}.");
 
             var output = Channel.CreateUnbounded<ScannedComponent>();
             var errors = Channel.CreateUnbounded<ComponentDetectorException>();
