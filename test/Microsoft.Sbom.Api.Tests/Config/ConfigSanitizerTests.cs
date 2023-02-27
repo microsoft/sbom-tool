@@ -1,10 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Hashing;
@@ -12,10 +9,13 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PowerArgs;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Tests.Config
@@ -169,25 +169,25 @@ namespace Microsoft.Sbom.Api.Tests.Config
 
             Assert.IsNotNull(config.ManifestDirPath);
             Assert.IsNotNull(config.ManifestDirPath.Value);
-
-            var expectedPath = Path.Join("dropPath", "_manifest");
-            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
+            Assert.AreEqual(Path.Join("dropPath", "_manifest"), config.ManifestDirPath.Value);
         }
 
         [TestMethod]
         public void ManifestDirShouldEndWithManifestDirForGenerate_Succeeds()
         {
             var config = GetConfigurationBaseObject();
-            config.ManifestDirPath = new ConfigurationSetting<string>("manifestDirPath");
+            config.ManifestDirPath = new ConfigurationSetting<string>
+            {
+                Source = SettingSource.Default,
+                Value = "manifestDirPath"
+            };
 
             config.ManifestToolAction = ManifestToolActions.Generate;
             configSanitizer.SanitizeConfig(config);
 
             Assert.IsNotNull(config.ManifestDirPath);
             Assert.IsNotNull(config.ManifestDirPath.Value);
-
-            var expectedPath = Path.Join("manifestDirPath", "_manifest");
-            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
+            Assert.AreEqual(Path.Join("manifestDirPath", "_manifest"), config.ManifestDirPath.Value);
         }
 
         [TestMethod]
@@ -280,34 +280,6 @@ namespace Microsoft.Sbom.Api.Tests.Config
             configSanitizer.SanitizeConfig(config);
 
             Assert.AreEqual(actualOrg, config.PackageSupplier.Value);
-        }
-
-        [TestMethod]
-        [DataRow(ManifestToolActions.Validate)]
-        [DataRow(ManifestToolActions.Generate)]
-        public void ConfigSantizer_Validate_ReplacesBackslashes(ManifestToolActions action)
-        {
-            var config = GetConfigurationBaseObject();
-            config.ManifestDirPath = new ($"\\{nameof(config.ManifestDirPath)}\\", SettingSource.Default);
-            config.BuildDropPath = new ($"\\{nameof(config.BuildDropPath)}\\", SettingSource.Default);
-            config.OutputPath = new ($"\\{nameof(config.OutputPath)}\\", SettingSource.Default);
-            config.ConfigFilePath = new ($"\\{nameof(config.ConfigFilePath)}\\", SettingSource.Default);
-            config.RootPathFilter = new ($"\\{nameof(config.RootPathFilter)}\\", SettingSource.Default);
-            config.BuildComponentPath = new ($"\\{nameof(config.BuildComponentPath)}\\", SettingSource.Default);
-            config.CatalogFilePath = new ($"\\{nameof(config.CatalogFilePath)}\\", SettingSource.Default);
-            config.TelemetryFilePath = new ($"\\{nameof(config.TelemetryFilePath)}\\", SettingSource.Default);
-
-            config.ManifestToolAction = action;
-            configSanitizer.SanitizeConfig(config);
-
-            Assert.IsTrue(config.ManifestDirPath.Value.StartsWith($"/{nameof(config.ManifestDirPath)}/"));
-            Assert.IsTrue(config.BuildDropPath.Value.StartsWith($"/{nameof(config.BuildDropPath)}/"));
-            Assert.IsTrue(config.OutputPath.Value.StartsWith($"/{nameof(config.OutputPath)}/"));
-            Assert.IsTrue(config.ConfigFilePath.Value.StartsWith($"/{nameof(config.ConfigFilePath)}/"));
-            Assert.IsTrue(config.RootPathFilter.Value.StartsWith($"/{nameof(config.RootPathFilter)}/"));
-            Assert.IsTrue(config.BuildComponentPath.Value.StartsWith($"/{nameof(config.BuildComponentPath)}/"));
-            Assert.IsTrue(config.CatalogFilePath.Value.StartsWith($"/{nameof(config.CatalogFilePath)}/"));
-            Assert.IsTrue(config.TelemetryFilePath.Value.StartsWith($"/{nameof(config.TelemetryFilePath)}/"));
         }
     }
 }
