@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Ninject;
 using Serilog;
 using System;
 using System.Threading.Channels;
@@ -16,15 +15,17 @@ namespace Microsoft.Sbom.Api.Executors
     /// </summary>
     public class ManifestFolderFilterer
     {
-        private readonly IFilter manifestFolderFilter;
+        private readonly IFilter<ManifestFolderFilter> manifestFolderFilter;
         private readonly ILogger log;
 
         public ManifestFolderFilterer(
-                                      [Named(nameof(ManifestFolderFilter))] IFilter manifestFolderFilter,
+                                      IFilter<ManifestFolderFilter> manifestFolderFilter,
                                       ILogger log)
         {
-            this.manifestFolderFilter = manifestFolderFilter ?? throw new ArgumentNullException(nameof(manifestFolderFilter));
-            this.log = log ?? throw new ArgumentNullException(nameof(log));
+            ArgumentNullException.ThrowIfNull(manifestFolderFilter);
+            ArgumentNullException.ThrowIfNull(log);
+            this.manifestFolderFilter = manifestFolderFilter;
+            this.log = log;
         }
 
         public (ChannelReader<string> file, ChannelReader<FileValidationResult> errors) FilterFiles(ChannelReader<string> files)

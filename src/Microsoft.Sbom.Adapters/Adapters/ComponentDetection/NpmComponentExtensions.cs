@@ -14,9 +14,9 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
     internal static class NpmComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="NpmComponent"/> to an <see cref="SBOMPackage"/>.
+        /// Converts a <see cref="NpmComponent"/> to an <see cref="SbomPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this NpmComponent npmComponent) => new ()
+        public static SbomPackage? ToSbomPackage(this NpmComponent npmComponent) => new ()
         {
             Id = npmComponent.Id,
             PackageUrl = npmComponent.PackageUrl?.ToString(),

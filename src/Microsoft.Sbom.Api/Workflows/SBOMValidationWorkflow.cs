@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
@@ -26,7 +25,7 @@ namespace Microsoft.Sbom.Api.Workflows
     /// <summary>
     /// Defines the workflow steps for the drop validation action.
     /// </summary>
-    public class SBOMValidationWorkflow : IWorkflow
+    public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
     {
         private readonly IConfiguration configuration;
         private readonly DirectoryWalker directoryWalker;
@@ -42,7 +41,7 @@ namespace Microsoft.Sbom.Api.Workflows
         private readonly ManifestFileFilterer manifestFileFilterer;
         private readonly IRecorder recorder;
 
-        public SBOMValidationWorkflow(
+        public SbomValidationWorkflow(
             IConfiguration configuration,
             DirectoryWalker directoryWalker,
             ManifestFolderFilterer fileFilterer,

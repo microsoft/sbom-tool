@@ -10,7 +10,6 @@ using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Ninject;
 using PowerArgs;
 using Serilog;
 using System;
@@ -27,50 +26,50 @@ namespace Microsoft.Sbom.Api.Workflows
     /// The SBOM tool workflow class that is used to generate a SBOM
     /// file for a given build root path.
     /// </summary>
-    public class SBOMGenerationWorkflow : IWorkflow
+    public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
     {
-        public IFileSystemUtils FileSystemUtils { get; }
+        private readonly IFileSystemUtils fileSystemUtils;
 
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration configuration;
 
-        public ILogger Log { get; }
+        private readonly ILogger log;
 
-        public IJsonArrayGenerator FileArrayGenerator { get; }
-        
-        public IJsonArrayGenerator PackageArrayGenerator { get; }
-        
-        public IJsonArrayGenerator RelationshipsArrayGenerator { get; }
+        private readonly IJsonArrayGenerator<FileArrayGenerator> fileArrayGenerator;
 
-        public IJsonArrayGenerator ExternalDocumentReferenceGenerator { get; }
+        private readonly IJsonArrayGenerator<PackageArrayGenerator> packageArrayGenerator;
 
-        public ISbomConfigProvider SBOMConfigs { get; }
+        private readonly IJsonArrayGenerator<RelationshipsArrayGenerator> relationshipsArrayGenerator;
 
-        public IOSUtils OSUtils { get; }
+        private readonly IJsonArrayGenerator<ExternalDocumentReferenceGenerator> externalDocumentReferenceGenerator;
 
-        public IRecorder Recorder { get; }
+        private readonly ISbomConfigProvider sbomConfigs;
 
-        public SBOMGenerationWorkflow(
+        private readonly IOSUtils osUtils;
+
+        private readonly IRecorder recorder;
+
+        public SbomGenerationWorkflow(
             IConfiguration configuration,
             IFileSystemUtils fileSystemUtils,
             ILogger log,
-            [Named(nameof(FileArrayGenerator))] IJsonArrayGenerator fileArrayGenerator,
-            [Named(nameof(PackageArrayGenerator))] IJsonArrayGenerator packageArrayGenerator,
-            [Named(nameof(RelationshipsArrayGenerator))] IJsonArrayGenerator relationshipsArrayGenerator,
-            [Named(nameof(ExternalDocumentReferenceGenerator))] IJsonArrayGenerator externalDocumentReferenceGenerator,
+            IJsonArrayGenerator<FileArrayGenerator> fileArrayGenerator,
+            IJsonArrayGenerator<PackageArrayGenerator> packageArrayGenerator,
+            IJsonArrayGenerator<RelationshipsArrayGenerator> relationshipsArrayGenerator,
+            IJsonArrayGenerator<ExternalDocumentReferenceGenerator> externalDocumentReferenceGenerator,
             ISbomConfigProvider sbomConfigs,
             IOSUtils osUtils,
             IRecorder recorder)
         {
-            FileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
-            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            Log = log ?? throw new ArgumentNullException(nameof(log));
-            FileArrayGenerator = fileArrayGenerator ?? throw new ArgumentNullException(nameof(fileArrayGenerator));
-            PackageArrayGenerator = packageArrayGenerator ?? throw new ArgumentNullException(nameof(packageArrayGenerator));
-            RelationshipsArrayGenerator = relationshipsArrayGenerator ?? throw new ArgumentNullException(nameof(relationshipsArrayGenerator));
-            ExternalDocumentReferenceGenerator = externalDocumentReferenceGenerator ?? throw new ArgumentNullException(nameof(externalDocumentReferenceGenerator));
-            SBOMConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
-            OSUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
-            Recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+            this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.log = log ?? throw new ArgumentNullException(nameof(log));
+            this.fileArrayGenerator = fileArrayGenerator ?? throw new ArgumentNullException(nameof(fileArrayGenerator));
+            this.packageArrayGenerator = packageArrayGenerator ?? throw new ArgumentNullException(nameof(packageArrayGenerator));
+            this.relationshipsArrayGenerator = relationshipsArrayGenerator ?? throw new ArgumentNullException(nameof(relationshipsArrayGenerator));
+            this.externalDocumentReferenceGenerator = externalDocumentReferenceGenerator ?? throw new ArgumentNullException(nameof(externalDocumentReferenceGenerator));
+            this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+            this.osUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
+            this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         }
 
         public virtual async Task<bool> RunAsync()
@@ -78,57 +77,57 @@ namespace Microsoft.Sbom.Api.Workflows
             IList<FileValidationResult> validErrors = new List<FileValidationResult>();
             string sbomDir = null;
             bool deleteSBOMDir = false;
-            using (Recorder.TraceEvent(Events.SBOMGenerationWorkflow))
+            using (recorder.TraceEvent(Events.SBOMGenerationWorkflow))
             {
                 try
                 {
-                    Log.Debug("Starting SBOM generation workflow.");
+                    log.Debug("Starting SBOM generation workflow.");
 
-                    sbomDir = Configuration.ManifestDirPath.Value;
+                    sbomDir = configuration.ManifestDirPath.Value;
 
                     // Don't remove directory if path is provided by user, there could be other files in that directory
-                    if (Configuration.ManifestDirPath.IsDefaultSource)
+                    if (configuration.ManifestDirPath.IsDefaultSource)
                     {
                         RemoveExistingManifestDirectory();
                     }
 
-                    await using (SBOMConfigs.StartJsonSerializationAsync())
+                    await using (sbomConfigs.StartJsonSerializationAsync())
                     {
-                        SBOMConfigs.ApplyToEachConfig(config => config.JsonSerializer.StartJsonObject());
+                        sbomConfigs.ApplyToEachConfig(config => config.JsonSerializer.StartJsonObject());
 
                         // Files section
-                        validErrors = await FileArrayGenerator.GenerateAsync();
+                        validErrors = await fileArrayGenerator.GenerateAsync();
 
                         // Packages section
-                        validErrors.Concat(await PackageArrayGenerator.GenerateAsync());
+                        validErrors.Concat(await packageArrayGenerator.GenerateAsync());
 
                         // External Document Reference section
-                        validErrors.Concat(await ExternalDocumentReferenceGenerator.GenerateAsync());
+                        validErrors.Concat(await externalDocumentReferenceGenerator.GenerateAsync());
 
                         // Relationships section
-                        validErrors.Concat(await RelationshipsArrayGenerator.GenerateAsync());
+                        validErrors.Concat(await relationshipsArrayGenerator.GenerateAsync());
 
                         // Write headers
-                        SBOMConfigs.ApplyToEachConfig(config =>
+                        sbomConfigs.ApplyToEachConfig(config =>
                             config.JsonSerializer.WriteJsonString(
-                                config.MetadataBuilder.GetHeaderJsonString(SBOMConfigs)));
+                                config.MetadataBuilder.GetHeaderJsonString(sbomConfigs)));
 
                         // Finalize JSON
-                        SBOMConfigs.ApplyToEachConfig(config => config.JsonSerializer.FinalizeJsonObject());
+                        sbomConfigs.ApplyToEachConfig(config => config.JsonSerializer.FinalizeJsonObject());
                     }
 
                     // Generate SHA256 for manifest json
-                    SBOMConfigs.ApplyToEachConfig(config => GenerateHashForManifestJson(config.ManifestJsonFilePath));
+                    sbomConfigs.ApplyToEachConfig(config => GenerateHashForManifestJson(config.ManifestJsonFilePath));
 
                     return !validErrors.Any();
                 }
                 catch (Exception e)
                 {
-                    Recorder.RecordException(e);
-                    Log.Error("Encountered an error while generating the manifest.");
-                    Log.Error($"Error details: {e.Message}");
+                    recorder.RecordException(e);
+                    log.Error("Encountered an error while generating the manifest.");
+                    log.Error($"Error details: {e.Message}");
 
-                    if (!(e is ManifestFolderExistsException))
+                    if (e is not ManifestFolderExistsException)
                     {
                         deleteSBOMDir = true;
                     }
@@ -140,7 +139,7 @@ namespace Microsoft.Sbom.Api.Workflows
                 {
                     if (validErrors != null)
                     {
-                        Recorder.RecordTotalErrors(validErrors);
+                        recorder.RecordTotalErrors(validErrors);
                     }
 
                     // Delete the generated _manifest folder if generation failed.
@@ -156,22 +155,22 @@ namespace Microsoft.Sbom.Api.Workflows
         {
             try
             {
-                if (!string.IsNullOrEmpty(sbomDir) && FileSystemUtils.DirectoryExists(sbomDir))
+                if (!string.IsNullOrEmpty(sbomDir) && fileSystemUtils.DirectoryExists(sbomDir))
                 {
-                    if (Configuration.ManifestDirPath.IsDefaultSource)
+                    if (configuration.ManifestDirPath.IsDefaultSource)
                     {
-                        FileSystemUtils.DeleteDir(sbomDir, true);
+                        fileSystemUtils.DeleteDir(sbomDir, true);
                     }
-                    else if (!FileSystemUtils.IsDirectoryEmpty(sbomDir))
+                    else if (!fileSystemUtils.IsDirectoryEmpty(sbomDir))
                     {
-                        Log.Warning($"Manifest generation failed, however we were " +
+                        log.Warning($"Manifest generation failed, however we were " +
                                     $"unable to delete the partially generated manifest.json file and the {sbomDir} directory because the directory was not empty.");
                     }
                 }
             }
             catch (Exception e)
             {
-                Log.Warning(
+                log.Warning(
                     $"Manifest generation failed, however we were " +
                     $"unable to delete the partially generated manifest.json file and the {sbomDir} directory.", e);
             }
@@ -179,24 +178,24 @@ namespace Microsoft.Sbom.Api.Workflows
 
         private void GenerateHashForManifestJson(string manifestJsonFilePath)
         {
-            if (!FileSystemUtils.FileExists(manifestJsonFilePath))
+            if (!fileSystemUtils.FileExists(manifestJsonFilePath))
             {
-                Log.Warning($"Failed to create manifest hash because the manifest json file does not exist.");
+                log.Warning($"Failed to create manifest hash because the manifest json file does not exist.");
                 return;
             }
 
             string hashFileName = $"{manifestJsonFilePath}.sha256";
 
-            using var readStream = FileSystemUtils.OpenRead(manifestJsonFilePath);
+            using var readStream = fileSystemUtils.OpenRead(manifestJsonFilePath);
             using var bufferedStream = new BufferedStream(readStream, 1024 * 32);
-            using var writeFileStream = FileSystemUtils.OpenWrite(hashFileName);
+            using var writeFileStream = fileSystemUtils.OpenWrite(hashFileName);
             var hashValue = Encoding.Unicode.GetBytes(BitConverter.ToString(new Sha256HashAlgorithm().ComputeHash(bufferedStream)).Replace("-", string.Empty).ToLower());
             writeFileStream.Write(hashValue, 0, hashValue.Length);
         }
 
         private void RemoveExistingManifestDirectory()
         {
-            var rootManifestFolderPath = Configuration.ManifestDirPath.Value;
+            var rootManifestFolderPath = configuration.ManifestDirPath.Value;
 
             try
             {
@@ -204,15 +203,15 @@ namespace Microsoft.Sbom.Api.Workflows
                 // multiple SBOMs for the same drop. However, the default behaviour is to fail with an
                 // Exception since we don't want to inadvertently delete someone else's data. This behaviour
                 // can be overridden by setting an environment variable.
-                if (FileSystemUtils.DirectoryExists(rootManifestFolderPath))
+                if (fileSystemUtils.DirectoryExists(rootManifestFolderPath))
                 {
                     bool.TryParse(
-                        OSUtils.GetEnvironmentVariable(Constants.DeleteManifestDirBoolVariableName),
+                        osUtils.GetEnvironmentVariable(Constants.DeleteManifestDirBoolVariableName),
                         out bool deleteSbomDirSwitch);
 
-                    Recorder.RecordSwitch(Constants.DeleteManifestDirBoolVariableName, deleteSbomDirSwitch);
+                    recorder.RecordSwitch(Constants.DeleteManifestDirBoolVariableName, deleteSbomDirSwitch);
 
-                    if (!deleteSbomDirSwitch && !(Configuration.DeleteManifestDirIfPresent?.Value ?? false))
+                    if (!deleteSbomDirSwitch && !(configuration.DeleteManifestDirIfPresent?.Value ?? false))
                     {
                         throw new ManifestFolderExistsException(
                             $"The BuildDropRoot folder already contains a _manifest folder. Please" +
@@ -221,10 +220,10 @@ namespace Microsoft.Sbom.Api.Workflows
                             $"overwrite this folder.");
                     }
 
-                    Log.Warning(
+                    log.Warning(
                         $"Deleting pre-existing folder {rootManifestFolderPath} as {Constants.DeleteManifestDirBoolVariableName}" +
                         $" is 'true'.");
-                    FileSystemUtils.DeleteDir(rootManifestFolderPath, true);
+                    fileSystemUtils.DeleteDir(rootManifestFolderPath, true);
                 }
             }
             catch (ManifestFolderExistsException)

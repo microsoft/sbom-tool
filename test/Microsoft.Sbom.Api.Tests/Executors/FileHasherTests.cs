@@ -73,7 +73,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>(), false)).Returns((string r, bool v) => (r, true));
 
             var files = Channel.CreateUnbounded<string>();
-            (ChannelReader<InternalSBOMFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
+            (ChannelReader<InternalSbomFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
                 = new FileHasher(
                     hashCodeGeneratorMock.Object,
                     manifestPathConverter.Object,
@@ -90,7 +90,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
             files.Writer.Complete();
 
-            await foreach (InternalSBOMFileInfo fileHash in fileHashes.file.ReadAllAsync())
+            await foreach (InternalSbomFileInfo fileHash in fileHashes.file.ReadAllAsync())
             {
                 Assert.IsTrue(fileList.Remove(fileHash.Path));
                 Assert.AreEqual("hash", fileHash.Checksum.First().ChecksumValue);
@@ -136,7 +136,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             };
 
             var files = Channel.CreateUnbounded<string>();
-            (ChannelReader<InternalSBOMFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
+            (ChannelReader<InternalSbomFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
                 = fileHasher.Run(files);
             foreach (var file in fileList)
             {
@@ -206,7 +206,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             };
 
             var files = Channel.CreateUnbounded<string>();
-            (ChannelReader<InternalSBOMFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
+            (ChannelReader<InternalSbomFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
                 = fileHasher.Run(files);
             foreach (var file in fileList)
             {
@@ -217,7 +217,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             var errorCount = 0;
             var filesCount = 0;
 
-            await foreach (InternalSBOMFileInfo fileHash in fileHashes.file.ReadAllAsync())
+            await foreach (InternalSbomFileInfo fileHash in fileHashes.file.ReadAllAsync())
             {
                 Assert.IsTrue(fileList.Remove(fileHash.Path));
                 Assert.AreEqual("hash", fileHash.Checksum.First().ChecksumValue);
@@ -282,7 +282,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>(), It.IsAny<bool>())).Returns((string r, bool v) => (r, true));
 
             var files = Channel.CreateUnbounded<string>();
-            (ChannelReader<InternalSBOMFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
+            (ChannelReader<InternalSbomFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
                 = new FileHasher(
                     hashCodeGeneratorMock.Object,
                     manifestPathConverter.Object,
@@ -299,7 +299,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests
 
             files.Writer.Complete();
 
-            await foreach (InternalSBOMFileInfo fileHash in fileHashes.file.ReadAllAsync())
+            await foreach (InternalSbomFileInfo fileHash in fileHashes.file.ReadAllAsync())
             {
                 Assert.IsTrue(fileList.Remove(fileHash.Path));
                 Assert.AreEqual("hash", fileHash.Checksum.First().ChecksumValue);

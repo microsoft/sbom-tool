@@ -27,7 +27,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
         private readonly ManifestFolderFilterer fileFilterer;
         private readonly ConcurrentSha256HashValidator hashValidator;
         private readonly EnumeratorChannel enumeratorChannel;
-        private readonly SBOMFileToFileInfoConverter fileConverter;
+        private readonly SbomFileToFileInfoConverter fileConverter;
         private readonly FileHashesDictionary fileHashesDictionary;
         private readonly FileFilterer spdxFileFilterer;
 
@@ -39,7 +39,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             ManifestFolderFilterer fileFilterer,
             ConcurrentSha256HashValidator hashValidator,
             EnumeratorChannel enumeratorChannel,
-            SBOMFileToFileInfoConverter fileConverter,
+            SbomFileToFileInfoConverter fileConverter,
             FileHashesDictionary fileHashesDictionary,
             FileFilterer spdxFileFilterer)
         {

@@ -6,6 +6,7 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Validators;
 using PowerArgs;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Microsoft.Sbom.Api.Config
@@ -13,18 +14,18 @@ namespace Microsoft.Sbom.Api.Config
     /// <summary>
     /// Runs finalizing operations on the configuration once it has been successfully parsed.
     /// </summary>
-    public class ConfigPostProcessor : IMappingAction<Configuration, Configuration>
+    public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration>
     {
-        private readonly ConfigValidator[] configValidators;
+        private readonly IEnumerable<ConfigValidator> configValidators;
         private readonly ConfigSanitizer configSanitizer;
 
-        public ConfigPostProcessor(ConfigValidator[] configValidators, ConfigSanitizer configSanitizer)
+        public ConfigPostProcessor(IEnumerable<ConfigValidator> configValidators, ConfigSanitizer configSanitizer)
         {
             this.configValidators = configValidators ?? throw new ArgumentNullException(nameof(configValidators));
             this.configSanitizer = configSanitizer ?? throw new ArgumentNullException(nameof(configSanitizer));
         }
 
-        public void Process(Configuration source, Configuration destination, ResolutionContext context)
+        public void Process(IConfiguration source, IConfiguration destination, ResolutionContext context)
         {
             // Set current action on config validators
             configValidators.ForEach(c => c.CurrentAction = destination.ManifestToolAction);
@@ -47,7 +48,7 @@ namespace Microsoft.Sbom.Api.Config
             destination = configSanitizer.SanitizeConfig(destination);
         }
 
-        private void SetDefautValue(Configuration destination, object value, PropertyDescriptor property)
+        private void SetDefautValue(IConfiguration destination, object value, PropertyDescriptor property)
         {
             if (value is string valueString)
             {

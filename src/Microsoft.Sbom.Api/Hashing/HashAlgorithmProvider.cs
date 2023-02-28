@@ -11,10 +11,10 @@ namespace Microsoft.Sbom.Api.Hashing
 {
     public class HashAlgorithmProvider : IHashAlgorithmProvider
     {
-        private readonly IAlgorithmNames[] algorithmNamesList;
+        private readonly IEnumerable<IAlgorithmNames> algorithmNamesList;
         private readonly Dictionary<string, AlgorithmName> algorithmNameMap;
 
-        public HashAlgorithmProvider(IAlgorithmNames[] algorithmNamesList)
+        public HashAlgorithmProvider(IEnumerable<IAlgorithmNames> algorithmNamesList)
         {
             this.algorithmNamesList = algorithmNamesList ?? throw new ArgumentNullException(nameof(algorithmNamesList));
             algorithmNameMap = new Dictionary<string, AlgorithmName>();

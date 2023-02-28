@@ -246,7 +246,7 @@ namespace Microsoft.Sbom.Adapters.Tests
             Assert.AreEqual(gitComponent.PackageUrl?.ToString(), sbomPackage.PackageUrl);
         }
 
-        private (AdapterReport report, List<SBOMPackage> packages) GenerateJsonFileForTestAndRun(string json)
+        private (AdapterReport report, List<SbomPackage> packages) GenerateJsonFileForTestAndRun(string json)
         {
             var baseDirectory = Path.Combine(testContext.TestRunDirectory, Guid.NewGuid().ToString());
             var bcdeOutputPath = Path.Combine(baseDirectory, "bcde-output.json");

@@ -8,25 +8,25 @@ using Microsoft.Sbom.Common;
 
 namespace Microsoft.Sbom.Api.Filters
 {
-    public class ManifestFolderFilter : IFilter
+    public class ManifestFolderFilter : IFilter<ManifestFolderFilter>
     {
         private readonly IConfiguration configuration;
-        private readonly IFileSystemUtils fileSystemUtils;
         private readonly IOSUtils osUtils;
-        private string manifestFolderPath;
 
         public ManifestFolderFilter(
             IConfiguration configuration,
-            IFileSystemUtils fileSystemUtils,
             IOSUtils osUtils)
         {
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
             this.osUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
+
+            Init();
         }
 
         public bool IsValid(string filePath)
         {
+            var manifestFolderPath = new FileInfo(configuration.ManifestDirPath.Value).FullName;
+
             if (string.IsNullOrEmpty(filePath))
             {
                 return false;
@@ -39,7 +39,6 @@ namespace Microsoft.Sbom.Api.Filters
 
         public void Init()
         {
-            manifestFolderPath = new FileInfo(configuration.ManifestDirPath.Value).FullName;
         }
     }
 }

@@ -15,21 +15,25 @@ namespace Microsoft.Sbom.Api.Manifest
     /// </summary>
     public class ManifestGeneratorProvider
     {
-        private readonly IManifestGenerator[] manifestGenerators;
+        private readonly IEnumerable<IManifestGenerator> manifestGenerators;
         private readonly IDictionary<string, IManifestGenerator> manifestMap = new Dictionary<string, IManifestGenerator>(StringComparer.OrdinalIgnoreCase);
 
-        public ManifestGeneratorProvider(IManifestGenerator[] manifestGenerators)
+        public ManifestGeneratorProvider(IEnumerable<IManifestGenerator> manifestGenerators)
         {
             this.manifestGenerators = manifestGenerators ?? Array.Empty<IManifestGenerator>();
+
+            Init();
         }
 
-        public void Init()
+        public ManifestGeneratorProvider Init()
         {
             foreach (var manifestGenerator in manifestGenerators)
             {
                 var manifestFormat = manifestGenerator.RegisterManifest();
                 manifestMap[$"{manifestFormat.Name}:{manifestFormat.Version}"] = manifestGenerator;
             }
+
+            return this;
         }
 
         public IManifestGenerator Get(ManifestInfo manifestInfo)

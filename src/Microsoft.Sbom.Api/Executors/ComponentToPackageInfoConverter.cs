@@ -31,9 +31,9 @@ namespace Microsoft.Sbom.Api.Executors
             this.log = log ?? throw new ArgumentNullException(nameof(log));
         }
 
-        public virtual (ChannelReader<SBOMPackage> output, ChannelReader<FileValidationResult> errors) Convert(ChannelReader<ScannedComponent> componentReader)
+        public virtual (ChannelReader<SbomPackage> output, ChannelReader<FileValidationResult> errors) Convert(ChannelReader<ScannedComponent> componentReader)
         {
-            var output = Channel.CreateUnbounded<SBOMPackage>();
+            var output = Channel.CreateUnbounded<SbomPackage>();
             var errors = Channel.CreateUnbounded<FileValidationResult>();
 
             Task.Run(async () =>
@@ -47,7 +47,7 @@ namespace Microsoft.Sbom.Api.Executors
                 output.Writer.Complete();
                 errors.Writer.Complete();
 
-                async Task ConvertComponentToPackage(ScannedComponent scannedComponent, Channel<SBOMPackage> output, Channel<FileValidationResult> errors)
+                async Task ConvertComponentToPackage(ScannedComponent scannedComponent, Channel<SbomPackage> output, Channel<FileValidationResult> errors)
                 {
                     try
                     {

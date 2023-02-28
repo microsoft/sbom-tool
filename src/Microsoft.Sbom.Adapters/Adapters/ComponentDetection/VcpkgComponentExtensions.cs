@@ -12,9 +12,9 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
     internal static class VcpkgComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="VcpkgComponent"/> to an <see cref="SBOMPackage"/>.
+        /// Converts a <see cref="VcpkgComponent"/> to an <see cref="SbomPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this VcpkgComponent vcpkgComponent) => new ()
+        public static SbomPackage? ToSbomPackage(this VcpkgComponent vcpkgComponent) => new ()
         {
             Id = vcpkgComponent.Id,
             PackageUrl = vcpkgComponent.PackageUrl?.ToString(),

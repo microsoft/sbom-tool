@@ -14,9 +14,9 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
     internal static class GitComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="GitComponent"/> to an <see cref="SBOMPackage"/>.
+        /// Converts a <see cref="GitComponent"/> to an <see cref="SbomPackage"/>.
         /// </summary>
-        public static SBOMPackage? ToSbomPackage(this GitComponent gitComponent) => new ()
+        public static SbomPackage? ToSbomPackage(this GitComponent gitComponent) => new ()
         {
             Id = gitComponent.Id,
             PackageName = gitComponent.Id,

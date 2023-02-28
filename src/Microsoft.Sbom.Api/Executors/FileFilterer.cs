@@ -6,7 +6,6 @@ using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.Entities;
-using Ninject;
 using Serilog;
 using System;
 using System.Threading.Channels;
@@ -19,13 +18,13 @@ namespace Microsoft.Sbom.Api.Executors
     /// </summary>
     public class FileFilterer
     {
-        private readonly IFilter rootPathFilter;
+        private readonly IFilter<DownloadedRootPathFilter> rootPathFilter;
         private readonly ILogger log;
         private readonly IFileSystemUtils fileSystemUtils;
         private readonly IConfiguration configuration;
 
         public FileFilterer(
-            [Named(nameof(DownloadedRootPathFilter))] IFilter rootPathFilter,
+            IFilter<DownloadedRootPathFilter> rootPathFilter,
             ILogger log,
             IConfiguration configuration,
             IFileSystemUtils fileSystemUtils)
@@ -36,9 +35,9 @@ namespace Microsoft.Sbom.Api.Executors
             this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         }
 
-        public (ChannelReader<InternalSBOMFileInfo> files, ChannelReader<FileValidationResult> errors) Filter(ChannelReader<InternalSBOMFileInfo> files)
+        public (ChannelReader<InternalSbomFileInfo> files, ChannelReader<FileValidationResult> errors) Filter(ChannelReader<InternalSbomFileInfo> files)
         {
-            var output = Channel.CreateUnbounded<InternalSBOMFileInfo>();
+            var output = Channel.CreateUnbounded<InternalSbomFileInfo>();
             var errors = Channel.CreateUnbounded<FileValidationResult>();
 
             Task.Run(async () =>
@@ -55,7 +54,7 @@ namespace Microsoft.Sbom.Api.Executors
             return (output, errors);
         }
 
-        private async Task FilterFiles(InternalSBOMFileInfo file, Channel<FileValidationResult> errors, Channel<InternalSBOMFileInfo> output)
+        private async Task FilterFiles(InternalSbomFileInfo file, Channel<FileValidationResult> errors, Channel<InternalSbomFileInfo> output)
         {
             try
             {

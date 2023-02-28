@@ -1,15 +1,20 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Hashing;
+using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Ninject;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -21,11 +26,15 @@ namespace Microsoft.Sbom.Api.Tests
     public class SBOMGeneratorTest
     {
         private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
-        private SBOMGenerator generator;
-        private StandardKernel kernel;
-        private Mock<IWorkflow> mockWorkflow;
+        private SbomGenerator generator;
+        private Mock<IWorkflow<SbomGenerationWorkflow>> mockWorkflow;
         private Mock<IRecorder> mockRecorder;
+        private Mock<ManifestGeneratorProvider> mockGeneratorProvider;
+        private Mock<ConfigSanitizer> mockSanitizer;
+        private Mock<IHashAlgorithmProvider> mockHashAlgorithmProvider;
+        private Mock<IAssemblyConfig> mockAssemblyConfig;
         private RuntimeConfiguration runtimeConfiguration;
+        private Mock<IConfiguration> mockConfiguration;
 
         [TestInitialize]
         public void Setup()
@@ -35,15 +44,14 @@ namespace Microsoft.Sbom.Api.Tests
             fileSystemMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
 
-            kernel = new StandardKernel(new Bindings());
-            kernel.Unbind<IWorkflow>();
-            kernel.Unbind<IRecorder>();
-            kernel.Unbind<IFileSystemUtils>();
-
-            kernel.Bind<IFileSystemUtils>().ToConstant(fileSystemMock.Object);
-            generator = new SBOMGenerator(kernel, fileSystemMock.Object);
-            mockWorkflow = new Mock<IWorkflow>();
+            mockWorkflow = new Mock<IWorkflow<SbomGenerationWorkflow>>();
             mockRecorder = new Mock<IRecorder>();
+            mockGeneratorProvider = new Mock<ManifestGeneratorProvider>(null);
+            mockHashAlgorithmProvider = new Mock<IHashAlgorithmProvider>();
+            mockAssemblyConfig = new Mock<IAssemblyConfig>();
+            mockConfiguration = new Mock<IConfiguration>();
+
+            mockSanitizer = new Mock<ConfigSanitizer>(mockHashAlgorithmProvider.Object, fileSystemMock.Object, mockAssemblyConfig.Object);
 
             runtimeConfiguration = new RuntimeConfiguration
             {
@@ -54,11 +62,11 @@ namespace Microsoft.Sbom.Api.Tests
         [TestMethod]
         public async Task When_GenerateSbomAsync_WithRecordedErrors_Then_PopulateEntityErrors()
         {
-            var fileValidationResults = new List<FileValidationResult>();
-            fileValidationResults.Add(new FileValidationResult() { Path = "random", ErrorType = ErrorType.Other });
+            var fileValidationResults = new List<FileValidationResult>
+            {
+                new FileValidationResult() { Path = "random", ErrorType = ErrorType.Other }
+            };
 
-            kernel.Bind<IWorkflow>().ToMethod(x => mockWorkflow.Object).Named(nameof(SBOMGenerationWorkflow));
-            kernel.Bind<IRecorder>().ToMethod(x => mockRecorder.Object).InSingletonScope();
             mockRecorder.Setup(c => c.Errors).Returns(fileValidationResults).Verifiable();
             mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
 
@@ -67,7 +75,8 @@ namespace Microsoft.Sbom.Api.Tests
                 PackageSupplier = "Contoso"
             };
 
-            var result = await generator.GenerateSBOMAsync("rootPath", "compPath", metadata, configuration: runtimeConfiguration);
+            generator = new SbomGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
+            var result = await generator.GenerateSbomAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
 
             Assert.AreEqual(1, result.Errors.Count);
             Assert.AreEqual(EntityErrorType.Other, result.Errors[0].ErrorType);
@@ -79,8 +88,6 @@ namespace Microsoft.Sbom.Api.Tests
         [TestMethod]
         public async Task When_GenerateSbomAsync_WithNoRecordedErrors_Then_EmptyEntityErrors()
         {
-            kernel.Bind<IWorkflow>().ToMethod(x => mockWorkflow.Object).Named(nameof(SBOMGenerationWorkflow));
-            kernel.Bind<IRecorder>().ToMethod(x => mockRecorder.Object).InSingletonScope();
             mockRecorder.Setup(c => c.Errors).Returns(new List<FileValidationResult>()).Verifiable();
             mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
 
@@ -89,7 +96,8 @@ namespace Microsoft.Sbom.Api.Tests
                 PackageSupplier = "Contoso"
             };
 
-            var result = await generator.GenerateSBOMAsync("rootPath", "compPath", metadata, configuration: runtimeConfiguration);
+            generator = new SbomGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
+            var result = await generator.GenerateSbomAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
 
             Assert.AreEqual(0, result.Errors.Count);
             mockRecorder.Verify();

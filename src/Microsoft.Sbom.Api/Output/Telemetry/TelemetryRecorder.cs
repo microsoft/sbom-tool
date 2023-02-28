@@ -25,7 +25,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
     /// </summary>
     public class TelemetryRecorder : IRecorder
     {
-        private readonly ConcurrentBag<TimingRecorder> timingRecorders = new ConcurrentBag<TimingRecorder>();
+        private readonly ConcurrentBag<TimingRecorder> timingRecorders = new ();
         private readonly IDictionary<ManifestInfo, string> sbomFormats = new Dictionary<ManifestInfo, string>();
         private readonly IDictionary<string, object> switches = new Dictionary<string, object>();
         private readonly IList<Exception> exceptions = new List<Exception>();

@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Api.Tests
         private const int MaxParallelism = 48;
         private const string PackageName = "packageName";
         private const string PackageVersion = "packageVersion";
-        private readonly ApiConfigurationBuilder builder = new ApiConfigurationBuilder();
+
         private readonly SBOMMetadata metadata = new SBOMMetadata()
         {
             PackageName = PackageName,
@@ -41,16 +41,16 @@ namespace Microsoft.Sbom.Api.Tests
         };
 
         private readonly string manifestDirPath = "manifestDirPath";
-        private readonly List<SBOMFile> files = new List<SBOMFile>();
-        private readonly List<SBOMPackage> packages = new List<SBOMPackage>();
+        private readonly List<SbomFile> files = new List<SbomFile>();
+        private readonly List<SbomPackage> packages = new List<SbomPackage>();
         private readonly string externalDocumentRefListFile = "externalDocRef";
         private readonly string componentPath = @"D:\COMPONENT";
 
         [TestMethod]
         public void GetConfiguration_PopulateAll()
         {
-            List<SBOMSpecification> specs = new List<SBOMSpecification>();
-            specs.Add(new SBOMSpecification("spdx", "2.2"));
+            List<SbomSpecification> specs = new List<SbomSpecification>();
+            specs.Add(new SbomSpecification("spdx", "2.2"));
 
             var expectedManifestInfo = new ManifestInfo()
             {
@@ -58,7 +58,7 @@ namespace Microsoft.Sbom.Api.Tests
                 Version = "2.2"
             };
 
-            var config = builder.GetConfiguration(RootPath, manifestDirPath, files, packages, metadata, specs, runtime, externalDocumentRefListFile, componentPath);
+            var config = ApiConfigurationBuilder.GetConfiguration(RootPath, manifestDirPath, files, packages, metadata, specs, runtime, externalDocumentRefListFile, componentPath);
 
             Assert.AreEqual(RootPath, config.BuildDropPath.Value);
             Assert.AreEqual(componentPath, config.BuildComponentPath.Value);
@@ -90,7 +90,7 @@ namespace Microsoft.Sbom.Api.Tests
         [TestMethod]
         public void GetConfiguration_NullProperties()
         {
-            var config = builder.GetConfiguration(RootPath, manifestDirPath, null, null, metadata, null, runtime, null, componentPath);
+            var config = ApiConfigurationBuilder.GetConfiguration(RootPath, manifestDirPath, null, null, metadata, null, runtime, null, componentPath);
 
             Assert.IsNull(config.PackagesList);
             Assert.IsNull(config.FilesList);
@@ -103,7 +103,7 @@ namespace Microsoft.Sbom.Api.Tests
         [DataRow(" ")]
         public void GetConfiguration_NullComponentPath(string componentPath)
         {
-            var config = builder.GetConfiguration(RootPath, manifestDirPath, null, null, metadata, null, runtime, null, componentPath);
+            var config = ApiConfigurationBuilder.GetConfiguration(RootPath, manifestDirPath, null, null, metadata, null, runtime, null, componentPath);
 
             Assert.IsNull(config.BuildComponentPath);
         }
@@ -123,7 +123,7 @@ namespace Microsoft.Sbom.Api.Tests
                 Verbosity = input
             };
 
-            IConfiguration config = builder.GetConfiguration(
+            var config = ApiConfigurationBuilder.GetConfiguration(
                 RootPath, string.Empty, null, null,
                 metadata, null, runtime);
 
@@ -147,7 +147,7 @@ namespace Microsoft.Sbom.Api.Tests
                 runtime.WorkflowParallelism = (int)input;
             }
 
-            var config = builder.GetConfiguration("random", null, null, null, metadata, null, runtime);
+            var config = ApiConfigurationBuilder.GetConfiguration("random", null, null, null, metadata, null, runtime);
             Assert.AreEqual(output, config.Parallelism.Value);
         }
 
@@ -161,7 +161,7 @@ namespace Microsoft.Sbom.Api.Tests
                 DeleteManifestDirectoryIfPresent = false
             };
 
-            var config = builder.GetConfiguration("random", null, null, null, metadata, null, null);
+            var config = ApiConfigurationBuilder.GetConfiguration("random", null, null, null, metadata, null, null);
             Assert.AreEqual(defaultRuntime.WorkflowParallelism, config.Parallelism.Value);
             Assert.AreEqual(LogEventLevel.Warning, config.Verbosity.Value);
         }
@@ -172,21 +172,21 @@ namespace Microsoft.Sbom.Api.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void ThrowArguementExceptionOnRootPathValues(string input)
         {
-            builder.GetConfiguration(input, null, null, null, null);
+            ApiConfigurationBuilder.GetConfiguration(input, null, null, null, null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ThrowArguementNulExceptionOnNullMetadata()
         {
-            builder.GetConfiguration("random", null, null, null, null);
+            ApiConfigurationBuilder.GetConfiguration("random", null, null, null, null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void ThrowArguementExceptionOnSpecificationZero()
         {
-            builder.GetConfiguration("random", null, null, null, metadata, new List<SBOMSpecification>(), runtime);
+            ApiConfigurationBuilder.GetConfiguration("random", null, null, null, metadata, new List<SbomSpecification>(), runtime);
         }
     }
 }

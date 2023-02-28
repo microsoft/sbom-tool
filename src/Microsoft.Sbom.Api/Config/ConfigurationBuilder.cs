@@ -9,14 +9,9 @@ using Microsoft.Sbom.Common.Config;
 
 namespace Microsoft.Sbom.Api.Config
 {
-    /// <summary>
-    /// Converts the command line arguments and config file parameters to <see cref="ConfigurationSetting{T}"/> objects.
-    /// Finally combines the two into one <see cref="IConfiguration"/> object.
-    /// 
-    /// Throws an error if the same parameters are defined in both the config file and command line.
-    /// </summary>
-    /// <typeparam name="T">The action args parameter.</typeparam>
-    public class ConfigurationBuilder<T>
+    /// <inheritdoc />
+    /// <remarks>Throws an error if the same parameters are defined in both the config file and command line.</remarks>
+    public class ConfigurationBuilder<T> : IConfigurationBuilder<T>
     {
         private readonly IMapper mapper;
         private readonly ConfigFileParser configFileParser;
@@ -27,20 +22,20 @@ namespace Microsoft.Sbom.Api.Config
             this.configFileParser = configFileParser;
         }
 
-        public async Task<IConfiguration> GetConfiguration(T args)
+        public async Task<InputConfiguration> GetConfiguration(T args)
         {
-            Configuration commandLineArgs;
+            InputConfiguration commandLineArgs;
 
             // Set current action for the config validators and convert command line arguments to configuration
             switch (args)
             {
                 case ValidationArgs validationArgs:
                     validationArgs.ManifestToolAction = ManifestToolActions.Validate;
-                    commandLineArgs = mapper.Map<Configuration>(validationArgs);
+                    commandLineArgs = mapper.Map<InputConfiguration>(validationArgs);
                     break;
                 case GenerationArgs generationArgs:
                     generationArgs.ManifestToolAction = ManifestToolActions.Generate;
-                    commandLineArgs = mapper.Map<Configuration>(generationArgs);
+                    commandLineArgs = mapper.Map<InputConfiguration>(generationArgs);
                     break;
                 default:
                     throw new ValidationArgException($"Unsupported configuration type found {typeof(T)}");
@@ -52,10 +47,20 @@ namespace Microsoft.Sbom.Api.Config
                                         new ConfigFile();
 
             // Convert config file arguments to configuration.
-            var configFileArgs = mapper.Map<ConfigFile, Configuration>(configFromFile);
+            var configFileArgs = mapper.Map<ConfigFile, InputConfiguration>(configFromFile);
 
             // Combine both configs, include defaults.
             return mapper.Map(commandLineArgs, configFileArgs);
         }
+    }
+
+    /// <summary>
+    /// Converts the command line arguments and config file parameters to <see cref="ConfigurationSetting{T}"/> objects.
+    /// Finally combines the two into one <see cref="IConfiguration"/> object.
+    /// </summary>
+    /// <typeparam name="T">The action args parameter.</typeparam>
+    public interface IConfigurationBuilder<T>
+    {
+        Task<InputConfiguration> GetConfiguration(T args);
     }
 }
