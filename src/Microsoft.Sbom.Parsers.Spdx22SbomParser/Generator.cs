@@ -159,7 +159,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
                 CopyrightText = packageInfo.CopyrightText ?? Constants.NoAssertionValue,
                 LicenseConcluded = packageInfo.LicenseInfo?.Concluded ?? Constants.NoAssertionValue,
                 LicenseDeclared = packageInfo.LicenseInfo?.Declared ?? Constants.NoAssertionValue,
-                LicenseInfoFromFiles = Constants.NoAssertionListValue,
+                LicenseInfoFromFiles = packageInfo.FilesAnalyzed ? Constants.NoAssertionListValue : null,
                 FilesAnalyzed = packageInfo.FilesAnalyzed,
                 Supplier = packageInfo.Supplier ?? Constants.NoAssertionValue
             };
