@@ -30,8 +30,8 @@ namespace Microsoft.Sbom.Parser
         public void GenerateJsonDocumentTest_FilesAnalyzed_IsTrue()
         {
             var generator = new Generator();
-            var expected = """"["NOASSERTION"]"""";
-
+            var expected = "[\"NOASSERTION\"]";
+            
             const string PackageUrl = "packageUrl";
             var packageInfo = new SbomPackage
             {
