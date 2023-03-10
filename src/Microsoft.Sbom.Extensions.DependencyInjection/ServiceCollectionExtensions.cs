@@ -27,6 +27,7 @@ using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Common.Extensions;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Interfaces;
+using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -132,7 +133,26 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
                     typeof(IMetadataProvider),
                     typeof(IManifestInterface)))
                 .AsImplementedInterfaces())
-            .AddScoped<ISBOMGenerator, SbomGenerator>();
+            .AddScoped<ISBOMGenerator, SbomGenerator>().AddTransient(x =>
+            {
+                IFileSystemUtils fileSystemUtils = x.GetRequiredService<IFileSystemUtils>();
+                ISbomConfigProvider sbomConfigs = x.GetRequiredService<ISbomConfigProvider>();
+                IOSUtils osUtils = x.GetRequiredService<IOSUtils>();
+                IConfiguration configuration = x.GetRequiredService<IConfiguration>();
+
+                ManifestData manifestData = new ManifestData();
+
+                if (!configuration.ManifestInfo.Value.Contains(Api.Utils.Constants.SPDX22ManifestInfo))
+                {
+                    var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo?.Value?.FirstOrDefault());
+                    var parserProvider = x.GetRequiredService<IManifestParserProvider>();
+                    var manifestValue = fileSystemUtils.ReadAllText(sbomConfig.ManifestJsonFilePath);
+                    manifestData = parserProvider.Get(sbomConfig.ManifestInfo).ParseManifest(manifestValue);
+                    manifestData.HashesMap = new ConcurrentDictionary<string, Checksum[]>(manifestData.HashesMap, osUtils.GetFileSystemStringComparer());
+                }
+
+                return manifestData;          
+            }); 
 
             return services;
         }
