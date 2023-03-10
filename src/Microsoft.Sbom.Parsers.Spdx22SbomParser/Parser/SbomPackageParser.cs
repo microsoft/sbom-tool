@@ -109,7 +109,7 @@ internal ref struct SbomPackageParser
             missingProps.Add(nameof(sbomPackage.LicenseConcluded));
         }
 
-        if (sbomPackage.LicenseInfoFromFiles == null || sbomPackage.LicenseInfoFromFiles.Count == 0)
+        if (sbomPackage.FilesAnalyzed && (sbomPackage.LicenseInfoFromFiles == null || sbomPackage.LicenseInfoFromFiles?.Count == 0))
         {
             missingProps.Add(nameof(sbomPackage.LicenseInfoFromFiles));
         }
