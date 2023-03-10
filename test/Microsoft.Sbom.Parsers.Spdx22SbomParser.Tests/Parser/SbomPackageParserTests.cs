@@ -85,6 +85,7 @@ public class SbomPackageParserTests
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageBadReferenceType)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingReferenceLocator)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingPackageVerificationCode)]
+    [DataRow(SbomPackageStrings.PackageJsonWith1PackageFilesAnalyzedTrueAndMissingLicenseInfoFromFiles)]
     [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
     {
