@@ -58,6 +58,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities
         /// <summary>
         /// Gets or sets contains all license found in the package.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("licenseInfoFromFiles")]
         public List<string> LicenseInfoFromFiles { get; set; }
 
