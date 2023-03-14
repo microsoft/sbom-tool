@@ -535,7 +535,7 @@ internal struct SbomPackageStrings
           ""referenceLocator"": ""https://github.com/actions/virtual-environments""
         }
       ],
-      ""supplier"": ""Microsoft/GitHub""
+      ""supplier"": ""Organization: Microsoft/GitHub""
     },
     {
       ""name"": ""Testing cross platform signing"",
