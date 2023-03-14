@@ -60,7 +60,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
                             PackageVersion = (string)imageVersionObj,
                             PackageUrl = "https://github.com/actions/virtual-environments",
                             Id = $"{name} {(string)imageVersionObj}".Replace(' ', '-'),
-                            Supplier = "Microsoft/GitHub"
+                            Supplier = "Organization: Microsoft/GitHub"
                         });
                     }
                 }
