@@ -58,18 +58,6 @@ namespace Microsoft.Sbom.Api.Executors
         {
             try
             {
-                // Filter SPDX type files.
-                if (file.FileTypes != null && file.FileTypes.Contains(Contracts.Enums.FileType.SPDX))
-                {
-                    await errors.Writer.WriteAsync(new FileValidationResult
-                    {
-                        ErrorType = ErrorType.ReferencedSbomFile,
-                        Path = file.Path,
-                    });
-
-                    return;
-                }
-
                 // Filter paths that are not present on disk.
                 var fullPath = fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, file.Path);
                 if (!rootPathFilter.IsValid(fullPath))
