@@ -92,6 +92,7 @@ namespace Microsoft.Sbom.Api.Tests.Config
                 manifestConfigHandlers: new IManifestConfigHandler[] { configHandler.Object },
                 metadataProviders: metadataProviders,
                 logger: logger.Object,
-                recorder: recorder.Object);
+                recorder: recorder.Object,
+                config: config);
     }
 }

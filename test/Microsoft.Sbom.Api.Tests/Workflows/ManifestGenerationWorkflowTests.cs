@@ -107,7 +107,8 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 new IManifestConfigHandler[] { mockConfigHandler.Object },
                 new IMetadataProvider[] { mockMetadataProvider.Object },
                 mockLogger.Object,
-                recorderMock.Object);
+                recorderMock.Object,
+                configurationMock.Object);
 
             using var manifestStream = new MemoryStream();
             using var manifestWriter = new StreamWriter(manifestStream);
