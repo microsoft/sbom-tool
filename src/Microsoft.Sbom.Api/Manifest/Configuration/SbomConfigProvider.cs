@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Common.Extensions;
+using System.IO;
 
 namespace Microsoft.Sbom.Api.Manifest.Configuration
 {
@@ -87,12 +88,16 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
         /// <inheritdoc/>
         public ISbomConfig Get(ManifestInfo manifestInfo)
         {
-            if (manifestInfo is null)
-            {
-                throw new ArgumentNullException(nameof(manifestInfo));
-            }
+            ArgumentNullException.ThrowIfNull(nameof(manifestInfo));
 
-            return ConfigsDictionary[manifestInfo];
+            if (ConfigsDictionary.TryGetValue(manifestInfo, out var value))
+            {
+                return value;
+            }
+            else
+            {
+                throw new FileNotFoundException($"Unable to handle a manifest of type {manifestInfo} or no manifest file was found.");
+            }
         }
 
         /// <inheritdoc/>
