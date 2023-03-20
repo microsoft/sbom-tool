@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Common.Extensions;
 using System.IO;
+using Microsoft.Sbom.Common.Config;
 
 namespace Microsoft.Sbom.Api.Manifest.Configuration
 {
@@ -67,22 +68,20 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
         private readonly IEnumerable<IMetadataProvider> metadataProviders;
         private readonly ILogger logger;
         private readonly IRecorder recorder;
+        private readonly IConfiguration config;
 
         public SbomConfigProvider(
             IEnumerable<IManifestConfigHandler> manifestConfigHandlers,
             IEnumerable<IMetadataProvider> metadataProviders,
             ILogger logger,
-            IRecorder recorder)
+            IRecorder recorder,
+            IConfiguration config)
         {
-            if (manifestConfigHandlers is null)
-            {
-                throw new ArgumentNullException(nameof(manifestConfigHandlers));
-            }
-
             this.manifestConfigHandlers = manifestConfigHandlers ?? throw new ArgumentNullException(nameof(manifestConfigHandlers));
             this.metadataProviders = metadataProviders ?? throw new ArgumentNullException(nameof(metadataProviders));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+            this.config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
         /// <inheritdoc/>
@@ -96,7 +95,7 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
             }
             else
             {
-                throw new FileNotFoundException($"Unable to handle a manifest of type {manifestInfo} or no manifest file was found.");
+                throw new FileNotFoundException($"Unable to handle a manifest of type {manifestInfo} or no manifest file was found in the provided drop path {config.BuildDropPath}.");
             }
         }
 
