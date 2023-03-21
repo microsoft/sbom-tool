@@ -21,7 +21,7 @@ namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers
         private readonly IConfiguration configuration;
         private readonly IFileSystemUtils fileSystemUtils;
 
-        private string ManifestDirPath => configuration.ManifestDirPath?.Value;
+        private string ManifestDirPath => configuration.ManifestDirPath.Value;
 
         // directory path for SPDX 2.2 is 
         // root/_manifest/spdx_2.2/
