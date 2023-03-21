@@ -13,7 +13,7 @@ namespace Microsoft.Sbom.Parser
             var generator = new Generator();
 
             const string PackageUrl = "packageUrl";
-            var packageInfo = new SbomPackage
+            var packageInfo = new SBOMPackage
             {
                 PackageName = "test",
                 PackageUrl = PackageUrl,
@@ -33,7 +33,7 @@ namespace Microsoft.Sbom.Parser
             var expected = "[\"NOASSERTION\"]";
             
             const string PackageUrl = "packageUrl";
-            var packageInfo = new SbomPackage
+            var packageInfo = new SBOMPackage
             {
                 PackageName = "test",
                 PackageUrl = PackageUrl,
