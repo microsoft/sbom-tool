@@ -13,14 +13,13 @@ namespace Microsoft.Sbom.Api.Manifest
     /// </summary>
     public class ManifestParserProvider : IManifestParserProvider
     {
-        private readonly IEnumerable<IManifestInterface> manifestInterfaces;
+        private readonly IManifestInterface[] manifestInterfaces;
         private readonly IDictionary<string, IManifestInterface> manifestMap;
 
-        public ManifestParserProvider(IEnumerable<IManifestInterface> manifestInterfaces)
+        public ManifestParserProvider(IManifestInterface[] manifestInterfaces)
         {
             this.manifestInterfaces = manifestInterfaces;
             manifestMap = new Dictionary<string, IManifestInterface>(StringComparer.OrdinalIgnoreCase);
-            this.Init();
         }
 
         public void Init()

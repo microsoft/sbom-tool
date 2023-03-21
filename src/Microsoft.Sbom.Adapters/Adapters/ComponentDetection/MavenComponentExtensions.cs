@@ -12,9 +12,9 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
     internal static class MavenComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="MavenComponent"/> to an <see cref="SbomPackage"/>.
+        /// Converts a <see cref="MavenComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SbomPackage? ToSbomPackage(this MavenComponent mavenComponent) => new ()
+        public static SBOMPackage? ToSbomPackage(this MavenComponent mavenComponent) => new ()
         {
             Id = mavenComponent.Id,
             PackageName = $"{mavenComponent.GroupId}.{mavenComponent.ArtifactId}",

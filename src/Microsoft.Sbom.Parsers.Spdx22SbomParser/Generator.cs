@@ -33,7 +33,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
 
         public string ExternalDocumentRefArrayHeaderName => Constants.ExternalDocumentRefArrayHeaderName;
 
-        public GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo)
+        public GenerationResult GenerateJsonDocument(InternalSBOMFileInfo fileInfo)
         {
             if (fileInfo is null)
             {
@@ -51,7 +51,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
             };
         }
 
-        private SPDXFile ConvertSbomFileToSpdxFile(InternalSbomFileInfo fileInfo)
+        private SPDXFile ConvertSbomFileToSpdxFile(InternalSBOMFileInfo fileInfo)
         {
             if (fileInfo is null)
             {
@@ -139,7 +139,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser
             };
         }
 
-        public GenerationResult GenerateJsonDocument(SbomPackage packageInfo)
+        public GenerationResult GenerateJsonDocument(SBOMPackage packageInfo)
         {
             if (packageInfo is null)
             {

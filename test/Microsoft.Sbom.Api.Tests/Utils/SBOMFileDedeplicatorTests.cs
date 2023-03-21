@@ -20,31 +20,31 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public async Task When_DeduplicatingSBOMFile_WithSingleChannel_ThenTestPass()
         {
-            var sbomFiles = new List<InternalSbomFileInfo>()
+            var sbomFiles = new List<InternalSBOMFileInfo>()
             {
-                new InternalSbomFileInfo()
+                new InternalSBOMFileInfo()
                 {
                     Path = "./file1.txt"
                 },
-                new InternalSbomFileInfo()
+                new InternalSBOMFileInfo()
                 {
                     Path = "./file2.txt"
                 },
-                new InternalSbomFileInfo()
+                new InternalSBOMFileInfo()
                 {
                     Path = "./file2.txt"
                 },
-                new InternalSbomFileInfo()
+                new InternalSBOMFileInfo()
                 {
                     Path = "./file3.txt"
                 },
-                new InternalSbomFileInfo()
+                new InternalSBOMFileInfo()
                 {
                     Path = "./file4.txt"
                 }
             };
 
-            var inputChannel = Channel.CreateUnbounded<InternalSbomFileInfo>();
+            var inputChannel = Channel.CreateUnbounded<InternalSBOMFileInfo>();
 
             foreach (var sbomFile in sbomFiles)
             {
@@ -64,25 +64,25 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         [TestMethod]
         public async Task When_DeduplicatingSBOMFile_WithConcurrentChannel_ThenTestPass()
         {
-            var sbomFiles = new List<InternalSbomFileInfo>()
+            var sbomFiles = new List<InternalSBOMFileInfo>()
             {
-                new InternalSbomFileInfo()
+                new InternalSBOMFileInfo()
                 {
                     Path = "./file1.txt"
                 },
-                new InternalSbomFileInfo()
+                new InternalSBOMFileInfo()
                 {
                     Path = "./file2.txt"
                 },
-                new InternalSbomFileInfo()
+                new InternalSBOMFileInfo()
                 {
                     Path = "./file2.txt"
                 },
-                new InternalSbomFileInfo()
+                new InternalSBOMFileInfo()
                 {
                     Path = "./file3.txt"
                 },
-                new InternalSbomFileInfo()
+                new InternalSBOMFileInfo()
                 {
                     Path = "./file4.txt"
                 }
@@ -92,7 +92,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
 
             var task1 = Task.Run(async () =>
             {
-                var inputChannel = Channel.CreateUnbounded<InternalSbomFileInfo>();
+                var inputChannel = Channel.CreateUnbounded<InternalSBOMFileInfo>();
 
                 foreach (var fileInfo in sbomFiles)
                 {
@@ -108,7 +108,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
 
             var task2 = Task.Run(async () =>
             {
-                var inputChannel = Channel.CreateUnbounded<InternalSbomFileInfo>();
+                var inputChannel = Channel.CreateUnbounded<InternalSBOMFileInfo>();
 
                 foreach (var fileInfo in sbomFiles)
                 {
@@ -123,7 +123,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
             });
 
             await Task.WhenAll(task1, task2);
-            var result = channelUtils.Merge(new ChannelReader<InternalSbomFileInfo>[] { task1.Result, task2.Result });
+            var result = channelUtils.Merge(new ChannelReader<InternalSBOMFileInfo>[] { task1.Result, task2.Result });
             var resultList = await result.ReadAllAsync().ToListAsync();
 
             Assert.AreEqual(resultList.Count, sbomFiles.Count - 1);
@@ -134,7 +134,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils
         {
             var deduplicator = new InternalSBOMFileInfoDeduplicator();
 
-            Assert.AreEqual("./file1.txt", deduplicator.GetKey(new InternalSbomFileInfo() { Path = "./file1.txt" }));
+            Assert.AreEqual("./file1.txt", deduplicator.GetKey(new InternalSBOMFileInfo() { Path = "./file1.txt" }));
             Assert.AreEqual(null, deduplicator.GetKey(null));
         }
     }

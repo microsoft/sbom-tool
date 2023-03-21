@@ -1,15 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using AutoMapper;
-using AutoMapper.Configuration;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Attributes;
 using PowerArgs;
 using System.Collections.Generic;
 using System.Linq;
-using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
 
 namespace Microsoft.Sbom.Api.Config.Extensions
 {
@@ -52,11 +49,5 @@ namespace Microsoft.Sbom.Api.Config.Extensions
                 .ForEach(arg => arg.AddToCommandLineBuilder(builder));
             return builder.Build();
         }
-
-        // Map the validated InputConfiguration to a Configuration, which will persist the mapping statically and globally
-        public static Configuration ToConfiguration(this InputConfiguration inputConfig) =>
-            new MapperConfiguration(cfg => cfg.CreateMap<InputConfiguration, Configuration>())
-            .CreateMapper()
-            .Map<Configuration>(inputConfig);
     }
 }

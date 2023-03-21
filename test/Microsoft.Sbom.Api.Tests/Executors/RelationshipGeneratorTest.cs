@@ -25,7 +25,6 @@ namespace Microsoft.Sbom.Api.Executors.Tests
         public async Task RunShouldHandleExceptionWithoutOrphaningChannel()
         {
             Mock<IManifestGenerator> mock = new Mock<IManifestGenerator>();
-            mock.Setup(m => m.RegisterManifest()).Returns(new Mock<ManifestInfo>().Object);
 
             var m = new ManifestGeneratorProvider(new IManifestGenerator[] { mock.Object });
 
@@ -56,7 +55,6 @@ namespace Microsoft.Sbom.Api.Executors.Tests
         public async Task RunShouldReturnTwoResults()
         {
             Mock<IManifestGenerator> mock = new Mock<IManifestGenerator>();
-            mock.Setup(m => m.RegisterManifest()).Returns(new Mock<ManifestInfo>().Object);
 
             var m = new ManifestGeneratorProvider(new IManifestGenerator[] { mock.Object });
 
@@ -97,7 +95,6 @@ namespace Microsoft.Sbom.Api.Executors.Tests
         public async Task RunShouldNotFailWithNull()
         {
             Mock<IManifestGenerator> mock = new Mock<IManifestGenerator>();
-            mock.Setup(m => m.RegisterManifest()).Returns(new Mock<ManifestInfo>().Object);
 
             var m = new ManifestGeneratorProvider(new IManifestGenerator[] { mock.Object });
 

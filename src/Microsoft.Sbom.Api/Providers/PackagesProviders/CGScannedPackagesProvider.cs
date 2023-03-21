@@ -6,6 +6,7 @@ using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Executors;
+using Ninject;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
@@ -20,9 +21,9 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
     /// </summary>
     public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent>
     {
-        private readonly ComponentToPackageInfoConverter packageInfoConverter;
+        public ComponentToPackageInfoConverter PackageInfoConverter { get; }
 
-        private readonly PackagesWalker packagesWalker;
+        public PackagesWalker PackagesWalker { get; }
 
         public CGScannedPackagesProvider(
             IConfiguration configuration,
@@ -34,8 +35,8 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
             PackagesWalker packagesWalker)
             : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter)
         {
-            this.packageInfoConverter = packageInfoConverter ?? throw new ArgumentNullException(nameof(packageInfoConverter));
-            this.packagesWalker = packagesWalker ?? throw new ArgumentNullException(nameof(packagesWalker));
+            PackageInfoConverter = packageInfoConverter ?? throw new ArgumentNullException(nameof(packageInfoConverter));
+            PackagesWalker = packagesWalker ?? throw new ArgumentNullException(nameof(packagesWalker));
         }
 
         public override bool IsSupported(ProviderType providerType)
@@ -60,7 +61,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
         {
             IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
 
-            var (packageInfos, packageErrors) = packageInfoConverter.Convert(sourceChannel);
+            var (packageInfos, packageErrors) = PackageInfoConverter.Convert(sourceChannel);
             errors.Add(packageErrors);
 
             var (jsonResults, jsonErrors) = PackageInfoJsonWriter.Write(packageInfos, requiredConfigs);
@@ -71,7 +72,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
 
         protected override (ChannelReader<ScannedComponent> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            var (output, cdErrors) = packagesWalker.GetComponents(Configuration.BuildComponentPath?.Value);
+            var (output, cdErrors) = PackagesWalker.GetComponents(Configuration.BuildComponentPath?.Value);
 
             if (cdErrors.TryRead(out ComponentDetectorException e))
             {

@@ -54,8 +54,8 @@ namespace Microsoft.Sbom.Workflows
             HashesMap = new ConcurrentDictionary<string, Checksum[]>(GetFilesDictionary(), StringComparer.InvariantCultureIgnoreCase)
         };
 
-        protected IEnumerable<SbomFile> GetSBOMFiles(IDictionary<string, Checksum[]> dictionary) => dictionary
-            .Select(file => new SbomFile
+        protected IEnumerable<SBOMFile> GetSBOMFiles(IDictionary<string, Checksum[]> dictionary) => dictionary
+            .Select(file => new SBOMFile
             {
                 Path = $".{file.Key}", // Prepend .
                 Checksum = file.Value

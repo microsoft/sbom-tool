@@ -12,7 +12,7 @@ namespace Microsoft.Sbom.Api.Config.Args
     /// <summary>
     /// Defines the common arguments used by all actions of the ManifestTool.
     /// </summary>
-    public abstract class CommonArgs
+    public class CommonArgs
     {
         /// <summary>
         /// Gets or sets display this amount of detail in the logging output.

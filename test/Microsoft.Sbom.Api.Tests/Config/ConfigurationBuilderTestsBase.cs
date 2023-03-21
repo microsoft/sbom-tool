@@ -39,6 +39,12 @@ namespace Microsoft.Sbom.Api.Config.Tests
                 new UriValidator(mockAssemblyConfig.Object)
             };
 
+            var bindingsMock = new Mock<Bindings>
+            {
+                CallBase = true
+            };
+            bindingsMock.Setup(b => b.Load()).Verifiable();
+
             var hashAlgorithmProvider = new HashAlgorithmProvider(new IAlgorithmNames[] { new AlgorithmNames() });
             hashAlgorithmProvider.Init();
 

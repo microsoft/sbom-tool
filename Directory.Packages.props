@@ -39,6 +39,7 @@
         <PackageVersion Include="coverlet.collector" Version="3.1.0" />
         <PackageVersion Include="Moq" Version="4.17.2" />
         <PackageVersion Include="AutoMapper" Version="10.1.1" />
+        <PackageVersion Include="Ninject" Version="3.3.6" />
         <PackageVersion Include="PowerArgs" Version="3.6.0" />
         <PackageVersion Include="System.Threading.Channels" Version="6.0.0" />
         <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
@@ -46,10 +47,5 @@
         <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
         <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="6.0.0" />
         <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
-        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
-        <PackageVersion Include="Scrutor" Version="4.2.0" />
-        <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-        <PackageVersion Include="Serilog.AspNetCore" Version="6.1.0" />
     </ItemGroup>
 </Project>

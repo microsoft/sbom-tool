@@ -17,28 +17,28 @@ namespace Microsoft.Sbom.Api.Executors
     /// <summary>
     /// Takes a SBOMFile and converts it to a FileInfo object.
     /// </summary>
-    public class SbomFileToFileInfoConverter
+    public class SBOMFileToFileInfoConverter
     {
         private readonly IFileTypeUtils fileTypeUtils;
 
-        public SbomFileToFileInfoConverter(IFileTypeUtils fileTypeUtils)
+        public SBOMFileToFileInfoConverter(FileTypeUtils fileTypeUtils)
         {
             this.fileTypeUtils = fileTypeUtils ?? throw new ArgumentNullException(nameof(fileTypeUtils));
         }
 
-        public (ChannelReader<InternalSbomFileInfo> output, ChannelReader<FileValidationResult> error) Convert(ChannelReader<SbomFile> componentReader, FileLocation fileLocation = FileLocation.OnDisk)
+        public (ChannelReader<InternalSBOMFileInfo> output, ChannelReader<FileValidationResult> error) Convert(ChannelReader<SBOMFile> componentReader, FileLocation fileLocation = FileLocation.OnDisk)
         {
             if (componentReader is null)
             {
                 throw new ArgumentNullException(nameof(componentReader));
             }
 
-            var output = Channel.CreateUnbounded<InternalSbomFileInfo>();
+            var output = Channel.CreateUnbounded<InternalSBOMFileInfo>();
             var errors = Channel.CreateUnbounded<FileValidationResult>();
 
             Task.Run(async () =>
             {
-                await foreach (SbomFile component in componentReader.ReadAllAsync())
+                await foreach (SBOMFile component in componentReader.ReadAllAsync())
                 {
                     await Convert(component, output, errors, fileLocation);
                 }
@@ -50,7 +50,7 @@ namespace Microsoft.Sbom.Api.Executors
             return (output, errors);
         }
 
-        private async Task Convert(SbomFile component, Channel<InternalSbomFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation)
+        private async Task Convert(SBOMFile component, Channel<InternalSBOMFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace Microsoft.Sbom.Api.Executors
                     });
                 }
 
-                var fileInfo = new InternalSbomFileInfo
+                var fileInfo = new InternalSBOMFileInfo
                 {
                     Path = component.Path,
                     Checksum = checksums.ToArray(),

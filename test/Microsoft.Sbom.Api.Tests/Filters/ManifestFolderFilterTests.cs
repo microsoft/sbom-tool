@@ -15,13 +15,14 @@ namespace Microsoft.Sbom.Api.Filters.Tests
         [TestMethod]
         public void ManifestFolderFilterTest_CheckAllManifestFolder_Succeeds()
         {
+            var fileSystemMock = new Mock<IFileSystemUtils>();
             var mockOSUtils = new Mock<IOSUtils>();
             mockOSUtils.Setup(o => o.GetFileSystemStringComparisonType()).Returns(StringComparison.CurrentCultureIgnoreCase);
 
             var configMock = new Mock<IConfiguration>();
             configMock.SetupGet(c => c.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = "C:/test/_manifest" });
 
-            var filter = new ManifestFolderFilter(configMock.Object, mockOSUtils.Object);
+            var filter = new ManifestFolderFilter(configMock.Object, fileSystemMock.Object, mockOSUtils.Object);
             filter.Init();
 
             Assert.IsTrue(filter.IsValid("c:/test"));
@@ -35,6 +36,7 @@ namespace Microsoft.Sbom.Api.Filters.Tests
             Assert.IsFalse(filter.IsValid("c:/test/_manifest/manifest.json"));
             Assert.IsFalse(filter.IsValid("c:\\test\\_manifest"));
             Assert.IsFalse(filter.IsValid("c:/test/_manifest\\manifest.json"));
+            fileSystemMock.VerifyAll();
             configMock.VerifyAll();
         }
     }

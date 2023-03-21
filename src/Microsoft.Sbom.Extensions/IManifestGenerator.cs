@@ -31,7 +31,7 @@ namespace Microsoft.Sbom.Extensions
         /// has the responsibility to dispose this object.
         /// </summary>
         /// <param name="fileInfo">The fileInfo object.</param>
-        GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo);
+        GenerationResult GenerateJsonDocument(InternalSBOMFileInfo fileInfo);
 
         /// <summary>
         /// Generates a JSON element representation of the <paramref name="packageInfo"/> object.
@@ -42,7 +42,7 @@ namespace Microsoft.Sbom.Extensions
         /// </summary>
         /// <param name="packageInfo">The current package that needs to be serialized.</param>
         /// <returns></returns>
-        GenerationResult GenerateJsonDocument(SbomPackage packageInfo);
+        GenerationResult GenerateJsonDocument(SBOMPackage packageInfo);
 
         /// <summary>
         /// Generate and return the package this SBOM describes. The <see cref="GenerationData"/> object can be used

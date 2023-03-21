@@ -39,10 +39,10 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             var configuration = new Mock<IConfiguration>();
             configuration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
 
-            var files = Channel.CreateUnbounded<InternalSbomFileInfo>();
+            var files = Channel.CreateUnbounded<InternalSBOMFileInfo>();
             foreach (var file in fileList)
             {
-                await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = file.ToUpper(), Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"{file}_hash" } } });
+                await files.Writer.WriteAsync(new InternalSBOMFileInfo { Path = file.ToUpper(), Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"{file}_hash" } } });
             }
 
             files.Writer.Complete();
@@ -78,10 +78,10 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             var configuration = new Mock<IConfiguration>();
             configuration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
 
-            var files = Channel.CreateUnbounded<InternalSbomFileInfo>();
+            var files = Channel.CreateUnbounded<InternalSBOMFileInfo>();
             foreach (var file in fileList)
             {
-                await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = file.ToUpper(), Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"{file}_hash" } } });
+                await files.Writer.WriteAsync(new InternalSBOMFileInfo { Path = file.ToUpper(), Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"{file}_hash" } } });
             }
 
             files.Writer.Complete();
@@ -122,16 +122,16 @@ namespace Microsoft.Sbom.Api.Executors.Tests
             var configuration = new Mock<IConfiguration>();
             configuration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
 
-            var files = Channel.CreateUnbounded<InternalSbomFileInfo>();
+            var files = Channel.CreateUnbounded<InternalSBOMFileInfo>();
             var errors = Channel.CreateUnbounded<FileValidationResult>();
 
             foreach (var file in fileList)
             {
-                await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = file.ToUpper(), Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"{file}_hash" } } });
+                await files.Writer.WriteAsync(new InternalSBOMFileInfo { Path = file.ToUpper(), Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"{file}_hash" } } });
             }
 
             // Additional file.
-            await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = "TEST4", Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"TEST4_hash" } } });
+            await files.Writer.WriteAsync(new InternalSBOMFileInfo { Path = "TEST4", Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"TEST4_hash" } } });
 
             files.Writer.Complete();
             errors.Writer.Complete();

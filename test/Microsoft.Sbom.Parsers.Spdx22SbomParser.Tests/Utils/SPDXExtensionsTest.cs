@@ -22,7 +22,7 @@ namespace SPDX22SBOMParserTest
         private readonly Regex spdxIdAllowedCharsRegex = new Regex("^[a-zA-Z0-9]*$");
 
         private SPDXPackage spdxPackage = new SPDXPackage();
-        private SbomPackage packageInfo = new SbomPackage();
+        private SBOMPackage packageInfo = new SBOMPackage();
 
         [TestInitialize]
         public void Setup()
@@ -32,7 +32,7 @@ namespace SPDX22SBOMParserTest
                 Name = "packageName",
                 VersionInfo = "1.0.0"
             };
-            packageInfo = new SbomPackage
+            packageInfo = new SBOMPackage
             {
                 PackageUrl = PackageUrl
             };
@@ -79,7 +79,7 @@ namespace SPDX22SBOMParserTest
         public void AddPackageUrlsTest_WithSpecialCharacter_Success(string inputUrl, string expectedUrl)
         {
             spdxPackage = new SPDXPackage();
-            spdxPackage.AddPackageUrls(new SbomPackage { PackageUrl = inputUrl });
+            spdxPackage.AddPackageUrls(new SBOMPackage { PackageUrl = inputUrl });
 
             var externalRef = spdxPackage.ExternalReferences.First();
 

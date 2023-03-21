@@ -35,14 +35,14 @@ namespace Microsoft.Sbom.Api.Executors
             this.log = log ?? throw new ArgumentNullException(nameof(log));
         }
 
-        public (ChannelReader<JsonDocWithSerializer> result, ChannelReader<FileValidationResult> errors) Write(ChannelReader<SbomPackage> packageInfos, IList<ISbomConfig> packagesArraySupportingConfigs)
+        public (ChannelReader<JsonDocWithSerializer> result, ChannelReader<FileValidationResult> errors) Write(ChannelReader<SBOMPackage> packageInfos, IList<ISbomConfig> packagesArraySupportingConfigs)
         {
             var errors = Channel.CreateUnbounded<FileValidationResult>();
             var result = Channel.CreateUnbounded<JsonDocWithSerializer>();
 
             Task.Run(async () =>
             {
-                await foreach (SbomPackage packageInfo in packageInfos.ReadAllAsync())
+                await foreach (SBOMPackage packageInfo in packageInfos.ReadAllAsync())
                 {
                     await GenerateJson(packagesArraySupportingConfigs, packageInfo, result, errors);
                 }
@@ -54,7 +54,7 @@ namespace Microsoft.Sbom.Api.Executors
             return (result, errors);
         }
 
-        private async Task GenerateJson(IList<ISbomConfig> packagesArraySupportingConfigs, SbomPackage packageInfo, Channel<JsonDocWithSerializer> result,
+        private async Task GenerateJson(IList<ISbomConfig> packagesArraySupportingConfigs, SBOMPackage packageInfo, Channel<JsonDocWithSerializer> result,
             Channel<FileValidationResult> errors)
         {
             try

@@ -18,22 +18,30 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
     /// <summary>
     /// This class generates an array of filenames and hashes based on the format of the SBOM. 
     /// </summary>
-    public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
+    public class FileArrayGenerator : IJsonArrayGenerator
     {
-        private readonly ISbomConfigProvider sbomConfigs;
+        public IConfiguration Configuration { get; }
 
-        private readonly IEnumerable<ISourcesProvider> sourcesProviders;
+        public ILogger Log { get;  }
 
-        private readonly IRecorder recorder;
+        public ISbomConfigProvider SBOMConfigs { get; }
+
+        public IList<ISourcesProvider> SourcesProviders { get; }
+
+        public IRecorder Recorder { get; }
 
         public FileArrayGenerator(
+            IConfiguration configuration,
+            ILogger log,
             ISbomConfigProvider sbomConfigs,
-            IEnumerable<ISourcesProvider> sourcesProviders,
+            IList<ISourcesProvider> sourcesProviders,
             IRecorder recorder)
         {
-            this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
-            this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
-            this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            Log = log ?? throw new ArgumentNullException(nameof(log));
+            SBOMConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+            SourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
+            Recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         }
 
         /// <summary>
@@ -46,18 +54,18 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
         /// <returns></returns>
         public async Task<IList<FileValidationResult>> GenerateAsync()
         {
-            using (recorder.TraceEvent(Events.FilesGeneration))
+            using (Recorder.TraceEvent(Events.FilesGeneration))
             {
                 IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
 
-                IEnumerable<ISourcesProvider> sourcesProviders = this.sourcesProviders
+                IEnumerable<ISourcesProvider> sourcesProviders = SourcesProviders
                                                     .Where(s => s.IsSupported(ProviderType.Files));
 
                 // Write the start of the array, if supported.
                 IList<ISbomConfig> filesArraySupportingSBOMs = new List<ISbomConfig>();
-                foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
+                foreach (var manifestInfo in SBOMConfigs.GetManifestInfos())
                 {
-                    var config = sbomConfigs.Get(manifestInfo);
+                    var config = SBOMConfigs.Get(manifestInfo);
 
                     if (config.MetadataBuilder.TryGetFilesArrayHeaderName(out string filesArrayHeaderName))
                     {

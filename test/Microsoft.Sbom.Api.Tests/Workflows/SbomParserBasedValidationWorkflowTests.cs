@@ -26,6 +26,7 @@ using Serilog;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ErrorType = Microsoft.Sbom.Api.Entities.ErrorType;
@@ -143,7 +144,7 @@ namespace Microsoft.Sbom.Workflows
                               new ManifestGeneratorProvider(null),
                               new FileTypeUtils());
 
-            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
+            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
             var fileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object);
 
@@ -152,7 +153,7 @@ namespace Microsoft.Sbom.Workflows
 
             var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
             var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
-            var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
+            var fileConverter = new SBOMFileToFileInfoConverter(new FileTypeUtils());
             var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
 
             var filesValidator = new FilesValidator(
@@ -167,7 +168,7 @@ namespace Microsoft.Sbom.Workflows
                 FileHashesDictionarySingleton.Instance,
                 spdxFileFilterer);
 
-            var validator = new SbomParserBasedValidationWorkflow(
+            var validator = new SBOMParserBasedValidationWorkflow(
                 recorder.Object,
                 signValidationProviderMock.Object,
                 mockLogger.Object,
@@ -290,7 +291,7 @@ namespace Microsoft.Sbom.Workflows
                               new ManifestGeneratorProvider(null),
                               new FileTypeUtils());
 
-            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
+            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
             var fileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object);
 
@@ -299,7 +300,7 @@ namespace Microsoft.Sbom.Workflows
 
             var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
             var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
-            var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
+            var fileConverter = new SBOMFileToFileInfoConverter(new FileTypeUtils());
             var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
 
             var filesValidator = new FilesValidator(
@@ -314,7 +315,7 @@ namespace Microsoft.Sbom.Workflows
                 FileHashesDictionarySingleton.Instance,
                 spdxFileFilterer);
             
-            var validator = new SbomParserBasedValidationWorkflow(
+            var validator = new SBOMParserBasedValidationWorkflow(
                 recorder.Object,
                 signValidationProviderMock.Object,
                 mockLogger.Object,

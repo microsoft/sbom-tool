@@ -16,28 +16,37 @@ using System;
 namespace Microsoft.Sbom.Api.Providers.FilesProviders
 {
     /// <summary>
-    /// Serializes a list of <see cref="SbomFile"/> objects provided through the API to SBOM Json objects.
+    /// Serializes a list of <see cref="SBOMFile"/> objects provided through the API to SBOM Json objects.
     /// </summary>
-    public class SbomFileBasedFileToJsonProvider : EntityToJsonProviderBase<SbomFile>
+    public class SBOMFileBasedFileToJsonProvider : EntityToJsonProviderBase<SBOMFile>
     {
-        private readonly FileInfoWriter fileHashWriter;
+        /// <summary>
+        /// Gets or sets serializes a <see cref="FileInfo"/> object to Json.
+        /// </summary>
+        public FileInfoWriter FileHashWriter { get; }
 
-        private readonly SbomFileToFileInfoConverter sbomFileToFileInfoConverter;
+        /// <summary>
+        /// Gets or sets converts a <see cref="SBOMFile"/> object to a <see cref="FileInfo"/>.
+        /// </summary>
+        public SBOMFileToFileInfoConverter SBOMFileToFileInfoConverter { get; }
 
-        private readonly InternalSBOMFileInfoDeduplicator fileInfoDeduplicator;
+        /// <summary>
+        /// Gets or sets deduplicate FileInfo due to duplications of other providers.
+        /// </summary>
+        public InternalSBOMFileInfoDeduplicator FileInfoDeduplicator { get; }
 
-        public SbomFileBasedFileToJsonProvider(
+        public SBOMFileBasedFileToJsonProvider(
             IConfiguration configuration,
             ChannelUtils channelUtils,
             ILogger logger,
             FileInfoWriter fileHashWriter,
-            SbomFileToFileInfoConverter sbomFileToFileInfoConverter,
+            SBOMFileToFileInfoConverter sbomFileToFileInfoConverter,
             InternalSBOMFileInfoDeduplicator fileInfo)
             : base(configuration, channelUtils, logger)
         {
-            this.fileHashWriter = fileHashWriter ?? throw new ArgumentNullException(nameof(fileHashWriter));
-            this.sbomFileToFileInfoConverter = sbomFileToFileInfoConverter ?? throw new ArgumentNullException(nameof(sbomFileToFileInfoConverter));
-            fileInfoDeduplicator = fileInfo ?? throw new ArgumentNullException(nameof(fileInfo));
+            FileHashWriter = fileHashWriter ?? throw new ArgumentNullException(nameof(fileHashWriter));
+            SBOMFileToFileInfoConverter = sbomFileToFileInfoConverter ?? throw new ArgumentNullException(nameof(sbomFileToFileInfoConverter));
+            FileInfoDeduplicator = fileInfo ?? throw new ArgumentNullException(nameof(fileInfo));
         }
 
         /// <summary>
@@ -51,7 +60,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
             {
                 if (Configuration.FilesList?.Value != null && string.IsNullOrWhiteSpace(Configuration.BuildListFile?.Value))
                 {
-                    Log.Debug($"Using the {nameof(SbomFileBasedFileToJsonProvider)} provider for the files workflow.");
+                    Log.Debug($"Using the {nameof(SBOMFileBasedFileToJsonProvider)} provider for the files workflow.");
                     return true;
                 }
             }
@@ -60,23 +69,23 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
         }
 
         protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors)
-            ConvertToJson(ChannelReader<SbomFile> sourceChannel, IList<ISbomConfig> requiredConfigs)
+            ConvertToJson(ChannelReader<SBOMFile> sourceChannel, IList<ISbomConfig> requiredConfigs)
         {
             IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
 
-            var (fileInfos, hashErrors) = sbomFileToFileInfoConverter.Convert(sourceChannel);
+            var (fileInfos, hashErrors) = SBOMFileToFileInfoConverter.Convert(sourceChannel);
             errors.Add(hashErrors);
-            fileInfos = fileInfoDeduplicator.Deduplicate(fileInfos);
+            fileInfos = FileInfoDeduplicator.Deduplicate(fileInfos);
 
-            var (jsonDocCount, jsonErrors) = fileHashWriter.Write(fileInfos, requiredConfigs);
+            var (jsonDocCount, jsonErrors) = FileHashWriter.Write(fileInfos, requiredConfigs);
             errors.Add(jsonErrors);
 
             return (jsonDocCount, ChannelUtils.Merge(errors.ToArray()));
         }
 
-        protected override (ChannelReader<SbomFile> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
+        protected override (ChannelReader<SBOMFile> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            var listWalker = new ListWalker<SbomFile>();
+            var listWalker = new ListWalker<SBOMFile>();
             return listWalker.GetComponents(Configuration.FilesList.Value);
         }
 

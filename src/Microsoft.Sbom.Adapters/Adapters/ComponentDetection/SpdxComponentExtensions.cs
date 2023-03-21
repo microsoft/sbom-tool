@@ -13,9 +13,9 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
     internal static class SpdxComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="SpdxComponent"/> to an <see cref="SbomPackage"/>.
+        /// Converts a <see cref="SpdxComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SbomPackage? ToSbomPackage(this SpdxComponent spdxComponent) => new ()
+        public static SBOMPackage? ToSbomPackage(this SpdxComponent spdxComponent) => new ()
         {
             Id = spdxComponent.Id,
             PackageName = spdxComponent.Name,

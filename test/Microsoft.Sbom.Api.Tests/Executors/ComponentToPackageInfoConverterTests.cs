@@ -19,7 +19,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using HashAlgorithmName = Microsoft.Sbom.Contracts.Enums.AlgorithmName;
 using ILogger = Serilog.ILogger;
-using PackageInfo = Microsoft.Sbom.Contracts.SbomPackage;
+using PackageInfo = Microsoft.Sbom.Contracts.SBOMPackage;
 
 namespace Microsoft.Sbom.Api.Executors.Tests
 {

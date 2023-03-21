@@ -18,43 +18,43 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
     /// <summary>
     /// Generates a packages array that contains a list of all the packages that are referenced in this project.
     /// </summary>
-    public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
+    public class PackageArrayGenerator : IJsonArrayGenerator
     {
-        private readonly ILogger log;
+        private ILogger Log { get; }
 
-        private readonly ISbomConfigProvider sbomConfigs;
+        private ISbomConfigProvider SBOMConfigs { get; }
 
-        private readonly IEnumerable<ISourcesProvider> sourcesProviders;
+        private IList<ISourcesProvider> SourcesProviders { get; }
 
-        private readonly IRecorder recorder;
+        private IRecorder Recorder { get; }
 
         public PackageArrayGenerator(
             ILogger log,
             ISbomConfigProvider sbomConfigs,
-            IEnumerable<ISourcesProvider> sourcesProviders,
+            IList<ISourcesProvider> sourcesProviders,
             IRecorder recorder)
         {
-            this.log = log ?? throw new ArgumentNullException(nameof(log));
-            this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
-            this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
-            this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+            Log = log ?? throw new ArgumentNullException(nameof(log));
+            SBOMConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+            SourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
+            Recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         }
 
         public async Task<IList<FileValidationResult>> GenerateAsync()
         {
-            using (recorder.TraceEvent(Events.PackagesGeneration))
+            using (Recorder.TraceEvent(Events.PackagesGeneration))
             {
                 IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
 
-                ISourcesProvider sourcesProvider = sourcesProviders
+                ISourcesProvider sourcesProvider = SourcesProviders
                                                     .Where(s => s.IsSupported(ProviderType.Packages))
                                                     .FirstOrDefault();
 
                 // Write the start of the array, if supported.
                 IList<ISbomConfig> packagesArraySupportingConfigs = new List<ISbomConfig>();
-                foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
+                foreach (var manifestInfo in SBOMConfigs.GetManifestInfos())
                 {
-                    var config = sbomConfigs.Get(manifestInfo);
+                    var config = SBOMConfigs.Get(manifestInfo);
                     if (config.MetadataBuilder.TryGetPackageArrayHeaderName(out string packagesArrayHeaderName))
                     {
                         packagesArraySupportingConfigs.Add(config);
@@ -73,7 +73,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                     totalJsonDocumentsWritten++;
                 }
 
-                log.Debug($"Wrote {totalJsonDocumentsWritten} package elements in the SBOM.");
+                Log.Debug($"Wrote {totalJsonDocumentsWritten} package elements in the SBOM.");
                 await foreach (FileValidationResult error in errors.ReadAllAsync())
                 {
                     totalErrors.Add(error);
@@ -82,7 +82,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                 foreach (ISbomConfig sbomConfig in packagesArraySupportingConfigs)
                 {
                     // Write the root package information to the packages array.
-                    if (sbomConfig.MetadataBuilder.TryGetRootPackageJson(sbomConfigs, out GenerationResult generationResult))
+                    if (sbomConfig.MetadataBuilder.TryGetRootPackageJson(SBOMConfigs, out GenerationResult generationResult))
                     {
                         sbomConfig.JsonSerializer.Write(generationResult?.Document);
                         sbomConfig.Recorder.RecordRootPackageId(generationResult?.ResultMetadata?.EntityId);

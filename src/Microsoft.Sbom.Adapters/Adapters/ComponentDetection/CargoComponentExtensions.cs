@@ -12,9 +12,9 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
     internal static class CargoComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="CargoComponent"/> to an <see cref="SbomPackage"/>.
+        /// Converts a <see cref="CargoComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SbomPackage? ToSbomPackage(this CargoComponent cargoComponent) => new ()
+        public static SBOMPackage? ToSbomPackage(this CargoComponent cargoComponent) => new ()
         {
             Id = cargoComponent.Id,
             PackageUrl = cargoComponent.PackageUrl?.ToString(),

@@ -18,17 +18,17 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
     /// <summary>
     /// Generates an array of relationships between different elements of the SBOM.
     /// </summary>
-    public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArrayGenerator>
+    public class RelationshipsArrayGenerator : IJsonArrayGenerator
     {
-        private readonly RelationshipGenerator generator;
+        public RelationshipGenerator Generator { get; }
 
-        private readonly ChannelUtils channelUtils;
+        public ChannelUtils ChannelUtils { get; }
 
-        private readonly ILogger log;
+        public ILogger Log { get; }
 
-        private readonly ISbomConfigProvider sbomConfigs;
+        public ISbomConfigProvider SbomConfigs { get; }
 
-        private readonly IRecorder recorder;
+        public IRecorder Recorder { get; }
 
         public RelationshipsArrayGenerator(
             RelationshipGenerator generator,
@@ -37,23 +37,23 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
             ISbomConfigProvider sbomConfigs,
             IRecorder recorder)
         {
-            this.generator = generator;
-            this.channelUtils = channelUtils;
-            this.log = log;
-            this.sbomConfigs = sbomConfigs;
-            this.recorder = recorder;
+            Generator = generator;
+            ChannelUtils = channelUtils;
+            Log = log;
+            SbomConfigs = sbomConfigs;
+            Recorder = recorder;
         }
 
         public async Task<IList<FileValidationResult>> GenerateAsync()
         {
-            using (recorder.TraceEvent(Events.RelationshipsGeneration))
+            using (Recorder.TraceEvent(Events.RelationshipsGeneration))
             {
                 IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
 
                 // Write the relationship array only if supported
-                foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
+                foreach (var manifestInfo in SbomConfigs.GetManifestInfos())
                 {
-                    var sbomConfig = sbomConfigs.Get(manifestInfo);
+                    var sbomConfig = SbomConfigs.Get(manifestInfo);
                     if (sbomConfig.MetadataBuilder.TryGetRelationshipsHeaderName(out string relationshipArrayHeaderName))
                     {
                         sbomConfig.JsonSerializer.StartJsonArray(relationshipArrayHeaderName);
@@ -64,7 +64,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                         var jsonChannelsArray = new ChannelReader<JsonDocument>[]
                         {
                             // Packages relationships
-                            generator.Run(
+                            Generator.Run(
                                 GetRelationships(
                                 RelationshipType.DEPENDS_ON,
                                 generationData.RootPackageId,
@@ -72,7 +72,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                                 sbomConfig.ManifestInfo),
 
                             // Root package relationship
-                            generator.Run(
+                            Generator.Run(
                                 GetRelationships(
                                 RelationshipType.DESCRIBES,
                                 generationData.DocumentId,
@@ -80,7 +80,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                                 sbomConfig.ManifestInfo),
 
                             // External reference relationship
-                            generator.Run(
+                            Generator.Run(
                                 GetRelationships(
                                 RelationshipType.PREREQUISITE_FOR,
                                 generationData.RootPackageId,
@@ -88,7 +88,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                                 sbomConfig.ManifestInfo),
 
                             // External reference file relationship
-                            generator.Run(
+                            Generator.Run(
                                 GetRelationships(
                                 RelationshipType.DESCRIBED_BY,
                                 generationData.SPDXFileIds,
@@ -99,13 +99,13 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
                         // Collect all the json elements and write to the serializer.
                         int count = 0;
 
-                        await foreach (JsonDocument jsonDoc in channelUtils.Merge(jsonChannelsArray).ReadAllAsync())
+                        await foreach (JsonDocument jsonDoc in ChannelUtils.Merge(jsonChannelsArray).ReadAllAsync())
                         {
                             count++;
                             sbomConfig.JsonSerializer.Write(jsonDoc);
                         }
 
-                        log.Debug($"Wrote {count} relationship elements in the SBOM.");
+                        Log.Debug($"Wrote {count} relationship elements in the SBOM.");
 
                         // Write the end of the array.
                         sbomConfig.JsonSerializer.EndJsonArray();

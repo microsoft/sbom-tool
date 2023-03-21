@@ -53,7 +53,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
         /// </summary>
         /// <param name="spdxPackage">The object to add the external reference to.</param>
         /// <param name="packageInfo">The packageInfo object to use for source data.</param>
-        public static void AddPackageUrls(this SPDXPackage spdxPackage, SbomPackage packageInfo)
+        public static void AddPackageUrls(this SPDXPackage spdxPackage, SBOMPackage packageInfo)
         {
             if (spdxPackage is null)
             {
@@ -91,7 +91,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
         /// </summary>
         /// <param name="spdxPackage"></param>
         /// <param name="packageInfo"></param>
-        public static string AddSpdxId(this SPDXPackage spdxPackage, SbomPackage packageInfo)
+        public static string AddSpdxId(this SPDXPackage spdxPackage, SBOMPackage packageInfo)
         {
             if (spdxPackage is null)
             {

@@ -20,17 +20,17 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
     /// <typeparam name="T">The type of the files channel that is used by the provider.</typeparam>
     public abstract class FileToJsonProviderBase<T> : ISourcesProvider
     {
-        private readonly IConfiguration configuration;
+        public IConfiguration Configuration { get; }
 
-        private readonly ILogger log;
+        public ILogger Log { get; }
 
-        private readonly ChannelUtils channelUtils;
-        
+        public ChannelUtils ChannelUtils { get; }
+
         public FileToJsonProviderBase(IConfiguration configuration, ILogger log, ChannelUtils channelUtils)
         {
-            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            this.log = log ?? throw new ArgumentNullException(nameof(log));
-            this.channelUtils = channelUtils ?? throw new ArgumentNullException(nameof(channelUtils));
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            Log = log ?? throw new ArgumentNullException(nameof(log));
+            ChannelUtils = channelUtils ?? throw new ArgumentNullException(nameof(channelUtils));
         }
 
         public (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) Get(IList<ISbomConfig> requiredConfigs)
@@ -42,10 +42,10 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
             var (files, dirErrors) = GetFilesChannel();
             errors.Add(dirErrors);
 
-            log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
-            var splitFilesChannels = channelUtils.Split(files, configuration.Parallelism.Value);
+            Log.Debug($"Splitting the workflow into {Configuration.Parallelism.Value} threads.");
+            var splitFilesChannels = ChannelUtils.Split(files, Configuration.Parallelism.Value);
 
-            log.Debug("Running the files generation workflow ...");
+            Log.Debug("Running the files generation workflow ...");
             foreach (var fileChannel in splitFilesChannels)
             {
                 var (jsonDoc, convertErrors) = ConvertToJson(fileChannel, requiredConfigs);
@@ -54,7 +54,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
                 jsonDocResults.Add(jsonDoc);
             }
 
-            return (channelUtils.Merge(jsonDocResults.ToArray()), channelUtils.Merge(errors.ToArray()));
+            return (ChannelUtils.Merge(jsonDocResults.ToArray()), ChannelUtils.Merge(errors.ToArray()));
         }
 
         /// <summary>

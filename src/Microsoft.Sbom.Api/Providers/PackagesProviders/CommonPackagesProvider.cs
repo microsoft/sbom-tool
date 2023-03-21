@@ -21,7 +21,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
     /// </summary>
     public abstract class CommonPackagesProvider<T> : EntityToJsonProviderBase<T>
     {
-        private readonly ISbomConfigProvider sbomConfigs;
+        public ISbomConfigProvider SBOMConfigs { get; }
 
         public PackageInfoJsonWriter PackageInfoJsonWriter { get; }
 
@@ -33,7 +33,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
             PackageInfoJsonWriter packageInfoJsonWriter)
             : base(configuration, channelUtils, logger)
         {
-            this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+            SBOMConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
             PackageInfoJsonWriter = packageInfoJsonWriter ?? throw new ArgumentNullException(nameof(packageInfoJsonWriter));
         }
 
@@ -41,20 +41,20 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
         /// Get common packages that are provided by the build engine.
         /// </summary>
         /// <returns></returns>
-        private Channel<SbomPackage> GetCommonPackages()
+        private Channel<SBOMPackage> GetCommonPackages()
         {
-            var packageInfos = Channel.CreateUnbounded<SbomPackage>();
+            var packageInfos = Channel.CreateUnbounded<SBOMPackage>();
 
             Task.Run(async () =>
             {
                 try
                 {
-                    if (sbomConfigs.TryGetMetadata(MetadataKey.ImageOS, out object imageOsObj) &&
-                        sbomConfigs.TryGetMetadata(MetadataKey.ImageVersion, out object imageVersionObj))
+                    if (SBOMConfigs.TryGetMetadata(MetadataKey.ImageOS, out object imageOsObj) &&
+                        SBOMConfigs.TryGetMetadata(MetadataKey.ImageVersion, out object imageVersionObj))
                     {
                         Log.Debug($"Adding the image OS package to the packages list as a dependency.");
                         string name = $"Azure Pipelines Hosted Image {imageOsObj}";
-                        await packageInfos.Writer.WriteAsync(new SbomPackage()
+                        await packageInfos.Writer.WriteAsync(new SBOMPackage()
                         {
                             PackageName = name,
                             PackageVersion = (string)imageVersionObj,

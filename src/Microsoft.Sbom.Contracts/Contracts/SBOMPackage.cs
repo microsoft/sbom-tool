@@ -8,7 +8,7 @@ namespace Microsoft.Sbom.Contracts
     /// <summary>
     /// A structure that represents a package in a SBOM.
     /// </summary>
-    public class SbomPackage
+    public class SBOMPackage
     { 
         /// <summary>
         /// Gets or sets the unique identifier of this package.

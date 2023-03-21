@@ -11,7 +11,7 @@ namespace Microsoft.Sbom.Extensions.Entities
     /// <summary>
     /// InternalSBOMFileInfo class used for processing and storing extra data during the generation process.
     /// </summary>
-    public class InternalSbomFileInfo
+    public class InternalSBOMFileInfo
     {
         /// <summary>
         /// Gets or sets a list of the checksums for the file.

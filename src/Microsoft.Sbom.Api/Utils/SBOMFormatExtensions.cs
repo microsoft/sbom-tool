@@ -13,12 +13,12 @@ namespace Microsoft.Sbom.Api.Utils
     public static class SBOMFormatExtensions
     {
         /// <summary>
-        /// Converts a <see cref="SbomSpecification"/> to a <see cref="ManifestInfo"/> object.
+        /// Converts a <see cref="SBOMSpecification"/> to a <see cref="ManifestInfo"/> object.
         /// </summary>
         /// <param name="specification"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static ManifestInfo ToManifestInfo(this SbomSpecification specification)
+        public static ManifestInfo ToManifestInfo(this SBOMSpecification specification)
         {
             if (specification is null)
             {
@@ -33,19 +33,19 @@ namespace Microsoft.Sbom.Api.Utils
         }
 
         /// <summary>
-        /// Converts a <see cref="ManifestInfo"/> to a <see cref="SbomSpecification"/> object.
+        /// Converts a <see cref="ManifestInfo"/> to a <see cref="SBOMSpecification"/> object.
         /// </summary>
         /// <param name="manifestInfo"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static SbomSpecification ToSBOMSpecification(this ManifestInfo manifestInfo)
+        public static SBOMSpecification ToSBOMSpecification(this ManifestInfo manifestInfo)
         {
             if (manifestInfo is null)
             {
                 throw new ArgumentNullException(nameof(manifestInfo));
             }
 
-            return new SbomSpecification(manifestInfo.Name, manifestInfo.Version);
+            return new SBOMSpecification(manifestInfo.Name, manifestInfo.Version);
         }
     }
 }

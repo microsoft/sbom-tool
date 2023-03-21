@@ -8,7 +8,7 @@ namespace Microsoft.Sbom.Contracts
     /// <summary>
     /// Customer facing structure that represents a file in a SBOM.
     /// </summary>
-    public class SbomFile
+    public class SBOMFile
     {
         /// <summary>
         /// Gets or sets a list of the checksums for the file.

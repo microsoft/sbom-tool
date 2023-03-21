@@ -120,17 +120,17 @@ namespace Microsoft.Sbom.Common.Config
         ConfigurationSetting<string> PackageSupplier { get; set; }
 
         /// <summary>
-        /// Gets or sets a list of <see cref="SbomFile"/> files provided to us from the API.
+        /// Gets or sets a list of <see cref="SBOMFile"/> files provided to us from the API.
         /// We won't traverse the build root path to get a list of files if this is set, and 
         /// use the list provided here instead.
         /// </summary>
-        ConfigurationSetting<IEnumerable<SbomFile>> FilesList { get; set; }
+        ConfigurationSetting<IEnumerable<SBOMFile>> FilesList { get; set; }
 
         /// <summary>
-        /// Gets or sets a list of <see cref="SbomPackage"/> packages provided to us from the API.
+        /// Gets or sets a list of <see cref="SBOMPackage"/> packages provided to us from the API.
         /// This list will be used to generate the packages in the final SBOM.
         /// </summary>
-        ConfigurationSetting<IEnumerable<SbomPackage>> PackagesList { get; set; }
+        ConfigurationSetting<IEnumerable<SBOMPackage>> PackagesList { get; set; }
 
         /// <summary>
         /// Gets or sets if specified, we will store the generated telemetry for the execution

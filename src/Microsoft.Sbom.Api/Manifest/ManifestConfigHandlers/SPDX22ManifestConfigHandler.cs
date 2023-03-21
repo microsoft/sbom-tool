@@ -1,13 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Extensions;
 using System;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Manifest.Configuration;
-using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Recorder;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Extensions;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers
@@ -17,38 +16,48 @@ namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers
     /// </summary>
     public class SPDX22ManifestConfigHandler : IManifestConfigHandler
     {
-        private readonly IMetadataBuilderFactory metadataBuilderFactory;
         private readonly IConfiguration configuration;
         private readonly IFileSystemUtils fileSystemUtils;
+        private readonly IMetadataBuilder metadataBuilder;
 
-        private string ManifestDirPath => configuration.ManifestDirPath.Value;
-
-        // directory path for SPDX 2.2 is 
-        // root/_manifest/spdx_2.2/
-        private string SbomDirPath => fileSystemUtils.JoinPaths(ManifestDirPath, $"{Constants.SPDX22ManifestInfo.Name.ToLower()}_{Constants.SPDX22ManifestInfo.Version.ToLower()}");
-
-        // sbom file path is manifest.spdx.json in the sbom directory.
-        private string SbomFilePath => fileSystemUtils.JoinPaths(SbomDirPath, $"manifest.{Constants.SPDX22ManifestInfo.Name.ToLower()}.json");
-
-        // sha file is sbom file + .sha256
-        private string ManifestJsonSha256FilePath => $"{SbomFilePath}.sha256";
-
-        // catalog file is always manifest.cat
-        private string CatalogFilePath => fileSystemUtils.JoinPaths(SbomDirPath, Constants.CatalogFileName);
-
-        // bsi.json file contains build session metadata and is always bsi.json
-        private string BsiJsonFilePath => fileSystemUtils.JoinPaths(SbomDirPath, Constants.BsiFileName);
-
-        private IMetadataBuilder MetadataBuilder => metadataBuilderFactory.Get(Constants.SPDX22ManifestInfo);
+        private readonly string sbomDirPath;
+        private readonly string sbomFilePath;
+        private readonly string manifestJsonSha256FilePath;
+        private readonly string catalogFilePath;
+        private readonly string bsiJsonFilePath;
 
         public SPDX22ManifestConfigHandler(
             IConfiguration configuration,
             IFileSystemUtils fileSystemUtils,
             IMetadataBuilderFactory metadataBuilderFactory)
         {
-            this.metadataBuilderFactory = metadataBuilderFactory ?? throw new ArgumentException(nameof(metadataBuilderFactory));
+            if (metadataBuilderFactory is null)
+            {
+                throw new ArgumentNullException(nameof(metadataBuilderFactory));
+            }
+
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+
+            string manifestDirPath = configuration.ManifestDirPath.Value;
+
+            // directory path for SPDX 2.2 is 
+            // root/_manifest/spdx_2.2/
+            sbomDirPath = fileSystemUtils.JoinPaths(manifestDirPath, $"{Constants.SPDX22ManifestInfo.Name.ToLower()}_{Constants.SPDX22ManifestInfo.Version.ToLower()}");
+
+            // sbom file path is manifest.spdx.json in the sbom directory.
+            sbomFilePath = fileSystemUtils.JoinPaths(sbomDirPath, $"manifest.{Constants.SPDX22ManifestInfo.Name.ToLower()}.json");
+
+            // sha file is sbom file + .sha256
+            manifestJsonSha256FilePath = $"{sbomFilePath}.sha256";
+
+            // catalog file is always manifest.cat
+            catalogFilePath = fileSystemUtils.JoinPaths(sbomDirPath, Constants.CatalogFileName);
+
+            // bsi.json file contains build session metadata and is always bsi.json
+            bsiJsonFilePath = fileSystemUtils.JoinPaths(sbomDirPath, Constants.BsiFileName);
+
+            metadataBuilder = metadataBuilderFactory.Get(Constants.SPDX22ManifestInfo);
         }
 
         public bool TryGetManifestConfig(out ISbomConfig sbomConfig)
@@ -56,12 +65,12 @@ namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers
             sbomConfig = new SbomConfig(fileSystemUtils)
             {
                 ManifestInfo = Constants.SPDX22ManifestInfo,
-                ManifestJsonDirPath = SbomDirPath,
-                ManifestJsonFilePath = SbomFilePath,
-                CatalogFilePath = CatalogFilePath,
-                BsiFilePath = BsiJsonFilePath,
-                ManifestJsonFileSha256FilePath = ManifestJsonSha256FilePath,
-                MetadataBuilder = MetadataBuilder,
+                ManifestJsonDirPath = sbomDirPath,
+                ManifestJsonFilePath = sbomFilePath,
+                CatalogFilePath = catalogFilePath,
+                BsiFilePath = bsiJsonFilePath,
+                ManifestJsonFileSha256FilePath = manifestJsonSha256FilePath,
+                MetadataBuilder = metadataBuilder,
                 Recorder = new SbomPackageDetailsRecorder()
             };
 
@@ -80,7 +89,7 @@ namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers
             }
 
             if (configuration.ManifestToolAction == ManifestToolActions.Validate
-               && fileSystemUtils.FileExists(SbomFilePath))
+               && fileSystemUtils.FileExists(sbomFilePath))
             {
                 // We can only validate one format at a time, so check if its this one and return true/false.
                 if (configuration.ManifestInfo?.Value != null

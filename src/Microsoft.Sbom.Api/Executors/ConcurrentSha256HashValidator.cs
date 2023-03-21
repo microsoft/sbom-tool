@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Api.Executors
         }
 
         public (ChannelReader<FileValidationResult> output, ChannelReader<FileValidationResult> errors)
-            Validate(ChannelReader<InternalSbomFileInfo> fileWithHash)
+            Validate(ChannelReader<InternalSBOMFileInfo> fileWithHash)
         {
             var output = Channel.CreateUnbounded<FileValidationResult>();
             var errors = Channel.CreateUnbounded<FileValidationResult>();
@@ -45,7 +45,7 @@ namespace Microsoft.Sbom.Api.Executors
             return (output, errors);
         }
 
-        private async Task Validate(InternalSbomFileInfo internalFileInfo, Channel<FileValidationResult> output, Channel<FileValidationResult> errors)
+        private async Task Validate(InternalSBOMFileInfo internalFileInfo, Channel<FileValidationResult> output, Channel<FileValidationResult> errors)
         {
             var sha256Checksum = internalFileInfo.Checksum.Where(c => c.Algorithm == AlgorithmName.SHA256).FirstOrDefault();
             var fileHashes = new FileHashes();

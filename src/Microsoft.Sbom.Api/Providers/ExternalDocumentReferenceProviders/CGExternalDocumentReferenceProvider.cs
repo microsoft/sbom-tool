@@ -23,13 +23,13 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
     /// </summary>
     public class CGExternalDocumentReferenceProvider : EntityToJsonProviderBase<ScannedComponent>
     {
-        private readonly ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter;
+        public ComponentToExternalReferenceInfoConverter ComponentToExternalReferenceInfoConverter { get; }
 
-        private readonly ExternalDocumentReferenceWriter externalDocumentReferenceWriter;
+        public ExternalDocumentReferenceWriter ExternalDocumentReferenceWriter { get; }
 
-        private readonly SBOMComponentsWalker sbomComponentsWalker;
+        public SBOMComponentsWalker SBOMComponentsWalker { get; }
 
-        private readonly ExternalReferenceDeduplicator externalReferenceDeduplicator;
+        public ExternalReferenceDeduplicator ExternalReferenceDeduplicator { get; }
 
         public CGExternalDocumentReferenceProvider(
             IConfiguration configuration,
@@ -41,10 +41,10 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
             ExternalReferenceDeduplicator externalReferenceDeduplicator)
             : base(configuration, channelUtils, logger)
         {
-            this.componentToExternalReferenceInfoConverter = componentToExternalReferenceInfoConverter ?? throw new ArgumentNullException(nameof(componentToExternalReferenceInfoConverter));
-            this.externalDocumentReferenceWriter = externalDocumentReferenceWriter ?? throw new ArgumentNullException(nameof(externalDocumentReferenceWriter));
-            this.sbomComponentsWalker = sbomComponentsWalker ?? throw new ArgumentNullException(nameof(sbomComponentsWalker));
-            this.externalReferenceDeduplicator = externalReferenceDeduplicator ?? throw new ArgumentNullException(nameof(externalReferenceDeduplicator));
+            ComponentToExternalReferenceInfoConverter = componentToExternalReferenceInfoConverter ?? throw new ArgumentNullException(nameof(componentToExternalReferenceInfoConverter));
+            ExternalDocumentReferenceWriter = externalDocumentReferenceWriter ?? throw new ArgumentNullException(nameof(externalDocumentReferenceWriter));
+            SBOMComponentsWalker = sbomComponentsWalker ?? throw new ArgumentNullException(nameof(sbomComponentsWalker));
+            ExternalReferenceDeduplicator = externalReferenceDeduplicator ?? throw new ArgumentNullException(nameof(externalReferenceDeduplicator));
         }
 
         public override bool IsSupported(ProviderType providerType)
@@ -62,11 +62,11 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
         {
             IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
 
-            var (output, convertErrors) = componentToExternalReferenceInfoConverter.Convert(sourceChannel);
+            var (output, convertErrors) = ComponentToExternalReferenceInfoConverter.Convert(sourceChannel);
             errors.Add(convertErrors);
-            output = externalReferenceDeduplicator.Deduplicate(output);
+            output = ExternalReferenceDeduplicator.Deduplicate(output);
 
-            var (jsonDoc, jsonErrors) = externalDocumentReferenceWriter.Write(output, requiredConfigs);
+            var (jsonDoc, jsonErrors) = ExternalDocumentReferenceWriter.Write(output, requiredConfigs);
             errors.Add(jsonErrors);
 
             return (jsonDoc, ChannelUtils.Merge(errors.ToArray()));
@@ -74,7 +74,7 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
 
         protected override (ChannelReader<ScannedComponent> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            var (output, cdErrors) = sbomComponentsWalker.GetComponents(Configuration.BuildComponentPath?.Value);
+            var (output, cdErrors) = SBOMComponentsWalker.GetComponents(Configuration.BuildComponentPath?.Value);
 
             if (cdErrors.TryRead(out ComponentDetectorException e))
             {

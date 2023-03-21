@@ -14,9 +14,9 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
     internal static class GoComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="GoComponent"/> to an <see cref="SbomPackage"/>.
+        /// Converts a <see cref="GoComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SbomPackage? ToSbomPackage(this GoComponent goComponent) => new ()
+        public static SBOMPackage? ToSbomPackage(this GoComponent goComponent) => new ()
         {
             Id = goComponent.Id,
             PackageUrl = goComponent.PackageUrl?.ToString(),

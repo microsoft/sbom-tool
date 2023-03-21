@@ -8,8 +8,7 @@ namespace Microsoft.Sbom.Api.Workflows
     /// <summary>
     /// Defines the workflow run for a given action.
     /// </summary>
-    public interface IWorkflow<T>
-        where T : IWorkflow<T>
+    public interface IWorkflow
     {
         public Task<bool> RunAsync();
     }

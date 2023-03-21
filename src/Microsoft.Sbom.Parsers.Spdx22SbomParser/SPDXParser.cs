@@ -340,7 +340,7 @@ public class SPDXParser : ISbomParser
     }
 
     /// <inheritdoc/>
-    public IEnumerable<SbomPackage> GetPackages()
+    public IEnumerable<SBOMPackage> GetPackages()
     {
         if (parserState != ParserState.PACKAGES)
         {
@@ -400,7 +400,7 @@ public class SPDXParser : ISbomParser
     }
 
     /// <inheritdoc/>
-    public IEnumerable<SbomFile> GetFiles()
+    public IEnumerable<SBOMFile> GetFiles()
     {
         if (parserState != ParserState.FILES)
         {

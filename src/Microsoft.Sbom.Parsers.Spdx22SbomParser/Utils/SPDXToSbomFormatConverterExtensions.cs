@@ -17,13 +17,13 @@ namespace Microsoft.Sbom.Utils;
 internal static class SPDXToSbomFormatConverterExtensions
 {
     /// <summary>
-    /// Converts a <see cref="SPDXFile"/> object to a <see cref="SbomFile"/> object.
+    /// Converts a <see cref="SPDXFile"/> object to a <see cref="SBOMFile"/> object.
     /// </summary>
     /// <param name="spdxFile"></param>
     /// <returns></returns>
-    internal static SbomFile ToSbomFile(this SPDXFile spdxFile)
+    internal static SBOMFile ToSbomFile(this SPDXFile spdxFile)
     {
-        return new SbomFile
+        return new SBOMFile
         {
             Checksum = spdxFile.FileChecksums?.Select(c => c.ToSbomChecksum()),
             FileCopyrightText = spdxFile.FileCopyrightText,
@@ -35,13 +35,13 @@ internal static class SPDXToSbomFormatConverterExtensions
     }
 
     /// <summary>
-    /// Converts a <see cref="SPDXPackage"/> to a <see cref="SbomPackage"/> object.
+    /// Converts a <see cref="SPDXPackage"/> to a <see cref="SBOMPackage"/> object.
     /// </summary>
     /// <param name="spdxPackage"></param>
     /// <returns></returns>
-    internal static SbomPackage ToSbomPackage(this SPDXPackage spdxPackage)
+    internal static SBOMPackage ToSbomPackage(this SPDXPackage spdxPackage)
     {
-        return new SbomPackage
+        return new SBOMPackage
         {
             Checksum = spdxPackage.Checksums?.Select(c => c.ToSbomChecksum()),
             CopyrightText = spdxPackage.CopyrightText,

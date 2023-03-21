@@ -18,7 +18,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
     /// </summary>
     public class DirectoryTraversingFileToJsonProvider : PathBasedFileToJsonProviderBase
     {
-        private readonly DirectoryWalker directoryWalker;
+        public DirectoryWalker DirectoryWalker { get; }
 
         public DirectoryTraversingFileToJsonProvider(
             IConfiguration configuration,
@@ -31,7 +31,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
             DirectoryWalker directoryWalker)
             : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
         {
-            this.directoryWalker = directoryWalker ?? throw new ArgumentNullException(nameof(directoryWalker));
+            DirectoryWalker = directoryWalker ?? throw new ArgumentNullException(nameof(directoryWalker));
         }
 
         public override bool IsSupported(ProviderType providerType)
@@ -52,7 +52,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
 
         protected override (ChannelReader<string> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            return directoryWalker.GetFilesRecursively(Configuration.BuildDropPath?.Value);
+            return DirectoryWalker.GetFilesRecursively(Configuration.BuildDropPath?.Value);
         }
 
         protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) WriteAdditionalItems(IList<ISbomConfig> requiredConfigs)

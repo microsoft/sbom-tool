@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Extensions.Entities;
+using Ninject;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -21,14 +22,15 @@ namespace Microsoft.Sbom.Api.Executors
     public class ManifestFileFilterer
     {
         private readonly ManifestData manifestData;
-        private readonly IFilter<DownloadedRootPathFilter> rootPathFilter;
+        private readonly IFilter rootPathFilter;
         private readonly IConfiguration configuration;
         private readonly ILogger log;
         private readonly IFileSystemUtils fileSystemUtils;
 
         public ManifestFileFilterer(
             ManifestData manifestData,
-            IFilter<DownloadedRootPathFilter> rootPathFilter,
+            [Named(nameof(DownloadedRootPathFilter))]
+            IFilter rootPathFilter,
             IConfiguration configuration,
             ILogger log,
             IFileSystemUtils fileSystemUtils)

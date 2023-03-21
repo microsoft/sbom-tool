@@ -22,20 +22,20 @@ public interface ISbomParser
     ParserState Next();
 
     /// <summary>
-    /// Returns a list of <see cref="SbomFile"/> objects defined in the
+    /// Returns a list of <see cref="SBOMFile"/> objects defined in the
     /// current SBOM.
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    IEnumerable<SbomFile> GetFiles();
+    IEnumerable<SBOMFile> GetFiles();
 
     /// <summary>
-    /// Returns a list of <see cref="SbomPackage"/> objects defined in the
+    /// Returns a list of <see cref="SBOMPackage"/> objects defined in the
     /// current SBOM.
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    IEnumerable<SbomPackage> GetPackages();
+    IEnumerable<SBOMPackage> GetPackages();
 
     /// <summary>
     /// Returns a list of <see cref="SBOMRelationship"/> objects defined in the

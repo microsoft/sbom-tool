@@ -13,9 +13,9 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
     internal static class NuGetComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="NuGetComponent"/> to an <see cref="SbomPackage"/>.
+        /// Converts a <see cref="NuGetComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SbomPackage? ToSbomPackage(this NuGetComponent nuGetComponent) => new ()
+        public static SBOMPackage? ToSbomPackage(this NuGetComponent nuGetComponent) => new ()
         {
             Id = nuGetComponent.Id,
             PackageUrl = nuGetComponent.PackageUrl?.ToString(),

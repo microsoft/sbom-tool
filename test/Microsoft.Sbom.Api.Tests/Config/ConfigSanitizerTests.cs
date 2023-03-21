@@ -60,9 +60,9 @@ namespace Microsoft.Sbom.Api.Tests.Config
         /// are testing the correct config.
         /// </summary>
         /// <returns></returns>
-        private InputConfiguration GetConfigurationBaseObject()
+        private Configuration GetConfigurationBaseObject()
         {
-            return new InputConfiguration
+            return new Configuration
             {
                 HashAlgorithm = new ConfigurationSetting<AlgorithmName>
                 {

@@ -14,9 +14,9 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection
     internal static class DockerReferenceComponentExtensions
     {
         /// <summary>
-        /// Converts a <see cref="DockerReferenceComponent"/> to an <see cref="SbomPackage"/>.
+        /// Converts a <see cref="DockerReferenceComponent"/> to an <see cref="SBOMPackage"/>.
         /// </summary>
-        public static SbomPackage? ToSbomPackage(this DockerReferenceComponent dockerReferenceComponent) => new ()
+        public static SBOMPackage? ToSbomPackage(this DockerReferenceComponent dockerReferenceComponent) => new ()
         {
             Id = dockerReferenceComponent.Id,
             PackageUrl = dockerReferenceComponent.PackageUrl?.ToString(),

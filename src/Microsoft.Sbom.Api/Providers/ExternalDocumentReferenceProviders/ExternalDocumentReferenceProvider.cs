@@ -20,13 +20,13 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
     /// </summary>
     public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string>
     {
-        private readonly FileListEnumerator listWalker;
+        public FileListEnumerator ListWalker { get; }
 
-        private readonly ISBOMReaderForExternalDocumentReference spdxSbomReaderForExternalDocumentReference;
+        public ISBOMReaderForExternalDocumentReference SPDXSBOMReaderForExternalDocumentReference { get; }
 
-        private readonly ExternalDocumentReferenceWriter externalDocumentReferenceWriter;
+        public ExternalDocumentReferenceWriter ExternalDocumentReferenceWriter { get; }
 
-        private readonly ExternalReferenceDeduplicator externalReferenceDeduplicator;
+        public ExternalReferenceDeduplicator ExternalReferenceDeduplicator { get; }
 
         public ExternalDocumentReferenceProvider(
             IConfiguration configuration,
@@ -38,10 +38,10 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
             ExternalReferenceDeduplicator externalReferenceDeduplicator)
             : base(configuration, channelUtils, logger)
         {
-            this.listWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));
-            this.spdxSbomReaderForExternalDocumentReference = spdxSbomReaderForExternalDocumentReference ?? throw new ArgumentNullException(nameof(spdxSbomReaderForExternalDocumentReference));
-            this.externalDocumentReferenceWriter = externalDocumentReferenceWriter ?? throw new ArgumentNullException(nameof(externalDocumentReferenceWriter));
-            this.externalReferenceDeduplicator = externalReferenceDeduplicator ?? throw new ArgumentNullException(nameof(externalReferenceDeduplicator));
+            ListWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));
+            SPDXSBOMReaderForExternalDocumentReference = spdxSbomReaderForExternalDocumentReference ?? throw new ArgumentNullException(nameof(spdxSbomReaderForExternalDocumentReference));
+            ExternalDocumentReferenceWriter = externalDocumentReferenceWriter ?? throw new ArgumentNullException(nameof(externalDocumentReferenceWriter));
+            ExternalReferenceDeduplicator = externalReferenceDeduplicator ?? throw new ArgumentNullException(nameof(externalReferenceDeduplicator));
         }
 
         public override bool IsSupported(ProviderType providerType)
@@ -58,10 +58,10 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
         protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) ConvertToJson(ChannelReader<string> sourceChannel, IList<ISbomConfig> requiredConfigs)
         {
             IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
-            var (results, parseErrors) = spdxSbomReaderForExternalDocumentReference.ParseSBOMFile(sourceChannel);
+            var (results, parseErrors) = SPDXSBOMReaderForExternalDocumentReference.ParseSBOMFile(sourceChannel);
             errors.Add(parseErrors);
-            results = externalReferenceDeduplicator.Deduplicate(results);
-            var (jsonDoc, jsonErrors) = externalDocumentReferenceWriter.Write(results, requiredConfigs);
+            results = ExternalReferenceDeduplicator.Deduplicate(results);
+            var (jsonDoc, jsonErrors) = ExternalDocumentReferenceWriter.Write(results, requiredConfigs);
             errors.Add(jsonErrors);
 
             return (jsonDoc, ChannelUtils.Merge(errors.ToArray()));
@@ -69,7 +69,7 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
 
         protected override (ChannelReader<string> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            return listWalker.GetFilesFromList(Configuration.ExternalDocumentReferenceListFile.Value);
+            return ListWalker.GetFilesFromList(Configuration.ExternalDocumentReferenceListFile.Value);
         }
 
         protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) WriteAdditionalItems(IList<ISbomConfig> requiredConfigs)

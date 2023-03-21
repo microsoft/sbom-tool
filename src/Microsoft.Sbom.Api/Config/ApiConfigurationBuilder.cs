@@ -18,7 +18,7 @@ namespace Microsoft.Sbom.Api.Config
     /// <summary>
     /// Builds the configuration object for the SBOM api.
     /// </summary>
-    public static class ApiConfigurationBuilder
+    internal class ApiConfigurationBuilder
     {
         /// <summary>
         /// Gets a generate configuration.
@@ -32,13 +32,13 @@ namespace Microsoft.Sbom.Api.Config
         /// <param name="runtimeConfiguration"></param>
         /// <param name="verbosity"></param>
         /// <returns>A generate configuration.</returns>
-        public static InputConfiguration GetConfiguration(
+        internal Configuration GetConfiguration(
             string rootPath,
             string manifestDirPath,
-            IEnumerable<SbomFile> files,
-            IEnumerable<SbomPackage> packages,
+            IEnumerable<SBOMFile> files,
+            IEnumerable<SBOMPackage> packages,
             SBOMMetadata metadata,
-            IList<SbomSpecification> specifications = null,
+            IList<SBOMSpecification> specifications = null,
             RuntimeConfiguration runtimeConfiguration = null,
             string externalDocumentReferenceListFile = null,
             string componentPath = null)
@@ -55,7 +55,7 @@ namespace Microsoft.Sbom.Api.Config
 
             RuntimeConfiguration sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
 
-            var configuration = new InputConfiguration();
+            var configuration = new Configuration();
             configuration.BuildDropPath = GetConfigurationSetting(rootPath);
             configuration.ManifestDirPath = GetConfigurationSetting(manifestDirPath);
             configuration.ManifestToolAction = ManifestToolActions.Generate;
@@ -100,10 +100,10 @@ namespace Microsoft.Sbom.Api.Config
             return configuration;
         }
 
-        public static InputConfiguration GetConfiguration(
+        public Configuration GetConfiguration(
             string buildDropPath,
             string outputPath,
-            IList<SbomSpecification> specifications,
+            IList<SBOMSpecification> specifications,
             AlgorithmName algorithmName,
             string manifestDirPath,
             bool validateSignature,
@@ -123,12 +123,12 @@ namespace Microsoft.Sbom.Api.Config
 
             if (specifications is null || specifications.Count == 0)
             {
-                specifications = new List<SbomSpecification>() { ApiConstants.SPDX22Specification };
+                specifications = new List<SBOMSpecification>() { ApiConstants.SPDX22Specification };
             }
 
             var sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
 
-            var configuration = new InputConfiguration();
+            var configuration = new Configuration();
             configuration.BuildDropPath = GetConfigurationSetting(buildDropPath);
             configuration.ManifestDirPath = GetConfigurationSetting(manifestDirPath);
             configuration.ManifestToolAction = ManifestToolActions.Validate;
@@ -152,7 +152,7 @@ namespace Microsoft.Sbom.Api.Config
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        private static ConfigurationSetting<IList<ManifestInfo>> ConvertSbomSpecificationToManifestInfo(IList<SbomSpecification> specifications)
+        private ConfigurationSetting<IList<ManifestInfo>> ConvertSbomSpecificationToManifestInfo(IList<SBOMSpecification> specifications)
         {
             if (specifications is null)
             {
@@ -171,21 +171,35 @@ namespace Microsoft.Sbom.Api.Config
             return GetConfigurationSetting(manifestInfos);
         }
 
-        private static void SetVerbosity(RuntimeConfiguration sanitizedRuntimeConfiguration, InputConfiguration configuration)
+        private void SetVerbosity(RuntimeConfiguration sanitizedRuntimeConfiguration, Configuration configuration)
         {
-            configuration.Verbosity = sanitizedRuntimeConfiguration.Verbosity switch
+            switch (sanitizedRuntimeConfiguration.Verbosity)
             {
-                System.Diagnostics.Tracing.EventLevel.Critical => GetConfigurationSetting(LogEventLevel.Fatal),
-                System.Diagnostics.Tracing.EventLevel.Informational => GetConfigurationSetting(LogEventLevel.Information),
-                System.Diagnostics.Tracing.EventLevel.Error => GetConfigurationSetting(LogEventLevel.Error),
-                System.Diagnostics.Tracing.EventLevel.LogAlways => GetConfigurationSetting(LogEventLevel.Verbose),
-                System.Diagnostics.Tracing.EventLevel.Warning => GetConfigurationSetting(LogEventLevel.Warning),
-                System.Diagnostics.Tracing.EventLevel.Verbose => GetConfigurationSetting(LogEventLevel.Verbose),
-                _ => GetConfigurationSetting(Constants.DefaultLogLevel),
-            };
+                case System.Diagnostics.Tracing.EventLevel.Critical:
+                    configuration.Verbosity = GetConfigurationSetting(LogEventLevel.Fatal);
+                    break;
+                case System.Diagnostics.Tracing.EventLevel.Informational:
+                    configuration.Verbosity = GetConfigurationSetting(LogEventLevel.Information);
+                    break;
+                case System.Diagnostics.Tracing.EventLevel.Error:
+                    configuration.Verbosity = GetConfigurationSetting(LogEventLevel.Error);
+                    break;
+                case System.Diagnostics.Tracing.EventLevel.LogAlways:
+                    configuration.Verbosity = GetConfigurationSetting(LogEventLevel.Verbose);
+                    break;
+                case System.Diagnostics.Tracing.EventLevel.Warning:
+                    configuration.Verbosity = GetConfigurationSetting(LogEventLevel.Warning);
+                    break;
+                case System.Diagnostics.Tracing.EventLevel.Verbose:
+                    configuration.Verbosity = GetConfigurationSetting(LogEventLevel.Verbose);
+                    break;
+                default:
+                    configuration.Verbosity = GetConfigurationSetting(Constants.DefaultLogLevel);
+                    break;
+            }
         }
 
-        private static ConfigurationSetting<T> GetConfigurationSetting<T>(T value)
+        private ConfigurationSetting<T> GetConfigurationSetting<T>(T value)
         {
             return new ConfigurationSetting<T>
             {
@@ -194,7 +208,7 @@ namespace Microsoft.Sbom.Api.Config
             };
         }
 
-        private static RuntimeConfiguration SanitiseRuntimeConfiguration(RuntimeConfiguration runtimeConfiguration)
+        private RuntimeConfiguration SanitiseRuntimeConfiguration(RuntimeConfiguration runtimeConfiguration)
         {
             if (runtimeConfiguration == null)
             {

@@ -19,7 +19,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
     /// </summary>
     public class ExternalDocumentReferenceFileProvider : PathBasedFileToJsonProviderBase
     {
-        private readonly FileListEnumerator listWalker;
+        public FileListEnumerator ListWalker { get; }
 
         public ExternalDocumentReferenceFileProvider(
             IConfiguration configuration,
@@ -32,7 +32,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
             FileListEnumerator listWalker)
             : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
         {
-            this.listWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));
+            ListWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));
         }
 
         public override bool IsSupported(ProviderType providerType)
@@ -57,7 +57,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
                 return (emptyList, errors);
             }
 
-            return listWalker.GetFilesFromList(Configuration.ExternalDocumentReferenceListFile.Value);
+            return ListWalker.GetFilesFromList(Configuration.ExternalDocumentReferenceListFile.Value);
         }
 
         protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) WriteAdditionalItems(IList<ISbomConfig> requiredConfigs)
