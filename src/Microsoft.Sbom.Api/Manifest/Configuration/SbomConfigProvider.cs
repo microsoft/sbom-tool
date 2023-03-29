@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Common.Extensions;
 
 namespace Microsoft.Sbom.Api.Manifest.Configuration
 {
@@ -19,14 +20,56 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
     /// </summary>
     public class SbomConfigProvider : ISbomConfigProvider
     {
-        private readonly IDictionary<ManifestInfo, ISbomConfig> configsDictionary = new Dictionary<ManifestInfo, ISbomConfig>();
-        private readonly IMetadataProvider[] metadataProviders;
+        private IDictionary<ManifestInfo, ISbomConfig> configsDictionary;
+
+        private IDictionary<ManifestInfo, ISbomConfig> ConfigsDictionary
+        {
+            get
+            {
+                configsDictionary ??= new Dictionary<ManifestInfo, ISbomConfig>();
+
+                foreach (var configHandler in manifestConfigHandlers)
+                {
+                    if (configHandler.TryGetManifestConfig(out ISbomConfig sbomConfig))
+                    {
+                        configsDictionary.AddIfKeyNotPresentAndValueNotNull(sbomConfig.ManifestInfo, sbomConfig);
+                        recorder.RecordSBOMFormat(sbomConfig.ManifestInfo, sbomConfig.ManifestJsonFilePath);
+                    }
+                }
+
+                return configsDictionary;
+            }
+        }
+
+        private IReadOnlyDictionary<MetadataKey, object> MetadataDictionary
+        {
+            get
+            {
+                try
+                {
+                    return metadataProviders
+                        .Select(md => md.MetadataDictionary)
+                        .SelectMany(dict => dict)
+                        .Where(kvp => kvp.Value != null)
+                        .GroupBy(kvp => kvp.Key, kvp => kvp.Value)
+                        .ToDictionary(g => g.Key, g => g.First());
+                }
+                catch (ArgumentException e)
+                {
+                    // Sanitize exceptions.
+                    throw new Exception($"An error occured while creating metadata entries for the SBOM.", e);
+                }
+            }
+        }
+
+        private readonly IEnumerable<IManifestConfigHandler> manifestConfigHandlers;
+        private readonly IEnumerable<IMetadataProvider> metadataProviders;
         private readonly ILogger logger;
-        private readonly IReadOnlyDictionary<MetadataKey, object> metadataDictionary;
+        private readonly IRecorder recorder;
 
         public SbomConfigProvider(
-            IManifestConfigHandler[] manifestConfigHandlers,
-            IMetadataProvider[] metadataProviders,
+            IEnumerable<IManifestConfigHandler> manifestConfigHandlers,
+            IEnumerable<IMetadataProvider> metadataProviders,
             ILogger logger,
             IRecorder recorder)
         {
@@ -35,19 +78,10 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
                 throw new ArgumentNullException(nameof(manifestConfigHandlers));
             }
 
-            foreach (var configHandler in manifestConfigHandlers)
-            {
-                if (configHandler.TryGetManifestConfig(out ISbomConfig sbomConfig))
-                {
-                    configsDictionary.Add(sbomConfig.ManifestInfo, sbomConfig);
-                    recorder.RecordSBOMFormat(sbomConfig.ManifestInfo, sbomConfig.ManifestJsonFilePath);
-                }
-            }
-
+            this.manifestConfigHandlers = manifestConfigHandlers ?? throw new ArgumentNullException(nameof(manifestConfigHandlers));
             this.metadataProviders = metadataProviders ?? throw new ArgumentNullException(nameof(metadataProviders));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            metadataDictionary = InitializeDictionary();
+            this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         }
 
         /// <inheritdoc/>
@@ -58,7 +92,7 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
                 throw new ArgumentNullException(nameof(manifestInfo));
             }
 
-            return configsDictionary[manifestInfo];
+            return ConfigsDictionary[manifestInfo];
         }
 
         /// <inheritdoc/>
@@ -69,12 +103,12 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
                 throw new ArgumentNullException(nameof(manifestInfo));
             }
 
-            return configsDictionary.TryGetValue(manifestInfo, out sbomConfig);
+            return ConfigsDictionary.TryGetValue(manifestInfo, out sbomConfig);
         }
 
         public IEnumerable<ManifestInfo> GetManifestInfos()
         {
-            return configsDictionary.Keys;
+            return ConfigsDictionary.Keys;
         }
 
         public IDisposable StartJsonSerialization()
@@ -95,7 +129,7 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
         /// <param name="action">The action to perform on the config.</param>
         public void ApplyToEachConfig(Action<ISbomConfig> action)
         {
-            foreach (var config in configsDictionary)
+            foreach (var config in ConfigsDictionary)
             {
                 action(config.Value);
             }
@@ -103,27 +137,9 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
 
         #region IInternalMetadataProvider implementation
 
-        private IReadOnlyDictionary<MetadataKey, object> InitializeDictionary()
-        {
-            try
-            {
-                return metadataProviders
-                    .Select(md => md.MetadataDictionary)
-                    .SelectMany(dict => dict)
-                    .Where(kvp => kvp.Value != null)
-                    .GroupBy(kvp => kvp.Key, kvp => kvp.Value)
-                    .ToDictionary(g => g.Key, g => g.First());
-            }
-            catch (ArgumentException e)
-            {
-                // Sanitize exceptions.
-                throw new Exception($"An error occured while creating metadata entries for the SBOM.", e);
-            }
-        }
-
         public object GetMetadata(MetadataKey key)
         {
-            if (metadataDictionary.TryGetValue(key, out object value))
+            if (MetadataDictionary.TryGetValue(key, out object value))
             {
                 logger.Debug($"Found value for header {key} in internal metadata.");
                 return value;
@@ -134,10 +150,10 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
 
         public bool TryGetMetadata(MetadataKey key, out object value)
         {
-            if (metadataDictionary.ContainsKey(key))
+            if (MetadataDictionary.ContainsKey(key))
             {
                 logger.Debug($"Found value for header {key} in internal metadata.");
-                value = metadataDictionary[key];
+                value = MetadataDictionary[key];
                 return true;
             }
 
@@ -160,7 +176,7 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
 
         public GenerationData GetGenerationData(ManifestInfo manifestInfo)
         {
-            if (configsDictionary.TryGetValue(manifestInfo, out ISbomConfig sbomConfig))
+            if (ConfigsDictionary.TryGetValue(manifestInfo, out ISbomConfig sbomConfig))
             {
                 return sbomConfig.Recorder.GetGenerationData();
             }
@@ -171,7 +187,7 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
         public string GetSBOMNamespaceUri()
         {
             IMetadataProvider provider = null;
-            if (metadataDictionary.TryGetValue(MetadataKey.BuildEnvironmentName, out object buildEnvironmentName))
+            if (MetadataDictionary.TryGetValue(MetadataKey.BuildEnvironmentName, out object buildEnvironmentName))
             {
                 provider = metadataProviders
                     .Where(p => p.BuildEnvironmentName != null && p.BuildEnvironmentName == buildEnvironmentName as string)
@@ -219,7 +235,7 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
 
         protected virtual async ValueTask DisposeAsyncCore()
         {
-            foreach (var config in configsDictionary)
+            foreach (var config in ConfigsDictionary)
             {
                 await config.Value.DisposeAsync().ConfigureAwait(false);
             }

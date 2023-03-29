@@ -11,7 +11,7 @@ namespace Microsoft.Sbom.Contracts
     /// Represents the specification of the SBOM.
     /// For ex. SPDX 2.2.
     /// </summary>
-    public class SBOMSpecification : IEquatable<SBOMSpecification>
+    public class SbomSpecification : IEquatable<SbomSpecification>
     {
         /// <summary>
         /// Gets the name of the SBOM specification.
@@ -23,7 +23,7 @@ namespace Microsoft.Sbom.Contracts
         /// </summary>
         public string Version { get; private set; }
 
-        public SBOMSpecification(string name, string version)
+        public SbomSpecification(string name, string version)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -40,12 +40,12 @@ namespace Microsoft.Sbom.Contracts
         }
 
         /// <summary>
-        /// Parse the given string into a <see cref="SBOMSpecification"/> object.
+        /// Parse the given string into a <see cref="SbomSpecification"/> object.
         /// </summary>
         /// <param name="value">The string representation of the SBOM.</param>
         /// <returns>A SBOMSpecification object.</returns>
         /// <example>spdx:2.2.</example>
-        public static SBOMSpecification Parse(string value)
+        public static SbomSpecification Parse(string value)
         {
             if (string.IsNullOrEmpty(value))
             {
@@ -60,7 +60,7 @@ namespace Microsoft.Sbom.Contracts
                 throw new ArgumentException($"The SBOM specification string is not formatted correctly. The correct format is <name>:<version>.");
             }
 
-            return new SBOMSpecification(values[0], values[1]);
+            return new SbomSpecification(values[0], values[1]);
         }
 
         public override string ToString()
@@ -68,9 +68,9 @@ namespace Microsoft.Sbom.Contracts
             return $"{Name}:{Version}";
         }
 
-        public override bool Equals(object obj) => this.Equals(obj as SBOMSpecification);
+        public override bool Equals(object obj) => this.Equals(obj as SbomSpecification);
 
-        public bool Equals(SBOMSpecification other)
+        public bool Equals(SbomSpecification other)
         {
             if (other is null)
             {
@@ -101,7 +101,7 @@ namespace Microsoft.Sbom.Contracts
             return hashCode;
         }
 
-        public static bool operator ==(SBOMSpecification lhs, SBOMSpecification rhs)
+        public static bool operator ==(SbomSpecification lhs, SbomSpecification rhs)
         {
             if (lhs is null)
             {
@@ -118,6 +118,6 @@ namespace Microsoft.Sbom.Contracts
             return lhs.Equals(rhs);
         }
 
-        public static bool operator !=(SBOMSpecification lhs, SBOMSpecification rhs) => !(lhs == rhs);
+        public static bool operator !=(SbomSpecification lhs, SbomSpecification rhs) => !(lhs == rhs);
     }
 }

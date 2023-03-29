@@ -30,7 +30,7 @@ namespace Microsoft.Sbom.Api.Workflows
     /// Validates a SBOM against a given drop path. Uses the <see cref="ISbomParser"/> to read
     /// objects inside a SBOM.
     /// </summary>
-    public class SBOMParserBasedValidationWorkflow : IWorkflow
+    public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValidationWorkflow>
     {
         private readonly IRecorder recorder;
         private readonly ISignValidationProvider signValidationProvider;
@@ -43,7 +43,7 @@ namespace Microsoft.Sbom.Api.Workflows
         private readonly IOutputWriter outputWriter;
         private readonly IFileSystemUtils fileSystemUtils;
 
-        public SBOMParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ILogger log, IManifestParserProvider manifestParserProvider, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
+        public SbomParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ILogger log, IManifestParserProvider manifestParserProvider, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
         {
             this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
             this.signValidationProvider = signValidationProvider ?? throw new ArgumentNullException(nameof(signValidationProvider));

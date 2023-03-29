@@ -134,6 +134,27 @@ internal struct SbomPackageStrings
       ""supplier"": ""Organization: testa""
     }]}";
 
+    public const string PackageJsonWith1PackageFilesAnalyzedTrueAndMissingLicenseInfoFromFiles = @"{
+       ""packages"": [{
+      ""name"": ""pest"",
+      ""other"": ""tt"",
+      ""SPDXID"": ""SPDXRef-Package-1C4595D6D70121622649BB913859B18A3C0A2D49EC7D36279777025C4AC92303"",
+      ""downloadLocation"": ""NOASSERTION"",
+      ""filesAnalyzed"": true,
+      ""licenseConcluded"": ""NOASSERTION"",
+      ""licenseDeclared"": ""NOASSERTION"",
+      ""copyrightText"": ""NOASSERTION"",
+      ""versionInfo"": ""1.0.0"",
+      ""externalRefs"": [
+        {
+          ""referenceCategory"": ""PACKAGE_MANAGER"",
+          ""referenceType"": ""purl"",
+          ""referenceLocator"": ""pkg:nuget/pest%401.0.0""
+        }
+      ],
+      ""supplier"": ""Organization: testa""
+    }]}";
+
     public const string PackageJsonWith1PackageMissingPackageVerificationCode = @"{
        ""packages"": [{
       ""name"": ""pest"",
@@ -504,9 +525,6 @@ internal struct SbomPackageStrings
       ""downloadLocation"": ""NOASSERTION"",
       ""filesAnalyzed"": false,
       ""licenseConcluded"": ""NOASSERTION"",
-      ""licenseInfoFromFiles"": [
-        ""NOASSERTION""
-      ],
       ""licenseDeclared"": ""NOASSERTION"",
       ""copyrightText"": ""NOASSERTION"",
       ""versionInfo"": ""20220905.1"",
@@ -517,7 +535,7 @@ internal struct SbomPackageStrings
           ""referenceLocator"": ""https://github.com/actions/virtual-environments""
         }
       ],
-      ""supplier"": ""Microsoft/GitHub""
+      ""supplier"": ""Organization: Microsoft/GitHub""
     },
     {
       ""name"": ""Testing cross platform signing"",

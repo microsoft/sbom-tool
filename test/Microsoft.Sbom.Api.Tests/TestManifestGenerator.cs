@@ -31,7 +31,7 @@ namespace Microsoft.Sbom.Api.Tests
 
         public string ExternalDocumentRefArrayHeaderName => "externalDocumentRefs";
 
-        public GenerationResult GenerateJsonDocument(InternalSBOMFileInfo fileInfo)
+        public GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo)
         {
             if (fileInfo is null)
             {
@@ -65,7 +65,7 @@ namespace Microsoft.Sbom.Api.Tests
             };
         }
 
-        public GenerationResult GenerateJsonDocument(SBOMPackage packageInfo)
+        public GenerationResult GenerateJsonDocument(SbomPackage packageInfo)
         {
             var jsonString = $@"
 {{

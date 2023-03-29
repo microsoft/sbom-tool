@@ -125,7 +125,7 @@ internal ref struct SbomRelationshipParser
 
         if (missingProps.Count() > 0)
         {
-            throw new ParserException($"Missing required value(s) for file object at position {stream.Position}: {string.Join(",", missingProps)}");
+            throw new ParserException($"Missing required value(s) for relationship object at position {stream.Position}: {string.Join(",", missingProps)}");
         }
     }
 }

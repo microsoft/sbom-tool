@@ -29,7 +29,7 @@ namespace Microsoft.Sbom.Api.Executors
         }
 
         public (ChannelReader<FileValidationResult> output, ChannelReader<FileValidationResult> errors)
-            Validate(ChannelReader<InternalSBOMFileInfo> fileWithHash)
+            Validate(ChannelReader<InternalSbomFileInfo> fileWithHash)
         {
             var output = Channel.CreateUnbounded<FileValidationResult>();
             var errors = Channel.CreateUnbounded<FileValidationResult>();
@@ -48,7 +48,7 @@ namespace Microsoft.Sbom.Api.Executors
             return (output, errors);
         }
 
-        private async Task Validate(InternalSBOMFileInfo fileHash, Channel<FileValidationResult> output, Channel<FileValidationResult> errors)
+        private async Task Validate(InternalSbomFileInfo fileHash, Channel<FileValidationResult> output, Channel<FileValidationResult> errors)
         {
             var result = new FileValidationResult
             {

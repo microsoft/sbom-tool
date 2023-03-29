@@ -8,7 +8,6 @@ using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Serilog;
@@ -31,45 +30,41 @@ namespace Microsoft.Sbom.Api.Executors
     {
         private readonly IHashCodeGenerator hashCodeGenerator;
         private readonly ILogger log;
-        private readonly AlgorithmName[] hashAlgorithmNames;
+        private readonly ISbomConfigProvider sbomConfigs;
+        private readonly ManifestGeneratorProvider manifestGeneratorProvider;
+        private AlgorithmName[] hashAlgorithmNames;
         private readonly IFileSystemUtils fileSystemUtils;
 
         private readonly IEnumerable<string> supportedSPDXVersions = new List<string> { "SPDX-2.2" };
 
-        public SPDXSBOMReaderForExternalDocumentReference(
-            IHashCodeGenerator hashCodeGenerator,
-            ILogger log,
-            IConfiguration configuration,
-            ISbomConfigProvider sbomConfigs,
-            ManifestGeneratorProvider manifestGeneratorProvider,
-            IFileSystemUtils fileSystemUtils)
+        private AlgorithmName[] HashAlgorithmNames
         {
-            if (configuration is null)
+            get
             {
-                throw new ArgumentNullException(nameof(configuration));
-            }
-
-            if (sbomConfigs is null)
-            {
-                throw new ArgumentNullException(nameof(sbomConfigs));
-            }
-
-            if (manifestGeneratorProvider is null)
-            {
-                throw new ArgumentNullException(nameof(manifestGeneratorProvider));
-            }
-
-            this.hashCodeGenerator = hashCodeGenerator ?? throw new ArgumentNullException(nameof(hashCodeGenerator));
-            this.log = log ?? throw new ArgumentNullException(nameof(log));
-            this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
-
-            hashAlgorithmNames = sbomConfigs.GetManifestInfos()
+                hashAlgorithmNames ??= sbomConfigs.GetManifestInfos()
                                     .Select(config => manifestGeneratorProvider
                                                         .Get(config)
                                                         .RequiredHashAlgorithms)
                                     .SelectMany(h => h)
                                     .Distinct()
                                     .ToArray();
+
+                return hashAlgorithmNames;
+            }
+        }
+
+        public SPDXSBOMReaderForExternalDocumentReference(
+            IHashCodeGenerator hashCodeGenerator,
+            ILogger log,
+            ISbomConfigProvider sbomConfigs,
+            ManifestGeneratorProvider manifestGeneratorProvider,
+            IFileSystemUtils fileSystemUtils)
+        {
+            this.hashCodeGenerator = hashCodeGenerator ?? throw new ArgumentNullException(nameof(hashCodeGenerator));
+            this.log = log ?? throw new ArgumentNullException(nameof(log));
+            this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+            this.manifestGeneratorProvider = manifestGeneratorProvider ?? throw new ArgumentNullException(nameof(manifestGeneratorProvider));
+            this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         }
 
         public virtual (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSBOMFile(ChannelReader<string> sbomFileLocation)
@@ -146,7 +141,7 @@ namespace Microsoft.Sbom.Api.Executors
         private ExternalDocumentReferenceInfo ReadJson(string file)
         {
             Checksum[] checksums;
-            checksums = hashCodeGenerator.GenerateHashes(file, hashAlgorithmNames);
+            checksums = hashCodeGenerator.GenerateHashes(file, HashAlgorithmNames);
 
             using (var openStream = fileSystemUtils.OpenRead(file))
             using (JsonDocument doc = JsonDocument.Parse(openStream))

@@ -3,7 +3,12 @@
 
 namespace Microsoft.Sbom.Api.Filters
 {
-    public interface IFilter
+    /// <summary>
+    /// A filter that, given a file path, returns whther it is valid.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public interface IFilter<T>
+        where T : IFilter<T>
     {
         bool IsValid(string filePath);
 

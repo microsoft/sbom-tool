@@ -1,90 +1,89 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Config.Extensions;
+using Microsoft.Sbom.Api.Manifest;
+using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.Workflows;
+using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Config.Validators;
+using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Contracts.Enums;
+using PowerArgs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Sbom.Api.Config;
-using Microsoft.Sbom.Api.Exceptions;
-using Microsoft.Sbom.Api.Manifest;
-using Microsoft.Sbom.Api.Output.Telemetry;
-using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Api.Workflows;
-using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Common.Config.Validators;
-using Microsoft.Sbom.Contracts;
-using Microsoft.Sbom.Contracts.Enums;
-using Ninject;
-using PowerArgs;
 
 namespace Microsoft.Sbom.Api
 {
     /// <summary>
     /// Responsible for an API to generate SBOMs.
     /// </summary>
-    public class SBOMGenerator : ISBOMGenerator
+    public class SbomGenerator : ISBOMGenerator
     {
-        private readonly ApiConfigurationBuilder configurationBuilder;
-        private readonly StandardKernel kernel;
-        private readonly IFileSystemUtils fileSystemUtils;
+        private readonly IWorkflow<SbomGenerationWorkflow> generationWorkflow;
+        private readonly ManifestGeneratorProvider generatorProvider;
+        private readonly IRecorder recorder;
+        private readonly IEnumerable<ConfigValidator> configValidators;
+        private readonly ConfigSanitizer configSanitizer;
 
-        public SBOMGenerator()
+        public SbomGenerator(
+            IWorkflow<SbomGenerationWorkflow> generationWorkflow, 
+            ManifestGeneratorProvider generatorProvider, 
+            IRecorder recorder, 
+            IEnumerable<ConfigValidator> configValidators, 
+            ConfigSanitizer configSanitizer)
         {
-            kernel = new StandardKernel(new Bindings());
-            configurationBuilder = new ApiConfigurationBuilder();
-            fileSystemUtils = new WindowsFileSystemUtils();
-        }
-
-        public SBOMGenerator(StandardKernel kernel, IFileSystemUtils fileSystemUtils)
-        {
-            this.kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
-            configurationBuilder = new ApiConfigurationBuilder();
-            this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+            this.generationWorkflow = generationWorkflow;
+            this.generatorProvider = generatorProvider;
+            this.recorder = recorder;
+            this.configValidators = configValidators;
+            this.configSanitizer = configSanitizer;
         }
 
         /// <inheritdoc />
-        public async Task<SBOMGenerationResult> GenerateSBOMAsync(
+        public async Task<SbomGenerationResult> GenerateSbomAsync(
             string rootPath,
             string componentPath,
             SBOMMetadata metadata,
-            IList<SBOMSpecification> specifications = null,
-            RuntimeConfiguration configuration = null,
+            IList<SbomSpecification> specifications = null,
+            RuntimeConfiguration runtimeConfiguration = null,
             string manifestDirPath = null,
             string externalDocumentReferenceListFile = null)
         {
             // Get scan configuration
-            var config = configurationBuilder.GetConfiguration(
+            var inputConfiguration = ApiConfigurationBuilder.GetConfiguration(
                 rootPath,
                 manifestDirPath, null, null, metadata, specifications,
-                configuration, externalDocumentReferenceListFile, componentPath);
+                runtimeConfiguration, externalDocumentReferenceListFile, componentPath);
 
-            // Initialize the IOC container. This varies depending on the configuration.
-            config = ValidateConfig(config);
-            kernel.Bind<IConfiguration>().ToConstant(config);
+            // Validate the configuration
+            inputConfiguration = ValidateConfig(inputConfiguration);
+
+            // Globally update the configuration
+            inputConfiguration.ToConfiguration();
 
             // This is the generate workflow
-            IWorkflow workflow = kernel.Get<IWorkflow>(nameof(SBOMGenerationWorkflow));
-            bool isSuccess = await workflow.RunAsync();
+            bool isSuccess = await generationWorkflow.RunAsync();
 
-            // TODO: Telemetry?
-            IRecorder recorder = kernel.Get<IRecorder>();
             await recorder.FinalizeAndLogTelemetryAsync();
 
             var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
 
-            return new SBOMGenerationResult(isSuccess, entityErrors);
+            return new SbomGenerationResult(isSuccess, entityErrors);
         }
 
         /// <inheritdoc />
-        public async Task<SBOMGenerationResult> GenerateSBOMAsync(
+        public async Task<SbomGenerationResult> GenerateSbomAsync(
             string rootPath,
-            IEnumerable<SBOMFile> files,
-            IEnumerable<SBOMPackage> packages,
+            IEnumerable<SbomFile> files,
+            IEnumerable<SbomPackage> packages,
             SBOMMetadata metadata,
-            IList<SBOMSpecification> specifications = null,
+            IList<SbomSpecification> specifications = null,
             RuntimeConfiguration runtimeConfiguration = null,
             string manifestDirPath = null,
             string externalDocumentReferenceListFile = null)
@@ -94,79 +93,44 @@ namespace Microsoft.Sbom.Api
                 throw new ArgumentException($"'{nameof(rootPath)}' cannot be null or whitespace.", nameof(rootPath));
             }
 
-            if (files is null)
-            {
-                throw new ArgumentNullException(nameof(files));
-            }
+            ArgumentNullException.ThrowIfNull(files);
+            ArgumentNullException.ThrowIfNull(packages);
+            ArgumentNullException.ThrowIfNull(metadata);
+            ArgumentNullException.ThrowIfNull(manifestDirPath);
 
-            if (packages is null)
-            {
-                throw new ArgumentNullException(nameof(packages));
-            }
-
-            if (metadata is null)
-            {
-                throw new ArgumentNullException(nameof(metadata));
-            }
-
-            if (string.IsNullOrWhiteSpace(manifestDirPath))
-            {
-                manifestDirPath = rootPath;
-            }
-
-            var configuration = configurationBuilder.GetConfiguration(
+            var inputConfiguration = ApiConfigurationBuilder.GetConfiguration(
                 rootPath, manifestDirPath, files, packages, metadata, specifications,
                 runtimeConfiguration, externalDocumentReferenceListFile);
-            configuration = ValidateConfig(configuration);
+            inputConfiguration = ValidateConfig(inputConfiguration);
 
-            kernel.Bind<IConfiguration>().ToConstant(configuration);
+            inputConfiguration.ToConfiguration();
 
-            kernel.Bind<SBOMMetadata>().ToConstant(metadata);
-            bool result = await kernel.Get<IWorkflow>(nameof(SBOMGenerationWorkflow)).RunAsync();
-            return new SBOMGenerationResult(result, new List<EntityError>());
+            // This is the generate workflow
+            bool result = await generationWorkflow.RunAsync();
+
+            return new SbomGenerationResult(result, new List<EntityError>());
         }
 
         /// <inheritdoc />
-        public IEnumerable<AlgorithmName> GetRequiredAlgorithms(SBOMSpecification specification)
+        public IEnumerable<AlgorithmName> GetRequiredAlgorithms(SbomSpecification specification)
         {
-            if (specification is null)
-            {
-                throw new ArgumentNullException(nameof(specification));
-            }
-
-            var generatorProvider = kernel.Get<ManifestGeneratorProvider>();
-            if (generatorProvider == null)
-            {
-                throw new MissingGeneratorException($"Unable to get a list of supported SBOM generators.");
-            }
+            ArgumentNullException.ThrowIfNull(specification);
 
             // The provider will throw if the generator is not found.
             var generator = generatorProvider.Get(specification.ToManifestInfo());
 
             return generator
-                        .RequiredHashAlgorithms
-                        .ToList();
-        }
-
-        public IEnumerable<SBOMSpecification> GetSupportedSBOMSpecifications()
-        {
-            var generatorProvider = kernel.Get<ManifestGeneratorProvider>();
-            if (generatorProvider == null)
-            {
-                throw new Exception($"Unable to get a list of supported SBOM generators.");
-            }
-
-            return generatorProvider
-                    .GetSupportedManifestInfos()
-                    .Select(g => g.ToSBOMSpecification())
+                    .RequiredHashAlgorithms
                     .ToList();
         }
 
-        private Configuration ValidateConfig(Configuration config)
-        {
-            var configValidators = kernel.GetAll<ConfigValidator>();
-            var configSanitizer = kernel.Get<ConfigSanitizer>();
+        public IEnumerable<SbomSpecification> GetSupportedSBOMSpecifications() => generatorProvider
+                    .GetSupportedManifestInfos()
+                    .Select(g => g.ToSBOMSpecification())
+                    .ToList();
 
+        private InputConfiguration ValidateConfig(InputConfiguration config)
+        {
             foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(config))
             {
                 configValidators.ForEach(v =>

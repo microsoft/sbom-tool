@@ -17,21 +17,21 @@ namespace Microsoft.Sbom.Contracts
         /// Generate a SBOM in the rootPath using the provided file and package lists.
         /// </summary>
         /// <param name="rootPath">The root path of the drop where the generated SBOM will be placed.</param>
-        /// <param name="files">The list of <see cref="SBOMFile">files</see> to include in this SBOM.</param>
-        /// <param name="packages">The list of <see cref="SBOMPackage">packages</see> to include in this SBOM.</param>
+        /// <param name="files">The list of <see cref="SbomFile">files</see> to include in this SBOM.</param>
+        /// <param name="packages">The list of <see cref="SbomPackage">packages</see> to include in this SBOM.</param>
         /// <param name="metadata">Provide any available metadata about your build environment using the SBOMMetadata object.</param>
-        /// <param name="specifications">Provide a list of <see cref="SBOMSpecification"/> that you want your SBOM to be generated
+        /// <param name="specifications">Provide a list of <see cref="SbomSpecification"/> that you want your SBOM to be generated
         /// for. If this is not provided, we will generate SBOMs for all the available formats.</param>
         /// <param name="runtimeConfiguration">Configuration to tweak the SBOM generator workflow.</param>
         /// <param name="manifestDirPath">Output directory. If null defaults to rootPath.</param>
         /// <returns>The result object that indicates if the generation succeeded, and a list of 
         /// errors if it failed along with telemetry.</returns>
-        Task<SBOMGenerationResult> GenerateSBOMAsync(
+        Task<SbomGenerationResult> GenerateSbomAsync(
                                           string rootPath,
-                                          IEnumerable<SBOMFile> files,
-                                          IEnumerable<SBOMPackage> packages,
+                                          IEnumerable<SbomFile> files,
+                                          IEnumerable<SbomPackage> packages,
                                           SBOMMetadata metadata,
-                                          IList<SBOMSpecification> specifications = null,
+                                          IList<SbomSpecification> specifications = null,
                                           RuntimeConfiguration runtimeConfiguration = null,
                                           string manifestDirPath = null,
                                           string externalDocumentReferenceListFile = null);
@@ -42,17 +42,17 @@ namespace Microsoft.Sbom.Contracts
         /// <param name="rootPath">The root path of the drop where the generated SBOM will be placed.</param>
         /// <param name="componentPath">The path where all the build components for this drop can be found.</param>
         /// <param name="metadata">Provide any available metadata about your build environment using the SBOMMetadata object.</param>
-        /// <param name="specifications">Provide a list of <see cref="SBOMSpecification"/> that you want your SBOM to be generated
+        /// <param name="specifications">Provide a list of <see cref="SbomSpecification"/> that you want your SBOM to be generated
         /// for. If this is not provided, we will generate SBOMs for all the available formats.</param>
         /// <param name="runtimeConfiguration">Configuration to tweak the SBOM generator workflow.</param>
         /// <param name="manifestDirPath">Output directory. If null defaults to rootPath joined to _manifest.</param>
         /// <returns>The result object that indicates if the generation succeeded, and a list of 
         /// errors if it failed along with telemetry.</returns>
-        Task<SBOMGenerationResult> GenerateSBOMAsync(
+        Task<SbomGenerationResult> GenerateSbomAsync(
             string rootPath,
             string componentPath,
             SBOMMetadata metadata,
-            IList<SBOMSpecification> specifications = null,
+            IList<SbomSpecification> specifications = null,
             RuntimeConfiguration runtimeConfiguration = null,
             string manifestDirPath = null,
             string externalDocumentReferenceListFile = null);
@@ -64,12 +64,12 @@ namespace Microsoft.Sbom.Contracts
         /// </summary>
         /// <param name="specification">The SBOM specification.</param>
         /// <returns>A list of <see cref="HashAlgorithmName"/>.</returns>
-        IEnumerable<AlgorithmName> GetRequiredAlgorithms(SBOMSpecification specification);
+        IEnumerable<AlgorithmName> GetRequiredAlgorithms(SbomSpecification specification);
 
         /// <summary>
-        /// Gets a list of <see cref="SBOMSpecification"/> this SBOM generator supports.
+        /// Gets a list of <see cref="SbomSpecification"/> this SBOM generator supports.
         /// </summary>
-        /// <returns>A list of <see cref="SBOMSpecification"/>.</returns>
-        IEnumerable<SBOMSpecification> GetSupportedSBOMSpecifications();
+        /// <returns>A list of <see cref="SbomSpecification"/>.</returns>
+        IEnumerable<SbomSpecification> GetSupportedSBOMSpecifications();
     }
 }

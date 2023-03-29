@@ -57,7 +57,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
         private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>();
         private readonly Mock<IMetadataProvider> mockMetadataProvider = new Mock<IMetadataProvider>();
         private readonly Mock<ComponentDetectorCachedExecutor> mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
-        private readonly Mock<IJsonArrayGenerator> relationshipArrayGenerator = new Mock<IJsonArrayGenerator>();
+        private readonly Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>> relationshipArrayGenerator = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>();
         private readonly Mock<ComponentToPackageInfoConverter> packageInfoConverterMock = new Mock<ComponentToPackageInfoConverter>();
         private readonly Mock<ISBOMReaderForExternalDocumentReference> sBOMReaderForExternalDocumentReferenceMock = new Mock<ISBOMReaderForExternalDocumentReference>();
         private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new Mock<IFileSystemUtilsExtension>();
@@ -178,7 +178,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                                                 })
                                             .ToArray());
 
-            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, fileSystemMock.Object, mockOSUtils.Object);
+            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
             manifestFilterMock.Init();
 
             var scannedComponents = new List<ScannedComponent>();
@@ -200,11 +200,11 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
 
-            var packagesChannel = Channel.CreateUnbounded<SBOMPackage>();
+            var packagesChannel = Channel.CreateUnbounded<SbomPackage>();
             var errorsChannel = Channel.CreateUnbounded<FileValidationResult>();
             foreach (var component in scannedComponents)
             {
-                await packagesChannel.Writer.WriteAsync(new SBOMPackage { PackageName = component.GetHashCode().ToString() });
+                await packagesChannel.Writer.WriteAsync(new SbomPackage { PackageName = component.GetHashCode().ToString() });
             }
 
             packagesChannel.Writer.Complete();
@@ -301,17 +301,17 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 { externalDocumentReferenceProvider }
             };
 
-            var fileArrayGenerator = new FileArrayGenerator(configurationMock.Object, mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
+            var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object);
 
             var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
-            var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(configurationMock.Object, mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
+            var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
             relationshipArrayGenerator
                 .Setup(r => r.GenerateAsync())
                 .ReturnsAsync(await Task.FromResult(new List<FileValidationResult>()));
 
-            var workflow = new SBOMGenerationWorkflow(
+            var workflow = new SbomGenerationWorkflow(
                 configurationMock.Object,
                 fileSystemMock.Object,
                 mockLogger.Object,
@@ -361,14 +361,14 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                 ManifestJsonDirPath = "/root/_manifest",
                 ManifestJsonFilePath = "/root/_manifest/manifest.json"
             };
-            var workflow = new SBOMGenerationWorkflow(
+            var workflow = new SbomGenerationWorkflow(
                 configurationMock.Object,
                 fileSystemMock.Object,
                 mockLogger.Object,
-                new Mock<IJsonArrayGenerator>().Object,
-                new Mock<IJsonArrayGenerator>().Object,
-                new Mock<IJsonArrayGenerator>().Object,
-                new Mock<IJsonArrayGenerator>().Object,
+                new Mock<IJsonArrayGenerator<FileArrayGenerator>>().Object,
+                new Mock<IJsonArrayGenerator<PackageArrayGenerator>>().Object,
+                new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>().Object,
+                new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>().Object,
                 new Mock<ISbomConfigProvider>().Object,
                 mockOSUtils.Object,
                 recorderMock.Object);
@@ -390,17 +390,17 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
             configurationMock.SetupGet(x => x.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.CommandLine });
             fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
             fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
-            var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator>();
+            var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
             fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(new List<FileValidationResult> { new FileValidationResult() });
 
-            var workflow = new SBOMGenerationWorkflow(
+            var workflow = new SbomGenerationWorkflow(
                 configurationMock.Object,
                 fileSystemMock.Object,
                 mockLogger.Object,
                 fileArrayGeneratorMock.Object,
-                new Mock<IJsonArrayGenerator>().Object,
-                new Mock<IJsonArrayGenerator>().Object,
-                new Mock<IJsonArrayGenerator>().Object,
+                new Mock<IJsonArrayGenerator<PackageArrayGenerator>>().Object,
+                new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>().Object,
+                new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>().Object,
                 new Mock<ISbomConfigProvider>().Object,
                 mockOSUtils.Object,
                 recorderMock.Object);

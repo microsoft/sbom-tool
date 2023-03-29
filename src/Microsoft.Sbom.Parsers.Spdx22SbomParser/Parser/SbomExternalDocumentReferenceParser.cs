@@ -122,7 +122,7 @@ internal ref struct SbomExternalDocumentReferenceParser
 
         if (missingProps.Count() > 0)
         {
-            throw new ParserException($"Missing required value(s) for file object at position {stream.Position}: {string.Join(",", missingProps)}");
+            throw new ParserException($"Missing required value(s) for external document reference object at position {stream.Position}: {string.Join(",", missingProps)}");
         }
     }
 }
