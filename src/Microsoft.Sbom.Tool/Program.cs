@@ -80,7 +80,7 @@ namespace Microsoft.Sbom.Tool
                                 catch (Exception e)
                                 {
                                     var recorder = TelemetryRecorder.Create(telemetryFilePath, fileSystemUtils);
-                                    _ = recorder.ConsoleLogger(e);
+                                    _ = recorder.LogToConsole(e);
                                     throw e;
                                 }
                             })

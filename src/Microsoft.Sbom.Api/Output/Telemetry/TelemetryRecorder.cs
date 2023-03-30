@@ -53,13 +53,20 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
             FileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         }
 
+        /// <summary>
+        /// Create an instance of TelemtryRecorder without the need for a configuration object for scenarios where the tool fails before a configuration is available.
+        /// </summary>
+        /// <param name="telemetryFilePath">The path where the telemetry will be written to.</param>
+        /// <param name="fileSystemUtils">Wrapper around file system functions.</param>
         public static TelemetryRecorder Create(string telemetryFilePath, IFileSystemUtils fileSystemUtils)
         {
             return new TelemetryRecorder(telemetryFilePath, fileSystemUtils);
         }
 
-        //Method to log telemetry in conditions when the tool is not able to start execution of workflow.
-        public async Task ConsoleLogger(Exception e)
+        /// <summary>
+        /// Method to log telemetry in conditions when the tool is not able to start execution of workflow.
+        /// </summary>
+        public async Task LogToConsole(Exception e)
         {
             var logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
             try
