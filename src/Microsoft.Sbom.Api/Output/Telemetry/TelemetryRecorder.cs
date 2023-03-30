@@ -25,10 +25,11 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
     /// </summary>
     public class TelemetryRecorder : IRecorder
     {
-        private readonly ConcurrentBag<TimingRecorder> timingRecorders = new ();
+        private readonly ConcurrentBag<TimingRecorder> timingRecorders = new();
         private readonly IDictionary<ManifestInfo, string> sbomFormats = new Dictionary<ManifestInfo, string>();
         private readonly IDictionary<string, object> switches = new Dictionary<string, object>();
         private readonly IList<Exception> exceptions = new List<Exception>();
+        private readonly string telemetryFilePath;
 
         private IList<FileValidationResult> errors = new List<FileValidationResult>();
         private Result result = Result.Success;
@@ -44,6 +45,66 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
             FileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             Log = log ?? throw new ArgumentNullException(nameof(log));
+        }
+
+        private TelemetryRecorder(string telemetryFilePath, IFileSystemUtils fileSystemUtils)
+        {
+            this.telemetryFilePath = telemetryFilePath;
+            FileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+        }
+
+        public static TelemetryRecorder Create(string telemetryFilePath, IFileSystemUtils fileSystemUtils)
+        {
+            return new TelemetryRecorder(telemetryFilePath, fileSystemUtils);
+        }
+
+        //Method to log telemetry in conditions when the tool is not able to start execution of workflow.
+        public async Task ConsoleLogger(Exception e)
+        {
+            var logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+            try
+            {
+                //convert exception to IDictionary<string,string> and handle unicode char.
+                var exceptions = new Dictionary<string, string>
+                {
+                    { e.GetType().ToString().Replace("\u0027", "'"), e.Message }
+                };
+
+                // Create the telemetry object.
+                var telemetry = new SBOMTelemetry
+                {
+                    Result = Result.Failure,
+                    Timings = timingRecorders.Select(t => t.ToTiming()).ToList(),
+                    Switches = this.switches,
+                    Exceptions = exceptions
+                };
+
+                // Log to logger.
+                logger.Information("Could not start execution of workflow. Logging telemetry {@Telemetry}", telemetry);
+
+                // Write to file.
+                if (!string.IsNullOrWhiteSpace(telemetryFilePath))
+                {
+                    using (var fileStream = FileSystemUtils.OpenWrite(telemetryFilePath))
+                    {
+                        var options = new JsonSerializerOptions
+                        {
+                            Converters =
+                        {
+                            new JsonStringEnumConverter()
+                        }
+                        };
+                        await JsonSerializer.SerializeAsync(fileStream, telemetry, options);
+                        logger.Debug($"Wrote telemetry object to path {telemetryFilePath}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // We shouldn't fail the main workflow due to some failure on the telemetry generation.
+                // Just log the result and return silently.
+                logger.Warning($"Failed to log telemetry. Exception: {ex.Message}");
+            }
         }
 
         public IList<FileValidationResult> Errors => errors;
