@@ -81,7 +81,7 @@ namespace Microsoft.Sbom.Tool
                                 {
                                     var recorder = TelemetryRecorder.Create(telemetryFilePath, fileSystemUtils);
                                     _ = recorder.LogToConsole(e);
-                                    throw e;
+                                    throw;
                                 }
                             })
 

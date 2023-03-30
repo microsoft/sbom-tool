@@ -89,22 +89,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
                 // Log to logger.
                 logger.Information("Could not start execution of workflow. Logging telemetry {@Telemetry}", telemetry);
 
-                // Write to file.
-                if (!string.IsNullOrWhiteSpace(telemetryFilePath))
-                {
-                    using (var fileStream = FileSystemUtils.OpenWrite(telemetryFilePath))
-                    {
-                        var options = new JsonSerializerOptions
-                        {
-                            Converters =
-                        {
-                            new JsonStringEnumConverter()
-                        }
-                        };
-                        await JsonSerializer.SerializeAsync(fileStream, telemetry, options);
-                        logger.Debug($"Wrote telemetry object to path {telemetryFilePath}");
-                    }
-                }
+                await RecordToFile(telemetry, telemetryFilePath);
             }
             catch (Exception ex)
             {
@@ -157,6 +142,30 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
             }
 
             this.sbomFormats[manifestInfo] = sbomFilePath;
+        }
+
+        /// <summary>
+        /// Write telemetry object to the telemetryFilePath.
+        /// </summary>
+        /// <param name="telemetry">The telemetry object to be written to the file.</param>
+        /// /// <param name="telemetryFilePath">The file path we want to write the telemetry to.</param>
+        public async Task RecordToFile(SBOMTelemetry telemetry, string telemetryFilePath)
+        {
+            // Write to file.
+            if (!string.IsNullOrWhiteSpace(telemetryFilePath))
+            {
+                using (var fileStream = FileSystemUtils.OpenWrite(telemetryFilePath))
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        Converters =
+                        {
+                                new JsonStringEnumConverter()
+                        }
+                    };
+                    await JsonSerializer.SerializeAsync(fileStream, telemetry, options);
+                }
+            }
         }
 
         /// <summary>
@@ -239,22 +248,9 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
                 // Log to logger.
                 Log.Information("Finished execution of the {Action} workflow {@Telemetry}", Configuration.ManifestToolAction, telemetry);
 
-                // Write to file.
-                if (!string.IsNullOrWhiteSpace(Configuration.TelemetryFilePath?.Value))
-                {
-                    using (var fileStream = FileSystemUtils.OpenWrite(Configuration.TelemetryFilePath.Value))
-                    {
-                        var options = new JsonSerializerOptions
-                        {
-                            Converters =
-                        {
-                            new JsonStringEnumConverter()
-                        }
-                        };
-                        await JsonSerializer.SerializeAsync(fileStream, telemetry, options);
-                        Log.Debug($"Wrote telemetry object to path {Configuration.TelemetryFilePath.Value}");
-                    }
-                }
+                await RecordToFile(telemetry, Configuration.TelemetryFilePath?.Value);
+                Log.Debug($"Wrote telemetry object to path {telemetryFilePath}");
+
             }
             catch (Exception ex)
             {
