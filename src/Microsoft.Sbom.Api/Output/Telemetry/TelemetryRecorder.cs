@@ -250,7 +250,6 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
 
                 await RecordToFile(telemetry, Configuration.TelemetryFilePath?.Value);
                 Log.Debug($"Wrote telemetry object to path {telemetryFilePath}");
-
             }
             catch (Exception ex)
             {
