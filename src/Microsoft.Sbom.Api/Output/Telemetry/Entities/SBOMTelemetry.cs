@@ -54,5 +54,11 @@ namespace Microsoft.Sbom.Api.Output.Telemetry.Entities
         /// of the exception.
         /// </summary>
         public IDictionary<string, string> Exceptions { get; set; }
+
+        /// <summary>
+        /// Gets or sets the args that were passed to the tool. This is used when the tool fails before
+        /// the IConfiguration is set.
+        /// </summary>
+        public string[] Arguments { get; set; }
     }
 }

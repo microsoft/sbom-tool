@@ -66,7 +66,9 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
         /// <summary>
         /// Method to log telemetry in conditions when the tool is not able to start execution of workflow.
         /// </summary>
-        public async Task LogToConsole(Exception e)
+        /// <param name="e">Exception that we want to log.</param>
+        /// <param name="args">Arguments used to run the tool.</param>
+        public async Task LogToConsole(Exception e, string[] args)
         {
             var logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
             try
@@ -83,7 +85,8 @@ namespace Microsoft.Sbom.Api.Output.Telemetry
                     Result = Result.Failure,
                     Timings = timingRecorders.Select(t => t.ToTiming()).ToList(),
                     Switches = this.switches,
-                    Exceptions = exceptions
+                    Arguments = args,
+                    Exceptions = exceptions,
                 };
 
                 // Log to logger.
