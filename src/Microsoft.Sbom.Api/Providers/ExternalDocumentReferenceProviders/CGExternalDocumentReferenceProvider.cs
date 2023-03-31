@@ -74,7 +74,7 @@ namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders
 
         protected override (ChannelReader<ScannedComponent> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            var (output, cdErrors) = sbomComponentsWalker.GetComponents(Configuration.BuildComponentPath?.Value);
+            var (output, cdErrors) = sbomComponentsWalker.GetComponents(Configuration.BuildComponentPath?.Value ?? Configuration.BuildDropPath?.Value);
 
             if (cdErrors.TryRead(out ComponentDetectorException e))
             {

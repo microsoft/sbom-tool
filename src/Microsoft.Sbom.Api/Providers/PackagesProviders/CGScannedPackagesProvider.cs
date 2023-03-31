@@ -71,7 +71,7 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders
 
         protected override (ChannelReader<ScannedComponent> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            var (output, cdErrors) = packagesWalker.GetComponents(Configuration.BuildComponentPath?.Value);
+            var (output, cdErrors) = packagesWalker.GetComponents(Configuration.BuildComponentPath?.Value ?? Configuration.BuildDropPath?.Value);
 
             if (cdErrors.TryRead(out ComponentDetectorException e))
             {

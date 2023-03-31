@@ -43,6 +43,7 @@ namespace Microsoft.Sbom.Api.Executors
             this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs)); 
         }
 
+        //This is where the -bc parameter is being used.
         public (ChannelReader<ScannedComponent> output, ChannelReader<ComponentDetectorException> error) GetComponents(string buildComponentDirPath)
         {
             log.Debug($"Scanning for packages under the root path {buildComponentDirPath}.");
