@@ -159,7 +159,7 @@ namespace Microsoft.Sbom.Api.Workflows
                     }
                     catch (Exception e)
                     {
-                        log.Warning($"Unable to delete the temp directory {IConfiguration.RandomTempPath}");
+                        log.Warning($"Unable to delete the temp directory {IConfiguration.RandomTempPath}", e);
                     }          
                 }
             }
