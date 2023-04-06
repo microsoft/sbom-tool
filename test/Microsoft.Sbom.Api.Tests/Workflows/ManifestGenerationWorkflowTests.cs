@@ -407,7 +407,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
 
             var result = await workflow.RunAsync();
 
-            fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Never);
+            fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Once);
             Assert.IsFalse(result);
         }
     }
