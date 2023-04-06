@@ -52,7 +52,7 @@ namespace Microsoft.Sbom.Api.Providers.FilesProviders
 
         protected override (ChannelReader<string> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
         {
-            return directoryWalker.GetFilesRecursively(Configuration.BuildDropPath?.Value);
+            return directoryWalker.GetFilesRecursively(Configuration.BuildComponentPath?.Value);
         }
 
         protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) WriteAdditionalItems(IList<ISbomConfig> requiredConfigs)

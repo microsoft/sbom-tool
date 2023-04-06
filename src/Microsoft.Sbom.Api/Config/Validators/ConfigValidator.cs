@@ -2,8 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.VisualBasic;
 using System;
 using System.ComponentModel;
+using System.IO;
 
 namespace Microsoft.Sbom.Common.Config.Validators
 {
@@ -57,6 +59,12 @@ namespace Microsoft.Sbom.Common.Config.Validators
             }
             
             if (propertyName == nameof(IConfiguration.PackageSupplier) && !string.IsNullOrEmpty(assemblyConfig.DefaultPackageSupplier))
+            {
+                return;
+            }
+
+            // Skip validation of (-b) when it is null, validation for this scenario will happen in the ConfigSanitizer.
+            if (propertyName == nameof(IConfiguration.BuildDropPath) && propertyValue == null)
             {
                 return;
             }

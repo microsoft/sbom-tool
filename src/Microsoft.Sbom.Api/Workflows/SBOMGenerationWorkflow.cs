@@ -147,6 +147,20 @@ namespace Microsoft.Sbom.Api.Workflows
                     {
                         DeleteManifestFolder(sbomDir);
                     }
+
+                    try
+                    {
+                        // Delete the generated temp folder if necessary 
+                        if (fileSystemUtils.DirectoryExists(IConfiguration.RandomTempPath))
+                        {
+                            log.Debug($"Deleting the temp directory {IConfiguration.RandomTempPath}.");
+                            fileSystemUtils.DeleteDir(IConfiguration.RandomTempPath, true);
+                        }
+                    }
+                    catch (Exception e)
+                    { 
+                        log.Warning($"Unable to delete the temp directory {IConfiguration.RandomTempPath}")
+                    }          
                 }
             }
         }
