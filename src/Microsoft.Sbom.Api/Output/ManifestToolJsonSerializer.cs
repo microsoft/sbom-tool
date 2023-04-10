@@ -96,7 +96,7 @@ namespace Microsoft.Sbom.Api.Output
         /// <summary>
         /// Writes the end JSON object. Must be called after finishing writing to 
         /// the serializer to close the json object.
-        /// </summary>s
+        /// </summary>
         public void FinalizeJsonObject() => jsonWriter.WriteEndObject();
 
         /// <summary>
