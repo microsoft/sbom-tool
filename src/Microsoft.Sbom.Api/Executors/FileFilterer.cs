@@ -8,7 +8,6 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
 using System;
-using System.IO;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
