@@ -8,6 +8,7 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
 using System;
+using System.IO;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
@@ -58,8 +59,26 @@ namespace Microsoft.Sbom.Api.Executors
         {
             try
             {
-                // Filter paths that are not present on disk.
                 var fullPath = fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, file.Path);
+
+                // Filter SPDX type files.
+                if (file.FileTypes != null && file.FileTypes.Contains(Contracts.Enums.FileType.SPDX))
+                {
+                    // If the file is in the buildDropPath => validate it
+                    // If it's outside, throw referencedSBOMFile error.
+                    if (!rootPathFilter.IsValid(fullPath))
+                    {
+                        await errors.Writer.WriteAsync(new FileValidationResult
+                        {
+                            ErrorType = ErrorType.FilteredRootPath,
+                            Path = file.Path
+                        });
+
+                        return;
+                    }          
+                }
+
+                // Filter paths that are not present on disk.
                 if (!rootPathFilter.IsValid(fullPath))
                 {
                     await errors.Writer.WriteAsync(new FileValidationResult
