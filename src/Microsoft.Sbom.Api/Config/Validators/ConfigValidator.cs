@@ -51,7 +51,7 @@ namespace Microsoft.Sbom.Common.Config.Validators
             }
 
             // Skip validation of the NamespaceUriBase if it is empty. This is handled in the ConfigSanitizer
-            if (propertyName == nameof(IConfiguration.NamespaceUriBase) && propertyValue == null)
+            if (propertyName == nameof(IConfiguration.NamespaceUriBase) && (propertyValue == null || (!string.IsNullOrEmpty(assemblyConfig.DefaultSBOMNamespaceBaseUri))))
             {
                 return;
             }
