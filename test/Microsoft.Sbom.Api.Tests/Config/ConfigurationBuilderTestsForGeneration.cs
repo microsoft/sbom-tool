@@ -203,6 +203,35 @@ namespace Microsoft.Sbom.Api.Config.Tests
         }
 
         [TestMethod]
+        public async Task ConfigurationBuilderTest_Generation_NullNSBaseUriChangesToDefault()
+        {
+            var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+            var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+
+            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
+
+            var args = new GenerationArgs
+            {
+                BuildDropPath = "BuildDropPath",
+                ManifestDirPath = "ManifestDirPath",
+                NamespaceUriBase = null,
+                PackageSupplier = "Contoso"
+            };
+
+            var config = await cb.GetConfiguration(args);
+
+            Assert.IsNotNull(config); 
+            Assert.IsNotNull(config.ManifestDirPath);
+            Assert.IsNotNull(config.NamespaceUriBase);
+            Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+
+            fileSystemUtilsMock.VerifyAll();
+        }
+
+        [TestMethod]
         public async Task ConfigurationBuilderTest_Generation_BadNSBaseUriWithDefaultValue_Succeds()
         {
             var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);

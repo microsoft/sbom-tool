@@ -28,10 +28,7 @@ namespace Microsoft.Sbom.Api.Config
 
         internal static string SBOMToolVersion => VersionValue.Value;
 
-        private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
-        {
-            return typeof(SbomToolCmdRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
-        });
+        private static readonly Lazy<string> VersionValue = new Lazy<string>(() => typeof(SbomToolCmdRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty);
 
         public ConfigSanitizer(IHashAlgorithmProvider hashAlgorithmProvider, IFileSystemUtils fileSystemUtils, IAssemblyConfig assemblyConfig)
         {
@@ -125,7 +122,7 @@ namespace Microsoft.Sbom.Api.Config
             // If assembly name is not defined and namespace was not provided then return the default namespace as per spdx spec https://spdx.github.io/spdx-spec/v2.2.2/document-creation-information/#653-examples.
             if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri) && string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
             {
-                string defaultNamespaceUriBase = "https://spdx.org/spdxdocs/sbom-tool-" + SBOMToolVersion + "-" + Guid.NewGuid();
+                string defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SBOMToolVersion}-{Guid.NewGuid()}";
 
                 logger.Information($"No namespace URI base provided, using default value {defaultNamespaceUriBase}");
 
