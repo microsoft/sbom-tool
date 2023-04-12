@@ -50,12 +50,12 @@ namespace Microsoft.Sbom.Common.Config.Validators
                 return;
             }
 
-            // If default value for namespace base uri is provided in the assembly info, skip value check requirements.
-            if (propertyName == nameof(IConfiguration.NamespaceUriBase) && !string.IsNullOrEmpty(assemblyConfig.DefaultSBOMNamespaceBaseUri))
+            // Skip validation for properties if NamespaceUriBase. This case is handled in the ConfigSanitizer
+            if (propertyName == nameof(IConfiguration.NamespaceUriBase))
             {
                 return;
             }
-            
+  
             if (propertyName == nameof(IConfiguration.PackageSupplier) && !string.IsNullOrEmpty(assemblyConfig.DefaultPackageSupplier))
             {
                 return;
