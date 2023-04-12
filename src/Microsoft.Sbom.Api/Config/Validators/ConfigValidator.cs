@@ -50,8 +50,8 @@ namespace Microsoft.Sbom.Common.Config.Validators
                 return;
             }
 
-            // Skip validation for properties if NamespaceUriBase. This case is handled in the ConfigSanitizer
-            if (propertyName == nameof(IConfiguration.NamespaceUriBase))
+            // Skip validation of the NamespaceUriBase if it is empty. This is handled in the ConfigSanitizer
+            if (propertyName == nameof(IConfiguration.NamespaceUriBase) && propertyValue == null)
             {
                 return;
             }
