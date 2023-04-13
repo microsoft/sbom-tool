@@ -50,6 +50,12 @@ namespace Microsoft.Sbom.Api.Config
             // set ManifestDirPath after validation of DirectoryExist and DirectoryPathIsWritable, this wouldn't exist because it needs to be created by the tool.
             configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath.Value, configuration.ManifestToolAction);
 
+            // If the user is attempting to validate a manifest then validate there is a manifest present in the ManifestDirPath
+            if (configuration.ManifestToolAction == ManifestToolActions.Validate)
+            {
+                ValidateManifestFileExists(configuration);
+            }
+
             // Set namespace value if provided in the assembly
             configuration.NamespaceUriBase = GetNamespaceBaseUriFromAssembly(configuration, logger);
 
@@ -177,6 +183,19 @@ namespace Microsoft.Sbom.Api.Config
                 Value = EnsurePathEndsWithManifestFolderForGenerate(manifestDirPathConfig.Value, manifestToolAction),
                 Source = manifestDirPathConfig.Source
             };
+        }
+
+        /// <summary>
+        /// Validates that there is a manifest present at the ManifestDirPath.
+        /// </summary>
+        private void ValidateManifestFileExists(IConfiguration configuration)
+        {
+            var manifestFilePath = fileSystemUtils.JoinPaths(configuration.ManifestDirPath.Value, "manifest.spdx.json");
+
+            if (!fileSystemUtils.FileExists(manifestFilePath))
+            {
+                throw new ValidationArgException($"No manifest file found at {manifestFilePath}. Please provide a buildDropPath (-b) that contains a manifest.");
+            }
         }
 
         private string EnsurePathEndsWithManifestFolderForGenerate(string value, ManifestToolActions manifestToolAction)
