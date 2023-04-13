@@ -32,10 +32,10 @@ namespace Microsoft.Sbom.Api
         private readonly ConfigSanitizer configSanitizer;
 
         public SbomGenerator(
-            IWorkflow<SbomGenerationWorkflow> generationWorkflow, 
-            ManifestGeneratorProvider generatorProvider, 
-            IRecorder recorder, 
-            IEnumerable<ConfigValidator> configValidators, 
+            IWorkflow<SbomGenerationWorkflow> generationWorkflow,
+            ManifestGeneratorProvider generatorProvider,
+            IRecorder recorder,
+            IEnumerable<ConfigValidator> configValidators,
             ConfigSanitizer configSanitizer)
         {
             this.generationWorkflow = generationWorkflow;
@@ -65,7 +65,7 @@ namespace Microsoft.Sbom.Api
             inputConfiguration = ValidateConfig(inputConfiguration);
 
             // Globally update the configuration
-            inputConfiguration.ToConfiguration();
+            inputConfiguration.ToConfiguration(configValidators, configSanitizer);
 
             // This is the generate workflow
             bool isSuccess = await generationWorkflow.RunAsync();
@@ -103,7 +103,7 @@ namespace Microsoft.Sbom.Api
                 runtimeConfiguration, externalDocumentReferenceListFile);
             inputConfiguration = ValidateConfig(inputConfiguration);
 
-            inputConfiguration.ToConfiguration();
+            inputConfiguration.ToConfiguration(configValidators, configSanitizer);
 
             // This is the generate workflow
             bool result = await generationWorkflow.RunAsync();

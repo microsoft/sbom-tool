@@ -63,28 +63,7 @@ namespace Microsoft.Sbom.Api
 
             // Add maps to combine both config json and argument args,
             // validate each settings using the config validator.
-            CreateMap<InputConfiguration, InputConfiguration>()
-                    .AfterMap<ConfigPostProcessor>()
-                    .ForAllMembers(dest => dest.Condition((src, dest, srcObj, dstObj) =>
-                    {
-                        // If the property is set in both source and destination (config and cmdline,
-                        // this is a failure case, unless one of the property is a default value, in which
-                        // case the non default value wins.
-                        if (srcObj != null && dstObj != null
-                            && srcObj is ISettingSourceable srcWithSource
-                            && dstObj is ISettingSourceable dstWithSource)
-                        {
-                            if (srcWithSource.Source != SettingSource.Default && dstWithSource.Source != SettingSource.Default)
-                            {
-                                throw new Exception($"Duplicate keys found in config file and command line parameters.");
-                            }
-
-                            return dstWithSource.Source == SettingSource.Default;
-                        }
-
-                        // If source property is not null, use source, or else use destination value.
-                        return srcObj != null;
-                    }));
+            CreateMap<InputConfiguration, InputConfiguration>();
 
             // Set value converters for each type of object.
             ForAllPropertyMaps(

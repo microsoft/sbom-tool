@@ -6,7 +6,9 @@ using AutoMapper.Configuration;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Attributes;
+using Microsoft.Sbom.Common.Config.Validators;
 using PowerArgs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
@@ -54,8 +56,29 @@ namespace Microsoft.Sbom.Api.Config.Extensions
         }
 
         // Map the validated InputConfiguration to a Configuration, which will persist the mapping statically and globally
-        public static Configuration ToConfiguration(this InputConfiguration inputConfig) =>
-            new MapperConfiguration(cfg => cfg.CreateMap<InputConfiguration, Configuration>())
+        public static Configuration ToConfiguration(this InputConfiguration inputConfig, IEnumerable<ConfigValidator> configValidators, ConfigSanitizer configSanitizer) =>
+            new MapperConfiguration(cfg => cfg.CreateMap<InputConfiguration, Configuration>()
+            .AfterMap((_, configuration) => new ConfigPostProcessor(configValidators, configSanitizer).Process(configuration))
+                    .ForAllMembers(dest => dest.Condition((src, dest, srcObj, dstObj) =>
+                    {
+                        // If the property is set in both source and destination (config and cmdline,
+                        // this is a failure case, unless one of the property is a default value, in which
+                        // case the non default value wins.
+                        if (srcObj != null && dstObj != null
+                            && srcObj is ISettingSourceable srcWithSource
+                            && dstObj is ISettingSourceable dstWithSource)
+                        {
+                            if (srcWithSource.Source != SettingSource.Default && dstWithSource.Source != SettingSource.Default)
+                            {
+                                throw new Exception($"Duplicate keys found in config file and command line parameters.");
+                            }
+
+                            return dstWithSource.Source == SettingSource.Default;
+                        }
+
+                        // If source property is not null, use source, or else use destination value.
+                        return srcObj != null;
+                    })))
             .CreateMapper()
             .Map<Configuration>(inputConfig);
     }

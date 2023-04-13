@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +10,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Config.Extensions;
+using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Extensions.DependencyInjection;
 using PowerArgs;
 
@@ -50,11 +54,15 @@ namespace Microsoft.Sbom.Tool
                             _ => services
                         };
 
-                        services
+                        _ = services
                             .AddTransient<ConfigFileParser>()
                             .AddSingleton(typeof(IConfigurationBuilder<>), typeof(ConfigurationBuilder<>))
                             .AddSingleton(x =>
                             {
+                                var fileSystemUtils = x.GetService<IFileSystemUtils>();
+                                var configValidators = x.GetRequiredService<IEnumerable<ConfigValidator>>();
+                                var configSanitizer = x.GetRequiredService<ConfigSanitizer>();
+
                                 var validationConfigurationBuilder = x.GetService<IConfigurationBuilder<ValidationArgs>>();
                                 var generationConfigurationBuilder = x.GetService<IConfigurationBuilder<GenerationArgs>>();
                                 var inputConfiguration = result.ActionArgs switch
@@ -64,8 +72,17 @@ namespace Microsoft.Sbom.Tool
                                     _ => default
                                 };
 
-                                inputConfiguration.ToConfiguration();
-                                return inputConfiguration;
+                                try
+                                {
+                                    inputConfiguration.ToConfiguration(configValidators, configSanitizer);
+                                    return inputConfiguration;
+                                }
+                                catch (Exception e)
+                                {
+                                    var recorder = TelemetryRecorder.Create(inputConfiguration, fileSystemUtils);
+                                    _ = recorder.LogToConsole(e);
+                                    throw;
+                                }
                             })
 
                             .AddSbomTool();

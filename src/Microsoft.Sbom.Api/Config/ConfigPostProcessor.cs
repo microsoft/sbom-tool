@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Api.Config
     /// <summary>
     /// Runs finalizing operations on the configuration once it has been successfully parsed.
     /// </summary>
-    public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration>
+    public class ConfigPostProcessor
     {
         private readonly IEnumerable<ConfigValidator> configValidators;
         private readonly ConfigSanitizer configSanitizer;
@@ -25,7 +25,7 @@ namespace Microsoft.Sbom.Api.Config
             this.configSanitizer = configSanitizer ?? throw new ArgumentNullException(nameof(configSanitizer));
         }
 
-        public void Process(IConfiguration source, IConfiguration destination, ResolutionContext context)
+        public void Process(IConfiguration destination)
         {
             // Set current action on config validators
             configValidators.ForEach(c => c.CurrentAction = destination.ManifestToolAction);

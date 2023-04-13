@@ -42,9 +42,11 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
         {
             ArgumentNullException.ThrowIfNull(inputConfiguration);
             services
-                .AddSingleton(_ =>
+                .AddSingleton(x =>
                 {
-                    inputConfiguration.ToConfiguration();
+                    var configValidators = x.GetRequiredService<IEnumerable<ConfigValidator>>();
+                    var configSanitizer = x.GetRequiredService<ConfigSanitizer>();
+                    inputConfiguration.ToConfiguration(configValidators, configSanitizer);
                     return inputConfiguration;
                 })
                 .AddSbomTool(logLevel);
@@ -151,8 +153,8 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
                     manifestData.HashesMap = new ConcurrentDictionary<string, Checksum[]>(manifestData.HashesMap, osUtils.GetFileSystemStringComparer());
                 }
 
-                return manifestData;          
-            }); 
+                return manifestData;
+            });
 
             return services;
         }
