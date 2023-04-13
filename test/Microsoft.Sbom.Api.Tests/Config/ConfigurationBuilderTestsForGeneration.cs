@@ -224,7 +224,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
             var config = await cb.GetConfiguration(args);
 
             Assert.IsNotNull(config); 
-            Assert.IsNotNull(config.ManifestDirPath);
+            Assert.IsNotNull(args.ManifestDirPath);
             Assert.IsNotNull(config.NamespaceUriBase);
             Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
 
