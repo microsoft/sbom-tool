@@ -31,6 +31,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
             var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
             fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath)).Verifiable();
+            fileSystemUtilsMock.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemUtilsMock.Setup(f => f.GetDirectoryName(It.IsAny<string>())).Returns("test").Verifiable();
@@ -64,6 +65,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
             var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
             fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath)).Verifiable();
+            fileSystemUtilsMock.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemUtilsMock.Setup(f => f.GetDirectoryName(It.IsAny<string>())).Returns("test").Verifiable();
@@ -138,6 +140,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
+            fileSystemUtilsMock.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
 
@@ -164,6 +167,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
 
             fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
+            fileSystemUtilsMock.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true).Verifiable();
             fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
 
             var args = new ValidationArgs

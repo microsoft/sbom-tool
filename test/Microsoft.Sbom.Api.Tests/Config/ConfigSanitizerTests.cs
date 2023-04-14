@@ -35,7 +35,9 @@ namespace Microsoft.Sbom.Api.Tests.Config
             mockFileSystemUtils
                 .Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns((string p1, string p2) => Path.Join(p1, p2));
-
+            mockFileSystemUtils
+                .Setup(f => f.FileExists(It.IsAny<string>()))
+                .Returns(true);
             mockHashAlgorithmProvider = new Mock<IHashAlgorithmProvider>();
             mockHashAlgorithmProvider
                 .Setup(h => h.Get(It.IsAny<string>()))
