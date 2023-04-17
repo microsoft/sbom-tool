@@ -12,6 +12,8 @@ using Serilog;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Config
@@ -190,11 +192,11 @@ namespace Microsoft.Sbom.Api.Config
         /// </summary>
         private void ValidateManifestFileExists(IConfiguration configuration)
         {
-            var manifestFilePath = fileSystemUtils.JoinPaths(configuration.ManifestDirPath.Value, "manifest.spdx.json");
+            string[] filesInsideManifestDirPath = Directory.GetFileSystemEntries(configuration.ManifestDirPath.Value, "*", SearchOption.AllDirectories);
 
-            if (!fileSystemUtils.FileExists(manifestFilePath))
+            if (!filesInsideManifestDirPath.Any(entry => entry.EndsWith(".spdx.json") || entry.EndsWith("manifest.json")))
             {
-                throw new ValidationArgException($"No manifest file found at {manifestFilePath}. Please provide a buildDropPath (-b) that contains a manifest.");
+                throw new ValidationArgException($"No manifest file found in the manifest directory {configuration.ManifestDirPath.Value}");
             }
         }
 
