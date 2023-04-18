@@ -52,17 +52,17 @@ namespace Microsoft.Sbom.Api.Config
             // set ManifestDirPath after validation of DirectoryExist and DirectoryPathIsWritable, this wouldn't exist because it needs to be created by the tool.
             configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath.Value, configuration.ManifestToolAction);
 
-            // If the user is attempting to validate a manifest then validate there is a manifest present in the ManifestDirPath
-            if (configuration.ManifestToolAction == ManifestToolActions.Validate)
-            {
-                ValidateManifestFileExists(configuration);
-            }
-
             // Set namespace value if provided in the assembly
             configuration.NamespaceUriBase = GetNamespaceBaseUriFromAssembly(configuration, logger);
 
             // Set default ManifestInfo for validation in case user doesn't provide a value.
             configuration.ManifestInfo = GetDefaultManifestInfoForValidationAction(configuration);
+
+            // If the user is attempting to validate a manifest then validate there is a manifest present in the ManifestDirPath
+            if (configuration.ManifestToolAction == ManifestToolActions.Validate)
+            {
+                ValidateManifestFileExists(configuration);
+            }
 
             // Set default package supplier if not provided in configuration.
             configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
@@ -192,12 +192,35 @@ namespace Microsoft.Sbom.Api.Config
         /// </summary>
         private void ValidateManifestFileExists(IConfiguration configuration)
         {
-            string[] filesInsideManifestDirPath = Directory.GetFileSystemEntries(configuration.ManifestDirPath.Value, "*", SearchOption.AllDirectories);
+            var spdxManifestDirPath = fileSystemUtils.JoinPaths(configuration.ManifestDirPath.Value, "spdx_2.2");
+            var spdxManifestFilePath = fileSystemUtils.JoinPaths(spdxManifestDirPath, "manifest.spdx.json");
+            var manifestInfo = configuration.ManifestInfo.Value;
 
-            if (!filesInsideManifestDirPath.Any(entry => entry.EndsWith(".spdx.json") || entry.EndsWith("manifest.json")))
+            if (!fileSystemUtils.DirectoryExists(spdxManifestDirPath))
             {
-                throw new ValidationArgException($"No manifest file found in the manifest directory {configuration.ManifestDirPath.Value}");
+                throw new ValidationArgException($"No manifest file found at {configuration.ManifestDirPath.Value}.");
             }
+
+            if (fileSystemUtils.DirectoryExists(spdxManifestDirPath))
+            {
+                if (!fileSystemUtils.FileExists(spdxManifestFilePath))
+                {
+                    throw new ValidationArgException($"No manifest file found at {configuration.ManifestDirPath.Value}.");
+                }
+            }
+
+            //If we are not working with SPDX:2.2 then check for other possible manifest name.
+            if (!manifestInfo[0].Equals(Constants.SPDX22ManifestInfo))
+            {
+                var nonSpdxManifestFilePath = fileSystemUtils.JoinPaths(configuration.ManifestDirPath.Value, "manifest.json");
+
+                if (!fileSystemUtils.FileExists(nonSpdxManifestFilePath))
+                {
+                    throw new ValidationArgException($"No manifest file found at {configuration.ManifestDirPath.Value}.");
+                }
+            }
+
+            return;
         }
 
         private string EnsurePathEndsWithManifestFolderForGenerate(string value, ManifestToolActions manifestToolAction)

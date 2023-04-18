@@ -38,6 +38,9 @@ namespace Microsoft.Sbom.Api.Tests.Config
             mockFileSystemUtils
                 .Setup(f => f.FileExists(It.IsAny<string>()))
                 .Returns(true);
+            mockFileSystemUtils
+                .Setup(f => f.DirectoryExists(It.IsAny<string>()))
+                .Returns(true);
             mockHashAlgorithmProvider = new Mock<IHashAlgorithmProvider>();
             mockHashAlgorithmProvider
                 .Setup(h => h.Get(It.IsAny<string>()))
