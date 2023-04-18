@@ -65,5 +65,10 @@ namespace Microsoft.Sbom.Common
         /// Returns whether a directory is empty.
         /// </summary>
         bool IsDirectoryEmpty(string directoryPath);
+
+        /// <summary>
+        /// RandomTempPath to be used in scenarios where a (-m) and (-di) are provided and the user does not provide a (-b) path.
+        /// </summary>
+        public static string RandomTempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
     }
 }

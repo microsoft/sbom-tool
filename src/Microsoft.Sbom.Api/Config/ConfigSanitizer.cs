@@ -48,9 +48,10 @@ namespace Microsoft.Sbom.Api.Config
             // If BuildDropPath is null then run the logic to check whether it is required or not based on the current configuration.
             if (configuration.BuildDropPath?.Value == null || (configuration.DockerImagesToScan?.Value != null && configuration.BuildComponentPath?.Value == null))
             {
+                ValidateBuildDropPathConfiguration(configuration);
                 configuration.BuildDropPath = GetTempBuildDropPath(configuration);
             }
-            
+
             configuration.HashAlgorithm = GetHashAlgorithmName(configuration);
 
             // set ManifestDirPath after validation of DirectoryExist and DirectoryPathIsWritable, this wouldn't exist because it needs to be created by the tool.
@@ -94,15 +95,11 @@ namespace Microsoft.Sbom.Api.Config
             };
         }
 
-        private ConfigurationSetting<string> GetTempBuildDropPath(IConfiguration configuration)
+        private void ValidateBuildDropPathConfiguration(IConfiguration configuration)
         {
             if (configuration.ManifestToolAction != ManifestToolActions.Validate && configuration.ManifestDirPath?.Value != null && configuration.DockerImagesToScan?.Value != null)
             {
-                return new ConfigurationSetting<string>
-                {
-                    Source = SettingSource.Default,
-                    Value = IConfiguration.RandomTempPath,
-                };
+                return;
             }
             else if (configuration.ManifestToolAction != ManifestToolActions.Validate && configuration.ManifestDirPath?.Value == null && configuration.BuildComponentPath?.Value == null && configuration.DockerImagesToScan?.Value != null)
             {
@@ -116,6 +113,15 @@ namespace Microsoft.Sbom.Api.Config
             {
                 throw new ValidationArgException($"Please provide a value for the BuildDropPath (-b) parameter to generate the SBOM.");
             }
+        }
+
+        private ConfigurationSetting<string> GetTempBuildDropPath(IConfiguration configuration)
+        {
+                return new ConfigurationSetting<string>
+                {
+                    Source = SettingSource.Default,
+                    Value = IFileSystemUtils.RandomTempPath,
+                };
         }
 
         private ConfigurationSetting<AlgorithmName> GetHashAlgorithmName(IConfiguration configuration)

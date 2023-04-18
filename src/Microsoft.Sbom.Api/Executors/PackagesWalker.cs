@@ -9,6 +9,7 @@ using Microsoft.Sbom.Common.Config;
 using System.Collections.Generic;
 using System.Linq;
 using ILogger = Serilog.ILogger;
+using Microsoft.Sbom.Common;
 
 namespace Microsoft.Sbom.Api.Executors
 {
@@ -17,8 +18,8 @@ namespace Microsoft.Sbom.Api.Executors
     /// </summary>
     public class PackagesWalker : ComponentDetectionBaseWalker
     {
-        public PackagesWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs)
-            : base(log, componentDetector, configuration, sbomConfigs)
+        public PackagesWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils)
+            : base(log, componentDetector, configuration, sbomConfigs, fileSystemUtils)
         {
         }
 

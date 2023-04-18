@@ -280,7 +280,7 @@ namespace Microsoft.Sbom.Api.Workflows.Tests
                     manifestGeneratorProvider,
                     mockLogger.Object),
                 packageInfoConverterMock.Object,
-                new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs));
+                new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object));
 
             var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider(
                 configurationMock.Object,

@@ -21,11 +21,6 @@ namespace Microsoft.Sbom.Common.Config
     public interface IConfiguration
     {
         /// <summary>
-        /// RandomTempPath to be used in scenarios where a (-m) and (-di) are provided and the user does not provide a (-b) path.
-        /// </summary>
-        public static string RandomTempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-
-        /// <summary>
         /// Gets or sets the root folder of the drop directory to validate or generate.
         /// </summary>
         ConfigurationSetting<string> BuildDropPath { get; set; }

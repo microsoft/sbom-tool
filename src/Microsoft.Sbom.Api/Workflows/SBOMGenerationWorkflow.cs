@@ -151,15 +151,14 @@ namespace Microsoft.Sbom.Api.Workflows
                     try
                     {
                         // Delete the generated temp folder if necessary 
-                        if (fileSystemUtils.DirectoryExists(IConfiguration.RandomTempPath))
+                        if (fileSystemUtils.DirectoryExists(IFileSystemUtils.RandomTempPath))
                         {
-                            log.Debug($"Deleting the temp directory {IConfiguration.RandomTempPath}.");
-                            fileSystemUtils.DeleteDir(IConfiguration.RandomTempPath, true);
+                            fileSystemUtils.DeleteDir(IFileSystemUtils.RandomTempPath, true);
                         }
                     }
                     catch (Exception e)
                     {
-                        log.Warning($"Unable to delete the temp directory {IConfiguration.RandomTempPath}", e);
+                        log.Warning($"Unable to delete the temp directory {IFileSystemUtils.RandomTempPath}", e);
                     }          
                 }
             }

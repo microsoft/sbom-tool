@@ -9,12 +9,14 @@ using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors
@@ -28,6 +30,7 @@ namespace Microsoft.Sbom.Api.Executors
         private readonly ComponentDetectorCachedExecutor componentDetector;
         private readonly IConfiguration configuration;
         private readonly ISbomConfigProvider sbomConfigs;
+        private readonly IFileSystemUtils fileSystemUtils;
 
         private ComponentDetectionCliArgumentBuilder cliArgumentBuilder;
 
@@ -35,23 +38,27 @@ namespace Microsoft.Sbom.Api.Executors
             ILogger log,
             ComponentDetectorCachedExecutor componentDetector,
             IConfiguration configuration,
-            ISbomConfigProvider sbomConfigs)
+            ISbomConfigProvider sbomConfigs,
+            IFileSystemUtils fileSystemUtils)
         {
             this.log = log ?? throw new ArgumentNullException(nameof(log));
             this.componentDetector = componentDetector ?? throw new ArgumentNullException(nameof(componentDetector));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs)); 
+            this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         }
 
         public (ChannelReader<ScannedComponent> output, ChannelReader<ComponentDetectorException> error) GetComponents(string buildComponentDirPath)
         {
-            log.Debug($"Scanning for packages under the root path {buildComponentDirPath}.");
-
-            // If the buildComponentDirPath is null or empty, make sure we have a ManifestDirPath create a new temp directory with a random name.
-            if (!Directory.Exists(configuration.BuildComponentPath?.Value) && Directory.Exists(configuration.ManifestDirPath?.Value))
+            if (fileSystemUtils.FileExists(buildComponentDirPath))
             {
-                log.Debug($"The build component directory path {buildComponentDirPath} does not exist. Creating a new temp directory.");
-                buildComponentDirPath = IConfiguration.RandomTempPath;
+                log.Debug($"Scanning for packages under the root path {buildComponentDirPath}.");
+            }
+
+            // If the buildComponentDirPath is null or empty, make sure we have a ManifestDirPath and create a new temp directory with a random name.
+            if (!fileSystemUtils.DirectoryExists(configuration.BuildComponentPath?.Value) && fileSystemUtils.DirectoryExists(configuration.ManifestDirPath?.Value))
+            {
+                buildComponentDirPath = IFileSystemUtils.RandomTempPath;
                 Directory.CreateDirectory(buildComponentDirPath);
             }
 
