@@ -8,8 +8,8 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using System.Collections.Generic;
 using System.Linq;
-using ILogger = Serilog.ILogger;
 using Microsoft.Sbom.Common;
+using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors
 {
