@@ -69,7 +69,7 @@ namespace Microsoft.Sbom.Api.Executors
                     {
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
-                            ErrorType = ErrorType.FilteredRootPath,
+                            ErrorType = ErrorType.ReferencedSbomFile,
                             Path = file.Path
                         });
 
