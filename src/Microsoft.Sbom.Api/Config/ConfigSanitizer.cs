@@ -194,30 +194,16 @@ namespace Microsoft.Sbom.Api.Config
         {
             var spdxManifestDirPath = fileSystemUtils.JoinPaths(configuration.ManifestDirPath.Value, "spdx_2.2");
             var spdxManifestFilePath = fileSystemUtils.JoinPaths(spdxManifestDirPath, "manifest.spdx.json");
-            var manifestInfo = configuration.ManifestInfo.Value;
+            var nonSpdxManifestFilePath = fileSystemUtils.JoinPaths(configuration.ManifestDirPath.Value, "manifest.json");
 
-            if (!fileSystemUtils.DirectoryExists(spdxManifestDirPath))
+            if (!fileSystemUtils.FileExists(spdxManifestFilePath))
             {
+                if (fileSystemUtils.FileExists(nonSpdxManifestFilePath))
+                {
+                    return;
+                }
+
                 throw new ValidationArgException($"No manifest file found at {configuration.ManifestDirPath.Value}.");
-            }
-
-            if (fileSystemUtils.DirectoryExists(spdxManifestDirPath))
-            {
-                if (!fileSystemUtils.FileExists(spdxManifestFilePath))
-                {
-                    throw new ValidationArgException($"No manifest file found at {configuration.ManifestDirPath.Value}.");
-                }
-            }
-
-            //If we are not working with SPDX:2.2 then check for other possible manifest name.
-            if (!manifestInfo[0].Equals(Constants.SPDX22ManifestInfo))
-            {
-                var nonSpdxManifestFilePath = fileSystemUtils.JoinPaths(configuration.ManifestDirPath.Value, "manifest.json");
-
-                if (!fileSystemUtils.FileExists(nonSpdxManifestFilePath))
-                {
-                    throw new ValidationArgException($"No manifest file found at {configuration.ManifestDirPath.Value}.");
-                }
             }
 
             return;
