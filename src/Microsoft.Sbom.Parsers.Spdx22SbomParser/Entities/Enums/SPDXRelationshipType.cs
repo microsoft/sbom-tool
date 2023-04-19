@@ -37,6 +37,11 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums
         /// <summary>
         /// Is to be used when SPDXRef-A is described by SPDXREF-Document.
         /// </summary>
-        DESCRIBED_BY
+        DESCRIBED_BY,
+
+        /// <summary>
+        /// Is to be used when SPDXRef-A is a patch file for (to be applied to) SPDXRef-B.
+        /// </summary>
+        PATCH_FOR,
     }
 }

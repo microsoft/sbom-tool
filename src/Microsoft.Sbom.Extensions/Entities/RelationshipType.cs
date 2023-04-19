@@ -58,6 +58,14 @@ namespace Microsoft.Sbom.Extensions.Entities
         /// <example>
         /// The package ‘WildFly’ is described by SPDX document WildFly.spdx.
         /// </example>
-        DESCRIBED_BY
+        DESCRIBED_BY,
+
+        /// <summary>
+        /// The source element is a patch for the target element.
+        /// </summary>
+        /// <example>
+        /// A source file foo.diff is a patch file for source file foo.c.
+        /// </example>
+        PATCH_FOR
     }
 }
