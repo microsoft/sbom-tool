@@ -133,7 +133,8 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
                     typeof(IMetadataProvider),
                     typeof(IManifestInterface)))
                 .AsImplementedInterfaces())
-            .AddScoped<ISBOMGenerator, SbomGenerator>().AddTransient(x =>
+            .AddScoped<ISBOMGenerator, SbomGenerator>()
+            .AddSingleton(x =>
             {
                 IFileSystemUtils fileSystemUtils = x.GetRequiredService<IFileSystemUtils>();
                 ISbomConfigProvider sbomConfigs = x.GetRequiredService<ISbomConfigProvider>();
