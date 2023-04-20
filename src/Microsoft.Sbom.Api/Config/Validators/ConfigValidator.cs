@@ -50,12 +50,12 @@ namespace Microsoft.Sbom.Common.Config.Validators
                 return;
             }
 
-            // If default value for namespace base uri is provided in the assembly info, skip value check requirements.
-            if (propertyName == nameof(IConfiguration.NamespaceUriBase) && !string.IsNullOrEmpty(assemblyConfig.DefaultSBOMNamespaceBaseUri))
+            // Skip validation of the NamespaceUriBase if it is empty or has a default provided by the assembly info, This case is handled in the ConfigSanitizer.
+            if (propertyName == nameof(IConfiguration.NamespaceUriBase) && NamespaceUriBaseIsNullOrHasDefaultValue(propertyValue))
             {
                 return;
             }
-            
+  
             if (propertyName == nameof(IConfiguration.PackageSupplier) && !string.IsNullOrEmpty(assemblyConfig.DefaultPackageSupplier))
             {
                 return;
@@ -82,6 +82,20 @@ namespace Microsoft.Sbom.Common.Config.Validators
 
                 default:
                     throw new ArgumentException($"'{propertyName}' must be of type '{typeof(ConfigurationSetting<>)}'");
+            }
+        }
+
+        private bool NamespaceUriBaseIsNullOrHasDefaultValue(object propertyValue)
+        {
+            var defaultProperty = assemblyConfig.DefaultSBOMNamespaceBaseUri;
+
+            if (propertyValue == null || !string.IsNullOrEmpty(defaultProperty))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
