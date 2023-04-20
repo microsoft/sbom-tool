@@ -26,8 +26,14 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
         {
             get
             {
-                configsDictionary ??= new Dictionary<ManifestInfo, ISbomConfig>();
-
+                if (configsDictionary is not null)
+                {
+                    // Exit fast if config map is already initialized.
+                    return configsDictionary;
+                }
+               
+                // Initialize new config map.
+                configsDictionary = new Dictionary<ManifestInfo, ISbomConfig>();
                 foreach (var configHandler in manifestConfigHandlers)
                 {
                     if (configHandler.TryGetManifestConfig(out ISbomConfig sbomConfig))
@@ -73,11 +79,6 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration
             ILogger logger,
             IRecorder recorder)
         {
-            if (manifestConfigHandlers is null)
-            {
-                throw new ArgumentNullException(nameof(manifestConfigHandlers));
-            }
-
             this.manifestConfigHandlers = manifestConfigHandlers ?? throw new ArgumentNullException(nameof(manifestConfigHandlers));
             this.metadataProviders = metadataProviders ?? throw new ArgumentNullException(nameof(metadataProviders));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
