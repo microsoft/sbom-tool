@@ -12,6 +12,7 @@ using Serilog;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Config
@@ -24,6 +25,10 @@ namespace Microsoft.Sbom.Api.Config
         private readonly IHashAlgorithmProvider hashAlgorithmProvider;
         private readonly IFileSystemUtils fileSystemUtils;
         private readonly IAssemblyConfig assemblyConfig;
+
+        internal static string SBOMToolVersion => VersionValue.Value;
+
+        private static readonly Lazy<string> VersionValue = new Lazy<string>(() => typeof(SbomToolCmdRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty);
 
         public ConfigSanitizer(IHashAlgorithmProvider hashAlgorithmProvider, IFileSystemUtils fileSystemUtils, IAssemblyConfig assemblyConfig)
         {
@@ -50,8 +55,8 @@ namespace Microsoft.Sbom.Api.Config
             // set ManifestDirPath after validation of DirectoryExist and DirectoryPathIsWritable, this wouldn't exist because it needs to be created by the tool.
             configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath.Value, configuration.ManifestToolAction);
 
-            // Set namespace value if provided in the assembly
-            configuration.NamespaceUriBase = GetNamespaceBaseUriFromAssembly(configuration, logger);
+            // Set namespace value, this handles default values and user provided values.
+            configuration.NamespaceUriBase = GetNamespaceBaseUri(configuration, logger);
 
             // Set default ManifestInfo for validation in case user doesn't provide a value.
             configuration.ManifestInfo = GetDefaultManifestInfoForValidationAction(configuration);
@@ -106,12 +111,26 @@ namespace Microsoft.Sbom.Api.Config
             };
         }
 
-        private ConfigurationSetting<string> GetNamespaceBaseUriFromAssembly(IConfiguration configuration, ILogger logger)
+        private ConfigurationSetting<string> GetNamespaceBaseUri(IConfiguration configuration, ILogger logger)
         {
-            // If assembly name is not defined returned the current value.
-            if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri))
+            // If assembly name is not defined but a namespace was provided, then return the current value.
+            if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri) && !string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
             {
                 return configuration.NamespaceUriBase;
+            }
+
+            // If assembly name is not defined and namespace was not provided then return the default namespace as per spdx spec https://spdx.github.io/spdx-spec/v2.2.2/document-creation-information/#653-examples.
+            if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri) && string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
+            {
+                string defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SBOMToolVersion}-{Guid.NewGuid()}";
+
+                logger.Information($"No namespace URI base provided, using default value {defaultNamespaceUriBase}");
+
+                return new ConfigurationSetting<string>
+                {
+                    Source = SettingSource.Default,
+                    Value = defaultNamespaceUriBase
+                };
             }
 
             // If the user provides the parameter even when the assembly attribute is provided, 

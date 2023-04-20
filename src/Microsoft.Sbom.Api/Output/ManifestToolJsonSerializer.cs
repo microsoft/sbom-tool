@@ -4,7 +4,9 @@
 using Microsoft.Sbom.Extensions;
 using System;
 using System.IO;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Output
@@ -27,7 +29,7 @@ namespace Microsoft.Sbom.Api.Output
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            jsonWriter = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
+            jsonWriter = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
         }
 
         public void Dispose()
