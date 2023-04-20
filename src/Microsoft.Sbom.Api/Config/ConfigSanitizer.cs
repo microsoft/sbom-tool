@@ -12,8 +12,6 @@ using Serilog;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Config
