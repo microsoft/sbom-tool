@@ -1,4 +1,8 @@
 [*.cs]
+tab_width = 4
+indent_size = 4
+end_of_line = crlf
+
 # this. preferences
 dotnet_style_qualification_for_field = true:silent
 dotnet_style_qualification_for_property = true:silent
