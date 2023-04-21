@@ -10,132 +10,131 @@ using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace Microsoft.Sbom.Api.Tests.Utils
+namespace Microsoft.Sbom.Api.Tests.Utils;
+
+[TestClass]
+public class SBOMFileDedeplicatorTests
 {
-    [TestClass]
-    public class SBOMFileDedeplicatorTests
+    private readonly ChannelUtils channelUtils = new ChannelUtils();
+
+    [TestMethod]
+    public async Task When_DeduplicatingSBOMFile_WithSingleChannel_ThenTestPass()
     {
-        private readonly ChannelUtils channelUtils = new ChannelUtils();
-
-        [TestMethod]
-        public async Task When_DeduplicatingSBOMFile_WithSingleChannel_ThenTestPass()
+        var sbomFiles = new List<InternalSbomFileInfo>()
         {
-            var sbomFiles = new List<InternalSbomFileInfo>()
+            new InternalSbomFileInfo()
             {
-                new InternalSbomFileInfo()
-                {
-                    Path = "./file1.txt"
-                },
-                new InternalSbomFileInfo()
-                {
-                    Path = "./file2.txt"
-                },
-                new InternalSbomFileInfo()
-                {
-                    Path = "./file2.txt"
-                },
-                new InternalSbomFileInfo()
-                {
-                    Path = "./file3.txt"
-                },
-                new InternalSbomFileInfo()
-                {
-                    Path = "./file4.txt"
-                }
-            };
+                Path = "./file1.txt"
+            },
+            new InternalSbomFileInfo()
+            {
+                Path = "./file2.txt"
+            },
+            new InternalSbomFileInfo()
+            {
+                Path = "./file2.txt"
+            },
+            new InternalSbomFileInfo()
+            {
+                Path = "./file3.txt"
+            },
+            new InternalSbomFileInfo()
+            {
+                Path = "./file4.txt"
+            }
+        };
 
+        var inputChannel = Channel.CreateUnbounded<InternalSbomFileInfo>();
+
+        foreach (var sbomFile in sbomFiles)
+        {
+            await inputChannel.Writer.WriteAsync(sbomFile);
+        }
+
+        inputChannel.Writer.Complete();
+
+        var deduplicator = new InternalSBOMFileInfoDeduplicator();
+        var output = deduplicator.Deduplicate(inputChannel);
+
+        var results = await output.ReadAllAsync().ToListAsync();
+
+        Assert.AreEqual(results.Count, sbomFiles.Count - 1);
+    }
+
+    [TestMethod]
+    public async Task When_DeduplicatingSBOMFile_WithConcurrentChannel_ThenTestPass()
+    {
+        var sbomFiles = new List<InternalSbomFileInfo>()
+        {
+            new InternalSbomFileInfo()
+            {
+                Path = "./file1.txt"
+            },
+            new InternalSbomFileInfo()
+            {
+                Path = "./file2.txt"
+            },
+            new InternalSbomFileInfo()
+            {
+                Path = "./file2.txt"
+            },
+            new InternalSbomFileInfo()
+            {
+                Path = "./file3.txt"
+            },
+            new InternalSbomFileInfo()
+            {
+                Path = "./file4.txt"
+            }
+        };
+
+        var deduplicator = new InternalSBOMFileInfoDeduplicator();
+
+        var task1 = Task.Run(async () =>
+        {
             var inputChannel = Channel.CreateUnbounded<InternalSbomFileInfo>();
 
-            foreach (var sbomFile in sbomFiles)
+            foreach (var fileInfo in sbomFiles)
             {
-                await inputChannel.Writer.WriteAsync(sbomFile);
+                await inputChannel.Writer.WriteAsync(fileInfo);
             }
 
             inputChannel.Writer.Complete();
 
-            var deduplicator = new InternalSBOMFileInfoDeduplicator();
             var output = deduplicator.Deduplicate(inputChannel);
 
-            var results = await output.ReadAllAsync().ToListAsync();
+            return output;
+        });
 
-            Assert.AreEqual(results.Count, sbomFiles.Count - 1);
-        }
-
-        [TestMethod]
-        public async Task When_DeduplicatingSBOMFile_WithConcurrentChannel_ThenTestPass()
+        var task2 = Task.Run(async () =>
         {
-            var sbomFiles = new List<InternalSbomFileInfo>()
+            var inputChannel = Channel.CreateUnbounded<InternalSbomFileInfo>();
+
+            foreach (var fileInfo in sbomFiles)
             {
-                new InternalSbomFileInfo()
-                {
-                    Path = "./file1.txt"
-                },
-                new InternalSbomFileInfo()
-                {
-                    Path = "./file2.txt"
-                },
-                new InternalSbomFileInfo()
-                {
-                    Path = "./file2.txt"
-                },
-                new InternalSbomFileInfo()
-                {
-                    Path = "./file3.txt"
-                },
-                new InternalSbomFileInfo()
-                {
-                    Path = "./file4.txt"
-                }
-            };
+                await inputChannel.Writer.WriteAsync(fileInfo);
+            }
 
-            var deduplicator = new InternalSBOMFileInfoDeduplicator();
+            inputChannel.Writer.Complete();
 
-            var task1 = Task.Run(async () =>
-            {
-                var inputChannel = Channel.CreateUnbounded<InternalSbomFileInfo>();
+            var output = deduplicator.Deduplicate(inputChannel);
 
-                foreach (var fileInfo in sbomFiles)
-                {
-                    await inputChannel.Writer.WriteAsync(fileInfo);
-                }
+            return output;
+        });
 
-                inputChannel.Writer.Complete();
+        await Task.WhenAll(task1, task2);
+        var result = channelUtils.Merge(new ChannelReader<InternalSbomFileInfo>[] { task1.Result, task2.Result });
+        var resultList = await result.ReadAllAsync().ToListAsync();
 
-                var output = deduplicator.Deduplicate(inputChannel);
+        Assert.AreEqual(resultList.Count, sbomFiles.Count - 1);
+    }
 
-                return output;
-            });
+    [TestMethod]
+    public void When_GetKeyForSBOMFile_ThenTestPass()
+    {
+        var deduplicator = new InternalSBOMFileInfoDeduplicator();
 
-            var task2 = Task.Run(async () =>
-            {
-                var inputChannel = Channel.CreateUnbounded<InternalSbomFileInfo>();
-
-                foreach (var fileInfo in sbomFiles)
-                {
-                    await inputChannel.Writer.WriteAsync(fileInfo);
-                }
-
-                inputChannel.Writer.Complete();
-
-                var output = deduplicator.Deduplicate(inputChannel);
-
-                return output;
-            });
-
-            await Task.WhenAll(task1, task2);
-            var result = channelUtils.Merge(new ChannelReader<InternalSbomFileInfo>[] { task1.Result, task2.Result });
-            var resultList = await result.ReadAllAsync().ToListAsync();
-
-            Assert.AreEqual(resultList.Count, sbomFiles.Count - 1);
-        }
-
-        [TestMethod]
-        public void When_GetKeyForSBOMFile_ThenTestPass()
-        {
-            var deduplicator = new InternalSBOMFileInfoDeduplicator();
-
-            Assert.AreEqual("./file1.txt", deduplicator.GetKey(new InternalSbomFileInfo() { Path = "./file1.txt" }));
-            Assert.AreEqual(null, deduplicator.GetKey(null));
-        }
+        Assert.AreEqual("./file1.txt", deduplicator.GetKey(new InternalSbomFileInfo() { Path = "./file1.txt" }));
+        Assert.AreEqual(null, deduplicator.GetKey(null));
     }
 }

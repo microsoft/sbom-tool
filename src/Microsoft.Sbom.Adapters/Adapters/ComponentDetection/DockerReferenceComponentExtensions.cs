@@ -6,31 +6,30 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Adapters.ComponentDetection
+namespace Microsoft.Sbom.Adapters.ComponentDetection;
+
+/// <summary>
+/// Extensions methods for <see cref="DockerReferenceComponent"/>.
+/// </summary>
+internal static class DockerReferenceComponentExtensions
 {
     /// <summary>
-    /// Extensions methods for <see cref="DockerReferenceComponent"/>.
+    /// Converts a <see cref="DockerReferenceComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    internal static class DockerReferenceComponentExtensions
+    public static SbomPackage? ToSbomPackage(this DockerReferenceComponent dockerReferenceComponent) => new ()
     {
-        /// <summary>
-        /// Converts a <see cref="DockerReferenceComponent"/> to an <see cref="SbomPackage"/>.
-        /// </summary>
-        public static SbomPackage? ToSbomPackage(this DockerReferenceComponent dockerReferenceComponent) => new ()
+        Id = dockerReferenceComponent.Id,
+        PackageUrl = dockerReferenceComponent.PackageUrl?.ToString(),
+        PackageName = dockerReferenceComponent.Digest,
+        Checksum = new[]
         {
-            Id = dockerReferenceComponent.Id,
-            PackageUrl = dockerReferenceComponent.PackageUrl?.ToString(),
-            PackageName = dockerReferenceComponent.Digest,
-            Checksum = new[]
+            new Checksum
             {
-                new Checksum
-                {
-                    Algorithm = AlgorithmName.SHA256,
-                    ChecksumValue = dockerReferenceComponent.Digest
-                },
+                Algorithm = AlgorithmName.SHA256,
+                ChecksumValue = dockerReferenceComponent.Digest
             },
-            FilesAnalyzed = false,
-            Type = "docker"
-        };
-    }
+        },
+        FilesAnalyzed = false,
+        Type = "docker"
+    };
 }

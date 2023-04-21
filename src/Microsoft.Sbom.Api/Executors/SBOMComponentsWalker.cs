@@ -10,25 +10,24 @@ using System.Collections.Generic;
 using System.Linq;
 using ILogger = Serilog.ILogger;
 
-namespace Microsoft.Sbom.Api.Executors
-{
-    /// <summary>
-    /// Runs the component detection tool and returns a list of SBOM components scanned in the given folder.
-    /// </summary>
-    public class SBOMComponentsWalker : ComponentDetectionBaseWalker
-    {
-        public SBOMComponentsWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs)
-            : base(log, componentDetector, configuration, sbomConfigs)
-        {
-        }
+namespace Microsoft.Sbom.Api.Executors;
 
-        protected override IEnumerable<ScannedComponent> FilterScannedComponents(ScanResult result)
-        {
-            return result
-                .ComponentsFound
-                .Where(component => component.Component is SpdxComponent)
-                .Distinct(new ScannedComponentEqualityComparer())
-                .ToList();
-        }
+/// <summary>
+/// Runs the component detection tool and returns a list of SBOM components scanned in the given folder.
+/// </summary>
+public class SBOMComponentsWalker : ComponentDetectionBaseWalker
+{
+    public SBOMComponentsWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs)
+        : base(log, componentDetector, configuration, sbomConfigs)
+    {
+    }
+
+    protected override IEnumerable<ScannedComponent> FilterScannedComponents(ScanResult result)
+    {
+        return result
+            .ComponentsFound
+            .Where(component => component.Component is SpdxComponent)
+            .Distinct(new ScannedComponentEqualityComparer())
+            .ToList();
     }
 }

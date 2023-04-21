@@ -6,33 +6,32 @@ using Microsoft.Sbom.Extensions.Entities;
 using System.Collections.Generic;
 using Microsoft.Sbom.Common.Config;
 
-namespace Microsoft.Sbom.Api.Config.ValueConverters
+namespace Microsoft.Sbom.Api.Config.ValueConverters;
+
+/// <summary>
+/// Converts an ManifestInfo member to a ConfigurationSetting decorated string member.
+/// </summary>
+internal class ManifestInfoConfigurationSettingAddingConverter : IValueConverter<IList<ManifestInfo>, ConfigurationSetting<IList<ManifestInfo>>>
 {
-    /// <summary>
-    /// Converts an ManifestInfo member to a ConfigurationSetting decorated string member.
-    /// </summary>
-    internal class ManifestInfoConfigurationSettingAddingConverter : IValueConverter<IList<ManifestInfo>, ConfigurationSetting<IList<ManifestInfo>>>
+    private SettingSource settingSource;
+
+    public ManifestInfoConfigurationSettingAddingConverter(SettingSource settingSource)
     {
-        private SettingSource settingSource;
+        this.settingSource = settingSource;
+    }
 
-        public ManifestInfoConfigurationSettingAddingConverter(SettingSource settingSource)
+    public ConfigurationSetting<IList<ManifestInfo>> Convert(IList<ManifestInfo> sourceMember, ResolutionContext context)
+    {
+        if (sourceMember == null)
         {
-            this.settingSource = settingSource;
+            settingSource = SettingSource.Default;
+            sourceMember = null;
         }
 
-        public ConfigurationSetting<IList<ManifestInfo>> Convert(IList<ManifestInfo> sourceMember, ResolutionContext context)
+        return new ConfigurationSetting<IList<ManifestInfo>>
         {
-            if (sourceMember == null)
-            {
-                settingSource = SettingSource.Default;
-                sourceMember = null;
-            }
-
-            return new ConfigurationSetting<IList<ManifestInfo>>
-            {
-                Source = settingSource,
-                Value = sourceMember
-            };
-        }
+            Source = settingSource,
+            Value = sourceMember
+        };
     }
 }

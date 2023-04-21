@@ -11,142 +11,141 @@ using System.Linq;
 using System.Text.Json;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Microsoft.Sbom.Api.Tests
+namespace Microsoft.Sbom.Api.Tests;
+
+internal class TestManifestGenerator : IManifestGenerator
 {
-    internal class TestManifestGenerator : IManifestGenerator
+    public AlgorithmName[] RequiredHashAlgorithms => new[] {
+        AlgorithmName.SHA256
+    };
+
+    public string Version { get; set; } = "1.0.0";
+
+    public IList<string> HeaderKeys => throw new NotImplementedException();
+
+    public string FilesArrayHeaderName => "Outputs";
+
+    public string PackagesArrayHeaderName => "Packages";
+
+    public string RelationshipsArrayHeaderName => "Relationships";
+
+    public string ExternalDocumentRefArrayHeaderName => "externalDocumentRefs";
+
+    public GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo)
     {
-        public AlgorithmName[] RequiredHashAlgorithms => new[] {
-            AlgorithmName.SHA256
-        };
-
-        public string Version { get; set; } = "1.0.0";
-
-        public IList<string> HeaderKeys => throw new NotImplementedException();
-
-        public string FilesArrayHeaderName => "Outputs";
-
-        public string PackagesArrayHeaderName => "Packages";
-
-        public string RelationshipsArrayHeaderName => "Relationships";
-
-        public string ExternalDocumentRefArrayHeaderName => "externalDocumentRefs";
-
-        public GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo)
+        if (fileInfo is null)
         {
-            if (fileInfo is null)
-            {
-                throw new ArgumentNullException(nameof(fileInfo));
-            }
+            throw new ArgumentNullException(nameof(fileInfo));
+        }
 
-            if (fileInfo.Checksum == null || fileInfo.Checksum.Count() == 0)
-            {
-                throw new ArgumentException(nameof(fileInfo.Checksum));
-            }
+        if (fileInfo.Checksum == null || fileInfo.Checksum.Count() == 0)
+        {
+            throw new ArgumentException(nameof(fileInfo.Checksum));
+        }
 
-            if (string.IsNullOrWhiteSpace(fileInfo.Path))
-            {
-                throw new ArgumentException(nameof(fileInfo.Path));
-            }
+        if (string.IsNullOrWhiteSpace(fileInfo.Path))
+        {
+            throw new ArgumentException(nameof(fileInfo.Path));
+        }
 
-            var jsonString = $@"
+        var jsonString = $@"
 {{
     ""Source"":""{fileInfo.Path}"",
     ""Sha256Hash"":""{fileInfo.Checksum.Where(h => h.Algorithm == AlgorithmName.SHA256).Select(h => h.ChecksumValue).FirstOrDefault()}""
 }}
 ";
 
-            return new GenerationResult
-            {
-                Document = JsonDocument.Parse(jsonString),
-                ResultMetadata = new ResultMetadata
-                {
-                    EntityId = $"{fileInfo.Path}_{Guid.NewGuid()}"
-                }
-            };
-        }
-
-        public GenerationResult GenerateJsonDocument(SbomPackage packageInfo)
+        return new GenerationResult
         {
-            var jsonString = $@"
+            Document = JsonDocument.Parse(jsonString),
+            ResultMetadata = new ResultMetadata
+            {
+                EntityId = $"{fileInfo.Path}_{Guid.NewGuid()}"
+            }
+        };
+    }
+
+    public GenerationResult GenerateJsonDocument(SbomPackage packageInfo)
+    {
+        var jsonString = $@"
 {{
     ""Name"": ""{packageInfo.PackageName}""
 }}
 ";
 
-            return new GenerationResult
-            {
-                Document = JsonDocument.Parse(jsonString),
-                ResultMetadata = new ResultMetadata
-                {
-                    EntityId = $"{packageInfo.PackageName}_{Guid.NewGuid()}"
-                }
-            };
-        }
-
-        public GenerationResult GenerateJsonDocument(Relationship relationship)
+        return new GenerationResult
         {
-            return new GenerationResult
+            Document = JsonDocument.Parse(jsonString),
+            ResultMetadata = new ResultMetadata
             {
-                Document = JsonDocument.Parse(JsonSerializer.Serialize(relationship))
-            };
-        }
+                EntityId = $"{packageInfo.PackageName}_{Guid.NewGuid()}"
+            }
+        };
+    }
 
-        public GenerationResult GenerateJsonDocument(ExternalDocumentReferenceInfo externalDocumentReferenceInfo)
+    public GenerationResult GenerateJsonDocument(Relationship relationship)
+    {
+        return new GenerationResult
         {
-            var jsonString = $@"
+            Document = JsonDocument.Parse(JsonSerializer.Serialize(relationship))
+        };
+    }
+
+    public GenerationResult GenerateJsonDocument(ExternalDocumentReferenceInfo externalDocumentReferenceInfo)
+    {
+        var jsonString = $@"
             {{
                 ""ExternalDocumentId"":""{externalDocumentReferenceInfo.ExternalDocumentName}"",
                 ""Document"":""{externalDocumentReferenceInfo.DocumentNamespace}""
             }}
             ";
 
-            return new GenerationResult
-            {
-                Document = JsonDocument.Parse(jsonString),
-                ResultMetadata = new ResultMetadata
-                {
-                    EntityId = $"{externalDocumentReferenceInfo.ExternalDocumentName}_{Guid.NewGuid()}"
-                }
-            };
-        }
-
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "Discard variable has a _ name")]
-        public GenerationResult GenerateRootPackage(IInternalMetadataProvider _)
+        return new GenerationResult
         {
-            var jsonString = $@"
+            Document = JsonDocument.Parse(jsonString),
+            ResultMetadata = new ResultMetadata
+            {
+                EntityId = $"{externalDocumentReferenceInfo.ExternalDocumentName}_{Guid.NewGuid()}"
+            }
+        };
+    }
+
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "Discard variable has a _ name")]
+    public GenerationResult GenerateRootPackage(IInternalMetadataProvider _)
+    {
+        var jsonString = $@"
 {{
     ""Name"": ""rootPackage""
 }}
 ";
 
-            return new GenerationResult
-            {
-                Document = JsonDocument.Parse(jsonString),
-                ResultMetadata = new ResultMetadata
-                {
-                    DocumentId = "doc-rootPackage-Id",
-                    EntityId = "rootPackage-Id"
-                }
-            };
-        }
-
-        public IDictionary<string, object> GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider)
+        return new GenerationResult
         {
-            return new Dictionary<string, object>
+            Document = JsonDocument.Parse(jsonString),
+            ResultMetadata = new ResultMetadata
             {
-                { "Version", "1.0.0" },
-                { "Build", internalMetadataProvider.GetMetadata(MetadataKey.Build_BuildId) },
-                { "Definition", internalMetadataProvider.GetMetadata(MetadataKey.Build_DefinitionName) },
-            };
-        }
+                DocumentId = "doc-rootPackage-Id",
+                EntityId = "rootPackage-Id"
+            }
+        };
+    }
 
-        public ManifestInfo RegisterManifest()
+    public IDictionary<string, object> GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider)
+    {
+        return new Dictionary<string, object>
         {
-            return new ManifestInfo
-            {
-                Name = "TestManifest",
-                Version = "1.0.0"
-            };
-        }
+            { "Version", "1.0.0" },
+            { "Build", internalMetadataProvider.GetMetadata(MetadataKey.Build_BuildId) },
+            { "Definition", internalMetadataProvider.GetMetadata(MetadataKey.Build_DefinitionName) },
+        };
+    }
+
+    public ManifestInfo RegisterManifest()
+    {
+        return new ManifestInfo
+        {
+            Name = "TestManifest",
+            Version = "1.0.0"
+        };
     }
 }

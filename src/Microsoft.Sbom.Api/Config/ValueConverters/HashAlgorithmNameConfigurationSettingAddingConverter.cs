@@ -6,32 +6,31 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
 
-namespace Microsoft.Sbom.Api.Config.ValueConverters
+namespace Microsoft.Sbom.Api.Config.ValueConverters;
+
+/// <summary>
+/// Converts an LogEventLevel member to a ConfigurationSetting decorated string member.
+/// </summary>
+internal class HashAlgorithmNameConfigurationSettingAddingConverter : IValueConverter<AlgorithmName, ConfigurationSetting<AlgorithmName>>
 {
-    /// <summary>
-    /// Converts an LogEventLevel member to a ConfigurationSetting decorated string member.
-    /// </summary>
-    internal class HashAlgorithmNameConfigurationSettingAddingConverter : IValueConverter<AlgorithmName, ConfigurationSetting<AlgorithmName>>
+    private SettingSource settingSource;
+
+    public HashAlgorithmNameConfigurationSettingAddingConverter(SettingSource settingSource)
     {
-        private SettingSource settingSource;
+        this.settingSource = settingSource;
+    }
 
-        public HashAlgorithmNameConfigurationSettingAddingConverter(SettingSource settingSource)
+    public ConfigurationSetting<AlgorithmName> Convert(AlgorithmName sourceMember, ResolutionContext context)
+    {
+        if (sourceMember == null)
         {
-            this.settingSource = settingSource;
+            settingSource = SettingSource.Default;
         }
 
-        public ConfigurationSetting<AlgorithmName> Convert(AlgorithmName sourceMember, ResolutionContext context)
+        return new ConfigurationSetting<AlgorithmName>
         {
-            if (sourceMember == null)
-            {
-                settingSource = SettingSource.Default;
-            }
-
-            return new ConfigurationSetting<AlgorithmName>
-            {
-                Source = settingSource,
-                Value = sourceMember ?? Constants.DefaultHashAlgorithmName
-            };
-        }
+            Source = settingSource,
+            Value = sourceMember ?? Constants.DefaultHashAlgorithmName
+        };
     }
 }

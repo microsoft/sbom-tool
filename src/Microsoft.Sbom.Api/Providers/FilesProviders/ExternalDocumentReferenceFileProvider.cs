@@ -11,58 +11,57 @@ using Microsoft.Sbom.Common.Config;
 using Serilog;
 using Microsoft.Sbom.Api.Utils;
 
-namespace Microsoft.Sbom.Api.Providers.FilesProviders
+namespace Microsoft.Sbom.Api.Providers.FilesProviders;
+
+/// <summary>
+/// Provider for external document reference file supported only when 
+/// ExternalDocumentReferenceListFile is provided in the generation arguments.
+/// </summary>
+public class ExternalDocumentReferenceFileProvider : PathBasedFileToJsonProviderBase
 {
-    /// <summary>
-    /// Provider for external document reference file supported only when 
-    /// ExternalDocumentReferenceListFile is provided in the generation arguments.
-    /// </summary>
-    public class ExternalDocumentReferenceFileProvider : PathBasedFileToJsonProviderBase
+    private readonly FileListEnumerator listWalker;
+
+    public ExternalDocumentReferenceFileProvider(
+        IConfiguration configuration,
+        ChannelUtils channelUtils,
+        ILogger log,
+        FileHasher fileHasher,
+        ManifestFolderFilterer fileFilterer,
+        FileInfoWriter fileHashWriter,
+        InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
+        FileListEnumerator listWalker)
+        : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
     {
-        private readonly FileListEnumerator listWalker;
+        this.listWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));
+    }
 
-        public ExternalDocumentReferenceFileProvider(
-            IConfiguration configuration,
-            ChannelUtils channelUtils,
-            ILogger log,
-            FileHasher fileHasher,
-            ManifestFolderFilterer fileFilterer,
-            FileInfoWriter fileHashWriter,
-            InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
-            FileListEnumerator listWalker)
-            : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
+    public override bool IsSupported(ProviderType providerType)
+    {
+        if (providerType == ProviderType.Files && !string.IsNullOrWhiteSpace(Configuration.ExternalDocumentReferenceListFile?.Value))
         {
-            this.listWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));
+            Log.Debug($"Using the {nameof(ExternalDocumentReferenceFileProvider)} provider for the files workflow.");
+            return true;
         }
 
-        public override bool IsSupported(ProviderType providerType)
-        {
-            if (providerType == ProviderType.Files && !string.IsNullOrWhiteSpace(Configuration.ExternalDocumentReferenceListFile?.Value))
-            {
-                Log.Debug($"Using the {nameof(ExternalDocumentReferenceFileProvider)} provider for the files workflow.");
-                return true;
-            }
+        return false;
+    }
 
-            return false;
+    protected override (ChannelReader<string> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
+    {
+        if (Configuration.ExternalDocumentReferenceListFile?.Value == null)
+        {
+            var emptyList = Channel.CreateUnbounded<string>();
+            emptyList.Writer.Complete();
+            var errors = Channel.CreateUnbounded<FileValidationResult>();
+            errors.Writer.Complete();
+            return (emptyList, errors);
         }
 
-        protected override (ChannelReader<string> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
-        {
-            if (Configuration.ExternalDocumentReferenceListFile?.Value == null)
-            {
-                var emptyList = Channel.CreateUnbounded<string>();
-                emptyList.Writer.Complete();
-                var errors = Channel.CreateUnbounded<FileValidationResult>();
-                errors.Writer.Complete();
-                return (emptyList, errors);
-            }
+        return listWalker.GetFilesFromList(Configuration.ExternalDocumentReferenceListFile.Value);
+    }
 
-            return listWalker.GetFilesFromList(Configuration.ExternalDocumentReferenceListFile.Value);
-        }
-
-        protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) WriteAdditionalItems(IList<ISbomConfig> requiredConfigs)
-        {
-            return (null, null);
-        }
+    protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) WriteAdditionalItems(IList<ISbomConfig> requiredConfigs)
+    {
+        return (null, null);
     }
 }

@@ -4,20 +4,19 @@
 using System;
 using System.Collections;
 
-namespace Microsoft.Sbom.Common
+namespace Microsoft.Sbom.Common;
+
+/// <summary>
+/// Wrapper class for System.Environment to allow for testing.
+/// </summary>
+public class EnvironmentWrapper : IEnvironmentWrapper
 {
     /// <summary>
-    /// Wrapper class for System.Environment to allow for testing.
+    /// Method to call System.Environment.GetEnvironmentVariables.
     /// </summary>
-    public class EnvironmentWrapper : IEnvironmentWrapper
+    /// <returns> A dictionary of available environment variables. </returns>
+    public IDictionary GetEnvironmentVariables()
     {
-        /// <summary>
-        /// Method to call System.Environment.GetEnvironmentVariables.
-        /// </summary>
-        /// <returns> A dictionary of available environment variables. </returns>
-        public IDictionary GetEnvironmentVariables()
-        {
-            return Environment.GetEnvironmentVariables();
-        }
+        return Environment.GetEnvironmentVariables();
     }
 }

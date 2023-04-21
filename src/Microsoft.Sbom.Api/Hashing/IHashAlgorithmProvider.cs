@@ -3,10 +3,9 @@
 
 using Microsoft.Sbom.Contracts.Enums;
 
-namespace Microsoft.Sbom.Api.Hashing
+namespace Microsoft.Sbom.Api.Hashing;
+
+public interface IHashAlgorithmProvider
 {
-    public interface IHashAlgorithmProvider
-    {
-        AlgorithmName Get(string algorithmName);
-    }
+    AlgorithmName Get(string algorithmName);
 }

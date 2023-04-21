@@ -6,32 +6,31 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Adapters.ComponentDetection
+namespace Microsoft.Sbom.Adapters.ComponentDetection;
+
+/// <summary>
+/// Extensions methods for <see cref="GitComponent"/>.
+/// </summary>
+internal static class GitComponentExtensions
 {
     /// <summary>
-    /// Extensions methods for <see cref="GitComponent"/>.
+    /// Converts a <see cref="GitComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    internal static class GitComponentExtensions
+    public static SbomPackage? ToSbomPackage(this GitComponent gitComponent) => new ()
     {
-        /// <summary>
-        /// Converts a <see cref="GitComponent"/> to an <see cref="SbomPackage"/>.
-        /// </summary>
-        public static SbomPackage? ToSbomPackage(this GitComponent gitComponent) => new ()
+        Id = gitComponent.Id,
+        PackageName = gitComponent.Id,
+        PackageUrl = gitComponent.PackageUrl?.ToString(),
+        PackageSource = gitComponent.RepositoryUrl?.ToString(),
+        Checksum = new[]
         {
-            Id = gitComponent.Id,
-            PackageName = gitComponent.Id,
-            PackageUrl = gitComponent.PackageUrl?.ToString(),
-            PackageSource = gitComponent.RepositoryUrl?.ToString(),
-            Checksum = new[]
+            new Checksum
             {
-                new Checksum
-                {
-                    Algorithm = AlgorithmName.SHA1,
-                    ChecksumValue = gitComponent.CommitHash
-                },
+                Algorithm = AlgorithmName.SHA1,
+                ChecksumValue = gitComponent.CommitHash
             },
-            FilesAnalyzed = false,
-            Type = "git-package"
-        };
-    }
+        },
+        FilesAnalyzed = false,
+        Type = "git-package"
+    };
 }

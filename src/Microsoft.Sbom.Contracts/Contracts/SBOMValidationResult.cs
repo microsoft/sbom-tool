@@ -1,12 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.Sbom.Contracts
+namespace Microsoft.Sbom.Contracts;
+
+/// <summary>
+/// Represents the result of a SBOM validation action.
+/// </summary>
+public abstract class SBOMValidationResult
 {
-    /// <summary>
-    /// Represents the result of a SBOM validation action.
-    /// </summary>
-    public abstract class SBOMValidationResult
-    {
-    }
 }

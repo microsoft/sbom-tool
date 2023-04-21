@@ -5,25 +5,24 @@ using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
 using System.Linq;
 
-namespace Microsoft.Sbom.Adapters.ComponentDetection
+namespace Microsoft.Sbom.Adapters.ComponentDetection;
+
+/// <summary>
+/// Extensions methods for <see cref="NuGetComponent"/>.
+/// </summary>
+internal static class NuGetComponentExtensions
 {
     /// <summary>
-    /// Extensions methods for <see cref="NuGetComponent"/>.
+    /// Converts a <see cref="NuGetComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    internal static class NuGetComponentExtensions
+    public static SbomPackage? ToSbomPackage(this NuGetComponent nuGetComponent) => new ()
     {
-        /// <summary>
-        /// Converts a <see cref="NuGetComponent"/> to an <see cref="SbomPackage"/>.
-        /// </summary>
-        public static SbomPackage? ToSbomPackage(this NuGetComponent nuGetComponent) => new ()
-        {
-            Id = nuGetComponent.Id,
-            PackageUrl = nuGetComponent.PackageUrl?.ToString(),
-            PackageName = nuGetComponent.Name,
-            PackageVersion = nuGetComponent.Version,
-            Supplier = nuGetComponent.Authors?.Any() == true ? $"Organization: {nuGetComponent.Authors.First()}" : null,
-            FilesAnalyzed = false,
-            Type = "nuget"
-        };
-    }
+        Id = nuGetComponent.Id,
+        PackageUrl = nuGetComponent.PackageUrl?.ToString(),
+        PackageName = nuGetComponent.Name,
+        PackageVersion = nuGetComponent.Version,
+        Supplier = nuGetComponent.Authors?.Any() == true ? $"Organization: {nuGetComponent.Authors.First()}" : null,
+        FilesAnalyzed = false,
+        Type = "nuget"
+    };
 }

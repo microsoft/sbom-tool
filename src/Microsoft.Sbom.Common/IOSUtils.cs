@@ -4,16 +4,15 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.Sbom.Common
+namespace Microsoft.Sbom.Common;
+
+public interface IOSUtils
 {
-    public interface IOSUtils
-    {
-        OSPlatform GetCurrentOSPlatform();
+    OSPlatform GetCurrentOSPlatform();
        
-        string GetEnvironmentVariable(string variableName);
+    string GetEnvironmentVariable(string variableName);
 
-        StringComparer GetFileSystemStringComparer();
+    StringComparer GetFileSystemStringComparer();
 
-        StringComparison GetFileSystemStringComparisonType();
-    }
+    StringComparison GetFileSystemStringComparisonType();
 }
