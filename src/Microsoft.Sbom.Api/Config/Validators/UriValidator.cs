@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Common.Config.Validators;
 using PowerArgs;
-using System;
 
 namespace Microsoft.Sbom.Api.Config.Validators;
 

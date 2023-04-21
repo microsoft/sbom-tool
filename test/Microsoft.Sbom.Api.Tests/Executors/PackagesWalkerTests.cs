@@ -1,23 +1,23 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.ComponentDetection.Contracts;
-using Microsoft.ComponentDetection.Contracts.BcdeModels;
-using Microsoft.ComponentDetection.Contracts.TypedComponent;
-using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Api.Exceptions;
-using Microsoft.Sbom.Api.Manifest.Configuration;
-using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.ComponentDetection.Contracts;
+using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.Sbom.Api.Manifest.Configuration;
+using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using Serilog.Events;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;

@@ -1,17 +1,17 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Extensions;
 using Serilog;
-using System;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
 

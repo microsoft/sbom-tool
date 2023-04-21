@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using PowerArgs;
 using System;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.Sbom.Api.Config.Args;
+using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Config;
 

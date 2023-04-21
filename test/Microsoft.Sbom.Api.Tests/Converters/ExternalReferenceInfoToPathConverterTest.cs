@@ -1,16 +1,16 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Api.Converters;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Serilog;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using Serilog;
 
 namespace Microsoft.Sbom.Api.Tests.Converters;
 

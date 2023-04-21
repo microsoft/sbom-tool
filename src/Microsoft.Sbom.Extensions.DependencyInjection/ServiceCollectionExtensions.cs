@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
@@ -31,7 +32,6 @@ using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using System.Collections.Concurrent;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Extensions.DependencyInjection;

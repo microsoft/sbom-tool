@@ -1,6 +1,6 @@
-﻿using Microsoft.Sbom.Api.Manifest.FileHashes;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
+using Microsoft.Sbom.Api.Manifest.FileHashes;
 
 namespace Microsoft.Sbom.Utils;
 

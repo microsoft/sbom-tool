@@ -4,7 +4,6 @@
 using Microsoft.ComponentDetection.Contracts.Internal;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
-using System.Collections.Generic;
 
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
 

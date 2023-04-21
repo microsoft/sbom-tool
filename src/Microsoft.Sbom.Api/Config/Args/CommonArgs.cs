@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions.Entities;
+using System.Collections.Generic;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
 using Serilog.Events;
-using System.Collections.Generic;
 
 namespace Microsoft.Sbom.Api.Config.Args;
 

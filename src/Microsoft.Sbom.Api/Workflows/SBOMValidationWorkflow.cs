@@ -1,16 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Entities.Output;
-using Microsoft.Sbom.Api.Executors;
-using Microsoft.Sbom.Api.Output;
-using Microsoft.Sbom.Api.Output.Telemetry;
-using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Common.Config;
-using PowerArgs;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +8,17 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Entities.Output;
+using Microsoft.Sbom.Api.Executors;
+using Microsoft.Sbom.Api.Output;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.SignValidator;
+using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions.Entities;
+using PowerArgs;
+using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows;
 

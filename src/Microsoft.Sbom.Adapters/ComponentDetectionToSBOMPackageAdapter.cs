@@ -1,15 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Adapters.ComponentDetection;
-using Microsoft.Sbom.Adapters.Report;
-using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System;
 using System.Linq;
-using Microsoft.Sbom.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Sbom.Adapters.ComponentDetection;
+using Microsoft.Sbom.Adapters.Report;
+using Microsoft.Sbom.Contracts;
+using Newtonsoft.Json;
 
 namespace Microsoft.Sbom.Adapters;
 

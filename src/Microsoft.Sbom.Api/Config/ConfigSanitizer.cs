@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
@@ -10,9 +13,6 @@ using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
 using Serilog;
 using Serilog.Core;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Config;

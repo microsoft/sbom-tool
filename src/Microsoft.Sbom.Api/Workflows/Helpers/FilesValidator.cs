@@ -1,16 +1,16 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+using System.Collections.Generic;
+using System.Threading.Channels;
+using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Entities;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 

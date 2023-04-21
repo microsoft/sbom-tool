@@ -1,10 +1,10 @@
-﻿using Microsoft.Sbom.Contracts.Enums;
+﻿using System.IO;
+using System.Linq;
+using System.Text;
+using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace Microsoft.Sbom.Parser;
 

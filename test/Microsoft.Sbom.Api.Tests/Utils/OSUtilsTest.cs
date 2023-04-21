@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Sbom.Common;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections;
-using Microsoft.Sbom.Common;
 
 namespace Microsoft.Sbom.Api.Tests.Utils;
 
