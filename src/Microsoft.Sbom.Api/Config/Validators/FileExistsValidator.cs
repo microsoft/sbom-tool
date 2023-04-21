@@ -8,29 +8,28 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Api.Utils;
 
-namespace Microsoft.Sbom.Api.Config.Validators
+namespace Microsoft.Sbom.Api.Config.Validators;
+
+/// <summary>
+/// Validates if the file exists.
+/// </summary>
+public class FileExistsValidator : ConfigValidator
 {
-    /// <summary>
-    /// Validates if the file exists.
-    /// </summary>
-    public class FileExistsValidator : ConfigValidator
+    private readonly IFileSystemUtils fileSystemUtils;
+
+    public FileExistsValidator(IFileSystemUtils fileSystemUtils, IAssemblyConfig assemblyConfig)
+        : base(typeof(FileExistsAttribute), assemblyConfig)
     {
-        private readonly IFileSystemUtils fileSystemUtils;
+        this.fileSystemUtils = fileSystemUtils;
+    }
 
-        public FileExistsValidator(IFileSystemUtils fileSystemUtils, IAssemblyConfig assemblyConfig)
-            : base(typeof(FileExistsAttribute), assemblyConfig)
+    public override void ValidateInternal(string paramName, object paramValue, Attribute attribute)
+    {
+        if (paramValue != null && paramValue is string value && !string.IsNullOrEmpty(value))
         {
-            this.fileSystemUtils = fileSystemUtils;
-        }
-
-        public override void ValidateInternal(string paramName, object paramValue, Attribute attribute)
-        {
-            if (paramValue != null && paramValue is string value && !string.IsNullOrEmpty(value))
+            if (!fileSystemUtils.FileExists(value))
             {
-                if (!fileSystemUtils.FileExists(value))
-                {
-                    throw new ValidationArgException($"{paramName} file not found for '{value}'");
-                }
+                throw new ValidationArgException($"{paramName} file not found for '{value}'");
             }
         }
     }

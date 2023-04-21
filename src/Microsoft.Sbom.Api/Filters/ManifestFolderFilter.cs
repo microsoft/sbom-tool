@@ -6,39 +6,38 @@ using System.IO;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common;
 
-namespace Microsoft.Sbom.Api.Filters
+namespace Microsoft.Sbom.Api.Filters;
+
+public class ManifestFolderFilter : IFilter<ManifestFolderFilter>
 {
-    public class ManifestFolderFilter : IFilter<ManifestFolderFilter>
+    private readonly IConfiguration configuration;
+    private readonly IOSUtils osUtils;
+
+    public ManifestFolderFilter(
+        IConfiguration configuration,
+        IOSUtils osUtils)
     {
-        private readonly IConfiguration configuration;
-        private readonly IOSUtils osUtils;
+        this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        this.osUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
 
-        public ManifestFolderFilter(
-            IConfiguration configuration,
-            IOSUtils osUtils)
+        Init();
+    }
+
+    public bool IsValid(string filePath)
+    {
+        var manifestFolderPath = new FileInfo(configuration.ManifestDirPath.Value).FullName;
+
+        if (string.IsNullOrEmpty(filePath))
         {
-            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            this.osUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
-
-            Init();
+            return false;
         }
 
-        public bool IsValid(string filePath)
-        {
-            var manifestFolderPath = new FileInfo(configuration.ManifestDirPath.Value).FullName;
+        var normalizedPath = new FileInfo(filePath).FullName;
 
-            if (string.IsNullOrEmpty(filePath))
-            {
-                return false;
-            }
+        return !normalizedPath.StartsWith(manifestFolderPath, osUtils.GetFileSystemStringComparisonType());
+    }
 
-            var normalizedPath = new FileInfo(filePath).FullName;
-
-            return !normalizedPath.StartsWith(manifestFolderPath, osUtils.GetFileSystemStringComparisonType());
-        }
-
-        public void Init()
-        {
-        }
+    public void Init()
+    {
     }
 }

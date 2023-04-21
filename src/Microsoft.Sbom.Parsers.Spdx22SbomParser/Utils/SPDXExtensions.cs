@@ -13,189 +13,188 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils;
+
+/// <summary>
+/// Provides extensions to SPDX objects.
+/// </summary>
+public static class SPDXExtensions
 {
     /// <summary>
-    /// Provides extensions to SPDX objects.
+    /// Only these chars are allowed in a SPDX id. Replace all other chars with '-'.
     /// </summary>
-    public static class SPDXExtensions
+    private static readonly Regex SpdxIdAllowedCharsRegex = new Regex("[^a-zA-Z0-9.-]");
+
+    /// <summary>
+    /// Returns the SPDX-compliant package ID.
+    /// </summary>
+    public static string GenerateSpdxPackageId(string id) => $"SPDXRef-Package-{GetStringHash(id)}";
+
+    /// <summary>
+    /// Returns the SPDX-compliant file ID.
+    /// </summary>
+    public static string GenerateSpdxFileId(string fileName, string sha1Value)
     {
-        /// <summary>
-        /// Only these chars are allowed in a SPDX id. Replace all other chars with '-'.
-        /// </summary>
-        private static readonly Regex SpdxIdAllowedCharsRegex = new Regex("[^a-zA-Z0-9.-]");
+        var spdxFileId = $"{Constants.SPDXRefFile}-{fileName}-{sha1Value}";
+        return SpdxIdAllowedCharsRegex.Replace(spdxFileId, "-");
+    }
 
-        /// <summary>
-        /// Returns the SPDX-compliant package ID.
-        /// </summary>
-        public static string GenerateSpdxPackageId(string id) => $"SPDXRef-Package-{GetStringHash(id)}";
+    /// <summary>
+    /// Returns the SPDX-compliant external document ID.
+    /// </summary>
+    public static string GenerateSpdxExternalDocumentId(string fileName, string sha1Value)
+    {
+        var spdxExternalDocumentId = $"DocumentRef-{fileName}-{sha1Value}";
+        return SpdxIdAllowedCharsRegex.Replace(spdxExternalDocumentId, "-");
+    }
 
-        /// <summary>
-        /// Returns the SPDX-compliant file ID.
-        /// </summary>
-        public static string GenerateSpdxFileId(string fileName, string sha1Value)
+    /// <summary>
+    /// Using a <see cref="PackageInfo"/> object, add package urls to the spdxPackage.
+    /// </summary>
+    /// <param name="spdxPackage">The object to add the external reference to.</param>
+    /// <param name="packageInfo">The packageInfo object to use for source data.</param>
+    public static void AddPackageUrls(this SPDXPackage spdxPackage, SbomPackage packageInfo)
+    {
+        if (spdxPackage is null)
         {
-            var spdxFileId = $"{Constants.SPDXRefFile}-{fileName}-{sha1Value}";
-            return SpdxIdAllowedCharsRegex.Replace(spdxFileId, "-");
+            throw new ArgumentNullException(nameof(spdxPackage));
         }
 
-        /// <summary>
-        /// Returns the SPDX-compliant external document ID.
-        /// </summary>
-        public static string GenerateSpdxExternalDocumentId(string fileName, string sha1Value)
+        if (packageInfo is null)
         {
-            var spdxExternalDocumentId = $"DocumentRef-{fileName}-{sha1Value}";
-            return SpdxIdAllowedCharsRegex.Replace(spdxExternalDocumentId, "-");
+            return;
         }
 
-        /// <summary>
-        /// Using a <see cref="PackageInfo"/> object, add package urls to the spdxPackage.
-        /// </summary>
-        /// <param name="spdxPackage">The object to add the external reference to.</param>
-        /// <param name="packageInfo">The packageInfo object to use for source data.</param>
-        public static void AddPackageUrls(this SPDXPackage spdxPackage, SbomPackage packageInfo)
+        // Add purl information if available.
+        if (packageInfo.PackageUrl != null)
         {
-            if (spdxPackage is null)
+            if (spdxPackage.ExternalReferences == null)
             {
-                throw new ArgumentNullException(nameof(spdxPackage));
+                spdxPackage.ExternalReferences = new List<ExternalReference>();
             }
 
-            if (packageInfo is null)
+            // Create a new PURL external reference.
+            var extRef = new ExternalReference
             {
-                return;
-            }
+                ReferenceCategory = ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(),
+                Type = ExternalRepositoryType.purl,
+                Locator = packageInfo.PackageUrl,
+            };
 
-            // Add purl information if available.
-            if (packageInfo.PackageUrl != null)
-            {
-                if (spdxPackage.ExternalReferences == null)
-                {
-                    spdxPackage.ExternalReferences = new List<ExternalReference>();
-                }
+            spdxPackage.ExternalReferences.Add(extRef);
+        }
+    }
 
-                // Create a new PURL external reference.
-                var extRef = new ExternalReference
-                {
-                    ReferenceCategory = ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(),
-                    Type = ExternalRepositoryType.purl,
-                    Locator = packageInfo.PackageUrl,
-                };
-
-                spdxPackage.ExternalReferences.Add(extRef);
-            }
+    /// <summary>
+    /// Adds a SPDXID property to the given package. The id of the package should be the same
+    /// for any build as long as the contents of the package haven't changed.
+    /// </summary>
+    /// <param name="spdxPackage"></param>
+    /// <param name="packageInfo"></param>
+    public static string AddSpdxId(this SPDXPackage spdxPackage, SbomPackage packageInfo)
+    {
+        if (spdxPackage is null)
+        {
+            throw new ArgumentNullException(nameof(spdxPackage));
         }
 
-        /// <summary>
-        /// Adds a SPDXID property to the given package. The id of the package should be the same
-        /// for any build as long as the contents of the package haven't changed.
-        /// </summary>
-        /// <param name="spdxPackage"></param>
-        /// <param name="packageInfo"></param>
-        public static string AddSpdxId(this SPDXPackage spdxPackage, SbomPackage packageInfo)
+        if (packageInfo is null)
         {
-            if (spdxPackage is null)
-            {
-                throw new ArgumentNullException(nameof(spdxPackage));
-            }
-
-            if (packageInfo is null)
-            {
-                throw new ArgumentNullException(nameof(packageInfo));
-            }
-
-            // Get package identity as package name and package version. If version is empty, just use package name
-            string packageIdentity = $"{packageInfo.Type}-{packageInfo.PackageName}";
-            if (!string.IsNullOrWhiteSpace(packageInfo.PackageVersion))
-            {
-                packageIdentity = string.Join("-", packageInfo.Type, packageInfo.PackageName, packageInfo.PackageVersion);
-            }
-
-            spdxPackage.SpdxId = GenerateSpdxPackageId(packageInfo.Id ?? packageIdentity);
-            return spdxPackage.SpdxId;
+            throw new ArgumentNullException(nameof(packageInfo));
         }
 
-        /// <summary>
-        /// Adds a SPDXID property to the given file. The id of the file should be the same
-        /// for any build as long as the contents of the file haven't changed.
-        /// </summary>
-        /// <param name="spdxFile"></param>
-        /// <param name="fileName"></param>
-        /// <param name="checksums"></param>
-        public static string AddSpdxId(this SPDXFile spdxFile, string fileName, IEnumerable<Sbom.Contracts.Checksum> checksums)
+        // Get package identity as package name and package version. If version is empty, just use package name
+        string packageIdentity = $"{packageInfo.Type}-{packageInfo.PackageName}";
+        if (!string.IsNullOrWhiteSpace(packageInfo.PackageVersion))
         {
-            if (spdxFile is null)
-            {
-                throw new ArgumentNullException(nameof(spdxFile));
-            }
-
-            if (string.IsNullOrEmpty(fileName))
-            {
-                throw new ArgumentException($"'{nameof(fileName)}' cannot be null or empty.", nameof(fileName));
-            }
-
-            if (checksums is null || !checksums.Any(c => c.Algorithm == AlgorithmName.SHA1))
-            {
-                throw new MissingHashValueException($"The file {fileName} is missing the {HashAlgorithmName.SHA1} hash value.");
-            }
-
-            // Get the SHA1 for this file.
-            string sha1Value = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1)
-                                        .Select(s => s.ChecksumValue)
-                                        .FirstOrDefault();
-
-            spdxFile.SPDXId = GenerateSpdxFileId(fileName, sha1Value);
-            return spdxFile.SPDXId;
+            packageIdentity = string.Join("-", packageInfo.Type, packageInfo.PackageName, packageInfo.PackageVersion);
         }
 
-        /// <summary>
-        /// Adds externalReferenceId property to the SPDXExternalDocumentReference based on name and checksum information.
-        /// </summary>
-        public static string AddExternalReferenceSpdxId(this SpdxExternalDocumentReference reference, string name, IEnumerable<Sbom.Contracts.Checksum> checksums)
+        spdxPackage.SpdxId = GenerateSpdxPackageId(packageInfo.Id ?? packageIdentity);
+        return spdxPackage.SpdxId;
+    }
+
+    /// <summary>
+    /// Adds a SPDXID property to the given file. The id of the file should be the same
+    /// for any build as long as the contents of the file haven't changed.
+    /// </summary>
+    /// <param name="spdxFile"></param>
+    /// <param name="fileName"></param>
+    /// <param name="checksums"></param>
+    public static string AddSpdxId(this SPDXFile spdxFile, string fileName, IEnumerable<Sbom.Contracts.Checksum> checksums)
+    {
+        if (spdxFile is null)
         {
-            if (reference is null)
-            {
-                throw new ArgumentNullException(nameof(reference));
-            }
-
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
-            }
-
-            if (checksums is null || !checksums.Any(c => c.Algorithm == AlgorithmName.SHA1))
-            {
-                throw new MissingHashValueException($"The external reference {name} is missing the {HashAlgorithmName.SHA1} hash value.");
-            }
-
-            // Get the SHA1 for this file.
-            string sha1Value = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1)
-                                        .Select(s => s.ChecksumValue)
-                                        .FirstOrDefault();
-
-            reference.ExternalDocumentId = GenerateSpdxExternalDocumentId(name, sha1Value);
-            return reference.ExternalDocumentId;
+            throw new ArgumentNullException(nameof(spdxFile));
         }
 
-        /// <summary>
-        /// Extension method to normalize the string value of <see cref="ReferenceCategory"/> to be compliant with SPDX 2.2 spec.
-        /// </summary>
-        /// <param name="referenceCategory"></param>
-        /// <returns>A reference category value complaint with the SPDX 2.2 spec.</returns>
-        public static string ToNormalizedString(this ReferenceCategory referenceCategory)
+        if (string.IsNullOrEmpty(fileName))
         {
-            return referenceCategory.ToString().Replace('_', '-');
+            throw new ArgumentException($"'{nameof(fileName)}' cannot be null or empty.", nameof(fileName));
         }
 
-        /// Compute the SHA256 string representation (omitting dashes) of a given string
-        /// </summary>
-        /// <remarks>
-        /// TODO:  refactor this into Core as similar functionality is duplicated in a few different places in the codebase
-        /// </remarks>
-        private static string GetStringHash(string str)
+        if (checksums is null || !checksums.Any(c => c.Algorithm == AlgorithmName.SHA1))
         {
-            var hash = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(str)); 
-            var spdxId = BitConverter.ToString(hash).Replace("-", string.Empty);
-            return spdxId;
+            throw new MissingHashValueException($"The file {fileName} is missing the {HashAlgorithmName.SHA1} hash value.");
         }
+
+        // Get the SHA1 for this file.
+        string sha1Value = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1)
+            .Select(s => s.ChecksumValue)
+            .FirstOrDefault();
+
+        spdxFile.SPDXId = GenerateSpdxFileId(fileName, sha1Value);
+        return spdxFile.SPDXId;
+    }
+
+    /// <summary>
+    /// Adds externalReferenceId property to the SPDXExternalDocumentReference based on name and checksum information.
+    /// </summary>
+    public static string AddExternalReferenceSpdxId(this SpdxExternalDocumentReference reference, string name, IEnumerable<Sbom.Contracts.Checksum> checksums)
+    {
+        if (reference is null)
+        {
+            throw new ArgumentNullException(nameof(reference));
+        }
+
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+        }
+
+        if (checksums is null || !checksums.Any(c => c.Algorithm == AlgorithmName.SHA1))
+        {
+            throw new MissingHashValueException($"The external reference {name} is missing the {HashAlgorithmName.SHA1} hash value.");
+        }
+
+        // Get the SHA1 for this file.
+        string sha1Value = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1)
+            .Select(s => s.ChecksumValue)
+            .FirstOrDefault();
+
+        reference.ExternalDocumentId = GenerateSpdxExternalDocumentId(name, sha1Value);
+        return reference.ExternalDocumentId;
+    }
+
+    /// <summary>
+    /// Extension method to normalize the string value of <see cref="ReferenceCategory"/> to be compliant with SPDX 2.2 spec.
+    /// </summary>
+    /// <param name="referenceCategory"></param>
+    /// <returns>A reference category value complaint with the SPDX 2.2 spec.</returns>
+    public static string ToNormalizedString(this ReferenceCategory referenceCategory)
+    {
+        return referenceCategory.ToString().Replace('_', '-');
+    }
+
+    /// Compute the SHA256 string representation (omitting dashes) of a given string
+    /// </summary>
+    /// <remarks>
+    /// TODO:  refactor this into Core as similar functionality is duplicated in a few different places in the codebase
+    /// </remarks>
+    private static string GetStringHash(string str)
+    {
+        var hash = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(str)); 
+        var spdxId = BitConverter.ToString(hash).Replace("-", string.Empty);
+        return spdxId;
     }
 }

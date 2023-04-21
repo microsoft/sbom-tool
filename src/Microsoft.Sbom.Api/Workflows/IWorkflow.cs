@@ -3,14 +3,13 @@
 
 using System.Threading.Tasks;
 
-namespace Microsoft.Sbom.Api.Workflows
+namespace Microsoft.Sbom.Api.Workflows;
+
+/// <summary>
+/// Defines the workflow run for a given action.
+/// </summary>
+public interface IWorkflow<T>
+    where T : IWorkflow<T>
 {
-    /// <summary>
-    /// Defines the workflow run for a given action.
-    /// </summary>
-    public interface IWorkflow<T>
-        where T : IWorkflow<T>
-    {
-        public Task<bool> RunAsync();
-    }
+    public Task<bool> RunAsync();
 }

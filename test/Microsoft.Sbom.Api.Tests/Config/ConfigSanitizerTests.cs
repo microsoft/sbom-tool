@@ -18,268 +18,267 @@ using System.Linq;
 using System.Security.Cryptography;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
-namespace Microsoft.Sbom.Api.Tests.Config
+namespace Microsoft.Sbom.Api.Tests.Config;
+
+[TestClass]
+public class ConfigSanitizerTests
 {
-    [TestClass]
-    public class ConfigSanitizerTests
+    private Mock<IFileSystemUtils> mockFileSystemUtils;
+    private Mock<IHashAlgorithmProvider> mockHashAlgorithmProvider;
+    private Mock<IAssemblyConfig> mockAssemblyConfig;
+    private ConfigSanitizer configSanitizer;
+
+    [TestInitialize]
+    public void Initialize()
     {
-        private Mock<IFileSystemUtils> mockFileSystemUtils;
-        private Mock<IHashAlgorithmProvider> mockHashAlgorithmProvider;
-        private Mock<IAssemblyConfig> mockAssemblyConfig;
-        private ConfigSanitizer configSanitizer;
+        mockFileSystemUtils = new Mock<IFileSystemUtils>();
+        mockFileSystemUtils
+            .Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns((string p1, string p2) => Path.Join(p1, p2));
 
-        [TestInitialize]
-        public void Initialize()
-        {
-            mockFileSystemUtils = new Mock<IFileSystemUtils>();
-            mockFileSystemUtils
-                .Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns((string p1, string p2) => Path.Join(p1, p2));
-
-            mockHashAlgorithmProvider = new Mock<IHashAlgorithmProvider>();
-            mockHashAlgorithmProvider
-                .Setup(h => h.Get(It.IsAny<string>()))
-                .Returns((string a) =>
-                {
-                    if (a == "SHA256")
-                    {
-                        return new AlgorithmName(a, stream => SHA256.Create().ComputeHash(stream));
-                    }
-
-                    throw new UnsupportedHashAlgorithmException("Unsupported");
-                });
-
-            mockAssemblyConfig = new Mock<IAssemblyConfig>();
-
-            configSanitizer = new ConfigSanitizer(mockHashAlgorithmProvider.Object, mockFileSystemUtils.Object, mockAssemblyConfig.Object);
-        }
-
-        /// <summary>
-        /// This method returns a configuration object with all the properties set to standard values, 
-        /// which won't make the test fail. Change one value that you are testing in order to ensure you
-        /// are testing the correct config.
-        /// </summary>
-        /// <returns></returns>
-        private InputConfiguration GetConfigurationBaseObject()
-        {
-            return new InputConfiguration
+        mockHashAlgorithmProvider = new Mock<IHashAlgorithmProvider>();
+        mockHashAlgorithmProvider
+            .Setup(h => h.Get(It.IsAny<string>()))
+            .Returns((string a) =>
             {
-                HashAlgorithm = new ConfigurationSetting<AlgorithmName>
+                if (a == "SHA256")
                 {
-                    Source = SettingSource.CommandLine,
-                    Value = new AlgorithmName("SHA256", null)
-                },
-                BuildDropPath = new ConfigurationSetting<string>
-                {
-                    Source = SettingSource.Default,
-                    Value = "dropPath"
-                },
-                ManifestInfo = new ConfigurationSetting<IList<ManifestInfo>>
-                {
-                    Source = SettingSource.Default,
-                    Value = new List<ManifestInfo>
-                    { Constants.TestManifestInfo }
-                },
-                Verbosity = new ConfigurationSetting<Serilog.Events.LogEventLevel>
-                {
-                    Source = SettingSource.Default,
-                    Value = Serilog.Events.LogEventLevel.Information
+                    return new AlgorithmName(a, stream => SHA256.Create().ComputeHash(stream));
                 }
-            };
-        }
 
-        [TestMethod]
-        public void SetValueForManifestInfoForValidation_Succeeds()
+                throw new UnsupportedHashAlgorithmException("Unsupported");
+            });
+
+        mockAssemblyConfig = new Mock<IAssemblyConfig>();
+
+        configSanitizer = new ConfigSanitizer(mockHashAlgorithmProvider.Object, mockFileSystemUtils.Object, mockAssemblyConfig.Object);
+    }
+
+    /// <summary>
+    /// This method returns a configuration object with all the properties set to standard values, 
+    /// which won't make the test fail. Change one value that you are testing in order to ensure you
+    /// are testing the correct config.
+    /// </summary>
+    /// <returns></returns>
+    private InputConfiguration GetConfigurationBaseObject()
+    {
+        return new InputConfiguration
         {
-            var config = GetConfigurationBaseObject();
-            config.ManifestToolAction = ManifestToolActions.Validate;
-            configSanitizer.SanitizeConfig(config);
-
-            mockAssemblyConfig.Verify();
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ValidationArgException))]
-        public void NoValueForManifestInfoForValidation_Throws()
-        {
-            var config = GetConfigurationBaseObject();
-            config.ManifestToolAction = ManifestToolActions.Validate;
-            config.ManifestInfo.Value.Clear();
-
-            configSanitizer.SanitizeConfig(config);
-        }
-
-        [TestMethod]
-        public void NoValueForManifestInfoForValidation_SetsDefaultValue()
-        {
-            var config = GetConfigurationBaseObject();
-            config.ManifestToolAction = ManifestToolActions.Validate;
-            config.ManifestInfo.Value.Clear();
-            mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForValidationAction).Returns(Constants.TestManifestInfo);
-
-            var sanitizedConfig = configSanitizer.SanitizeConfig(config);
-
-            Assert.IsNotNull(sanitizedConfig.ManifestInfo.Value);
-            Assert.AreEqual(1, sanitizedConfig.ManifestInfo.Value.Count);
-            Assert.AreEqual(Constants.TestManifestInfo, sanitizedConfig.ManifestInfo.Value.First());
-
-            mockAssemblyConfig.VerifyGet(a => a.DefaultManifestInfoForValidationAction);
-        }
-
-        [TestMethod]
-        public void ForGenerateActionIgnoresEmptyAlgorithmName_Succeeds()
-        {
-            var config = GetConfigurationBaseObject();
-            config.HashAlgorithm = null;
-            config.ManifestToolAction = ManifestToolActions.Generate;
-            var sanitizedConfig = configSanitizer.SanitizeConfig(config);
-
-            Assert.IsNull(sanitizedConfig.HashAlgorithm);
-        }
-
-        [TestMethod]
-        public void ForValidateGetsRealAlgorithmName_Succeeds_DoesNotThrow()
-        {
-            var config = GetConfigurationBaseObject();
-            config.ManifestToolAction = ManifestToolActions.Validate;
-            var sanitizedConfig = configSanitizer.SanitizeConfig(config);
-
-            Assert.IsNotNull(sanitizedConfig.HashAlgorithm);
-
-            var result = config.HashAlgorithm.Value.ComputeHash(TestUtils.GenerateStreamFromString("Hekki"));
-            Assert.IsNotNull(result);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(UnsupportedHashAlgorithmException))]
-        public void ForValidateBadAlgorithmNameGetsRealAlgorithmName_Throws()
-        {
-            var config = GetConfigurationBaseObject();
-            config.HashAlgorithm.Value = new AlgorithmName("a", null);
-            config.ManifestToolAction = ManifestToolActions.Validate;
-            configSanitizer.SanitizeConfig(config);
-        }
-
-        [TestMethod]
-        public void NullManifestDirShouldUseDropPath_Succeeds()
-        {
-            var config = GetConfigurationBaseObject();
-            config.ManifestToolAction = ManifestToolActions.Validate;
-            configSanitizer.SanitizeConfig(config);
-
-            Assert.IsNotNull(config.ManifestDirPath);
-            Assert.IsNotNull(config.ManifestDirPath.Value);
-            Assert.AreEqual(Path.Join("dropPath", "_manifest"), config.ManifestDirPath.Value);
-        }
-
-        [TestMethod]
-        public void ManifestDirShouldEndWithManifestDirForGenerate_Succeeds()
-        {
-            var config = GetConfigurationBaseObject();
-            config.ManifestDirPath = new ConfigurationSetting<string>
-            {
-                Source = SettingSource.Default,
-                Value = "manifestDirPath"
-            };
-
-            config.ManifestToolAction = ManifestToolActions.Generate;
-            configSanitizer.SanitizeConfig(config);
-
-            Assert.IsNotNull(config.ManifestDirPath);
-            Assert.IsNotNull(config.ManifestDirPath.Value);
-            Assert.AreEqual(Path.Join("manifestDirPath", "_manifest"), config.ManifestDirPath.Value);
-        }
-
-        [TestMethod]
-        public void ManifestDirShouldNotAddManifestDirForValidate_Succeeds()
-        {
-            var config = GetConfigurationBaseObject();
-            config.ManifestDirPath = new ConfigurationSetting<string>
-            {
-                Source = SettingSource.Default,
-                Value = "manifestDirPath"
-            };
-
-            config.ManifestToolAction = ManifestToolActions.Validate;
-            configSanitizer.SanitizeConfig(config);
-
-            Assert.IsNotNull(config.ManifestDirPath);
-            Assert.IsNotNull(config.ManifestDirPath.Value);
-            Assert.AreEqual("manifestDirPath", config.ManifestDirPath.Value);
-        }
-
-        [TestMethod]
-        public void NullDefaultNamespaceUriBaseShouldReturnExistingValue_Succeeds()
-        {
-            mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns(string.Empty);
-            var config = GetConfigurationBaseObject();
-            config.NamespaceUriBase = new ConfigurationSetting<string>
-            {
-                Source = SettingSource.Default,
-                Value = "http://base.uri"
-            };
-
-            config.ManifestToolAction = ManifestToolActions.Validate;
-            configSanitizer.SanitizeConfig(config);
-
-            Assert.AreEqual("http://base.uri", config.NamespaceUriBase.Value);
-
-            mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
-        }
-
-        [TestMethod]
-        public void UserProviderNamespaceUriBaseShouldReturnProvidedValue_Succeeds()
-        {
-            mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns("http://internal.base.uri");
-            var providedNamespaceValue = "http://base.uri";
-            var config = GetConfigurationBaseObject();
-            config.NamespaceUriBase = new ConfigurationSetting<string>
+            HashAlgorithm = new ConfigurationSetting<AlgorithmName>
             {
                 Source = SettingSource.CommandLine,
-                Value = providedNamespaceValue
-            };
-
-            config.ManifestToolAction = ManifestToolActions.Validate;
-            configSanitizer.SanitizeConfig(config);
-
-            Assert.AreEqual(providedNamespaceValue, config.NamespaceUriBase.Value);
-            Assert.AreEqual(SettingSource.CommandLine, config.NamespaceUriBase.Source);
-
-            mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
-        }
-
-        [TestMethod]
-        public void ShouldGetPackageSupplierFromAsseblyConfig_Succeeds()
-        {
-            var organization = "Contoso International";
-            mockAssemblyConfig.SetupGet(a => a.DefaultPackageSupplier).Returns(organization);
-            var config = GetConfigurationBaseObject();
-
-            config.ManifestToolAction = ManifestToolActions.Validate;
-            configSanitizer.SanitizeConfig(config);
-
-            Assert.AreEqual(organization, config.PackageSupplier.Value);
-
-            mockAssemblyConfig.VerifyGet(a => a.DefaultPackageSupplier);
-        }
-
-        [TestMethod]
-        public void ShouldNotOverridePackageSupplierIfProvided_Succeeds()
-        {
-            var organization = "Contoso International";
-            var actualOrg = "Contoso";
-            mockAssemblyConfig.SetupGet(a => a.DefaultPackageSupplier).Returns(organization);
-            var config = GetConfigurationBaseObject();
-            config.PackageSupplier = new ConfigurationSetting<string>
+                Value = new AlgorithmName("SHA256", null)
+            },
+            BuildDropPath = new ConfigurationSetting<string>
             {
-                Source = SettingSource.CommandLine,
-                Value = actualOrg
-            };
+                Source = SettingSource.Default,
+                Value = "dropPath"
+            },
+            ManifestInfo = new ConfigurationSetting<IList<ManifestInfo>>
+            {
+                Source = SettingSource.Default,
+                Value = new List<ManifestInfo>
+                    { Constants.TestManifestInfo }
+            },
+            Verbosity = new ConfigurationSetting<Serilog.Events.LogEventLevel>
+            {
+                Source = SettingSource.Default,
+                Value = Serilog.Events.LogEventLevel.Information
+            }
+        };
+    }
 
-            config.ManifestToolAction = ManifestToolActions.Validate;
-            configSanitizer.SanitizeConfig(config);
+    [TestMethod]
+    public void SetValueForManifestInfoForValidation_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        configSanitizer.SanitizeConfig(config);
 
-            Assert.AreEqual(actualOrg, config.PackageSupplier.Value);
-        }
+        mockAssemblyConfig.Verify();
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ValidationArgException))]
+    public void NoValueForManifestInfoForValidation_Throws()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestInfo.Value.Clear();
+
+        configSanitizer.SanitizeConfig(config);
+    }
+
+    [TestMethod]
+    public void NoValueForManifestInfoForValidation_SetsDefaultValue()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestInfo.Value.Clear();
+        mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForValidationAction).Returns(Constants.TestManifestInfo);
+
+        var sanitizedConfig = configSanitizer.SanitizeConfig(config);
+
+        Assert.IsNotNull(sanitizedConfig.ManifestInfo.Value);
+        Assert.AreEqual(1, sanitizedConfig.ManifestInfo.Value.Count);
+        Assert.AreEqual(Constants.TestManifestInfo, sanitizedConfig.ManifestInfo.Value.First());
+
+        mockAssemblyConfig.VerifyGet(a => a.DefaultManifestInfoForValidationAction);
+    }
+
+    [TestMethod]
+    public void ForGenerateActionIgnoresEmptyAlgorithmName_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.HashAlgorithm = null;
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        var sanitizedConfig = configSanitizer.SanitizeConfig(config);
+
+        Assert.IsNull(sanitizedConfig.HashAlgorithm);
+    }
+
+    [TestMethod]
+    public void ForValidateGetsRealAlgorithmName_Succeeds_DoesNotThrow()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        var sanitizedConfig = configSanitizer.SanitizeConfig(config);
+
+        Assert.IsNotNull(sanitizedConfig.HashAlgorithm);
+
+        var result = config.HashAlgorithm.Value.ComputeHash(TestUtils.GenerateStreamFromString("Hekki"));
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(UnsupportedHashAlgorithmException))]
+    public void ForValidateBadAlgorithmNameGetsRealAlgorithmName_Throws()
+    {
+        var config = GetConfigurationBaseObject();
+        config.HashAlgorithm.Value = new AlgorithmName("a", null);
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        configSanitizer.SanitizeConfig(config);
+    }
+
+    [TestMethod]
+    public void NullManifestDirShouldUseDropPath_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.IsNotNull(config.ManifestDirPath);
+        Assert.IsNotNull(config.ManifestDirPath.Value);
+        Assert.AreEqual(Path.Join("dropPath", "_manifest"), config.ManifestDirPath.Value);
+    }
+
+    [TestMethod]
+    public void ManifestDirShouldEndWithManifestDirForGenerate_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestDirPath = new ConfigurationSetting<string>
+        {
+            Source = SettingSource.Default,
+            Value = "manifestDirPath"
+        };
+
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.IsNotNull(config.ManifestDirPath);
+        Assert.IsNotNull(config.ManifestDirPath.Value);
+        Assert.AreEqual(Path.Join("manifestDirPath", "_manifest"), config.ManifestDirPath.Value);
+    }
+
+    [TestMethod]
+    public void ManifestDirShouldNotAddManifestDirForValidate_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestDirPath = new ConfigurationSetting<string>
+        {
+            Source = SettingSource.Default,
+            Value = "manifestDirPath"
+        };
+
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.IsNotNull(config.ManifestDirPath);
+        Assert.IsNotNull(config.ManifestDirPath.Value);
+        Assert.AreEqual("manifestDirPath", config.ManifestDirPath.Value);
+    }
+
+    [TestMethod]
+    public void NullDefaultNamespaceUriBaseShouldReturnExistingValue_Succeeds()
+    {
+        mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns(string.Empty);
+        var config = GetConfigurationBaseObject();
+        config.NamespaceUriBase = new ConfigurationSetting<string>
+        {
+            Source = SettingSource.Default,
+            Value = "http://base.uri"
+        };
+
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual("http://base.uri", config.NamespaceUriBase.Value);
+
+        mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
+    }
+
+    [TestMethod]
+    public void UserProviderNamespaceUriBaseShouldReturnProvidedValue_Succeeds()
+    {
+        mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns("http://internal.base.uri");
+        var providedNamespaceValue = "http://base.uri";
+        var config = GetConfigurationBaseObject();
+        config.NamespaceUriBase = new ConfigurationSetting<string>
+        {
+            Source = SettingSource.CommandLine,
+            Value = providedNamespaceValue
+        };
+
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(providedNamespaceValue, config.NamespaceUriBase.Value);
+        Assert.AreEqual(SettingSource.CommandLine, config.NamespaceUriBase.Source);
+
+        mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
+    }
+
+    [TestMethod]
+    public void ShouldGetPackageSupplierFromAsseblyConfig_Succeeds()
+    {
+        var organization = "Contoso International";
+        mockAssemblyConfig.SetupGet(a => a.DefaultPackageSupplier).Returns(organization);
+        var config = GetConfigurationBaseObject();
+
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(organization, config.PackageSupplier.Value);
+
+        mockAssemblyConfig.VerifyGet(a => a.DefaultPackageSupplier);
+    }
+
+    [TestMethod]
+    public void ShouldNotOverridePackageSupplierIfProvided_Succeeds()
+    {
+        var organization = "Contoso International";
+        var actualOrg = "Contoso";
+        mockAssemblyConfig.SetupGet(a => a.DefaultPackageSupplier).Returns(organization);
+        var config = GetConfigurationBaseObject();
+        config.PackageSupplier = new ConfigurationSetting<string>
+        {
+            Source = SettingSource.CommandLine,
+            Value = actualOrg
+        };
+
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(actualOrg, config.PackageSupplier.Value);
     }
 }

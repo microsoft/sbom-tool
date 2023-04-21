@@ -4,31 +4,30 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Microsoft.Sbom.Api.Exceptions
+namespace Microsoft.Sbom.Api.Exceptions;
+
+/// <summary>
+/// Thrown when we encounter a problem while running the component detector.
+/// </summary>
+[Serializable]
+public class ComponentDetectorException : Exception
 {
-    /// <summary>
-    /// Thrown when we encounter a problem while running the component detector.
-    /// </summary>
-    [Serializable]
-    public class ComponentDetectorException : Exception
+    public ComponentDetectorException()
     {
-        public ComponentDetectorException()
-        {
-        }
+    }
 
-        public ComponentDetectorException(string message)
-            : base(message)
-        {
-        }
+    public ComponentDetectorException(string message)
+        : base(message)
+    {
+    }
 
-        public ComponentDetectorException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public ComponentDetectorException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
 
-        protected ComponentDetectorException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+    protected ComponentDetectorException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    {
     }
 }

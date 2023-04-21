@@ -3,19 +3,18 @@
 
 using System.IO;
 
-namespace Microsoft.Sbom.Api.Hashing.Algorithms
+namespace Microsoft.Sbom.Api.Hashing.Algorithms;
+
+/// <summary>
+/// Provides a hashing algorithm implementation that can be used
+/// to generate the hash for a given string.
+/// </summary>
+internal interface IHashAlgorithm
 {
     /// <summary>
-    /// Provides a hashing algorithm implementation that can be used
-    /// to generate the hash for a given string.
+    /// Returns a byte array of the content using the current hash algorithm.
     /// </summary>
-    internal interface IHashAlgorithm
-    {
-        /// <summary>
-        /// Returns a byte array of the content using the current hash algorithm.
-        /// </summary>
-        /// <param name="inputStream">The read stream of the content to be hashed.</param>
-        /// <returns>A byte array of the hash value.</returns>
-        byte[] ComputeHash(Stream inputStream);
-    }
+    /// <param name="inputStream">The read stream of the content to be hashed.</param>
+    /// <returns>A byte array of the hash value.</returns>
+    byte[] ComputeHash(Stream inputStream);
 }

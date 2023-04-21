@@ -3,19 +3,18 @@
 
 using Microsoft.Sbom.Extensions.Entities;
 
-namespace Microsoft.Sbom.Api.Utils
-{
-    /// <summary>
-    /// Provides deduplication of InternalSBOMFileInfo objects inside a channel. 
-    /// </summary>
-    public class InternalSBOMFileInfoDeduplicator : ChannelDeduplicator<InternalSbomFileInfo>
-    {
-        public InternalSBOMFileInfoDeduplicator()
-            : base() { }
+namespace Microsoft.Sbom.Api.Utils;
 
-        public override string GetKey(InternalSbomFileInfo obj)
-        {
-            return obj?.Path;
-        }
+/// <summary>
+/// Provides deduplication of InternalSBOMFileInfo objects inside a channel. 
+/// </summary>
+public class InternalSBOMFileInfoDeduplicator : ChannelDeduplicator<InternalSbomFileInfo>
+{
+    public InternalSBOMFileInfoDeduplicator()
+        : base() { }
+
+    public override string GetKey(InternalSbomFileInfo obj)
+    {
+        return obj?.Path;
     }
 }

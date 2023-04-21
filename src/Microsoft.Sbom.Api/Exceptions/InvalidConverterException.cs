@@ -4,35 +4,34 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Microsoft.Sbom.Api.Exceptions
+namespace Microsoft.Sbom.Api.Exceptions;
+
+/// <summary>
+/// Thrown when the instantiated <see cref="IPackageInfoConverter"/> 
+/// cannot convert the <see cref="Microsoft.VisualStudio.Services.Governance.ComponentDetection.TypedComponent"/>.
+/// </summary>
+/// <remarks>
+/// Thrown out of public classes implementing IPackageInfoConverter so it must also be public.
+/// <remarks>
+[Serializable]
+public class InvalidConverterException : Exception
 {
-    /// <summary>
-    /// Thrown when the instantiated <see cref="IPackageInfoConverter"/> 
-    /// cannot convert the <see cref="Microsoft.VisualStudio.Services.Governance.ComponentDetection.TypedComponent"/>.
-    /// </summary>
-    /// <remarks>
-    /// Thrown out of public classes implementing IPackageInfoConverter so it must also be public.
-    /// <remarks>
-    [Serializable]
-    public class InvalidConverterException : Exception
+    public InvalidConverterException()
     {
-        public InvalidConverterException()
-        {
-        }
+    }
 
-        public InvalidConverterException(string message)
-            : base(message)
-        {
-        }
+    public InvalidConverterException(string message)
+        : base(message)
+    {
+    }
 
-        public InvalidConverterException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public InvalidConverterException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
 
-        protected InvalidConverterException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+    protected InvalidConverterException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    {
     }
 }

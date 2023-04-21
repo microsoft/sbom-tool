@@ -11,56 +11,55 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Common.Config;
 
-namespace Microsoft.Sbom.Api.Providers.FilesProviders
+namespace Microsoft.Sbom.Api.Providers.FilesProviders;
+
+/// <summary>
+/// Abstract base class for all file path based providers. This assumes that we are getting a list of file
+/// paths to process as a string.
+/// </summary>
+public abstract class PathBasedFileToJsonProviderBase : EntityToJsonProviderBase<string>
 {
-    /// <summary>
-    /// Abstract base class for all file path based providers. This assumes that we are getting a list of file
-    /// paths to process as a string.
-    /// </summary>
-    public abstract class PathBasedFileToJsonProviderBase : EntityToJsonProviderBase<string>
+    private readonly FileHasher fileHasher;
+
+    private readonly ManifestFolderFilterer fileFilterer;
+
+    private readonly FileInfoWriter fileHashWriter;
+
+    private readonly InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator;
+
+    public PathBasedFileToJsonProviderBase(
+        IConfiguration configuration,
+        ChannelUtils channelUtils,
+        Serilog.ILogger log,
+        FileHasher fileHasher,
+        ManifestFolderFilterer fileFilterer,
+        FileInfoWriter fileHashWriter,
+        InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator)
+        : base(configuration, channelUtils, log)
     {
-        private readonly FileHasher fileHasher;
+        this.fileHasher = fileHasher ?? throw new ArgumentNullException(nameof(fileHasher));
+        this.fileFilterer = fileFilterer ?? throw new ArgumentNullException(nameof(fileFilterer));
+        this.fileHashWriter = fileHashWriter ?? throw new ArgumentNullException(nameof(fileHashWriter));
+        this.internalSBOMFileInfoDeduplicator = internalSBOMFileInfoDeduplicator ?? throw new ArgumentNullException(nameof(internalSBOMFileInfoDeduplicator));
+    }
 
-        private readonly ManifestFolderFilterer fileFilterer;
+    protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors)
+        ConvertToJson(ChannelReader<string> sourceChannel, IList<ISbomConfig> requiredConfigs)
+    {
+        IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
 
-        private readonly FileInfoWriter fileHashWriter;
+        // Filter files
+        var (filteredFiles, filteringErrors) = fileFilterer.FilterFiles(sourceChannel);
+        errors.Add(filteringErrors);
 
-        private readonly InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator;
+        // Generate hash code for the files
+        var (fileInfos, hashingErrors) = fileHasher.Run(filteredFiles);
+        errors.Add(hashingErrors);
+        fileInfos = internalSBOMFileInfoDeduplicator.Deduplicate(fileInfos);
 
-        public PathBasedFileToJsonProviderBase(
-            IConfiguration configuration,
-            ChannelUtils channelUtils,
-            Serilog.ILogger log,
-            FileHasher fileHasher,
-            ManifestFolderFilterer fileFilterer,
-            FileInfoWriter fileHashWriter,
-            InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator)
-            : base(configuration, channelUtils, log)
-        {
-            this.fileHasher = fileHasher ?? throw new ArgumentNullException(nameof(fileHasher));
-            this.fileFilterer = fileFilterer ?? throw new ArgumentNullException(nameof(fileFilterer));
-            this.fileHashWriter = fileHashWriter ?? throw new ArgumentNullException(nameof(fileHashWriter));
-            this.internalSBOMFileInfoDeduplicator = internalSBOMFileInfoDeduplicator ?? throw new ArgumentNullException(nameof(internalSBOMFileInfoDeduplicator));
-        }
+        var (jsonDocCount, jsonErrors) = fileHashWriter.Write(fileInfos, requiredConfigs);
+        errors.Add(jsonErrors);
 
-        protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors)
-            ConvertToJson(ChannelReader<string> sourceChannel, IList<ISbomConfig> requiredConfigs)
-        {
-            IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
-
-            // Filter files
-            var (filteredFiles, filteringErrors) = fileFilterer.FilterFiles(sourceChannel);
-            errors.Add(filteringErrors);
-
-            // Generate hash code for the files
-            var (fileInfos, hashingErrors) = fileHasher.Run(filteredFiles);
-            errors.Add(hashingErrors);
-            fileInfos = internalSBOMFileInfoDeduplicator.Deduplicate(fileInfos);
-
-            var (jsonDocCount, jsonErrors) = fileHashWriter.Write(fileInfos, requiredConfigs);
-            errors.Add(jsonErrors);
-
-            return (jsonDocCount, ChannelUtils.Merge(errors.ToArray()));
-        }
+        return (jsonDocCount, ChannelUtils.Merge(errors.ToArray()));
     }
 }

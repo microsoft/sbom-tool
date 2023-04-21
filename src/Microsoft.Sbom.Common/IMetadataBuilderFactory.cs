@@ -4,18 +4,17 @@
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 
-namespace Microsoft.Sbom.Common
+namespace Microsoft.Sbom.Common;
+
+/// <summary>
+/// Builds a <see cref="MetadataBuilder"/> object for a given SBOM format.
+/// </summary>
+public interface IMetadataBuilderFactory
 {
     /// <summary>
-    /// Builds a <see cref="MetadataBuilder"/> object for a given SBOM format.
+    /// Get the <see cref="MetadataBuilder"/> object for the given SBOM format.
     /// </summary>
-    public interface IMetadataBuilderFactory
-    {
-        /// <summary>
-        /// Get the <see cref="MetadataBuilder"/> object for the given SBOM format.
-        /// </summary>
-        /// <param name="manifestInfo"></param>
-        /// <returns></returns>
-        IMetadataBuilder Get(ManifestInfo manifestInfo);
-    }
+    /// <param name="manifestInfo"></param>
+    /// <returns></returns>
+    IMetadataBuilder Get(ManifestInfo manifestInfo);
 }

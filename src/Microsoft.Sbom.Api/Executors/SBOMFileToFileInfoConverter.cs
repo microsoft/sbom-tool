@@ -12,88 +12,87 @@ using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Entities;
 
-namespace Microsoft.Sbom.Api.Executors
+namespace Microsoft.Sbom.Api.Executors;
+
+/// <summary>
+/// Takes a SBOMFile and converts it to a FileInfo object.
+/// </summary>
+public class SbomFileToFileInfoConverter
 {
-    /// <summary>
-    /// Takes a SBOMFile and converts it to a FileInfo object.
-    /// </summary>
-    public class SbomFileToFileInfoConverter
+    private readonly IFileTypeUtils fileTypeUtils;
+
+    public SbomFileToFileInfoConverter(IFileTypeUtils fileTypeUtils)
     {
-        private readonly IFileTypeUtils fileTypeUtils;
+        this.fileTypeUtils = fileTypeUtils ?? throw new ArgumentNullException(nameof(fileTypeUtils));
+    }
 
-        public SbomFileToFileInfoConverter(IFileTypeUtils fileTypeUtils)
+    public (ChannelReader<InternalSbomFileInfo> output, ChannelReader<FileValidationResult> error) Convert(ChannelReader<SbomFile> componentReader, FileLocation fileLocation = FileLocation.OnDisk)
+    {
+        if (componentReader is null)
         {
-            this.fileTypeUtils = fileTypeUtils ?? throw new ArgumentNullException(nameof(fileTypeUtils));
+            throw new ArgumentNullException(nameof(componentReader));
         }
 
-        public (ChannelReader<InternalSbomFileInfo> output, ChannelReader<FileValidationResult> error) Convert(ChannelReader<SbomFile> componentReader, FileLocation fileLocation = FileLocation.OnDisk)
+        var output = Channel.CreateUnbounded<InternalSbomFileInfo>();
+        var errors = Channel.CreateUnbounded<FileValidationResult>();
+
+        Task.Run(async () =>
         {
-            if (componentReader is null)
+            await foreach (SbomFile component in componentReader.ReadAllAsync())
             {
-                throw new ArgumentNullException(nameof(componentReader));
+                await Convert(component, output, errors, fileLocation);
             }
 
-            var output = Channel.CreateUnbounded<InternalSbomFileInfo>();
-            var errors = Channel.CreateUnbounded<FileValidationResult>();
+            output.Writer.Complete();
+            errors.Writer.Complete();
+        });
 
-            Task.Run(async () =>
+        return (output, errors);
+    }
+
+    private async Task Convert(SbomFile component, Channel<InternalSbomFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation)
+    {
+        try
+        {
+            var checksums = new List<Checksum>();
+            foreach (var checksum in component.Checksum)
             {
-                await foreach (SbomFile component in componentReader.ReadAllAsync())
+                checksums.Add(new Checksum
                 {
-                    await Convert(component, output, errors, fileLocation);
-                }
+                    Algorithm = checksum.Algorithm,
+                    ChecksumValue = checksum.ChecksumValue
+                });
+            }
 
-                output.Writer.Complete();
-                errors.Writer.Complete();
+            var fileInfo = new InternalSbomFileInfo
+            {
+                Path = component.Path,
+                Checksum = checksums.ToArray(),
+                FileCopyrightText = component.FileCopyrightText,
+                LicenseConcluded = component.LicenseConcluded,
+                LicenseInfoInFiles = component.LicenseInfoInFiles,
+                FileTypes = fileTypeUtils.GetFileTypesBy(component.Path),
+                IsOutsideDropPath = false, // assumption from SBOMApi is that Files are in dropPath
+                FileLocation = fileLocation,
+            };
+
+            await output.Writer.WriteAsync(fileInfo);
+        }
+        catch (UnsupportedHashAlgorithmException)
+        {
+            await errors.Writer.WriteAsync(new FileValidationResult
+            {
+                ErrorType = ErrorType.UnsupportedHashAlgorithm,
+                Path = component.Path
             });
-
-            return (output, errors);
         }
-
-        private async Task Convert(SbomFile component, Channel<InternalSbomFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation)
+        catch (Exception)
         {
-            try
+            await errors.Writer.WriteAsync(new FileValidationResult
             {
-                var checksums = new List<Checksum>();
-                foreach (var checksum in component.Checksum)
-                {
-                    checksums.Add(new Checksum
-                    {
-                        Algorithm = checksum.Algorithm,
-                        ChecksumValue = checksum.ChecksumValue
-                    });
-                }
-
-                var fileInfo = new InternalSbomFileInfo
-                {
-                    Path = component.Path,
-                    Checksum = checksums.ToArray(),
-                    FileCopyrightText = component.FileCopyrightText,
-                    LicenseConcluded = component.LicenseConcluded,
-                    LicenseInfoInFiles = component.LicenseInfoInFiles,
-                    FileTypes = fileTypeUtils.GetFileTypesBy(component.Path),
-                    IsOutsideDropPath = false, // assumption from SBOMApi is that Files are in dropPath
-                    FileLocation = fileLocation,
-                };
-
-                await output.Writer.WriteAsync(fileInfo);
-            }
-            catch (UnsupportedHashAlgorithmException)
-            {
-                await errors.Writer.WriteAsync(new FileValidationResult
-                {
-                    ErrorType = ErrorType.UnsupportedHashAlgorithm,
-                    Path = component.Path
-                });
-            }
-            catch (Exception)
-            {
-                await errors.Writer.WriteAsync(new FileValidationResult
-                {
-                    ErrorType = ErrorType.Other,
-                    Path = component.Path
-                });
-            }
+                ErrorType = ErrorType.Other,
+                Path = component.Path
+            });
         }
     }
 }

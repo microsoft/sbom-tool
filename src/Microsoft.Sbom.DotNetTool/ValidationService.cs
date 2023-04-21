@@ -10,66 +10,65 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
 using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
 
-namespace Microsoft.Sbom.Tool
+namespace Microsoft.Sbom.Tool;
+
+public class ValidationService : IHostedService
 {
-    public class ValidationService : IHostedService
+    private readonly IWorkflow<SbomValidationWorkflow> validationWorkflow;
+
+    private readonly IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow;
+
+    private readonly IConfiguration configuration;
+
+    private readonly IRecorder recorder;
+
+    private readonly IHostApplicationLifetime hostApplicationLifetime;
+
+    public ValidationService(
+        IConfiguration configuration,
+        IWorkflow<SbomValidationWorkflow> validationWorkflow,
+        IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow,
+        IRecorder recorder,
+        IHostApplicationLifetime hostApplicationLifetime)
     {
-        private readonly IWorkflow<SbomValidationWorkflow> validationWorkflow;
+        this.validationWorkflow = validationWorkflow;
+        this.parserValidationWorkflow = parserValidationWorkflow;
+        this.configuration = configuration;
+        this.recorder = recorder;
+        this.hostApplicationLifetime = hostApplicationLifetime;
+    }
 
-        private readonly IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow;
-
-        private readonly IConfiguration configuration;
-
-        private readonly IRecorder recorder;
-
-        private readonly IHostApplicationLifetime hostApplicationLifetime;
-
-        public ValidationService(
-            IConfiguration configuration,
-            IWorkflow<SbomValidationWorkflow> validationWorkflow,
-            IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow,
-            IRecorder recorder,
-            IHostApplicationLifetime hostApplicationLifetime)
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        bool result;
+        try
         {
-            this.validationWorkflow = validationWorkflow;
-            this.parserValidationWorkflow = parserValidationWorkflow;
-            this.configuration = configuration;
-            this.recorder = recorder;
-            this.hostApplicationLifetime = hostApplicationLifetime;
-        }
-
-        public async Task StartAsync(CancellationToken cancellationToken)
-        {
-            bool result;
-            try
+            if (configuration.ManifestInfo.Value.Contains(Api.Utils.Constants.SPDX22ManifestInfo))
             {
-                if (configuration.ManifestInfo.Value.Contains(Api.Utils.Constants.SPDX22ManifestInfo))
-                {
-                    result = await parserValidationWorkflow.RunAsync();
-                }
-                else
-                {
-                    // On deprecation path.
-                    Console.WriteLine($"This validation workflow is soon going to be deprecated. Please switch to the SPDX validation.");
-                    result = await validationWorkflow.RunAsync();
-                }
-
-                await recorder.FinalizeAndLogTelemetryAsync();
-                Environment.ExitCode = result ? (int)ExitCode.Success : (int)ExitCode.GeneralError;
+                result = await parserValidationWorkflow.RunAsync();
             }
-            catch (Exception e)
+            else
             {
-                var message = e.InnerException != null ? e.InnerException.Message : e.Message;
-                Console.WriteLine($"Encountered error while running ManifestTool validation workflow. Error: {message}");
-                Environment.ExitCode = (int)ExitCode.GeneralError;
+                // On deprecation path.
+                Console.WriteLine($"This validation workflow is soon going to be deprecated. Please switch to the SPDX validation.");
+                result = await validationWorkflow.RunAsync();
             }
 
-            hostApplicationLifetime.StopApplication();
+            await recorder.FinalizeAndLogTelemetryAsync();
+            Environment.ExitCode = result ? (int)ExitCode.Success : (int)ExitCode.GeneralError;
+        }
+        catch (Exception e)
+        {
+            var message = e.InnerException != null ? e.InnerException.Message : e.Message;
+            Console.WriteLine($"Encountered error while running ManifestTool validation workflow. Error: {message}");
+            Environment.ExitCode = (int)ExitCode.GeneralError;
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
+        hostApplicationLifetime.StopApplication();
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
     }
 }

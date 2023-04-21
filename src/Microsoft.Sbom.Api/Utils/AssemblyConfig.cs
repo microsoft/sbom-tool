@@ -8,44 +8,43 @@ using System.IO;
 using System.Reflection;
 using System.Linq;
 
-namespace Microsoft.Sbom.Api.Utils
+namespace Microsoft.Sbom.Api.Utils;
+
+/// <inheritdoc/>
+public class AssemblyConfig : IAssemblyConfig
 {
     /// <inheritdoc/>
-    public class AssemblyConfig : IAssemblyConfig
+    public string DefaultSBOMNamespaceBaseUri => DefaultSBOMBaseNamespaceUri.Value;
+
+    /// <inheritdoc/>
+    public ManifestInfo DefaultManifestInfoForValidationAction => DefaultManifestInfoForValidationActionValue.Value;
+
+    public string DefaultPackageSupplier => PackageSupplier.Value;
+
+    /// <inheritdoc/>
+    public string AssemblyDirectory => AssemblyDirectoryValue.Value;
+
+    private static readonly Lazy<string> DefaultSBOMBaseNamespaceUri
+        = GetCustomAttributeValue<DefaultNamespaceBaseUriAttribute, string>(a => a?.DefaultBaseNamespaceUri);
+
+    private static readonly Lazy<ManifestInfo> DefaultManifestInfoForValidationActionValue
+        = GetCustomAttributeValue<DefaultManifestInfoArgForValidationAttribute, ManifestInfo>(a => a?.ManifestInfo);
+
+    private static readonly Lazy<string> PackageSupplier = GetCustomAttributeValue<PackageSupplierAttribute, string>(a => a?.PackageSupplier);
+
+    private static readonly Lazy<string> AssemblyDirectoryValue = new Lazy<string>(() =>
     {
-        /// <inheritdoc/>
-        public string DefaultSBOMNamespaceBaseUri => DefaultSBOMBaseNamespaceUri.Value;
+        string location = Assembly.GetExecutingAssembly().Location;
+        return Path.GetDirectoryName(location);
+    });
 
-        /// <inheritdoc/>
-        public ManifestInfo DefaultManifestInfoForValidationAction => DefaultManifestInfoForValidationActionValue.Value;
-
-        public string DefaultPackageSupplier => PackageSupplier.Value;
-
-        /// <inheritdoc/>
-        public string AssemblyDirectory => AssemblyDirectoryValue.Value;
-
-        private static readonly Lazy<string> DefaultSBOMBaseNamespaceUri
-            = GetCustomAttributeValue<DefaultNamespaceBaseUriAttribute, string>(a => a?.DefaultBaseNamespaceUri);
-
-        private static readonly Lazy<ManifestInfo> DefaultManifestInfoForValidationActionValue
-            = GetCustomAttributeValue<DefaultManifestInfoArgForValidationAttribute, ManifestInfo>(a => a?.ManifestInfo);
-
-        private static readonly Lazy<string> PackageSupplier = GetCustomAttributeValue<PackageSupplierAttribute, string>(a => a?.PackageSupplier);
-
-        private static readonly Lazy<string> AssemblyDirectoryValue = new Lazy<string>(() =>
+    private static Lazy<TVal> GetCustomAttributeValue<T, TVal>(Func<T, TVal> getValue)
+        where T : Attribute
+        => new Lazy<TVal>(() =>
         {
-            string location = Assembly.GetExecutingAssembly().Location;
-            return Path.GetDirectoryName(location);
+            var attr = AppDomain.CurrentDomain
+                .GetAssemblies()
+                .FirstOrDefault(a => a.IsDefined(typeof(T)))?.GetCustomAttribute<T>();
+            return getValue(attr);
         });
-
-        private static Lazy<TVal> GetCustomAttributeValue<T, TVal>(Func<T, TVal> getValue)
-            where T : Attribute
-            => new Lazy<TVal>(() =>
-            {
-                var attr = AppDomain.CurrentDomain
-                    .GetAssemblies()
-                    .FirstOrDefault(a => a.IsDefined(typeof(T)))?.GetCustomAttribute<T>();
-                return getValue(attr);
-            });
-    }
 }
