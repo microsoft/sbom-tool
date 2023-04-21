@@ -1,13 +1,13 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using AutoMapper;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Validators;
 using PowerArgs;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace Microsoft.Sbom.Api.Config;
 

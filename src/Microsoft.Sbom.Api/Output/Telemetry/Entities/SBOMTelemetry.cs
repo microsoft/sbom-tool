@@ -3,9 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
+using Microsoft.Sbom.Common.Config;
 
 namespace Microsoft.Sbom.Api.Output.Telemetry.Entities;
 

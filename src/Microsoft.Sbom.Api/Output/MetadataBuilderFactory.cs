@@ -1,13 +1,13 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 using System;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
+using Serilog;
 
 namespace Microsoft.Sbom.Api.Output;
 

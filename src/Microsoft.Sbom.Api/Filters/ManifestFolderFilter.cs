@@ -3,8 +3,8 @@
 
 using System;
 using System.IO;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
 
 namespace Microsoft.Sbom.Api.Filters;
 

@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using PowerArgs;
-using Microsoft.Sbom.Contracts.Enums;
 using System;
+using Microsoft.Sbom.Contracts.Enums;
+using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Config.Args;
 

@@ -2,14 +2,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using Serilog;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
+using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
 

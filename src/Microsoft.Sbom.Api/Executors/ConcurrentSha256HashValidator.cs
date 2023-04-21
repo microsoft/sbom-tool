@@ -1,14 +1,14 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Manifest.FileHashes;
-using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Extensions.Entities;
 using System;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Manifest.FileHashes;
+using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Api.Executors;
 

@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.ComponentDetection.Contracts.BcdeModels;
-using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Serilog;
 
 namespace Microsoft.Sbom.Api.Utils;
 

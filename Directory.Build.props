@@ -36,14 +36,15 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)analyzers.ruleset</CodeAnalysisRuleSet>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-        <NoWarn>NU1608,NU5119</NoWarn>
+        <NoWarn>NU1608,NU5119,CS8002</NoWarn>
     </PropertyGroup>
+    
     <PropertyGroup Condition="'$(OFFICIAL_BUILD)'=='True'">
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     </PropertyGroup>
     <PropertyGroup Condition="'$(CODEQL_BUILD)'=='True'">
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
     </PropertyGroup>
 </Project>

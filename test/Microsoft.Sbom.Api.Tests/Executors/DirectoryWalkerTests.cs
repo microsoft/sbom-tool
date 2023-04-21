@@ -1,15 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Exceptions;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
 

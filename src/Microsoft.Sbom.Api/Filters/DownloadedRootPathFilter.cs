@@ -1,13 +1,13 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
+using Serilog;
 
 namespace Microsoft.Sbom.Api.Filters;
 

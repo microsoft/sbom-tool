@@ -3,8 +3,8 @@
 
 using System.Collections.Generic;
 using System.Threading.Channels;
-using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Providers;
 

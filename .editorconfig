@@ -1,0 +1,188 @@
+[*.cs]
+tab_width = 4
+indent_size = 4
+end_of_line = crlf
+
+# this. preferences
+dotnet_style_qualification_for_field = true:silent
+dotnet_style_qualification_for_property = true:silent
+dotnet_style_qualification_for_method = true:silent
+dotnet_style_qualification_for_event = true:silent
+
+# Namespace declaration preferences
+csharp_style_namespace_declarations = file_scoped:warning
+dotnet_diagnostic.IDE0160.severity = none
+dotnet_diagnostic.IDE0161.severity = warning
+
+# Require that unused using directives are removed
+dotnet_diagnostic.IDE0005.severity = error
+
+# No underscores for private field names
+dotnet_naming_symbols.private_fields.applicable_kinds           = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_rule.private_members.symbols  = private_fields
+dotnet_naming_rule.private_members.style = camel_case_no_prefix
+dotnet_naming_rule.private_members.severity = suggestion
+
+# Pascal Case for private static or private constant fields
+dotnet_naming_symbols.private_static_readonly_fields.applicable_kinds = field
+dotnet_naming_symbols.private_static_readonly_fields.applicable_accessibilities = private, protected, protected_internal, private_protected
+dotnet_naming_symbols.private_static_readonly_fields.required_modifiers = readonly, static
+
+dotnet_naming_symbols.private_constant_fields.applicable_kinds = field
+dotnet_naming_symbols.private_constant_fields.applicable_accessibilities = private, protected, protected_internal, private_protected
+dotnet_naming_symbols.private_constant_fields.required_modifiers = const
+
+dotnet_naming_rule.private_constant_fields_should_be_pascalcase.symbols = private_constant_fields
+dotnet_naming_rule.private_constant_fields_should_be_pascalcase.style = pascalcase
+dotnet_naming_rule.private_constant_fields_should_be_pascalcase.severity = suggestion
+
+dotnet_naming_rule.private_static_readonly_fields_should_be_pascalcase.symbols = private_static_readonly_fields
+dotnet_naming_rule.private_static_readonly_fields_should_be_pascalcase.style = pascalcase
+dotnet_naming_rule.private_static_readonly_fields_should_be_pascalcase.severity = suggestion
+
+# Style definitions
+dotnet_naming_style.camel_case_no_prefix.capitalization = camel_case
+dotnet_naming_style.camel_case_no_prefix.required_prefix = # Empty
+
+dotnet_naming_style.pascalcase.capitalization = pascal_case
+
+#### Style Cop Rules ####
+
+## Spacing Rules
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+dotnet_diagnostic.SA1028.severity = none
+dotnet_diagnostic.SA1200.severity = none
+
+## Readability Rules
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.ReadabilityRules.severity = none
+dotnet_diagnostic.SA1100.severity = warning
+dotnet_diagnostic.SA1101.severity = none 
+dotnet_diagnostic.SA1106.severity = warning
+dotnet_diagnostic.SA1107.severity = warning
+dotnet_diagnostic.SA1110.severity = warning
+dotnet_diagnostic.SA1111.severity = warning
+dotnet_diagnostic.SA1113.severity = warning
+dotnet_diagnostic.SA1116.severity = warning
+dotnet_diagnostic.SA1120.severity = warning
+dotnet_diagnostic.SA1121.severity = warning
+dotnet_diagnostic.SA1122.severity = warning
+dotnet_diagnostic.SA1123.severity = warning
+dotnet_diagnostic.SA1127.severity = warning
+dotnet_diagnostic.SA1128.severity = warning
+dotnet_diagnostic.SA1130.severity = warning
+dotnet_diagnostic.SA1131.severity = warning
+dotnet_diagnostic.SA1132.severity = warning
+dotnet_diagnostic.SA1133.severity = warning
+dotnet_diagnostic.SA1134.severity = warning
+dotnet_diagnostic.SA1135.severity = warning
+dotnet_diagnostic.SA1136.severity = warning
+dotnet_diagnostic.SA1137.severity = warning
+
+## Maintainability Rules
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severity = none
+dotnet_diagnostic.SA1400.severity = warning
+dotnet_diagnostic.SA1402.severity = warning
+dotnet_diagnostic.SA1404.severity = warning
+dotnet_diagnostic.SA1407.severity = warning
+dotnet_diagnostic.SA1408.severity = warning
+dotnet_diagnostic.SA1409.severity = warning
+dotnet_diagnostic.SA1410.severity = warning
+dotnet_diagnostic.SA1411.severity = warning
+
+## Ordering Rules
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.OrderingRules.severity = none
+dotnet_diagnostic.SA1208.severity = warning
+dotnet_diagnostic.SA1210.severity = warning
+
+## Naming Rules
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.NamingRules.severity = warning
+dotnet_diagnostic.SA1301.severity = none
+dotnet_diagnostic.SA1305.severity = none
+dotnet_diagnostic.SX1309.severity = none
+dotnet_diagnostic.SX1309S.severity = none
+
+## Layout Rules
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.LayoutRules.severity = warning
+dotnet_diagnostic.SA1500.severity = none
+dotnet_diagnostic.SA1502.severity = none
+
+## Documentation Rules
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+dotnet_diagnostic.SA1628.severity = warning
+dotnet_diagnostic.SA1649.severity = warning
+
+## Special rules
+dotnet_diagnostic.SA0001.severity = none
+dotnet_diagnostic.SA0002.severity = none
+dotnet_diagnostic.CS8002.severity = none # For some reason this rule is ignored, but it suppressed in Directory.Build.props
+
+
+#### Code Quality ####
+
+## Design Rules
+dotnet_diagnostic.CA1000.severity = warning
+dotnet_diagnostic.CA1001.severity = none # (CA1001: Types that own disposable fields should be disposable) should be enabled
+dotnet_diagnostic.CA1031.severity = none # (CA1031: catch a more specific allowed exception type) should be enabled
+dotnet_diagnostic.CA1032.severity = none # (CA1032: Implement standard exception constructors) should be enabled
+dotnet_diagnostic.CA1044.severity = warning
+dotnet_diagnostic.CA1034.severity = warning
+dotnet_diagnostic.CA1040.severity = none # (CA1040: Avoid empty interfaces) should be enabled
+dotnet_diagnostic.CA1041.severity = none # (CA1041: Provide ObsoleteAttribute message) should be enabled
+dotnet_diagnostic.CA1051.severity = none # (CA1051: Do not declare visible instance fields) should be enabled
+dotnet_diagnostic.CA1052.severity = none # (CA1052: Static holder types should be Static or NotInheritable) should be enabled
+dotnet_diagnostic.CA1054.severity = none 
+dotnet_diagnostic.CA1055.severity = none
+dotnet_diagnostic.CA1056.severity = none
+dotnet_diagnostic.CA1062.severity = none # (CA1062: Validate arguments of public methods) should be enabled
+dotnet_diagnostic.CA1063.severity = none # (CA1063: Implement IDisposable correctly) should be enabled (official docs mention this rule shouldn't be disabled)
+dotnet_diagnostic.CA1064.severity = none # (CA1064: Exceptions should be public) should be enabled
+dotnet_diagnostic.CA1065.severity = warning
+dotnet_diagnostic.CA1066.severity = none # (CA1066: Implement IEquatable when overriding Equals) should be enabled
+dotnet_diagnostic.CA1067.severity = warning
+
+## Globalization Rules
+## (should revisit these rules somewhere in the future)
+dotnet_diagnostic.CA1303.severity = none
+dotnet_diagnostic.CA1304.severity = none
+dotnet_diagnostic.CA1305.severity = none
+dotnet_diagnostic.CA1307.severity = none
+dotnet_diagnostic.CA1308.severity = none
+
+## Naming Rules
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1710.severity = warning
+dotnet_diagnostic.CA1714.severity = none # (CA1714: Flags enums should have plural names) should be enabled
+dotnet_diagnostic.CA1715.severity = none # (CA1715: Identifiers should have correct prefix) should be enabled
+dotnet_diagnostic.CA1716.severity = none
+dotnet_diagnostic.CA1720.severity = none # (CA1720: Identifiers should not contain type names) should be enabled
+dotnet_diagnostic.CA1724.severity = none
+
+## Performance Rules
+dotnet_diagnostic.CA1801.severity = none # (CA1801: Review unused parameters) should be enabled
+dotnet_diagnostic.CA1805.severity = none # (CA1805: Do not initialize unnecessarily) should be enabled
+dotnet_diagnostic.CA1806.severity = none # (CA1806: Do not ignore method results) should be enabled
+dotnet_diagnostic.CA1812.severity = none
+dotnet_diagnostic.CA1815.severity = none
+dotnet_diagnostic.CA1816.severity = none # (CA1816: Call GC.SuppressFinalize correctly) should be enabled
+dotnet_diagnostic.CA1819.severity = none
+dotnet_diagnostic.CA1822.severity = none
+dotnet_diagnostic.CA1823.severity = none # (CA1823: Avoid unused private fields) should be enabled
+dotnet_diagnostic.CA1825.severity = none # (CA1825: Avoid zero-length array allocations) should be enabled
+dotnet_diagnostic.CA1827.severity = none # (CA1827: Do not use Count/LongCount when Any can be used) should be enabled
+dotnet_diagnostic.CA1829.severity = none # (CA1829: Use Length/Count property instead of Enumerable.Count method) should be enabled
+
+## Reliability Rules
+dotnet_diagnostic.CA2000.severity = none # (CA2000: Dispose objects before losing scope) should be enabled
+dotnet_diagnostic.CA2007.severity = silent
+
+## Usage Rules
+dotnet_diagnostic.CA2201.severity = none # (CA2201: Do not raise reserved exception types) should be enabled
+dotnet_diagnostic.CA2208.severity = none # (CA2208: Instantiate argument exceptions correctly) should be enabled
+dotnet_diagnostic.CA2211.severity = none
+dotnet_diagnostic.CA2225.severity = none
+dotnet_diagnostic.CA2227.severity = none
+dotnet_diagnostic.CA2229.severity = none # (CA2229: Implement serialization constructors) should be enabled
+dotnet_diagnostic.CA2231.severity = none
+dotnet_diagnostic.CA2235.severity = none # (CA2235: Mark all non-serializable fields) should be enabled

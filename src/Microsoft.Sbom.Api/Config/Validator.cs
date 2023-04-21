@@ -5,9 +5,9 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Api.Utils;
 
 namespace Microsoft.Sbom.Api.Config;
 
