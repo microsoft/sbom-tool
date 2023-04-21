@@ -42,7 +42,6 @@ public class InternalMetadataProviderIdentityExtensionsTests
         Assert.IsTrue(timestamp.Equals("time"));
     }
 
-
     [TestMethod]
     public void GetPackageVersion_WherePackageVersionIsValid_ReturnPackageVersion()
     {
