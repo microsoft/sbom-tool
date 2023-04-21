@@ -1,12 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Api.Output.Telemetry;
-using Microsoft.Sbom.Api.Workflows;
-using PowerArgs;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.Workflows;
 
 namespace Microsoft.Sbom.Api;
 

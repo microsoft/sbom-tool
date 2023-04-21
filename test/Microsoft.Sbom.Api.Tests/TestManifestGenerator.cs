@@ -1,15 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Contracts;
-using Microsoft.Sbom.Contracts.Enums;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
-using System.Diagnostics.CodeAnalysis;
+using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Api.Tests;
 

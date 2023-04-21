@@ -8,8 +8,8 @@ using System.Threading.Channels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
 

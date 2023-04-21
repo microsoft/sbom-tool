@@ -2,11 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using Microsoft.Sbom.Adapters.Report;
-using Microsoft.ComponentDetection.Contracts.TypedComponent;
-using Microsoft.Sbom.Contracts;
-using Microsoft.Sbom.Adapters.ComponentDetection.Logging;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Sbom.Adapters.ComponentDetection.Logging;
+using Microsoft.Sbom.Adapters.Report;
+using Microsoft.Sbom.Contracts;
 
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
 

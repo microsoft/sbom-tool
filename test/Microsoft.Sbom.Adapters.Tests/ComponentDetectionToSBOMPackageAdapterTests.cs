@@ -1,18 +1,18 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Sbom.Adapters.Report;
-using Microsoft.Sbom.Contracts;
+using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.ComponentDetection.Contracts.Internal;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Adapters.ComponentDetection;
-using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Sbom.Adapters.Report;
+using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.ComponentDetection.Contracts.Internal;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Sbom.Adapters.Tests;
 

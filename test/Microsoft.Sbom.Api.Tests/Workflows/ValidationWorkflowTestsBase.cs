@@ -1,14 +1,12 @@
-﻿using Microsoft.Sbom.Api.Manifest.FileHashes;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Utils;
 using Moq;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Microsoft.Sbom.Workflows;
 

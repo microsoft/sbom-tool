@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using AutoMapper;
-using PowerArgs;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Common.Config;
+using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Config;
 

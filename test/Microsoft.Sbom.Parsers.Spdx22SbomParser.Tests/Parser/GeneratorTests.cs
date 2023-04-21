@@ -1,6 +1,6 @@
 ﻿using Microsoft.Sbom.Contracts;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Sbom.Parser;
 

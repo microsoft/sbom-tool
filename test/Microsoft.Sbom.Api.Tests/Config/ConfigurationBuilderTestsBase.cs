@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using AutoMapper;
 using Microsoft.Sbom.Api.Config.Validators;
 using Microsoft.Sbom.Api.Hashing;
@@ -10,7 +11,6 @@ using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.Sbom.Contracts.Interfaces;
 using Moq;
-using System;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Config.Tests;

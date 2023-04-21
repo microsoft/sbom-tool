@@ -4,7 +4,6 @@
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
-using System.Collections.Generic;
 
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
 

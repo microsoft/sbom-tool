@@ -1,18 +1,18 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Contracts;
-using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Exceptions;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 
