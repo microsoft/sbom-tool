@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Api.Metadata;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Microsoft.Sbom.Api.Metadata;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Sbom.Api.Tests.Metadata;
 
