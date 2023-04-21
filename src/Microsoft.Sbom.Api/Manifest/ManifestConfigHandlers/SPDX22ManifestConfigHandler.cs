@@ -79,8 +79,7 @@ namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers
                 return true;
             }
 
-            if (configuration.ManifestToolAction == ManifestToolActions.Validate
-               && fileSystemUtils.FileExists(SbomFilePath))
+            if (configuration.ManifestToolAction == ManifestToolActions.Validate)
             {
                 // We can only validate one format at a time, so check if its this one and return true/false.
                 if (configuration.ManifestInfo?.Value != null
