@@ -2,10 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Api.Utils;
-using Microsoft.VisualBasic;
 using System;
 using System.ComponentModel;
-using System.IO;
 
 namespace Microsoft.Sbom.Common.Config.Validators
 {
