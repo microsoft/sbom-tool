@@ -63,8 +63,6 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers
 
                         var jsonChannelsArray = new ChannelReader<JsonDocument>[]
                         {
-                            //is a generator.Run() call needed here?
-
                             // Packages relationships
                             generator.Run(
                                 GetRelationships(
