@@ -4,24 +4,23 @@
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
 
-namespace Microsoft.Sbom.Adapters.ComponentDetection
+namespace Microsoft.Sbom.Adapters.ComponentDetection;
+
+/// <summary>
+/// Extensions methods for <see cref="PipComponent"/>.
+/// </summary>
+internal static class PipComponentExtensions
 {
     /// <summary>
-    /// Extensions methods for <see cref="PipComponent"/>.
+    /// Converts a <see cref="PipComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    internal static class PipComponentExtensions
+    public static SbomPackage? ToSbomPackage(this PipComponent pipComponent) => new ()
     {
-        /// <summary>
-        /// Converts a <see cref="PipComponent"/> to an <see cref="SbomPackage"/>.
-        /// </summary>
-        public static SbomPackage? ToSbomPackage(this PipComponent pipComponent) => new ()
-        {
-            Id = pipComponent.Id,
-            PackageUrl = pipComponent.PackageUrl?.ToString(),
-            PackageName = pipComponent.Name,
-            PackageVersion = pipComponent.Version,
-            FilesAnalyzed = false,
-            Type = "python"
-        };
-    }
+        Id = pipComponent.Id,
+        PackageUrl = pipComponent.PackageUrl?.ToString(),
+        PackageName = pipComponent.Name,
+        PackageVersion = pipComponent.Version,
+        FilesAnalyzed = false,
+        Type = "python"
+    };
 }

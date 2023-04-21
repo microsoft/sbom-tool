@@ -4,31 +4,30 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Microsoft.Sbom.Api.Exceptions
+namespace Microsoft.Sbom.Api.Exceptions;
+
+/// <summary>
+/// Thrown when the file path is invalid or inaccessible.
+/// </summary>
+[Serializable]
+public class InvalidPathException : Exception
 {
-    /// <summary>
-    /// Thrown when the file path is invalid or inaccessible.
-    /// </summary>
-    [Serializable]
-    public class InvalidPathException : Exception
+    public InvalidPathException()
     {
-        public InvalidPathException()
-        {
-        }
+    }
 
-        public InvalidPathException(string message)
-            : base(message)
-        {
-        }
+    public InvalidPathException(string message)
+        : base(message)
+    {
+    }
 
-        public InvalidPathException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public InvalidPathException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
 
-        protected InvalidPathException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+    protected InvalidPathException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    {
     }
 }

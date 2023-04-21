@@ -4,10 +4,9 @@
 using Microsoft.Sbom.Contracts.Enums;
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Api.Utils
+namespace Microsoft.Sbom.Api.Utils;
+
+public interface IFileTypeUtils
 {
-    public interface IFileTypeUtils
-    {
-        List<FileType> GetFileTypesBy(string fileName);
-    }
+    List<FileType> GetFileTypesBy(string fileName);
 }

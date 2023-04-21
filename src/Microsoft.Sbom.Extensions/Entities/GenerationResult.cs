@@ -4,29 +4,28 @@
 using System;
 using System.Text.Json;
 
-namespace Microsoft.Sbom.Extensions.Entities
+namespace Microsoft.Sbom.Extensions.Entities;
+
+/// <summary>
+/// A object that represents the generated <see cref="JsonDocument"/> along
+/// with additional metadata about the generated object.
+/// </summary>
+public class GenerationResult
 {
+    private JsonDocument document;
+
     /// <summary>
-    /// A object that represents the generated <see cref="JsonDocument"/> along
-    /// with additional metadata about the generated object.
+    /// Gets or sets the entity object in the JSON format as expected by the current SBOM format.
     /// </summary>
-    public class GenerationResult
+    public JsonDocument Document
     {
-        private JsonDocument document;
-
-        /// <summary>
-        /// Gets or sets the entity object in the JSON format as expected by the current SBOM format.
-        /// </summary>
-        public JsonDocument Document
-        {
-            get { return document; }
-            set { document = value ?? throw new Exception("JsonDocument cannot be null."); }
-        }
-
-        /// <summary>
-        /// Gets or sets any additional metadata that needs to be returned about the current
-        /// entity or SBOM.
-        /// </summary>
-        public ResultMetadata ResultMetadata { get; set; }
+        get { return document; }
+        set { document = value ?? throw new Exception("JsonDocument cannot be null."); }
     }
+
+    /// <summary>
+    /// Gets or sets any additional metadata that needs to be returned about the current
+    /// entity or SBOM.
+    /// </summary>
+    public ResultMetadata ResultMetadata { get; set; }
 }

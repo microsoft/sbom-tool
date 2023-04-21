@@ -6,32 +6,31 @@ using Microsoft.Sbom.Common.Config;
 using Serilog.Events;
 using Constants = Microsoft.Sbom.Common.Constants;
 
-namespace Microsoft.Sbom.Api.Config.ValueConverters
+namespace Microsoft.Sbom.Api.Config.ValueConverters;
+
+/// <summary>
+/// Converts an LogEventLevel member to a ConfigurationSetting decorated string member.
+/// </summary>
+internal class LogEventLevelConfigurationSettingAddingConverter : IValueConverter<LogEventLevel?, ConfigurationSetting<LogEventLevel>>
 {
-    /// <summary>
-    /// Converts an LogEventLevel member to a ConfigurationSetting decorated string member.
-    /// </summary>
-    internal class LogEventLevelConfigurationSettingAddingConverter : IValueConverter<LogEventLevel?, ConfigurationSetting<LogEventLevel>>
+    private SettingSource settingSource;
+
+    public LogEventLevelConfigurationSettingAddingConverter(SettingSource settingSource)
     {
-        private SettingSource settingSource;
+        this.settingSource = settingSource;
+    }
 
-        public LogEventLevelConfigurationSettingAddingConverter(SettingSource settingSource)
+    public ConfigurationSetting<LogEventLevel> Convert(LogEventLevel? sourceMember, ResolutionContext context)
+    {
+        if (sourceMember == null)
         {
-            this.settingSource = settingSource;
+            settingSource = SettingSource.Default;
         }
 
-        public ConfigurationSetting<LogEventLevel> Convert(LogEventLevel? sourceMember, ResolutionContext context)
+        return new ConfigurationSetting<LogEventLevel>
         {
-            if (sourceMember == null)
-            {
-                settingSource = SettingSource.Default;
-            }
-
-            return new ConfigurationSetting<LogEventLevel>
-            {
-                Source = settingSource,
-                Value = sourceMember ?? Constants.DefaultLogLevel
-            };
-        }
+            Source = settingSource,
+            Value = sourceMember ?? Constants.DefaultLogLevel
+        };
     }
 }

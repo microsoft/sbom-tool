@@ -7,38 +7,37 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.ComponentModel;
 
-namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Utils.Tests;
+
+[TestClass]
+public class InternalMetadataProviderIdentityExtensionsTests
 {
-    [TestClass]
-    public class InternalMetadataProviderIdentityExtensionsTests
+    [TestMethod]
+    public void GetGenerationTimestamp_Default_Test()
     {
-        [TestMethod]
-        public void GetGenerationTimestamp_Default_Test()
-        {
-            var mdProviderMock = new Mock<IInternalMetadataProvider>();
-            object time = null;
-            mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.GenerationTimestamp, out time))
-                .Returns(false);
+        var mdProviderMock = new Mock<IInternalMetadataProvider>();
+        object time = null;
+        mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.GenerationTimestamp, out time))
+            .Returns(false);
 
-            var timestamp = mdProviderMock.Object.GetGenerationTimestamp();
+        var timestamp = mdProviderMock.Object.GetGenerationTimestamp();
 
-            Assert.IsNotNull(timestamp);
-            var parsedDate = new DateTimeOffsetConverter().ConvertFromString(timestamp);
-            Assert.IsNotNull(parsedDate);
-        }
+        Assert.IsNotNull(timestamp);
+        var parsedDate = new DateTimeOffsetConverter().ConvertFromString(timestamp);
+        Assert.IsNotNull(parsedDate);
+    }
 
-        [TestMethod]
-        public void GetGenerationTimestamp_Override_Test()
-        {
-            var mdProviderMock = new Mock<IInternalMetadataProvider>();
-            object time = "time";
-            mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.GenerationTimestamp, out time))
-                .Returns(true);
+    [TestMethod]
+    public void GetGenerationTimestamp_Override_Test()
+    {
+        var mdProviderMock = new Mock<IInternalMetadataProvider>();
+        object time = "time";
+        mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.GenerationTimestamp, out time))
+            .Returns(true);
 
-            var timestamp = mdProviderMock.Object.GetGenerationTimestamp();
+        var timestamp = mdProviderMock.Object.GetGenerationTimestamp();
 
-            Assert.IsNotNull(timestamp);
-            Assert.IsTrue(timestamp.Equals("time"));
-        }
+        Assert.IsNotNull(timestamp);
+        Assert.IsTrue(timestamp.Equals("time"));
     }
 }

@@ -4,22 +4,21 @@
 using PowerArgs;
 using System;
 
-namespace Microsoft.Sbom.Api.Exceptions
-{
-    /// <summary>
-    /// Exception during argument validation used to indicate when we don't have access to a path passed as argument.
-    /// </summary>
-    [Serializable]
-    public class AccessDeniedValidationArgException : ValidationArgException
-    {
-        public AccessDeniedValidationArgException(string message)
-            : base(message)
-        {
-        }
+namespace Microsoft.Sbom.Api.Exceptions;
 
-        public AccessDeniedValidationArgException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+/// <summary>
+/// Exception during argument validation used to indicate when we don't have access to a path passed as argument.
+/// </summary>
+[Serializable]
+public class AccessDeniedValidationArgException : ValidationArgException
+{
+    public AccessDeniedValidationArgException(string message)
+        : base(message)
+    {
+    }
+
+    public AccessDeniedValidationArgException(string message, Exception innerException)
+        : base(message, innerException)
+    {
     }
 }

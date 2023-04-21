@@ -6,31 +6,30 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Adapters.ComponentDetection
+namespace Microsoft.Sbom.Adapters.ComponentDetection;
+
+/// <summary>
+/// Extensions methods for <see cref="DockerImageComponent"/>.
+/// </summary>
+internal static class DockerImageComponentExtensions
 {
     /// <summary>
-    /// Extensions methods for <see cref="DockerImageComponent"/>.
+    /// Converts a <see cref="DockerImageComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    internal static class DockerImageComponentExtensions
+    public static SbomPackage? ToSbomPackage(this DockerImageComponent dockerImageComponent) => new ()
     {
-        /// <summary>
-        /// Converts a <see cref="DockerImageComponent"/> to an <see cref="SbomPackage"/>.
-        /// </summary>
-        public static SbomPackage? ToSbomPackage(this DockerImageComponent dockerImageComponent) => new ()
+        Id = dockerImageComponent.Id,
+        PackageUrl = dockerImageComponent.PackageUrl?.ToString(),
+        PackageName = dockerImageComponent.Name,
+        Checksum = new[]
         {
-            Id = dockerImageComponent.Id,
-            PackageUrl = dockerImageComponent.PackageUrl?.ToString(),
-            PackageName = dockerImageComponent.Name,
-            Checksum = new[]
+            new Checksum
             {
-                new Checksum
-                {
-                    Algorithm = AlgorithmName.SHA256,
-                    ChecksumValue = dockerImageComponent.Digest
-                },
+                Algorithm = AlgorithmName.SHA256,
+                ChecksumValue = dockerImageComponent.Digest
             },
-            FilesAnalyzed = false,
-            Type = "docker"
-        };
-    }
+        },
+        FilesAnalyzed = false,
+        Type = "docker"
+    };
 }

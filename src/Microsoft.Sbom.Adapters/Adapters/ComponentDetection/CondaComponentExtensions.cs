@@ -6,33 +6,32 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Adapters.ComponentDetection
+namespace Microsoft.Sbom.Adapters.ComponentDetection;
+
+/// <summary>
+/// Extensions methods for <see cref="CondaComponent"/>.
+/// </summary>
+internal static class CondaComponentExtensions
 {
     /// <summary>
-    /// Extensions methods for <see cref="CondaComponent"/>.
+    /// Converts a <see cref="CondaComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    internal static class CondaComponentExtensions
+    public static SbomPackage? ToSbomPackage(this CondaComponent condaComponent) => new ()
     {
-        /// <summary>
-        /// Converts a <see cref="CondaComponent"/> to an <see cref="SbomPackage"/>.
-        /// </summary>
-        public static SbomPackage? ToSbomPackage(this CondaComponent condaComponent) => new ()
+        Id = condaComponent.Id,
+        PackageUrl = condaComponent.PackageUrl?.ToString(),
+        PackageName = condaComponent.Name,
+        PackageVersion = condaComponent.Version,
+        PackageSource = condaComponent.Url,
+        Checksum = new List<Checksum>
         {
-            Id = condaComponent.Id,
-            PackageUrl = condaComponent.PackageUrl?.ToString(),
-            PackageName = condaComponent.Name,
-            PackageVersion = condaComponent.Version,
-            PackageSource = condaComponent.Url,
-            Checksum = new List<Checksum>
+            new Checksum
             {
-                new Checksum
-                {
-                    Algorithm = AlgorithmName.MD5,
-                    ChecksumValue = condaComponent.MD5
-                },
+                Algorithm = AlgorithmName.MD5,
+                ChecksumValue = condaComponent.MD5
             },
-            FilesAnalyzed = false,
-            Type = "conda"
-        };
-    }
+        },
+        FilesAnalyzed = false,
+        Type = "conda"
+    };
 }

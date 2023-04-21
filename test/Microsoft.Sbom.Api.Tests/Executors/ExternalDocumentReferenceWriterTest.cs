@@ -21,78 +21,77 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
-namespace Microsoft.Sbom.Api.Tests.Executors
+namespace Microsoft.Sbom.Api.Tests.Executors;
+
+[TestClass]
+public class ExternalDocumentReferenceWriterTest
 {
-    [TestClass]
-    public class ExternalDocumentReferenceWriterTest
+    private Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private Mock<IRecorder> recorderMock = new Mock<IRecorder>();
+    private Mock<IFileSystemUtils> fileSystemUtilsMock = new Mock<IFileSystemUtils>();
+
+    [TestMethod]
+    public async Task PassExternalDocumentReferenceInfosChannel_ReturnsJsonDocWithSerializer()
     {
-        private Mock<ILogger> mockLogger = new Mock<ILogger>();
-        private Mock<IRecorder> recorderMock = new Mock<IRecorder>();
-        private Mock<IFileSystemUtils> fileSystemUtilsMock = new Mock<IFileSystemUtils>();
-
-        [TestMethod]
-        public async Task PassExternalDocumentReferenceInfosChannel_ReturnsJsonDocWithSerializer()
+        var manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
+        manifestGeneratorProvider.Init();
+        var metadataBuilder = new MetadataBuilder(
+            mockLogger.Object,
+            manifestGeneratorProvider,
+            Constants.TestManifestInfo,
+            recorderMock.Object);
+        var jsonFilePath = "/root/_manifest/manifest.json";
+        var sbomConfig = new SbomConfig(fileSystemUtilsMock.Object)
         {
-            var manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
-            manifestGeneratorProvider.Init();
-            var metadataBuilder = new MetadataBuilder(
-                mockLogger.Object,
-                manifestGeneratorProvider,
-                Constants.TestManifestInfo,
-                recorderMock.Object);
-            var jsonFilePath = "/root/_manifest/manifest.json";
-            var sbomConfig = new SbomConfig(fileSystemUtilsMock.Object)
-            {
-                ManifestInfo = Constants.TestManifestInfo,
-                ManifestJsonDirPath = "/root/_manifest",
-                ManifestJsonFilePath = jsonFilePath,
-                MetadataBuilder = metadataBuilder,
-                Recorder = new SbomPackageDetailsRecorder()
-            };
+            ManifestInfo = Constants.TestManifestInfo,
+            ManifestJsonDirPath = "/root/_manifest",
+            ManifestJsonFilePath = jsonFilePath,
+            MetadataBuilder = metadataBuilder,
+            Recorder = new SbomPackageDetailsRecorder()
+        };
 
-            ExternalDocumentReferenceInfo externalDocumentReferenceInfo = new ExternalDocumentReferenceInfo();
-            externalDocumentReferenceInfo.ExternalDocumentName = "name";
-            externalDocumentReferenceInfo.DocumentNamespace = "namespace";
-            var checksum = new Checksum();
-            checksum.Algorithm = AlgorithmName.SHA1;
-            checksum.ChecksumValue = "abc";
-            externalDocumentReferenceInfo.Checksum = new List<Checksum> { checksum };
+        ExternalDocumentReferenceInfo externalDocumentReferenceInfo = new ExternalDocumentReferenceInfo();
+        externalDocumentReferenceInfo.ExternalDocumentName = "name";
+        externalDocumentReferenceInfo.DocumentNamespace = "namespace";
+        var checksum = new Checksum();
+        checksum.Algorithm = AlgorithmName.SHA1;
+        checksum.ChecksumValue = "abc";
+        externalDocumentReferenceInfo.Checksum = new List<Checksum> { checksum };
 
-            var externalDocumentReferenceInfos = new List<ExternalDocumentReferenceInfo> { externalDocumentReferenceInfo };
-            var externalDocumentReferenceInfosChannel = Channel.CreateUnbounded<ExternalDocumentReferenceInfo>();
-            foreach (var data in externalDocumentReferenceInfos)
+        var externalDocumentReferenceInfos = new List<ExternalDocumentReferenceInfo> { externalDocumentReferenceInfo };
+        var externalDocumentReferenceInfosChannel = Channel.CreateUnbounded<ExternalDocumentReferenceInfo>();
+        foreach (var data in externalDocumentReferenceInfos)
+        {
+            await externalDocumentReferenceInfosChannel.Writer.WriteAsync(data);
+        }
+
+        externalDocumentReferenceInfosChannel.Writer.Complete();
+
+        var externalDocumentReferenceWriter = new ExternalDocumentReferenceWriter(manifestGeneratorProvider, mockLogger.Object);
+        var (results, errors) = externalDocumentReferenceWriter.Write(externalDocumentReferenceInfosChannel, new List<ISbomConfig> { sbomConfig });
+
+        await foreach (var result in results.ReadAllAsync())
+        {
+            JsonElement root = result.Document.RootElement;
+
+            Assert.IsNotNull(root);
+
+            if (root.TryGetProperty("Document", out JsonElement documentNamespace))
             {
-                await externalDocumentReferenceInfosChannel.Writer.WriteAsync(data);
+                Assert.AreEqual("namespace", documentNamespace.GetString());
+            }
+            else
+            {
+                Assert.Fail("Document property not found");
             }
 
-            externalDocumentReferenceInfosChannel.Writer.Complete();
-
-            var externalDocumentReferenceWriter = new ExternalDocumentReferenceWriter(manifestGeneratorProvider, mockLogger.Object);
-            var (results, errors) = externalDocumentReferenceWriter.Write(externalDocumentReferenceInfosChannel, new List<ISbomConfig> { sbomConfig });
-
-            await foreach (var result in results.ReadAllAsync())
+            if (root.TryGetProperty("ExternalDocumentId", out JsonElement externalDocumentId))
             {
-                JsonElement root = result.Document.RootElement;
-
-                Assert.IsNotNull(root);
-
-                if (root.TryGetProperty("Document", out JsonElement documentNamespace))
-                {
-                    Assert.AreEqual("namespace", documentNamespace.GetString());
-                }
-                else
-                {
-                    Assert.Fail("Document property not found");
-                }
-
-                if (root.TryGetProperty("ExternalDocumentId", out JsonElement externalDocumentId))
-                {
-                    Assert.AreEqual("name", externalDocumentId.GetString());
-                }
-                else
-                {
-                    Assert.Fail("ExternalDocumentId property not found");
-                }
+                Assert.AreEqual("name", externalDocumentId.GetString());
+            }
+            else
+            {
+                Assert.Fail("ExternalDocumentId property not found");
             }
         }
     }

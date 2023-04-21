@@ -13,86 +13,85 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 
-namespace Microsoft.Sbom.Api.Workflows.Helpers
+namespace Microsoft.Sbom.Api.Workflows.Helpers;
+
+/// <summary>
+/// This class generates an array of filenames and hashes based on the format of the SBOM. 
+/// </summary>
+public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
 {
-    /// <summary>
-    /// This class generates an array of filenames and hashes based on the format of the SBOM. 
-    /// </summary>
-    public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
+    private readonly ISbomConfigProvider sbomConfigs;
+
+    private readonly IEnumerable<ISourcesProvider> sourcesProviders;
+
+    private readonly IRecorder recorder;
+
+    public FileArrayGenerator(
+        ISbomConfigProvider sbomConfigs,
+        IEnumerable<ISourcesProvider> sourcesProviders,
+        IRecorder recorder)
     {
-        private readonly ISbomConfigProvider sbomConfigs;
+        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+        this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
+        this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+    }
 
-        private readonly IEnumerable<ISourcesProvider> sourcesProviders;
-
-        private readonly IRecorder recorder;
-
-        public FileArrayGenerator(
-            ISbomConfigProvider sbomConfigs,
-            IEnumerable<ISourcesProvider> sourcesProviders,
-            IRecorder recorder)
+    /// <summary>
+    /// Traverses all the files inside the buildDropPath, and serializes the SBOM using the JSON serializer creating
+    /// an array object whose key is defined by <paramref name="headerName"/>. Upon failure, returns a list of 
+    /// <see cref="FileValidationResult"/> objects that can be used to trace the error.
+    /// </summary>
+    /// <param name="jsonSerializer">The serializer used to write the SBOM.</param>
+    /// <param name="headerName">The header key for the file array object.</param>
+    /// <returns></returns>
+    public async Task<IList<FileValidationResult>> GenerateAsync()
+    {
+        using (recorder.TraceEvent(Events.FilesGeneration))
         {
-            this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
-            this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
-            this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
-        }
+            IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
 
-        /// <summary>
-        /// Traverses all the files inside the buildDropPath, and serializes the SBOM using the JSON serializer creating
-        /// an array object whose key is defined by <paramref name="headerName"/>. Upon failure, returns a list of 
-        /// <see cref="FileValidationResult"/> objects that can be used to trace the error.
-        /// </summary>
-        /// <param name="jsonSerializer">The serializer used to write the SBOM.</param>
-        /// <param name="headerName">The header key for the file array object.</param>
-        /// <returns></returns>
-        public async Task<IList<FileValidationResult>> GenerateAsync()
-        {
-            using (recorder.TraceEvent(Events.FilesGeneration))
+            IEnumerable<ISourcesProvider> sourcesProviders = this.sourcesProviders
+                .Where(s => s.IsSupported(ProviderType.Files));
+
+            // Write the start of the array, if supported.
+            IList<ISbomConfig> filesArraySupportingSBOMs = new List<ISbomConfig>();
+            foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
             {
-                IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
+                var config = sbomConfigs.Get(manifestInfo);
 
-                IEnumerable<ISourcesProvider> sourcesProviders = this.sourcesProviders
-                                                    .Where(s => s.IsSupported(ProviderType.Files));
-
-                // Write the start of the array, if supported.
-                IList<ISbomConfig> filesArraySupportingSBOMs = new List<ISbomConfig>();
-                foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
+                if (config.MetadataBuilder.TryGetFilesArrayHeaderName(out string filesArrayHeaderName))
                 {
-                    var config = sbomConfigs.Get(manifestInfo);
-
-                    if (config.MetadataBuilder.TryGetFilesArrayHeaderName(out string filesArrayHeaderName))
-                    {
-                        config.JsonSerializer.StartJsonArray(filesArrayHeaderName);
-                        filesArraySupportingSBOMs.Add(config);
-                    }
+                    config.JsonSerializer.StartJsonArray(filesArrayHeaderName);
+                    filesArraySupportingSBOMs.Add(config);
                 }
-
-                foreach (var sourcesProvider in sourcesProviders)
-                {
-                    var (jsondDocResults, errors) = sourcesProvider.Get(filesArraySupportingSBOMs);
-
-                    await foreach (JsonDocWithSerializer jsonResults in jsondDocResults.ReadAllAsync())
-                    {
-                        jsonResults.Serializer.Write(jsonResults.Document);
-                    }
-
-                    await foreach (FileValidationResult error in errors.ReadAllAsync())
-                    {
-                        // TODO fix errors.
-                        if (error.ErrorType != ErrorType.ManifestFolder)
-                        {
-                            totalErrors.Add(error);
-                        }
-                    }
-                }
-
-                // Write the end of the array.
-                foreach (ISbomConfig config in filesArraySupportingSBOMs)
-                {
-                    config.JsonSerializer.EndJsonArray();
-                }
-
-                return totalErrors;
             }
+
+            foreach (var sourcesProvider in sourcesProviders)
+            {
+                var (jsondDocResults, errors) = sourcesProvider.Get(filesArraySupportingSBOMs);
+
+                await foreach (JsonDocWithSerializer jsonResults in jsondDocResults.ReadAllAsync())
+                {
+                    jsonResults.Serializer.Write(jsonResults.Document);
+                }
+
+                await foreach (FileValidationResult error in errors.ReadAllAsync())
+                {
+                    // TODO fix errors.
+                    if (error.ErrorType != ErrorType.ManifestFolder)
+                    {
+                        totalErrors.Add(error);
+                    }
+                }
+            }
+
+            // Write the end of the array.
+            foreach (ISbomConfig config in filesArraySupportingSBOMs)
+            {
+                config.JsonSerializer.EndJsonArray();
+            }
+
+            return totalErrors;
         }
     }
 }

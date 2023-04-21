@@ -11,50 +11,49 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Common.Config;
 using Serilog;
 
-namespace Microsoft.Sbom.Api.Providers.PackagesProviders
+namespace Microsoft.Sbom.Api.Providers.PackagesProviders;
+
+/// <summary>
+/// Provides a serialized list of packages given a list of <see cref="SbomPackage"/>.
+/// </summary>
+public class SBOMPackagesProvider : CommonPackagesProvider<SbomPackage>
 {
-    /// <summary>
-    /// Provides a serialized list of packages given a list of <see cref="SbomPackage"/>.
-    /// </summary>
-    public class SBOMPackagesProvider : CommonPackagesProvider<SbomPackage>
+    public SBOMPackagesProvider(
+        IConfiguration configuration,
+        ChannelUtils channelUtils,
+        ILogger logger,
+        ISbomConfigProvider sbomConfigs,
+        PackageInfoJsonWriter packageInfoJsonWriter)
+        : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter)
     {
-        public SBOMPackagesProvider(
-            IConfiguration configuration,
-            ChannelUtils channelUtils,
-            ILogger logger,
-            ISbomConfigProvider sbomConfigs,
-            PackageInfoJsonWriter packageInfoJsonWriter)
-            : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter)
-        {
-        }
+    }
 
-        public override bool IsSupported(ProviderType providerType)
+    public override bool IsSupported(ProviderType providerType)
+    {
+        if (providerType == ProviderType.Packages)
         {
-            if (providerType == ProviderType.Packages)
+            if (Configuration.PackagesList?.Value != null)
             {
-                if (Configuration.PackagesList?.Value != null)
-                {
-                    Log.Debug($"Using the {nameof(SBOMPackagesProvider)} provider for the packages workflow.");
-                    return true;
-                }
+                Log.Debug($"Using the {nameof(SBOMPackagesProvider)} provider for the packages workflow.");
+                return true;
             }
-
-            return false;
         }
 
-        protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) ConvertToJson(ChannelReader<SbomPackage> sourceChannel, IList<ISbomConfig> requiredConfigs)
-        {
-            IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
-            var (jsonDocCount, jsonErrors) = PackageInfoJsonWriter.Write(sourceChannel, requiredConfigs);
-            errors.Add(jsonErrors);
+        return false;
+    }
 
-            return (jsonDocCount, ChannelUtils.Merge(errors.ToArray()));
-        }
+    protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) ConvertToJson(ChannelReader<SbomPackage> sourceChannel, IList<ISbomConfig> requiredConfigs)
+    {
+        IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
+        var (jsonDocCount, jsonErrors) = PackageInfoJsonWriter.Write(sourceChannel, requiredConfigs);
+        errors.Add(jsonErrors);
 
-        protected override (ChannelReader<SbomPackage> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
-        {
-            var listWalker = new ListWalker<SbomPackage>();
-            return listWalker.GetComponents(Configuration.PackagesList.Value);
-        }
+        return (jsonDocCount, ChannelUtils.Merge(errors.ToArray()));
+    }
+
+    protected override (ChannelReader<SbomPackage> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
+    {
+        var listWalker = new ListWalker<SbomPackage>();
+        return listWalker.GetComponents(Configuration.PackagesList.Value);
     }
 }
