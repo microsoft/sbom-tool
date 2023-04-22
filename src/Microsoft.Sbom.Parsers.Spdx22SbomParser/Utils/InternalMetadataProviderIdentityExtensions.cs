@@ -34,15 +34,15 @@ public static class InternalMetadataProviderIdentityExtensions
         }
 
         // First check if the user provided a package name.
-        if (internalMetadataProvider.TryGetMetadata(MetadataKey.PackageName, out object packageName))
+        if (internalMetadataProvider.TryGetMetadata(MetadataKey.PackageName, out string packageName))
         {
-            return packageName as string;
+            return packageName;
         }
 
         // If the build name is provided, use it as the name.
-        if (internalMetadataProvider.TryGetMetadata(MetadataKey.Build_DefinitionName, out object buildDefName))
+        if (internalMetadataProvider.TryGetMetadata(MetadataKey.Build_DefinitionName, out string buildDefName))
         {
-            return buildDefName as string;
+            return buildDefName;
         }
 
         // Right now we don't have any better way to name the package. Throw an exception for the user to 
@@ -122,15 +122,15 @@ public static class InternalMetadataProviderIdentityExtensions
         }
 
         // First check if the user provided a package version.
-        if (internalMetadataProvider.TryGetMetadata(MetadataKey.PackageVersion, out object packageVersion))
+        if (internalMetadataProvider.TryGetMetadata(MetadataKey.PackageVersion, out string packageVersion))
         {
-            return packageVersion as string;
+            return packageVersion;
         }
 
         // If the build id is provided, use that as version.
-        if (internalMetadataProvider.TryGetMetadata(MetadataKey.Build_BuildId, out object buildId))
+        if (internalMetadataProvider.TryGetMetadata(MetadataKey.Build_BuildId, out string buildId))
         {
-            return buildId as string;
+            return buildId;
         }
 
         // Right now we don't have any better way to version the package. Throw an exception for the user to 
