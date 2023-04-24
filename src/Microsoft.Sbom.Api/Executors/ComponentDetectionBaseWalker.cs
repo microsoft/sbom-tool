@@ -58,7 +58,7 @@ namespace Microsoft.Sbom.Api.Executors
             // If the buildComponentDirPath is null or empty, make sure we have a ManifestDirPath and create a new temp directory with a random name.
             if (!fileSystemUtils.DirectoryExists(configuration.BuildComponentPath?.Value) && fileSystemUtils.DirectoryExists(configuration.ManifestDirPath?.Value))
             {
-                buildComponentDirPath = IFileSystemUtils.RandomTempPath;
+                buildComponentDirPath = fileSystemUtils.GetSbomToolTempPath();
                 Directory.CreateDirectory(buildComponentDirPath);
             }
 

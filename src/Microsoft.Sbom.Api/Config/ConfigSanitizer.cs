@@ -120,7 +120,7 @@ namespace Microsoft.Sbom.Api.Config
                 return new ConfigurationSetting<string>
                 {
                     Source = SettingSource.Default,
-                    Value = IFileSystemUtils.RandomTempPath,
+                    Value = fileSystemUtils.GetSbomToolTempPath(),
                 };
         }
 

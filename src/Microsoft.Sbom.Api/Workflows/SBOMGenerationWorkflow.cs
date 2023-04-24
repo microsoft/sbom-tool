@@ -94,7 +94,7 @@ namespace Microsoft.Sbom.Api.Workflows
                     await using (sbomConfigs.StartJsonSerializationAsync())
                     {
                         sbomConfigs.ApplyToEachConfig(config => config.JsonSerializer.StartJsonObject());
-
+                        
                         // Files section
                         validErrors = await fileArrayGenerator.GenerateAsync();
 
@@ -151,14 +151,14 @@ namespace Microsoft.Sbom.Api.Workflows
                     try
                     {
                         // Delete the generated temp folder if necessary 
-                        if (fileSystemUtils.DirectoryExists(IFileSystemUtils.RandomTempPath))
+                        if (fileSystemUtils.DirectoryExists(fileSystemUtils.GetSbomToolTempPath()))
                         {
-                            fileSystemUtils.DeleteDir(IFileSystemUtils.RandomTempPath, true);
+                            fileSystemUtils.DeleteDir(fileSystemUtils.GetSbomToolTempPath(), true);
                         }
                     }
                     catch (Exception e)
                     {
-                        log.Warning($"Unable to delete the temp directory {IFileSystemUtils.RandomTempPath}", e);
+                        log.Warning($"Unable to delete the temp directory {fileSystemUtils.GetSbomToolTempPath()}", e);
                     }          
                 }
             }
