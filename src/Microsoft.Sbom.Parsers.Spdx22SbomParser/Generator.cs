@@ -249,19 +249,19 @@ public class Generator : IManifestGenerator
         };
     }
 
-        private SPDXRelationshipType GetSPDXRelationshipType(RelationshipType relationshipType)
+    private SPDXRelationshipType GetSPDXRelationshipType(RelationshipType relationshipType)
+    {
+        switch (relationshipType)
         {
-            switch (relationshipType)
-            {
-                case RelationshipType.CONTAINS: return SPDXRelationshipType.CONTAINS;
-                case RelationshipType.DEPENDS_ON: return SPDXRelationshipType.DEPENDS_ON;
-                case RelationshipType.DESCRIBES: return SPDXRelationshipType.DESCRIBES;
-                case RelationshipType.PREREQUISITE_FOR: return SPDXRelationshipType.PREREQUISITE_FOR;
-                case RelationshipType.DESCRIBED_BY: return SPDXRelationshipType.DESCRIBED_BY;
-                case RelationshipType.PATCH_FOR: return SPDXRelationshipType.PATCH_FOR;
-                default:
-                    throw new NotImplementedException($"The relationship {relationshipType} is currently not " +
-                                                  $"mapped to any SPDX 2.2 relationship type.");
+            case RelationshipType.CONTAINS: return SPDXRelationshipType.CONTAINS;
+            case RelationshipType.DEPENDS_ON: return SPDXRelationshipType.DEPENDS_ON;
+            case RelationshipType.DESCRIBES: return SPDXRelationshipType.DESCRIBES;
+            case RelationshipType.PREREQUISITE_FOR: return SPDXRelationshipType.PREREQUISITE_FOR;
+            case RelationshipType.DESCRIBED_BY: return SPDXRelationshipType.DESCRIBED_BY;
+            case RelationshipType.PATCH_FOR: return SPDXRelationshipType.PATCH_FOR;
+            default:
+            throw new NotImplementedException($"The relationship {relationshipType} is currently not " +
+                                              $"mapped to any SPDX 2.2 relationship type.");
         }
     }
 
