@@ -101,16 +101,18 @@ public class ConfigSanitizer
         }
 
     private void ValidateBuildDropPathConfiguration(IConfiguration configuration)
+    {
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
         {
-            if (configuration.ManifestToolAction != ManifestToolActions.Validate && configuration.ManifestDirPath?.Value != null && configuration.DockerImagesToScan?.Value != null)
+            if (configuration.ManifestDirPath?.Value != null && configuration.DockerImagesToScan?.Value != null)
             {
                 return;
             }
-            else if (configuration.ManifestToolAction != ManifestToolActions.Validate && configuration.ManifestDirPath?.Value == null && configuration.BuildComponentPath?.Value == null && configuration.DockerImagesToScan?.Value != null)
+            else if (configuration.ManifestDirPath?.Value == null && configuration.BuildComponentPath?.Value == null && configuration.DockerImagesToScan?.Value != null)
             {
                 throw new ValidationArgException($"Please provide a (-m) if you intend to create an SBOM with only the contents of the Docker image or a (-bc) if you intend to include other components in your SBOM.");
             }
-            else if (configuration.ManifestToolAction != ManifestToolActions.Validate && configuration.ManifestDirPath?.Value == null && configuration.DockerImagesToScan?.Value != null)
+            else if (configuration.ManifestDirPath?.Value == null && configuration.DockerImagesToScan?.Value != null)
             {
                 throw new ValidationArgException($"Please provide a value for the ManifestDirPath (-m) parameter to generate the SBOM for the specified Docker image.");
             }
@@ -119,15 +121,20 @@ public class ConfigSanitizer
                 throw new ValidationArgException($"Please provide a value for the BuildDropPath (-b) parameter to generate the SBOM.");
             }
         }
+        else
+        {
+            throw new ValidationArgException($"Please provide a value for the BuildDropPath (-b) parameter.");
+        }
+    }
 
     private ConfigurationSetting<string> GetTempBuildDropPath(IConfiguration configuration)
+    {
+        return new ConfigurationSetting<string>
         {
-                return new ConfigurationSetting<string>
-                {
-                    Source = SettingSource.Default,
-                    Value = fileSystemUtils.GetSbomToolTempPath(),
-                };
-        }
+            Source = SettingSource.Default,
+            Value = fileSystemUtils.GetSbomToolTempPath(),
+        };
+    }
 
     private ConfigurationSetting<AlgorithmName> GetHashAlgorithmName(IConfiguration configuration)
     {

@@ -272,15 +272,15 @@ public class ManifestGenerationWorkflowTests
             new FileListEnumerator(fileSystemMock.Object, mockLogger.Object));
 
         var cgPackagesProvider = new CGScannedPackagesProvider(
-                configurationMock.Object,
-                new ChannelUtils(),
-                mockLogger.Object,
-                sbomConfigs,
-                new PackageInfoJsonWriter(
-                    manifestGeneratorProvider,
-                    mockLogger.Object),
-                packageInfoConverterMock.Object,
-                new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object));
+            configurationMock.Object,
+            new ChannelUtils(),
+            mockLogger.Object,
+            sbomConfigs,
+            new PackageInfoJsonWriter(
+                manifestGeneratorProvider,
+                mockLogger.Object),
+            packageInfoConverterMock.Object,
+            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object));
 
         var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider(
             configurationMock.Object,
