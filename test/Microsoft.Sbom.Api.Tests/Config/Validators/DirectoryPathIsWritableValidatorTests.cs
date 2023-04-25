@@ -9,45 +9,44 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PowerArgs;
 
-namespace Microsoft.Sbom.Api.Tests.Config.Validators
+namespace Microsoft.Sbom.Api.Tests.Config.Validators;
+
+[TestClass]
+public class DirectoryPathIsWritableValidatorTests
 {
-    [TestClass]
-    public class DirectoryPathIsWritableValidatorTests
+    private readonly Mock<IAssemblyConfig> mockAssemblyConfig = new Mock<IAssemblyConfig>();
+
+    [TestMethod]
+    [ExpectedException(typeof(ValidationArgException))]
+    public void WhenDirectoryDoesNotExistsThrows()
     {
-        private readonly Mock<IAssemblyConfig> mockAssemblyConfig = new Mock<IAssemblyConfig>();
+        var fileSystemUtilsMock = new Mock<IFileSystemUtils>();
+        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(false).Verifiable();
 
-        [TestMethod]
-        [ExpectedException(typeof(ValidationArgException))]
-        public void WhenDirectoryDoesNotExistsThrows()
-        {
-            var fileSystemUtilsMock = new Mock<IFileSystemUtils>();
-            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(false).Verifiable();
+        var validator = new DirectoryPathIsWritableValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object);
+        validator.ValidateInternal("property", "value", null);
+    }
 
-            var validator = new DirectoryPathIsWritableValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object);
-            validator.ValidateInternal("property", "value", null);
-        }
+    [TestMethod]
+    [ExpectedException(typeof(AccessDeniedValidationArgException))]
+    public void WhenDirectoryDoesNotHaveWriteAccessThrows()
+    {
+        var fileSystemUtilsMock = new Mock<IFileSystemUtils>();
+        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(false).Verifiable();
 
-        [TestMethod]
-        [ExpectedException(typeof(AccessDeniedValidationArgException))]
-        public void WhenDirectoryDoesNotHaveWriteAccessThrows()
-        {
-            var fileSystemUtilsMock = new Mock<IFileSystemUtils>();
-            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
-            fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(false).Verifiable();
+        var validator = new DirectoryPathIsWritableValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object);
+        validator.ValidateInternal("property", "value", null);
+    }
 
-            var validator = new DirectoryPathIsWritableValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object);
-            validator.ValidateInternal("property", "value", null);
-        }
+    [TestMethod]
+    public void WhenDirectoryHasWriteAccess()
+    {
+        var fileSystemUtilsMock = new Mock<IFileSystemUtils>();
+        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
 
-        [TestMethod]
-        public void WhenDirectoryHasWriteAccess()
-        {
-            var fileSystemUtilsMock = new Mock<IFileSystemUtils>();
-            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
-            fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
-
-            var validator = new DirectoryPathIsWritableValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object);
-            validator.ValidateInternal("property", "value", null);
-        }
+        var validator = new DirectoryPathIsWritableValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object);
+        validator.ValidateInternal("property", "value", null);
     }
 }

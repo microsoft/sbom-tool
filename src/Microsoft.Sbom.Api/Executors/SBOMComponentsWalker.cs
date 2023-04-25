@@ -1,7 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Utils;
@@ -23,13 +24,12 @@ namespace Microsoft.Sbom.Api.Executors
         {
         }
 
-        protected override IEnumerable<ScannedComponent> FilterScannedComponents(ScanResult result)
-        {
-            return result
-                .ComponentsFound
-                .Where(component => component.Component is SpdxComponent)
-                .Distinct(new ScannedComponentEqualityComparer())
-                .ToList();
-        }
+    protected override IEnumerable<ScannedComponent> FilterScannedComponents(ScanResult result)
+    {
+        return result
+            .ComponentsFound
+            .Where(component => component.Component is SpdxComponent)
+            .Distinct(new ScannedComponentEqualityComparer())
+            .ToList();
     }
 }

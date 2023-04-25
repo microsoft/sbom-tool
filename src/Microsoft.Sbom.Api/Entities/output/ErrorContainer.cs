@@ -3,22 +3,21 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Api.Entities.Output
+namespace Microsoft.Sbom.Api.Entities.Output;
+
+/// <summary>
+/// Error container for validation errors.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public class ErrorContainer<T>
 {
     /// <summary>
-    /// Error container for validation errors.
+    /// Gets or sets the total count of errors.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ErrorContainer<T>
-    {
-        /// <summary>
-        /// Gets or sets the total count of errors.
-        /// </summary>
-        public int Count { get; set; }
+    public int Count { get; set; }
 
-        /// <summary>
-        /// Gets or sets the list of errors.
-        /// </summary>
-        public IList<T> Errors { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the list of errors.
+    /// </summary>
+    public IList<T> Errors { get; set; }
 }

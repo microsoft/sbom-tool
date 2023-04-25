@@ -3,32 +3,31 @@
 
 using System;
 
-namespace Microsoft.Sbom.Entities
+namespace Microsoft.Sbom.Entities;
+
+/// <summary>
+/// A flag that denotes where the file is located, like on disk or inside an SBOM.
+/// </summary>
+[Flags]
+public enum FileLocation
 {
     /// <summary>
-    /// A flag that denotes where the file is located, like on disk or inside an SBOM.
+    /// File is not present anywhere.
     /// </summary>
-    [Flags]
-    public enum FileLocation
-    {
-        /// <summary>
-        /// File is not present anywhere.
-        /// </summary>
-        None,
+    None,
 
-        /// <summary>
-        /// File is only present on disk.
-        /// </summary>
-        OnDisk,
+    /// <summary>
+    /// File is only present on disk.
+    /// </summary>
+    OnDisk,
 
-        /// <summary>
-        /// File is only present inside a SBOM.
-        /// </summary>
-        InSbomFile,
+    /// <summary>
+    /// File is only present inside a SBOM.
+    /// </summary>
+    InSbomFile,
 
-        /// <summary>
-        /// File is present in both the SBOM and on disk.
-        /// </summary>
-        All = OnDisk | InSbomFile,
-    }
+    /// <summary>
+    /// File is present in both the SBOM and on disk.
+    /// </summary>
+    All = OnDisk | InSbomFile,
 }

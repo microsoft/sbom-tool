@@ -1,50 +1,49 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+using System.Collections.Generic;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Contracts.Interfaces;
-using System;
-using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Api.Hashing
+namespace Microsoft.Sbom.Api.Hashing;
+
+public class HashAlgorithmProvider : IHashAlgorithmProvider
 {
-    public class HashAlgorithmProvider : IHashAlgorithmProvider
+    private readonly IEnumerable<IAlgorithmNames> algorithmNamesList;
+    private readonly Dictionary<string, AlgorithmName> algorithmNameMap;
+
+    public HashAlgorithmProvider(IEnumerable<IAlgorithmNames> algorithmNamesList)
     {
-        private readonly IEnumerable<IAlgorithmNames> algorithmNamesList;
-        private readonly Dictionary<string, AlgorithmName> algorithmNameMap;
+        this.algorithmNamesList = algorithmNamesList ?? throw new ArgumentNullException(nameof(algorithmNamesList));
+        algorithmNameMap = new Dictionary<string, AlgorithmName>();
+        Init();
+    }
 
-        public HashAlgorithmProvider(IEnumerable<IAlgorithmNames> algorithmNamesList)
+    public void Init()
+    {
+        foreach (var algorithmNames in algorithmNamesList)
         {
-            this.algorithmNamesList = algorithmNamesList ?? throw new ArgumentNullException(nameof(algorithmNamesList));
-            algorithmNameMap = new Dictionary<string, AlgorithmName>();
-            Init();
-        }
-
-        public void Init()
-        {
-            foreach (var algorithmNames in algorithmNamesList)
+            foreach (var algorithmName in algorithmNames.GetAlgorithmNames())
             {
-                foreach (var algorithmName in algorithmNames.GetAlgorithmNames())
-                {
-                    algorithmNameMap[algorithmName.Name.ToLowerInvariant()] = algorithmName;
-                }
+                algorithmNameMap[algorithmName.Name.ToLowerInvariant()] = algorithmName;
             }
         }
+    }
 
-        public AlgorithmName Get(string algorithmName)
+    public AlgorithmName Get(string algorithmName)
+    {
+        if (string.IsNullOrWhiteSpace(algorithmName))
         {
-            if (string.IsNullOrWhiteSpace(algorithmName))
-            {
-                throw new ArgumentException($"'{nameof(algorithmName)}' cannot be null or whitespace.", nameof(algorithmName));
-            }
-
-            if (algorithmNameMap.TryGetValue(algorithmName.ToLowerInvariant(), out AlgorithmName value))
-            {
-                return value;
-            }
-
-            throw new UnsupportedHashAlgorithmException($"Unsupported hash algorithm {algorithmName}");
+            throw new ArgumentException($"'{nameof(algorithmName)}' cannot be null or whitespace.", nameof(algorithmName));
         }
+
+        if (algorithmNameMap.TryGetValue(algorithmName.ToLowerInvariant(), out AlgorithmName value))
+        {
+            return value;
+        }
+
+        throw new UnsupportedHashAlgorithmException($"Unsupported hash algorithm {algorithmName}");
     }
 }

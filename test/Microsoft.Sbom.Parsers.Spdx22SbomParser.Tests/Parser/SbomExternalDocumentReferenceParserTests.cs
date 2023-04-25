@@ -1,11 +1,11 @@
+using System;
+using System.IO;
+using System.Text;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using System.Text;
 
 namespace Microsoft.Sbom.Parser;
 

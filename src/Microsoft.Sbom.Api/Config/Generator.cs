@@ -8,48 +8,47 @@ using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
 
-namespace Microsoft.Sbom.Api.Config
+namespace Microsoft.Sbom.Api.Config;
+
+public class Generator : ISbomService<GenerationArgs>
 {
-    public class Generator : ISbomService<GenerationArgs>
+    private readonly IWorkflow<SbomGenerationWorkflow> generationWorkflow;
+
+    private readonly IRecorder recorder;
+
+    public Generator(
+        IWorkflow<SbomGenerationWorkflow> generationWorkflow,
+        IRecorder recorder) 
     {
-        private readonly IWorkflow<SbomGenerationWorkflow> generationWorkflow;
+        this.generationWorkflow = generationWorkflow;
+        this.recorder = recorder;
+    }
 
-        private readonly IRecorder recorder;
+    public async Task<(bool IsFailed, bool IsAccessError)> Generate()
+    {
+        bool isFailed;
+        bool isAccessError = default;
 
-        public Generator(
-            IWorkflow<SbomGenerationWorkflow> generationWorkflow,
-            IRecorder recorder) 
+        try
         {
-            this.generationWorkflow = generationWorkflow;
-            this.recorder = recorder;
+            var result = await generationWorkflow.RunAsync();
+            await recorder.FinalizeAndLogTelemetryAsync();
+            isFailed = !result;
+        }
+        catch (AccessDeniedValidationArgException e)
+        {
+            var message = e.InnerException != null ? e.InnerException.Message : e.Message;
+            Console.WriteLine($"Encountered error while running ManifestTool generation workflow. Error: {message}");
+            isFailed = true;
+            isAccessError = true;
+        }
+        catch (Exception e)
+        {
+            var message = e.InnerException != null ? e.InnerException.Message : e.Message;
+            Console.WriteLine($"Encountered error while running ManifestTool generation workflow. Error: {message}");
+            isFailed = true;
         }
 
-        public async Task<(bool IsFailed, bool IsAccessError)> Generate()
-        {
-            bool isFailed;
-            bool isAccessError = default;
-
-            try
-            {
-                var result = await generationWorkflow.RunAsync();
-                await recorder.FinalizeAndLogTelemetryAsync();
-                isFailed = !result;
-            }
-            catch (AccessDeniedValidationArgException e)
-            {
-                var message = e.InnerException != null ? e.InnerException.Message : e.Message;
-                Console.WriteLine($"Encountered error while running ManifestTool generation workflow. Error: {message}");
-                isFailed = true;
-                isAccessError = true;
-            }
-            catch (Exception e)
-            {
-                var message = e.InnerException != null ? e.InnerException.Message : e.Message;
-                Console.WriteLine($"Encountered error while running ManifestTool generation workflow. Error: {message}");
-                isFailed = true;
-            }
-
-            return (IsFailed: isFailed, IsAccessError: isAccessError);
-        }
+        return (IsFailed: isFailed, IsAccessError: isAccessError);
     }
 }

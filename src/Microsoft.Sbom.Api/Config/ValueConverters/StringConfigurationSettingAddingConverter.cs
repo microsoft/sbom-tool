@@ -4,32 +4,31 @@
 using AutoMapper;
 using Microsoft.Sbom.Common.Config;
 
-namespace Microsoft.Sbom.Api.Config.ValueConverters
+namespace Microsoft.Sbom.Api.Config.ValueConverters;
+
+/// <summary>
+/// Converts a string member to a ConfigurationSetting decorated string member.
+/// </summary>
+internal class StringConfigurationSettingAddingConverter : IValueConverter<string, ConfigurationSetting<string>>
 {
-    /// <summary>
-    /// Converts a string member to a ConfigurationSetting decorated string member.
-    /// </summary>
-    internal class StringConfigurationSettingAddingConverter : IValueConverter<string, ConfigurationSetting<string>>
+    private readonly SettingSource settingSource;
+
+    public StringConfigurationSettingAddingConverter(SettingSource settingSource)
     {
-        private readonly SettingSource settingSource;
+        this.settingSource = settingSource;
+    }
 
-        public StringConfigurationSettingAddingConverter(SettingSource settingSource)
+    public ConfigurationSetting<string> Convert(string sourceMember, ResolutionContext context)
+    {
+        if (string.IsNullOrEmpty(sourceMember))
         {
-            this.settingSource = settingSource;
+            return null;
         }
 
-        public ConfigurationSetting<string> Convert(string sourceMember, ResolutionContext context)
+        return new ConfigurationSetting<string>
         {
-            if (string.IsNullOrEmpty(sourceMember))
-            {
-                return null;
-            }
-
-            return new ConfigurationSetting<string>
-            {
-                Source = settingSource,
-                Value = sourceMember
-            };
-        }
+            Source = settingSource,
+            Value = sourceMember
+        };
     }
 }

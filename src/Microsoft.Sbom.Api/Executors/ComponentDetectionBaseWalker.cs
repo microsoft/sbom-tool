@@ -1,11 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Api.Config.Extensions;
-using Microsoft.Sbom.Extensions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Channels;
+using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Common;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
@@ -32,7 +36,7 @@ namespace Microsoft.Sbom.Api.Executors
         private readonly ISbomConfigProvider sbomConfigs;
         private readonly IFileSystemUtils fileSystemUtils;
 
-        private ComponentDetectionCliArgumentBuilder cliArgumentBuilder;
+    private ComponentDetectionCliArgumentBuilder cliArgumentBuilder;
 
         public ComponentDetectionBaseWalker(
             ILogger log,
@@ -62,79 +66,78 @@ namespace Microsoft.Sbom.Api.Executors
                 Directory.CreateDirectory(buildComponentDirPath);
             }
 
-            var verbosity = configuration.Verbosity.Value switch
+        var verbosity = configuration.Verbosity.Value switch
+        {
+            LogEventLevel.Verbose => VerbosityMode.Verbose,
+            _ => VerbosityMode.Normal,
+        };
+
+        cliArgumentBuilder = new ComponentDetectionCliArgumentBuilder().Scan().Verbosity(verbosity);
+
+        // Enable SPDX22 detector which is disabled by default.
+        cliArgumentBuilder.AddDetectorArg("SPDX22SBOM", "EnableIfDefaultOff");
+
+        if (sbomConfigs.TryGet(Constants.SPDX22ManifestInfo, out ISbomConfig spdxSbomConfig))
+        {
+            var directory = Path.GetDirectoryName(spdxSbomConfig.ManifestJsonFilePath);
+            if (!string.IsNullOrEmpty(directory))
             {
-                LogEventLevel.Verbose => VerbosityMode.Verbose,
-                _ => VerbosityMode.Normal,
-            };
-
-            cliArgumentBuilder = new ComponentDetectionCliArgumentBuilder().Scan().Verbosity(verbosity);
-
-            // Enable SPDX22 detector which is disabled by default.
-            cliArgumentBuilder.AddDetectorArg("SPDX22SBOM", "EnableIfDefaultOff");
-
-            if (sbomConfigs.TryGet(Constants.SPDX22ManifestInfo, out ISbomConfig spdxSbomConfig))
-            {
-                var directory = Path.GetDirectoryName(spdxSbomConfig.ManifestJsonFilePath);
-                if (!string.IsNullOrEmpty(directory))
-                {
-                    cliArgumentBuilder.AddArg("DirectoryExclusionList", directory);
-                }
+                cliArgumentBuilder.AddArg("DirectoryExclusionList", directory);
             }
+        }
 
-            var output = Channel.CreateUnbounded<ScannedComponent>();
-            var errors = Channel.CreateUnbounded<ComponentDetectorException>();
+        var output = Channel.CreateUnbounded<ScannedComponent>();
+        var errors = Channel.CreateUnbounded<ComponentDetectorException>();
 
-            if (string.IsNullOrEmpty(buildComponentDirPath))
-            {
-                output.Writer.Complete();
-                errors.Writer.Complete();
-                return (output, errors);
-            }
-
-            async Task Scan(string path)
-            {
-                cliArgumentBuilder.SourceDirectory(buildComponentDirPath);
-                var cmdLineParams = configuration.ToComponentDetectorCommandLineParams(cliArgumentBuilder);
-
-                var scanResult = await componentDetector.ScanAsync(cmdLineParams);
-
-                if (scanResult.ResultCode != ProcessingResultCode.Success)
-                {
-                    await errors.Writer.WriteAsync(new ComponentDetectorException($"Component detector failed. Result: {scanResult.ResultCode}."));
-                    return;
-                }
-
-                var uniqueComponents = FilterScannedComponents(scanResult);
-
-                foreach (var component in uniqueComponents)
-                {
-                    await output.Writer.WriteAsync(component);
-                }
-            }
-
-            Task.Run(async () =>
-            {
-                try
-                {
-                    await Scan(buildComponentDirPath);
-                }
-                catch (Exception e)
-                {
-                    log.Error($"Unknown error while running CD scan: {e}");
-                    await errors.Writer.WriteAsync(new ComponentDetectorException("Unknown exception", e));
-                    return;
-                }
-                finally
-                {
-                    output.Writer.Complete();
-                    errors.Writer.Complete();
-                }
-            });
-
+        if (string.IsNullOrEmpty(buildComponentDirPath))
+        {
+            output.Writer.Complete();
+            errors.Writer.Complete();
             return (output, errors);
         }
 
-        protected abstract IEnumerable<ScannedComponent> FilterScannedComponents(ScanResult result);
+        async Task Scan(string path)
+        {
+            cliArgumentBuilder.SourceDirectory(buildComponentDirPath);
+            var cmdLineParams = configuration.ToComponentDetectorCommandLineParams(cliArgumentBuilder);
+
+            var scanResult = await componentDetector.ScanAsync(cmdLineParams);
+
+            if (scanResult.ResultCode != ProcessingResultCode.Success)
+            {
+                await errors.Writer.WriteAsync(new ComponentDetectorException($"Component detector failed. Result: {scanResult.ResultCode}."));
+                return;
+            }
+
+            var uniqueComponents = FilterScannedComponents(scanResult);
+
+            foreach (var component in uniqueComponents)
+            {
+                await output.Writer.WriteAsync(component);
+            }
+        }
+
+        Task.Run(async () =>
+        {
+            try
+            {
+                await Scan(buildComponentDirPath);
+            }
+            catch (Exception e)
+            {
+                log.Error($"Unknown error while running CD scan: {e}");
+                await errors.Writer.WriteAsync(new ComponentDetectorException("Unknown exception", e));
+                return;
+            }
+            finally
+            {
+                output.Writer.Complete();
+                errors.Writer.Complete();
+            }
+        });
+
+        return (output, errors);
     }
+
+    protected abstract IEnumerable<ScannedComponent> FilterScannedComponents(ScanResult result);
 }

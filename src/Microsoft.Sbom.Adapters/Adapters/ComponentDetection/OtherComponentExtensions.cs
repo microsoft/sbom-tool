@@ -3,31 +3,29 @@
 
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
-using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Adapters.ComponentDetection
+namespace Microsoft.Sbom.Adapters.ComponentDetection;
+
+/// <summary>
+/// Extensions methods for <see cref="OtherComponent"/>.
+/// </summary>
+internal static class OtherComponentExtensions
 {
     /// <summary>
-    /// Extensions methods for <see cref="OtherComponent"/>.
+    /// Converts a <see cref="OtherComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    internal static class OtherComponentExtensions
+    public static SbomPackage? ToSbomPackage(this OtherComponent otherComponent) => new ()
     {
-        /// <summary>
-        /// Converts a <see cref="OtherComponent"/> to an <see cref="SbomPackage"/>.
-        /// </summary>
-        public static SbomPackage? ToSbomPackage(this OtherComponent otherComponent) => new ()
+        Id = otherComponent.Id,
+        PackageUrl = otherComponent.PackageUrl?.ToString(),
+        PackageName = otherComponent.Name,
+        PackageVersion = otherComponent.Version,
+        PackageSource = otherComponent.DownloadUrl?.ToString(),
+        Checksum = new[] 
         {
-            Id = otherComponent.Id,
-            PackageUrl = otherComponent.PackageUrl?.ToString(),
-            PackageName = otherComponent.Name,
-            PackageVersion = otherComponent.Version,
-            PackageSource = otherComponent.DownloadUrl?.ToString(),
-            Checksum = new[] 
-            {
-                new Checksum { ChecksumValue = otherComponent.Hash },
-            },
-            FilesAnalyzed = false,
-            Type = "other"
-        };
-    }
+            new Checksum { ChecksumValue = otherComponent.Hash },
+        },
+        FilesAnalyzed = false,
+        Type = "other"
+    };
 }

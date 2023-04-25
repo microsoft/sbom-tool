@@ -3,25 +3,24 @@
 
 using System;
 
-namespace Microsoft.Sbom.Api.Exceptions
+namespace Microsoft.Sbom.Api.Exceptions;
+
+/// <summary>
+/// Thrown when the manifest tool is unable to serialize the SBOM component.
+/// </summary>
+[Serializable]
+public class ManifestToolSerializerException : Exception
 {
-    /// <summary>
-    /// Thrown when the manifest tool is unable to serialize the SBOM component.
-    /// </summary>
-    [Serializable]
-    public class ManifestToolSerializerException : Exception
-    {
-        public ManifestToolSerializerException() { }
+    public ManifestToolSerializerException() { }
 
-        public ManifestToolSerializerException(string message)
-            : base(message) { }
+    public ManifestToolSerializerException(string message)
+        : base(message) { }
 
-        public ManifestToolSerializerException(string message, Exception inner)
-            : base(message, inner) { }
+    public ManifestToolSerializerException(string message, Exception inner)
+        : base(message, inner) { }
 
-        protected ManifestToolSerializerException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context)
-            : base(info, context) { }
-    }
+    protected ManifestToolSerializerException(
+        System.Runtime.Serialization.SerializationInfo info,
+        System.Runtime.Serialization.StreamingContext context)
+        : base(info, context) { }
 }

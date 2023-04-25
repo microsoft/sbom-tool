@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
@@ -31,29 +32,28 @@ using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using System.Collections.Concurrent;
 using ILogger = Serilog.ILogger;
 
-namespace Microsoft.Sbom.Extensions.DependencyInjection
-{
-    public static class ServiceCollectionExtensions
-    {
-        public static IServiceCollection AddSbomConfiguration(this IServiceCollection services, InputConfiguration inputConfiguration, LogEventLevel logLevel = LogEventLevel.Information)
-        {
-            ArgumentNullException.ThrowIfNull(inputConfiguration);
-            services
-                .AddSingleton(_ =>
-                {
-                    inputConfiguration.ToConfiguration();
-                    return inputConfiguration;
-                })
-                .AddSbomTool(logLevel);
-            return services;
-        }
+namespace Microsoft.Sbom.Extensions.DependencyInjection;
 
-        public static IServiceCollection AddSbomTool(this IServiceCollection services, LogEventLevel logLevel = LogEventLevel.Information)
-        {
-            services
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection AddSbomConfiguration(this IServiceCollection services, InputConfiguration inputConfiguration, LogEventLevel logLevel = LogEventLevel.Information)
+    {
+        ArgumentNullException.ThrowIfNull(inputConfiguration);
+        services
+            .AddSingleton(_ =>
+            {
+                inputConfiguration.ToConfiguration();
+                return inputConfiguration;
+            })
+            .AddSbomTool(logLevel);
+        return services;
+    }
+
+    public static IServiceCollection AddSbomTool(this IServiceCollection services, LogEventLevel logLevel = LogEventLevel.Information)
+    {
+        services
             .AddSingleton<IConfiguration, Configuration>()
             .AddTransient(_ => FileSystemUtilsProvider.CreateInstance())
             .AddTransient<ILogger>(x =>
@@ -123,7 +123,7 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
             .AddAutoMapper(x => x.AddProfile(new ConfigurationProfile()), typeof(ConfigValidator), typeof(ConfigSanitizer))
             .Scan(scan => scan.FromApplicationDependencies()
                 .AddClasses(classes => classes.AssignableTo<ConfigValidator>())
-                    .As<ConfigValidator>()
+                .As<ConfigValidator>()
                 .AddClasses(classes => classes.AssignableToAny(
                     typeof(IAlgorithmNames),
                     typeof(IManifestConfigHandler),
@@ -155,7 +155,6 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
                 return manifestData;          
             }); 
 
-            return services;
-        }
+        return services;
     }
 }
