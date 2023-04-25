@@ -102,7 +102,7 @@ If at generation the SBOM was created using the following parameters:
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -m c:\sboms
 ```
 
-Then the sbom will not be found at the default location. In order to allow the tool to validate the SBOM at the different location you must provide the path to the `_manifest` that was created in that directory. So in order to validate in this scenario you can run:
+Then the sbom will not be found at the default location. In order to allow the tool to validate the SBOM at the different location you must provide the path to the `_manifest` that was created in that directory:
 
 ```
 ./sbom-tool-win-x64.exe validate -b c:\outputDrop -o c:\validationOutputPath\output.json -mi SPDX:2.2 -m c:\sboms\_manifest
