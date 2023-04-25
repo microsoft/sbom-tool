@@ -271,7 +271,7 @@ public class ManifestGenerationWorkflowTests
             new InternalSBOMFileInfoDeduplicator(),
             new FileListEnumerator(fileSystemMock.Object, mockLogger.Object));
 
-            var cgPackagesProvider = new CGScannedPackagesProvider(
+        var cgPackagesProvider = new CGScannedPackagesProvider(
                 configurationMock.Object,
                 new ChannelUtils(),
                 mockLogger.Object,
@@ -407,8 +407,7 @@ public class ManifestGenerationWorkflowTests
 
         var result = await workflow.RunAsync();
 
-            fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Once);
-            Assert.IsFalse(result);
-        }
+        fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Once);
+        Assert.IsFalse(result);
     }
 }

@@ -50,14 +50,14 @@ public class ConfigSanitizer
             .WriteTo.Console(outputTemplate: Constants.LoggerTemplate)
             .CreateLogger();
 
-            // If BuildDropPath is null then run the logic to check whether it is required or not based on the current configuration.
-            if (configuration.BuildDropPath?.Value == null || (configuration.DockerImagesToScan?.Value != null && configuration.BuildComponentPath?.Value == null))
-            {
+        // If BuildDropPath is null then run the logic to check whether it is required or not based on the current configuration.
+        if (configuration.BuildDropPath?.Value == null || (configuration.DockerImagesToScan?.Value != null && configuration.BuildComponentPath?.Value == null))
+        {
                 ValidateBuildDropPathConfiguration(configuration);
                 configuration.BuildDropPath = GetTempBuildDropPath(configuration);
-            }
+        }
 
-            configuration.HashAlgorithm = GetHashAlgorithmName(configuration);
+        configuration.HashAlgorithm = GetHashAlgorithmName(configuration);
 
         // set ManifestDirPath after validation of DirectoryExist and DirectoryPathIsWritable, this wouldn't exist because it needs to be created by the tool.
         configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath.Value, configuration.ManifestToolAction);
@@ -90,7 +90,7 @@ public class ConfigSanitizer
             throw new ValidationArgException($"Please provide a value for the ManifestInfo (-mi) parameter to validate the SBOM.");
         }
 
-            return new ConfigurationSetting<IList<ManifestInfo>>
+        return new ConfigurationSetting<IList<ManifestInfo>>
             {
                 Source = SettingSource.Default,
                 Value = new List<ManifestInfo>()
@@ -100,7 +100,7 @@ public class ConfigSanitizer
             };
         }
 
-        private void ValidateBuildDropPathConfiguration(IConfiguration configuration)
+    private void ValidateBuildDropPathConfiguration(IConfiguration configuration)
         {
             if (configuration.ManifestToolAction != ManifestToolActions.Validate && configuration.ManifestDirPath?.Value != null && configuration.DockerImagesToScan?.Value != null)
             {
@@ -120,7 +120,7 @@ public class ConfigSanitizer
             }
         }
 
-        private ConfigurationSetting<string> GetTempBuildDropPath(IConfiguration configuration)
+    private ConfigurationSetting<string> GetTempBuildDropPath(IConfiguration configuration)
         {
                 return new ConfigurationSetting<string>
                 {

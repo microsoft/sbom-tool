@@ -51,21 +51,21 @@ public abstract class ConfigValidator
         }
 
             // If default value for namespace base uri is provided in the assembly info, skip value check requirements.
-            if (propertyName == nameof(IConfiguration.NamespaceUriBase) && !string.IsNullOrEmpty(assemblyConfig.DefaultSBOMNamespaceBaseUri))
-            {
-                return;
-            }
+        if (propertyName == nameof(IConfiguration.NamespaceUriBase) && !string.IsNullOrEmpty(assemblyConfig.DefaultSBOMNamespaceBaseUri))
+        {
+            return;
+        }
             
-            if (propertyName == nameof(IConfiguration.PackageSupplier) && !string.IsNullOrEmpty(assemblyConfig.DefaultPackageSupplier))
-            {
-                return;
-            }
+        if (propertyName == nameof(IConfiguration.PackageSupplier) && !string.IsNullOrEmpty(assemblyConfig.DefaultPackageSupplier))
+        {
+            return;
+        }
 
-            // Skip validation of (-b) when it is null, validation for this scenario will happen in the ConfigSanitizer.
-            if (propertyName == nameof(IConfiguration.BuildDropPath) && propertyValue == null)
-            {
-                return;
-            }
+        // Skip validation of (-b) when it is null, validation for this scenario will happen in the ConfigSanitizer.
+        if (propertyName == nameof(IConfiguration.BuildDropPath) && propertyValue == null)
+        {
+            return;
+        }
 
         switch (propertyValue)
         {
