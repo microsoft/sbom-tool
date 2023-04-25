@@ -6,25 +6,25 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 
-namespace Microsoft.Sbom.Common
-{
-    /// <summary>
-    /// A wrapper class to make the filesystem methods unit testable.
-    /// </summary>
-    public abstract class FileSystemUtils : IFileSystemUtils
-    {
-        private readonly EnumerationOptions dontFollowSymlinks = new EnumerationOptions
-        {
-            AttributesToSkip = FileAttributes.ReparsePoint
-        };
+namespace Microsoft.Sbom.Common;
 
-        private static readonly string SbomToolTempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+/// <summary>
+/// A wrapper class to make the filesystem methods unit testable.
+/// </summary>
+public abstract class FileSystemUtils : IFileSystemUtils
+{
+    private readonly EnumerationOptions dontFollowSymlinks = new EnumerationOptions
+    {
+        AttributesToSkip = FileAttributes.ReparsePoint
+    };
+
+    private static readonly string SbomToolTempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
     private const string SearchAllFilesAndFolders = "*";
 
-        public bool DirectoryExists(string path) => Directory.Exists(path);
+    public bool DirectoryExists(string path) => Directory.Exists(path);
 
-        public string GetSbomToolTempPath() => SbomToolTempPath;
+    public string GetSbomToolTempPath() => SbomToolTempPath;
 
     public IEnumerable<string> GetDirectories(string path, bool followSymlinks = true) => followSymlinks switch
     {
