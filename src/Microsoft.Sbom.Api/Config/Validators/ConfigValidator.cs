@@ -50,12 +50,12 @@ public abstract class ConfigValidator
             return;
         }
 
-            // If default value for namespace base uri is provided in the assembly info, skip value check requirements.
-        if (propertyName == nameof(IConfiguration.NamespaceUriBase) && !string.IsNullOrEmpty(assemblyConfig.DefaultSBOMNamespaceBaseUri))
+        // Skip validation of the NamespaceUriBase if it is empty or has a default provided by the assembly info, This case is handled in the ConfigSanitizer.
+        if (propertyName == nameof(IConfiguration.NamespaceUriBase) && NamespaceUriBaseIsNullOrHasDefaultValue(propertyValue))
         {
             return;
         }
-            
+
         if (propertyName == nameof(IConfiguration.PackageSupplier) && !string.IsNullOrEmpty(assemblyConfig.DefaultPackageSupplier))
         {
             return;
