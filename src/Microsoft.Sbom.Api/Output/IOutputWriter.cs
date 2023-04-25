@@ -3,15 +3,14 @@
 
 using System.Threading.Tasks;
 
-namespace Microsoft.Sbom.Api.Output
+namespace Microsoft.Sbom.Api.Output;
+
+public interface IOutputWriter
 {
-    public interface IOutputWriter
-    {
-        /// <summary>
-        /// Writes a string to a file asynchronously.
-        /// </summary>
-        /// <param name="output"></param>
-        /// <returns></returns>
-        Task WriteAsync(string output);
-    }
+    /// <summary>
+    /// Writes a string to a file asynchronously.
+    /// </summary>
+    /// <param name="output"></param>
+    /// <returns></returns>
+    Task WriteAsync(string output);
 }

@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Hashing;
@@ -15,93 +18,89 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using EntityErrorType = Microsoft.Sbom.Contracts.Enums.ErrorType;
 
-namespace Microsoft.Sbom.Api.Tests
+namespace Microsoft.Sbom.Api.Tests;
+
+[TestClass]
+public class SBOMGeneratorTest
 {
-    [TestClass]
-    public class SBOMGeneratorTest
+    private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
+    private SbomGenerator generator;
+    private Mock<IWorkflow<SbomGenerationWorkflow>> mockWorkflow;
+    private Mock<IRecorder> mockRecorder;
+    private Mock<ManifestGeneratorProvider> mockGeneratorProvider;
+    private Mock<ConfigSanitizer> mockSanitizer;
+    private Mock<IHashAlgorithmProvider> mockHashAlgorithmProvider;
+    private Mock<IAssemblyConfig> mockAssemblyConfig;
+    private RuntimeConfiguration runtimeConfiguration;
+    private Mock<IConfiguration> mockConfiguration;
+
+    [TestInitialize]
+    public void Setup()
     {
-        private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
-        private SbomGenerator generator;
-        private Mock<IWorkflow<SbomGenerationWorkflow>> mockWorkflow;
-        private Mock<IRecorder> mockRecorder;
-        private Mock<ManifestGeneratorProvider> mockGeneratorProvider;
-        private Mock<ConfigSanitizer> mockSanitizer;
-        private Mock<IHashAlgorithmProvider> mockHashAlgorithmProvider;
-        private Mock<IAssemblyConfig> mockAssemblyConfig;
-        private RuntimeConfiguration runtimeConfiguration;
-        private Mock<IConfiguration> mockConfiguration;
+        fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
+        fileSystemMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
+        fileSystemMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
+        fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
 
-        [TestInitialize]
-        public void Setup()
+        mockWorkflow = new Mock<IWorkflow<SbomGenerationWorkflow>>();
+        mockRecorder = new Mock<IRecorder>();
+        mockGeneratorProvider = new Mock<ManifestGeneratorProvider>(null);
+        mockHashAlgorithmProvider = new Mock<IHashAlgorithmProvider>();
+        mockAssemblyConfig = new Mock<IAssemblyConfig>();
+        mockConfiguration = new Mock<IConfiguration>();
+
+        mockSanitizer = new Mock<ConfigSanitizer>(mockHashAlgorithmProvider.Object, fileSystemMock.Object, mockAssemblyConfig.Object);
+
+        runtimeConfiguration = new RuntimeConfiguration
         {
-            fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
-            fileSystemMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
-            fileSystemMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
-            fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
+            NamespaceUriBase = "https://base.uri"
+        };
+    }
 
-            mockWorkflow = new Mock<IWorkflow<SbomGenerationWorkflow>>();
-            mockRecorder = new Mock<IRecorder>();
-            mockGeneratorProvider = new Mock<ManifestGeneratorProvider>(null);
-            mockHashAlgorithmProvider = new Mock<IHashAlgorithmProvider>();
-            mockAssemblyConfig = new Mock<IAssemblyConfig>();
-            mockConfiguration = new Mock<IConfiguration>();
-
-            mockSanitizer = new Mock<ConfigSanitizer>(mockHashAlgorithmProvider.Object, fileSystemMock.Object, mockAssemblyConfig.Object);
-
-            runtimeConfiguration = new RuntimeConfiguration
-            {
-                NamespaceUriBase = "https://base.uri"
-            };
-        }
-
-        [TestMethod]
-        public async Task When_GenerateSbomAsync_WithRecordedErrors_Then_PopulateEntityErrors()
+    [TestMethod]
+    public async Task When_GenerateSbomAsync_WithRecordedErrors_Then_PopulateEntityErrors()
+    {
+        var fileValidationResults = new List<FileValidationResult>
         {
-            var fileValidationResults = new List<FileValidationResult>
-            {
-                new FileValidationResult() { Path = "random", ErrorType = ErrorType.Other }
-            };
+            new FileValidationResult() { Path = "random", ErrorType = ErrorType.Other }
+        };
 
-            mockRecorder.Setup(c => c.Errors).Returns(fileValidationResults).Verifiable();
-            mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
+        mockRecorder.Setup(c => c.Errors).Returns(fileValidationResults).Verifiable();
+        mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
 
-            var metadata = new SBOMMetadata()
-            {
-                PackageSupplier = "Contoso"
-            };
-
-            generator = new SbomGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
-            var result = await generator.GenerateSbomAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
-
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.AreEqual(EntityErrorType.Other, result.Errors[0].ErrorType);
-            Assert.AreEqual("random", ((FileEntity)result.Errors[0].Entity).Path);
-            mockRecorder.Verify();
-            mockWorkflow.Verify();
-        }
-
-        [TestMethod]
-        public async Task When_GenerateSbomAsync_WithNoRecordedErrors_Then_EmptyEntityErrors()
+        var metadata = new SBOMMetadata()
         {
-            mockRecorder.Setup(c => c.Errors).Returns(new List<FileValidationResult>()).Verifiable();
-            mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
+            PackageSupplier = "Contoso"
+        };
 
-            var metadata = new SBOMMetadata()
-            {
-                PackageSupplier = "Contoso"
-            };
+        generator = new SbomGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
+        var result = await generator.GenerateSbomAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
 
-            generator = new SbomGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
-            var result = await generator.GenerateSbomAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
+        Assert.AreEqual(1, result.Errors.Count);
+        Assert.AreEqual(EntityErrorType.Other, result.Errors[0].ErrorType);
+        Assert.AreEqual("random", ((FileEntity)result.Errors[0].Entity).Path);
+        mockRecorder.Verify();
+        mockWorkflow.Verify();
+    }
 
-            Assert.AreEqual(0, result.Errors.Count);
-            mockRecorder.Verify();
-            mockWorkflow.Verify();
-        }
+    [TestMethod]
+    public async Task When_GenerateSbomAsync_WithNoRecordedErrors_Then_EmptyEntityErrors()
+    {
+        mockRecorder.Setup(c => c.Errors).Returns(new List<FileValidationResult>()).Verifiable();
+        mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
+
+        var metadata = new SBOMMetadata()
+        {
+            PackageSupplier = "Contoso"
+        };
+
+        generator = new SbomGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
+        var result = await generator.GenerateSbomAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
+
+        Assert.AreEqual(0, result.Errors.Count);
+        mockRecorder.Verify();
+        mockWorkflow.Verify();
     }
 }

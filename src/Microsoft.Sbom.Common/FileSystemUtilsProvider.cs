@@ -3,23 +3,22 @@
 
 using System.Runtime.InteropServices;
 
-namespace Microsoft.Sbom.Common
+namespace Microsoft.Sbom.Common;
+
+/// <summary>
+/// Provides the <see cref="IFileSystemUtils"/> for a given OS.
+/// </summary>
+public static class FileSystemUtilsProvider
 {
     /// <summary>
-    /// Provides the <see cref="IFileSystemUtils"/> for a given OS.
+    /// Checks the OS to provide the correct <see cref="IFileSystemUtils"/>.
+    /// This is important due to the different file systems of operating systems.
     /// </summary>
-    public static class FileSystemUtilsProvider
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static IFileSystemUtils CreateInstance()
     {
-        /// <summary>
-        /// Checks the OS to provide the correct <see cref="IFileSystemUtils"/>.
-        /// This is important due to the different file systems of operating systems.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public static IFileSystemUtils CreateInstance()
-        {
-            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-            return isWindows ? new WindowsFileSystemUtils() : new UnixFileSystemUtils();
-        }
+        bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        return isWindows ? new WindowsFileSystemUtils() : new UnixFileSystemUtils();
     }
 }

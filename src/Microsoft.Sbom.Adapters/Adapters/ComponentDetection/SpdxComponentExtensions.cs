@@ -5,32 +5,31 @@ using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 
-namespace Microsoft.Sbom.Adapters.ComponentDetection
+namespace Microsoft.Sbom.Adapters.ComponentDetection;
+
+/// <summary>
+/// Extensions methods for <see cref="SpdxComponent"/>.
+/// </summary>
+internal static class SpdxComponentExtensions
 {
     /// <summary>
-    /// Extensions methods for <see cref="SpdxComponent"/>.
+    /// Converts a <see cref="SpdxComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    internal static class SpdxComponentExtensions
+    public static SbomPackage? ToSbomPackage(this SpdxComponent spdxComponent) => new ()
     {
-        /// <summary>
-        /// Converts a <see cref="SpdxComponent"/> to an <see cref="SbomPackage"/>.
-        /// </summary>
-        public static SbomPackage? ToSbomPackage(this SpdxComponent spdxComponent) => new ()
+        Id = spdxComponent.Id,
+        PackageName = spdxComponent.Name,
+        PackageUrl = spdxComponent.PackageUrl?.ToString(),
+        PackageVersion = spdxComponent.SpdxVersion,
+        Checksum = new[]
         {
-            Id = spdxComponent.Id,
-            PackageName = spdxComponent.Name,
-            PackageUrl = spdxComponent.PackageUrl?.ToString(),
-            PackageVersion = spdxComponent.SpdxVersion,
-            Checksum = new[]
+            new Checksum
             {
-                new Checksum
-                {
-                    Algorithm = AlgorithmName.SHA1,
-                    ChecksumValue = spdxComponent.Checksum
-                },
+                Algorithm = AlgorithmName.SHA1,
+                ChecksumValue = spdxComponent.Checksum
             },
-            FilesAnalyzed = false,
-            Type = "spdx"
-        };
-    }
+        },
+        FilesAnalyzed = false,
+        Type = "spdx"
+    };
 }

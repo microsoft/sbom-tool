@@ -4,27 +4,26 @@
 using AutoMapper;
 using Microsoft.Sbom.Common.Config;
 
-namespace Microsoft.Sbom.Api.Config.ValueConverters
+namespace Microsoft.Sbom.Api.Config.ValueConverters;
+
+/// <summary>
+/// Converts a nullable bool member to a ConfigurationSetting decorated string member.
+/// </summary>
+internal class BoolConfigurationSettingAddingConverter : IValueConverter<bool, ConfigurationSetting<bool>>
 {
-    /// <summary>
-    /// Converts a nullable bool member to a ConfigurationSetting decorated string member.
-    /// </summary>
-    internal class BoolConfigurationSettingAddingConverter : IValueConverter<bool, ConfigurationSetting<bool>>
+    private readonly SettingSource settingSource;
+
+    public BoolConfigurationSettingAddingConverter(SettingSource settingSource)
     {
-        private readonly SettingSource settingSource;
+        this.settingSource = settingSource;
+    }
 
-        public BoolConfigurationSettingAddingConverter(SettingSource settingSource)
+    public ConfigurationSetting<bool> Convert(bool sourceMember, ResolutionContext context)
+    {
+        return new ConfigurationSetting<bool>
         {
-            this.settingSource = settingSource;
-        }
-
-        public ConfigurationSetting<bool> Convert(bool sourceMember, ResolutionContext context)
-        {
-            return new ConfigurationSetting<bool>
-            {
-                Source = settingSource,
-                Value = sourceMember
-            };
-        }
+            Source = settingSource,
+            Value = sourceMember
+        };
     }
 }

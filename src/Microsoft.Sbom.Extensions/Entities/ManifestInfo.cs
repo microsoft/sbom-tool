@@ -5,95 +5,94 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Microsoft.Sbom.Extensions.Entities
+namespace Microsoft.Sbom.Extensions.Entities;
+
+/// <summary>
+/// Defines a manifest name and version.
+/// </summary>
+public class ManifestInfo : IEquatable<ManifestInfo>
 {
     /// <summary>
-    /// Defines a manifest name and version.
+    /// Gets or sets the name of the manifest.
     /// </summary>
-    public class ManifestInfo : IEquatable<ManifestInfo>
+    public string Name { get; set; }
+
+    /// <summary>
+    /// Gets or sets the version of the manifest.
+    /// </summary>
+    public string Version { get; set; }
+
+    /// <summary>
+    /// Parses the manifest info from a string
+    /// The format is <name>:<version>
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1629:Documentation text should end with a period", 
+        Justification = "Code element in comment.")]
+    public static ManifestInfo Parse(string value)
     {
-        /// <summary>
-        /// Gets or sets the name of the manifest.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the version of the manifest.
-        /// </summary>
-        public string Version { get; set; }
-
-        /// <summary>
-        /// Parses the manifest info from a string
-        /// The format is <name>:<version>
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1629:Documentation text should end with a period", 
-            Justification = "Code element in comment.")]
-        public static ManifestInfo Parse(string value)
+        if (string.IsNullOrEmpty(value))
         {
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new ArgumentException($"The manifest info string is empty");
-            }
-
-            var values = value.Split(':');
-            if (values == null || values.Length != 2)
-            {
-                throw new ArgumentException($"The manifest info string is not formatted correctly. The correct format is <name>:<version>.");
-            }
-
-            return new ManifestInfo
-            {
-                Name = values[0],
-                Version = values[1]
-            };
+            throw new ArgumentException($"The manifest info string is empty");
         }
 
-        public override bool Equals(object other)
+        var values = value.Split(':');
+        if (values == null || values.Length != 2)
         {
-            return Equals(other as ManifestInfo);
+            throw new ArgumentException($"The manifest info string is not formatted correctly. The correct format is <name>:<version>.");
         }
 
-        public static bool operator ==(ManifestInfo obj1, ManifestInfo obj2)
+        return new ManifestInfo
         {
-            if (ReferenceEquals(obj1, obj2))
-            {
-                return true;
-            }
+            Name = values[0],
+            Version = values[1]
+        };
+    }
 
-            if (obj1 is null || obj2 is null)
-            {
-                return false;
-            }
+    public override bool Equals(object other)
+    {
+        return Equals(other as ManifestInfo);
+    }
 
-            return obj1.Equals(obj2);
+    public static bool operator ==(ManifestInfo obj1, ManifestInfo obj2)
+    {
+        if (ReferenceEquals(obj1, obj2))
+        {
+            return true;
         }
 
-        public static bool operator !=(ManifestInfo obj1, ManifestInfo obj2) => !(obj1 == obj2);
-
-        public override int GetHashCode()
+        if (obj1 is null || obj2 is null)
         {
-            int hashCode = 2112831277;
-            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name.ToLowerInvariant());
-            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Version.ToLowerInvariant());
-            return hashCode;
+            return false;
         }
 
-        public bool Equals(ManifestInfo other)
-        {
-            return Name.ToLowerInvariant() == other.Name.ToLowerInvariant() &&
-                   Version.ToLowerInvariant() == other.Version.ToLowerInvariant();
-        }
+        return obj1.Equals(obj2);
+    }
 
-        public override string ToString()
-        {
-            return $"{Name}:{Version}";
-        }
+    public static bool operator !=(ManifestInfo obj1, ManifestInfo obj2) => !(obj1 == obj2);
 
-        public string ToLowerString()
-        {
-            return $"{Name.ToLowerInvariant()}:{Version.ToUpperInvariant()}";
-        }
+    public override int GetHashCode()
+    {
+        int hashCode = 2112831277;
+        hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name.ToLowerInvariant());
+        hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Version.ToLowerInvariant());
+        return hashCode;
+    }
+
+    public bool Equals(ManifestInfo other)
+    {
+        return Name.ToLowerInvariant() == other.Name.ToLowerInvariant() &&
+               Version.ToLowerInvariant() == other.Version.ToLowerInvariant();
+    }
+
+    public override string ToString()
+    {
+        return $"{Name}:{Version}";
+    }
+
+    public string ToLowerString()
+    {
+        return $"{Name.ToLowerInvariant()}:{Version.ToUpperInvariant()}";
     }
 }
