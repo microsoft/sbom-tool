@@ -33,7 +33,8 @@ public class ValidationArgs : CommonArgs
     /// </summary>
     [ArgShortcut("o")]
     [ArgRequired(IfNot = "ConfigFilePath")]
-    [ArgDescription("The path where the output json should be written.")]
+    [ArgDescription("The path where the output json should be written." +
+                    " ex: Path/output.json")]
     public string OutputPath { get; set; }
 
     /// <summary>
