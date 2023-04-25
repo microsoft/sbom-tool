@@ -3,19 +3,19 @@
 
 using PowerArgs;
 
-namespace Microsoft.Sbom.Api.Config.Args
+namespace Microsoft.Sbom.Api.Config.Args;
+
+/// <summary>
+/// The command line arguments provided for the generate action in ManifestTool.
+/// </summary>
+public class GenerationArgs : CommonArgs
 {
     /// <summary>
-    /// The command line arguments provided for the generate action in ManifestTool.
+    /// Gets or sets the root folder of the drop directory for which the SBOM file will be generated.
     /// </summary>
-    public class GenerationArgs : CommonArgs
-    {
-        /// <summary>
-        /// Gets or sets the root folder of the drop directory for which the SBOM file will be generated.
-        /// </summary>
-        [ArgShortcut("b")]
-        [ArgDescription("The root folder of the drop directory for which the SBOM file will be generated.")]
-        public string BuildDropPath { get; set; }
+    [ArgShortcut("b")]
+    [ArgDescription("The root folder of the drop directory for which the SBOM file will be generated.")]
+    public string BuildDropPath { get; set; }
 
     /// <summary>
     /// Gets or sets the folder containing the build components and packages.

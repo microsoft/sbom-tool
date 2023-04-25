@@ -6,23 +6,22 @@ using System.Linq;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Common.Config;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions;
 using ILogger = Serilog.ILogger;
 
-namespace Microsoft.Sbom.Api.Executors
+namespace Microsoft.Sbom.Api.Executors;
+
+/// <summary>
+/// Runs the component detection tool and returns a list of components scanned in the given folder.
+/// </summary>
+public class PackagesWalker : ComponentDetectionBaseWalker
 {
-    /// <summary>
-    /// Runs the component detection tool and returns a list of components scanned in the given folder.
-    /// </summary>
-    public class PackagesWalker : ComponentDetectionBaseWalker
+    public PackagesWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils)
+        : base(log, componentDetector, configuration, sbomConfigs, fileSystemUtils)
     {
-        public PackagesWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils)
-            : base(log, componentDetector, configuration, sbomConfigs, fileSystemUtils)
-        {
-        }
+    }
 
     protected override IEnumerable<ScannedComponent> FilterScannedComponents(ScanResult result)
     {
