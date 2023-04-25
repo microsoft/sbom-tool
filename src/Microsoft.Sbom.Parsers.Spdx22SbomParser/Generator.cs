@@ -260,8 +260,8 @@ public class Generator : IManifestGenerator
             case RelationshipType.DESCRIBED_BY: return SPDXRelationshipType.DESCRIBED_BY;
             case RelationshipType.PATCH_FOR: return SPDXRelationshipType.PATCH_FOR;
             default:
-            throw new NotImplementedException($"The relationship {relationshipType} is currently not " +
-                                              $"mapped to any SPDX 2.2 relationship type.");
+                throw new NotImplementedException($"The relationship {relationshipType} is currently not " +
+                                                  $"mapped to any SPDX 2.2 relationship type.");
         }
     }
 
