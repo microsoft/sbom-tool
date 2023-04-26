@@ -104,7 +104,7 @@ This is the minimal setup required to validate an SBOM where `-b` should be the 
 
 This can be any file path on the system, in this case the tool will look for the validationOutputPath directory and create a file named output.json and write the validation output. `-mi` is the ManifestInfo, A list of the name and version of the manifest format that we are using.
 
-Currently, only SPDX2.2 is supported.
+Currently only SPDX2.2 is supported.
 
 ## Common scenarios where you can provide additional parameters
 
