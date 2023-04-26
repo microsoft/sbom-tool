@@ -70,6 +70,20 @@ Say, in addition to the test image, we also want to gather all dependencies in o
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1,ubuntu:1.9
 ```
 
+By providing the `-b` and `-bc` these paths will also be scanned. If we wanted to generate an SBOM for only the dependency packages of the Docker image then we would run the following command
+
+```
+./sbom-tool-win-x64.exe generate -m c:\outputPath -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1
+```
+
+`-m` is the path where you want to generate the sbom. A new `_manifest\spdx_2.2` folder will be created and the SBOM will be stored here. The files section for these parameters will be empty as this is only scanning for the dependency packages of the image.
+
+To scan a path to populate the files section of the SBOM you could run the following command
+
+```
+./sbom-tool-win-x64.exe generate -b c:\outputDrop -m c:\outputPath -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1
+```
+
 ### Write telemetry to a file
 
 By default, we just log telemetry to the console output. In order to get the telemetry logged to a file, specify the `-t` parameter 
