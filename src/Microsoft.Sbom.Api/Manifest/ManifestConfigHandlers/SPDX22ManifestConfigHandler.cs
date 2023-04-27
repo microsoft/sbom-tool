@@ -78,15 +78,15 @@ public class SPDX22ManifestConfigHandler : IManifestConfigHandler
             return true;
         }
 
-            if (configuration.ManifestToolAction == ManifestToolActions.Validate)
+        if (configuration.ManifestToolAction == ManifestToolActions.Validate)
+        {
+            // We can only validate one format at a time, so check if its this one and return true/false.
+            if (configuration.ManifestInfo?.Value != null
+               && configuration.ManifestInfo.Value.Count == 1
+               && configuration.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
             {
-                // We can only validate one format at a time, so check if its this one and return true/false.
-                if (configuration.ManifestInfo?.Value != null
-                   && configuration.ManifestInfo.Value.Count == 1
-                   && configuration.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
-                {
-                    return true;
-                }
+                return true;
+            }
 
             return false;
         }
