@@ -280,7 +280,7 @@ public class ManifestGenerationWorkflowTests
                 manifestGeneratorProvider,
                 mockLogger.Object),
             packageInfoConverterMock.Object,
-            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs));
+            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object));
 
         var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider(
             configurationMock.Object,
@@ -407,7 +407,7 @@ public class ManifestGenerationWorkflowTests
 
         var result = await workflow.RunAsync();
 
-        fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Never);
+        fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Once);
         Assert.IsFalse(result);
     }
 }

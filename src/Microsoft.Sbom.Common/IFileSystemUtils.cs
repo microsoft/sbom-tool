@@ -65,4 +65,9 @@ public interface IFileSystemUtils
     /// Returns whether a directory is empty.
     /// </summary>
     bool IsDirectoryEmpty(string directoryPath);
+
+    /// <summary>
+    /// Temporary path to be used in scenarios where a (-m) and (-di) are provided and the user does not provide a (-b) path.
+    /// </summary>
+    string GetSbomToolTempPath();
 }

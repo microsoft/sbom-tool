@@ -12,9 +12,11 @@ using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using Serilog.Events;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors;
@@ -28,6 +30,7 @@ public abstract class ComponentDetectionBaseWalker
     private readonly ComponentDetectorCachedExecutor componentDetector;
     private readonly IConfiguration configuration;
     private readonly ISbomConfigProvider sbomConfigs;
+    private readonly IFileSystemUtils fileSystemUtils;
 
     private ComponentDetectionCliArgumentBuilder cliArgumentBuilder;
 
@@ -35,17 +38,29 @@ public abstract class ComponentDetectionBaseWalker
         ILogger log,
         ComponentDetectorCachedExecutor componentDetector,
         IConfiguration configuration,
-        ISbomConfigProvider sbomConfigs)
+        ISbomConfigProvider sbomConfigs,
+        IFileSystemUtils fileSystemUtils)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.componentDetector = componentDetector ?? throw new ArgumentNullException(nameof(componentDetector));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs)); 
+        this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
     }
 
     public (ChannelReader<ScannedComponent> output, ChannelReader<ComponentDetectorException> error) GetComponents(string buildComponentDirPath)
     {
-        log.Debug($"Scanning for packages under the root path {buildComponentDirPath}.");
+        if (fileSystemUtils.FileExists(buildComponentDirPath))
+        {
+            log.Debug($"Scanning for packages under the root path {buildComponentDirPath}.");
+        }
+
+        // If the buildComponentDirPath is null or empty, make sure we have a ManifestDirPath and create a new temp directory with a random name.
+        if (!fileSystemUtils.DirectoryExists(configuration.BuildComponentPath?.Value) && fileSystemUtils.DirectoryExists(configuration.ManifestDirPath?.Value))
+        {
+            buildComponentDirPath = fileSystemUtils.GetSbomToolTempPath();
+            Directory.CreateDirectory(buildComponentDirPath);
+        }
 
         var verbosity = configuration.Verbosity.Value switch
         {
@@ -118,7 +133,7 @@ public abstract class ComponentDetectionBaseWalker
         });
 
         return (output, errors);
-    }
+}
 
     protected abstract IEnumerable<ScannedComponent> FilterScannedComponents(ScanResult result);
 }
