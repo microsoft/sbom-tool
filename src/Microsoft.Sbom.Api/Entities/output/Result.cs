@@ -3,17 +3,16 @@
 
 using System.Runtime.Serialization;
 
-namespace Microsoft.Sbom.Api.Entities.Output
-{
-    /// <summary>
-    /// The result of the validation.
-    /// </summary>
-    public enum Result
-    {
-        [EnumMember(Value = "Success")]
-        Success = 0,
+namespace Microsoft.Sbom.Api.Entities.Output;
 
-        [EnumMember(Value = "Failure")]
-        Failure = 1
-    }
+/// <summary>
+/// The result of the validation.
+/// </summary>
+public enum Result
+{
+    [EnumMember(Value = "Success")]
+    Success = 0,
+
+    [EnumMember(Value = "Failure")]
+    Failure = 1
 }

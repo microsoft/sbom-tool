@@ -1,167 +1,166 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Executors;
-using Microsoft.Sbom.Api.Output.Telemetry;
-using Microsoft.Sbom.Api.Utils;
-using Serilog;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Executors;
+using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
+using Serilog;
 
-namespace Microsoft.Sbom.Api.Workflows.Helpers
+namespace Microsoft.Sbom.Api.Workflows.Helpers;
+
+/// <summary>
+/// Generates an array of relationships between different elements of the SBOM.
+/// </summary>
+public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArrayGenerator>
 {
-    /// <summary>
-    /// Generates an array of relationships between different elements of the SBOM.
-    /// </summary>
-    public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArrayGenerator>
+    private readonly RelationshipGenerator generator;
+
+    private readonly ChannelUtils channelUtils;
+
+    private readonly ILogger log;
+
+    private readonly ISbomConfigProvider sbomConfigs;
+
+    private readonly IRecorder recorder;
+
+    public RelationshipsArrayGenerator(
+        RelationshipGenerator generator,
+        ChannelUtils channelUtils,
+        ILogger log,
+        ISbomConfigProvider sbomConfigs,
+        IRecorder recorder)
     {
-        private readonly RelationshipGenerator generator;
+        this.generator = generator;
+        this.channelUtils = channelUtils;
+        this.log = log;
+        this.sbomConfigs = sbomConfigs;
+        this.recorder = recorder;
+    }
 
-        private readonly ChannelUtils channelUtils;
-
-        private readonly ILogger log;
-
-        private readonly ISbomConfigProvider sbomConfigs;
-
-        private readonly IRecorder recorder;
-
-        public RelationshipsArrayGenerator(
-            RelationshipGenerator generator,
-            ChannelUtils channelUtils,
-            ILogger log,
-            ISbomConfigProvider sbomConfigs,
-            IRecorder recorder)
+    public async Task<IList<FileValidationResult>> GenerateAsync()
+    {
+        using (recorder.TraceEvent(Events.RelationshipsGeneration))
         {
-            this.generator = generator;
-            this.channelUtils = channelUtils;
-            this.log = log;
-            this.sbomConfigs = sbomConfigs;
-            this.recorder = recorder;
-        }
+            IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
 
-        public async Task<IList<FileValidationResult>> GenerateAsync()
-        {
-            using (recorder.TraceEvent(Events.RelationshipsGeneration))
+            // Write the relationship array only if supported
+            foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
             {
-                IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
-
-                // Write the relationship array only if supported
-                foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
+                var sbomConfig = sbomConfigs.Get(manifestInfo);
+                if (sbomConfig.MetadataBuilder.TryGetRelationshipsHeaderName(out string relationshipArrayHeaderName))
                 {
-                    var sbomConfig = sbomConfigs.Get(manifestInfo);
-                    if (sbomConfig.MetadataBuilder.TryGetRelationshipsHeaderName(out string relationshipArrayHeaderName))
+                    sbomConfig.JsonSerializer.StartJsonArray(relationshipArrayHeaderName);
+
+                    // Get generation data
+                    var generationData = sbomConfig.Recorder.GetGenerationData();
+
+                    var jsonChannelsArray = new ChannelReader<JsonDocument>[]
                     {
-                        sbomConfig.JsonSerializer.StartJsonArray(relationshipArrayHeaderName);
-
-                        // Get generation data
-                        var generationData = sbomConfig.Recorder.GetGenerationData();
-
-                        var jsonChannelsArray = new ChannelReader<JsonDocument>[]
-                        {
-                            // Packages relationships
-                            generator.Run(
-                                GetRelationships(
+                        // Packages relationships
+                        generator.Run(
+                            GetRelationships(
                                 RelationshipType.DEPENDS_ON,
                                 generationData.RootPackageId,
                                 generationData.PackageIds),
-                                sbomConfig.ManifestInfo),
+                            sbomConfig.ManifestInfo),
 
-                            // Root package relationship
-                            generator.Run(
-                                GetRelationships(
+                        // Root package relationship
+                        generator.Run(
+                            GetRelationships(
                                 RelationshipType.DESCRIBES,
                                 generationData.DocumentId,
                                 new string[] { generationData.RootPackageId }),
-                                sbomConfig.ManifestInfo),
+                            sbomConfig.ManifestInfo),
 
-                            // External reference relationship
-                            generator.Run(
-                                GetRelationships(
+                        // External reference relationship
+                        generator.Run(
+                            GetRelationships(
                                 RelationshipType.PREREQUISITE_FOR,
                                 generationData.RootPackageId,
                                 generationData.ExternalDocumentReferenceIDs),
-                                sbomConfig.ManifestInfo),
+                            sbomConfig.ManifestInfo),
 
-                            // External reference file relationship
-                            generator.Run(
-                                GetRelationships(
+                        // External reference file relationship
+                        generator.Run(
+                            GetRelationships(
                                 RelationshipType.DESCRIBED_BY,
                                 generationData.SPDXFileIds,
                                 generationData.DocumentId),
-                                sbomConfig.ManifestInfo),
-                        };
+                            sbomConfig.ManifestInfo),
+                    };
 
-                        // Collect all the json elements and write to the serializer.
-                        int count = 0;
+                    // Collect all the json elements and write to the serializer.
+                    int count = 0;
 
-                        await foreach (JsonDocument jsonDoc in channelUtils.Merge(jsonChannelsArray).ReadAllAsync())
-                        {
-                            count++;
-                            sbomConfig.JsonSerializer.Write(jsonDoc);
-                        }
-
-                        log.Debug($"Wrote {count} relationship elements in the SBOM.");
-
-                        // Write the end of the array.
-                        sbomConfig.JsonSerializer.EndJsonArray();
+                    await foreach (JsonDocument jsonDoc in channelUtils.Merge(jsonChannelsArray).ReadAllAsync())
+                    {
+                        count++;
+                        sbomConfig.JsonSerializer.Write(jsonDoc);
                     }
-                }
 
-                return totalErrors;
-            }
-        }
+                    log.Debug($"Wrote {count} relationship elements in the SBOM.");
 
-        private IEnumerator<Relationship> GetRelationships(RelationshipType relationshipType, string sourceElementId, IEnumerable<string> targetElementIds)
-        {
-            foreach (var targetElementId in targetElementIds)
-            {
-                if (targetElementId != null || sourceElementId != null)
-                {
-                    yield return new Relationship
-                    {
-                        RelationshipType = relationshipType,
-                        TargetElementId = targetElementId,
-                        SourceElementId = sourceElementId
-                    };
+                    // Write the end of the array.
+                    sbomConfig.JsonSerializer.EndJsonArray();
                 }
             }
-        }
 
-        private IEnumerator<Relationship> GetRelationships(RelationshipType relationshipType, IList<string> sourceElementIds, string targetElementId)
+            return totalErrors;
+        }
+    }
+
+    private IEnumerator<Relationship> GetRelationships(RelationshipType relationshipType, string sourceElementId, IEnumerable<string> targetElementIds)
+    {
+        foreach (var targetElementId in targetElementIds)
         {
-            foreach (var sourceElementId in sourceElementIds)
+            if (targetElementId != null || sourceElementId != null)
             {
-                if (sourceElementId != null || targetElementId != null)
+                yield return new Relationship
                 {
-                    yield return new Relationship
-                    {
-                        RelationshipType = relationshipType,
-                        SourceElementId = sourceElementId,
-                        TargetElementId = targetElementId,
-                    };
-                }
+                    RelationshipType = relationshipType,
+                    TargetElementId = targetElementId,
+                    SourceElementId = sourceElementId
+                };
             }
         }
+    }
 
-        private IEnumerator<Relationship> GetRelationships(RelationshipType relationshipType, string sourceElementId, IEnumerable<KeyValuePair<string, string>> targetElementIds)
+    private IEnumerator<Relationship> GetRelationships(RelationshipType relationshipType, IList<string> sourceElementIds, string targetElementId)
+    {
+        foreach (var sourceElementId in sourceElementIds)
         {
-            foreach (var targetElementId in targetElementIds)
+            if (sourceElementId != null || targetElementId != null)
             {
-                if (sourceElementId != null || targetElementId.Key != null || targetElementId.Value != null)
+                yield return new Relationship
                 {
-                    yield return new Relationship
-                    {
-                        RelationshipType = relationshipType,
-                        TargetElementId = targetElementId.Value,
-                        TargetElementExternalReferenceId = targetElementId.Key,
-                        SourceElementId = sourceElementId
-                    };
-                }
+                    RelationshipType = relationshipType,
+                    SourceElementId = sourceElementId,
+                    TargetElementId = targetElementId,
+                };
+            }
+        }
+    }
+
+    private IEnumerator<Relationship> GetRelationships(RelationshipType relationshipType, string sourceElementId, IEnumerable<KeyValuePair<string, string>> targetElementIds)
+    {
+        foreach (var targetElementId in targetElementIds)
+        {
+            if (sourceElementId != null || targetElementId.Key != null || targetElementId.Value != null)
+            {
+                yield return new Relationship
+                {
+                    RelationshipType = relationshipType,
+                    TargetElementId = targetElementId.Value,
+                    TargetElementExternalReferenceId = targetElementId.Key,
+                    SourceElementId = sourceElementId
+                };
             }
         }
     }

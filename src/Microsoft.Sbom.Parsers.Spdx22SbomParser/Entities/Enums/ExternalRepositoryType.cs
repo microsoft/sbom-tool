@@ -4,43 +4,42 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
+
+/// <summary>
+/// Type of the external reference. These are definined in an appendix in the SPDX specification.
+/// https://spdx.github.io/spdx-spec/appendix-VI-external-repository-identifiers/.
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+[SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:Element should begin with upper-case letter",
+    Justification = "These are enum types that are case sensitive and defined by external code.")]
+public enum ExternalRepositoryType
 {
-    /// <summary>
-    /// Type of the external reference. These are definined in an appendix in the SPDX specification.
-    /// https://spdx.github.io/spdx-spec/appendix-VI-external-repository-identifiers/.
-    /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:Element should begin with upper-case letter",
-        Justification = "These are enum types that are case sensitive and defined by external code.")]
-    public enum ExternalRepositoryType
-    {
-        #region Security
-        cpe22,
-        cpe23,
+    #region Security
+    cpe22,
+    cpe23,
 
-        #endregion
+    #endregion
 
-        #region Persistent-Id
+    #region Persistent-Id
         
-        swh,
+    swh,
 
-        #endregion
+    #endregion
 
-        #region Package-Manager
+    #region Package-Manager
 
-        maven_central,
-        npm,
-        nuget,
-        bower,
-        purl,
+    maven_central,
+    npm,
+    nuget,
+    bower,
+    purl,
 
-        #endregion
+    #endregion
 
-        #region Other
+    #region Other
 
-        idstring
+    idstring
 
-        #endregion
-    }
+    #endregion
 }

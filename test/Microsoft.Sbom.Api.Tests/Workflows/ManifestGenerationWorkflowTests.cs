@@ -1,6 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Channels;
+using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
@@ -32,383 +38,376 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json.Linq;
 using Serilog.Events;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ILogger = Serilog.ILogger;
 
-namespace Microsoft.Sbom.Api.Workflows.Tests
+namespace Microsoft.Sbom.Api.Workflows.Tests;
+
+[TestClass]
+public class ManifestGenerationWorkflowTests
 {
-    [TestClass]
-    public class ManifestGenerationWorkflowTests
+    private readonly Mock<IRecorder> recorderMock = new Mock<IRecorder>();
+
+    private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
+    private readonly Mock<IConfiguration> configurationMock = new Mock<IConfiguration>();
+    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<IHashCodeGenerator> hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
+    private readonly Mock<IOSUtils> mockOSUtils = new Mock<IOSUtils>();
+    private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>();
+    private readonly Mock<IMetadataProvider> mockMetadataProvider = new Mock<IMetadataProvider>();
+    private readonly Mock<ComponentDetectorCachedExecutor> mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
+    private readonly Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>> relationshipArrayGenerator = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>();
+    private readonly Mock<ComponentToPackageInfoConverter> packageInfoConverterMock = new Mock<ComponentToPackageInfoConverter>();
+    private readonly Mock<ISBOMReaderForExternalDocumentReference> sBOMReaderForExternalDocumentReferenceMock = new Mock<ISBOMReaderForExternalDocumentReference>();
+    private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new Mock<IFileSystemUtilsExtension>();
+
+    [TestInitialize]
+    public void Setup()
     {
-        private readonly Mock<IRecorder> recorderMock = new Mock<IRecorder>();
+        fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
+        fileSystemUtilsExtensionMock.Setup(f => f.IsTargetPathInSource(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+    }
 
-        private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
-        private readonly Mock<IConfiguration> configurationMock = new Mock<IConfiguration>();
-        private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
-        private readonly Mock<IHashCodeGenerator> hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
-        private readonly Mock<IOSUtils> mockOSUtils = new Mock<IOSUtils>();
-        private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>();
-        private readonly Mock<IMetadataProvider> mockMetadataProvider = new Mock<IMetadataProvider>();
-        private readonly Mock<ComponentDetectorCachedExecutor> mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
-        private readonly Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>> relationshipArrayGenerator = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>();
-        private readonly Mock<ComponentToPackageInfoConverter> packageInfoConverterMock = new Mock<ComponentToPackageInfoConverter>();
-        private readonly Mock<ISBOMReaderForExternalDocumentReference> sBOMReaderForExternalDocumentReferenceMock = new Mock<ISBOMReaderForExternalDocumentReference>();
-        private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new Mock<IFileSystemUtilsExtension>();
+    [TestMethod]
+    [DataRow(true, true)]
+    [DataRow(false, false)]
+    [DataRow(true, false)]
+    [DataRow(false, true)]
+    public async Task ManifestGenerationWorkflowTests_Succeeds(bool deleteExistingManifestDir, bool isDefaultSourceManifestDirPath)
+    {
+        var manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
+        manifestGeneratorProvider.Init();
 
-        [TestInitialize]
-        public void Setup()
+        var metadataBuilder = new MetadataBuilder(
+            mockLogger.Object,
+            manifestGeneratorProvider,
+            Constants.TestManifestInfo,
+            recorderMock.Object);
+        var jsonFilePath = "/root/_manifest/manifest.json";
+
+        ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
-            fileSystemUtilsExtensionMock.Setup(f => f.IsTargetPathInSource(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+            ManifestInfo = Constants.TestManifestInfo,
+            ManifestJsonDirPath = "/root/_manifest",
+            ManifestJsonFilePath = jsonFilePath,
+            MetadataBuilder = metadataBuilder,
+            Recorder = new SbomPackageDetailsRecorder()
+        };
+
+        mockConfigHandler.Setup(c => c.TryGetManifestConfig(out sbomConfig)).Returns(true);
+        mockMetadataProvider.SetupGet(m => m.MetadataDictionary).Returns(new Dictionary<MetadataKey, object>
+        {
+            { MetadataKey.Build_BuildId, 12 },
+            { MetadataKey.Build_DefinitionName, "test" },
+        });
+
+        var sbomConfigs = new SbomConfigProvider(
+            new IManifestConfigHandler[] { mockConfigHandler.Object },
+            new IMetadataProvider[] { mockMetadataProvider.Object },
+            mockLogger.Object,
+            recorderMock.Object);
+
+        using var manifestStream = new MemoryStream();
+        using var manifestWriter = new StreamWriter(manifestStream);
+        using var sha256Stream = new MemoryStream();
+        using var sha256Writer = new StreamWriter(sha256Stream);
+
+        fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+        if (isDefaultSourceManifestDirPath)
+        {
+            configurationMock.SetupGet(c => c.ManifestDirPath)
+                .Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest") });
+            fileSystemMock.Setup(f => f.DirectoryExists(It.Is<string>(d => d == PathUtils.Join("/root", "_manifest"))))
+                .Returns(deleteExistingManifestDir);
+
+            if (deleteExistingManifestDir)
+            {
+                mockOSUtils.Setup(o => o.GetEnvironmentVariable(It.IsAny<string>())).Returns("true");
+                fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
+            }
+        }
+        else
+        {
+            configurationMock.SetupGet(c => c.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.CommandLine });
         }
 
-        [TestMethod]
-        [DataRow(true, true)]
-        [DataRow(false, false)]
-        [DataRow(true, false)]
-        [DataRow(false, true)]
-        public async Task ManifestGenerationWorkflowTests_Succeeds(bool deleteExistingManifestDir, bool isDefaultSourceManifestDirPath)
+        configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
+        configurationMock.SetupGet(c => c.Parallelism).Returns(new ConfigurationSetting<int> { Value = 3 });
+        configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Generate);
+        configurationMock.SetupGet(c => c.Verbosity).Returns(new ConfigurationSetting<LogEventLevel> { Value = LogEventLevel.Information });
+        configurationMock.SetupGet(c => c.BuildComponentPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
+        configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
+
+        fileSystemMock
+            .Setup(f => f.CreateDirectory(
+                It.Is<string>(d => d == "/root/_manifest")))
+            .Returns(new DirectoryInfo("/"));
+        fileSystemMock
+            .Setup(f => f.OpenWrite(
+                It.Is<string>(d => d == "/root/_manifest/manifest.json")))
+            .Returns(manifestWriter.BaseStream);
+
+        fileSystemMock.Setup(f => f.GetDirectories(It.Is<string>(c => c == "/root"), true)).Returns(new string[] { "child1", "child2", "child3", "_manifest" });
+        fileSystemMock.Setup(f => f.GetDirectories(It.Is<string>(c => c == "child1"), true)).Returns(new string[] { });
+        fileSystemMock.Setup(f => f.GetDirectories(It.Is<string>(c => c == "child2"), true)).Returns(new string[] { "grandchild1", "grandchild2" });
+
+        fileSystemMock.Setup(f => f.GetFilesInDirectory(It.Is<string>(c => c == "child1"), true)).Returns(new string[] { "/root/child1/file1", "/root/child1/file2" });
+        fileSystemMock.Setup(f => f.GetFilesInDirectory(It.Is<string>(c => c == "child2"), true)).Returns(new string[] { "/root/child2/file3", "/root/child2/file4", "/root/child2/file5" });
+        fileSystemMock.Setup(f => f.GetFilesInDirectory(It.Is<string>(c => c == "child3"), true)).Returns(new string[] { "/root/child3/file11", "/root/child3/file12" });
+        fileSystemMock.Setup(f => f.GetFilesInDirectory(It.Is<string>(c => c == "_manifest"), true)).Returns(new string[] { "/root/_manifest/manifest.json", "/root/_manifest/manifest.cat" });
+
+        fileSystemMock.Setup(f => f.GetFilesInDirectory(It.Is<string>(c => c == "grandchild1"), true)).Returns(new string[] { "/root/child2/grandchild1/file6", "/root/child2/grandchild1/file10" });
+        fileSystemMock.Setup(f => f.GetFilesInDirectory(It.Is<string>(c => c == "grandchild2"), true)).Returns(new string[] { "/root/child2/grandchild1/file7", "/root/child2/grandchild1/file9" });
+
+        fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
+
+        fileSystemMock.Setup(f => f.FileExists(It.Is<string>(c => c == jsonFilePath))).Returns(true);
+        fileSystemMock.Setup(f => f.OpenRead(It.Is<string>(c => c == jsonFilePath))).Returns(TestUtils.GenerateStreamFromString("randomContent"));
+        fileSystemMock.Setup(f => f.OpenWrite(It.Is<string>(c => c == "/root/_manifest/manifest.json.sha256"))).Returns(sha256Writer.BaseStream);
+
+        hashCodeGeneratorMock.Setup(h => h.GenerateHashes(It.IsAny<string>(), It.IsAny<AlgorithmName[]>()))
+            .Returns((string fileName, AlgorithmName[] algos) =>
+                algos.Select(a =>
+                        new Checksum
+                        {
+                            ChecksumValue = $"{fileName}hash",
+                            Algorithm = a
+                        })
+                    .ToArray());
+
+        var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
+        manifestFilterMock.Init();
+
+        var scannedComponents = new List<ScannedComponent>();
+        for (int i = 1; i < 4; i++)
         {
-            var manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
-            manifestGeneratorProvider.Init();
-
-            var metadataBuilder = new MetadataBuilder(
-               mockLogger.Object,
-               manifestGeneratorProvider,
-               Constants.TestManifestInfo,
-               recorderMock.Object);
-            var jsonFilePath = "/root/_manifest/manifest.json";
-
-            ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
+            var scannedComponent = new ScannedComponent
             {
-                ManifestInfo = Constants.TestManifestInfo,
-                ManifestJsonDirPath = "/root/_manifest",
-                ManifestJsonFilePath = jsonFilePath,
-                MetadataBuilder = metadataBuilder,
-                Recorder = new SbomPackageDetailsRecorder()
+                Component = new NpmComponent("componentName", $"{i}")
             };
 
-            mockConfigHandler.Setup(c => c.TryGetManifestConfig(out sbomConfig)).Returns(true);
-            mockMetadataProvider.SetupGet(m => m.MetadataDictionary).Returns(new Dictionary<MetadataKey, object>
-            {
-                { MetadataKey.Build_BuildId, 12 },
-                { MetadataKey.Build_DefinitionName, "test" },
-            });
+            scannedComponents.Add(scannedComponent);
+        }
 
-            var sbomConfigs = new SbomConfigProvider(
-                new IManifestConfigHandler[] { mockConfigHandler.Object },
-                new IMetadataProvider[] { mockMetadataProvider.Object },
-                mockLogger.Object,
-                recorderMock.Object);
+        var scanResult = new ScanResult
+        {
+            ResultCode = ProcessingResultCode.Success,
+            ComponentsFound = scannedComponents
+        };
 
-            using var manifestStream = new MemoryStream();
-            using var manifestWriter = new StreamWriter(manifestStream);
-            using var sha256Stream = new MemoryStream();
-            using var sha256Writer = new StreamWriter(sha256Stream);
+        mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
 
-            fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-            if (isDefaultSourceManifestDirPath)
-            {
-                configurationMock.SetupGet(c => c.ManifestDirPath)
-                    .Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest") });
-                fileSystemMock.Setup(f => f.DirectoryExists(It.Is<string>(d => d == PathUtils.Join("/root", "_manifest"))))
-                    .Returns(deleteExistingManifestDir);
+        var packagesChannel = Channel.CreateUnbounded<SbomPackage>();
+        var errorsChannel = Channel.CreateUnbounded<FileValidationResult>();
+        foreach (var component in scannedComponents)
+        {
+            await packagesChannel.Writer.WriteAsync(new SbomPackage { PackageName = component.GetHashCode().ToString() });
+        }
 
-                if (deleteExistingManifestDir)
-                {
-                    mockOSUtils.Setup(o => o.GetEnvironmentVariable(It.IsAny<string>())).Returns("true");
-                    fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
-                }
-            }
-            else
-            {
-                configurationMock.SetupGet(c => c.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.CommandLine });
-            }
+        packagesChannel.Writer.Complete();
+        errorsChannel.Writer.Complete();
+        packageInfoConverterMock
+            .Setup(p => p.Convert(It.IsAny<ChannelReader<ScannedComponent>>()))
+            .Returns((packagesChannel, errorsChannel));
 
-            configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
-            configurationMock.SetupGet(c => c.Parallelism).Returns(new ConfigurationSetting<int> { Value = 3 });
-            configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Generate);
-            configurationMock.SetupGet(c => c.Verbosity).Returns(new ConfigurationSetting<LogEventLevel> { Value = LogEventLevel.Information });
-            configurationMock.SetupGet(c => c.BuildComponentPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
-            configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
-
-            fileSystemMock
-                .Setup(f => f.CreateDirectory(
-                    It.Is<string>(d => d == "/root/_manifest")))
-                .Returns(new DirectoryInfo("/"));
-            fileSystemMock
-                .Setup(f => f.OpenWrite(
-                    It.Is<string>(d => d == "/root/_manifest/manifest.json")))
-                .Returns(manifestWriter.BaseStream);
-
-            fileSystemMock.Setup(f => f.GetDirectories(It.Is<string>(c => c == "/root"), true)).Returns(new string[] { "child1", "child2", "child3", "_manifest" });
-            fileSystemMock.Setup(f => f.GetDirectories(It.Is<string>(c => c == "child1"), true)).Returns(new string[] { });
-            fileSystemMock.Setup(f => f.GetDirectories(It.Is<string>(c => c == "child2"), true)).Returns(new string[] { "grandchild1", "grandchild2" });
-
-            fileSystemMock.Setup(f => f.GetFilesInDirectory(It.Is<string>(c => c == "child1"), true)).Returns(new string[] { "/root/child1/file1", "/root/child1/file2" });
-            fileSystemMock.Setup(f => f.GetFilesInDirectory(It.Is<string>(c => c == "child2"), true)).Returns(new string[] { "/root/child2/file3", "/root/child2/file4", "/root/child2/file5" });
-            fileSystemMock.Setup(f => f.GetFilesInDirectory(It.Is<string>(c => c == "child3"), true)).Returns(new string[] { "/root/child3/file11", "/root/child3/file12" });
-            fileSystemMock.Setup(f => f.GetFilesInDirectory(It.Is<string>(c => c == "_manifest"), true)).Returns(new string[] { "/root/_manifest/manifest.json", "/root/_manifest/manifest.cat" });
-
-            fileSystemMock.Setup(f => f.GetFilesInDirectory(It.Is<string>(c => c == "grandchild1"), true)).Returns(new string[] { "/root/child2/grandchild1/file6", "/root/child2/grandchild1/file10" });
-            fileSystemMock.Setup(f => f.GetFilesInDirectory(It.Is<string>(c => c == "grandchild2"), true)).Returns(new string[] { "/root/child2/grandchild1/file7", "/root/child2/grandchild1/file9" });
-
-            fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
-
-            fileSystemMock.Setup(f => f.FileExists(It.Is<string>(c => c == jsonFilePath))).Returns(true);
-            fileSystemMock.Setup(f => f.OpenRead(It.Is<string>(c => c == jsonFilePath))).Returns(TestUtils.GenerateStreamFromString("randomContent"));
-            fileSystemMock.Setup(f => f.OpenWrite(It.Is<string>(c => c == "/root/_manifest/manifest.json.sha256"))).Returns(sha256Writer.BaseStream);
-
-            hashCodeGeneratorMock.Setup(h => h.GenerateHashes(It.IsAny<string>(), It.IsAny<AlgorithmName[]>()))
-                                .Returns((string fileName, AlgorithmName[] algos) =>
-                                            algos.Select(a =>
-                                                new Checksum
-                                                {
-                                                    ChecksumValue = $"{fileName}hash",
-                                                    Algorithm = a
-                                                })
-                                            .ToArray());
-
-            var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
-            manifestFilterMock.Init();
-
-            var scannedComponents = new List<ScannedComponent>();
-            for (int i = 1; i < 4; i++)
-            {
-                var scannedComponent = new ScannedComponent
-                {
-                    Component = new NpmComponent("componentName", $"{i}")
-                };
-
-                scannedComponents.Add(scannedComponent);
-            }
-
-            var scanResult = new ScanResult
-            {
-                ResultCode = ProcessingResultCode.Success,
-                ComponentsFound = scannedComponents
-            };
-
-            mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
-
-            var packagesChannel = Channel.CreateUnbounded<SbomPackage>();
-            var errorsChannel = Channel.CreateUnbounded<FileValidationResult>();
-            foreach (var component in scannedComponents)
-            {
-                await packagesChannel.Writer.WriteAsync(new SbomPackage { PackageName = component.GetHashCode().ToString() });
-            }
-
-            packagesChannel.Writer.Complete();
-            errorsChannel.Writer.Complete();
-            packageInfoConverterMock
-                .Setup(p => p.Convert(It.IsAny<ChannelReader<ScannedComponent>>()))
-                .Returns((packagesChannel, errorsChannel));
-
-            var externalDocumentReferenceChannel = Channel.CreateUnbounded<ExternalDocumentReferenceInfo>();
-            var externalDocumentReferenceErrorsChannel = Channel.CreateUnbounded<FileValidationResult>();
-            await externalDocumentReferenceChannel.Writer.WriteAsync(new ExternalDocumentReferenceInfo
-            {
-                DocumentNamespace = "namespace",
-                ExternalDocumentName = "name",
-                Checksum = new List<Checksum> { new Checksum { Algorithm = AlgorithmName.SHA1,
-                                                               ChecksumValue = "abc"
-                                                             } }
-            });
-            externalDocumentReferenceChannel.Writer.Complete();
-            externalDocumentReferenceErrorsChannel.Writer.Complete();
-            sBOMReaderForExternalDocumentReferenceMock
+        var externalDocumentReferenceChannel = Channel.CreateUnbounded<ExternalDocumentReferenceInfo>();
+        var externalDocumentReferenceErrorsChannel = Channel.CreateUnbounded<FileValidationResult>();
+        await externalDocumentReferenceChannel.Writer.WriteAsync(new ExternalDocumentReferenceInfo
+        {
+            DocumentNamespace = "namespace",
+            ExternalDocumentName = "name",
+            Checksum = new List<Checksum> { new Checksum { Algorithm = AlgorithmName.SHA1,
+                ChecksumValue = "abc"
+            } }
+        });
+        externalDocumentReferenceChannel.Writer.Complete();
+        externalDocumentReferenceErrorsChannel.Writer.Complete();
+        sBOMReaderForExternalDocumentReferenceMock
             .Setup(p => p.ParseSBOMFile(It.IsAny<ChannelReader<string>>()))
             .Returns((externalDocumentReferenceChannel, externalDocumentReferenceErrorsChannel));
 
-            var directoryTraversingProvider = new DirectoryTraversingFileToJsonProvider(
-                configurationMock.Object,
-                new ChannelUtils(),
+        var directoryTraversingProvider = new DirectoryTraversingFileToJsonProvider(
+            configurationMock.Object,
+            new ChannelUtils(),
+            mockLogger.Object,
+            new FileHasher(
+                hashCodeGeneratorMock.Object,
+                new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
                 mockLogger.Object,
-                new FileHasher(
-                    hashCodeGeneratorMock.Object,
-                    new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
-                    mockLogger.Object,
-                    configurationMock.Object,
-                    sbomConfigs,
-                    manifestGeneratorProvider,
-                    new FileTypeUtils()),
-                new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
-                new FileInfoWriter(
-                    manifestGeneratorProvider,
-                    mockLogger.Object,
-                    fileSystemUtilsExtensionMock.Object,
-                    configurationMock.Object),
-                new InternalSBOMFileInfoDeduplicator(),
-                new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object));
-
-            var fileListBasedProvider = new FileListBasedFileToJsonProvider(
                 configurationMock.Object,
-                new ChannelUtils(),
-                mockLogger.Object,
-                new FileHasher(
-                    hashCodeGeneratorMock.Object,
-                    new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
-                    mockLogger.Object,
-                    configurationMock.Object,
-                    sbomConfigs,
-                    manifestGeneratorProvider,
-                    new FileTypeUtils()),
-                new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
-                new FileInfoWriter(
-                    manifestGeneratorProvider,
-                    mockLogger.Object,
-                    fileSystemUtilsExtensionMock.Object,
-                    configurationMock.Object),
-                new InternalSBOMFileInfoDeduplicator(),
-                new FileListEnumerator(fileSystemMock.Object, mockLogger.Object));
-
-            var cgPackagesProvider = new CGScannedPackagesProvider(
-                configurationMock.Object,
-                new ChannelUtils(),
-                mockLogger.Object,
                 sbomConfigs,
-                new PackageInfoJsonWriter(
-                    manifestGeneratorProvider,
-                    mockLogger.Object),
-                packageInfoConverterMock.Object,
-                new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs));
-
-            var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider(
-                configurationMock.Object,
-                new ChannelUtils(),
+                manifestGeneratorProvider,
+                new FileTypeUtils()),
+            new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
+            new FileInfoWriter(
+                manifestGeneratorProvider,
                 mockLogger.Object,
-                new FileListEnumerator(fileSystemMock.Object, mockLogger.Object),
-                sBOMReaderForExternalDocumentReferenceMock.Object,
-                new ExternalDocumentReferenceWriter(
-                    manifestGeneratorProvider,
-                    mockLogger.Object),
-                new ExternalReferenceDeduplicator());
+                fileSystemUtilsExtensionMock.Object,
+                configurationMock.Object),
+            new InternalSBOMFileInfoDeduplicator(),
+            new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object));
 
-            var sourcesProvider = new List<ISourcesProvider>
-            {
-                { fileListBasedProvider },
-                { directoryTraversingProvider },
-                { cgPackagesProvider },
-                { externalDocumentReferenceProvider }
-            };
-
-            var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object);
-
-            var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
-
-            var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
-
-            relationshipArrayGenerator
-                .Setup(r => r.GenerateAsync())
-                .ReturnsAsync(await Task.FromResult(new List<FileValidationResult>()));
-
-            var workflow = new SbomGenerationWorkflow(
-                configurationMock.Object,
-                fileSystemMock.Object,
+        var fileListBasedProvider = new FileListBasedFileToJsonProvider(
+            configurationMock.Object,
+            new ChannelUtils(),
+            mockLogger.Object,
+            new FileHasher(
+                hashCodeGeneratorMock.Object,
+                new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
                 mockLogger.Object,
-                fileArrayGenerator,
-                packageArrayGenerator,
-                relationshipArrayGenerator.Object,
-                externalDocumentReferenceGenerator,
+                configurationMock.Object,
                 sbomConfigs,
-                mockOSUtils.Object,
-                recorderMock.Object);
-
-            Assert.IsTrue(await workflow.RunAsync());
-
-            var result = Encoding.UTF8.GetString(manifestStream.ToArray());
-            var resultJson = JObject.Parse(result);
-
-            Assert.AreEqual(resultJson["Version"], "1.0.0");
-            Assert.AreEqual(resultJson["Build"], 12);
-            Assert.AreEqual(resultJson["Definition"], "test");
-
-            var outputs = resultJson["Outputs"];
-            JArray sortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
-            JArray expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
-
-            var packages = resultJson["Packages"];
-            Assert.IsTrue(packages.Count() == 4);
-
-            Assert.IsTrue(JToken.DeepEquals(sortedOutputs, expectedSortedOutputs));
-
-            configurationMock.VerifyAll();
-            fileSystemMock.VerifyAll();
-            hashCodeGeneratorMock.VerifyAll();
-            mockLogger.VerifyAll();
-            fileSystemMock.Verify(x => x.FileExists(jsonFilePath), Times.Once);
-            fileSystemMock.Verify(x => x.OpenWrite($"{jsonFilePath}.sha256"), Times.Once);
-        }
-
-        [TestMethod]
-        public async Task ManifestGenerationWorkflowTests_SBOMDirExists_Throws()
-        {
-            configurationMock.SetupGet(x => x.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.Default });
-            fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-            mockOSUtils.Setup(o => o.GetEnvironmentVariable(It.IsAny<string>())).Returns("false");
-            var sbomConfig = new SbomConfig(fileSystemMock.Object)
-            {
-                ManifestInfo = Constants.TestManifestInfo,
-                ManifestJsonDirPath = "/root/_manifest",
-                ManifestJsonFilePath = "/root/_manifest/manifest.json"
-            };
-            var workflow = new SbomGenerationWorkflow(
-                configurationMock.Object,
-                fileSystemMock.Object,
+                manifestGeneratorProvider,
+                new FileTypeUtils()),
+            new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
+            new FileInfoWriter(
+                manifestGeneratorProvider,
                 mockLogger.Object,
-                new Mock<IJsonArrayGenerator<FileArrayGenerator>>().Object,
-                new Mock<IJsonArrayGenerator<PackageArrayGenerator>>().Object,
-                new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>().Object,
-                new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>().Object,
-                new Mock<ISbomConfigProvider>().Object,
-                mockOSUtils.Object,
-                recorderMock.Object);
+                fileSystemUtilsExtensionMock.Object,
+                configurationMock.Object),
+            new InternalSBOMFileInfoDeduplicator(),
+            new FileListEnumerator(fileSystemMock.Object, mockLogger.Object));
 
-            Assert.IsFalse(await workflow.RunAsync());
-            recorderMock.Verify(r => r.RecordException(It.IsAny<ManifestFolderExistsException>()), Times.Once);
-        }
+        var cgPackagesProvider = new CGScannedPackagesProvider(
+            configurationMock.Object,
+            new ChannelUtils(),
+            mockLogger.Object,
+            sbomConfigs,
+            new PackageInfoJsonWriter(
+                manifestGeneratorProvider,
+                mockLogger.Object),
+            packageInfoConverterMock.Object,
+            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object));
 
-        [TestMethod]
-        public async Task ManifestGenerationWorkflowTests_SBOMDir_NotDefault_NotDeleted()
+        var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider(
+            configurationMock.Object,
+            new ChannelUtils(),
+            mockLogger.Object,
+            new FileListEnumerator(fileSystemMock.Object, mockLogger.Object),
+            sBOMReaderForExternalDocumentReferenceMock.Object,
+            new ExternalDocumentReferenceWriter(
+                manifestGeneratorProvider,
+                mockLogger.Object),
+            new ExternalReferenceDeduplicator());
+
+        var sourcesProvider = new List<ISourcesProvider>
         {
-            fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-            var sbomConfig = new SbomConfig(fileSystemMock.Object)
-            {
-                ManifestInfo = Constants.TestManifestInfo,
-                ManifestJsonDirPath = "/root/_manifest",
-                ManifestJsonFilePath = "/root/_manifest/manifest.json"
-            };
-            configurationMock.SetupGet(x => x.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.CommandLine });
-            fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-            fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
-            var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
-            fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(new List<FileValidationResult> { new FileValidationResult() });
+            { fileListBasedProvider },
+            { directoryTraversingProvider },
+            { cgPackagesProvider },
+            { externalDocumentReferenceProvider }
+        };
 
-            var workflow = new SbomGenerationWorkflow(
-                configurationMock.Object,
-                fileSystemMock.Object,
-                mockLogger.Object,
-                fileArrayGeneratorMock.Object,
-                new Mock<IJsonArrayGenerator<PackageArrayGenerator>>().Object,
-                new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>().Object,
-                new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>().Object,
-                new Mock<ISbomConfigProvider>().Object,
-                mockOSUtils.Object,
-                recorderMock.Object);
+        var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object);
 
-            var result = await workflow.RunAsync();
+        var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
-            fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Never);
-            Assert.IsFalse(result);
-        }
+        var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
+
+        relationshipArrayGenerator
+            .Setup(r => r.GenerateAsync())
+            .ReturnsAsync(await Task.FromResult(new List<FileValidationResult>()));
+
+        var workflow = new SbomGenerationWorkflow(
+            configurationMock.Object,
+            fileSystemMock.Object,
+            mockLogger.Object,
+            fileArrayGenerator,
+            packageArrayGenerator,
+            relationshipArrayGenerator.Object,
+            externalDocumentReferenceGenerator,
+            sbomConfigs,
+            mockOSUtils.Object,
+            recorderMock.Object);
+
+        Assert.IsTrue(await workflow.RunAsync());
+
+        var result = Encoding.UTF8.GetString(manifestStream.ToArray());
+        var resultJson = JObject.Parse(result);
+
+        Assert.AreEqual(resultJson["Version"], "1.0.0");
+        Assert.AreEqual(resultJson["Build"], 12);
+        Assert.AreEqual(resultJson["Definition"], "test");
+
+        var outputs = resultJson["Outputs"];
+        JArray sortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
+        JArray expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
+
+        var packages = resultJson["Packages"];
+        Assert.IsTrue(packages.Count() == 4);
+
+        Assert.IsTrue(JToken.DeepEquals(sortedOutputs, expectedSortedOutputs));
+
+        configurationMock.VerifyAll();
+        fileSystemMock.VerifyAll();
+        hashCodeGeneratorMock.VerifyAll();
+        mockLogger.VerifyAll();
+        fileSystemMock.Verify(x => x.FileExists(jsonFilePath), Times.Once);
+        fileSystemMock.Verify(x => x.OpenWrite($"{jsonFilePath}.sha256"), Times.Once);
+    }
+
+    [TestMethod]
+    public async Task ManifestGenerationWorkflowTests_SBOMDirExists_Throws()
+    {
+        configurationMock.SetupGet(x => x.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.Default });
+        fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+        mockOSUtils.Setup(o => o.GetEnvironmentVariable(It.IsAny<string>())).Returns("false");
+        var sbomConfig = new SbomConfig(fileSystemMock.Object)
+        {
+            ManifestInfo = Constants.TestManifestInfo,
+            ManifestJsonDirPath = "/root/_manifest",
+            ManifestJsonFilePath = "/root/_manifest/manifest.json"
+        };
+        var workflow = new SbomGenerationWorkflow(
+            configurationMock.Object,
+            fileSystemMock.Object,
+            mockLogger.Object,
+            new Mock<IJsonArrayGenerator<FileArrayGenerator>>().Object,
+            new Mock<IJsonArrayGenerator<PackageArrayGenerator>>().Object,
+            new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>().Object,
+            new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>().Object,
+            new Mock<ISbomConfigProvider>().Object,
+            mockOSUtils.Object,
+            recorderMock.Object);
+
+        Assert.IsFalse(await workflow.RunAsync());
+        recorderMock.Verify(r => r.RecordException(It.IsAny<ManifestFolderExistsException>()), Times.Once);
+    }
+
+    [TestMethod]
+    public async Task ManifestGenerationWorkflowTests_SBOMDir_NotDefault_NotDeleted()
+    {
+        fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+        var sbomConfig = new SbomConfig(fileSystemMock.Object)
+        {
+            ManifestInfo = Constants.TestManifestInfo,
+            ManifestJsonDirPath = "/root/_manifest",
+            ManifestJsonFilePath = "/root/_manifest/manifest.json"
+        };
+        configurationMock.SetupGet(x => x.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.CommandLine });
+        fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+        fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
+        var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
+        fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(new List<FileValidationResult> { new FileValidationResult() });
+
+        var workflow = new SbomGenerationWorkflow(
+            configurationMock.Object,
+            fileSystemMock.Object,
+            mockLogger.Object,
+            fileArrayGeneratorMock.Object,
+            new Mock<IJsonArrayGenerator<PackageArrayGenerator>>().Object,
+            new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>().Object,
+            new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>().Object,
+            new Mock<ISbomConfigProvider>().Object,
+            mockOSUtils.Object,
+            recorderMock.Object);
+
+        var result = await workflow.RunAsync();
+
+        fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Once);
+        Assert.IsFalse(result);
     }
 }

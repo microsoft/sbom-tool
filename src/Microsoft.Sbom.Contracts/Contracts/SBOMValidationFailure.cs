@@ -3,21 +3,20 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.Sbom.Contracts
+namespace Microsoft.Sbom.Contracts;
+
+/// <summary>
+/// Represents a failure result for SBOM validation.
+/// </summary>
+public class SBOMValidationFailure : SBOMValidationResult
 {
     /// <summary>
-    /// Represents a failure result for SBOM validation.
+    /// Gets a list of errors that were encountered during the SBOM validation.
     /// </summary>
-    public class SBOMValidationFailure : SBOMValidationResult
-    {
-        /// <summary>
-        /// Gets a list of errors that were encountered during the SBOM validation.
-        /// </summary>
-        public IList<EntityError> Errors { get; private set; }
+    public IList<EntityError> Errors { get; private set; }
 
-        public SBOMValidationFailure(IList<EntityError> errors)
-        {
-            Errors = errors;
-        }
+    public SBOMValidationFailure(IList<EntityError> errors)
+    {
+        Errors = errors;
     }
 }

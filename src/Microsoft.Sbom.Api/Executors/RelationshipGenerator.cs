@@ -6,50 +6,49 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Api.Manifest;
 
-namespace Microsoft.Sbom.Api.Executors
+namespace Microsoft.Sbom.Api.Executors;
+
+/// <summary>
+/// Takes a list of relationships and generates the SBOM JsonDocuments for each of the
+/// relationship.
+/// </summary>
+public class RelationshipGenerator
 {
-    /// <summary>
-    /// Takes a list of relationships and generates the SBOM JsonDocuments for each of the
-    /// relationship.
-    /// </summary>
-    public class RelationshipGenerator
+    private readonly ManifestGeneratorProvider manifestGeneratorProvider;
+
+    public RelationshipGenerator(ManifestGeneratorProvider manifestGeneratorProvider)
     {
-        private readonly ManifestGeneratorProvider manifestGeneratorProvider;
+        this.manifestGeneratorProvider = manifestGeneratorProvider ?? throw new ArgumentNullException(nameof(manifestGeneratorProvider));
+    }
 
-        public RelationshipGenerator(ManifestGeneratorProvider manifestGeneratorProvider)
+    public virtual ChannelReader<JsonDocument> Run(IEnumerator<Relationship> relationships, ManifestInfo manifestInfo)
+    {
+        var output = Channel.CreateUnbounded<JsonDocument>();
+
+        Task.Run(async () =>
         {
-            this.manifestGeneratorProvider = manifestGeneratorProvider ?? throw new ArgumentNullException(nameof(manifestGeneratorProvider));
-        }
-
-        public virtual ChannelReader<JsonDocument> Run(IEnumerator<Relationship> relationships, ManifestInfo manifestInfo)
-        {
-            var output = Channel.CreateUnbounded<JsonDocument>();
-
-            Task.Run(async () =>
+            using (relationships)
             {
-                using (relationships)
+                try
                 {
-                    try
+                    while (relationships.MoveNext())
                     {
-                        while (relationships.MoveNext())
-                        {
-                            IManifestGenerator manifestGenerator = manifestGeneratorProvider.Get(manifestInfo);
-                            GenerationResult generationResult = manifestGenerator.GenerateJsonDocument(relationships.Current);
-                            await output.Writer.WriteAsync(generationResult?.Document);
-                        }
-                    }
-                    finally
-                    {
-                        output.Writer.Complete();
+                        IManifestGenerator manifestGenerator = manifestGeneratorProvider.Get(manifestInfo);
+                        GenerationResult generationResult = manifestGenerator.GenerateJsonDocument(relationships.Current);
+                        await output.Writer.WriteAsync(generationResult?.Document);
                     }
                 }
-            });
+                finally
+                {
+                    output.Writer.Complete();
+                }
+            }
+        });
 
-            return output;
-        }
+        return output;
     }
 }

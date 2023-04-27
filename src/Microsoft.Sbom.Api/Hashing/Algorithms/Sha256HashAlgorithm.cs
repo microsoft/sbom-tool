@@ -4,13 +4,12 @@
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Microsoft.Sbom.Api.Hashing.Algorithms
+namespace Microsoft.Sbom.Api.Hashing.Algorithms;
+
+/// <summary>
+/// The hash algorithm implementation of the <see cref="SHA256"/> hash type.
+/// </summary>
+public class Sha256HashAlgorithm : IHashAlgorithm
 {
-    /// <summary>
-    /// The hash algorithm implementation of the <see cref="SHA256"/> hash type.
-    /// </summary>
-    public class Sha256HashAlgorithm : IHashAlgorithm
-    {
-        public byte[] ComputeHash(Stream stream) => SHA256.Create().ComputeHash(stream);
-    }
+    public byte[] ComputeHash(Stream stream) => SHA256.Create().ComputeHash(stream);
 }

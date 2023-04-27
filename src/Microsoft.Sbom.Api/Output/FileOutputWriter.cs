@@ -5,26 +5,25 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Common.Config;
 
-namespace Microsoft.Sbom.Api.Output
+namespace Microsoft.Sbom.Api.Output;
+
+/// <summary>
+/// Writes a string to a file.
+/// TODO Use serilog.
+/// </summary>
+public class FileOutputWriter : IOutputWriter
 {
-    /// <summary>
-    /// Writes a string to a file.
-    /// TODO Use serilog.
-    /// </summary>
-    public class FileOutputWriter : IOutputWriter
+    private readonly IConfiguration configuration;
+
+    public FileOutputWriter(IConfiguration configuration)
     {
-        private readonly IConfiguration configuration;
+        this.configuration = configuration;
+    }
 
-        public FileOutputWriter(IConfiguration configuration)
-        {
-            this.configuration = configuration;
-        }
-
-        public async Task WriteAsync(string output)
-        {
-            using FileStream fs = new FileStream(configuration.OutputPath.Value, FileMode.Create);
-            using StreamWriter outputFile = new StreamWriter(fs);
-            await outputFile.WriteAsync(output);
-        }
+    public async Task WriteAsync(string output)
+    {
+        using FileStream fs = new FileStream(configuration.OutputPath.Value, FileMode.Create);
+        using StreamWriter outputFile = new StreamWriter(fs);
+        await outputFile.WriteAsync(output);
     }
 }

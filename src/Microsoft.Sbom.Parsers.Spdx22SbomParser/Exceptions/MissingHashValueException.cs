@@ -4,28 +4,27 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Exceptions
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Exceptions;
+
+[Serializable]
+internal class MissingHashValueException : Exception
 {
-    [Serializable]
-    internal class MissingHashValueException : Exception
+    public MissingHashValueException()
     {
-        public MissingHashValueException()
-        {
-        }
+    }
 
-        public MissingHashValueException(string message)
-            : base(message)
-        {
-        }
+    public MissingHashValueException(string message)
+        : base(message)
+    {
+    }
 
-        public MissingHashValueException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public MissingHashValueException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
 
-        protected MissingHashValueException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+    protected MissingHashValueException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    {
     }
 }

@@ -3,19 +3,18 @@
 
 using System.Collections.Concurrent;
 
-namespace Microsoft.Sbom.Api.Manifest.FileHashes
-{
-    /// <summary>
-    /// A container for a concurrent dictionary that is used to store <see cref="FileHashes"/>
-    /// used in validation.
-    /// </summary>
-    public class FileHashesDictionary
-    {
-        public ConcurrentDictionary<string, FileHashes> FileHashes { get; private set; }
+namespace Microsoft.Sbom.Api.Manifest.FileHashes;
 
-        public FileHashesDictionary(ConcurrentDictionary<string, FileHashes> fileHashes)
-        {
-            FileHashes = fileHashes;
-        }
+/// <summary>
+/// A container for a concurrent dictionary that is used to store <see cref="FileHashes"/>
+/// used in validation.
+/// </summary>
+public class FileHashesDictionary
+{
+    public ConcurrentDictionary<string, FileHashes> FileHashes { get; private set; }
+
+    public FileHashesDictionary(ConcurrentDictionary<string, FileHashes> fileHashes)
+    {
+        FileHashes = fileHashes;
     }
 }

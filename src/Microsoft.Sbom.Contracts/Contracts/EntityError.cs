@@ -4,26 +4,25 @@
 using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.Sbom.Contracts.Enums;
 
-namespace Microsoft.Sbom.Contracts
+namespace Microsoft.Sbom.Contracts;
+
+/// <summary>
+/// Represents a single error for a given entity. The entity could be a file or package.
+/// </summary>
+public class EntityError
 {
     /// <summary>
-    /// Represents a single error for a given entity. The entity could be a file or package.
+    /// Gets or sets the type of error.
     /// </summary>
-    public class EntityError
-    {
-        /// <summary>
-        /// Gets or sets the type of error.
-        /// </summary>
-        public ErrorType ErrorType { get; set; }
+    public ErrorType ErrorType { get; set; }
 
-        /// <summary>
-        /// Gets or sets the entity that encountered the error.
-        /// </summary>
-        public Entity Entity { get; set; }
+    /// <summary>
+    /// Gets or sets the entity that encountered the error.
+    /// </summary>
+    public Entity Entity { get; set; }
 
-        /// <summary>
-        /// Gets or sets the details of the error.
-        /// </summary>
-        public string Details { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the details of the error.
+    /// </summary>
+    public string Details { get; set; }
 }

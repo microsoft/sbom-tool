@@ -6,72 +6,75 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 
-namespace Microsoft.Sbom.Common
+namespace Microsoft.Sbom.Common;
+
+/// <summary>
+/// A wrapper class to make the filesystem methods unit testable.
+/// </summary>
+public abstract class FileSystemUtils : IFileSystemUtils
 {
-    /// <summary>
-    /// A wrapper class to make the filesystem methods unit testable.
-    /// </summary>
-    public abstract class FileSystemUtils : IFileSystemUtils
+    private readonly EnumerationOptions dontFollowSymlinks = new EnumerationOptions
     {
-        private readonly EnumerationOptions dontFollowSymlinks = new EnumerationOptions
-        {
-            AttributesToSkip = FileAttributes.ReparsePoint
-        };
+        AttributesToSkip = FileAttributes.ReparsePoint
+    };
 
-        private const string SearchAllFilesAndFolders = "*";
+    private static readonly string SbomToolTempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
-        public bool DirectoryExists(string path) => Directory.Exists(path);
+    private const string SearchAllFilesAndFolders = "*";
 
-        public IEnumerable<string> GetDirectories(string path, bool followSymlinks = true) => followSymlinks switch
-        {
-            true => Directory.GetDirectories(path),
-            false => Directory.GetDirectories(path, SearchAllFilesAndFolders, dontFollowSymlinks)
-        };
+    public bool DirectoryExists(string path) => Directory.Exists(path);
 
-        public IEnumerable<string> GetFilesInDirectory(string path, bool followSymlinks = true) => followSymlinks switch
-        {
-            true => Directory.GetFiles(path),
-            false => Directory.GetFiles(path, SearchAllFilesAndFolders, dontFollowSymlinks)
-        };
+    public string GetSbomToolTempPath() => SbomToolTempPath;
 
-        public DirectorySecurity GetDirectorySecurity(string directoryPath) => new DirectoryInfo(directoryPath).GetAccessControl();
+    public IEnumerable<string> GetDirectories(string path, bool followSymlinks = true) => followSymlinks switch
+    {
+        true => Directory.GetDirectories(path),
+        false => Directory.GetDirectories(path, SearchAllFilesAndFolders, dontFollowSymlinks)
+    };
 
-        public string JoinPaths(string root, string relativePath) => Path.Join(root, relativePath);
+    public IEnumerable<string> GetFilesInDirectory(string path, bool followSymlinks = true) => followSymlinks switch
+    {
+        true => Directory.GetFiles(path),
+        false => Directory.GetFiles(path, SearchAllFilesAndFolders, dontFollowSymlinks)
+    };
 
-        public string JoinPaths(string root, string relativePath, string secondRelativePath) => Path.Join(root, relativePath, secondRelativePath);
+    public DirectorySecurity GetDirectorySecurity(string directoryPath) => new DirectoryInfo(directoryPath).GetAccessControl();
 
-        /// <inheritdoc/>
-        public string GetRelativePath(string relativeTo, string path) => Path.GetRelativePath(relativeTo, path);
+    public string JoinPaths(string root, string relativePath) => Path.Join(root, relativePath);
 
-        public string GetDirectoryName(string filePath) => Path.GetDirectoryName(filePath);
+    public string JoinPaths(string root, string relativePath, string secondRelativePath) => Path.Join(root, relativePath, secondRelativePath);
 
-        public Stream OpenRead(string filePath) => File.OpenRead(filePath);
+    /// <inheritdoc/>
+    public string GetRelativePath(string relativeTo, string path) => Path.GetRelativePath(relativeTo, path);
 
-        public string ReadAllText(string filePath) => File.ReadAllText(filePath);
+    public string GetDirectoryName(string filePath) => Path.GetDirectoryName(filePath);
 
-        public bool FileExists(string path) => File.Exists(path);
+    public Stream OpenRead(string filePath) => File.OpenRead(filePath);
 
-        public Stream OpenWrite(string filePath) => new FileStream(
-            filePath,
-            FileMode.Create,
-            FileAccess.Write,
-            FileShare.Delete,
-            Constants.DefaultStreamBufferSize,
-            FileOptions.Asynchronous);
+    public string ReadAllText(string filePath) => File.ReadAllText(filePath);
 
-        abstract public bool DirectoryHasReadPermissions(string directoryPath);
+    public bool FileExists(string path) => File.Exists(path);
 
-        abstract public bool DirectoryHasWritePermissions(string directoryPath);
+    public Stream OpenWrite(string filePath) => new FileStream(
+        filePath,
+        FileMode.Create,
+        FileAccess.Write,
+        FileShare.Delete,
+        Constants.DefaultStreamBufferSize,
+        FileOptions.Asynchronous);
 
-        public DirectoryInfo CreateDirectory(string path) => Directory.CreateDirectory(path);
+    abstract public bool DirectoryHasReadPermissions(string directoryPath);
 
-        public void DeleteFile(string filePath) => File.Delete(filePath);
+    abstract public bool DirectoryHasWritePermissions(string directoryPath);
 
-        public void DeleteDir(string path, bool recursive = false) => Directory.Delete(path, recursive);
+    public DirectoryInfo CreateDirectory(string path) => Directory.CreateDirectory(path);
 
-        public string AbsolutePath(string filePath) => Path.GetFullPath(filePath);
+    public void DeleteFile(string filePath) => File.Delete(filePath);
 
-        /// <inheritdoc/>
-        public bool IsDirectoryEmpty(string directoryPath) => DirectoryExists(directoryPath) && !Directory.EnumerateFiles(directoryPath).Any();
-    }
+    public void DeleteDir(string path, bool recursive = false) => Directory.Delete(path, recursive);
+
+    public string AbsolutePath(string filePath) => Path.GetFullPath(filePath);
+
+    /// <inheritdoc/>
+    public bool IsDirectoryEmpty(string directoryPath) => DirectoryExists(directoryPath) && !Directory.EnumerateFiles(directoryPath).Any();
 }

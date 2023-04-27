@@ -3,27 +3,26 @@
 
 using System;
 
-namespace Microsoft.Sbom.Common.Config.Attributes
+namespace Microsoft.Sbom.Common.Config.Attributes;
+
+/// <summary>
+/// Validate if the property value is a valid URI.
+/// </summary>
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Assembly, Inherited = false, AllowMultiple = false)]
+public sealed class ValidUriAttribute : Attribute
 {
     /// <summary>
-    /// Validate if the property value is a valid URI.
+    /// Gets or sets execute this validation only for the given action. Default is all.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Assembly, Inherited = false, AllowMultiple = false)]
-    public sealed class ValidUriAttribute : Attribute
+    public ManifestToolActions ForAction { get; set; }
+
+    /// <summary>
+    /// Gets or sets the type of URI the value should be.
+    /// </summary>
+    public UriKind UriKind { get; set; }
+
+    public ValidUriAttribute()
     {
-        /// <summary>
-        /// Gets or sets execute this validation only for the given action. Default is all.
-        /// </summary>
-        public ManifestToolActions ForAction { get; set; }
-
-        /// <summary>
-        /// Gets or sets the type of URI the value should be.
-        /// </summary>
-        public UriKind UriKind { get; set; }
-
-        public ValidUriAttribute()
-        {
-            ForAction = ManifestToolActions.Generate;
-        }
+        ForAction = ManifestToolActions.Generate;
     }
 }

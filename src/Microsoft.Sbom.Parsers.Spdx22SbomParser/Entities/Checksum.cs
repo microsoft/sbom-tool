@@ -3,24 +3,23 @@
 
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+
+/// <summary>
+/// Represents the hash value of the file using the algorithm specified.
+/// </summary>
+public class Checksum
 {
     /// <summary>
-    /// Represents the hash value of the file using the algorithm specified.
+    /// Gets or sets the name of the hash algorithm.
     /// </summary>
-    public class Checksum
-    {
-        /// <summary>
-        /// Gets or sets the name of the hash algorithm.
-        /// </summary>
-        [JsonPropertyName("algorithm")]
+    [JsonPropertyName("algorithm")]
 
-        public string Algorithm { get; set; }
+    public string Algorithm { get; set; }
 
-        /// <summary>
-        /// Gets or sets the string value of the computed hash.
-        /// </summary>
-        [JsonPropertyName("checksumValue")]
-        public string ChecksumValue { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the string value of the computed hash.
+    /// </summary>
+    [JsonPropertyName("checksumValue")]
+    public string ChecksumValue { get; set; }
 }

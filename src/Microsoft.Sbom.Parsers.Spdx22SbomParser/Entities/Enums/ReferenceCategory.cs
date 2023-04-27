@@ -3,17 +3,16 @@
 
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums
+namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
+
+/// <summary>
+/// Defines a Category for an external package reference.
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum ReferenceCategory
 {
-    /// <summary>
-    /// Defines a Category for an external package reference.
-    /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum ReferenceCategory
-    {
-        OTHER,
-        SECURITY,
-        PACKAGE_MANAGER,
-        PERSISTENT_ID
-    }
+    OTHER,
+    SECURITY,
+    PACKAGE_MANAGER,
+    PERSISTENT_ID
 }

@@ -12,70 +12,69 @@ using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Extensions.DependencyInjection;
 using PowerArgs;
 
-namespace Microsoft.Sbom.Tool
+namespace Microsoft.Sbom.Tool;
+
+internal class Program
 {
-    internal class Program
+    internal static string Name => NameValue.Value;
+
+    internal static string Version => VersionValue.Value;
+
+    private static readonly Lazy<string> NameValue = new Lazy<string>(() =>
     {
-        internal static string Name => NameValue.Value;
+        return typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product ?? "sbomtool";
+    });
 
-        internal static string Version => VersionValue.Value;
+    private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
+    {
+        return typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
+    });
 
-        private static readonly Lazy<string> NameValue = new Lazy<string>(() =>
+    public static async Task Main(string[] args)
+    {
+        var result = await Args.InvokeActionAsync<SbomToolCmdRunner>(args);
+        if (result.HandledException != null || (result.ActionArgs is not CommonArgs))
         {
-            return typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product ?? "sbomtool";
-        });
+            return;
+        }
 
-        private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
+        try
         {
-            return typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
-        });
-
-        public static async Task Main(string[] args)
-        {
-            var result = await Args.InvokeActionAsync<SbomToolCmdRunner>(args);
-            if (result.HandledException != null || (result.ActionArgs is not CommonArgs))
-            {
-                return;
-            }
-
-            try
-            {
-                await Host.CreateDefaultBuilder(args)
-                    .ConfigureServices((host, services) =>
+            await Host.CreateDefaultBuilder(args)
+                .ConfigureServices((host, services) =>
+                {
+                    services = result.ActionArgs switch
                     {
-                        services = result.ActionArgs switch
+                        ValidationArgs v => services.AddHostedService<ValidationService>(),
+                        GenerationArgs g => services.AddHostedService<GenerationService>(),
+                        _ => services
+                    };
+
+                    services
+                        .AddTransient<ConfigFileParser>()
+                        .AddSingleton(typeof(IConfigurationBuilder<>), typeof(ConfigurationBuilder<>))
+                        .AddSingleton(x =>
                         {
-                            ValidationArgs v => services.AddHostedService<ValidationService>(),
-                            GenerationArgs g => services.AddHostedService<GenerationService>(),
-                            _ => services
-                        };
-
-                        services
-                            .AddTransient<ConfigFileParser>()
-                            .AddSingleton(typeof(IConfigurationBuilder<>), typeof(ConfigurationBuilder<>))
-                            .AddSingleton(x =>
+                            var validationConfigurationBuilder = x.GetService<IConfigurationBuilder<ValidationArgs>>();
+                            var generationConfigurationBuilder = x.GetService<IConfigurationBuilder<GenerationArgs>>();
+                            var inputConfiguration = result.ActionArgs switch
                             {
-                                var validationConfigurationBuilder = x.GetService<IConfigurationBuilder<ValidationArgs>>();
-                                var generationConfigurationBuilder = x.GetService<IConfigurationBuilder<GenerationArgs>>();
-                                var inputConfiguration = result.ActionArgs switch
-                                {
-                                    ValidationArgs v => validationConfigurationBuilder.GetConfiguration(v).GetAwaiter().GetResult(),
-                                    GenerationArgs g => generationConfigurationBuilder.GetConfiguration(g).GetAwaiter().GetResult(),
-                                    _ => default
-                                };
+                                ValidationArgs v => validationConfigurationBuilder.GetConfiguration(v).GetAwaiter().GetResult(),
+                                GenerationArgs g => generationConfigurationBuilder.GetConfiguration(g).GetAwaiter().GetResult(),
+                                _ => default
+                            };
 
-                                inputConfiguration.ToConfiguration();
-                                return inputConfiguration;
-                            })
+                            inputConfiguration.ToConfiguration();
+                            return inputConfiguration;
+                        })
 
-                            .AddSbomTool();
-                    })
+                        .AddSbomTool();
+                })
                 .RunConsoleAsync(x => x.SuppressStatusMessages = true);
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine(e.Message);
-            }
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e.Message);
         }
     }
 }
