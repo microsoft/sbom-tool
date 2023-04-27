@@ -18,9 +18,13 @@ public abstract class FileSystemUtils : IFileSystemUtils
         AttributesToSkip = FileAttributes.ReparsePoint
     };
 
+    private static readonly string SbomToolTempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+
     private const string SearchAllFilesAndFolders = "*";
 
     public bool DirectoryExists(string path) => Directory.Exists(path);
+
+    public string GetSbomToolTempPath() => SbomToolTempPath;
 
     public IEnumerable<string> GetDirectories(string path, bool followSymlinks = true) => followSymlinks switch
     {

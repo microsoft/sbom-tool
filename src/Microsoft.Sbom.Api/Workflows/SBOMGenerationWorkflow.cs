@@ -142,11 +142,24 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     recorder.RecordTotalErrors(validErrors);
                 }
 
-                // Delete the generated _manifest folder if generation failed.
+               // Delete the generated _manifest folder if generation failed.
                 if (deleteSBOMDir || validErrors.Any())
                 {
                     DeleteManifestFolder(sbomDir);
                 }
+
+                try
+                {
+                    // Delete the generated temp folder if necessary 
+                    if (fileSystemUtils.DirectoryExists(fileSystemUtils.GetSbomToolTempPath()))
+                    {
+                        fileSystemUtils.DeleteDir(fileSystemUtils.GetSbomToolTempPath(), true);
+                    }
+                }
+                catch (Exception e)
+                {
+                    log.Warning($"Unable to delete the temp directory {fileSystemUtils.GetSbomToolTempPath()}", e);
+                }          
             }
         }
     }

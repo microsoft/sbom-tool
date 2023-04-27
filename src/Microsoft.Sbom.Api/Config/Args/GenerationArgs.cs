@@ -14,7 +14,6 @@ public class GenerationArgs : CommonArgs
     /// Gets or sets the root folder of the drop directory for which the SBOM file will be generated.
     /// </summary>
     [ArgShortcut("b")]
-    [ArgRequired(IfNot = "ConfigFilePath")]
     [ArgDescription("The root folder of the drop directory for which the SBOM file will be generated.")]
     public string BuildDropPath { get; set; }
 

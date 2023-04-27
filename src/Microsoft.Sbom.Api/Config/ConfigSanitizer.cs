@@ -50,6 +50,13 @@ public class ConfigSanitizer
             .WriteTo.Console(outputTemplate: Constants.LoggerTemplate)
             .CreateLogger();
 
+        // If BuildDropPath is null then run the logic to check whether it is required or not based on the current configuration.
+        if (configuration.BuildDropPath?.Value == null || (configuration.DockerImagesToScan?.Value != null && configuration.BuildComponentPath?.Value == null))
+        {
+                ValidateBuildDropPathConfiguration(configuration);
+                configuration.BuildDropPath = GetTempBuildDropPath(configuration);
+        }
+
         configuration.HashAlgorithm = GetHashAlgorithmName(configuration);
 
         // set ManifestDirPath after validation of DirectoryExist and DirectoryPathIsWritable, this wouldn't exist because it needs to be created by the tool.
@@ -84,12 +91,48 @@ public class ConfigSanitizer
         }
 
         return new ConfigurationSetting<IList<ManifestInfo>>
+            {
+                Source = SettingSource.Default,
+                Value = new List<ManifestInfo>()
+                {
+                    defaultManifestInfo
+                }
+            };
+        }
+
+    private void ValidateBuildDropPathConfiguration(IConfiguration configuration)
+    {
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        {
+            if (configuration.ManifestDirPath?.Value != null && configuration.DockerImagesToScan?.Value != null)
+            {
+                return;
+            }
+            else if (configuration.ManifestDirPath?.Value == null && configuration.BuildComponentPath?.Value == null && configuration.DockerImagesToScan?.Value != null)
+            {
+                throw new ValidationArgException($"Please provide a (-m) if you intend to create an SBOM with only the contents of the Docker image or a (-bc) if you intend to include other components in your SBOM.");
+            }
+            else if (configuration.ManifestDirPath?.Value == null && configuration.DockerImagesToScan?.Value != null)
+            {
+                throw new ValidationArgException($"Please provide a value for the ManifestDirPath (-m) parameter to generate the SBOM for the specified Docker image.");
+            }
+            else
+            {
+                throw new ValidationArgException($"Please provide a value for the BuildDropPath (-b) parameter to generate the SBOM.");
+            }
+        }
+        else
+        {
+            throw new ValidationArgException($"Please provide a value for the BuildDropPath (-b) parameter.");
+        }
+    }
+
+    private ConfigurationSetting<string> GetTempBuildDropPath(IConfiguration configuration)
+    {
+        return new ConfigurationSetting<string>
         {
             Source = SettingSource.Default,
-            Value = new List<ManifestInfo>()
-            {
-                defaultManifestInfo
-            }
+            Value = fileSystemUtils.GetSbomToolTempPath(),
         };
     }
 
