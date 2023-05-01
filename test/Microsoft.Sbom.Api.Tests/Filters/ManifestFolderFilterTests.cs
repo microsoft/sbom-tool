@@ -16,8 +16,9 @@ public class ManifestFolderFilterTests
     [TestMethod]
     public void ManifestFolderFilterTest_CheckAllManifestFolder_Succeeds()
     {
-        bool isWindows = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-        //if os doesn't contain windows in the name then return;
+        bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+        // If the OS is not Windows, then skip this test.
         if (!isWindows)
         {
             return;

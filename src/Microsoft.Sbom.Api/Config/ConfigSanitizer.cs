@@ -75,16 +75,16 @@ public class ConfigSanitizer
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
 
         // Replace backslashes in directory paths with the OS-sepcific directory separator character.
-            var pathProps = configuration.GetType().GetProperties().Where(p => p.GetCustomAttributes(typeof(DirectoryAttribute), true).Any());
-            foreach (var pathProp in pathProps)
+        var pathProps = configuration.GetType().GetProperties().Where(p => p.GetCustomAttributes(typeof(DirectoryAttribute), true).Any());
+        foreach (var pathProp in pathProps)
+        {
+            var path = pathProp.GetValue(configuration) as ConfigurationSetting<string>;
+            if (path != null)
             {
-                var path = pathProp.GetValue(configuration) as ConfigurationSetting<string>;
-                if (path != null)
-                {
-                    path.Value = path.Value?.Replace('\\', Path.AltDirectorySeparatorChar);
-                    pathProp.SetValue(configuration, path);
-                }    
-            }
+                path.Value = path.Value?.Replace('\\', Path.AltDirectorySeparatorChar);
+                pathProp.SetValue(configuration, path);
+            }    
+        }
 
         logger.Dispose();
 

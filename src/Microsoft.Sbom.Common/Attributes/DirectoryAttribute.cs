@@ -3,13 +3,12 @@
 
 using System;
 
-namespace Microsoft.Sbom.Common.Config.Attributes
+namespace Microsoft.Sbom.Common.Config.Attributes;
+
+/// <summary>
+/// Validate if the property value is a valid URI.
+/// </summary>
+[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+public sealed class DirectoryAttribute : Attribute
 {
-    /// <summary>
-    /// Validate if the property value is a valid URI.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-    public sealed class DirectoryAttribute : Attribute
-    {
-    }
 }
