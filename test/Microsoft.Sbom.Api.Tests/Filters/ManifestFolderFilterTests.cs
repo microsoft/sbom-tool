@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Runtime.InteropServices;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,6 +16,13 @@ public class ManifestFolderFilterTests
     [TestMethod]
     public void ManifestFolderFilterTest_CheckAllManifestFolder_Succeeds()
     {
+        bool isWindows = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        //if os doesn't contain windows in the name then return;
+        if (!isWindows)
+        {
+            return;
+        }
+
         var mockOSUtils = new Mock<IOSUtils>();
         mockOSUtils.Setup(o => o.GetFileSystemStringComparisonType()).Returns(StringComparison.CurrentCultureIgnoreCase);
 

@@ -24,6 +24,15 @@ public class ConfigurationSetting<T> : ISettingSourceable
     }
 
     /// <summary>
+    /// Constructs a new instance of <see cref="ConfigurationSetting"/> with the provided value and <see cref="SettingSource"/>.
+    /// </summary>
+    public ConfigurationSetting(T value, SettingSource source = SettingSource.Default)
+    {
+        Value = value;
+        Source = source;
+    }
+
+    /// <summary>
     /// Gets or sets the actual value of the setting.
     /// </summary>
     public T Value { get; set; }

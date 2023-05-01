@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.IO;
-using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Tests;
@@ -11,279 +9,254 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PowerArgs;
+using System.IO;
+using System.Threading.Tasks;
 
-namespace Microsoft.Sbom.Api.Config.Tests;
-
-[TestClass]
-public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsBase
+namespace Microsoft.Sbom.Api.Config.Tests
 {
-    [TestInitialize]
-    public void Setup()
+    [TestClass]
+    public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsBase
     {
-        Init();
-    }
-
-    [TestMethod]
-    public async Task ConfigurationBuilderTest_ForGenerator_CombinesConfigs()
-    {
-        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
-
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigGoodWithManifestInfo));
-        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
-
-        var args = new GenerationArgs
+        [TestInitialize]
+        public void Setup()
         {
-            BuildDropPath = "BuildDropPath",
-            ConfigFilePath = "config.json",
-            NamespaceUriBase = "https://base.uri",
-            PackageSupplier = "Contoso"
-        };
+            Init();
+        }
 
-        var configuration = await cb.GetConfiguration(args);
-
-        Assert.AreEqual(configuration.BuildDropPath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.ConfigFilePath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.ManifestInfo.Source, SettingSource.JsonConfig);
-
-        fileSystemUtilsMock.VerifyAll();
-    }
-
-    [TestMethod]
-    public async Task ConfigurationBuilderTest_ForGenerator_CombinesConfigs_CmdLineSucceeds()
-    {
-        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
-
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigGoodWithManifestInfo));
-        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
-
-        var args = new GenerationArgs
+        [TestMethod]
+        public async Task ConfigurationBuilderTest_ForGenerator_CombinesConfigs()
         {
-            BuildDropPath = "BuildDropPath",
-            ConfigFilePath = "config.json",
-            NamespaceUriBase = "https://base.uri",
-            PackageSupplier = "Contoso"
-        };
+            var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+            var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        var configuration = await cb.GetConfiguration(args);
+            fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigGoodWithManifestInfo));
+            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
 
-        Assert.AreEqual(configuration.BuildDropPath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.ConfigFilePath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.ManifestInfo.Source, SettingSource.JsonConfig);
+            var args = new GenerationArgs
+            {
+                BuildDropPath = "BuildDropPath",
+                ConfigFilePath = "config.json",
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
+            };
 
-        fileSystemUtilsMock.VerifyAll();
-    }
+            var configuration = await cb.GetConfiguration(args);
 
-    [TestMethod]
-    [ExpectedException(typeof(ValidationArgException))]
-    public async Task ConfigurationBuilderTest_Generation_BuildDropPathDoNotExist_Throws()
-    {
-        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+            Assert.AreEqual(configuration.BuildDropPath.Source, SettingSource.CommandLine);
+            Assert.AreEqual(configuration.ConfigFilePath.Source, SettingSource.CommandLine);
+            Assert.AreEqual(configuration.ManifestInfo.Source, SettingSource.JsonConfig);
 
-        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(false);
+            fileSystemUtilsMock.VerifyAll();
+        }
 
-        var args = new GenerationArgs
+        [TestMethod]
+        public async Task ConfigurationBuilderTest_ForGenerator_CombinesConfigs_CmdLineSucceeds()
         {
-            BuildDropPath = "BuildDropPath",
-            NamespaceUriBase = "https://base.uri",
-            PackageSupplier = "Contoso"
-        };
+            var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+            var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        var configuration = await cb.GetConfiguration(args);
-    }
+            fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigGoodWithManifestInfo));
+            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
 
-    [TestMethod]
-    [ExpectedException(typeof(AccessDeniedValidationArgException))]
-    public async Task ConfigurationBuilderTest_Generation_BuildDropPathNotWriteAccess_Throws()
-    {
-        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+            var args = new GenerationArgs
+            {
+                BuildDropPath = "BuildDropPath",
+                ConfigFilePath = "config.json",
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
+            };
 
-        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(false);
+            var configuration = await cb.GetConfiguration(args);
 
-        var args = new GenerationArgs
+            Assert.AreEqual(configuration.BuildDropPath.Source, SettingSource.CommandLine);
+            Assert.AreEqual(configuration.ConfigFilePath.Source, SettingSource.CommandLine);
+            Assert.AreEqual(configuration.ManifestInfo.Source, SettingSource.JsonConfig);
+
+            fileSystemUtilsMock.VerifyAll();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ValidationArgException))]
+        public async Task ConfigurationBuilderTest_Generation_BuildDropPathDoNotExist_Throws()
         {
-            BuildDropPath = "BuildDropPath",
-            NamespaceUriBase = "https://base.uri",
-            PackageSupplier = "Contoso"
-        };
+            var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+            var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        var configuration = await cb.GetConfiguration(args);
-    }
+            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(false);
 
-    [TestMethod]
-    public async Task ConfigurationBuilderTest_Generation_DefaultManifestDirPath_AddsManifestDir()
-    {
-        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+            var args = new GenerationArgs
+            {
+                BuildDropPath = "BuildDropPath",
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
+            };
 
-        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
+            var configuration = await cb.GetConfiguration(args);
+        }
 
-        var args = new GenerationArgs
+        [TestMethod]
+        [ExpectedException(typeof(AccessDeniedValidationArgException))]
+        public async Task ConfigurationBuilderTest_Generation_BuildDropPathNotWriteAccess_Throws()
         {
-            BuildDropPath = "BuildDropPath",
-            NamespaceUriBase = "https://base.uri",
-            PackageSupplier = "Contoso"
-        };
+            var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+            var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        var config = await cb.GetConfiguration(args);
+            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(false);
 
-        Assert.IsNotNull(config);
-        Assert.IsNotNull(config.ManifestDirPath);
-        Assert.AreEqual(Path.Join(args.BuildDropPath, Constants.ManifestFolder), config.ManifestDirPath.Value);
+            var args = new GenerationArgs
+            {
+                BuildDropPath = "BuildDropPath",
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
+            };
 
-        fileSystemUtilsMock.VerifyAll();
-    }
+            var configuration = await cb.GetConfiguration(args);
+        }
 
-    [TestMethod]
-    public async Task ConfigurationBuilderTest_Generation_UserManifestDirPath_AddsManifestDir()
-    {
-        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
-
-        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
-
-        var args = new GenerationArgs
+        [TestMethod]
+        public async Task ConfigurationBuilderTest_Generation_DefaultManifestDirPath_AddsManifestDir()
         {
-            BuildDropPath = "BuildDropPath",
-            ManifestDirPath = "ManifestDirPath",
-            NamespaceUriBase = "https://base.uri",
-            PackageSupplier = "Contoso"
-        };
+            var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+            var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        var config = await cb.GetConfiguration(args);
+            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
 
-        Assert.IsNotNull(config);
-        Assert.IsNotNull(config.ManifestDirPath);
-        Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+            var args = new GenerationArgs
+            {
+                BuildDropPath = "BuildDropPath",
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
+            };
 
-        fileSystemUtilsMock.VerifyAll();
-    }
+            var config = await cb.GetConfiguration(args);
 
-    [TestMethod]
-    public async Task ConfigurationBuilderTest_Generation_NSBaseUri_Validated()
-    {
-        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+            Assert.IsNotNull(config);
+            Assert.IsNotNull(config.ManifestDirPath);
 
-        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
+            var expectedPath = Path.Join(args.BuildDropPath, Constants.ManifestFolder);
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
 
-        var args = new GenerationArgs
+            fileSystemUtilsMock.VerifyAll();
+        }
+
+        [TestMethod]
+        public async Task ConfigurationBuilderTest_Generation_UserManifestDirPath_AddsManifestDir()
         {
-            BuildDropPath = "BuildDropPath",
-            ManifestDirPath = "ManifestDirPath",
-            NamespaceUriBase = "https://base.uri",
-            PackageSupplier = "Contoso"
-        };
+            var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+            var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        var config = await cb.GetConfiguration(args);
+            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
 
-        Assert.IsNotNull(config);
-        Assert.IsNotNull(config.ManifestDirPath);
-        Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+            var args = new GenerationArgs
+            {
+                BuildDropPath = "BuildDropPath",
+                ManifestDirPath = "ManifestDirPath",
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
+            };
 
-        fileSystemUtilsMock.VerifyAll();
-    }
+            var config = await cb.GetConfiguration(args);
 
-    [TestMethod]
-    public async Task ConfigurationBuilderTest_Generation_NullNSBaseUriChangesToDefault()
-    {
-        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+            Assert.IsNotNull(config);
+            Assert.IsNotNull(config.ManifestDirPath);
 
-        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
+            var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
 
-        var args = new GenerationArgs
+            fileSystemUtilsMock.VerifyAll();
+        }
+
+        [TestMethod]
+        public async Task ConfigurationBuilderTest_Generation_NSBaseUri_Validated()
         {
-            BuildDropPath = "BuildDropPath",
-            ManifestDirPath = "ManifestDirPath",
-            NamespaceUriBase = null,
-            PackageSupplier = "Contoso"
-        };
+            var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+            var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        var config = await cb.GetConfiguration(args);
+            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
 
-        Assert.IsNotNull(config); 
-        Assert.IsNotNull(args.ManifestDirPath);
-        Assert.IsNotNull(config.NamespaceUriBase);
-        Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+            var args = new GenerationArgs
+            {
+                BuildDropPath = "BuildDropPath",
+                ManifestDirPath = "ManifestDirPath",
+                NamespaceUriBase = "https://base.uri",
+                PackageSupplier = "Contoso"
+            };
 
-        fileSystemUtilsMock.VerifyAll();
-    }
+            var config = await cb.GetConfiguration(args);
 
-    [TestMethod]
-    public async Task ConfigurationBuilderTest_Generation_BadNSBaseUriWithDefaultValue_Succeds()
-    {
-        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+            Assert.IsNotNull(config);
+            Assert.IsNotNull(config.ManifestDirPath);
 
-        mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns("https://uri");
+            var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
 
-        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
+            fileSystemUtilsMock.VerifyAll();
+        }
 
-        var args = new GenerationArgs
+        [TestMethod]
+        public async Task ConfigurationBuilderTest_Generation_BadNSBaseUriWithDefaultValue_Succeds()
         {
-            BuildDropPath = "BuildDropPath",
-            ManifestDirPath = "ManifestDirPath",
-            NamespaceUriBase = "baduri",
-            PackageSupplier = "Contoso"
-        };
+            var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+            var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        var config = await cb.GetConfiguration(args);
+            mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns("https://uri");
 
-        Assert.IsNotNull(config);
-        Assert.IsNotNull(config.ManifestDirPath);
-        Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
 
-        fileSystemUtilsMock.VerifyAll();
-        mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
-    }
+            var args = new GenerationArgs
+            {
+                BuildDropPath = "BuildDropPath",
+                ManifestDirPath = "ManifestDirPath",
+                NamespaceUriBase = "baduri",
+                PackageSupplier = "Contoso"
+            };
 
-    [TestMethod]
-    public async Task ConfigurationBuilderTest_Generation_BadNSBaseUri_Fails()
-    {
-        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+            var config = await cb.GetConfiguration(args);
 
-        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
-        fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
+            Assert.IsNotNull(config);
+            Assert.IsNotNull(config.ManifestDirPath);
 
-        var badNsUris = new string[]
+            var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
+            Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
+
+            fileSystemUtilsMock.VerifyAll();
+            mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
+        }
+
+        [TestMethod]
+        [DataRow("baduri")]
+        [DataRow("https://")]
+        [DataRow("ww.com")]
+        [DataRow("https//test.com")]
+        [ExpectedException(typeof(ValidationArgException), "The value of NamespaceUriBase must be a valid URI.")]
+        public async Task ConfigurationBuilderTest_Generation_BadNSBaseUri_Fails(string badNsUri)
         {
-            "baduri",
-            "https://",
-            "ww.com",
-            "https//test.com",
-        };
-        int failedCount = 0;
+            var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+            var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        foreach (var badNsUri in badNsUris)
-        {
+            fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
+            fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
+
             var args = new GenerationArgs
             {
                 BuildDropPath = "BuildDropPath",
@@ -292,18 +265,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
                 PackageSupplier = "Contoso"
             };
 
-            try
-            {
-                var config = await cb.GetConfiguration(args);
-                Assert.Fail($"NamespaceUriBase test should fail. nsUri: {badNsUri}");
-            }
-            catch (ValidationArgException e)
-            {
-                ++failedCount;
-                Assert.AreEqual("The value of NamespaceUriBase must be a valid URI.", e.Message);
-            }
+            var config = await cb.GetConfiguration(args);
         }
-
-        Assert.AreEqual(badNsUris.Length, failedCount);
     }
 }
