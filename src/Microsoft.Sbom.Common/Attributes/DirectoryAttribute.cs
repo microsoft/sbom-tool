@@ -6,7 +6,7 @@ using System;
 namespace Microsoft.Sbom.Common.Config.Attributes;
 
 /// <summary>
-/// Validate if the property value is a valid URI.
+/// This attribute is used to mark a property as a directory.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 public sealed class DirectoryAttribute : Attribute
