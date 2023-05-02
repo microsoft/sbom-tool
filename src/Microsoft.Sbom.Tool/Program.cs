@@ -12,6 +12,7 @@ using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Extensions.DependencyInjection;
 using PowerArgs;
@@ -59,10 +60,6 @@ namespace Microsoft.Sbom.Tool
                             .AddSingleton(typeof(IConfigurationBuilder<>), typeof(ConfigurationBuilder<>))
                             .AddSingleton(x =>
                             {
-                                var fileSystemUtils = x.GetService<IFileSystemUtils>();
-                                var configValidators = x.GetRequiredService<IEnumerable<ConfigValidator>>();
-                                var configSanitizer = x.GetRequiredService<ConfigSanitizer>();
-
                                 var validationConfigurationBuilder = x.GetService<IConfigurationBuilder<ValidationArgs>>();
                                 var generationConfigurationBuilder = x.GetService<IConfigurationBuilder<GenerationArgs>>();
                                 var inputConfiguration = result.ActionArgs switch
@@ -72,17 +69,8 @@ namespace Microsoft.Sbom.Tool
                                     _ => default
                                 };
 
-                                try
-                                {
-                                    inputConfiguration.ToConfiguration(configValidators, configSanitizer);
-                                    return inputConfiguration;
-                                }
-                                catch (Exception e)
-                                {
-                                    var recorder = TelemetryRecorder.Create(inputConfiguration, fileSystemUtils);
-                                    _ = recorder.LogToConsole(e);
-                                    throw;
-                                }
+                                inputConfiguration.ToConfiguration();
+                                return inputConfiguration;
                             })
 
                             .AddSbomTool();

@@ -44,9 +44,7 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection
             services
                 .AddSingleton(x =>
                 {
-                    var configValidators = x.GetRequiredService<IEnumerable<ConfigValidator>>();
-                    var configSanitizer = x.GetRequiredService<ConfigSanitizer>();
-                    inputConfiguration.ToConfiguration(configValidators, configSanitizer);
+                    inputConfiguration.ToConfiguration();
                     return inputConfiguration;
                 })
                 .AddSbomTool(logLevel);

@@ -47,7 +47,7 @@ namespace Microsoft.Sbom.Api.Config.Tests
             {
                 if (type == typeof(ConfigPostProcessor))
                 {
-                    return new ConfigPostProcessor(configValidators, configSanitizer);
+                    return new ConfigPostProcessor(configValidators, configSanitizer, fileSystemUtilsMock.Object);
                 }
 
                 return Activator.CreateInstance(type);

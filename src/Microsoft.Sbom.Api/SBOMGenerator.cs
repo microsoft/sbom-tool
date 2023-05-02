@@ -65,7 +65,7 @@ namespace Microsoft.Sbom.Api
             inputConfiguration = ValidateConfig(inputConfiguration);
 
             // Globally update the configuration
-            inputConfiguration.ToConfiguration(configValidators, configSanitizer);
+            inputConfiguration.ToConfiguration();
 
             // This is the generate workflow
             bool isSuccess = await generationWorkflow.RunAsync();
@@ -103,7 +103,7 @@ namespace Microsoft.Sbom.Api
                 runtimeConfiguration, externalDocumentReferenceListFile);
             inputConfiguration = ValidateConfig(inputConfiguration);
 
-            inputConfiguration.ToConfiguration(configValidators, configSanitizer);
+            inputConfiguration.ToConfiguration();
 
             // This is the generate workflow
             bool result = await generationWorkflow.RunAsync();
