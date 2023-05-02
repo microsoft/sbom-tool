@@ -67,7 +67,7 @@ public class TelemetryRecorder : IRecorder
     /// <summary>
     /// Method to log telemetry in conditions when the tool is not able to start execution of workflow.
     /// </summary>
-    /// <param name="thrownException">Exception that we want to log.</param>
+    /// <param name="exception">Exception that we want to log.</param>
     public async Task LogToConsole(Exception exception)
     {
         var logger = new LoggerConfiguration()
@@ -75,7 +75,7 @@ public class TelemetryRecorder : IRecorder
             .WriteTo.Console(outputTemplate: Constants.LoggerTemplate)
             .CreateLogger();
 
-        //convert thrownExce to list of exceptions for the SBOMTelemetry object.
+        // Convert thrown Exception to list of exceptions for the SBOMTelemetry object.
         var exceptionList = new List<Exception>
         {
             exception
@@ -227,14 +227,14 @@ public class TelemetryRecorder : IRecorder
 
             // Calculate SBOM file sizes.
             var sbomFormatsUsed = sbomFormats
-                                    .Where(f => File.Exists(f.Value))
-                                    .Select(f => new SBOMFile
-                                    {
-                                        SbomFilePath = f.Value,
-                                        SbomFormatName = f.Key,
-                                        FileSizeInBytes = new System.IO.FileInfo(f.Value).Length
-                                    })
-                                    .ToList();
+                .Where(f => File.Exists(f.Value))
+                .Select(f => new SBOMFile
+                    {
+                        SbomFilePath = f.Value,
+                        SbomFormatName = f.Key,
+                        FileSizeInBytes = new System.IO.FileInfo(f.Value).Length
+                    })
+                .ToList();
 
             // Create the telemetry object.
             var telemetry = new SBOMTelemetry
