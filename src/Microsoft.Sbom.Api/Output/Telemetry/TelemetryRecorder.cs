@@ -74,9 +74,9 @@ public class TelemetryRecorder : IRecorder
         if (Log is null)
         {
             logger = new LoggerConfiguration()
-            .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = Configuration.Verbosity.Value })
-            .WriteTo.Console(outputTemplate: Constants.LoggerTemplate)
-            .CreateLogger();
+                .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = Configuration.Verbosity.Value })
+                .WriteTo.Console(outputTemplate: Constants.LoggerTemplate)
+                .CreateLogger();
         }
 
         // Convert thrown Exception to list of exceptions for the SBOMTelemetry object.
