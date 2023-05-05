@@ -30,7 +30,7 @@ public class SbomToolManifestPathConverterTests
         fileSystemExtensionUtils = new Mock<IFileSystemUtilsExtension>();
         configurationMock = new Mock<IConfiguration>();
 
-        isWindows = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
         converter = new SbomToolManifestPathConverter(configurationMock.Object, osUtils.Object, fileSystemUtils.Object, fileSystemExtensionUtils.Object);
 
