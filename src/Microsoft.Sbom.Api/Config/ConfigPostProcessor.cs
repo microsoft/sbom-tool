@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using AutoMapper;
+using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Validators;
 using PowerArgs;
@@ -18,11 +20,13 @@ public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration
 {
     private readonly IEnumerable<ConfigValidator> configValidators;
     private readonly ConfigSanitizer configSanitizer;
+    private readonly IFileSystemUtils fileSystemUtils;
 
-    public ConfigPostProcessor(IEnumerable<ConfigValidator> configValidators, ConfigSanitizer configSanitizer)
+    public ConfigPostProcessor(IEnumerable<ConfigValidator> configValidators, ConfigSanitizer configSanitizer, IFileSystemUtils fileSystemUtils)
     {
         this.configValidators = configValidators ?? throw new ArgumentNullException(nameof(configValidators));
         this.configSanitizer = configSanitizer ?? throw new ArgumentNullException(nameof(configSanitizer));
+        this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
     }
 
     public void Process(IConfiguration source, IConfiguration destination, ResolutionContext context)
@@ -40,15 +44,24 @@ public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration
                 property.Attributes[typeof(System.ComponentModel.DefaultValueAttribute)]
                     is System.ComponentModel.DefaultValueAttribute defaultValueAttribute)
             {
-                SetDefautValue(destination, defaultValueAttribute.Value, property);
+                SetDefaultValue(destination, defaultValueAttribute.Value, property);
             }
 
-            // Run validators on all properties.
-            configValidators.ForEach(v => v.Validate(property.DisplayName, property.GetValue(destination), property.Attributes));
+            try
+            {
+                // Run validators on all properties.
+                configValidators.ForEach(v => v.Validate(property.DisplayName, property.GetValue(destination), property.Attributes));
+            }
+            catch (Exception ex)
+            {
+                var recorder = TelemetryRecorder.Create(destination, fileSystemUtils);
+                _ = recorder.LogException(ex);
+                throw;
+            }
         }
     }
 
-    private void SetDefautValue(IConfiguration destination, object value, PropertyDescriptor property)
+    private void SetDefaultValue(IConfiguration destination, object value, PropertyDescriptor property)
     {
         if (value is string valueString)
         {
