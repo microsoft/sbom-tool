@@ -68,12 +68,16 @@ public class TelemetryRecorder : IRecorder
     /// Method to log telemetry in conditions when the tool is not able to start execution of workflow.
     /// </summary>
     /// <param name="exception">Exception that we want to log.</param>
-    public async Task LogToConsole(Exception exception)
+    public async Task LogException(Exception exception)
     {
-        var logger = new LoggerConfiguration()
+        var logger = Log;
+        if (Log is null)
+        {
+            logger = new LoggerConfiguration()
             .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = Configuration.Verbosity.Value })
             .WriteTo.Console(outputTemplate: Constants.LoggerTemplate)
             .CreateLogger();
+        }
 
         // Convert thrown Exception to list of exceptions for the SBOMTelemetry object.
         var exceptionList = new List<Exception>
@@ -156,7 +160,7 @@ public class TelemetryRecorder : IRecorder
     /// </summary>
     /// <param name="telemetry">The telemetry object to be written to the file.</param>
     /// /// <param name="telemetryFilePath">The file path we want to write the telemetry to.</param>
-    public async Task RecordToFile(SBOMTelemetry telemetry, string telemetryFilePath)
+    private async Task RecordToFile(SBOMTelemetry telemetry, string telemetryFilePath)
     {
         // Write to file.
         if (!string.IsNullOrWhiteSpace(telemetryFilePath))

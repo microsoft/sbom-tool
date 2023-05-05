@@ -52,7 +52,7 @@ public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration
             catch (Exception ex)
             {
                 var recorder = TelemetryRecorder.Create(destination, fileSystemUtils);
-                _ = recorder.LogToConsole(ex);
+                _ = recorder.LogException(ex);
                 throw;
             }
         }
