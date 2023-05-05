@@ -13,12 +13,18 @@ namespace Microsoft.Sbom.Api.Filters.Tests;
 [TestClass]
 public class ManifestFolderFilterTests
 {
+    private bool isWindows;
+
+    [TestInitialize]
+    public void Initialize()
+    {
+        isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+    }
+
     [TestMethod]
     public void ManifestFolderFilterTest_CheckAllManifestFolder_Succeeds()
     {
-        bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-
-        // If the OS is not Windows, then skip this test.
+        // If OS is not windows in the name then don't run the windows test.
         if (!isWindows)
         {
             return;
@@ -44,6 +50,37 @@ public class ManifestFolderFilterTests
         Assert.IsFalse(filter.IsValid("c:/test/_manifest/manifest.json"));
         Assert.IsFalse(filter.IsValid("c:\\test\\_manifest"));
         Assert.IsFalse(filter.IsValid("c:/test/_manifest\\manifest.json"));
+        configMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void ManifestFolderFilterTest_CheckAllManifestFolder_Succeeds_LinuxBased()
+    {
+        // if OS is windows in the name then don't run the linux test
+        if (isWindows)
+        {
+            return;
+        }
+
+        var mockOSUtils = new Mock<IOSUtils>();
+        mockOSUtils.Setup(o => o.GetFileSystemStringComparisonType()).Returns(StringComparison.CurrentCultureIgnoreCase);
+
+        var configMock = new Mock<IConfiguration>();
+        configMock.SetupGet(c => c.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = "home/test/_manifest" });
+
+        var filter = new ManifestFolderFilter(configMock.Object, mockOSUtils.Object);
+        filter.Init();
+
+        Assert.IsTrue(filter.IsValid("home/test"));
+        Assert.IsFalse(filter.IsValid(null));
+        Assert.IsTrue(filter.IsValid("home/test/me"));
+        Assert.IsTrue(filter.IsValid("me"));
+        Assert.IsTrue(filter.IsValid("home/me"));
+        Assert.IsTrue(filter.IsValid("home/test\\me"));
+        Assert.IsTrue(filter.IsValid("home\\test/me"));
+        Assert.IsFalse(filter.IsValid("home/test/_manifest"));
+        Assert.IsFalse(filter.IsValid("home/test/_manifest/manifest.json"));
+        Assert.IsFalse(filter.IsValid("home/test/_manifest\\manifest.json"));
         configMock.VerifyAll();
     }
 }
