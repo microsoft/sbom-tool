@@ -15,7 +15,10 @@ using Microsoft.Sbom.Api.Output.Telemetry.Entities;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.Entities;
+using PowerArgs;
 using Serilog;
+using Serilog.Core;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Output.Telemetry;
 
@@ -43,6 +46,68 @@ public class TelemetryRecorder : IRecorder
         FileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         Log = log ?? throw new ArgumentNullException(nameof(log));
+    }
+
+    private TelemetryRecorder(IConfiguration configuration, IFileSystemUtils fileSystemUtils)
+    {
+        Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        FileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+    }
+
+    /// <summary>
+    /// Create an instance of TelemtryRecorder without the need for an ILogger.
+    /// </summary>
+    /// <param name="configuration">Current configuration of the tool.</param>
+    /// <param name="fileSystemUtils">Wrapper around file system functions.</param>
+    public static TelemetryRecorder Create(IConfiguration configuration, IFileSystemUtils fileSystemUtils)
+    {
+        return new TelemetryRecorder(configuration, fileSystemUtils);
+    }
+
+    /// <summary>
+    /// Method to log telemetry in conditions when the tool is not able to start execution of workflow.
+    /// </summary>
+    /// <param name="exception">Exception that we want to log.</param>
+    public async Task LogException(Exception exception)
+    {
+        var logger = Log;
+        if (Log is null)
+        {
+            logger = new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = Configuration.Verbosity.Value })
+                .WriteTo.Console(outputTemplate: Constants.LoggerTemplate)
+                .CreateLogger();
+        }
+
+        // Convert thrown Exception to list of exceptions for the SBOMTelemetry object.
+        var exceptionList = new List<Exception>
+        {
+            exception
+        };
+
+        try
+        {
+            // Create the telemetry object.
+            var telemetry = new SBOMTelemetry
+            {
+                Result = Result.Failure,
+                Timings = timingRecorders.Select(t => t.ToTiming()).ToList(),
+                Switches = this.switches,
+                Parameters = Configuration,
+                Exceptions = exceptionList.ToDictionary(k => k.GetType().ToString(), v => v.Message),
+            };
+
+            // Log to logger.
+            logger.Information("Could not start execution of workflow. Logging telemetry {@Telemetry}", telemetry);
+
+            await RecordToFile(telemetry, Configuration.TelemetryFilePath?.Value);
+        }
+        catch (Exception e)
+        {
+            // We shouldn't fail the main workflow due to some failure on the telemetry generation.
+            // Just log the result and return silently.
+            logger.Warning($"Failed to log telemetry. Exception: {e.Message}");
+        }
     }
 
     public IList<FileValidationResult> Errors => errors;
@@ -88,6 +153,30 @@ public class TelemetryRecorder : IRecorder
         }
 
         this.sbomFormats[manifestInfo] = sbomFilePath;
+    }
+
+    /// <summary>
+    /// Write telemetry object to the telemetryFilePath.
+    /// </summary>
+    /// <param name="telemetry">The telemetry object to be written to the file.</param>
+    /// /// <param name="telemetryFilePath">The file path we want to write the telemetry to.</param>
+    private async Task RecordToFile(SBOMTelemetry telemetry, string telemetryFilePath)
+    {
+        // Write to file.
+        if (!string.IsNullOrWhiteSpace(telemetryFilePath))
+        {
+            using (var fileStream = FileSystemUtils.OpenWrite(telemetryFilePath))
+            {
+                var options = new JsonSerializerOptions
+                {
+                    Converters =
+                    {
+                            new JsonStringEnumConverter()
+                    }
+                };
+                await JsonSerializer.SerializeAsync(fileStream, telemetry, options);
+            }
+        }
     }
 
     /// <summary>
@@ -144,11 +233,11 @@ public class TelemetryRecorder : IRecorder
             var sbomFormatsUsed = sbomFormats
                 .Where(f => File.Exists(f.Value))
                 .Select(f => new SBOMFile
-                {
-                    SbomFilePath = f.Value,
-                    SbomFormatName = f.Key,
-                    FileSizeInBytes = new System.IO.FileInfo(f.Value).Length
-                })
+                    {
+                        SbomFilePath = f.Value,
+                        SbomFormatName = f.Key,
+                        FileSizeInBytes = new System.IO.FileInfo(f.Value).Length
+                    })
                 .ToList();
 
             // Create the telemetry object.
@@ -170,22 +259,8 @@ public class TelemetryRecorder : IRecorder
             // Log to logger.
             Log.Information("Finished execution of the {Action} workflow {@Telemetry}", Configuration.ManifestToolAction, telemetry);
 
-            // Write to file.
-            if (!string.IsNullOrWhiteSpace(Configuration.TelemetryFilePath?.Value))
-            {
-                using (var fileStream = FileSystemUtils.OpenWrite(Configuration.TelemetryFilePath.Value))
-                {
-                    var options = new JsonSerializerOptions
-                    {
-                        Converters =
-                        {
-                            new JsonStringEnumConverter()
-                        }
-                    };
-                    await JsonSerializer.SerializeAsync(fileStream, telemetry, options);
-                    Log.Debug($"Wrote telemetry object to path {Configuration.TelemetryFilePath.Value}");
-                }
-            }
+            await RecordToFile(telemetry, Configuration.TelemetryFilePath?.Value);
+            Log.Debug($"Wrote telemetry object to path {Configuration.TelemetryFilePath?.Value}");
         }
         catch (Exception ex)
         {
