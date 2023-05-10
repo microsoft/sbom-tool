@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
@@ -59,7 +60,7 @@ public class FilesValidator
     {
         var errors = new List<ChannelReader<FileValidationResult>>();
         var results = new List<ChannelReader<FileValidationResult>>();
-        var failures = new List<FileValidationResult>();
+        var failures = new Dictionary<string, FileValidationResult>();
 
         var (onDiskFileResults, onDiskFileErrors) = GetOnDiskFiles();
         results.AddRange(onDiskFileResults);
@@ -80,22 +81,28 @@ public class FilesValidator
 
         await foreach (FileValidationResult error in workflowErrors.ReadAllAsync())
         {
-            failures.Add(error);
+            failures.Add(error.Path, error);
         }
 
         foreach (var file in fileHashesDictionary.FileHashes)
         {
+            if (failures.ContainsKey(file.Key))
+            {
+                // If we have added a validation error for this file, we don't need to add another one.
+                continue;
+            }
+
             switch (file.Value.FileLocation)
             {
                 case FileLocation.OnDisk:
-                    failures.Add(new FileValidationResult
+                    failures.Add(file.Key, new FileValidationResult
                     {
                         ErrorType = ErrorType.AdditionalFile,
                         Path = file.Key,
                     });
                     break;
                 case FileLocation.InSbomFile:
-                    failures.Add(new FileValidationResult
+                    failures.Add(file.Key, new FileValidationResult
                     {
                         ErrorType = ErrorType.MissingFile,
                         Path = file.Key,
@@ -104,7 +111,7 @@ public class FilesValidator
             }
         }
 
-        return (successCount, failures);
+        return (successCount, failures.Values.ToList());
     }
 
     private (List<ChannelReader<FileValidationResult>>, List<ChannelReader<FileValidationResult>>) GetOnDiskFiles()
