@@ -24,7 +24,7 @@ public class ManifestFolderFilterTests
     [TestMethod]
     public void ManifestFolderFilterTest_CheckAllManifestFolder_Succeeds()
     {
-        // If OS is not windows in the name then don't run the windows test.
+        // If OS is not windows then don't run the windows test.
         if (!isWindows)
         {
             return;
@@ -56,7 +56,7 @@ public class ManifestFolderFilterTests
     [TestMethod]
     public void ManifestFolderFilterTest_CheckAllManifestFolder_Succeeds_LinuxBased()
     {
-        // if OS is windows in the name then don't run the linux test
+        // if OS is windows then don't run the linux test
         if (isWindows)
         {
             return;
