@@ -77,4 +77,8 @@ public abstract class FileSystemUtils : IFileSystemUtils
 
     /// <inheritdoc/>
     public bool IsDirectoryEmpty(string directoryPath) => DirectoryExists(directoryPath) && !Directory.EnumerateFiles(directoryPath).Any();
+
+    public string GetFullPath(string path) => Path.GetFullPath(path);
+
+    public DirectoryInfo GetParentDirectory(string path) => Directory.GetParent(path);
 }

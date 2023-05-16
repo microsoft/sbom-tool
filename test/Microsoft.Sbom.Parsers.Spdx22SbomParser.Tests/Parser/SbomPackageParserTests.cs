@@ -73,9 +73,23 @@ public class SbomPackageParserTests
     }
 
     [DataTestMethod]
-    [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingCopyrightText)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingDownloadLocation)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingVersionInfo)]
+    public void MissingPropertiesTest_DoesNotThrow(string json)
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        using var stream = new MemoryStream(bytes);
+
+        SPDXParser parser = new (stream, ignoreValidation: true);
+
+        var state = parser.Next();
+        Assert.AreEqual(ParserState.PACKAGES, state);
+
+        parser.GetPackages().GetEnumerator().MoveNext();
+    }
+
+    [DataTestMethod]
+    [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingCopyrightText)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingLicenseInfoFromFiles)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingSupplier)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingId)]
