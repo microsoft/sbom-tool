@@ -99,11 +99,6 @@ internal ref struct SbomPackageParser
             missingProps.Add(nameof(sbomPackage.SpdxId));
         }
 
-        if (string.IsNullOrWhiteSpace(sbomPackage.DownloadLocation))
-        {
-            missingProps.Add(nameof(sbomPackage.DownloadLocation));
-        }
-
         if (string.IsNullOrWhiteSpace(sbomPackage.LicenseConcluded))
         {
             missingProps.Add(nameof(sbomPackage.LicenseConcluded));
@@ -122,11 +117,6 @@ internal ref struct SbomPackageParser
         if (string.IsNullOrWhiteSpace(sbomPackage.CopyrightText))
         {
             missingProps.Add(nameof(sbomPackage.CopyrightText));
-        }
-
-        if (string.IsNullOrWhiteSpace(sbomPackage.VersionInfo))
-        {
-            missingProps.Add(nameof(sbomPackage.VersionInfo));
         }
 
         if (string.IsNullOrWhiteSpace(sbomPackage.Supplier))
