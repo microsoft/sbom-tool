@@ -54,5 +54,4 @@ public class SBOMTelemetry
     /// of the exception.
     /// </summary>
     public IDictionary<string, string> Exceptions { get; set; }
-
 }
