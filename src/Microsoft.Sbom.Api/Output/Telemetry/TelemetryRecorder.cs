@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Entities;
@@ -199,7 +200,7 @@ public class TelemetryRecorder : IRecorder
 
     public void RecordTotalNumberOfPackages(int packageCount)
     {
-        this.totalNumberOfPackages += packageCount;
+        Interlocked.Add(ref this.totalNumberOfPackages, packageCount);
     }
 
     public void RecordUniquePackages(ScannedComponent package)
