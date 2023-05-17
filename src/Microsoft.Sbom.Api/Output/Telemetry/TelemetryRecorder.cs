@@ -242,7 +242,8 @@ public class TelemetryRecorder : IRecorder
                     {
                         SbomFilePath = f.Value,
                         SbomFormatName = f.Key,
-                        FileSizeInBytes = new System.IO.FileInfo(f.Value).Length
+                        FileSizeInBytes = new System.IO.FileInfo(f.Value).Length,
+                        TotalNumberOfPackages = this.totalNumberOfPackages
                     })
                 .ToList();
 
@@ -250,7 +251,6 @@ public class TelemetryRecorder : IRecorder
             var telemetry = new SBOMTelemetry
             {
                 Result = this.result,
-                TotalNumberOfPackages = this.totalNumberOfPackages,
                 Errors = new ErrorContainer<FileValidationResult>
                 {
                     Errors = this.errors,

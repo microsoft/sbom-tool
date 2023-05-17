@@ -55,8 +55,4 @@ public class SBOMTelemetry
     /// </summary>
     public IDictionary<string, string> Exceptions { get; set; }
 
-    /// <summary>
-    /// Gets or sets the total number of packages that were detected during the execution of the SBOM tool.
-    /// </summary>
-    public int TotalNumberOfPackages { get; set; }
 }
