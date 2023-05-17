@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Common;
@@ -11,6 +12,7 @@ using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
@@ -27,6 +29,7 @@ namespace Microsoft.Sbom.Api.Executors;
 public abstract class ComponentDetectionBaseWalker
 {
     private readonly ILogger log;
+    private readonly IRecorder recorder;
     private readonly ComponentDetectorCachedExecutor componentDetector;
     private readonly IConfiguration configuration;
     private readonly ISbomConfigProvider sbomConfigs;
@@ -36,12 +39,14 @@ public abstract class ComponentDetectionBaseWalker
 
     public ComponentDetectionBaseWalker(
         ILogger log,
+        IRecorder recorder,
         ComponentDetectorCachedExecutor componentDetector,
         IConfiguration configuration,
         ISbomConfigProvider sbomConfigs,
         IFileSystemUtils fileSystemUtils)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
+        this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.componentDetector = componentDetector ?? throw new ArgumentNullException(nameof(componentDetector));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs)); 
@@ -111,6 +116,8 @@ public abstract class ComponentDetectionBaseWalker
             {
                 await output.Writer.WriteAsync(component);
             }
+
+            recorder.RecordTotalNumberOfPackages(uniqueComponents.Count());
         }
 
         Task.Run(async () =>

@@ -31,6 +31,7 @@ public class TelemetryRecorder : IRecorder
     private readonly IDictionary<ManifestInfo, string> sbomFormats = new Dictionary<ManifestInfo, string>();
     private readonly IDictionary<string, object> switches = new Dictionary<string, object>();
     private readonly IList<Exception> exceptions = new List<Exception>();
+    private int totalNumberOfPackages = 0;
 
     private IList<FileValidationResult> errors = new List<FileValidationResult>();
     private Result result = Result.Success;
@@ -194,6 +195,11 @@ public class TelemetryRecorder : IRecorder
         this.exceptions.Add(exception);
     }
 
+    public void RecordTotalNumberOfPackages(int packageCount)
+    {
+        this.totalNumberOfPackages += packageCount;
+    }
+
     /// <summary>
     /// Record a switch that was used during the execution of the SBOM tool.
     /// </summary>
@@ -244,6 +250,7 @@ public class TelemetryRecorder : IRecorder
             var telemetry = new SBOMTelemetry
             {
                 Result = this.result,
+                TotalNumberOfPackages = this.totalNumberOfPackages,
                 Errors = new ErrorContainer<FileValidationResult>
                 {
                     Errors = this.errors,

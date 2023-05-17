@@ -10,6 +10,7 @@ using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Manifest.Configuration;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
@@ -29,6 +30,7 @@ public class SBOMComponentsWalkerTests
     private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
     private readonly Mock<ISbomConfigProvider> mockSbomConfigs = new Mock<ISbomConfigProvider>();
     private readonly Mock<IFileSystemUtils> mockFileSystem = new Mock<IFileSystemUtils>();
+    private readonly Mock<IRecorder> mockRecorder = new Mock<IRecorder>();
 
     public SBOMComponentsWalkerTests()
     {
@@ -64,7 +66,7 @@ public class SBOMComponentsWalkerTests
         };
 
         mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
-        var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object);
+        var walker = new SBOMComponentsWalker(mockLogger.Object, mockRecorder.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
         var discoveredComponents = await packagesChannelReader.output.ReadAllAsync().ToListAsync();
@@ -109,7 +111,7 @@ public class SBOMComponentsWalkerTests
         };
 
         mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
-        var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object);
+        var walker = new SBOMComponentsWalker(mockLogger.Object, mockRecorder.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
         var discoveredComponents = await packagesChannelReader.output.ReadAllAsync().ToListAsync();
