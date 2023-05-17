@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Extensions.Entities;
 
@@ -31,8 +32,14 @@ public interface IRecorder
     /// <summary>
     /// Record the total number of unique packages that were detected during the execution of the SBOM tool.
     /// </summary>
-    /// <param name="packages">Total number of packages encountered while generating the SBOM.</param>
+    /// <param name="packages">Total number of packages encountered while validating the SBOM.</param>
     public void RecordTotalNumberOfPackages(int count);
+
+    /// <summary>
+    /// Record the total number of unique Component IDs encountered during component detection.
+    /// </summary>
+    /// <param name="packages">Total number of unique component IDs encountered while generating the SBOM.</param>
+    public void RecordUniquePackages(ScannedComponent package);
 
     /// <summary>
     /// Records a SBOM format that we used during the execution of the SBOM tool.

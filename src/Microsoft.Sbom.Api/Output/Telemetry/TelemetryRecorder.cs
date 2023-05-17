@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Output.Telemetry.Entities;
@@ -32,6 +33,7 @@ public class TelemetryRecorder : IRecorder
     private readonly IDictionary<string, object> switches = new Dictionary<string, object>();
     private readonly IList<Exception> exceptions = new List<Exception>();
     private int totalNumberOfPackages = 0;
+    private HashSet<string> packageIds = new HashSet<string>();
 
     private IList<FileValidationResult> errors = new List<FileValidationResult>();
     private Result result = Result.Success;
@@ -198,6 +200,17 @@ public class TelemetryRecorder : IRecorder
     public void RecordTotalNumberOfPackages(int packageCount)
     {
         this.totalNumberOfPackages += packageCount;
+    }
+
+    public void RecordUniquePackages(ScannedComponent package)
+    {
+        var packageId = package.Component.Id;
+        if (!this.packageIds.Contains(packageId))
+        {
+            this.packageIds.Add(packageId);
+        }
+
+        this.totalNumberOfPackages = this.packageIds.Count();
     }
 
     /// <summary>

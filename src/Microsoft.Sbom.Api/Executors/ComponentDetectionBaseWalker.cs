@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Common;
@@ -114,10 +113,9 @@ public abstract class ComponentDetectionBaseWalker
 
             foreach (var component in uniqueComponents)
             {
+                recorder.RecordUniquePackages(component);
                 await output.Writer.WriteAsync(component);
             }
-
-            recorder.RecordTotalNumberOfPackages(uniqueComponents.Count());
         }
 
         Task.Run(async () =>
