@@ -203,12 +203,14 @@ public class TelemetryRecorder : IRecorder
         Interlocked.Add(ref this.totalNumberOfPackages, packageCount);
     }
 
-    public void RecordUniquePackages(ScannedComponent package)
+    public void RecordUniquePackages(IEnumerable<ScannedComponent> uniqueComponents)
     {
-        var packageId = package.Component.Id;
-        if (!this.packageIds.Contains(packageId))
+        foreach (var component in uniqueComponents)
         {
-            this.packageIds.Add(packageId);
+            if (!packageIds.Contains(component.Component.Id))
+            {
+                packageIds.Add(component.Component.Id);
+            }
         }
 
         this.totalNumberOfPackages = this.packageIds.Count();

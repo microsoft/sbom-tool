@@ -38,8 +38,8 @@ public interface IRecorder
     /// <summary>
     /// Record the total number of unique Component IDs encountered during component detection.
     /// </summary>
-    /// <param name="packages">Total number of unique component IDs encountered while generating the SBOM.</param>
-    public void RecordUniquePackages(ScannedComponent package);
+    /// <param name="uniqueComponents">List of components detected by the Component Detector.</param>
+    public void RecordUniquePackages(IEnumerable<ScannedComponent> uniqueComponents);
 
     /// <summary>
     /// Records a SBOM format that we used during the execution of the SBOM tool.

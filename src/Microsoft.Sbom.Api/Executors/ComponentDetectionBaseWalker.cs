@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.ComponentDetection.Common;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
@@ -113,9 +114,10 @@ public abstract class ComponentDetectionBaseWalker
 
             foreach (var component in uniqueComponents)
             {
-                recorder.RecordUniquePackages(component);
                 await output.Writer.WriteAsync(component);
             }
+
+            recorder.RecordUniquePackages(uniqueComponents);
         }
 
         Task.Run(async () =>
