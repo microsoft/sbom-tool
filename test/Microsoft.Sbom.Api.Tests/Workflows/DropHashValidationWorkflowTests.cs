@@ -61,7 +61,7 @@ public class DropHashValidationWorkflowTests : ValidationWorkflowTestsBase
                 {
                     new Checksum
                     {
-                        ChecksumValue = $"{fileName}hash",
+                        ChecksumValue = $"{fileName.ToLowerInvariant()}hash",
                         Algorithm = Constants.DefaultHashAlgorithmName
                     }
                 });
@@ -185,7 +185,7 @@ public class DropHashValidationWorkflowTests : ValidationWorkflowTestsBase
                 {
                     new Checksum
                     {
-                        ChecksumValue = $"{fileName}hash",
+                        ChecksumValue = $"{fileName.ToLowerInvariant()}hash",
                         Algorithm = Constants.DefaultHashAlgorithmName
                     }
                 });
@@ -296,7 +296,7 @@ public class DropHashValidationWorkflowTests : ValidationWorkflowTestsBase
                 {
                     new Checksum
                     {
-                        ChecksumValue = $"{fileName}hash",
+                        ChecksumValue = $"{fileName.ToLowerInvariant()}hash",
                         Algorithm = Constants.DefaultHashAlgorithmName
                     }
                 });
@@ -406,7 +406,7 @@ public class DropHashValidationWorkflowTests : ValidationWorkflowTestsBase
                 {
                     new Checksum
                     {
-                        ChecksumValue = $"{fileName}hash",
+                        ChecksumValue = $"{fileName.ToLowerInvariant()}hash",
                         Algorithm = Constants.DefaultHashAlgorithmName
                     }
                 });
@@ -516,7 +516,7 @@ public class DropHashValidationWorkflowTests : ValidationWorkflowTestsBase
                 {
                     new Checksum
                     {
-                        ChecksumValue = $"{fileName}hash",
+                        ChecksumValue = $"{fileName.ToLowerInvariant()}hash",
                         Algorithm = Constants.DefaultHashAlgorithmName
                     }
                 });
