@@ -112,7 +112,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ISignValidationProvider, SignValidationProvider>()
             .AddSingleton<IManifestParserProvider, ManifestParserProvider>()
             .AddSingleton(x => {
-                var comparer = x.GetService<IOSUtils>()?.GetFileSystemStringComparer();
+                var comparer = x.GetRequiredService<IOSUtils>().GetFileSystemStringComparer();
                 return new FileHashesDictionary(new ConcurrentDictionary<string, FileHashes>(comparer));
             })
             .AddSingleton<IFileTypeUtils, FileTypeUtils>()
