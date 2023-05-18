@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.IO;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
@@ -57,15 +58,16 @@ public class FileFilterer
     private async Task FilterFiles(InternalSbomFileInfo file, Channel<FileValidationResult> errors, Channel<InternalSbomFileInfo> output)
     {
         try
-        {
-            var fullPath = fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, file.Path);
+        {                
+            // Resolve ../ in paths to absolute paths.
+            var fullPath = Path.GetFullPath(fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, file.Path));
 
             // Filter SPDX type files.
             if (file.FileTypes != null && file.FileTypes.Contains(Contracts.Enums.FileType.SPDX))
             {
                 // If the file is in the buildDropPath => validate it
                 // If it's outside, throw referencedSBOMFile error.
-                if (!rootPathFilter.IsValid(fullPath))
+                if (!fullPath.StartsWith(configuration.BuildDropPath.Value, StringComparison.InvariantCultureIgnoreCase))
                 {
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
