@@ -31,9 +31,6 @@ public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration
 
     public void Process(IConfiguration source, IConfiguration destination, ResolutionContext context)
     {
-        // Sanitize configuration
-        destination = configSanitizer.SanitizeConfig(destination);
-
         // Set current action on config validators
         configValidators.ForEach(c => c.CurrentAction = destination.ManifestToolAction);
 
@@ -59,6 +56,9 @@ public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration
                 throw;
             }
         }
+
+        // Sanitize configuration
+        destination = configSanitizer.SanitizeConfig(destination);
     }
 
     private void SetDefaultValue(IConfiguration destination, object value, PropertyDescriptor property)
