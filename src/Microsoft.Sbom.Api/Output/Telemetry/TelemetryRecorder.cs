@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -30,12 +31,11 @@ namespace Microsoft.Sbom.Api.Output.Telemetry;
 public class TelemetryRecorder : IRecorder
 {
     private readonly ConcurrentBag<TimingRecorder> timingRecorders = new ();
+    private ConcurrentBag<string> packageIds = new ();
     private readonly IDictionary<ManifestInfo, string> sbomFormats = new Dictionary<ManifestInfo, string>();
     private readonly IDictionary<string, object> switches = new Dictionary<string, object>();
     private readonly IList<Exception> exceptions = new List<Exception>();
     private int totalNumberOfPackages = 0;
-    private HashSet<string> packageIds = new HashSet<string>();
-
     private IList<FileValidationResult> errors = new List<FileValidationResult>();
     private Result result = Result.Success;
 
@@ -207,9 +207,10 @@ public class TelemetryRecorder : IRecorder
     {
         foreach (var component in uniqueComponents)
         {
-            if (!packageIds.Contains(component.Component.Id))
+            //if packageIds already contains the package, then we don't need to add it again.
+            if (!this.packageIds.Contains(component.Component.Id))
             {
-                packageIds.Add(component.Component.Id);
+                this.packageIds.Add(component.Component.Id);
             }
         }
 
