@@ -207,7 +207,7 @@ public class TelemetryRecorder : IRecorder
     {
         foreach (var component in uniqueComponents)
         {
-            //if packageIds already contains the package, then we don't need to add it again.
+            // If packageIds already contains the package, then we don't need to add it again.
             if (!this.packageIds.Contains(component.Component.Id))
             {
                 this.packageIds.Add(component.Component.Id);
