@@ -165,29 +165,30 @@ public class ConfigSanitizerTests
     {
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestDirPath = null;
         configSanitizer.SanitizeConfig(config);
 
         Assert.IsNotNull(config.ManifestDirPath);
         Assert.IsNotNull(config.ManifestDirPath.Value);
-        Assert.AreEqual(Path.Join("dropPath", "_manifest"), config.ManifestDirPath.Value);
+
+        var expectedPath = Path.Join("dropPath", "_manifest");
+        Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
     }
 
     [TestMethod]
     public void ManifestDirShouldEndWithManifestDirForGenerate_Succeeds()
     {
         var config = GetConfigurationBaseObject();
-        config.ManifestDirPath = new ConfigurationSetting<string>
-        {
-            Source = SettingSource.Default,
-            Value = "manifestDirPath"
-        };
+        config.ManifestDirPath = new ConfigurationSetting<string>("manifestDirPath");
 
         config.ManifestToolAction = ManifestToolActions.Generate;
         configSanitizer.SanitizeConfig(config);
 
         Assert.IsNotNull(config.ManifestDirPath);
         Assert.IsNotNull(config.ManifestDirPath.Value);
-        Assert.AreEqual(Path.Join("manifestDirPath", "_manifest"), config.ManifestDirPath.Value);
+
+        var expectedPath = Path.Join("manifestDirPath", "_manifest");
+        Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
     }
 
     [TestMethod]
