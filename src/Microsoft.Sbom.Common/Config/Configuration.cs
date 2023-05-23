@@ -51,6 +51,7 @@ public class Configuration : IConfiguration
     [DirectoryExists]
     [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
     [ValueRequired]
+    [Path]
     public ConfigurationSetting<string> BuildDropPath
     {
         get => buildDropPath.Value;
@@ -59,6 +60,7 @@ public class Configuration : IConfiguration
 
     /// <inheritdoc cref="IConfiguration.BuildComponentPath" />
     [DirectoryExists]
+    [Path]
     public ConfigurationSetting<string> BuildComponentPath
     {
         get => buildComponentPath.Value;
@@ -75,6 +77,7 @@ public class Configuration : IConfiguration
 
     /// <inheritdoc cref="IConfiguration.ManifestPath" />
     [Obsolete("This field is not provided by the user or configFile, set by system")]
+    [Path]
     public ConfigurationSetting<string> ManifestPath
     {
         get => manifestPath.Value;
@@ -84,6 +87,7 @@ public class Configuration : IConfiguration
     /// <inheritdoc cref="IConfiguration.ManifestDirPath" />
     [DirectoryExists]
     [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
+    [Path]
     public ConfigurationSetting<string> ManifestDirPath
     {
         get => manifestDirPath.Value;
@@ -93,6 +97,7 @@ public class Configuration : IConfiguration
     /// <inheritdoc cref="IConfiguration.OutputPath" />
     [FilePathIsWritable]
     [ValueRequired(ForAction = ManifestToolActions.Validate)]
+    [Path]
     public ConfigurationSetting<string> OutputPath
     {
         get => outputPath.Value;
@@ -116,6 +121,7 @@ public class Configuration : IConfiguration
     }
 
     /// <inheritdoc cref="IConfiguration.ConfigFilePath" />
+    [Path]
     public ConfigurationSetting<string> ConfigFilePath
     {
         get => configFilePath.Value;
@@ -137,6 +143,7 @@ public class Configuration : IConfiguration
     }
 
     /// <inheritdoc cref="IConfiguration.RootPathFilter" />
+    [Path]
     public ConfigurationSetting<string> RootPathFilter
     {
         get => rootFilterPath.Value;
@@ -144,6 +151,7 @@ public class Configuration : IConfiguration
     }
 
     /// <inheritdoc cref="IConfiguration.CatalogFilePath" />
+    [Path]
     public ConfigurationSetting<string> CatalogFilePath
     {
         get => catalogFilePath.Value;
@@ -210,6 +218,7 @@ public class Configuration : IConfiguration
     }
 
     /// <inheritdoc cref="IConfiguration.TelemetryFilePath" />
+    [Path]
     public ConfigurationSetting<string> TelemetryFilePath
     {
         get => telemetryFilePath.Value;

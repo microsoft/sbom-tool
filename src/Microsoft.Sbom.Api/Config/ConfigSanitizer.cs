@@ -3,11 +3,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
@@ -70,6 +73,18 @@ public class ConfigSanitizer
 
         // Set default package supplier if not provided in configuration.
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
+
+        // Replace backslashes in directory paths with the OS-sepcific directory separator character.
+        var pathProps = configuration.GetType().GetProperties().Where(p => p.GetCustomAttributes(typeof(PathAttribute), true).Any());
+        foreach (var pathProp in pathProps)
+        {
+            var path = pathProp.GetValue(configuration) as ConfigurationSetting<string>;
+            if (path != null)
+            {
+                path.Value = path.Value.Replace('\\', Path.AltDirectorySeparatorChar);
+                pathProp.SetValue(configuration, path);
+            }
+        }
 
         logger.Dispose();
 
