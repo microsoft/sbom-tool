@@ -281,10 +281,16 @@ public class TelemetryRecorder : IRecorder
             };
 
             // Log to logger.
+            Log.Debug($"Wrote telemetry object to path {Configuration.TelemetryFilePath?.Value}");
+       
+            if (Configuration.ManifestToolAction == ManifestToolActions.Generate && this.totalNumberOfPackages == 0)
+            {
+                Log.Warning("0 Packages were detected during the {Action} workflow.", Configuration.ManifestToolAction);
+            }
+
             Log.Information("Finished execution of the {Action} workflow {@Telemetry}", Configuration.ManifestToolAction, telemetry);
 
             await RecordToFile(telemetry, Configuration.TelemetryFilePath?.Value);
-            Log.Debug($"Wrote telemetry object to path {Configuration.TelemetryFilePath?.Value}");
         }
         catch (Exception ex)
         {
