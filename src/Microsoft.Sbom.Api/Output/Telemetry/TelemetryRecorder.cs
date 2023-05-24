@@ -200,7 +200,7 @@ public class TelemetryRecorder : IRecorder
 
     public void RecordTotalNumberOfPackages(int packageCount)
     {
-        Interlocked.Add(ref this.totalNumberOfPackages, packageCount);
+        Interlocked.Exchange(ref this.totalNumberOfPackages, packageCount);
     }
 
     public void RecordUniquePackages(IEnumerable<ScannedComponent> uniqueComponents)
