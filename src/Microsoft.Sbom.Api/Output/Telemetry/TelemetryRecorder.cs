@@ -282,8 +282,8 @@ public class TelemetryRecorder : IRecorder
 
             // Log to logger.
             Log.Debug($"Wrote telemetry object to path {Configuration.TelemetryFilePath?.Value}");
-       
-            if (Configuration.ManifestToolAction == ManifestToolActions.Generate && this.totalNumberOfPackages == 0)
+
+            if (Configuration.ManifestToolAction == ManifestToolActions.Generate && Configuration.BuildComponentPath?.Value != null && this.totalNumberOfPackages == 0)
             {
                 Log.Warning("0 Packages were detected during the {Action} workflow.", Configuration.ManifestToolAction);
             }
