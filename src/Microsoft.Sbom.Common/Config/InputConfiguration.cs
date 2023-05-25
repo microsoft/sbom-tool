@@ -19,10 +19,12 @@ public class InputConfiguration : IConfiguration
     [DirectoryExists]
     [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
     [ValueRequired]
+    [Path]
     public ConfigurationSetting<string> BuildDropPath { get; set; }
 
     /// <inheritdoc cref="IConfiguration.BuildComponentPath" />
     [DirectoryExists]
+    [Path]
     public ConfigurationSetting<string> BuildComponentPath { get; set; }
 
     /// <inheritdoc cref="IConfiguration.BuildListFile" />
@@ -36,11 +38,13 @@ public class InputConfiguration : IConfiguration
     /// <inheritdoc cref="IConfiguration.ManifestDirPath" />
     [DirectoryExists]
     [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
+    [Path]
     public ConfigurationSetting<string> ManifestDirPath { get; set; }
 
     /// <inheritdoc cref="IConfiguration.OutputPath" />
     [FilePathIsWritable]
     [ValueRequired(ForAction = ManifestToolActions.Validate)]
+    [Path]
     public ConfigurationSetting<string> OutputPath { get; set; }
 
     /// <inheritdoc cref="IConfiguration.Parallelism" />
@@ -52,6 +56,7 @@ public class InputConfiguration : IConfiguration
     public ConfigurationSetting<LogEventLevel> Verbosity { get; set; }
 
     /// <inheritdoc cref="IConfiguration.ConfigFilePath" />
+    [Path]
     public ConfigurationSetting<string> ConfigFilePath { get; set; }
 
     /// <inheritdoc cref="IConfiguration.ManifestInfo" />
@@ -61,9 +66,11 @@ public class InputConfiguration : IConfiguration
     public ConfigurationSetting<AlgorithmName> HashAlgorithm { get; set; }
 
     /// <inheritdoc cref="IConfiguration.RootPathFilter" />
+    [Path]
     public ConfigurationSetting<string> RootPathFilter { get; set; }
 
     /// <inheritdoc cref="IConfiguration.CatalogFilePath" />
+    [Path]
     public ConfigurationSetting<string> CatalogFilePath { get; set; }
 
     /// <inheritdoc cref="IConfiguration.ValidateSignature" />
@@ -94,6 +101,7 @@ public class InputConfiguration : IConfiguration
     public ConfigurationSetting<IEnumerable<SbomPackage>> PackagesList { get; set; }
 
     /// <inheritdoc cref="IConfiguration.TelemetryFilePath" />
+    [Path]
     public ConfigurationSetting<string> TelemetryFilePath { get; set; }
 
     /// <inheritdoc cref="IConfiguration.DockerImagesToScan" />

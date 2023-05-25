@@ -4,10 +4,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using AutoMapper;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Common.Config.Validators;
 using PowerArgs;
 
@@ -31,8 +34,17 @@ public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration
 
     public void Process(IConfiguration source, IConfiguration destination, ResolutionContext context)
     {
-        // Sanitize configuration
-        destination = configSanitizer.SanitizeConfig(destination);
+        // Replace backslashes in directory paths with the OS-sepcific directory separator character.
+        var pathProps = destination.GetType().GetProperties().Where(p => p.GetCustomAttributes(typeof(PathAttribute), true).Any());
+        foreach (var pathProp in pathProps)
+        {
+            var path = pathProp.GetValue(destination) as ConfigurationSetting<string>;
+            if (path != null)
+            {
+                path.Value = path.Value.Replace('\\', Path.AltDirectorySeparatorChar);
+                pathProp.SetValue(destination, path);
+            }
+        }
 
         // Set current action on config validators
         configValidators.ForEach(c => c.CurrentAction = destination.ManifestToolAction);
@@ -59,6 +71,9 @@ public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration
                 throw;
             }
         }
+
+        // Sanitize configuration
+        destination = configSanitizer.SanitizeConfig(destination);
     }
 
     private void SetDefaultValue(IConfiguration destination, object value, PropertyDescriptor property)
