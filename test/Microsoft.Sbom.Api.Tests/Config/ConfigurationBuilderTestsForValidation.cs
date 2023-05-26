@@ -152,6 +152,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
         Assert.IsNotNull(config);
         Assert.IsNotNull(config.ManifestDirPath);
         Assert.AreEqual(Path.Join("BuildDropPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+
         fileSystemUtilsMock.VerifyAll();
     }
 
