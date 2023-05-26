@@ -11,6 +11,7 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Attributes;
+using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
@@ -75,16 +76,7 @@ public class ConfigSanitizer
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
 
         // Replace backslashes in directory paths with the OS-sepcific directory separator character.
-        var pathProps = configuration.GetType().GetProperties().Where(p => p.GetCustomAttributes(typeof(PathAttribute), true).Any());
-        foreach (var pathProp in pathProps)
-        {
-            var path = pathProp.GetValue(configuration) as ConfigurationSetting<string>;
-            if (path != null)
-            {
-                path.Value = path.Value.Replace('\\', Path.DirectorySeparatorChar);
-                pathProp.SetValue(configuration, path);
-            }
-        }
+        PathUtils.ConvertToOSSpecificPathSeparators(configuration);
 
         logger.Dispose();
 

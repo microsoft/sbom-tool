@@ -12,6 +12,7 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Common.Config.Validators;
+using Microsoft.Sbom.Common.Utils;
 using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Config;
@@ -35,16 +36,7 @@ public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration
     public void Process(IConfiguration source, IConfiguration destination, ResolutionContext context)
     {
         // Replace backslashes in directory paths with the OS-sepcific directory separator character.
-        var pathProps = destination.GetType().GetProperties().Where(p => p.GetCustomAttributes(typeof(PathAttribute), true).Any());
-        foreach (var pathProp in pathProps)
-        {
-            var path = pathProp.GetValue(destination) as ConfigurationSetting<string>;
-            if (path != null)
-            {
-                path.Value = path.Value.Replace('\\', Path.DirectorySeparatorChar);
-                pathProp.SetValue(destination, path);
-            }
-        }
+        PathUtils.ConvertToOSSpecificPathSeparators(destination);
 
         // Set current action on config validators
         configValidators.ForEach(c => c.CurrentAction = destination.ManifestToolAction);
