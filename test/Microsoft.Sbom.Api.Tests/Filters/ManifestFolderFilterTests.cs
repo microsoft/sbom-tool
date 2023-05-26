@@ -27,7 +27,7 @@ public class ManifestFolderFilterTests
         // If OS is not windows then don't run the windows test.
         if (!isWindows)
         {
-            return;
+            Assert.Inconclusive("Test is only valid on Windows.");
         }
 
         var mockOSUtils = new Mock<IOSUtils>();
@@ -59,7 +59,7 @@ public class ManifestFolderFilterTests
         // if OS is windows then don't run the linux test
         if (isWindows)
         {
-            return;
+            Assert.Inconclusive("Test is only valid on Linux.");
         }
 
         var mockOSUtils = new Mock<IOSUtils>();

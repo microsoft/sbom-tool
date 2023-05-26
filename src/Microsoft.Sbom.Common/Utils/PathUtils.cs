@@ -15,7 +15,7 @@ public static class PathUtils
 {
     public static void ConvertToOSSpecificPathSeparators(IConfiguration configuration)
     {
-        var pathProps = configuration.GetType().GetProperties().Where(p => p.GetCustomAttributes(typeof(PathAttribute), true).Any());
+        var pathProps = configuration.GetType().GetProperties().Where(p => p.GetCustomAttributes(typeof(PathAttribute), inherit: true).Any());
         foreach (var pathProp in pathProps)
         {
             var path = pathProp.GetValue(configuration) as ConfigurationSetting<string>;

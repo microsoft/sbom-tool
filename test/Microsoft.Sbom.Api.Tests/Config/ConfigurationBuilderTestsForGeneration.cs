@@ -211,7 +211,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     }
 
     [TestMethod]
-    public async Task ConfigurationBuilderTest_Generation_BadNSBaseUriWithDefaultValue_Succeeds()
+    public async Task ConfigurationBuilderTest_Generation_BadNSBaseUriWithDefaultValue_Succeds()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);

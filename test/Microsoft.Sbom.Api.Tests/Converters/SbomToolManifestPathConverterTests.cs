@@ -40,108 +40,63 @@ public class SbomToolManifestPathConverterTests
     }
 
     [TestMethod]
-    public void SbomToolManifestPathConverterTests_ValidPath_Succeeds_Windows()
-    {
-        var os = OSPlatform.Windows;
-        if (!isWindows)
-        {
-            // End the test for windows if the os is not windows
-            return;
-        }
-
-        var rootPath = @"C:\Sample\Root";
-
-        configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = rootPath });
-        osUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(os);
-
-        var (path, isOutsideDropPath) = converter.Convert(rootPath + @"\hello\World");
-        Assert.AreEqual("/hello/World", path);
-    }
-
-    [TestMethod]
+    [DataRow(nameof(OSPlatform.Windows))]
     [DataRow(nameof(OSPlatform.Linux))]
     [DataRow(nameof(OSPlatform.OSX))]
 #if !NETFRAMEWORK
     [DataRow(nameof(OSPlatform.FreeBSD))]
 #endif
-    public void SbomToolManifestPathConverterTests_ValidPath_Succeeds_LinuxBased(string osName)
+    public void SbomToolManifestPathConverterTests_ValidPath_Succeeds(string osName)
     {
         var os = OSPlatform.Create(osName);
-        if (isWindows)
-        {
-            // End the test for linux based OS's if the os is windows
-            return;
-        }
-
         var rootPath = "/Sample/Root";
 
         configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = rootPath });
         osUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(os);
 
         var (path, isOutsideDropPath) = converter.Convert(rootPath + "/hello/World");
-        Assert.AreEqual("/hello/World", path);
-    }
 
-    [TestMethod]
-    public void SbomToolManifestPathConverterTests_ValidPathWithDot_Succeeds_Windows()
-    {
-        var os = OSPlatform.Windows;
-        if (!isWindows)
+        if (os == OSPlatform.Windows && isWindows)
         {
-            // End the test for windows if the OS is not windows
-            return;
+            rootPath = @"C:\Sample\Root";
+
+            configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = rootPath });
+
+            (path, isOutsideDropPath) = converter.Convert(rootPath + @"\hello\World");
         }
 
-        var rootPath = @"C:\Sample\Root\.";
-
-        configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = rootPath });
-        osUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(os);
-
-        var (path, isOutsideDropPath) = converter.Convert(rootPath + @"\hello\.\World");
         Assert.AreEqual("/hello/World", path);
     }
 
     [TestMethod]
+    [DataRow(nameof(OSPlatform.Windows))]
     [DataRow(nameof(OSPlatform.Linux))]
     [DataRow(nameof(OSPlatform.OSX))]
     [DataRow(nameof(OSPlatform.FreeBSD))]
     public void SbomToolManifestPathConverterTests_ValidPathWithDot_Succeeds_LinuxBased(string osName)
     {
         var os = OSPlatform.Create(osName);
-        if (isWindows)
-        {
-            // End the test for linux based OS's if the os is windows
-            return;
-        }
-
         var rootPath = "/Sample/Root/.";
+
         configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = rootPath });
         osUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(os);
 
         var (path, isOutsideDropPath) = converter.Convert(rootPath + "/hello/./World");
-        Assert.AreEqual("/hello/World", path);
-    }
 
-    [TestMethod]
-    public void SbomToolManifestPathConverterTests_BuildDropPathRelative_Succeeds_Windows()
-    {
-        var os = OSPlatform.Windows;
-        if (!isWindows)
+        if (os == OSPlatform.Windows && isWindows)
         {
-            // End the test for windows if the OS is not windows
-            return;
+            rootPath = @"C:\Sample\Root\.";
+
+            configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = rootPath });
+
+            (path, isOutsideDropPath) = converter.Convert(rootPath + @"\hello\.\World");
         }
 
-        var rootPath = @"Sample\.\Root\";
-
-        configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = rootPath });
-        osUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(os);
-
-        var (path, isOutsideDropPath) = converter.Convert(rootPath + @"\hello\.\World");
         Assert.AreEqual("/hello/World", path);
     }
 
     [TestMethod]
+    [DataRow(nameof(OSPlatform.Windows))]
     [DataRow(nameof(OSPlatform.Linux))]
     [DataRow(nameof(OSPlatform.OSX))]
 #if !NETFRAMEWORK
@@ -150,18 +105,22 @@ public class SbomToolManifestPathConverterTests
     public void SbomToolManifestPathConverterTests_BuildDropPathRelative_Succeeds_LinuxBased(string osName)
     {
         var os = OSPlatform.Create(osName);
-        if (isWindows)
-        {
-            // End the test for linux based OS's if the OS is Windows
-            return;
-        }
-
         var rootPath = "Sample/./Root/";
 
         configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = rootPath });
         osUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(os);
 
         var (path, isOutsideDropPath) = converter.Convert(rootPath + "/hello/./World");
+
+        if (os == OSPlatform.Windows && isWindows)
+        {
+            rootPath = @"Sample\.\Root\";
+
+            configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = rootPath });
+
+            (path, isOutsideDropPath) = converter.Convert(rootPath + @"\hello\.\World");
+        }
+
         Assert.AreEqual("/hello/World", path);
     }
 
@@ -171,8 +130,7 @@ public class SbomToolManifestPathConverterTests
         var os = OSPlatform.Windows;
         if (!isWindows)
         {
-            // End the test for Windows if the os is not Windows
-            return;
+            Assert.Inconclusive("This test will only run on Windows");
         }
 
         var rootPath = @"C:\Sample\Root";
@@ -190,8 +148,7 @@ public class SbomToolManifestPathConverterTests
         var os = OSPlatform.FreeBSD;
         if (isWindows)
         {
-            // End the test for FreeBSD if the OS is Windows
-            return;
+            Assert.Inconclusive("This test will only run on Linux");
         }
 
         var rootPath = @"/sample/Root";
@@ -249,8 +206,7 @@ public class SbomToolManifestPathConverterTests
     {
         if (!isWindows)
         {
-            // End the test for windows if the OS is not windows
-            return;
+            Assert.Inconclusive("This test will only run on Windows");
         }
 
         var rootPath = @"C:\Sample\Root";
@@ -263,13 +219,11 @@ public class SbomToolManifestPathConverterTests
         Assert.AreEqual(expectedPath, path);
     }
 
-    [TestMethod]
     public void SbomToolManifestPathConverterTests_RootPathOutside_SbomOnSameDrive_Succeeds()
     {
         if (!isWindows)
         {
-            // End the test for windows if the OS is not windows
-            return;
+            Assert.Inconclusive("This test will only run on Windows");
         }
 
         var rootPath = @"C:\Sample\Root";
