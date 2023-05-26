@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
-using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
@@ -19,8 +18,8 @@ namespace Microsoft.Sbom.Api.Executors;
 /// </summary>
 public class PackagesWalker : ComponentDetectionBaseWalker
 {
-    public PackagesWalker(ILogger log, IRecorder recorder, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils)
-        : base(log, recorder, componentDetector, configuration, sbomConfigs, fileSystemUtils)
+    public PackagesWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils)
+        : base(log, componentDetector, configuration, sbomConfigs, fileSystemUtils)
     {
     }
 

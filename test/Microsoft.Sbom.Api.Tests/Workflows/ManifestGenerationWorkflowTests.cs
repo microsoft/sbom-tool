@@ -61,7 +61,6 @@ public class ManifestGenerationWorkflowTests
     private readonly Mock<ComponentToPackageInfoConverter> packageInfoConverterMock = new Mock<ComponentToPackageInfoConverter>();
     private readonly Mock<ISBOMReaderForExternalDocumentReference> sBOMReaderForExternalDocumentReferenceMock = new Mock<ISBOMReaderForExternalDocumentReference>();
     private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new Mock<IFileSystemUtilsExtension>();
-    private readonly Mock<IRecorder> mockRecorder = new Mock<IRecorder>();
 
     [TestInitialize]
     public void Setup()
@@ -281,7 +280,7 @@ public class ManifestGenerationWorkflowTests
                 manifestGeneratorProvider,
                 mockLogger.Object),
             packageInfoConverterMock.Object,
-            new PackagesWalker(mockLogger.Object, mockRecorder.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object));
+            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object));
 
         var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider(
             configurationMock.Object,

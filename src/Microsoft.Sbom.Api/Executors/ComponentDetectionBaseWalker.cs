@@ -39,14 +39,12 @@ public abstract class ComponentDetectionBaseWalker
 
     public ComponentDetectionBaseWalker(
         ILogger log,
-        IRecorder recorder,
         ComponentDetectorCachedExecutor componentDetector,
         IConfiguration configuration,
         ISbomConfigProvider sbomConfigs,
         IFileSystemUtils fileSystemUtils)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
-        this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.componentDetector = componentDetector ?? throw new ArgumentNullException(nameof(componentDetector));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs)); 
