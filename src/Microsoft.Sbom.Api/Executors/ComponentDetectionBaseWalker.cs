@@ -6,13 +6,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.ComponentDetection.Common;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Exceptions;
-using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
@@ -29,7 +27,6 @@ namespace Microsoft.Sbom.Api.Executors;
 public abstract class ComponentDetectionBaseWalker
 {
     private readonly ILogger log;
-    private readonly IRecorder recorder;
     private readonly ComponentDetectorCachedExecutor componentDetector;
     private readonly IConfiguration configuration;
     private readonly ISbomConfigProvider sbomConfigs;
