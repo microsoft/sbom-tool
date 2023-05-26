@@ -41,7 +41,7 @@ public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration
             var path = pathProp.GetValue(destination) as ConfigurationSetting<string>;
             if (path != null)
             {
-                path.Value = path.Value.Replace('\\', Path.AltDirectorySeparatorChar);
+                path.Value = path.Value.Replace('\\', Path.DirectorySeparatorChar);
                 pathProp.SetValue(destination, path);
             }
         }

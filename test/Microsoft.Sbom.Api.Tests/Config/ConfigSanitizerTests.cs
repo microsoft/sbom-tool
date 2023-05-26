@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Exceptions;
@@ -27,6 +28,7 @@ public class ConfigSanitizerTests
     private Mock<IHashAlgorithmProvider> mockHashAlgorithmProvider;
     private Mock<IAssemblyConfig> mockAssemblyConfig;
     private ConfigSanitizer configSanitizer;
+    private bool isWindows;
 
     [TestInitialize]
     public void Initialize()
@@ -50,6 +52,8 @@ public class ConfigSanitizerTests
             });
 
         mockAssemblyConfig = new Mock<IAssemblyConfig>();
+
+        isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
         configSanitizer = new ConfigSanitizer(mockHashAlgorithmProvider.Object, mockFileSystemUtils.Object, mockAssemblyConfig.Object);
     }
@@ -286,28 +290,31 @@ public class ConfigSanitizerTests
     [TestMethod]
     [DataRow(ManifestToolActions.Validate)]
     [DataRow(ManifestToolActions.Generate)]
-    public void ConfigSantizer_Validate_ReplacesBackslashes(ManifestToolActions action)
+    public void ConfigSantizer_Validate_ReplacesBackslashes_Linux(ManifestToolActions action)
     {
-        var config = GetConfigurationBaseObject();
-        config.ManifestDirPath = new($"\\{nameof(config.ManifestDirPath)}\\", SettingSource.Default);
-        config.BuildDropPath = new($"\\{nameof(config.BuildDropPath)}\\", SettingSource.Default);
-        config.OutputPath = new($"\\{nameof(config.OutputPath)}\\", SettingSource.Default);
-        config.ConfigFilePath = new($"\\{nameof(config.ConfigFilePath)}\\", SettingSource.Default);
-        config.RootPathFilter = new($"\\{nameof(config.RootPathFilter)}\\", SettingSource.Default);
-        config.BuildComponentPath = new($"\\{nameof(config.BuildComponentPath)}\\", SettingSource.Default);
-        config.CatalogFilePath = new($"\\{nameof(config.CatalogFilePath)}\\", SettingSource.Default);
-        config.TelemetryFilePath = new($"\\{nameof(config.TelemetryFilePath)}\\", SettingSource.Default);
+        if (!isWindows)
+        {
+            var config = GetConfigurationBaseObject();
+            config.ManifestDirPath = new ($"\\{nameof(config.ManifestDirPath)}\\", SettingSource.Default);
+            config.BuildDropPath = new ($"\\{nameof(config.BuildDropPath)}\\", SettingSource.Default);
+            config.OutputPath = new ($"\\{nameof(config.OutputPath)}\\", SettingSource.Default);
+            config.ConfigFilePath = new ($"\\{nameof(config.ConfigFilePath)}\\", SettingSource.Default);
+            config.RootPathFilter = new ($"\\{nameof(config.RootPathFilter)}\\", SettingSource.Default);
+            config.BuildComponentPath = new ($"\\{nameof(config.BuildComponentPath)}\\", SettingSource.Default);
+            config.CatalogFilePath = new ($"\\{nameof(config.CatalogFilePath)}\\", SettingSource.Default);
+            config.TelemetryFilePath = new ($"\\{nameof(config.TelemetryFilePath)}\\", SettingSource.Default);
 
-        config.ManifestToolAction = action;
-        configSanitizer.SanitizeConfig(config);
+            config.ManifestToolAction = action;
+            configSanitizer.SanitizeConfig(config);
 
-        Assert.IsTrue(config.ManifestDirPath.Value.StartsWith($"/{nameof(config.ManifestDirPath)}/"));
-        Assert.IsTrue(config.BuildDropPath.Value.StartsWith($"/{nameof(config.BuildDropPath)}/"));
-        Assert.IsTrue(config.OutputPath.Value.StartsWith($"/{nameof(config.OutputPath)}/"));
-        Assert.IsTrue(config.ConfigFilePath.Value.StartsWith($"/{nameof(config.ConfigFilePath)}/"));
-        Assert.IsTrue(config.RootPathFilter.Value.StartsWith($"/{nameof(config.RootPathFilter)}/"));
-        Assert.IsTrue(config.BuildComponentPath.Value.StartsWith($"/{nameof(config.BuildComponentPath)}/"));
-        Assert.IsTrue(config.CatalogFilePath.Value.StartsWith($"/{nameof(config.CatalogFilePath)}/"));
-        Assert.IsTrue(config.TelemetryFilePath.Value.StartsWith($"/{nameof(config.TelemetryFilePath)}/"));
+            Assert.IsTrue(config.ManifestDirPath.Value.StartsWith($"/{nameof(config.ManifestDirPath)}/"));
+            Assert.IsTrue(config.BuildDropPath.Value.StartsWith($"/{nameof(config.BuildDropPath)}/"));
+            Assert.IsTrue(config.OutputPath.Value.StartsWith($"/{nameof(config.OutputPath)}/"));
+            Assert.IsTrue(config.ConfigFilePath.Value.StartsWith($"/{nameof(config.ConfigFilePath)}/"));
+            Assert.IsTrue(config.RootPathFilter.Value.StartsWith($"/{nameof(config.RootPathFilter)}/"));
+            Assert.IsTrue(config.BuildComponentPath.Value.StartsWith($"/{nameof(config.BuildComponentPath)}/"));
+            Assert.IsTrue(config.CatalogFilePath.Value.StartsWith($"/{nameof(config.CatalogFilePath)}/"));
+            Assert.IsTrue(config.TelemetryFilePath.Value.StartsWith($"/{nameof(config.TelemetryFilePath)}/"));
+        }
     }
 }

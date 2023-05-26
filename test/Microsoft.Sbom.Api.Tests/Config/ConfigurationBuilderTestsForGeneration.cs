@@ -33,6 +33,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns(Path.Join(It.IsAny<string>(), It.IsAny<string>())).Verifiable();
 
         var args = new GenerationArgs
         {
@@ -61,6 +62,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns(Path.Join(It.IsAny<string>(), It.IsAny<string>())).Verifiable();
 
         var args = new GenerationArgs
         {

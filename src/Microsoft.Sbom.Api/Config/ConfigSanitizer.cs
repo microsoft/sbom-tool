@@ -81,7 +81,7 @@ public class ConfigSanitizer
             var path = pathProp.GetValue(configuration) as ConfigurationSetting<string>;
             if (path != null)
             {
-                path.Value = path.Value.Replace('\\', Path.AltDirectorySeparatorChar);
+                path.Value = path.Value.Replace('\\', Path.DirectorySeparatorChar);
                 pathProp.SetValue(configuration, path);
             }
         }
