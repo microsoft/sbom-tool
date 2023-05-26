@@ -28,7 +28,7 @@ public class ConfigSanitizerTests
     private Mock<IHashAlgorithmProvider> mockHashAlgorithmProvider;
     private Mock<IAssemblyConfig> mockAssemblyConfig;
     private ConfigSanitizer configSanitizer;
-    private bool isWindows;
+    private readonly bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
     [TestInitialize]
     public void Initialize()
@@ -52,8 +52,6 @@ public class ConfigSanitizerTests
             });
 
         mockAssemblyConfig = new Mock<IAssemblyConfig>();
-
-        isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
         configSanitizer = new ConfigSanitizer(mockHashAlgorithmProvider.Object, mockFileSystemUtils.Object, mockAssemblyConfig.Object);
     }
