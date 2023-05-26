@@ -29,6 +29,12 @@ public interface IRecorder
     public void RecordTotalErrors(IList<FileValidationResult> errors);
 
     /// <summary>
+    /// Record the total number of unique packages that were detected during the execution of the SBOM tool.
+    /// </summary>
+    /// <param name="packages">Total number of packages encountered while validating the SBOM.</param>
+    public void RecordTotalNumberOfPackages(int count);
+
+    /// <summary>
     /// Records a SBOM format that we used during the execution of the SBOM tool.
     /// </summary>
     /// <param name="manifestInfo">The SBOM format as a <see cref="ManifestInfo"/> object.</param>

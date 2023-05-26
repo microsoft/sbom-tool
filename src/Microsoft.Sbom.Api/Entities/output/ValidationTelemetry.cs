@@ -29,4 +29,6 @@ public class ValidationTelemetry
     /// Gets or sets count of files that failed validation.
     /// </summary>
     public int FilesFailedCount { get; set; }
+
+    public int TotalPackagesInManifest { get; set; }
 }

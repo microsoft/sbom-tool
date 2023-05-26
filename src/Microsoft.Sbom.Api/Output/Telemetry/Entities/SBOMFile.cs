@@ -25,4 +25,9 @@ public class SBOMFile
     /// Gets or sets the size of the SBOM file in bytes.
     /// </summary>
     public long FileSizeInBytes { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total number of packages that were detected during the execution of the SBOM tool.
+    /// </summary>
+    public int TotalNumberOfPackages { get; set; }
 }

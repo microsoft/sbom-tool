@@ -61,6 +61,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
     {
         ValidationResult validationResultOutput = null;
         IEnumerable<FileValidationResult> validFailures = null;
+        int totalNumberOfPackages = 0;
 
         using (recorder.TraceEvent(Events.SBOMValidationWorkflow))
         {
@@ -103,7 +104,8 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                             (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(sbomParser);
                             break;
                         case Contracts.Enums.ParserState.PACKAGES:
-                            sbomParser.GetPackages().ToList();
+                            var packages = sbomParser.GetPackages().ToList();
+                            totalNumberOfPackages = packages.Count();
                             break;
                         case Contracts.Enums.ParserState.RELATIONSHIPS:
                             sbomParser.GetRelationships().ToList();
@@ -124,10 +126,11 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 }
 
                 log.Debug("Finished workflow, gathering results.");
-                    
+
                 // Generate JSON output
                 validationResultOutput = validationResultGenerator
                     .WithTotalFilesInManifest(sbomConfig.Recorder.GetGenerationData().Checksums.Count())
+                    .WithTotalPackagesInManifest(totalNumberOfPackages)
                     .WithSuccessCount(successfullyValidatedFiles)
                     .WithTotalDuration(sw.Elapsed)
                     .WithValidationResults(fileValidationFailures)
@@ -169,6 +172,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 }
 
                 // Log telemetry
+                recorder.RecordTotalNumberOfPackages(totalNumberOfPackages);
                 LogResultsSummary(validationResultOutput, validFailures);
                 LogIndividualFileResults(validFailures);
             }
