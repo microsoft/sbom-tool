@@ -201,7 +201,7 @@ public class TelemetryRecorder : IRecorder
     /// <param name="packageCount">The total package count after execution.</param>
     public void RecordTotalNumberOfPackages(int packageCount)
     {
-        Interlocked.Exchange(ref this.totalNumberOfPackages, packageCount);
+        this.totalNumberOfPackages = packageCount;
     }
 
     /// <summary>
