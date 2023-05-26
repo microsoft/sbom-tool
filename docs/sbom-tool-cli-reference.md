@@ -27,7 +27,7 @@ Now, you will generate the SBOM for the above project by running the tool you ju
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com
 ```
 
-Here, you configured the tool to generte an SBOM for all the files in the `c:\outputDrop` folder, the `c:\Users\test\TestProject` path will be searched for *.csproj or packages.config files to get a list of dependency packages that will be added to the SBOM. The package name and version were configured using the -pn and -pv parameter, and the -nsb parameter specifices the namespace base uri which will be used to generate the document namespace in the final SPDX 2.2 SBOM. If no -nsb is provided then a default namespace base uri that complies with SPDX2.2 specifications will be provided.
+Here, you configured the tool to generate an SBOM for all the files in the `c:\outputDrop` folder, the `c:\Users\test\TestProject` path will be searched for *.csproj or packages.config files to get a list of dependency packages that will be added to the SBOM. The package name and version were configured using the -pn and -pv parameter, and the -nsb parameter specifices the namespace base uri which will be used to generate the document namespace in the final SPDX 2.2 SBOM. If no -nsb is provided then a default namespace base uri that complies with SPDX2.2 specifications will be provided.
 
 The generated SBOM will be placed in the path specified by the -b argument inside a `_manifest\spdx_2.2\` folder. So, in our case the SBOM will be located here: `c:\outputDrop\_manifest\spdx_2.2\manifest.spdx.json`
 

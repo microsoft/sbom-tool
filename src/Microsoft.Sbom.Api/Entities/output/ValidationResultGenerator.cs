@@ -16,6 +16,7 @@ public class ValidationResultGenerator
 {
     private int successCount;
     private int totalFiles;
+    private int totalPackages;
     private TimeSpan duration;
     private readonly IConfiguration configuration;
 
@@ -98,6 +99,7 @@ public class ValidationResultGenerator
                     FilesFailedCount = validationErrors.Count,
                     FilesSkippedCount = skippedErrors.Count,
                     TotalFilesInManifest = totalFiles,
+                    TotalPackagesInManifest = totalPackages
                 },
                 Parameters = configuration
             }
@@ -107,6 +109,12 @@ public class ValidationResultGenerator
     public ValidationResultGenerator WithTotalFilesInManifest(int totalFiles)
     {
         this.totalFiles = totalFiles;
+        return this;
+    }
+
+    public ValidationResultGenerator WithTotalPackagesInManifest(int totalPackages)
+    {
+        this.totalPackages = totalPackages;
         return this;
     }
 }

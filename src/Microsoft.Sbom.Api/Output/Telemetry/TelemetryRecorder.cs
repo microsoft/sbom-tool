@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
@@ -31,7 +32,7 @@ public class TelemetryRecorder : IRecorder
     private readonly IDictionary<ManifestInfo, string> sbomFormats = new Dictionary<ManifestInfo, string>();
     private readonly IDictionary<string, object> switches = new Dictionary<string, object>();
     private readonly IList<Exception> exceptions = new List<Exception>();
-
+    private int totalNumberOfPackages = 0;
     private IList<FileValidationResult> errors = new List<FileValidationResult>();
     private Result result = Result.Success;
 
@@ -195,6 +196,15 @@ public class TelemetryRecorder : IRecorder
     }
 
     /// <summary>
+    /// Record the total number of packages that were processed during the execution of the SBOM tool.
+    /// </summary>
+    /// <param name="packageCount">The total package count after execution.</param>
+    public void RecordTotalNumberOfPackages(int packageCount)
+    {
+        this.totalNumberOfPackages = packageCount;
+    }
+
+    /// <summary>
     /// Record a switch that was used during the execution of the SBOM tool.
     /// </summary>
     /// <param name="switchName">The name of the switch or environment variable.</param>
@@ -236,7 +246,8 @@ public class TelemetryRecorder : IRecorder
                     {
                         SbomFilePath = f.Value,
                         SbomFormatName = f.Key,
-                        FileSizeInBytes = new System.IO.FileInfo(f.Value).Length
+                        FileSizeInBytes = new System.IO.FileInfo(f.Value).Length,
+                        TotalNumberOfPackages = this.totalNumberOfPackages
                     })
                 .ToList();
 
@@ -257,10 +268,16 @@ public class TelemetryRecorder : IRecorder
             };
 
             // Log to logger.
+            Log.Debug($"Wrote telemetry object to path {Configuration.TelemetryFilePath?.Value}");
+
+            if (Configuration.ManifestToolAction == ManifestToolActions.Generate && Configuration.BuildComponentPath?.Value != null && this.totalNumberOfPackages == 0)
+            {
+                Log.Warning("0 Packages were detected during the {Action} workflow.", Configuration.ManifestToolAction);
+            }
+
             Log.Information("Finished execution of the {Action} workflow {@Telemetry}", Configuration.ManifestToolAction, telemetry);
 
             await RecordToFile(telemetry, Configuration.TelemetryFilePath?.Value);
-            Log.Debug($"Wrote telemetry object to path {Configuration.TelemetryFilePath?.Value}");
         }
         catch (Exception ex)
         {

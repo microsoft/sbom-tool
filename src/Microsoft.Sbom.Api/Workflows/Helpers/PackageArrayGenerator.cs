@@ -74,6 +74,9 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
             }
 
             log.Debug($"Wrote {totalJsonDocumentsWritten} package elements in the SBOM.");
+
+            // +1 is added to the totalJsonDocumentsWritten to account for the root package of the SBOM.
+            recorder.RecordTotalNumberOfPackages(totalJsonDocumentsWritten + 1);
             await foreach (FileValidationResult error in errors.ReadAllAsync())
             {
                 totalErrors.Add(error);
