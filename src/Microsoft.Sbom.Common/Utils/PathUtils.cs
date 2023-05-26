@@ -25,6 +25,5 @@ public static class PathUtils
                 pathProp.SetValue(configuration, path);
             }
         }
-
     }
 }
