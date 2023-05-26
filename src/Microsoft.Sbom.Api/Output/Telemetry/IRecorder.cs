@@ -36,12 +36,6 @@ public interface IRecorder
     public void RecordTotalNumberOfPackages(int count);
 
     /// <summary>
-    /// Record the total number of unique Component IDs encountered during component detection.
-    /// </summary>
-    /// <param name="uniqueComponents">List of components detected by the Component Detector.</param>
-    public void RecordUniquePackages(IEnumerable<ScannedComponent> uniqueComponents);
-
-    /// <summary>
     /// Records a SBOM format that we used during the execution of the SBOM tool.
     /// </summary>
     /// <param name="manifestInfo">The SBOM format as a <see cref="ManifestInfo"/> object.</param>

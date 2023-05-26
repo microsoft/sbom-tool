@@ -116,8 +116,6 @@ public abstract class ComponentDetectionBaseWalker
             {
                 await output.Writer.WriteAsync(component);
             }
-
-            recorder.RecordUniquePackages(uniqueComponents);
         }
 
         Task.Run(async () =>

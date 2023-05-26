@@ -31,7 +31,6 @@ namespace Microsoft.Sbom.Api.Output.Telemetry;
 public class TelemetryRecorder : IRecorder
 {
     private readonly ConcurrentBag<TimingRecorder> timingRecorders = new ();
-    private ConcurrentBag<string> packageIds = new ();
     private readonly IDictionary<ManifestInfo, string> sbomFormats = new Dictionary<ManifestInfo, string>();
     private readonly IDictionary<string, object> switches = new Dictionary<string, object>();
     private readonly IList<Exception> exceptions = new List<Exception>();
@@ -198,23 +197,13 @@ public class TelemetryRecorder : IRecorder
         this.exceptions.Add(exception);
     }
 
+    /// <summary>
+    /// Record the total number of packages that were processed during the execution of the SBOM tool.
+    /// </summary>
+    /// <param name="packageCount">The total package count after execution.</param>
     public void RecordTotalNumberOfPackages(int packageCount)
     {
         Interlocked.Exchange(ref this.totalNumberOfPackages, packageCount);
-    }
-
-    public void RecordUniquePackages(IEnumerable<ScannedComponent> uniqueComponents)
-    {
-        foreach (var component in uniqueComponents)
-        {
-            // If packageIds already contains the package, then we don't need to add it again.
-            if (!this.packageIds.Contains(component.Component.Id))
-            {
-                this.packageIds.Add(component.Component.Id);
-            }
-        }
-
-        this.totalNumberOfPackages = this.packageIds.Count();
     }
 
     /// <summary>
