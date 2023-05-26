@@ -4,14 +4,12 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Output.Telemetry.Entities;
