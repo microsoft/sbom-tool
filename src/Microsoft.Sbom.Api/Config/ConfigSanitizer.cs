@@ -170,7 +170,7 @@ public class ConfigSanitizer
         {
             string defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SBOMToolVersion}-{Guid.NewGuid()}";
 
-            logger.Information($"No namespace URI base provided, using default value {defaultNamespaceUriBase}");
+            logger.Information($"No namespace URI base provided, using unique generated default value {defaultNamespaceUriBase}");
 
             return new ConfigurationSetting<string>
             {

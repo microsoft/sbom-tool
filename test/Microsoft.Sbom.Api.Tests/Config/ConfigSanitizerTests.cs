@@ -219,7 +219,7 @@ public class ConfigSanitizerTests
             Value = "http://base.uri"
         };
 
-        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestToolAction = ManifestToolActions.Generate;
         configSanitizer.SanitizeConfig(config);
 
         Assert.AreEqual("http://base.uri", config.NamespaceUriBase.Value);
@@ -239,7 +239,7 @@ public class ConfigSanitizerTests
             Value = providedNamespaceValue
         };
 
-        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestToolAction = ManifestToolActions.Generate;
         configSanitizer.SanitizeConfig(config);
 
         Assert.AreEqual(providedNamespaceValue, config.NamespaceUriBase.Value);
