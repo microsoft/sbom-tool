@@ -18,6 +18,7 @@ public class InputConfiguration : IConfiguration
     /// <inheritdoc cref="IConfiguration.BuildDropPath" />
     [DirectoryExists]
     [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
+    [ValueRequired]
     public ConfigurationSetting<string> BuildDropPath { get; set; }
 
     /// <inheritdoc cref="IConfiguration.BuildComponentPath" />
