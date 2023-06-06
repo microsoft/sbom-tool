@@ -61,6 +61,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
     {
         ValidationResult validationResultOutput = null;
         IEnumerable<FileValidationResult> validFailures = null;
+        IEnumerable<FileValidationResult> optionalValidFailures = null;
         int totalNumberOfPackages = 0;
 
         using (recorder.TraceEvent(Events.SBOMValidationWorkflow))
@@ -95,6 +96,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
                 int successfullyValidatedFiles = 0;
                 List<FileValidationResult> fileValidationFailures = null;
+                List<FileValidationResult> optionalFailures = null;
 
                 while (sbomParser.Next() != Contracts.Enums.ParserState.FINISHED)
                 {
@@ -125,6 +127,17 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                 }
 
+                if (configuration.FailIfNoPackages.Value == true && totalNumberOfPackages <= 1)
+                {
+                    optionalFailures = new List<FileValidationResult>
+                    {
+                        new FileValidationResult
+                        {
+                            ErrorType = ErrorType.NoPackagesFound
+                        }
+                    };
+                }
+
                 log.Debug("Finished workflow, gathering results.");
 
                 // Generate JSON output
@@ -134,6 +147,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     .WithSuccessCount(successfullyValidatedFiles)
                     .WithTotalDuration(sw.Elapsed)
                     .WithValidationResults(fileValidationFailures)
+                    .WithOptionalValidationResults(optionalFailures)
                     .Build();
 
                 // Write JSON output to file.
@@ -148,12 +162,19 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 await outputWriter.WriteAsync(JsonSerializer.Serialize(validationResultOutput, options));
                     
                 validFailures = fileValidationFailures.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType));
+                optionalValidFailures = optionalFailures?.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType));
 
                 if (configuration.IgnoreMissing.Value)
                 {
                     log.Warning("Not including missing files on disk as -IgnoreMissing switch is on.");
                     validFailures = validFailures.Where(a => a.ErrorType != ErrorType.MissingFile);
                 }
+
+                // Add optional validation failures to the list of failures if the flag was set to true.
+                if (configuration.FailIfNoPackages.Value == true)
+                {
+                    validFailures = validFailures.Concat(optionalValidFailures);
+                }          
 
                 return !validFailures.Any();
             }
@@ -207,11 +228,22 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         log.Verbose(string.Empty);
         validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => log.Verbose(f.Path));
         log.Verbose("------------------------------------------------------------");
-
         log.Verbose("Unknown file failures:");
         log.Verbose(string.Empty);
         validFailures.Where(vf => vf.ErrorType == ErrorType.Other).ForEach(f => log.Verbose(f.Path));
         log.Verbose("------------------------------------------------------------");
+
+        if (validFailures.Where(vf => vf.ErrorType == ErrorType.NoPackagesFound).Count() == 1)
+        {
+            log.Verbose(string.Empty);
+            log.Verbose("------------------------------------------------------------");
+            log.Verbose("Optional validation results");
+            log.Verbose("------------------------------------------------------------");
+            log.Verbose(string.Empty);
+        
+            log.Verbose("No packages found in the manifest.");
+            log.Verbose("------------------------------------------------------------");
+        }
     }
 
     private void LogResultsSummary(ValidationResult validationResultOutput, IEnumerable<FileValidationResult> validFailures)
@@ -238,6 +270,12 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         log.Debug($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
         log.Debug($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
         log.Debug($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
+
+        if (validFailures.Where(vf => vf.ErrorType == ErrorType.NoPackagesFound).Count() == 1)
+        {
+            log.Debug($"Optional validation failures . . . . . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.NoPackagesFound)}");
+        }
+
         log.Debug($"Unknown file failures . . . . . . . . . . . . .  {validFailures.Count(v => v.ErrorType == ErrorType.Other)}");
     }
 }

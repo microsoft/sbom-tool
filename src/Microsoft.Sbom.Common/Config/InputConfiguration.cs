@@ -18,7 +18,6 @@ public class InputConfiguration : IConfiguration
     /// <inheritdoc cref="IConfiguration.BuildDropPath" />
     [DirectoryExists]
     [DirectoryPathIsWritable(ForAction = ManifestToolActions.Generate)]
-    [ValueRequired]
     public ConfigurationSetting<string> BuildDropPath { get; set; }
 
     /// <inheritdoc cref="IConfiguration.BuildComponentPath" />
@@ -124,4 +123,8 @@ public class InputConfiguration : IConfiguration
     /// <inheritdoc cref="IConfiguration.DeleteManifestDirIfPresent" />
     [DefaultValue(false)]
     public ConfigurationSetting<bool> DeleteManifestDirIfPresent { get; set; }
+
+    /// <inheritdoc cref="IConfiguration.FailIfNoPackages" />
+    [DefaultValue(false)]
+    public ConfigurationSetting<bool> FailIfNoPackages { get; set; }
 }

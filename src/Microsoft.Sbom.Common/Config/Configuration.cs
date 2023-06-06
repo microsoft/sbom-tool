@@ -45,6 +45,7 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<string>> generationTimestamp = new ();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> followSymlinks = new ();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> deleteManifestDirIfPresent = new ();
+    private static readonly AsyncLocal<ConfigurationSetting<bool>> failIfNoPackages = new ();
     private static readonly AsyncLocal<ConfigurationSetting<LogEventLevel>> verbosity = new ();
 
     /// <inheritdoc cref="IConfiguration.BuildDropPath" />
@@ -275,5 +276,13 @@ public class Configuration : IConfiguration
     {
         get => deleteManifestDirIfPresent.Value;
         set => deleteManifestDirIfPresent.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.FailIfNoPackages" />
+    [DefaultValue(false)]
+    public ConfigurationSetting<bool> FailIfNoPackages
+    {
+        get => failIfNoPackages.Value;
+        set => failIfNoPackages.Value = value;
     }
 }

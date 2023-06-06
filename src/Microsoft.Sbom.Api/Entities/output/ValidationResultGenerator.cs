@@ -22,6 +22,8 @@ public class ValidationResultGenerator
 
     public IList<FileValidationResult> NodeValidationResults { get; set; }
 
+    public IList<FileValidationResult> OptionalNodeValidationResults { get; set; }
+
     public ValidationResultGenerator(IConfiguration configuration)
     {
         this.configuration = configuration;
@@ -52,7 +54,7 @@ public class ValidationResultGenerator
     }
 
     /// <summary>
-    /// Sets the failed validaion results.
+    /// Sets the failed validation results.
     /// Retuns the <see cref="ValidationResultGenerator"/> for chaining.
     /// </summary>
     /// <param name="nodeValidationResults"></param>
@@ -63,6 +65,12 @@ public class ValidationResultGenerator
         return this;
     }
 
+    public ValidationResultGenerator WithOptionalValidationResults(IList<FileValidationResult> optionalNodeValidationResults)
+    {
+        OptionalNodeValidationResults = optionalNodeValidationResults ?? new List<FileValidationResult>();
+        return this;
+    }
+
     /// <summary>
     /// Finalizes the validation generation and returns a new <see cref="ValidationResult"/> object.
     /// </summary>
@@ -70,9 +78,11 @@ public class ValidationResultGenerator
     public ValidationResult Build()
     {
         List<FileValidationResult> validationErrors;
+        List<FileValidationResult> optionalValidationErrors;
         List<FileValidationResult> skippedErrors;
 
         validationErrors = NodeValidationResults.Where(r => !Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
+        optionalValidationErrors = OptionalNodeValidationResults.Where(r => !Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
         skippedErrors = NodeValidationResults.Where(r => Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
             
         if (configuration.IgnoreMissing.Value)
@@ -83,7 +93,7 @@ public class ValidationResultGenerator
 
         return new ValidationResult
         {
-            Result = validationErrors.Count == 0 ? Result.Success : Result.Failure,
+            Result = validationErrors.Count == 0 && optionalValidationErrors.Count == 0 ? Result.Success : Result.Failure,
             ValidationErrors = new ErrorContainer<FileValidationResult>
             {
                 Count = validationErrors.Count,

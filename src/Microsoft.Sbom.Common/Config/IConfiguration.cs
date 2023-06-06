@@ -185,4 +185,9 @@ public interface IConfiguration
     /// for confirmation. The new manifest directory will then be created at this location and the generated SBOM will be stored there.
     /// </summary>
     ConfigurationSetting<bool> DeleteManifestDirIfPresent { get; set; }
+
+    /// <summary>
+    /// If set to true, validation will fail if the SBOM does not contain any packages.
+    /// </summary>
+    ConfigurationSetting<bool> FailIfNoPackages { get; set; }
 }

@@ -63,7 +63,10 @@ public class ConfigSanitizer
         configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath.Value, configuration.ManifestToolAction);
 
         // Set namespace value, this handles default values and user provided values.
-        configuration.NamespaceUriBase = GetNamespaceBaseUri(configuration, logger);
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        {
+            configuration.NamespaceUriBase = GetNamespaceBaseUri(configuration, logger);
+        }
 
         // Set default ManifestInfo for validation in case user doesn't provide a value.
         configuration.ManifestInfo = GetDefaultManifestInfoForValidationAction(configuration);

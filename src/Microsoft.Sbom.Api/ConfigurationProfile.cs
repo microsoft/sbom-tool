@@ -54,7 +54,8 @@ public class ConfigurationProfile : Profile
             .ForMember(c => c.ValidateSignature, o => o.Ignore())
             .ForMember(c => c.PackagesList, o => o.Ignore())
             .ForMember(c => c.FilesList, o => o.Ignore())
-            .ForMember(c => c.IgnoreMissing, o => o.Ignore());
+            .ForMember(c => c.IgnoreMissing, o => o.Ignore())
+            .ForMember(c => c.FailIfNoPackages, o => o.Ignore());
 
         // Create config for the config json file to configuration.
         CreateMap<ConfigFile, InputConfiguration>()

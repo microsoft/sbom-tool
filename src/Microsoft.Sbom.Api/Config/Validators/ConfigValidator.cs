@@ -67,6 +67,11 @@ public abstract class ConfigValidator
             return;
         }
 
+        if (propertyName == nameof(IConfiguration.FailIfNoPackages))
+        {
+            return;
+        }
+
         switch (propertyValue)
         {
             case null:
