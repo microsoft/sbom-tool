@@ -61,7 +61,6 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
     {
         ValidationResult validationResultOutput = null;
         IEnumerable<FileValidationResult> validFailures = null;
-        IEnumerable<FileValidationResult> optionalValidFailures = null;
         int totalNumberOfPackages = 0;
 
         using (recorder.TraceEvent(Events.SBOMValidationWorkflow))
@@ -129,13 +128,10 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
                 if (configuration.FailIfNoPackages?.Value == true && totalNumberOfPackages <= 1)
                 {
-                    optionalFailures = new List<FileValidationResult>
+                    fileValidationFailures.Add(new FileValidationResult
                     {
-                        new FileValidationResult
-                        {
-                            ErrorType = ErrorType.NoPackagesFound
-                        }
-                    };
+                        ErrorType = ErrorType.NoPackagesFound
+                    });
                 }
 
                 log.Debug("Finished workflow, gathering results.");
@@ -147,7 +143,6 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     .WithSuccessCount(successfullyValidatedFiles)
                     .WithTotalDuration(sw.Elapsed)
                     .WithValidationResults(fileValidationFailures)
-                    .WithOptionalValidationResults(optionalFailures)
                     .Build();
 
                 // Write JSON output to file.
@@ -162,19 +157,12 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 await outputWriter.WriteAsync(JsonSerializer.Serialize(validationResultOutput, options));
                     
                 validFailures = fileValidationFailures.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType));
-                optionalValidFailures = optionalFailures?.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType));
 
                 if (configuration.IgnoreMissing.Value)
                 {
                     log.Warning("Not including missing files on disk as -IgnoreMissing switch is on.");
                     validFailures = validFailures.Where(a => a.ErrorType != ErrorType.MissingFile);
                 }
-
-                // Add optional validation failures to the list of failures if the flag was set to true.
-                if (configuration.FailIfNoPackages?.Value == true)
-                {
-                    validFailures = validFailures.Concat(optionalValidFailures);
-                }          
 
                 return !validFailures.Any();
             }
