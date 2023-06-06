@@ -73,7 +73,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
                 totalJsonDocumentsWritten++;
             }
 
-            if ( totalJsonDocumentsWritten == 0)
+            if (totalJsonDocumentsWritten == 0)
             {
                 log.Warning($"There were no packages detected during the generation workflow.");
             }
