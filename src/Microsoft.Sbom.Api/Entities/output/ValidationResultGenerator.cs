@@ -82,7 +82,17 @@ public class ValidationResultGenerator
         List<FileValidationResult> skippedErrors;
 
         validationErrors = NodeValidationResults.Where(r => !Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
-        optionalValidationErrors = OptionalNodeValidationResults.Where(r => !Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
+
+        // Put all the errors into a list for the output to handle, if there are none then create an empty list
+        if (OptionalNodeValidationResults != null)
+        {
+            optionalValidationErrors = OptionalNodeValidationResults.Where(r => !Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
+        }
+        else
+        {
+            optionalValidationErrors = new List<FileValidationResult>();
+        }
+        
         skippedErrors = NodeValidationResults.Where(r => Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
             
         if (configuration.IgnoreMissing.Value)

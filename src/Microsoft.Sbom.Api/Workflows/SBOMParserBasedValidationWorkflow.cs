@@ -127,7 +127,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                 }
 
-                if (configuration.FailIfNoPackages.Value == true && totalNumberOfPackages <= 1)
+                if (configuration.FailIfNoPackages?.Value == true && totalNumberOfPackages <= 1)
                 {
                     optionalFailures = new List<FileValidationResult>
                     {
@@ -171,7 +171,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 }
 
                 // Add optional validation failures to the list of failures if the flag was set to true.
-                if (configuration.FailIfNoPackages.Value == true)
+                if (configuration.FailIfNoPackages?.Value == true)
                 {
                     validFailures = validFailures.Concat(optionalValidFailures);
                 }          
