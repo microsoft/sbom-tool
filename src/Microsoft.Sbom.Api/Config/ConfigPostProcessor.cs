@@ -4,11 +4,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using AutoMapper;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Common.Config.Validators;
+using Microsoft.Sbom.Common.Utils;
 using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Config;
@@ -31,6 +35,9 @@ public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration
 
     public void Process(IConfiguration source, IConfiguration destination, ResolutionContext context)
     {
+        // Replace backslashes in directory paths with the OS-sepcific directory separator character.
+        PathUtils.ConvertToOSSpecificPathSeparators(destination);
+
         // Set current action on config validators
         configValidators.ForEach(c => c.CurrentAction = destination.ManifestToolAction);
 
