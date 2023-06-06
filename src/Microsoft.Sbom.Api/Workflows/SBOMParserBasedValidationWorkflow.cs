@@ -95,7 +95,6 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
                 int successfullyValidatedFiles = 0;
                 List<FileValidationResult> fileValidationFailures = null;
-                List<FileValidationResult> optionalFailures = null;
 
                 while (sbomParser.Next() != Contracts.Enums.ParserState.FINISHED)
                 {
