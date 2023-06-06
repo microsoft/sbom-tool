@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Exceptions;
@@ -27,6 +28,7 @@ public class ConfigSanitizerTests
     private Mock<IHashAlgorithmProvider> mockHashAlgorithmProvider;
     private Mock<IAssemblyConfig> mockAssemblyConfig;
     private ConfigSanitizer configSanitizer;
+    private readonly bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
     [TestInitialize]
     public void Initialize()
@@ -60,9 +62,9 @@ public class ConfigSanitizerTests
     /// are testing the correct config.
     /// </summary>
     /// <returns></returns>
-    private InputConfiguration GetConfigurationBaseObject()
+    private Configuration GetConfigurationBaseObject()
     {
-        return new InputConfiguration
+        return new Configuration
         {
             HashAlgorithm = new ConfigurationSetting<AlgorithmName>
             {
@@ -78,7 +80,7 @@ public class ConfigSanitizerTests
             {
                 Source = SettingSource.Default,
                 Value = new List<ManifestInfo>
-                    { Constants.TestManifestInfo }
+                { Constants.TestManifestInfo }
             },
             Verbosity = new ConfigurationSetting<Serilog.Events.LogEventLevel>
             {
@@ -165,29 +167,30 @@ public class ConfigSanitizerTests
     {
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestDirPath = null;
         configSanitizer.SanitizeConfig(config);
 
         Assert.IsNotNull(config.ManifestDirPath);
         Assert.IsNotNull(config.ManifestDirPath.Value);
-        Assert.AreEqual(Path.Join("dropPath", "_manifest"), config.ManifestDirPath.Value);
+
+        var expectedPath = Path.Join("dropPath", "_manifest");
+        Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
     }
 
     [TestMethod]
     public void ManifestDirShouldEndWithManifestDirForGenerate_Succeeds()
     {
         var config = GetConfigurationBaseObject();
-        config.ManifestDirPath = new ConfigurationSetting<string>
-        {
-            Source = SettingSource.Default,
-            Value = "manifestDirPath"
-        };
+        config.ManifestDirPath = new ConfigurationSetting<string>("manifestDirPath");
 
         config.ManifestToolAction = ManifestToolActions.Generate;
         configSanitizer.SanitizeConfig(config);
 
         Assert.IsNotNull(config.ManifestDirPath);
         Assert.IsNotNull(config.ManifestDirPath.Value);
-        Assert.AreEqual(Path.Join("manifestDirPath", "_manifest"), config.ManifestDirPath.Value);
+
+        var expectedPath = Path.Join("manifestDirPath", "_manifest");
+        Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
     }
 
     [TestMethod]
@@ -280,5 +283,36 @@ public class ConfigSanitizerTests
         configSanitizer.SanitizeConfig(config);
 
         Assert.AreEqual(actualOrg, config.PackageSupplier.Value);
+    }
+
+    [TestMethod]
+    [DataRow(ManifestToolActions.Validate)]
+    [DataRow(ManifestToolActions.Generate)]
+    public void ConfigSantizer_Validate_ReplacesBackslashes_Linux(ManifestToolActions action)
+    {
+        if (!isWindows)
+        {
+            var config = GetConfigurationBaseObject();
+            config.ManifestDirPath = new ($"\\{nameof(config.ManifestDirPath)}\\", SettingSource.Default);
+            config.BuildDropPath = new ($"\\{nameof(config.BuildDropPath)}\\", SettingSource.Default);
+            config.OutputPath = new ($"\\{nameof(config.OutputPath)}\\", SettingSource.Default);
+            config.ConfigFilePath = new ($"\\{nameof(config.ConfigFilePath)}\\", SettingSource.Default);
+            config.RootPathFilter = new ($"\\{nameof(config.RootPathFilter)}\\", SettingSource.Default);
+            config.BuildComponentPath = new ($"\\{nameof(config.BuildComponentPath)}\\", SettingSource.Default);
+            config.CatalogFilePath = new ($"\\{nameof(config.CatalogFilePath)}\\", SettingSource.Default);
+            config.TelemetryFilePath = new ($"\\{nameof(config.TelemetryFilePath)}\\", SettingSource.Default);
+
+            config.ManifestToolAction = action;
+            configSanitizer.SanitizeConfig(config);
+
+            Assert.IsTrue(config.ManifestDirPath.Value.StartsWith($"/{nameof(config.ManifestDirPath)}/"));
+            Assert.IsTrue(config.BuildDropPath.Value.StartsWith($"/{nameof(config.BuildDropPath)}/"));
+            Assert.IsTrue(config.OutputPath.Value.StartsWith($"/{nameof(config.OutputPath)}/"));
+            Assert.IsTrue(config.ConfigFilePath.Value.StartsWith($"/{nameof(config.ConfigFilePath)}/"));
+            Assert.IsTrue(config.RootPathFilter.Value.StartsWith($"/{nameof(config.RootPathFilter)}/"));
+            Assert.IsTrue(config.BuildComponentPath.Value.StartsWith($"/{nameof(config.BuildComponentPath)}/"));
+            Assert.IsTrue(config.CatalogFilePath.Value.StartsWith($"/{nameof(config.CatalogFilePath)}/"));
+            Assert.IsTrue(config.TelemetryFilePath.Value.StartsWith($"/{nameof(config.TelemetryFilePath)}/"));
+        }
     }
 }
