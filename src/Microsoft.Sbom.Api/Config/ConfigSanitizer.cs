@@ -67,7 +67,10 @@ public class ConfigSanitizer
         configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath.Value, configuration.ManifestToolAction);
 
         // Set namespace value, this handles default values and user provided values.
-        configuration.NamespaceUriBase = GetNamespaceBaseUri(configuration, logger);
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        {
+            configuration.NamespaceUriBase = GetNamespaceBaseUri(configuration, logger);
+        }
 
         // Set default ManifestInfo for validation in case user doesn't provide a value.
         configuration.ManifestInfo = GetDefaultManifestInfoForValidationAction(configuration);
@@ -174,7 +177,7 @@ public class ConfigSanitizer
         {
             string defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SBOMToolVersion}-{Guid.NewGuid()}";
 
-            logger.Information($"No namespace URI base provided, using default value {defaultNamespaceUriBase}");
+            logger.Information($"No namespace URI base provided, using unique generated default value {defaultNamespaceUriBase}");
 
             return new ConfigurationSetting<string>
             {

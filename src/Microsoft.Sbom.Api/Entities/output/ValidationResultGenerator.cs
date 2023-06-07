@@ -52,7 +52,7 @@ public class ValidationResultGenerator
     }
 
     /// <summary>
-    /// Sets the failed validaion results.
+    /// Sets the failed validation results.
     /// Retuns the <see cref="ValidationResultGenerator"/> for chaining.
     /// </summary>
     /// <param name="nodeValidationResults"></param>
@@ -96,7 +96,7 @@ public class ValidationResultGenerator
                 {
                     FilesSuccessfulCount = successCount,
                     FilesValidatedCount = NodeValidationResults.Count + successCount,
-                    FilesFailedCount = validationErrors.Count,
+                    FilesFailedCount = validationErrors.Where(r => r.ErrorType != ErrorType.NoPackagesFound).Count(),
                     FilesSkippedCount = skippedErrors.Count,
                     TotalFilesInManifest = totalFiles,
                     TotalPackagesInManifest = totalPackages

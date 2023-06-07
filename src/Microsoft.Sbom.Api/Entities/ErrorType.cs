@@ -41,5 +41,8 @@ public enum ErrorType
     UnsupportedHashAlgorithm = 9,
 
     [EnumMember(Value = "Referenced SBOM file")]
-    ReferencedSbomFile = 10
+    ReferencedSbomFile = 10,
+
+    [EnumMember(Value = "No packages found")]
+    NoPackagesFound = 11
 }

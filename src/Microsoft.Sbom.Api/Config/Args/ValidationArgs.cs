@@ -61,6 +61,13 @@ public class ValidationArgs : CommonArgs
     public bool IgnoreMissing { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether if set, Will fail validation if the Manifest being validated contains less than 1 package (1 is used in order to account for the root package).
+    /// </summary>
+    [ArgShortcut("n")]
+    [ArgDescription("If set, validation will fail if there are no packages detected in the sbom.")]
+    public bool FailIfNoPackages { get; set; }
+
+    /// <summary>
     /// Gets or sets if you're downloading only a part of the drop using the '-r' or 'root' parameter
     /// in the drop client, specify the same string value here in order to skip
     /// validating paths that are not downloaded.

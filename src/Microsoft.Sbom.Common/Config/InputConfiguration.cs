@@ -132,4 +132,8 @@ public class InputConfiguration : IConfiguration
     /// <inheritdoc cref="IConfiguration.DeleteManifestDirIfPresent" />
     [DefaultValue(false)]
     public ConfigurationSetting<bool> DeleteManifestDirIfPresent { get; set; }
+
+    /// <inheritdoc cref="IConfiguration.FailIfNoPackages" />
+    [DefaultValue(false)]
+    public ConfigurationSetting<bool> FailIfNoPackages { get; set; }
 }

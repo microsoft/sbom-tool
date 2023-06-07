@@ -125,6 +125,14 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                 }
 
+                if (configuration.FailIfNoPackages?.Value == true && totalNumberOfPackages <= 1)
+                {
+                    fileValidationFailures.Add(new FileValidationResult
+                    {
+                        ErrorType = ErrorType.NoPackagesFound
+                    });
+                }
+
                 log.Debug("Finished workflow, gathering results.");
 
                 // Generate JSON output
@@ -207,11 +215,22 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         log.Verbose(string.Empty);
         validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => log.Verbose(f.Path));
         log.Verbose("------------------------------------------------------------");
-
         log.Verbose("Unknown file failures:");
         log.Verbose(string.Empty);
         validFailures.Where(vf => vf.ErrorType == ErrorType.Other).ForEach(f => log.Verbose(f.Path));
         log.Verbose("------------------------------------------------------------");
+
+        if (validFailures.Where(vf => vf.ErrorType == ErrorType.NoPackagesFound).Count() > 0)
+        {
+            log.Verbose(string.Empty);
+            log.Verbose("------------------------------------------------------------");
+            log.Verbose("Package validation results");
+            log.Verbose("------------------------------------------------------------");
+            log.Verbose(string.Empty);
+        
+            log.Verbose("No packages found in the manifest.");
+            log.Verbose("------------------------------------------------------------");
+        }
     }
 
     private void LogResultsSummary(ValidationResult validationResultOutput, IEnumerable<FileValidationResult> validFailures)
@@ -238,6 +257,12 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         log.Debug($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
         log.Debug($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
         log.Debug($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
+
+        if (validFailures.Where(vf => vf.ErrorType == ErrorType.NoPackagesFound).Count() > 0)
+        {
+            log.Debug($"Package validation failures . . . . . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.NoPackagesFound)}");
+        }
+
         log.Debug($"Unknown file failures . . . . . . . . . . . . .  {validFailures.Count(v => v.ErrorType == ErrorType.Other)}");
     }
 }

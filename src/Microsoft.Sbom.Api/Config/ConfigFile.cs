@@ -166,4 +166,9 @@ public class ConfigFile
     /// for confirmation. The new manifest directory will then be created at this location and the generated SBOM will be stored there.
     /// </summary>
     public bool? DeleteManifestDirIfPresent { get; set; }
+
+    /// <summary>
+    /// If set to true, we will fail the validation if no packages are found in the build drop.
+    /// </summary>
+    public bool? FailIfNoPackages { get; set; }
 }
