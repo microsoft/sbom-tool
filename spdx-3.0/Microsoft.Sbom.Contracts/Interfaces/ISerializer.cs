@@ -1,7 +1,7 @@
 ﻿namespace Microsoft.Sbom.Interfaces;
-public interface ISerializer
+public interface ISerializer : IDisposable
 {
-    IDisposable Start();
+    void Start();
 
     void EndDocument();
     

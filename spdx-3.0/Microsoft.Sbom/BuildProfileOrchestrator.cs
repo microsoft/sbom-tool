@@ -23,9 +23,11 @@ internal class BuildProfileOrchestrator
         var serializerChannel = Channel.CreateUnbounded<Element>();
         var errorsChannel = Channel.CreateUnbounded<ErrorInfo>();
 
-        using var _ = serializer.Start();
+        using var _ = serializer;
         try
         {
+            serializer.Start();
+
             // Start processing in a separate task
             var processingTask = Task.Run(async () =>
             {

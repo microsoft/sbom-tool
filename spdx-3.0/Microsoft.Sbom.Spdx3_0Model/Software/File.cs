@@ -1,4 +1,5 @@
-﻿using Microsoft.Sbom.Spdx3_0.Core;
+﻿using System.Text.Json.Serialization;
+using Microsoft.Sbom.Spdx3_0.Core;
 using Microsoft.Sbom.Spdx3_0.Core.Enums;
 using Microsoft.Sbom.Spdx3_0.Licensing;
 using Microsoft.Sbom.Spdx3_0.Software.Enums;
@@ -29,4 +30,8 @@ public record File(string? name,
                    string? copyrightText = null,
                    string? attributionText = null,
                    MediaType? contentType = null) 
-    : SoftwareArtifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, VerifiedUsing, externalReference, externalIdentifier, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard, contentIdentifier, primaryPurpose, additionalPurpose, concludedLicense, declaredLicense, copyrightText, attributionText);
+    : SoftwareArtifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, VerifiedUsing, externalReference, externalIdentifier, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard, contentIdentifier, primaryPurpose, additionalPurpose, concludedLicense, declaredLicense, copyrightText, attributionText)
+{
+    [JsonPropertyName("@type")]
+    public string Type { get; set; } = "File";
+}
