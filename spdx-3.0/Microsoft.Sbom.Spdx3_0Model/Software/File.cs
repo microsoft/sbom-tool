@@ -33,5 +33,5 @@ public record File(string? name,
     : SoftwareArtifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, VerifiedUsing, externalReference, externalIdentifier, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard, contentIdentifier, primaryPurpose, additionalPurpose, concludedLicense, declaredLicense, copyrightText, attributionText)
 {
     [JsonPropertyName("@type")]
-    public string Type { get; set; } = "File";
+    public string Type { get; } = "File";
 }

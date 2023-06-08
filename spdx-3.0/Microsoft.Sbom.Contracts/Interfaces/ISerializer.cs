@@ -1,9 +1,11 @@
-﻿namespace Microsoft.Sbom.Interfaces;
+﻿using Microsoft.Sbom.Spdx3_0.Core;
+
+namespace Microsoft.Sbom.Interfaces;
 public interface ISerializer : IDisposable
 {
     void Start();
 
     void EndDocument();
     
-    void Serialize<T>(T obj);
+    void Serialize(Element obj, Type type);
 }

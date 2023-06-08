@@ -46,7 +46,7 @@ internal class BuildProfileOrchestrator
             {
                 await foreach (var element in serializerChannel.Reader.ReadAllAsync())
                 {
-                    serializer.Serialize(element);
+                    serializer.Serialize(element, element.GetType());
                 }
             });
 
