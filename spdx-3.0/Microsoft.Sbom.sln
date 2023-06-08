@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.Contracts", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.Spdx3_0Model", "Microsoft.Sbom.Spdx3_0Model\Microsoft.Sbom.Spdx3_0Model.csproj", "{4F2C037C-C799-4547-9F3E-37717AAD51F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.Cli", "Microsoft.Sbom.Cli\Microsoft.Sbom.Cli.csproj", "{09127EBF-076F-4779-8ECF-B58FA7C74EB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{4F2C037C-C799-4547-9F3E-37717AAD51F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F2C037C-C799-4547-9F3E-37717AAD51F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F2C037C-C799-4547-9F3E-37717AAD51F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09127EBF-076F-4779-8ECF-B58FA7C74EB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09127EBF-076F-4779-8ECF-B58FA7C74EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09127EBF-076F-4779-8ECF-B58FA7C74EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09127EBF-076F-4779-8ECF-B58FA7C74EB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

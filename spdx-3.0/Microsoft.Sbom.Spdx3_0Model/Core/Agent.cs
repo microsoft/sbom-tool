@@ -1,7 +1,9 @@
 ﻿using Microsoft.Sbom.Core;
 
 namespace Microsoft.Sbom.Spdx3_0.Core;
-public record Agent(Uri? spdxId,
+public record Agent(List<NamespaceMap>? namespaces,
+                    ExternalMap? imports,
+                    Uri? spdxId,
                     string? name,
                     string? summary,
                     string? description,
@@ -10,4 +12,4 @@ public record Agent(Uri? spdxId,
                     IntegrityMethod? verifiedUsing,
                     ExternalReference? externalReference,
                     ExternalIdentifier? externalIdentifier)
-    : Element(spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifier);
+    : Element(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifier);

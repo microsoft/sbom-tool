@@ -1,7 +1,9 @@
 ﻿using Microsoft.Sbom.Core;
 
 namespace Microsoft.Sbom.Spdx3_0.Core;
-public record Tool(Uri? spdxId,
+public record Tool(List<NamespaceMap>? namespaces,
+                   ExternalMap? imports,
+                   Uri? spdxId,
                    string? name,
                    string? summary,
                    string? description,
@@ -9,5 +11,5 @@ public record Tool(Uri? spdxId,
                    CreationInfo? creationInfo,
                    IntegrityMethod? verifiedUsing,
                    ExternalReference? externalReference,
-                   ExternalIdentifier? externalIdentifier) 
-    : Element(spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifier);
+                   ExternalIdentifier? externalIdentifier)
+    : Element(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifier);
