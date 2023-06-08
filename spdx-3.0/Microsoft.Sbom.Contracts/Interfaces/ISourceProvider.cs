@@ -1,11 +1,10 @@
 ﻿using Microsoft.Sbom.Enums;
-using Microsoft.Sbom.Software;
+using Microsoft.Sbom.Spdx3_0.Software;
 
 namespace Microsoft.Sbom.Interfaces;
-public interface ISourceProvider<T> 
-    where T : SoftwareArtifact
+public interface ISourceProvider
 {
-    IAsyncEnumerable<T> Get();
+    IAsyncEnumerable<SoftwareArtifact> Get();
 
     SourceType SourceType { get; }
 }

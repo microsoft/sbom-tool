@@ -5,13 +5,15 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom", "Microsoft.Sbom\Microsoft.Sbom.csproj", "{94051C5C-75AE-48D8-B7E6-35511B6E3054}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.SourceProviders", "Microsoft.Sbom.SourceProviders\Microsoft.Sbom.SourceProviders.csproj", "{E485AC66-4657-408C-8A21-596D1F5C6016}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.SourceProviders", "Microsoft.Sbom.SourceProviders\Microsoft.Sbom.SourceProviders.csproj", "{E485AC66-4657-408C-8A21-596D1F5C6016}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.Contracts", "Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj", "{5D34F9F6-D0FE-4EF8-BEC9-BD85AC531F1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Contracts", "Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj", "{5D34F9F6-D0FE-4EF8-BEC9-BD85AC531F1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.Spdx3_0Model", "Microsoft.Sbom.Spdx3_0Model\Microsoft.Sbom.Spdx3_0Model.csproj", "{4F2C037C-C799-4547-9F3E-37717AAD51F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Spdx3_0Model", "Microsoft.Sbom.Spdx3_0Model\Microsoft.Sbom.Spdx3_0Model.csproj", "{4F2C037C-C799-4547-9F3E-37717AAD51F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.Cli", "Microsoft.Sbom.Cli\Microsoft.Sbom.Cli.csproj", "{09127EBF-076F-4779-8ECF-B58FA7C74EB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Cli", "Microsoft.Sbom.Cli\Microsoft.Sbom.Cli.csproj", "{09127EBF-076F-4779-8ECF-B58FA7C74EB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.JsonSerializer", "Microsoft.Sbom.JsonSerializer\Microsoft.Sbom.JsonSerializer.csproj", "{2BDD1A7C-33F2-4773-992F-B06D7C04A28D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{09127EBF-076F-4779-8ECF-B58FA7C74EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09127EBF-076F-4779-8ECF-B58FA7C74EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09127EBF-076F-4779-8ECF-B58FA7C74EB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BDD1A7C-33F2-4773-992F-B06D7C04A28D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BDD1A7C-33F2-4773-992F-B06D7C04A28D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BDD1A7C-33F2-4773-992F-B06D7C04A28D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BDD1A7C-33F2-4773-992F-B06D7C04A28D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

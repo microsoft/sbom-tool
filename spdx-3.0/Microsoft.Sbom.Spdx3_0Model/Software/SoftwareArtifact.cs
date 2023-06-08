@@ -3,7 +3,7 @@ using Microsoft.Sbom.Spdx3_0.Core;
 using Microsoft.Sbom.Spdx3_0.Licensing;
 using Microsoft.Sbom.Spdx3_0.Software.Enums;
 
-namespace Microsoft.Sbom.Software;
+namespace Microsoft.Sbom.Spdx3_0.Software;
 
 public abstract record SoftwareArtifact(List<NamespaceMap>? namespaces,
                                         ExternalMap? imports,
@@ -13,7 +13,7 @@ public abstract record SoftwareArtifact(List<NamespaceMap>? namespaces,
                                         string? description,
                                         string? comment,
                                         CreationInfo? creationInfo,
-                                        IntegrityMethod? verifiedUsing,
+                                        IList<IntegrityMethod>? VerifiedUsing,
                                         ExternalReference? externalReference,
                                         ExternalIdentifier? externalIdentifier,
                                         Agent? originatedBy,
@@ -29,4 +29,4 @@ public abstract record SoftwareArtifact(List<NamespaceMap>? namespaces,
                                         LicenseField? declaredLicense,
                                         string? copyrightText,
                                         string? attributionText)
-    : Artifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifier, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard);
+    : Artifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, VerifiedUsing, externalReference, externalIdentifier, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard);

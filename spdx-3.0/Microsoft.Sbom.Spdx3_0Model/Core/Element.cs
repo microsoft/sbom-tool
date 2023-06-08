@@ -1,8 +1,6 @@
-﻿using Microsoft.Sbom.Spdx3_0.Core;
+﻿namespace Microsoft.Sbom.Spdx3_0.Core;
 
-namespace Microsoft.Sbom.Core;
-
-public abstract record Element(List<NamespaceMap>? namespaces, 
+public abstract record Element(List<NamespaceMap>? namespaces,
                                ExternalMap? imports,
                                Uri? spdxId,
                                string? name,
@@ -10,7 +8,7 @@ public abstract record Element(List<NamespaceMap>? namespaces,
                                string? description,
                                string? comment,
                                CreationInfo? creationInfo,
-                               IntegrityMethod? verifiedUsing,
+                               IList<IntegrityMethod>? VerifiedUsing,
                                ExternalReference? externalReference,
                                ExternalIdentifier? externalIdentifier)
     : Payload(creationInfo, namespaces, imports);

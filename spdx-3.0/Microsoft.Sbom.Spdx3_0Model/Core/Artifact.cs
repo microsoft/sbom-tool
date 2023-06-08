@@ -9,7 +9,7 @@ public abstract record Artifact(List<NamespaceMap>? namespaces,
                                 string? description,
                                 string? comment,
                                 CreationInfo? creationInfo,
-                                IntegrityMethod? verifiedUsing,
+                                IList<IntegrityMethod>? VerifiedUsing,
                                 ExternalReference? externalReference,
                                 ExternalIdentifier? externalIdentifier,
                                 Agent? originatedBy,
@@ -18,4 +18,4 @@ public abstract record Artifact(List<NamespaceMap>? namespaces,
                                 DateTime? releaseTime,
                                 DateTime? validUntilTime,
                                 string? standard)
-    : Element(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifier);
+    : Element(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, VerifiedUsing, externalReference, externalIdentifier);

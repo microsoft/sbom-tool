@@ -1,0 +1,30 @@
+﻿namespace Microsoft.Sbom.Spdx3_0.Core.Enums;
+public enum HashAlgorithm
+{
+    Blake2b256,
+    Blake2b384,
+    Blake2b512,
+    Blake3,
+    CrystalsKyber,    
+    CrystalsDilithium,
+    Falcon,
+    Md2,
+    Md4,
+    Md5,
+    Md6,
+    Other,
+    Sha1,
+    Sha224,
+    Sha256,
+    Sha3_224,
+    Sha3_256,
+    Sha3_384,
+    Sha3_512,
+    Sha384,
+    Sha512,
+    SpdxPvcSha1,
+    SpdxPvcSha256,
+    SpdxPvcSha384,
+    SpdxPvcSha512,
+    SphincsPlus
+}

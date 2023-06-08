@@ -1,5 +1,4 @@
-﻿using Microsoft.Sbom.Software;
-using Microsoft.Sbom.Spdx3_0.Core;
+﻿using Microsoft.Sbom.Spdx3_0.Core;
 using Microsoft.Sbom.Spdx3_0.Core.Enums;
 using Microsoft.Sbom.Spdx3_0.Licensing;
 using Microsoft.Sbom.Spdx3_0.Software.Enums;
@@ -13,7 +12,7 @@ public record File(string? name,
                    string? description = null,
                    string? comment = null,
                    CreationInfo? creationInfo = null,
-                   IntegrityMethod? verifiedUsing = null,
+                   IList<IntegrityMethod>? VerifiedUsing = null,
                    ExternalReference? externalReference = null,
                    ExternalIdentifier? externalIdentifier = null,
                    Agent? originatedBy = null,
@@ -30,4 +29,4 @@ public record File(string? name,
                    string? copyrightText = null,
                    string? attributionText = null,
                    MediaType? contentType = null) 
-    : SoftwareArtifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifier, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard, contentIdentifier, primaryPurpose, additionalPurpose, concludedLicense, declaredLicense, copyrightText, attributionText);
+    : SoftwareArtifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, VerifiedUsing, externalReference, externalIdentifier, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard, contentIdentifier, primaryPurpose, additionalPurpose, concludedLicense, declaredLicense, copyrightText, attributionText);

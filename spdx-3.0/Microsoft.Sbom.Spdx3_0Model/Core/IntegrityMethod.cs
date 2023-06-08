@@ -1,2 +1,2 @@
 ﻿namespace Microsoft.Sbom.Spdx3_0.Core;
-public abstract record IntegrityMethod(string? comment);
+public abstract record IntegrityMethod(string? Comment);
