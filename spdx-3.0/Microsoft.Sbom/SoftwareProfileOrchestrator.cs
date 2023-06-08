@@ -5,13 +5,13 @@ using Microsoft.Sbom.Spdx3_0.Core;
 using System.Threading.Channels;
 
 namespace Microsoft.Sbom;
-internal class BuildProfileOrchestrator
+internal class SoftwareProfileOrchestrator
 {
     private IList<IProcessor> processors;
     private ISerializer serializer;
     private ILogger logger;
 
-    public BuildProfileOrchestrator(IList<IProcessor> processors, ISerializer serializer, ILogger logger)
+    public SoftwareProfileOrchestrator(IList<IProcessor> processors, ISerializer serializer, ILogger logger)
     {
         this.processors = processors;
         this.serializer = serializer;

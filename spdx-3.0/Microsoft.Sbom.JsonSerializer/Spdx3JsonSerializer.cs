@@ -1,8 +1,8 @@
-﻿using System.Text.Encodings.Web;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Sbom.Converters;
 using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.Spdx3_0.Core;
 
@@ -17,15 +17,20 @@ public class Spdx3JsonSerializer : ISerializer
 
     private bool disposedValue;
 
-    public Spdx3JsonSerializer(string filePath, ILogger? logger = null)
+    public Spdx3JsonSerializer(string? filePath = null, ILogger? logger = null)
     {
         this.logger = logger ?? NullLogger.Instance;
-        this.filePath = filePath;
+        this.filePath = Path.Combine(Path.GetTempPath(), $"sbom-{Guid.NewGuid()}.json");
+        this.logger.LogDebug("Writing SBOM to {filePath}", filePath);
         this.stream = File.Create(this.filePath);
         this.jsonOptions = new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            Converters = { new JsonStringEnumConverter() }
+            Converters = 
+            {
+                new JsonStringEnumConverter(), 
+                new IntegrityMethodConverter() 
+            }
         };
 
         this.jsonWriter = new Utf8JsonWriter(stream, new JsonWriterOptions

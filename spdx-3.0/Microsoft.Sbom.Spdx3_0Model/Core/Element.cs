@@ -8,7 +8,7 @@ public abstract record Element(List<NamespaceMap>? namespaces,
                                string? description,
                                string? comment,
                                CreationInfo? creationInfo,
-                               IList<IntegrityMethod>? VerifiedUsing,
+                               IList<IntegrityMethod>? verifiedUsing,
                                ExternalReference? externalReference,
                                ExternalIdentifier? externalIdentifier)
     : Payload(creationInfo, namespaces, imports);

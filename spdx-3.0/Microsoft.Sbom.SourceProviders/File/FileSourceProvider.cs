@@ -50,7 +50,7 @@ public class FileSourceProvider : ISourceProvider
         return new Spdx3_0.Software.File(GetSpdxFileName(entry))
         {
             additionalPurpose = Spdx3_0.Software.Enums.SoftwarePurpose.File,
-            VerifiedUsing = integrityProvider(ref entry, logger),
+            verifiedUsing = integrityProvider(ref entry, logger),
         };
     }
 

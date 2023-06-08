@@ -17,10 +17,7 @@ public class Generator
     {
         this.logger = logger ?? NullLogger.Instance;
         this.sourceProviders = sourceProviders ?? new List<ISourceProvider>() { new FileSourceProvider(logger: logger) };
-        
-        var filePath = Path.Combine(Path.GetTempPath(), $"sbom-{Guid.NewGuid()}.json");
-        this.logger.LogDebug("Writing SBOM to {filePath}", filePath);
-        this.serializer = serializer ?? new Spdx3JsonSerializer(filePath, this.logger);
+        this.serializer = serializer ?? new Spdx3JsonSerializer(logger: this.logger);
         this.processors = new List<IProcessor>()
         {
             new FilesProcessor(this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Files), this.logger),
@@ -29,7 +26,10 @@ public class Generator
 
     public async Task GenerateSBOM()
     {
-        var orchestrator = new Orchestrator(processors, serializer, logger);
-        await orchestrator.RunAsync();
+        // Figure out profile.
+        // By default we generate software profile
+
+        var softwareProfileOrchestrator = new SoftwareProfileOrchestrator(processors, serializer, logger);
+        await softwareProfileOrchestrator.RunAsync();
     }
 }
