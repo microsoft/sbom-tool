@@ -1,4 +1,6 @@
 ﻿using System.Threading.Channels;
+using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Config;
 using Microsoft.Sbom.Entities;
@@ -30,10 +32,11 @@ internal class PackagesProcessor : IProcessor
             {
                 await foreach (var package in sourceProvider.Get())
                 {
-                    if (package is Spdx3_0.Software.Package sbomPackage)
+                    if (package is TypedComponent typedComponent)
                     {
-                        await serializerChannel.WriteAsync(sbomPackage);
-                        await identifierChannel.WriteAsync(identifierUtils.GetPackageId());
+                        var packageId = identifierUtils.GetPackageId();
+                        await serializerChannel.WriteAsync(PackageConverter.Convert(typedComponent, packageId));
+                        await identifierChannel.WriteAsync(packageId);
                     }
                 }
             }
