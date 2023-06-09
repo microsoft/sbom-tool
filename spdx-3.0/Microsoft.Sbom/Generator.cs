@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Sbom.Config;
 using Microsoft.Sbom.File;
 using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.JsonSerializer;
@@ -13,11 +14,17 @@ public class Generator
     private readonly ILogger logger;
     private readonly IList<IProcessor> processors;
 
-    public Generator(IList<ISourceProvider>? sourceProviders = null, ISerializer? serializer = null, ILogger? logger = null)
+    public Generator(IList<ISourceProvider>? sourceProviders = null, ISerializer? serializer = null, Configuration? configuration = null)
     {
-        this.logger = logger ?? NullLogger.Instance;
-        this.sourceProviders = sourceProviders ?? new List<ISourceProvider>() { new FileSourceProvider(logger: logger) };
-        this.serializer = serializer ?? new Spdx3JsonSerializer(logger: this.logger);
+        this.logger = configuration?.Logger ?? NullLogger.Instance;
+        this.sourceProviders = sourceProviders
+            ?? new List<ISourceProvider>()
+            {
+                new FileSourceProvider(configuration),
+                new PackageSourceProvider(configuration)
+            };
+        this.serializer = serializer ?? new Spdx3JsonSerializer(configuration);
+
         this.processors = new List<IProcessor>()
         {
             new FilesProcessor(this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Files), this.logger),

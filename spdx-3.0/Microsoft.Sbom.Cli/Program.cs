@@ -1,13 +1,14 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Microsoft.Sbom;
-using Microsoft.Sbom.File;
-using Microsoft.Sbom.JsonSerializer;
+using Microsoft.Sbom.Config;
 
-var s = new Spdx3JsonSerializer("C:\\Users\\aamallad\\temp\\t.json");
-
-Console.WriteLine("Hello, World!");
-var g = new Generator(serializer: s);
+var g = new Generator(configuration: new Configuration
+{
+    BasePath = "C:\\Users\\aamallad\\git\\dropvalidator",
+    ComponentPath = "C:\\Users\\aamallad\\git\\dropvalidator",
+    OutputFilePath = "C:\\Users\\aamallad\\temp\\output.json"
+});
 await g.GenerateSBOM();
 
 

@@ -1,11 +1,12 @@
 ﻿using System.IO.Enumeration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Sbom.Config;
 using Microsoft.Sbom.Enums;
 using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.Spdx3_0.Software;
 using Microsoft.Sbom.Utils;
-using static Microsoft.Sbom.File.Delegates;
+using static Microsoft.Sbom.Delegates.FileDelegates;
 
 namespace Microsoft.Sbom.File;
 
@@ -15,11 +16,11 @@ public class FileSourceProvider : ISourceProvider
     private readonly IntegrityProvider integrityProvider;
     private readonly ILogger logger;
 
-    public FileSourceProvider(string? directory = null, IntegrityProvider? integrityProvider = null, ILogger? logger = null)
+    public FileSourceProvider(Configuration? configuration)
     {
-        this.directory = string.IsNullOrEmpty(directory) ? Directory.GetCurrentDirectory() : directory;
-        this.integrityProvider = integrityProvider ?? FileIntegrityProvider.Sha256IntegrityProvider;
-        this.logger = logger ?? NullLogger.Instance;
+        this.logger = configuration?.Logger ?? NullLogger.Instance;
+        this.directory = configuration?.BasePath ?? Directory.GetCurrentDirectory();
+        this.integrityProvider = configuration?.Providers?.IntegrityProvider ?? FileIntegrityProvider.Sha256IntegrityProvider;
     }
 
     public SourceType SourceType => SourceType.Files;
