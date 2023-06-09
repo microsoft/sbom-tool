@@ -1,12 +1,9 @@
-﻿using System.IO.Enumeration;
-using System.Security.Cryptography;
-using System.Threading.Tasks.Dataflow;
+﻿using System.Threading.Tasks.Dataflow;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Sbom.Config;
 using Microsoft.Sbom.Enums;
 using Microsoft.Sbom.Interfaces;
-using Microsoft.Sbom.Spdx3_0.Core;
 using Microsoft.Sbom.Spdx3_0.Software;
 using Microsoft.Sbom.Utils;
 using static Microsoft.Sbom.Delegates.FileDelegates;
@@ -58,17 +55,13 @@ public class FileSourceProvider : ISourceProvider
     private async Task<Spdx3_0.Software.File> CreateSpdxFile(string filePath)
     {
         using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
-        using var sha256 = SHA256.Create();
 
         // Compute hash
-        var hash = await Task.Run(() => sha256.ComputeHash(fs));
+        var integrityMethods = await integrityProvider(fs, logger);
 
         return new Spdx3_0.Software.File(GetSpdxFileName(filePath))
         {
-            verifiedUsing = new List<IntegrityMethod>()
-            {
-                new Hash(Spdx3_0.Core.Enums.HashAlgorithm.Sha256, BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant()),
-            }
+            verifiedUsing = integrityMethods,
         };
     }
 
