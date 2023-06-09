@@ -4,6 +4,7 @@ using Microsoft.Sbom.Config;
 using Microsoft.Sbom.File;
 using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.JsonSerializer;
+using Microsoft.Sbom.Package;
 using Microsoft.Sbom.Processors;
 
 namespace Microsoft.Sbom;
