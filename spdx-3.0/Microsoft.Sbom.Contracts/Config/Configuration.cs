@@ -5,6 +5,8 @@ public class Configuration
 {
     public string Name { get; init; } = Constants.DefaultDocumentName;
 
+    public Uri Namespace { get; init; } = Constants.DefaultNamespace;
+
     public ILogger? Logger { get; init; }
 
     public string? BasePath { get; init; }

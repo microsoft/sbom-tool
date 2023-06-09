@@ -1,5 +1,6 @@
 ﻿using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
+using Microsoft.Sbom.Config;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.Spdx3_0.Core;
@@ -8,15 +9,15 @@ using Microsoft.Sbom.Spdx3_0.Core.Enums;
 namespace Microsoft.Sbom;
 internal class SoftwareProfileOrchestrator
 {
-    private readonly string documentName;
+    private readonly Configuration? configuration;
     private readonly IList<IProcessor> processors;
     private readonly IList<ISourceProvider> sourceProviders;
     private readonly ISerializer serializer;
     private readonly ILogger logger;
 
-    public SoftwareProfileOrchestrator(string documentName, IList<IProcessor> processors, IList<ISourceProvider> sourceProviders, ISerializer serializer, ILogger logger)
+    public SoftwareProfileOrchestrator(Configuration? configuration, IList<IProcessor> processors, IList<ISourceProvider> sourceProviders, ISerializer serializer, ILogger logger)
     {
-        this.documentName = documentName;
+        this.configuration = configuration;
         this.processors = processors;
         this.sourceProviders = sourceProviders;
         this.serializer = serializer;
@@ -35,7 +36,7 @@ internal class SoftwareProfileOrchestrator
 
             await serializerChannel.Writer.WriteAsync(await GetPerson());
 
-            new SpdxDocument(documentName);
+            new SpdxDocument(configuration?.Name ?? Constants.DefaultDocumentName);
 
             // Start processing in a separate task
             var processingTask = Task.Run(async () =>

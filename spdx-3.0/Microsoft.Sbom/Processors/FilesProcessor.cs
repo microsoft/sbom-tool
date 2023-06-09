@@ -24,8 +24,12 @@ internal class FilesProcessor : IProcessor
             {
                 await foreach (var file in sourceProvider.Get())
                 {
-                    if (file is Spdx3_0.Software.File sbomFile)
+                    if (file is FileElement fileElement)
                     {
+                        var sbomFile = new Spdx3_0.Software.File(fileElement.Path)
+                        {
+                            verifiedUsing = ConvertToSpdxIntegrityMethods(fileElement.Hashes),
+                        };
                         await serializerChannel.WriteAsync(sbomFile);
                     }
                 }
@@ -35,5 +39,24 @@ internal class FilesProcessor : IProcessor
         {
             errorsChannel.TryWrite(new ErrorInfo(nameof(FilesProcessor), ex, string.Empty));
         }
+    }
+
+    private IList<IntegrityMethod>? ConvertToSpdxIntegrityMethods(IList<FileHash>? hashes)
+    {
+        if (hashes == null)
+        {
+            return null;
+        }
+
+        var integrityMethods = new List<IntegrityMethod>();
+        foreach (var hash in hashes)
+        {
+            if (Enum.TryParse<Spdx3_0.Core.Enums.HashAlgorithm>(hash.Algorithm, out var algorithm))
+            {
+                integrityMethods.Add(new Hash(algorithm, hash.Value));
+            }
+        }
+
+        return integrityMethods;
     }
 }

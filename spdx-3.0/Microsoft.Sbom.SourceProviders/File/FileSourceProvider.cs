@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Threading.Tasks.Dataflow;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Sbom.Config;
+using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Enums;
 using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.Utils;
-using System.Threading.Tasks.Dataflow;
 using static Microsoft.Sbom.Delegates.FileDelegates;
 
 namespace Microsoft.Sbom.File;
@@ -29,7 +30,7 @@ public class FileSourceProvider : ISourceProvider
         var files = Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories);
 
         var transformBlock =
-            new TransformBlock<string, Spdx3_0.Software.File>(CreateSpdxFile, new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = Environment.ProcessorCount});
+            new TransformBlock<string, FileElement>(CreateFileElement, new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = Environment.ProcessorCount});
 
         foreach (var file in files)
         {
@@ -51,21 +52,17 @@ public class FileSourceProvider : ISourceProvider
         await transformBlock.Completion;
     }
 
-    private async Task<Spdx3_0.Software.File> CreateSpdxFile(string filePath)
+    private async Task<FileElement> CreateFileElement(string filePath)
     {
         using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
 
         // Compute hash
         var integrityMethods = await integrityProvider(fs, logger);
 
-        return new Spdx3_0.Software.File(GetSpdxFileName(filePath))
-        {
-            verifiedUsing = integrityMethods,
-            spdxId = new Uri("https://hello"),
-        };
+        return new FileElement(GetRelativeFileName(filePath), integrityMethods);
     }
 
-    private string? GetSpdxFileName(string filePath)
+    private string? GetRelativeFileName(string filePath)
     {
         Uri fileUri = new (filePath);
         Uri parentUri = new (this.directory + Path.DirectorySeparatorChar);
