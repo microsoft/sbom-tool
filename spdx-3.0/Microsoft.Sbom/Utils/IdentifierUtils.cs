@@ -10,22 +10,16 @@ internal class IdentifierUtils
         this.configuration = configuration;
     }
 
-    internal Uri GetFileId()
-    {
-        var id = $"{Constants.FileIdString}-{Guid.NewGuid():N}";
-        if (configuration.Namespace.AbsoluteUri.EndsWith("/"))
-        {
-            return new Uri($"{configuration.Namespace.AbsoluteUri.TrimEnd('/')}#{id}");
-        }
-        else
-        {
-            return new Uri($"{configuration.Namespace}#{id}");
-        }
-    }
+    internal Uri GetFileId() => GetUriInternal($"{Constants.FileIdString}-{Guid.NewGuid():N}");
 
-    internal Uri GetPackageId()
+    internal Uri GetPackageId() => GetUriInternal($"{Constants.PackageIdString}-{Guid.NewGuid():N}");
+
+    internal Uri GetPersonId() => GetUriInternal($"{Constants.ActorIdString}-{Guid.NewGuid():N}");
+
+    internal Uri GetSpdxDocumentId() => GetUriInternal($"{Constants.SpdxDocumentIdString}-{Guid.NewGuid():N}");
+
+    private Uri GetUriInternal(string id)
     {
-        var id = $"{Constants.PackageIdString}-{Guid.NewGuid():N}";
         if (configuration.Namespace.AbsoluteUri.EndsWith("/"))
         {
             return new Uri($"{configuration.Namespace.AbsoluteUri.TrimEnd('/')}#{id}");

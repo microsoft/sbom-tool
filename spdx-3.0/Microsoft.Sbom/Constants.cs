@@ -7,4 +7,6 @@ internal class Constants
     internal const string CreationInfoId = "_a";
     internal const string FileIdString = "SPDXRef-File";
     internal const string PackageIdString = "SPDXRef-Package";
+    internal const string SpdxDocumentIdString = "SPDXRef-DOCUMENT";
+    internal const string ActorIdString = "SPDXRef-Actor";
 }

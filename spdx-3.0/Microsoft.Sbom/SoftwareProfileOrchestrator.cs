@@ -5,6 +5,7 @@ using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.Spdx3_0.Core;
 using Microsoft.Sbom.Spdx3_0.Core.Enums;
+using Microsoft.Sbom.Utils;
 
 namespace Microsoft.Sbom;
 internal class SoftwareProfileOrchestrator
@@ -14,14 +15,16 @@ internal class SoftwareProfileOrchestrator
     private readonly IList<ISourceProvider> sourceProviders;
     private readonly ISerializer serializer;
     private readonly ILogger logger;
+    private readonly IdentifierUtils identifierUtils;
 
-    public SoftwareProfileOrchestrator(Configuration? configuration, IList<IProcessor> processors, IList<ISourceProvider> sourceProviders, ISerializer serializer, ILogger logger)
+    public SoftwareProfileOrchestrator(Configuration configuration, IList<IProcessor> processors, IList<ISourceProvider> sourceProviders, ISerializer serializer, ILogger logger)
     {
         this.configuration = configuration;
         this.processors = processors;
         this.sourceProviders = sourceProviders;
         this.serializer = serializer;
         this.logger = logger;
+        this.identifierUtils = new IdentifierUtils(configuration);
     }
 
     internal async Task RunAsync()
@@ -35,7 +38,8 @@ internal class SoftwareProfileOrchestrator
         {
             serializer.Start();
 
-            await serializerChannel.Writer.WriteAsync(await GetPerson());
+            var creator = await GetCreator();
+            await serializerChannel.Writer.WriteAsync(creator);
 
             // Start processing in a separate task
             var processingTask = Task.Run(async () =>
@@ -55,10 +59,17 @@ internal class SoftwareProfileOrchestrator
                 {
                     ids.Add(new Identifier(id));
                 }
+                
+                // SPDX document references itself?? thats how spdx designed serialization.
+                var documentId = identifierUtils.GetSpdxDocumentId();
+                ids.Add(new Identifier(documentId));
+                ids.Add(new Identifier(creator.spdxId));
 
                 await serializerChannel.Writer.WriteAsync(new SpdxDocument(configuration?.Name ?? Constants.DefaultDocumentName)
                 {
-                    elements = ids
+                    elements = ids,
+                    creationInfo = Constants.CreationInfoId,
+                    spdxId = documentId,
                 });
 
                 // Mark the channels as complete when all processing is done
@@ -93,7 +104,7 @@ internal class SoftwareProfileOrchestrator
         }
     }
 
-    private async Task<Person> GetPerson()
+    private async Task<Person> GetCreator()
     {
         var userInfo = await GetUserInfo();
         IList<ExternalIdentifier>? externalIdentifiers = null;
@@ -116,7 +127,8 @@ internal class SoftwareProfileOrchestrator
                 dataLicense = Constants.DataLicense,
             },
             name = userInfo?.userName,
-            externalIdentifiers = externalIdentifiers
+            externalIdentifiers = externalIdentifiers,
+            spdxId = identifierUtils.GetPersonId(),
         };
     }
 
