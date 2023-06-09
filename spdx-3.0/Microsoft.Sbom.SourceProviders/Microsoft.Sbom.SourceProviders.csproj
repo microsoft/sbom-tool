@@ -8,7 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-  </ItemGroup>
+
+    <PackageReference Include="Microsoft.ComponentDetection.Common" />
+    <PackageReference Include="Microsoft.ComponentDetection.Contracts" />
+    <PackageReference Include="Microsoft.ComponentDetection.Orchestrator" />
+    <PackageReference Include="Microsoft.ComponentDetection.Detectors" />
+</ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />

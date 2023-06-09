@@ -29,6 +29,7 @@ public class Generator
         this.processors = new List<IProcessor>()
         {
             new FilesProcessor(this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Files), this.logger),
+            new PackagesProcessor(this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Packages), this.logger),
         };
     }
 

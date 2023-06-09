@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.ComponentDetection.Orchestrator;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Sbom.Config;
 using Microsoft.Sbom.Delegates;
@@ -25,6 +26,21 @@ public class PackageSourceProvider : ISourceProvider
 
     public async IAsyncEnumerable<SoftwareArtifact> Get()
     {
+        var argsString = $"scan --SourceDirectory {this.componentPath}";
+        var orchestrator = new Orchestrator();
+        var result = await orchestrator.LoadAsync(argsString.Split(" "));
+
+        if (result.ResultCode == ComponentDetection.Contracts.ProcessingResultCode.Error)
+        {
+            throw new Exception($"Error while scanning packages, component detector failed with error code: {result.ResultCode}");
+        }
+
+        if (result.ComponentsFound.Count() == 0)
+        {
+            this.logger.LogWarning("No packages found in the component path: {componentPath}", this.componentPath);
+            yield break;
+        }
+
         yield break;
     }
 }
