@@ -36,7 +36,7 @@ public record Package(string? name,
                         string? sourceInfo = null) 
     : SoftwareArtifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifiers, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard, contentIdentifier, primaryPurpose, additionalPurpose, concludedLicense, declaredLicense, copyrightText, attributionText)
 {
-    [JsonPropertyOrder(-1)]
+    [JsonPropertyOrder(-2)]
     [JsonPropertyName("@type")]
     public string Type { get; } = nameof(Package);
 }

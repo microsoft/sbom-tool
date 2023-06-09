@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks.Dataflow;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Sbom.Config;
 using Microsoft.Sbom.Enums;
 using Microsoft.Sbom.Interfaces;
-using Microsoft.Sbom.Spdx3_0.Software;
 using Microsoft.Sbom.Utils;
+using System.Threading.Tasks.Dataflow;
 using static Microsoft.Sbom.Delegates.FileDelegates;
 
 namespace Microsoft.Sbom.File;
@@ -42,9 +41,9 @@ public class FileSourceProvider : ISourceProvider
         // Read from the TransformBlock and yield return the results
         while (await transformBlock.OutputAvailableAsync())
         {
-            while (transformBlock.TryReceive(out var fileWithHash))
+            while (transformBlock.TryReceive(out var spdxFile))
             {
-                yield return fileWithHash;
+                yield return spdxFile;
             }
         }
 
@@ -62,6 +61,7 @@ public class FileSourceProvider : ISourceProvider
         return new Spdx3_0.Software.File(GetSpdxFileName(filePath))
         {
             verifiedUsing = integrityMethods,
+            spdxId = new Uri("https://hello"),
         };
     }
 

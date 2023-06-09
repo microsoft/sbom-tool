@@ -5,7 +5,7 @@ namespace Microsoft.Sbom.Spdx3_0.Core;
 public record Hash(HashAlgorithm Algorithm, string HashValue, string? Comment = null)
     : IntegrityMethod(Comment)
 {
-    [JsonPropertyOrder(-1)]
+    [JsonPropertyOrder(-2)]
     [JsonPropertyName("@type")]
     public string Type { get; } = nameof(Hash);
 }

@@ -32,6 +32,7 @@ public record File(string? name,
                    MediaType? contentType = null) 
     : SoftwareArtifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifiers, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard, contentIdentifier, primaryPurpose, additionalPurpose, concludedLicense, declaredLicense, copyrightText, attributionText)
 {
+    [JsonPropertyOrder(-2)]
     [JsonPropertyName("@type")]
     public string Type { get; } = nameof(File);
 }

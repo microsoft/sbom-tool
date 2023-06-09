@@ -14,7 +14,7 @@ public record Person(List<NamespaceMap>? namespaces = null,
                      IList<ExternalIdentifier>? externalIdentifiers = null)
     : Agent(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifiers)
 {
-    [JsonPropertyOrder(-1)]
+    [JsonPropertyOrder(-2)]
     [JsonPropertyName("@type")]
     public string Type { get; } = nameof(Person);
 }

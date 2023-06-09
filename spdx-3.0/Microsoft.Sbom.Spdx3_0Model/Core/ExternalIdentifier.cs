@@ -9,7 +9,7 @@ public record ExternalIdentifier(ExternalIdentifierType? externalIdentifierType 
                                  Uri? identifierLocator = null,
                                  Uri? issuingAuthority = null)
 {
-    [JsonPropertyOrder(-1)]
+    [JsonPropertyOrder(-2)]
     [JsonPropertyName("@type")]
     public string Type { get; } = nameof(ExternalIdentifier);
 }

@@ -17,7 +17,7 @@ public record Bundle(Uri? spdxId = null,
                      string? context = null)
     : ElementCollection(spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifiers, element, rootElement, namespaces, imports)
 {
-    [JsonPropertyOrder(-1)]
+    [JsonPropertyOrder(-2)]
     [JsonPropertyName("@type")]
     public string Type { get; } = nameof(Bundle);
 }
