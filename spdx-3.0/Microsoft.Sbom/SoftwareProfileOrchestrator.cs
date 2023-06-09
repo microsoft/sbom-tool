@@ -59,7 +59,16 @@ internal class SoftwareProfileOrchestrator
                 {
                     ids.Add(new Identifier(id));
                 }
-                
+
+                // Add the BOM to the graph.
+                await serializerChannel.Writer.WriteAsync(new Bom(Constants.SBOMName)
+                {
+                    elements = ids,
+                    creationInfo = Constants.CreationInfoId,
+                    spdxId = identifierUtils.GetSbomId(),
+                });
+
+                // Add SPDX document to the graph.
                 // SPDX document references itself?? thats how spdx designed serialization.
                 var documentId = identifierUtils.GetSpdxDocumentId();
                 ids.Add(new Identifier(documentId));

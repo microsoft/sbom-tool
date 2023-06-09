@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace Microsoft.Sbom.Spdx3_0.Core;
-public record SpdxDocument(string? name,
+public record Bom(string? name,
                            Uri? spdxId = null,
                            string? summary = null,
                            string? description = null,
@@ -18,7 +18,7 @@ public record SpdxDocument(string? name,
 {
     [JsonPropertyOrder(-2)]
     [JsonPropertyName("@type")]
-    public new string Type { get; } = nameof(SpdxDocument);
+    public new string Type { get; } = "SBOM";
 
-    public new string? creationInfo { get; init; }
+    public new string? creationInfo { get; set; }
 }

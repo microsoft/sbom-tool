@@ -18,6 +18,8 @@ internal class IdentifierUtils
 
     internal Uri GetSpdxDocumentId() => GetUriInternal($"{Constants.SpdxDocumentIdString}-{Guid.NewGuid():N}");
 
+    internal Uri GetSbomId() => GetUriInternal(Constants.SBOMName);
+
     private Uri GetUriInternal(string id)
     {
         if (configuration.Namespace.AbsoluteUri.EndsWith("/"))
