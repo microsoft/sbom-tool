@@ -77,7 +77,7 @@ public class Generator
         {
             this.logger ??= NullLogger.Instance;
             this.configuration ??= new Configuration();
-            this.serializer ??= new Spdx3JsonSerializer(configuration, this.logger);
+            this.serializer ??= new Spdx3JsonSerializer(this.configuration.OutputFilePath, this.logger);
             this.sourceProviders = PopulateMissingSourceProviders(sourceProviders, this.configuration, this.logger);
             
             return new Generator(sourceProviders, serializer, configuration, logger);
