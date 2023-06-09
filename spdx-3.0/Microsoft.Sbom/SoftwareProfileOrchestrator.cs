@@ -1,6 +1,5 @@
 ﻿using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
-using Microsoft.Sbom.Config;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.Spdx3_0.Core;
@@ -10,21 +9,27 @@ using Microsoft.Sbom.Utils;
 namespace Microsoft.Sbom;
 internal class SoftwareProfileOrchestrator
 {
-    private readonly Configuration? configuration;
     private readonly IList<IProcessor> processors;
     private readonly IList<ISourceProvider> sourceProviders;
     private readonly ISerializer serializer;
     private readonly ILogger logger;
     private readonly IdentifierUtils identifierUtils;
+    private readonly string documentName;
 
-    public SoftwareProfileOrchestrator(Configuration configuration, IList<IProcessor> processors, IList<ISourceProvider> sourceProviders, ISerializer serializer, ILogger logger)
+    public SoftwareProfileOrchestrator(
+                                       IList<IProcessor> processors,
+                                       IList<ISourceProvider> sourceProviders,
+                                       ISerializer serializer,
+                                       IdentifierUtils identifierUtils,
+                                       string documentName,
+                                       ILogger logger)
     {
-        this.configuration = configuration;
         this.processors = processors;
         this.sourceProviders = sourceProviders;
         this.serializer = serializer;
         this.logger = logger;
-        this.identifierUtils = new IdentifierUtils(configuration);
+        this.identifierUtils = identifierUtils;
+        this.documentName = documentName;
     }
 
     internal async Task RunAsync()
@@ -74,7 +79,7 @@ internal class SoftwareProfileOrchestrator
                 ids.Add(new Identifier(documentId));
                 ids.Add(new Identifier(creator.spdxId));
 
-                await serializerChannel.Writer.WriteAsync(new SpdxDocument(configuration?.Name ?? Constants.DefaultDocumentName)
+                await serializerChannel.Writer.WriteAsync(new SpdxDocument(documentName)
                 {
                     elements = ids,
                     creationInfo = Constants.CreationInfoId,

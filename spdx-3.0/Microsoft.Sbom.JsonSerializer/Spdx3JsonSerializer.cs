@@ -18,9 +18,9 @@ public class Spdx3JsonSerializer : ISerializer
 
     private bool disposedValue;
 
-    public Spdx3JsonSerializer(Configuration? configuration)
+    public Spdx3JsonSerializer(Configuration? configuration, ILogger? logger)
     {
-        this.logger = configuration?.Logger ?? NullLogger.Instance;
+        this.logger = logger ?? NullLogger.Instance;
         this.filePath = configuration?.OutputFilePath ?? Path.Combine(Path.GetTempPath(), $"sbom-{Guid.NewGuid()}.json");
         this.logger.LogDebug("Writing SBOM to {filePath}", filePath);
         this.stream = File.Create(this.filePath);

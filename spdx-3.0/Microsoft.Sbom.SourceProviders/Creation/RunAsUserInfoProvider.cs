@@ -9,10 +9,12 @@ namespace Microsoft.Sbom.Creation;
 public class RunAsUserInfoProvider : ISourceProvider
 {
     private readonly ILogger logger;
+    private readonly Configuration? configuration;
 
-    public RunAsUserInfoProvider(Configuration? configuration)
+    public RunAsUserInfoProvider(Configuration? configuration, ILogger? logger)
     {
-        this.logger = configuration?.Logger ?? NullLogger.Instance;
+        this.logger = logger ?? NullLogger.Instance;
+        this.configuration = configuration;
     }
 
     public SourceType SourceType => SourceType.UserInfo;

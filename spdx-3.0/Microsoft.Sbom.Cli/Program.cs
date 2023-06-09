@@ -6,31 +6,37 @@ using Microsoft.Sbom.Config;
 using Microsoft.Sbom.Creation;
 using Microsoft.Sbom.Interfaces;
 
+// Create logger
 var loggerFactory = LoggerFactory.Create(builder =>
 {
     builder
-        .AddFilter("Microsoft", LogLevel.Warning)
-        .AddFilter("System", LogLevel.Warning)
+        .AddFilter("Microsoft", LogLevel.Error)
+        .AddFilter("System", LogLevel.Error)
         .AddFilter("Program", LogLevel.Trace)
         .AddConsole();
 });
-
 ILogger logger = loggerFactory.CreateLogger<Program>();
+
+// Add custom user info provider
 var sourceProviders = new List<ISourceProvider>
 {
-    new CustomUserInfoProvider("Aasim Mallad", "aamallad@microsoft.com")
+    new CustomUserInfoProvider("Aasim Malladi", "aamallad@microsoft.com")
 };
 
 var testPath = "C:\\Users\\aamallad\\git\\WebApplication1";
-
-var g = new Generator(sourceProviders: sourceProviders, configuration: new Configuration
+var configuration = new Configuration
 {
     BasePath = testPath,
     ComponentPath = testPath,
     OutputFilePath = "C:\\Users\\aamallad\\temp\\output.json",
-    Logger = logger,
     Namespace = new Uri("https://sbom.microsoft"),
     Name = "Test",
-});
+};
 
-await g.GenerateSBOM();
+var generator = new Generator.Builder()
+                        .WithSourceProviders(sourceProviders)
+                        .WithConfiguration(configuration)
+                        .AddLogging(logger)
+                        .Build();
+
+await generator.GenerateSBOM();

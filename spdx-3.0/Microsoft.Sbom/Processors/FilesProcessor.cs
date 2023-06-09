@@ -1,25 +1,22 @@
-﻿using System.Threading.Channels;
-using Microsoft.Extensions.Logging;
-using Microsoft.Sbom.Config;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.Spdx3_0.Core;
 using Microsoft.Sbom.Utils;
+using System.Threading.Channels;
 
 namespace Microsoft.Sbom.Processors;
 internal class FilesProcessor : IProcessor
 {
-    private readonly Configuration configuration;
     private readonly IEnumerable<ISourceProvider> sourceProviders;
     private readonly ILogger logger;
     private readonly IdentifierUtils identifierUtils;
 
-    public FilesProcessor(Configuration configuration, IEnumerable<ISourceProvider> sourceProviders, ILogger logger)
+    public FilesProcessor(IEnumerable<ISourceProvider> sourceProviders, IdentifierUtils identifierUtils, ILogger logger)
     {
-        this.configuration = configuration;
         this.sourceProviders = sourceProviders;
         this.logger = logger;
-        this.identifierUtils = new IdentifierUtils(configuration);
+        this.identifierUtils = identifierUtils;
     }
 
     public async Task ProcessAsync(ChannelWriter<Element> serializerChannel, ChannelWriter<ErrorInfo> errorsChannel, ChannelWriter<Uri> identifierChannel)

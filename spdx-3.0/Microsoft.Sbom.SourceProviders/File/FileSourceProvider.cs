@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks.Dataflow;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Sbom.Config;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Enums;
@@ -16,9 +15,9 @@ public class FileSourceProvider : ISourceProvider
     private readonly IntegrityProvider integrityProvider;
     private readonly ILogger logger;
 
-    public FileSourceProvider(Configuration? configuration)
+    public FileSourceProvider(Configuration? configuration, ILogger logger)
     {
-        this.logger = configuration?.Logger ?? NullLogger.Instance;
+        this.logger = logger;
         this.directory = configuration?.BasePath ?? Directory.GetCurrentDirectory();
         this.integrityProvider = configuration?.Providers?.IntegrityProvider ?? FileIntegrityProvider.Sha256IntegrityProvider;
     }
@@ -30,7 +29,7 @@ public class FileSourceProvider : ISourceProvider
         var files = Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories);
 
         var transformBlock =
-            new TransformBlock<string, FileElement>(CreateFileElement, new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = Environment.ProcessorCount});
+            new TransformBlock<string, FileElement>(CreateFileElement, new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = Environment.ProcessorCount });
 
         foreach (var file in files)
         {

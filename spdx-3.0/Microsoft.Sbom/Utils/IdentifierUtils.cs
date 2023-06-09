@@ -1,13 +1,11 @@
-﻿using Microsoft.Sbom.Config;
-
-namespace Microsoft.Sbom.Utils;
+﻿namespace Microsoft.Sbom.Utils;
 internal class IdentifierUtils
 {
-    private readonly Configuration configuration;
+    private readonly Uri namespaceUri;
 
-    public IdentifierUtils(Configuration configuration)
+    public IdentifierUtils(Uri namespaceUri)
     {
-        this.configuration = configuration;
+        this.namespaceUri = namespaceUri;
     }
 
     internal Uri GetFileId() => GetUriInternal($"{Constants.FileIdString}-{Guid.NewGuid():N}");
@@ -22,13 +20,13 @@ internal class IdentifierUtils
 
     private Uri GetUriInternal(string id)
     {
-        if (configuration.Namespace.AbsoluteUri.EndsWith("/"))
+        if (namespaceUri.AbsoluteUri.EndsWith("/"))
         {
-            return new Uri($"{configuration.Namespace.AbsoluteUri.TrimEnd('/')}#{id}");
+            return new Uri($"{namespaceUri.AbsoluteUri.TrimEnd('/')}#{id}");
         }
         else
         {
-            return new Uri($"{configuration.Namespace}#{id}");
+            return new Uri($"{namespaceUri}#{id}");
         }
     }
 }

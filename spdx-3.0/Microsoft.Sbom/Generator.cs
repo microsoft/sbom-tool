@@ -7,65 +7,108 @@ using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.JsonSerializer;
 using Microsoft.Sbom.Package;
 using Microsoft.Sbom.Processors;
+using Microsoft.Sbom.Utils;
 
 namespace Microsoft.Sbom;
 public class Generator
 {
     private readonly IList<ISourceProvider> sourceProviders;
     private readonly ISerializer serializer;
-    private readonly Configuration? configuration;
     private readonly ILogger logger;
     private readonly IList<IProcessor> processors;
+    private readonly IdentifierUtils identifierUtils;
+    private readonly string documentName;
 
-    public Generator(IList<ISourceProvider>? sourceProviders = null, ISerializer? serializer = null, Configuration? configuration = null)
+    internal Generator(IList<ISourceProvider> sourceProviders, ISerializer serializer, Configuration configuration, ILogger logger)
     {
-        this.logger = configuration?.Logger ?? NullLogger.Instance;
-        this.sourceProviders = PopulateMissingSourceProviders(sourceProviders, configuration);
-        this.serializer = serializer ?? new Spdx3JsonSerializer(configuration);
-        this.configuration = configuration ?? new Configuration();
+        this.logger = logger;
+        this.sourceProviders = sourceProviders;
+        this.serializer = serializer;
+        this.identifierUtils = new IdentifierUtils(configuration.Namespace ?? Constants.DefaultNamespace);
+        this.documentName = configuration.Name ?? Constants.DefaultDocumentName;
 
         this.processors = new List<IProcessor>()
         {
-            new FilesProcessor(this.configuration, this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Files), this.logger),
-            new PackagesProcessor(this.configuration, this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Packages), this.logger),
+            new FilesProcessor(this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Files), this.identifierUtils, this.logger),
+            new PackagesProcessor(this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Packages), this.identifierUtils, this.logger),
         };
-    }
-
-    // TODO this should happen in a build or bootstrapper.
-    private IList<ISourceProvider> PopulateMissingSourceProviders(IList<ISourceProvider>? sourceProviders, Configuration? configuration)
-    {
-        var sourceProvidersComplete = sourceProviders
-             ?? new List<ISourceProvider>()
-             {
-                new FileSourceProvider(configuration),
-                new PackageSourceProvider(configuration),
-                new RunAsUserInfoProvider(configuration),
-             };
-
-        if (!sourceProvidersComplete.Any(s => s.SourceType == Enums.SourceType.Files))
-        {
-            sourceProvidersComplete.Add(new FileSourceProvider(configuration));
-        }
-
-        if (!sourceProvidersComplete.Any(s => s.SourceType == Enums.SourceType.Packages))
-        {
-            sourceProvidersComplete.Add(new PackageSourceProvider(configuration));
-        }
-
-        if (!sourceProvidersComplete.Any(s => s.SourceType == Enums.SourceType.UserInfo))
-        {
-            sourceProvidersComplete.Add(new RunAsUserInfoProvider(configuration));
-        }
-
-        return sourceProvidersComplete;
     }
 
     public async Task GenerateSBOM()
     {
         // Figure out profile.
         // By default we generate software profile
-
-        var softwareProfileOrchestrator = new SoftwareProfileOrchestrator(configuration, processors, sourceProviders, serializer, logger);
+        var softwareProfileOrchestrator = new SoftwareProfileOrchestrator(processors, sourceProviders, serializer, identifierUtils, documentName, logger);
         await softwareProfileOrchestrator.RunAsync();
+    }
+
+    public class Builder
+    {
+        private IList<ISourceProvider>? sourceProviders;
+        private ISerializer? serializer;
+        private Configuration? configuration;
+        private ILogger? logger;
+
+        public Builder WithSourceProviders(IList<ISourceProvider> sourceProviders)
+        {
+            this.sourceProviders = sourceProviders;
+            return this;
+        }
+
+        public Builder SerializeTo(ISerializer serializer)
+        {
+            this.serializer = serializer;
+            return this;
+        }
+
+        public Builder WithConfiguration(Configuration configuration)
+        {
+            this.configuration = configuration;
+            return this;
+        }
+
+        public Builder AddLogging(ILogger logger)
+        {
+            this.logger = logger;
+            return this;
+        }
+
+        public Generator Build()
+        {
+            this.logger ??= NullLogger.Instance;
+            this.configuration ??= new Configuration();
+            this.serializer ??= new Spdx3JsonSerializer(configuration, this.logger);
+            this.sourceProviders = PopulateMissingSourceProviders(sourceProviders, this.configuration, this.logger);
+            
+            return new Generator(sourceProviders, serializer, configuration, logger);
+        }
+
+        private IList<ISourceProvider> PopulateMissingSourceProviders(IList<ISourceProvider>? sourceProviders, Configuration configuration, ILogger logger)
+        {
+            var sourceProvidersComplete = sourceProviders
+                 ?? new List<ISourceProvider>()
+                 {
+                    new FileSourceProvider(configuration, logger),
+                    new PackageSourceProvider(configuration, logger),
+                    new RunAsUserInfoProvider(configuration, logger),
+                 };
+
+            if (!sourceProvidersComplete.Any(s => s.SourceType == Enums.SourceType.Files))
+            {
+                sourceProvidersComplete.Add(new FileSourceProvider(configuration, logger));
+            }
+
+            if (!sourceProvidersComplete.Any(s => s.SourceType == Enums.SourceType.Packages))
+            {
+                sourceProvidersComplete.Add(new PackageSourceProvider(configuration, logger));
+            }
+
+            if (!sourceProvidersComplete.Any(s => s.SourceType == Enums.SourceType.UserInfo))
+            {
+                sourceProvidersComplete.Add(new RunAsUserInfoProvider(configuration, logger));
+            }
+
+            return sourceProvidersComplete;
+        }
     }
 }

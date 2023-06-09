@@ -11,9 +11,9 @@ public class PackageSourceProvider : ISourceProvider
     private readonly ILogger logger;
     private readonly string componentPath;
 
-    public PackageSourceProvider(Configuration? configuration)
+    public PackageSourceProvider(Configuration? configuration, ILogger? logger)
     {
-        this.logger = configuration?.Logger ?? NullLogger.Instance;
+        this.logger = logger ?? NullLogger.Instance;
         this.componentPath = configuration?.ComponentPath ?? Directory.GetCurrentDirectory();
     }
 
