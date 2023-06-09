@@ -48,6 +48,7 @@ public class Spdx3JsonSerializer : ISerializer
 
     public void Serialize(Element obj, Type type)
     {
+        logger.LogDebug("Writing element {name}", obj.name);
         System.Text.Json.JsonSerializer.Serialize(jsonWriter, obj, type, jsonOptions);
     }
 

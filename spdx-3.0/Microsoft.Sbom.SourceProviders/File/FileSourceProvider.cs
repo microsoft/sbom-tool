@@ -1,9 +1,12 @@
 ﻿using System.IO.Enumeration;
+using System.Security.Cryptography;
+using System.Threading.Tasks.Dataflow;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Sbom.Config;
 using Microsoft.Sbom.Enums;
 using Microsoft.Sbom.Interfaces;
+using Microsoft.Sbom.Spdx3_0.Core;
 using Microsoft.Sbom.Spdx3_0.Software;
 using Microsoft.Sbom.Utils;
 using static Microsoft.Sbom.Delegates.FileDelegates;
@@ -27,36 +30,51 @@ public class FileSourceProvider : ISourceProvider
 
     public async IAsyncEnumerable<SoftwareArtifact> Get()
     {
-        var enumeration = await Task.Run(() =>
-            new FileSystemEnumerable<Spdx3_0.Software.File>(
-               directory: this.directory,
-               transform: TransformToFileElement,
-               options: new EnumerationOptions()
-               {
-                   RecurseSubdirectories = true
-               })
-            {
-                // The following predicate will be used to filter the file entries
-                ShouldIncludePredicate = (ref FileSystemEntry entry) => !entry.IsDirectory
-            });
+        var files = Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories);
 
-        foreach (var element in enumeration)
+        var transformBlock =
+            new TransformBlock<string, Spdx3_0.Software.File>(CreateSpdxFile, new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = Environment.ProcessorCount });
+
+        foreach (var file in files)
         {
-            yield return element;
+            await transformBlock.SendAsync(file);
         }
+
+        transformBlock.Complete();
+
+        // Read from the TransformBlock and yield return the results
+        while (await transformBlock.OutputAvailableAsync())
+        {
+            while (transformBlock.TryReceive(out var fileWithHash))
+            {
+                yield return fileWithHash;
+            }
+        }
+
+        // wait for all processing to finish
+        await transformBlock.Completion;
     }
 
-    private Spdx3_0.Software.File TransformToFileElement(ref FileSystemEntry entry)
+    private async Task<Spdx3_0.Software.File> CreateSpdxFile(string filePath)
     {
-        return new Spdx3_0.Software.File(GetSpdxFileName(entry))
+        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
+        using var sha256 = SHA256.Create();
+
+        // Compute hash
+        var hash = await Task.Run(() => sha256.ComputeHash(fs));
+
+        return new Spdx3_0.Software.File(GetSpdxFileName(filePath))
         {
-            verifiedUsing = integrityProvider(ref entry, logger),
+            verifiedUsing = new List<IntegrityMethod>()
+            {
+                new Hash(Spdx3_0.Core.Enums.HashAlgorithm.Sha256, BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant()),
+            }
         };
     }
 
-    private string? GetSpdxFileName(FileSystemEntry entry)
+    private string? GetSpdxFileName(string filePath)
     {
-        Uri fileUri = new (entry.ToFullPath());
+        Uri fileUri = new (filePath);
         Uri parentUri = new (this.directory + Path.DirectorySeparatorChar);
 
         string relativePath = Uri.UnescapeDataString(
