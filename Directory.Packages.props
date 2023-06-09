@@ -11,6 +11,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageVersion Include="Microsoft.Sbom.Adapters" Version="1.1.4" />
+    <PackageVersion Include="Microsoft.Sbom.Contracts" Version="1.1.4" />
     <PackageVersion Include="MinVer" Version="2.5.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />

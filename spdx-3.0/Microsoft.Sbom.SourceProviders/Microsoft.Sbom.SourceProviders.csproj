@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.ComponentDetection.Contracts" />
     <PackageReference Include="Microsoft.ComponentDetection.Orchestrator" />
     <PackageReference Include="Microsoft.ComponentDetection.Detectors" />
+    <PackageReference Include="Microsoft.Sbom.Adapters" />
 </ItemGroup>
 
   <ItemGroup>

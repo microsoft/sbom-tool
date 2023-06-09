@@ -41,6 +41,9 @@ public class PackageSourceProvider : ISourceProvider
             yield break;
         }
 
-        yield break;
+        foreach (var component in result.ComponentsFound)
+        {
+            yield return PackageConverter.Convert(component);
+        }
     }
 }
