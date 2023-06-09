@@ -3,6 +3,9 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Sbom;
 using Microsoft.Sbom.Config;
+using Microsoft.Sbom.Creation;
+using Microsoft.Sbom.Interfaces;
+
 var loggerFactory = LoggerFactory.Create(builder =>
 {
     builder
@@ -13,7 +16,12 @@ var loggerFactory = LoggerFactory.Create(builder =>
 });
 
 ILogger logger = loggerFactory.CreateLogger<Program>();
-var g = new Generator(configuration: new Configuration
+var sourceProviders = new List<ISourceProvider>
+{
+    new CustomUserInfoProvider("Aasim Mallad", "aamallad@microsoft.com")
+};
+
+var g = new Generator(sourceProviders: sourceProviders, configuration: new Configuration
 {
     BasePath = "C:\\Users\\aamallad\\git\\dropvalidator",
     ComponentPath = "C:\\Users\\aamallad\\git\\dropvalidator",

@@ -7,5 +7,5 @@ public record Hash(HashAlgorithm Algorithm, string HashValue, string? Comment = 
 {
     [JsonPropertyOrder(-1)]
     [JsonPropertyName("@type")]
-    public string Type { get; } = "Hash";
+    public string Type { get; } = nameof(Hash);
 }

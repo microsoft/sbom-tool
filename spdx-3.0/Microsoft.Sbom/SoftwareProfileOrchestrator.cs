@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Sbom.Config;
+﻿using System.Threading.Channels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.Spdx3_0.Core;
 using Microsoft.Sbom.Spdx3_0.Core.Enums;
-using System.Threading.Channels;
 
 namespace Microsoft.Sbom;
 internal class SoftwareProfileOrchestrator

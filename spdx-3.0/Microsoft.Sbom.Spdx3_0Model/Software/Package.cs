@@ -38,5 +38,5 @@ public record Package(string? name,
 {
     [JsonPropertyOrder(-1)]
     [JsonPropertyName("@type")]
-    public string Type { get; } = "Package";
+    public string Type { get; } = nameof(Package);
 }

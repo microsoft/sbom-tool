@@ -16,5 +16,5 @@ public record Person(List<NamespaceMap>? namespaces = null,
 {
     [JsonPropertyOrder(-1)]
     [JsonPropertyName("@type")]
-    public string Type { get; } = "Person";
+    public string Type { get; } = nameof(Person);
 }

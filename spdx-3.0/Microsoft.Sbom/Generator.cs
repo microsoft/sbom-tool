@@ -19,14 +19,7 @@ public class Generator
     public Generator(IList<ISourceProvider>? sourceProviders = null, ISerializer? serializer = null, Configuration? configuration = null)
     {
         this.logger = configuration?.Logger ?? NullLogger.Instance;
-        this.sourceProviders = sourceProviders
-            ?? new List<ISourceProvider>()
-            {
-                new FileSourceProvider(configuration),
-                new PackageSourceProvider(configuration),
-                new RunAsUserInfoProvider(configuration),
-                new CustomUserInfoProvider("Aasim Malladi", "aamallad@microsoft.com"),
-            };
+        this.sourceProviders = PopulateMissingSourceProviders(sourceProviders, configuration);
         this.serializer = serializer ?? new Spdx3JsonSerializer(configuration);
 
         this.processors = new List<IProcessor>()
@@ -34,6 +27,35 @@ public class Generator
             new FilesProcessor(this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Files), this.logger),
             new PackagesProcessor(this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Packages), this.logger),
         };
+    }
+
+    // TODO this should happen in a build or bootstrapper.
+    private IList<ISourceProvider> PopulateMissingSourceProviders(IList<ISourceProvider>? sourceProviders, Configuration? configuration)
+    {
+        var sourceProvidersComplete = sourceProviders
+             ?? new List<ISourceProvider>()
+             {
+                new FileSourceProvider(configuration),
+                new PackageSourceProvider(configuration),
+                new RunAsUserInfoProvider(configuration),
+             };
+
+        if (!sourceProvidersComplete.Any(s => s.SourceType == Enums.SourceType.Files))
+        {
+            sourceProvidersComplete.Add(new FileSourceProvider(configuration));
+        }
+
+        if (!sourceProvidersComplete.Any(s => s.SourceType == Enums.SourceType.Packages))
+        {
+            sourceProvidersComplete.Add(new PackageSourceProvider(configuration));
+        }
+
+        if (!sourceProvidersComplete.Any(s => s.SourceType == Enums.SourceType.UserInfo))
+        {
+            sourceProvidersComplete.Add(new RunAsUserInfoProvider(configuration));
+        }
+
+        return sourceProvidersComplete;
     }
 
     public async Task GenerateSBOM()
