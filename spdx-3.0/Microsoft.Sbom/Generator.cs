@@ -22,12 +22,12 @@ public class Generator
         this.logger = configuration?.Logger ?? NullLogger.Instance;
         this.sourceProviders = PopulateMissingSourceProviders(sourceProviders, configuration);
         this.serializer = serializer ?? new Spdx3JsonSerializer(configuration);
-        this.configuration = configuration;
+        this.configuration = configuration ?? new Configuration();
 
         this.processors = new List<IProcessor>()
         {
-            new FilesProcessor(this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Files), this.logger),
-            new PackagesProcessor(this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Packages), this.logger),
+            new FilesProcessor(this.configuration, this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Files), this.logger),
+            new PackagesProcessor(this.configuration, this.sourceProviders.Where(p => p.SourceType == Enums.SourceType.Packages), this.logger),
         };
     }
 

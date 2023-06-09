@@ -8,7 +8,7 @@ public abstract record ElementCollection(Uri? spdxId,
                                            IList<IntegrityMethod>? verifiedUsing,
                                            ExternalReference? externalReference,
                                            IList<ExternalIdentifier>? externalIdentifiers,
-                                           Element? element,
+                                           IList<Element>? elements,
                                            Element? rootElement,
                                            List<NamespaceMap>? namespaces,
                                            ExternalMap? imports)

@@ -30,7 +30,8 @@ public class Spdx3JsonSerializer : ISerializer
             Converters =
             {
                 new JsonStringEnumConverter(),
-                new IntegrityMethodConverter()
+                new IntegrityMethodConverter(),
+                new IdentifierConverter(),
             }
         };
 

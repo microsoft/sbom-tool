@@ -28,6 +28,7 @@ internal class SoftwareProfileOrchestrator
     {
         var serializerChannel = Channel.CreateUnbounded<Element>();
         var errorsChannel = Channel.CreateUnbounded<ErrorInfo>();
+        var identifiersChannel = Channel.CreateUnbounded<Uri>();
 
         using var _ = serializer;
         try
@@ -36,15 +37,29 @@ internal class SoftwareProfileOrchestrator
 
             await serializerChannel.Writer.WriteAsync(await GetPerson());
 
-            new SpdxDocument(configuration?.Name ?? Constants.DefaultDocumentName);
-
             // Start processing in a separate task
             var processingTask = Task.Run(async () =>
             {
                 foreach (var processor in processors)
                 {
-                    await processor.ProcessAsync(serializerChannel.Writer, errorsChannel.Writer);
+                    await processor.ProcessAsync(serializerChannel.Writer, errorsChannel.Writer, identifiersChannel.Writer);
                 }
+
+                identifiersChannel.Writer.Complete();
+            });
+
+            var relationshipsTask = Task.Run(async () =>
+            {
+                var ids = new List<Element>();
+                await foreach (var id in identifiersChannel.Reader.ReadAllAsync())
+                {
+                    ids.Add(new Identifier(id));
+                }
+
+                await serializerChannel.Writer.WriteAsync(new SpdxDocument(configuration?.Name ?? Constants.DefaultDocumentName)
+                {
+                    elements = ids
+                });
 
                 // Mark the channels as complete when all processing is done
                 serializerChannel.Writer.Complete();
@@ -70,7 +85,7 @@ internal class SoftwareProfileOrchestrator
             });
 
             // Wait for all tasks to complete
-            await Task.WhenAll(processingTask, serializationTask, errorLoggingTask);
+            await Task.WhenAll(processingTask, relationshipsTask, serializationTask, errorLoggingTask);
         }
         finally
         {
@@ -94,6 +109,7 @@ internal class SoftwareProfileOrchestrator
         {
             creationInfo = new CreationInfo
             {
+                spdxId = Constants.CreationInfoId,
                 specVersion = Constants.SpecVersion,
                 created = DateTime.UtcNow,
                 profile = new List<ProfileIdentifierType> { ProfileIdentifierType.Core, ProfileIdentifierType.Software },
