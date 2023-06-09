@@ -15,7 +15,7 @@ public record Package(string? name,
                         CreationInfo? creationInfo = null,
                         IList<IntegrityMethod>? verifiedUsing = null,
                         ExternalReference? externalReference = null,
-                        ExternalIdentifier? externalIdentifier = null,
+                        IList<ExternalIdentifier>? externalIdentifiers = null,
                         Agent? originatedBy = null,
                         Agent? suppliedBy = null,
                         DateTime? builtTime = null,
@@ -34,7 +34,7 @@ public record Package(string? name,
                         Uri? packageUrl = null,
                         Uri? homePage = null,
                         string? sourceInfo = null) 
-    : SoftwareArtifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifier, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard, contentIdentifier, primaryPurpose, additionalPurpose, concludedLicense, declaredLicense, copyrightText, attributionText)
+    : SoftwareArtifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifiers, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard, contentIdentifier, primaryPurpose, additionalPurpose, concludedLicense, declaredLicense, copyrightText, attributionText)
 {
     [JsonPropertyOrder(-1)]
     [JsonPropertyName("@type")]

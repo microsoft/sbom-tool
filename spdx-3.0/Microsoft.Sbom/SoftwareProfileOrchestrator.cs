@@ -1,19 +1,23 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Sbom.Config;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.Spdx3_0.Core;
+using Microsoft.Sbom.Spdx3_0.Core.Enums;
 using System.Threading.Channels;
 
 namespace Microsoft.Sbom;
 internal class SoftwareProfileOrchestrator
 {
-    private IList<IProcessor> processors;
-    private ISerializer serializer;
-    private ILogger logger;
+    private readonly IList<IProcessor> processors;
+    private readonly IList<ISourceProvider> sourceProviders;
+    private readonly ISerializer serializer;
+    private readonly ILogger logger;
 
-    public SoftwareProfileOrchestrator(IList<IProcessor> processors, ISerializer serializer, ILogger logger)
+    public SoftwareProfileOrchestrator(IList<IProcessor> processors, IList<ISourceProvider> sourceProviders, ISerializer serializer, ILogger logger)
     {
         this.processors = processors;
+        this.sourceProviders = sourceProviders;
         this.serializer = serializer;
         this.logger = logger;
     }
@@ -27,6 +31,8 @@ internal class SoftwareProfileOrchestrator
         try
         {
             serializer.Start();
+
+            await serializerChannel.Writer.WriteAsync(await GetPerson());
 
             // Start processing in a separate task
             var processingTask = Task.Run(async () =>
@@ -66,5 +72,60 @@ internal class SoftwareProfileOrchestrator
         {
             serializer.EndDocument();
         }
+    }
+
+    private async Task<Person> GetPerson()
+    {
+        var userInfo = await GetUserInfo();
+        IList<ExternalIdentifier>? externalIdentifiers = null;
+        if (!string.IsNullOrEmpty(userInfo?.userEmail))
+        {
+            externalIdentifiers = new List<ExternalIdentifier>
+            {
+                new ExternalIdentifier(ExternalIdentifierType.Email, userInfo?.userEmail)
+            };
+        }
+
+        return new Person
+        {
+            creationInfo = new CreationInfo
+            {
+                specVersion = Constants.SpecVersion,
+                created = DateTime.UtcNow,
+                profile = new List<ProfileIdentifierType> { ProfileIdentifierType.Core, ProfileIdentifierType.Software },
+                dataLicense = Constants.DataLicense,
+            },
+            name = userInfo?.userName,
+            externalIdentifiers = externalIdentifiers
+        };
+    }
+
+    private async Task<UserInfo?> GetUserInfo()
+    {
+        UserInfo? bestUserInfo = default;
+        foreach (var userInfoProvider in sourceProviders.Where(s => s.SourceType == Enums.SourceType.UserInfo))
+        {
+            await foreach (var providerObject in userInfoProvider.Get())
+            {
+                if (providerObject is UserInfo userInfo)
+                {
+                    if (!string.IsNullOrWhiteSpace(userInfo.userName) && !string.IsNullOrWhiteSpace(userInfo.userEmail))
+                    {
+                        // This user info has both fields, so it's the best possible match.
+                        // We return it immediately.
+                        return userInfo;
+                    }
+
+                    if (bestUserInfo == null
+                        && (!string.IsNullOrWhiteSpace(userInfo.userName) || !string.IsNullOrWhiteSpace(userInfo.userEmail)))
+                    {
+                        // This user info has at least one field and it's better than what we have so far.
+                        bestUserInfo = userInfo;
+                    }
+                }
+            }   
+        }
+
+        return bestUserInfo;
     }
 }

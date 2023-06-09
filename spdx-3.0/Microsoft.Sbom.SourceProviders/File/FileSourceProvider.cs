@@ -25,12 +25,12 @@ public class FileSourceProvider : ISourceProvider
 
     public SourceType SourceType => SourceType.Files;
 
-    public async IAsyncEnumerable<SoftwareArtifact> Get()
+    public async IAsyncEnumerable<object> Get()
     {
         var files = Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories);
 
         var transformBlock =
-            new TransformBlock<string, Spdx3_0.Software.File>(CreateSpdxFile, new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = Environment.ProcessorCount });
+            new TransformBlock<string, Spdx3_0.Software.File>(CreateSpdxFile, new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = Environment.ProcessorCount});
 
         foreach (var file in files)
         {

@@ -3,5 +3,6 @@ public enum SourceType
 {
     Files,
     Packages,
-    Build
+    Build,
+    UserInfo,
 }

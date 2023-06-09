@@ -8,7 +8,7 @@ var loggerFactory = LoggerFactory.Create(builder =>
     builder
         .AddFilter("Microsoft", LogLevel.Warning)
         .AddFilter("System", LogLevel.Warning)
-        .AddFilter("Program", LogLevel.Error)
+        .AddFilter("Program", LogLevel.Trace)
         .AddConsole();
 });
 

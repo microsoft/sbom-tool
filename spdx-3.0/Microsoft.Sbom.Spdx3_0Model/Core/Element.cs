@@ -10,5 +10,5 @@ public abstract record Element(List<NamespaceMap>? namespaces,
                                CreationInfo? creationInfo,
                                IList<IntegrityMethod>? verifiedUsing,
                                ExternalReference? externalReference,
-                               ExternalIdentifier? externalIdentifier)
+                               IList<ExternalIdentifier>? externalIdentifiers)
     : Payload(creationInfo, namespaces, imports);

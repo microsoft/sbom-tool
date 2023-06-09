@@ -24,7 +24,7 @@ public class PackageSourceProvider : ISourceProvider
 
     public SourceType SourceType => SourceType.Packages;
 
-    public async IAsyncEnumerable<SoftwareArtifact> Get()
+    public async IAsyncEnumerable<object> Get()
     {
         var argsString = $"scan --SourceDirectory {this.componentPath}";
         var orchestrator = new Orchestrator();

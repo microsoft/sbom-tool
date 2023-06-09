@@ -15,7 +15,7 @@ public record File(string? name,
                    CreationInfo? creationInfo = null,
                    IList<IntegrityMethod>? verifiedUsing = null,
                    ExternalReference? externalReference = null,
-                   ExternalIdentifier? externalIdentifier = null,
+                   IList<ExternalIdentifier>? externalIdentifiers = null,
                    Agent? originatedBy = null,
                    Agent? suppliedBy = null,
                    DateTime? builtTime = null,
@@ -30,7 +30,7 @@ public record File(string? name,
                    string? copyrightText = null,
                    string? attributionText = null,
                    MediaType? contentType = null) 
-    : SoftwareArtifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifier, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard, contentIdentifier, primaryPurpose, additionalPurpose, concludedLicense, declaredLicense, copyrightText, attributionText)
+    : SoftwareArtifact(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifiers, originatedBy, suppliedBy, builtTime, releaseTime, validUntilTime, standard, contentIdentifier, primaryPurpose, additionalPurpose, concludedLicense, declaredLicense, copyrightText, attributionText)
 {
     [JsonPropertyName("@type")]
     public string Type { get; } = "File";

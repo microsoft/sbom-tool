@@ -24,7 +24,10 @@ internal class PackagesProcessor : IProcessor
             {
                 await foreach (var package in sourceProvider.Get())
                 {
-                    await serializerChannel.WriteAsync(package);
+                    if (package is Spdx3_0.Software.Package sbomPackage)
+                    {
+                        await serializerChannel.WriteAsync(sbomPackage);
+                    }
                 }
             }
         }

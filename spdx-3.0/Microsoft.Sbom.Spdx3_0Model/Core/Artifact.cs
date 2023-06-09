@@ -11,11 +11,11 @@ public abstract record Artifact(List<NamespaceMap>? namespaces,
                                 CreationInfo? creationInfo,
                                 IList<IntegrityMethod>? verifiedUsing,
                                 ExternalReference? externalReference,
-                                ExternalIdentifier? externalIdentifier,
+                                IList<ExternalIdentifier>? externalIdentifiers,
                                 Agent? originatedBy,
                                 Agent? suppliedBy,
                                 DateTime? builtTime,
                                 DateTime? releaseTime,
                                 DateTime? validUntilTime,
                                 string? standard)
-    : Element(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifier);
+    : Element(namespaces, imports, spdxId, name, summary, description, comment, creationInfo, verifiedUsing, externalReference, externalIdentifiers);

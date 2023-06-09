@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Sbom.Config;
+using Microsoft.Sbom.Creation;
 using Microsoft.Sbom.File;
 using Microsoft.Sbom.Interfaces;
 using Microsoft.Sbom.JsonSerializer;
@@ -22,7 +23,9 @@ public class Generator
             ?? new List<ISourceProvider>()
             {
                 new FileSourceProvider(configuration),
-                new PackageSourceProvider(configuration)
+                new PackageSourceProvider(configuration),
+                new RunAsUserInfoProvider(configuration),
+                new CustomUserInfoProvider("Aasim Malladi", "aamallad@microsoft.com"),
             };
         this.serializer = serializer ?? new Spdx3JsonSerializer(configuration);
 
@@ -38,7 +41,7 @@ public class Generator
         // Figure out profile.
         // By default we generate software profile
 
-        var softwareProfileOrchestrator = new SoftwareProfileOrchestrator(processors, serializer, logger);
+        var softwareProfileOrchestrator = new SoftwareProfileOrchestrator(processors, sourceProviders, serializer, logger);
         await softwareProfileOrchestrator.RunAsync();
     }
 }

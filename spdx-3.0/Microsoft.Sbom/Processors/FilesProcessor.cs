@@ -24,7 +24,10 @@ internal class FilesProcessor : IProcessor
             {
                 await foreach (var file in sourceProvider.Get())
                 {
-                    await serializerChannel.WriteAsync(file);
+                    if (file is Spdx3_0.Software.File sbomFile)
+                    {
+                        await serializerChannel.WriteAsync(sbomFile);
+                    }
                 }
             }
         }
