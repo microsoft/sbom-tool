@@ -26,19 +26,9 @@ var g = new Generator(sourceProviders: sourceProviders, configuration: new Confi
     BasePath = "C:\\Users\\aamallad\\git\\dropvalidator",
     ComponentPath = "C:\\Users\\aamallad\\git\\dropvalidator",
     OutputFilePath = "C:\\Users\\aamallad\\temp\\output.json",
-    Logger = logger
+    Logger = logger,
+    Namespace = new Uri("https://sbom.microsoft"),
+    Name = "Test",
 });
+
 await g.GenerateSBOM();
-
-
-//await foreach (var file in f.Get())
-//{
-//    Console.WriteLine(file.name);
-//    if (file.VerifiedUsing != null)
-//    {
-//        foreach (var im in file.VerifiedUsing)
-//        {
-//            Console.WriteLine(im);
-//        }
-//    }
-//}
