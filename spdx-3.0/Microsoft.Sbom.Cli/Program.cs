@@ -21,10 +21,12 @@ var sourceProviders = new List<ISourceProvider>
     new CustomUserInfoProvider("Aasim Mallad", "aamallad@microsoft.com")
 };
 
+var testPath = "C:\\Users\\aamallad\\git\\WebApplication1";
+
 var g = new Generator(sourceProviders: sourceProviders, configuration: new Configuration
 {
-    BasePath = "C:\\Users\\aamallad\\git\\dropvalidator",
-    ComponentPath = "C:\\Users\\aamallad\\git\\dropvalidator",
+    BasePath = testPath,
+    ComponentPath = testPath,
     OutputFilePath = "C:\\Users\\aamallad\\temp\\output.json",
     Logger = logger,
     Namespace = new Uri("https://sbom.microsoft"),
