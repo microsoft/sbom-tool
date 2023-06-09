@@ -3,6 +3,8 @@
 namespace Microsoft.Sbom.Config;
 public class Configuration
 {
+    public string Name { get; init; } = Constants.DefaultDocumentName;
+
     public ILogger? Logger { get; init; }
 
     public string? BasePath { get; init; }

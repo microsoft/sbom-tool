@@ -15,12 +15,14 @@ public class Generator
     private readonly ISerializer serializer;
     private readonly ILogger logger;
     private readonly IList<IProcessor> processors;
+    private readonly string documentName;
 
     public Generator(IList<ISourceProvider>? sourceProviders = null, ISerializer? serializer = null, Configuration? configuration = null)
     {
         this.logger = configuration?.Logger ?? NullLogger.Instance;
         this.sourceProviders = PopulateMissingSourceProviders(sourceProviders, configuration);
         this.serializer = serializer ?? new Spdx3JsonSerializer(configuration);
+        this.documentName = configuration?.Name ?? Constants.DefaultDocumentName;
 
         this.processors = new List<IProcessor>()
         {
@@ -63,7 +65,7 @@ public class Generator
         // Figure out profile.
         // By default we generate software profile
 
-        var softwareProfileOrchestrator = new SoftwareProfileOrchestrator(processors, sourceProviders, serializer, logger);
+        var softwareProfileOrchestrator = new SoftwareProfileOrchestrator(documentName, processors, sourceProviders, serializer, logger);
         await softwareProfileOrchestrator.RunAsync();
     }
 }
