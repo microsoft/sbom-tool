@@ -21,6 +21,7 @@ public class PackageSourceProvider : ISourceProvider
 
     public async IAsyncEnumerable<object> Get()
     {
+        logger.LogDebug("Scanning packages in the component path: {componentPath}", this.componentPath);
         var argsString = $"scan --SourceDirectory {this.componentPath}";
         var orchestrator = new Orchestrator();
         var result = await orchestrator.LoadAsync(argsString.Split(" "));

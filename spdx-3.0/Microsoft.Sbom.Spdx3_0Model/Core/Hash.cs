@@ -2,8 +2,8 @@
 using Microsoft.Sbom.Spdx3_0.Core.Enums;
 
 namespace Microsoft.Sbom.Spdx3_0.Core;
-public record Hash(HashAlgorithm Algorithm, string HashValue, string? Comment = null)
-    : IntegrityMethod(Comment)
+public record Hash(HashAlgorithm algorithm, string hashValue, string? comment = null)
+    : IntegrityMethod(comment)
 {
     [JsonPropertyOrder(-2)]
     [JsonPropertyName("@type")]
