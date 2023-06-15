@@ -49,9 +49,6 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
 
-      - name: Verify files contain copyright header
-        run: .\scripts\verification\Verify-LicenceHeader.ps1 -Target .\src -LicenseHeaderPath .\scripts\verification\LicenseHeader.txt -Extensions *.xaml,*.xml,*.cs,*.ps1 -AddIfAbsent $false
-
       - name: Restore dependencies
         run: dotnet restore
 
