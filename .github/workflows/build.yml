@@ -7,14 +7,15 @@ on:
     branches: [ "main" ]
   
 jobs:
-  - name: Windows
+  windows_job:
+    name: Windows
     runs-on: windows-latest
 
     env:
-      OFFICIAL_BUILD: 'True'
-      # Set the build number in MinVer.
-      MINVERBUILDMETADATA: build.${{github.run_number}}
-    
+        OFFICIAL_BUILD: 'True'
+        # Set the build number in MinVer.
+        MINVERBUILDMETADATA: build.${{github.run_number}}
+
     steps:
       - uses: actions/checkout@v3
       
@@ -33,13 +34,14 @@ jobs:
       - name: Test
         run: dotnet test --no-build --verbosity normal
 
-  - name: Linux
+  linux_job:
+    name: Linux
     runs-on: ubuntu-latest
 
     env:
-      OFFICIAL_BUILD: 'True'
-      # Set the build number in MinVer.
-      MINVERBUILDMETADATA: build.${{github.run_number}}
+        OFFICIAL_BUILD: 'True'
+        # Set the build number in MinVer.
+        MINVERBUILDMETADATA: build.${{github.run_number}}
 
     steps:
       - uses: actions/checkout@v3
