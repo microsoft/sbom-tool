@@ -7,56 +7,59 @@ on:
     branches: [ "main" ]
   
 jobs:
-  build:
-    name: Build
-    runs-on: windows-latest
 
-    env:
-      OFFICIAL_BUILD: 'True'
-      # Set the build number in MinVer.
-      MINVERBUILDMETADATA: build.${{github.run_number}}
-  
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+  job: Windows
+    build:
+      name: Build
+      runs-on: windows-latest
 
-    - name: Verify files contain copyright header
-      run: .\scripts\verification\Verify-LicenceHeader.ps1 -Target .\src -LicenseHeaderPath .\scripts\verification\LicenseHeader.txt -Extensions *.xaml,*.xml,*.cs,*.ps1 -AddIfAbsent $false
+      env:
+        OFFICIAL_BUILD: 'True'
+        # Set the build number in MinVer.
+        MINVERBUILDMETADATA: build.${{github.run_number}}
     
-    - name: Restore dependencies
-      run: dotnet restore 
+      steps:
+      - uses: actions/checkout@v3
       
-    - name: Build
-      run: dotnet build --no-restore
-    
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
 
-  build:
-    name: Build (linux)
-    runs-on: ubuntu-latest
+      - name: Verify files contain copyright header
+        run: .\scripts\verification\Verify-LicenceHeader.ps1 -Target .\src -LicenseHeaderPath .\scripts\verification\LicenseHeader.txt -Extensions *.xaml,*.xml,*.cs,*.ps1 -AddIfAbsent $false
+      
+      - name: Restore dependencies
+        run: dotnet restore 
+        
+      - name: Build
+        run: dotnet build --no-restore
+      
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
 
-    env:
-      OFFICIAL_BUILD: 'True'
-      # Set the build number in MinVer.
-      MINVERBUILDMETADATA: build.${{github.run_number}}
+  job: Linux
+    build:
+      name: Build (linux)
+      runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v3
+      env:
+        OFFICIAL_BUILD: 'True'
+        # Set the build number in MinVer.
+        MINVERBUILDMETADATA: build.${{github.run_number}}
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+      steps:
+      - uses: actions/checkout@v3
 
-    - name: Verify files contain copyright header
-      run: .\scripts\verification\Verify-LicenceHeader.ps1 -Target .\src -LicenseHeaderPath .\scripts\verification\LicenseHeader.txt -Extensions *.xaml,*.xml,*.cs,*.ps1 -AddIfAbsent $false
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
 
-    - name: Restore dependencies
-      run: dotnet restore
+      - name: Verify files contain copyright header
+        run: .\scripts\verification\Verify-LicenceHeader.ps1 -Target .\src -LicenseHeaderPath .\scripts\verification\LicenseHeader.txt -Extensions *.xaml,*.xml,*.cs,*.ps1 -AddIfAbsent $false
 
-    - name: Build
-      run: dotnet build --no-restore
+      - name: Restore dependencies
+        run: dotnet restore
 
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
