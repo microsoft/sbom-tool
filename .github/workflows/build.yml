@@ -7,8 +7,7 @@ on:
     branches: [ "main" ]
   
 jobs:
-  - job: Windows
-    name: Build
+  - name: Windows
     runs-on: windows-latest
 
     env:
@@ -34,8 +33,7 @@ jobs:
       - name: Test
         run: dotnet test --no-build --verbosity normal
 
-  - job: Linux
-    name: Build (linux)
+  - name: Linux
     runs-on: ubuntu-latest
 
     env:
