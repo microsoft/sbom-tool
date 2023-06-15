@@ -7,18 +7,16 @@ on:
     branches: [ "main" ]
   
 jobs:
-
   - job: Windows
-    build:
-      name: Build
-      runs-on: windows-latest
+    name: Build
+    runs-on: windows-latest
 
-      env:
-        OFFICIAL_BUILD: 'True'
-        # Set the build number in MinVer.
-        MINVERBUILDMETADATA: build.${{github.run_number}}
+    env:
+      OFFICIAL_BUILD: 'True'
+      # Set the build number in MinVer.
+      MINVERBUILDMETADATA: build.${{github.run_number}}
     
-      steps:
+    steps:
       - uses: actions/checkout@v3
       
       - name: Setup .NET
@@ -37,16 +35,15 @@ jobs:
         run: dotnet test --no-build --verbosity normal
 
   - job: Linux
-    build:
-      name: Build (linux)
-      runs-on: ubuntu-latest
+    name: Build (linux)
+    runs-on: ubuntu-latest
 
-      env:
-        OFFICIAL_BUILD: 'True'
-        # Set the build number in MinVer.
-        MINVERBUILDMETADATA: build.${{github.run_number}}
+    env:
+      OFFICIAL_BUILD: 'True'
+      # Set the build number in MinVer.
+      MINVERBUILDMETADATA: build.${{github.run_number}}
 
-      steps:
+    steps:
       - uses: actions/checkout@v3
 
       - name: Setup .NET
