@@ -195,41 +195,37 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
             return;
         }
 
-        log.Verbose(string.Empty);
-        log.Verbose("------------------------------------------------------------");
-        log.Verbose("Individual file validation results");
-        log.Verbose("------------------------------------------------------------");
-        log.Verbose(string.Empty);
+        Console.WriteLine(string.Empty);
+        Console.WriteLine("------------------------------------------------------------");
+        Console.WriteLine("Individual file validation results");
+        Console.WriteLine("------------------------------------------------------------");
+        Console.WriteLine(string.Empty);
 
-        log.Verbose("Additional files not in the manifest: ");
-        log.Verbose(string.Empty);
-        validFailures.Where(vf => vf.ErrorType == ErrorType.AdditionalFile).ForEach(f => log.Verbose(f.Path));
-        log.Verbose("------------------------------------------------------------");
+        Console.WriteLine("Additional files not in the manifest: ");
+        Console.WriteLine(string.Empty);
+        validFailures.Where(vf => vf.ErrorType == ErrorType.AdditionalFile).ForEach(f => Console.WriteLine(f.Path));
+        Console.WriteLine("------------------------------------------------------------");
 
-        log.Verbose("Files with invalid hashes:");
-        log.Verbose(string.Empty);
-        validFailures.Where(vf => vf.ErrorType == ErrorType.InvalidHash).ForEach(f => log.Verbose(f.Path));
-        log.Verbose("------------------------------------------------------------");
+        Console.WriteLine("Files with invalid hashes:");
+        Console.WriteLine(string.Empty);
+        validFailures.Where(vf => vf.ErrorType == ErrorType.InvalidHash).ForEach(f => Console.WriteLine(f.Path));
+        Console.WriteLine("------------------------------------------------------------");
 
-        log.Verbose("Files in the manifest missing from the disk:");
-        log.Verbose(string.Empty);
-        validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => log.Verbose(f.Path));
-        log.Verbose("------------------------------------------------------------");
-        log.Verbose("Unknown file failures:");
-        log.Verbose(string.Empty);
-        validFailures.Where(vf => vf.ErrorType == ErrorType.Other).ForEach(f => log.Verbose(f.Path));
-        log.Verbose("------------------------------------------------------------");
+        Console.WriteLine("Files in the manifest missing from the disk:");
+        Console.WriteLine(string.Empty);
+        validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => Console.WriteLine(f.Path));
+        Console.WriteLine("------------------------------------------------------------");
+        Console.WriteLine("Unknown file failures:");
+        Console.WriteLine(string.Empty);
+        validFailures.Where(vf => vf.ErrorType == ErrorType.Other).ForEach(f => Console.WriteLine(f.Path));
+        Console.WriteLine("------------------------------------------------------------");
 
         if (validFailures.Where(vf => vf.ErrorType == ErrorType.NoPackagesFound).Count() > 0)
         {
-            log.Verbose(string.Empty);
-            log.Verbose("------------------------------------------------------------");
-            log.Verbose("Package validation results");
-            log.Verbose("------------------------------------------------------------");
-            log.Verbose(string.Empty);
-        
-            log.Verbose("No packages found in the manifest.");
-            log.Verbose("------------------------------------------------------------");
+            Console.WriteLine("Package validation results:");
+            Console.WriteLine(string.Empty);
+            Console.WriteLine("No packages found in the manifest");
+            Console.WriteLine("------------------------------------------------------------");
         }
     }
 
@@ -241,28 +237,28 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
             return;
         }
 
-        log.Debug(string.Empty);
-        log.Debug("------------------------------------------------------------");
-        log.Debug("Validation Summary");
-        log.Debug("------------------------------------------------------------");
-        log.Debug(string.Empty);
+        Console.WriteLine(string.Empty);
+        Console.WriteLine("------------------------------------------------------------");
+        Console.WriteLine("Validation Summary");
+        Console.WriteLine("------------------------------------------------------------");
+        Console.WriteLine(string.Empty);
 
-        log.Debug($"Validation Result . . . . . . . . . . . . . . . .{validationResultOutput.Result}");
-        log.Debug($"Total execution time (sec) . . . . . . . . . . . {validationResultOutput.Summary.TotalExecutionTimeInSeconds}");
-        log.Debug($"Files failed . . . . . . . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesFailedCount}");
-        log.Debug($"Files successfully validated . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesSuccessfulCount}");
-        log.Debug($"Total files validated. . . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesValidatedCount}");
-        log.Debug($"Total files in manifest. . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.TotalFilesInManifest}");
-        log.Debug($"");
-        log.Debug($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
-        log.Debug($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
-        log.Debug($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
+        Console.WriteLine($"Validation Result . . . . . . . . . . . . . . . .{validationResultOutput.Result}");
+        Console.WriteLine($"Total execution time (sec) . . . . . . . . . . . {validationResultOutput.Summary.TotalExecutionTimeInSeconds}");
+        Console.WriteLine($"Files failed . . . . . . . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesFailedCount}");
+        Console.WriteLine($"Files successfully validated . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesSuccessfulCount}");
+        Console.WriteLine($"Total files validated. . . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesValidatedCount}");
+        Console.WriteLine($"Total files in manifest. . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.TotalFilesInManifest}");
+        Console.WriteLine($"");
+        Console.WriteLine($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
+        Console.WriteLine($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
+        Console.WriteLine($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
 
         if (validFailures.Where(vf => vf.ErrorType == ErrorType.NoPackagesFound).Count() > 0)
         {
-            log.Debug($"Package validation failures . . . . . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.NoPackagesFound)}");
+            Console.WriteLine($"Package validation failures . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.NoPackagesFound)}");
         }
 
-        log.Debug($"Unknown file failures . . . . . . . . . . . . .  {validFailures.Count(v => v.ErrorType == ErrorType.Other)}");
+        Console.WriteLine($"Unknown file failures . . . . . . . . . . . . .  {validFailures.Count(v => v.ErrorType == ErrorType.Other)}");
     }
 }
