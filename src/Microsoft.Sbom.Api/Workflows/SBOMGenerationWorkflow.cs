@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
@@ -201,9 +200,8 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
 
         using var readStream = fileSystemUtils.OpenRead(manifestJsonFilePath);
         using var bufferedStream = new BufferedStream(readStream, 1024 * 32);
-        using var writeFileStream = fileSystemUtils.OpenWrite(hashFileName);
-        var hashValue = Encoding.Unicode.GetBytes(BitConverter.ToString(new Sha256HashAlgorithm().ComputeHash(bufferedStream)).Replace("-", string.Empty).ToLower());
-        writeFileStream.Write(hashValue, 0, hashValue.Length);
+        var hashValue = BitConverter.ToString(new Sha256HashAlgorithm().ComputeHash(bufferedStream)).Replace("-", string.Empty).ToLower();
+        fileSystemUtils.WriteAllText(hashFileName, hashValue);
     }
 
     private void RemoveExistingManifestDirectory()

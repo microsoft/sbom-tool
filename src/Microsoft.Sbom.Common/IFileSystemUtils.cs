@@ -26,6 +26,8 @@ public interface IFileSystemUtils
         
     string ReadAllText(string filePath);
         
+    void WriteAllText(string filePath, string contents);
+        
     string JoinPaths(string root, string relativePath);
 
     string JoinPaths(string root, string relativePath, string secondRelativePath);

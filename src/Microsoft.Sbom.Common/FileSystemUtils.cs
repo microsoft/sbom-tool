@@ -53,6 +53,8 @@ public abstract class FileSystemUtils : IFileSystemUtils
 
     public string ReadAllText(string filePath) => File.ReadAllText(filePath);
 
+    public void WriteAllText(string filePath, string contents) => File.WriteAllText(filePath, contents);
+
     public bool FileExists(string path) => File.Exists(path);
 
     public Stream OpenWrite(string filePath) => new FileStream(
