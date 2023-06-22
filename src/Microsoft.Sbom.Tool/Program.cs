@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Config.Extensions;
@@ -75,6 +76,7 @@ internal class Program
         catch (Exception e)
         {
             Console.Error.WriteLine(e.Message);
+            Environment.ExitCode = (int)ExitCode.GeneralError;
         }
     }
 }
