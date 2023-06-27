@@ -204,12 +204,15 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         using var bufferedStream = new BufferedStream(readStream, 1024 * 32);
         using var writeFileStream = fileSystemUtils.OpenWrite(hashFileName);
         
-        // Write BOM for Unicode
-        byte[] bom = Encoding.Unicode.GetPreamble();
+        // Write BOM for UTF8
+        byte[] bom = Encoding.UTF8.GetPreamble();
         writeFileStream.Write(bom, 0, bom.Length);
+        writeFileStream.Flush();
 
-        var hashValue = Encoding.Unicode.GetBytes(BitConverter.ToString(new Sha256HashAlgorithm().ComputeHash(bufferedStream)).Replace("-", string.Empty).ToLower());
-        writeFileStream.Write(hashValue, 0, hashValue.Length);
+        var hashBytes = new Sha256HashAlgorithm().ComputeHash(bufferedStream);
+        var hashValue = Convert.ToHexString(hashBytes).ToLowerInvariant();
+
+        writeFileStream.Write(Encoding.UTF8.GetBytes(hashValue), 0, hashValue.Length);
     }
 
     private void RemoveExistingManifestDirectory()

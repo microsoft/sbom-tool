@@ -89,6 +89,7 @@ public class SbomConfig : ISbomConfig, IDisposable, IAsyncDisposable
         // Write BOM for UTF-8
         byte[] bom = Encoding.UTF8.GetPreamble();
         fileStream.Write(bom, 0, bom.Length);
+        fileStream.Flush();
 
         JsonSerializer = new ManifestToolJsonSerializer(fileStream);
     }
