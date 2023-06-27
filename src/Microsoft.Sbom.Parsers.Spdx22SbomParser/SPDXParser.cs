@@ -4,7 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
@@ -86,11 +88,46 @@ public class SPDXParser : ISbomParser
             throw new ArgumentException($"The {nameof(buffer)} value can't be null or of 0 length.");
         }
 
+        // Read the BOM if present.
+        ReadBytOrderMarkIfPresent(stream);
+
         // Fill up the buffer.
         if (!stream.CanRead || stream.Read(buffer) == 0)
         {
             throw new EndOfStreamException();
         }
+    }
+
+    private void ReadBytOrderMarkIfPresent(Stream stream)
+    {
+        byte[] bom = new byte[4]; // Enough to read the BOM for UTF-32 as well.
+        stream.Read(bom, 0, 4);
+
+        int bomLength = 0; // No BOM by default
+
+        if (bom[0] == 0xFF && bom[1] == 0xFE && bom[2] == 0 && bom[3] == 0)
+        {
+            // Encoding.UTF32;
+            bomLength = 4;
+        }
+        else if (bom[0] == 0xFE && bom[1] == 0xFF)
+        {
+            // UTF-16BE
+            bomLength = 2;
+        }
+        else if (bom[0] == 0xFF && bom[1] == 0xFE)
+        {
+            // UTF-16LE
+            bomLength = 2;
+        }
+        else if (bom[0] == 0xEF && bom[1] == 0xBB && bom[2] == 0xBF)
+        {
+            // Encoding.UTF8;
+            bomLength = 3;
+        }
+
+        // Set the stream position just after the BOM if present, or at the start if not
+        stream.Position = bomLength;
     }
 
     private readonly ManifestInfo spdxManifestInfo = new ManifestInfo

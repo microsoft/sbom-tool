@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Common;
@@ -84,6 +85,11 @@ public class SbomConfig : ISbomConfig, IDisposable, IAsyncDisposable
 
         fileSystemUtils.CreateDirectory(ManifestJsonDirPath);
         fileStream = fileSystemUtils.OpenWrite(ManifestJsonFilePath);
+
+        // Write BOM for UTF-8
+        byte[] bom = Encoding.UTF8.GetPreamble();
+        fileStream.Write(bom, 0, bom.Length);
+
         JsonSerializer = new ManifestToolJsonSerializer(fileStream);
     }
 

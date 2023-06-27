@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -202,6 +203,11 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         using var readStream = fileSystemUtils.OpenRead(manifestJsonFilePath);
         using var bufferedStream = new BufferedStream(readStream, 1024 * 32);
         using var writeFileStream = fileSystemUtils.OpenWrite(hashFileName);
+        
+        // Write BOM for Unicode
+        byte[] bom = Encoding.Unicode.GetPreamble();
+        writeFileStream.Write(bom, 0, bom.Length);
+
         var hashValue = Encoding.Unicode.GetBytes(BitConverter.ToString(new Sha256HashAlgorithm().ComputeHash(bufferedStream)).Replace("-", string.Empty).ToLower());
         writeFileStream.Write(hashValue, 0, hashValue.Length);
     }
