@@ -184,7 +184,9 @@ public static class InternalMetadataProviderIdentityExtensions
         // Generate a guid for the new swid tag Id.
         string tagId = Guid.NewGuid().ToString();
 
-        return $"pkg:swid/{packageSupplierFromMetadata}/{namespaceUri.Host}/{rootPackageName}@{rootPackageVersion}?tag_id={tagId}";
+        Uri swidPurl = new Uri($"pkg:swid/{packageSupplierFromMetadata}/{namespaceUri.Host}/{rootPackageName}@{rootPackageVersion}?tag_id={tagId}");
+
+        return swidPurl.ToString();
     }
 
     public static string GetGenerationTimestamp(this IInternalMetadataProvider internalMetadataProvider)
