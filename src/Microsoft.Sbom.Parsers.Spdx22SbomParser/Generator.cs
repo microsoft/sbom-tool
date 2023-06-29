@@ -201,6 +201,15 @@ public class Generator : IManifestGenerator
             SpdxId = Constants.RootPackageIdValue,
             Name = internalMetadataProvider.GetPackageName(),
             VersionInfo = internalMetadataProvider.GetPackageVersion(),
+            ExternalReferences = new List<ExternalReference>
+            {
+                new ExternalReference
+                {
+                    ReferenceCategory = ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(),
+                    Type = ExternalRepositoryType.purl,
+                    Locator = internalMetadataProvider.GetSwidTagId()
+                }
+            },
             DownloadLocation = Constants.NoAssertionValue,
             CopyrightText = Constants.NoAssertionValue,
             LicenseConcluded = Constants.NoAssertionValue,
