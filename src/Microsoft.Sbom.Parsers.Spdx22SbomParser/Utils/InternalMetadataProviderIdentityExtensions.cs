@@ -170,40 +170,21 @@ public static class InternalMetadataProviderIdentityExtensions
 
     public static string GetSwidTagId(this IInternalMetadataProvider internalMetadataProvider)
     {
-        // Generate a guid for the new swid tag Id.
-        string tagId = Guid.NewGuid().ToString();
-
         if (internalMetadataProvider is null)
         {
             throw new ArgumentNullException(nameof(internalMetadataProvider));
         }
 
-        string rootPackageVersion = string.Empty;
-        string packageSupplierFromMetadata = string.Empty;
-
-        // First check if the user provided a package version.
-        if (internalMetadataProvider.TryGetMetadata(MetadataKey.PackageVersion, out string packageVersion))
-        {
-            rootPackageVersion = packageVersion;
-        }
-
-        // If the build id is provided, use that as version.
-        if (internalMetadataProvider.TryGetMetadata(MetadataKey.Build_BuildId, out string buildId))
-        {
-            rootPackageVersion = buildId;
-        }
-
-        if (internalMetadataProvider.TryGetMetadata(MetadataKey.PackageSupplier, out string packageSuplier))
-        {
-            packageSupplierFromMetadata = packageSuplier;
-        }   
-
-        string namespaceUri = internalMetadataProvider.GetSBOMNamespaceUri();
-        Uri uri = new Uri(namespaceUri);
-
+        string rootPackageVersion = internalMetadataProvider.GetPackageVersion();
+        string packageSupplierFromMetadata = internalMetadataProvider.GetPackageSupplier();
         string rootPackageName = internalMetadataProvider.GetPackageName();
 
-        return $"pkg:swid/{packageSupplierFromMetadata}/{uri.Host}/{rootPackageName}@{rootPackageVersion}?tag_id={tagId}";
+        Uri namespaceUri = new Uri(internalMetadataProvider.GetSBOMNamespaceUri());
+
+        // Generate a guid for the new swid tag Id.
+        string tagId = Guid.NewGuid().ToString();
+
+        return $"pkg:swid/{packageSupplierFromMetadata}/{namespaceUri.Host}/{rootPackageName}@{rootPackageVersion}?tag_id={tagId}";
     }
 
     public static string GetGenerationTimestamp(this IInternalMetadataProvider internalMetadataProvider)
