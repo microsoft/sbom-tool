@@ -175,18 +175,18 @@ public static class InternalMetadataProviderIdentityExtensions
             throw new ArgumentNullException(nameof(internalMetadataProvider));
         }
 
-        string rootPackageVersion = internalMetadataProvider.GetPackageVersion();
-        string packageSupplierFromMetadata = internalMetadataProvider.GetPackageSupplier();
-        string rootPackageName = internalMetadataProvider.GetPackageName();
+        string rootPackageVersion = Uri.EscapeDataString(internalMetadataProvider.GetPackageVersion());
+        string packageSupplierFromMetadata = Uri.EscapeDataString(internalMetadataProvider.GetPackageSupplier());
+        string rootPackageName = Uri.EscapeDataString(internalMetadataProvider.GetPackageName());
 
-        Uri namespaceUri = new Uri(internalMetadataProvider.GetSBOMNamespaceUri());
+        Uri namespaceUri = new Uri(internalMetadataProvider.GetDocumentNamespace());
 
         // Generate a guid for the new swid tag Id.
         string tagId = Guid.NewGuid().ToString();
 
-        Uri swidPurl = new Uri($"pkg:swid/{packageSupplierFromMetadata}/{namespaceUri.Host}/{rootPackageName}@{rootPackageVersion}?tag_id={tagId}");
+        string swidPurl = $"pkg:swid/{packageSupplierFromMetadata}/{namespaceUri.Host}/{rootPackageName}@{rootPackageVersion}?tag_id={tagId}";
 
-        return swidPurl.ToString();
+        return swidPurl;
     }
 
     public static string GetGenerationTimestamp(this IInternalMetadataProvider internalMetadataProvider)
