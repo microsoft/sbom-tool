@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -156,5 +157,31 @@ public class InternalMetadataProviderIdentityExtensionsTests
         {
             Assert.AreEqual(typeof(ArgumentException), e.GetType());
         }
+    }
+
+    [TestMethod]
+    public void GetSwidPurl_Succeeds()
+    {
+        var mdProviderMock = new Mock<IInternalMetadataProvider>();
+        Guid tagId = Guid.NewGuid();
+
+        string packageName = "name";
+        string packageVersion = "1.0.0";
+        object packageSupplier = "Microsoft";
+        Uri namespaceUri = new Uri("https://test.com/");
+        string expectedSwidPurlPattern = @"^pkg:swid\/Microsoft\/test.com\/name@1\.0\.0\?tag_id=.*";
+  
+        mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageSupplier, out packageSupplier))
+            .Returns(true);
+        mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageVersion, out packageVersion))
+            .Returns(true);
+        mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageName, out packageName))
+            .Returns(true);
+        mdProviderMock.Setup(m => m.GetSBOMNamespaceUri())
+        .Returns(namespaceUri.ToString);
+
+        var actualSwidPurl = mdProviderMock.Object.GetSwidTagId();
+
+        Assert.IsTrue(Regex.IsMatch(actualSwidPurl, expectedSwidPurlPattern));
     }
 }

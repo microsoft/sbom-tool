@@ -179,7 +179,7 @@ public static class InternalMetadataProviderIdentityExtensions
         string packageSupplierFromMetadata = Uri.EscapeDataString(internalMetadataProvider.GetPackageSupplier());
         string rootPackageName = Uri.EscapeDataString(internalMetadataProvider.GetPackageName());
 
-        Uri namespaceUri = new Uri(internalMetadataProvider.GetDocumentNamespace());
+        Uri namespaceUri = new Uri(internalMetadataProvider.GetSBOMNamespaceUri());
 
         // Generate a guid for the new swid tag Id.
         string tagId = Guid.NewGuid().ToString();
