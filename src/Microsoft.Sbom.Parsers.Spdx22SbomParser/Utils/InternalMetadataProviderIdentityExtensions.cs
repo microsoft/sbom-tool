@@ -168,6 +168,27 @@ public static class InternalMetadataProviderIdentityExtensions
         return internalMetadataProvider.GetSBOMNamespaceUri();
     }
 
+    public static string GetSwidTagId(this IInternalMetadataProvider internalMetadataProvider)
+    {
+        if (internalMetadataProvider is null)
+        {
+            throw new ArgumentNullException(nameof(internalMetadataProvider));
+        }
+
+        string rootPackageVersion = Uri.EscapeDataString(internalMetadataProvider.GetPackageVersion());
+        string packageSupplierFromMetadata = Uri.EscapeDataString(internalMetadataProvider.GetPackageSupplier());
+        string rootPackageName = Uri.EscapeDataString(internalMetadataProvider.GetPackageName());
+
+        Uri namespaceUri = new Uri(internalMetadataProvider.GetSBOMNamespaceUri());
+
+        // Generate a guid for the new swid tag Id.
+        string tagId = Guid.NewGuid().ToString();
+
+        string swidPurl = $"pkg:swid/{packageSupplierFromMetadata}/{namespaceUri.Host}/{rootPackageName}@{rootPackageVersion}?tag_id={tagId}";
+
+        return swidPurl;
+    }
+
     public static string GetGenerationTimestamp(this IInternalMetadataProvider internalMetadataProvider)
     {
         if (internalMetadataProvider is null)
