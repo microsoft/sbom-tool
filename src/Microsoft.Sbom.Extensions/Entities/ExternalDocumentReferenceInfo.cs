@@ -12,7 +12,7 @@ namespace Microsoft.Sbom.Extensions.Entities;
 public class ExternalDocumentReferenceInfo // TODO: Move to Contracts
 {
     /// <summary>
-    /// Gets or sets the name of the exteral SBOM document.
+    /// Gets or sets the name of the external SBOM document.
     /// </summary>
     public string ExternalDocumentName { get; set; }
 
