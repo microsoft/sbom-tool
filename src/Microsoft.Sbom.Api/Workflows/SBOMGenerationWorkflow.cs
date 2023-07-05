@@ -201,7 +201,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         using var readStream = fileSystemUtils.OpenRead(manifestJsonFilePath);
         using var bufferedStream = new BufferedStream(readStream, 1024 * 32);
         var hashBytes = new Sha256HashAlgorithm().ComputeHash(bufferedStream);
-        var hashValue = Convert.ToHexString(bytes).ToLowerInvariant();
+        var hashValue = Convert.ToHexString(hashBytes).ToLowerInvariant();
         fileSystemUtils.WriteAllText(hashFileName, hashValue);
     }
 
