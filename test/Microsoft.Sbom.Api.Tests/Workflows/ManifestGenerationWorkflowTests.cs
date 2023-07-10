@@ -166,7 +166,7 @@ public class ManifestGenerationWorkflowTests
 
         fileSystemMock.Setup(f => f.FileExists(It.Is<string>(c => c == jsonFilePath))).Returns(true);
         fileSystemMock.Setup(f => f.OpenRead(It.Is<string>(c => c == jsonFilePath))).Returns(TestUtils.GenerateStreamFromString("randomContent"));
-        fileSystemMock.Setup(f => f.OpenWrite(It.Is<string>(c => c == "/root/_manifest/manifest.json.sha256"))).Returns(sha256Writer.BaseStream);
+        fileSystemMock.Setup(f => f.WriteAllText(It.Is<string>(c => c == "/root/_manifest/manifest.json.sha256"), It.IsAny<string>()));
 
         hashCodeGeneratorMock.Setup(h => h.GenerateHashes(It.IsAny<string>(), It.IsAny<AlgorithmName[]>()))
             .Returns((string fileName, AlgorithmName[] algos) =>
@@ -346,7 +346,7 @@ public class ManifestGenerationWorkflowTests
         hashCodeGeneratorMock.VerifyAll();
         mockLogger.VerifyAll();
         fileSystemMock.Verify(x => x.FileExists(jsonFilePath), Times.Once);
-        fileSystemMock.Verify(x => x.OpenWrite($"{jsonFilePath}.sha256"), Times.Once);
+        fileSystemMock.Verify(x => x.WriteAllText($"{jsonFilePath}.sha256", It.IsAny<string>()), Times.Once);
     }
 
     [TestMethod]
