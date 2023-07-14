@@ -10,5 +10,6 @@ public enum ExitCode
 {
     Success = 0,
     GeneralError = 1,
-    WriteAccessError = 2
+    WriteAccessError = 2,
+    ValidationError = 3,
 }

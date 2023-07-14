@@ -55,7 +55,7 @@ public class ValidationService : IHostedService
             }
 
             await recorder.FinalizeAndLogTelemetryAsync();
-            Environment.ExitCode = result ? (int)ExitCode.Success : (int)ExitCode.GeneralError;
+            Environment.ExitCode = result ? (int)ExitCode.Success : (int)ExitCode.ValidationError;
         }
         catch (Exception e)
         {
