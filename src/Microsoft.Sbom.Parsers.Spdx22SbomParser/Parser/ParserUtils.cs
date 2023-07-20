@@ -229,7 +229,7 @@ internal class ParserUtils
             leftover.CopyTo(buffer);
             bytesRead = stream.Read(buffer.AsSpan(leftover.Length));
 
-            // stream.Read doesn't always return the whole buffer length, so we need to resize the buffer
+            // stream.Read doesn't always return the whole buffer length, so we need to fill the rest
             if (bytesRead + leftover.Length != buffer.Length)
             {
                 bytesRead = stream.Read(buffer.AsSpan(bytesRead + leftover.Length));
