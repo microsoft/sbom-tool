@@ -26,6 +26,12 @@
     <PackageReference Include="System.Linq.Async" />
   </ItemGroup>
 
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>$(AssemblyName).Tests, PublicKey=$(StrongNameSigningPublicKey)</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.Sbom.Api\Microsoft.Sbom.Api.csproj" />
   </ItemGroup>

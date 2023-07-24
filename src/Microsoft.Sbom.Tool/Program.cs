@@ -53,6 +53,7 @@ internal class Program
 
                     services
                         .AddTransient<ConfigFileParser>()
+                        .ConfigureLoggingProviders()
                         .AddSingleton(typeof(IConfigurationBuilder<>), typeof(ConfigurationBuilder<>))
                         .AddSingleton(x =>
                         {
