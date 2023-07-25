@@ -5,13 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.ComponentDetection.Common;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
-using Microsoft.ComponentDetection.Orchestrator;
-using Microsoft.ComponentDetection.Orchestrator.Services;
-using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Utils;
@@ -120,7 +116,7 @@ public class PackagesWalkerTests
         scannedComponents.Add(scannedComponentOther);
 
         var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
-        
+
         var scanResult = new ScanResult
         {
             ResultCode = ProcessingResultCode.Success,

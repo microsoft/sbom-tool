@@ -89,9 +89,9 @@ public static class ServiceCollectionExtensions
             {
                 logLevel = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? logLevel;
                 return Log.Logger = new LoggerConfiguration()
-                            .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
-                            .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
-                            .CreateBootstrapLogger();
+                    .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
+                    .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
+                    .CreateBootstrapLogger();
             })
             .AddTransient<IWorkflow<SbomValidationWorkflow>, SbomValidationWorkflow>()
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
@@ -144,6 +144,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<Orchestrator>()
             .AddSingleton<IFileWritingService, FileWritingService>()
             .AddSingleton<IArgumentHelper, ArgumentHelper>()
+
             // Shared services
             .AddSingleton<ICommandLineInvocationService, CommandLineInvocationService>()
             .AddSingleton<IComponentStreamEnumerableFactory, ComponentStreamEnumerableFactory>()
