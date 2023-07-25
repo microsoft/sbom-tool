@@ -143,102 +143,6 @@ public static class ServiceCollectionExtensions
             .AddSingleton<Orchestrator>()
             .AddSingleton<IFileWritingService, FileWritingService>()
             .AddSingleton<IArgumentHelper, ArgumentHelper>()
-
-            // Shared services
-            .AddSingleton<ICommandLineInvocationService, CommandLineInvocationService>()
-            .AddSingleton<IComponentStreamEnumerableFactory, ComponentStreamEnumerableFactory>()
-            .AddSingleton<IConsoleWritingService, ConsoleWritingService>()
-            .AddSingleton<IDockerService, DockerService>()
-            .AddSingleton<IEnvironmentVariableService, EnvironmentVariableService>()
-            .AddSingleton<IObservableDirectoryWalkerFactory, FastDirectoryWalkerFactory>()
-            .AddSingleton<IFileUtilityService, FileUtilityService>()
-            .AddSingleton<IFileWritingService, FileWritingService>()
-            .AddSingleton<IGraphTranslationService, DefaultGraphTranslationService>()
-            .AddSingleton<IPathUtilityService, PathUtilityService>()
-            .AddSingleton<ISafeFileEnumerableFactory, SafeFileEnumerableFactory>()
-
-            // Command line services
-            .AddSingleton<IScanArguments, BcdeArguments>()
-            .AddSingleton<IScanArguments, BcdeDevArguments>()
-            .AddSingleton<IScanArguments, ListDetectionArgs>()
-            .AddSingleton<IArgumentHandlingService, BcdeDevCommandService>()
-            .AddSingleton<IArgumentHandlingService, BcdeScanCommandService>()
-            .AddSingleton<IArgumentHandlingService, DetectorListingCommandService>()
-            .AddSingleton<IBcdeScanExecutionService, BcdeScanExecutionService>()
-            .AddSingleton<IDetectorProcessingService, DetectorProcessingService>()
-            .AddSingleton<IDetectorRestrictionService, DetectorRestrictionService>()
-            .AddSingleton<IArgumentHelper, ArgumentHelper>()
-
-            // Experiments
-            .AddSingleton<IExperimentService, ExperimentService>()
-
-            // Detectors
-
-            // CocoaPods
-            .AddSingleton<IComponentDetector, PodComponentDetector>()
-
-            // Conda
-            .AddSingleton<IComponentDetector, CondaLockComponentDetector>()
-
-            // Dockerfile
-            .AddSingleton<IComponentDetector, DockerfileComponentDetector>()
-
-            // Go
-            .AddSingleton<IComponentDetector, GoComponentDetector>()
-
-            // Gradle
-            .AddSingleton<IComponentDetector, GradleComponentDetector>()
-
-            // Ivy
-            .AddSingleton<IComponentDetector, IvyDetector>()
-
-            // Linux
-            .AddSingleton<ILinuxScanner, LinuxScanner>()
-            .AddSingleton<IComponentDetector, LinuxContainerDetector>()
-
-            // Maven
-            .AddSingleton<IMavenCommandService, MavenCommandService>()
-            .AddSingleton<IMavenStyleDependencyGraphParserService, MavenStyleDependencyGraphParserService>()
-            .AddSingleton<IComponentDetector, MvnCliComponentDetector>()
-
-            // npm
-            .AddSingleton<IComponentDetector, NpmComponentDetector>()
-            .AddSingleton<IComponentDetector, NpmComponentDetectorWithRoots>()
-            .AddSingleton<IComponentDetector, NpmLockfile3Detector>()
-
-            // NuGet
-            .AddSingleton<IComponentDetector, NuGetComponentDetector>()
-            .AddSingleton<IComponentDetector, NuGetPackagesConfigDetector>()
-            .AddSingleton<IComponentDetector, NuGetProjectModelProjectCentricComponentDetector>()
-
-            // PIP
-            .AddSingleton<IPyPiClient, PyPiClient>()
-            .AddSingleton<IPythonCommandService, PythonCommandService>()
-            .AddSingleton<IPythonResolver, PythonResolver>()
-            .AddSingleton<IComponentDetector, PipComponentDetector>()
-
-            // pnpm
-            .AddSingleton<IComponentDetector, PnpmComponentDetector>()
-
-            // Poetry
-            .AddSingleton<IComponentDetector, PoetryComponentDetector>()
-
-            // Ruby
-            .AddSingleton<IComponentDetector, RubyComponentDetector>()
-
-            // Rust
-            .AddSingleton<IComponentDetector, RustCrateDetector>()
-
-            // SPDX
-            .AddSingleton<IComponentDetector, Spdx22ComponentDetector>()
-
-            // VCPKG
-            .AddSingleton<IComponentDetector, VcpkgComponentDetector>()
-
-            // Yarn
-            .AddSingleton<IYarnLockParser, YarnLockParser>()
-            .AddSingleton<IYarnLockFileFactory, YarnLockFileFactory>()
-            .AddSingleton<IComponentDetector, YarnLockComponentDetector>()
             .AddSingleton(x => {
                 var comparer = x.GetRequiredService<IOSUtils>().GetFileSystemStringComparer();
                 return new FileHashesDictionary(new ConcurrentDictionary<string, FileHashes>(comparer));
@@ -284,7 +188,11 @@ public static class ServiceCollectionExtensions
                 }
 
                 return manifestData;
-            });
+            })
+            .ConfigureLoggingProviders()
+            .ConfigureComponentDetectors()
+            .ConfigureComponentDetectionSharedServices()
+            .ConfigureComponentDetectionCommandLineServices();
 
         return services;
     }
@@ -306,6 +214,77 @@ public static class ServiceCollectionExtensions
             return factory;
         });
         services.AddLogging(l => l.AddFilter<SerilogLoggerProvider>(null, LogLevel.Trace));
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureComponentDetectionCommandLineServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IScanArguments, BcdeArguments>();
+        services.AddSingleton<IScanArguments, BcdeDevArguments>();
+        services.AddSingleton<IScanArguments, ListDetectionArgs>();
+        services.AddSingleton<IArgumentHandlingService, BcdeDevCommandService>();
+        services.AddSingleton<IArgumentHandlingService, BcdeScanCommandService>();
+        services.AddSingleton<IArgumentHandlingService, DetectorListingCommandService>();
+        services.AddSingleton<IBcdeScanExecutionService, BcdeScanExecutionService>();
+        services.AddSingleton<IDetectorProcessingService, DetectorProcessingService>();
+        services.AddSingleton<IDetectorRestrictionService, DetectorRestrictionService>();
+        services.AddSingleton<IArgumentHelper, ArgumentHelper>();
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureComponentDetectionSharedServices(this IServiceCollection services)
+    {
+        // Shared services
+        services.AddSingleton<ICommandLineInvocationService, CommandLineInvocationService>();
+        services.AddSingleton<IComponentStreamEnumerableFactory, ComponentStreamEnumerableFactory>();
+        services.AddSingleton<IConsoleWritingService, ConsoleWritingService>();
+        services.AddSingleton<IDockerService, DockerService>();
+        services.AddSingleton<IEnvironmentVariableService, EnvironmentVariableService>();
+        services.AddSingleton<IObservableDirectoryWalkerFactory, FastDirectoryWalkerFactory>();
+        services.AddSingleton<IFileUtilityService, FileUtilityService>();
+        services.AddSingleton<IFileWritingService, FileWritingService>();
+        services.AddSingleton<IGraphTranslationService, DefaultGraphTranslationService>();
+        services.AddSingleton<IPathUtilityService, PathUtilityService>();
+        services.AddSingleton<ISafeFileEnumerableFactory, SafeFileEnumerableFactory>();
+        services.AddSingleton<IExperimentService, ExperimentService>();
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureComponentDetectors(this IServiceCollection services)
+    {
+        services.AddSingleton<IComponentDetector, PodComponentDetector>();
+        services.AddSingleton<IComponentDetector, CondaLockComponentDetector>();
+        services.AddSingleton<IComponentDetector, DockerfileComponentDetector>();
+        services.AddSingleton<IComponentDetector, GoComponentDetector>();
+        services.AddSingleton<IComponentDetector, GradleComponentDetector>();
+        services.AddSingleton<IComponentDetector, IvyDetector>();
+        services.AddSingleton<ILinuxScanner, LinuxScanner>();
+        services.AddSingleton<IComponentDetector, LinuxContainerDetector>();
+        services.AddSingleton<IMavenCommandService, MavenCommandService>();
+        services.AddSingleton<IMavenStyleDependencyGraphParserService, MavenStyleDependencyGraphParserService>();
+        services.AddSingleton<IComponentDetector, MvnCliComponentDetector>();
+        services.AddSingleton<IComponentDetector, NpmComponentDetector>();
+        services.AddSingleton<IComponentDetector, NpmComponentDetectorWithRoots>();
+        services.AddSingleton<IComponentDetector, NpmLockfile3Detector>();
+        services.AddSingleton<IComponentDetector, NuGetComponentDetector>();
+        services.AddSingleton<IComponentDetector, NuGetPackagesConfigDetector>();
+        services.AddSingleton<IComponentDetector, NuGetProjectModelProjectCentricComponentDetector>();
+        services.AddSingleton<IPyPiClient, PyPiClient>();
+        services.AddSingleton<IPythonCommandService, PythonCommandService>();
+        services.AddSingleton<IPythonResolver, PythonResolver>();
+        services.AddSingleton<IComponentDetector, PipComponentDetector>();
+        services.AddSingleton<IComponentDetector, PnpmComponentDetector>();
+        services.AddSingleton<IComponentDetector, PoetryComponentDetector>();
+        services.AddSingleton<IComponentDetector, RubyComponentDetector>();
+        services.AddSingleton<IComponentDetector, RustCrateDetector>();
+        services.AddSingleton<IComponentDetector, Spdx22ComponentDetector>();
+        services.AddSingleton<IComponentDetector, VcpkgComponentDetector>();
+        services.AddSingleton<IYarnLockParser, YarnLockParser>();
+        services.AddSingleton<IYarnLockFileFactory, YarnLockFileFactory>();
+        services.AddSingleton<IComponentDetector, YarnLockComponentDetector>();
 
         return services;
     }
