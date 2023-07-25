@@ -140,9 +140,6 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IFileTypeUtils, FileTypeUtils>()
             .AddSingleton<ISignValidationProvider, SignValidationProvider>()
             .AddSingleton<IManifestParserProvider, ManifestParserProvider>()
-            .AddSingleton<Orchestrator>()
-            .AddSingleton<IFileWritingService, FileWritingService>()
-            .AddSingleton<IArgumentHelper, ArgumentHelper>()
             .AddSingleton(x => {
                 var comparer = x.GetRequiredService<IOSUtils>().GetFileSystemStringComparer();
                 return new FileHashesDictionary(new ConcurrentDictionary<string, FileHashes>(comparer));
@@ -236,7 +233,9 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection ConfigureComponentDetectionSharedServices(this IServiceCollection services)
     {
-        // Shared services
+        services.AddSingleton<Orchestrator>();
+        services.AddSingleton<IFileWritingService, FileWritingService>();
+        services.AddSingleton<IArgumentHelper, ArgumentHelper>();
         services.AddSingleton<ICommandLineInvocationService, CommandLineInvocationService>();
         services.AddSingleton<IComponentStreamEnumerableFactory, ComponentStreamEnumerableFactory>();
         services.AddSingleton<IConsoleWritingService, ConsoleWritingService>();
