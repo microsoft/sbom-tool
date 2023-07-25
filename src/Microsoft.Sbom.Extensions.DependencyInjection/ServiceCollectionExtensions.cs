@@ -25,7 +25,6 @@ using Microsoft.ComponentDetection.Detectors.Yarn.Parsers;
 using Microsoft.ComponentDetection.Orchestrator;
 using Microsoft.ComponentDetection.Orchestrator.ArgumentSets;
 using Microsoft.ComponentDetection.Orchestrator.Experiments;
-using Microsoft.ComponentDetection.Orchestrator.Experiments.Configs;
 using Microsoft.ComponentDetection.Orchestrator.Services;
 using Microsoft.ComponentDetection.Orchestrator.Services.GraphTranslation;
 using Microsoft.Extensions.DependencyInjection;
@@ -172,9 +171,6 @@ public static class ServiceCollectionExtensions
 
             // Experiments
             .AddSingleton<IExperimentService, ExperimentService>()
-            .AddSingleton<IExperimentProcessor, DefaultExperimentProcessor>()
-            .AddSingleton<IExperimentConfiguration, NewNugetExperiment>()
-            .AddSingleton<IExperimentConfiguration, NpmLockfile3Experiment>()
 
             // Detectors
 
