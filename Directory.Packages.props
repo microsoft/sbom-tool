@@ -1,15 +1,15 @@
 <!-- All csproj package references should not include version numbers. The version numbers are set using this props file. -->
 <Project>
-      <ItemDefinitionGroup>
-            <PackageVersion>
-              <!-- Do not share compile-time dependencies transitively.  This requires that all projects reference all packages -->
-              <PrivateAssets>Compile</PrivateAssets>
-            </PackageVersion>
-      </ItemDefinitionGroup>
-      <PropertyGroup>
-            <ComponentDetectionPackageVersion>3.3.12</ComponentDetectionPackageVersion>
-      </PropertyGroup>
-      <ItemGroup>
+    <ItemDefinitionGroup>
+        <PackageVersion>
+            <!-- Do not share compile-time dependencies transitively.  This requires that all projects reference all packages -->
+            <PrivateAssets>Compile</PrivateAssets>
+        </PackageVersion>
+    </ItemDefinitionGroup>
+    <PropertyGroup>
+        <ComponentDetectionPackageVersion>3.3.12</ComponentDetectionPackageVersion>
+    </PropertyGroup>
+    <ItemGroup>
         <PackageVersion Include="MinVer" Version="2.5.0"/>
         <PackageVersion Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0"/>
         <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1"/>
