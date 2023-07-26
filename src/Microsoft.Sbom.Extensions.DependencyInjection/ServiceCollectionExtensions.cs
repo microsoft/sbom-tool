@@ -91,7 +91,7 @@ public static class ServiceCollectionExtensions
                     .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
                     .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
                     .CreateBootstrapLogger();
-            })
+            })          
             .AddTransient<IWorkflow<SbomValidationWorkflow>, SbomValidationWorkflow>()
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
@@ -225,6 +225,25 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IArgumentHandlingService, DetectorListingCommandService>();
         services.AddSingleton<IBcdeScanExecutionService, BcdeScanExecutionService>();
         services.AddSingleton<IDetectorProcessingService, DetectorProcessingService>();
+        services.AddSingleton<ILogger<DetectorProcessingService>>(x =>
+         {
+             // Override lower log levels to Information for Orchestrator
+             var logLevel = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? LogEventLevel.Information;
+             if (logLevel == LogEventLevel.Warning || logLevel == LogEventLevel.Error || logLevel == LogEventLevel.Fatal)
+             {
+                 logLevel = LogEventLevel.Information;
+             }
+             
+             // Customize the logging configuration for Orchestrator here
+             Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
+                .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
+                .CreateBootstrapLogger();
+
+             var logger = Log.Logger;
+ 
+             return new SerilogLoggerConverter<DetectorProcessingService>(logger); // Create an adapter to use Serilog's ILogger with Microsoft's interface
+         });
         services.AddSingleton<IDetectorRestrictionService, DetectorRestrictionService>();
         services.AddSingleton<IArgumentHelper, ArgumentHelper>();
 
