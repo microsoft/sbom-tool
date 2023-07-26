@@ -13,5 +13,5 @@ public static class Constants
     public const int DefaultParallelism = 8;
     public const int MaxParallelism = 48;
 
-    public const LogEventLevel DefaultLogLevel = LogEventLevel.Information;
+    public const LogEventLevel DefaultLogLevel = LogEventLevel.Warning;
 }

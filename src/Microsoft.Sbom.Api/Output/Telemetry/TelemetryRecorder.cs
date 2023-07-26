@@ -275,7 +275,7 @@ public class TelemetryRecorder : IRecorder
                 Log.Warning("0 Packages were detected during the {Action} workflow.", Configuration.ManifestToolAction);
             }
 
-            Log.Debug("Finished execution of the {Action} workflow {@Telemetry}", Configuration.ManifestToolAction, telemetry);
+            Log.Information("Finished execution of the {Action} workflow {@Telemetry}", Configuration.ManifestToolAction, telemetry);
 
             await RecordToFile(telemetry, Configuration.TelemetryFilePath?.Value);
         }
