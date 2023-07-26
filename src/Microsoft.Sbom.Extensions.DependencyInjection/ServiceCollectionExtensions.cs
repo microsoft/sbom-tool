@@ -239,10 +239,8 @@ public static class ServiceCollectionExtensions
                 .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
                 .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
                 .CreateBootstrapLogger();
-
-             var logger = Log.Logger;
- 
-             return new SerilogLoggerConverter<DetectorProcessingService>(logger); // Create an adapter to use Serilog's ILogger with Microsoft's interface
+             
+             return new SerilogLoggerConverter<DetectorProcessingService>(Log.Logger);
          });
         services.AddSingleton<IDetectorRestrictionService, DetectorRestrictionService>();
         services.AddSingleton<IArgumentHelper, ArgumentHelper>();
