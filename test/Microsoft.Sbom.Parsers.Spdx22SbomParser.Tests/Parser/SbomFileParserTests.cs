@@ -24,6 +24,11 @@ public class SbomFileParserTests
 
         while (parser.Next() != ParserState.FINISHED)
         {
+            if (parser.CurrentState == ParserState.METADATA)
+            {
+                break;
+            }
+
             Assert.AreEqual(ParserState.FILES, parser.CurrentState);
 
             foreach (var file in parser.GetFiles())

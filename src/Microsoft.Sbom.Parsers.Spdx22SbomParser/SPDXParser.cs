@@ -35,7 +35,6 @@ public class SPDXParser : ISbomParser
     private bool isExternalReferencesArrayParsingFinished = false;
 
     private bool isParsingStarted = false;
-    private bool stateChangedInPreviousOperation = true;
 
     private readonly Stream stream;
 
@@ -43,6 +42,10 @@ public class SPDXParser : ISbomParser
     private byte[] buffer;
     private JsonReaderState readerState;
     private bool isFinalBlock;
+    private string? currentRootPropertyName;
+    private string? nextTokenString;
+    private bool metadataStateProcessed = false;
+    private readonly Spdx22Metadata metadata = new ();
 
     // For unit tests only.
     private readonly bool ignoreValidation = false;
@@ -76,7 +79,6 @@ public class SPDXParser : ISbomParser
         buffer = new byte[bufferSize];
         readerState = default;
         isFinalBlock = false;
-        stateChangedInPreviousOperation = false;
         this.ignoreValidation = ignoreValidation;
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
 
@@ -93,34 +95,40 @@ public class SPDXParser : ISbomParser
         }
     }
 
-    private readonly ManifestInfo spdxManifestInfo = new ManifestInfo
+    private readonly ManifestInfo spdxManifestInfo = new ()
     {
         Name = Constants.SPDXName,
         Version = Constants.SPDXVersion
     };
 
     /// <inheritdoc/>
-    public SBOMMetadata GetMetadata()
+    public Spdx22Metadata GetMetadata()
     {
-        throw new NotImplementedException();
+        metadataStateProcessed = true;
+        CurrentState = ParserState.FINISHED;
+        return metadata;
     }
 
     /// <inheritdoc/>
     public ParserState Next()
     {
-        if (parserState == ParserState.FINISHED
-            || (stateChangedInPreviousOperation && parserState != ParserState.INTERNAL_SKIP))
+        if (parserState == ParserState.METADATA ||
+            (parserState != ParserState.NONE && parserState != ParserState.INTERNAL_SKIP && parserState != ParserState.INTERNAL_METADATA))
         {
             return parserState;
         }
 
-        var nextState = stateChangedInPreviousOperation ? parserState : MoveToNextState();
+        var nextState = parserState == ParserState.NONE ? MoveToNextState() : parserState;
         if (nextState == ParserState.INTERNAL_SKIP)
         {
             nextState = SkipInternalProperties();
         }
 
-        stateChangedInPreviousOperation = false;
+        if (nextState == ParserState.INTERNAL_METADATA) 
+        {
+            nextState = ProcessInternalMetadataProperties();
+        }
+
         CurrentState = nextState;
         return nextState;
         
@@ -140,17 +148,20 @@ public class SPDXParser : ISbomParser
 
                 var parser = new RootPropertiesParser(stream);
                 var result = parser.MoveNext(ref buffer, ref reader);
+                var resultState = result.State;
+                currentRootPropertyName = result.PropertyName;
+                nextTokenString = result.NextToken;
 
                 // The caller always closes the ending }
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    result = ParserState.FINISHED;
+                    resultState = ParserState.METADATA;
                 }
 
                 isFinalBlock = reader.IsFinalBlock;
                 readerState = reader.CurrentState;
-                return result;
+                return resultState;
             }
             catch (JsonException e)
             {
@@ -159,8 +170,77 @@ public class SPDXParser : ISbomParser
         }
     }
 
+    private ParserState ProcessInternalMetadataProperties()
+    {
+        ParserState internalParserState;
+        do
+        {
+            internalParserState = ProcessPropertyInternal();
+        }
+        while (internalParserState == ParserState.INTERNAL_METADATA);
+
+        return internalParserState;
+
+        ParserState ProcessPropertyInternal()
+        {
+            var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
+            
+            // The root properties parser consumes the value of the property as well. For example,
+            // "spdxId": "SPDXID", root parser would have already consumed the SPDXID string. To 
+            // work around this issue, the root parser will return the next token which we store in 
+            // nextTokenString and use it here instead of doing a reader.ReadString().
+            switch (currentRootPropertyName)
+            {
+                case Constants.SPDXVersionHeaderName:
+                    metadata.SpdxVersion = nextTokenString;
+                    break;
+                case Constants.DataLicenseHeaderName:
+                    metadata.DataLicense = nextTokenString;
+                    break;
+                case Constants.DocumentNameHeaderName:
+                    metadata.Name = nextTokenString;
+                    break;
+                case Constants.DocumentNamespaceHeaderName:
+                    if (string.IsNullOrEmpty(nextTokenString))
+                    {
+                        throw new ParserException($"Document namespace URI is null or empty.");
+                    }
+
+                    metadata.DocumentNamespace = new Uri(nextTokenString);
+                    break;
+                case Constants.CreationInfoHeaderName:
+                    var parser = new CreationInfoParser(stream);
+                    metadata.CreationInfo = parser.GetCreationInfo(ref buffer, ref reader);
+                    break;
+                case Constants.DocumentDescribesHeaderName:
+                    metadata.DocumentDescribes = ParserUtils.ParseListOfStrings(stream, ref reader, ref buffer);
+                    break;
+                case Constants.SPDXIDHeaderName:
+                    metadata.SpdxId = nextTokenString;
+                    break;
+                default:
+                    throw new ParserException($"Unknown metadata property {currentRootPropertyName} found while parsing metadata.");
+            }
+
+            var rootPropertiesParser = new RootPropertiesParser(stream);
+            var result = rootPropertiesParser.MoveNext(ref buffer, ref reader);
+            ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
+
+            isFinalBlock = reader.IsFinalBlock;
+            readerState = reader.CurrentState;
+            currentRootPropertyName = result.PropertyName;
+            nextTokenString = result.NextToken;
+            return result.State;
+        }
+    }
+
     private void ValidateParsingComplete()
     {
+        if (!metadataStateProcessed)
+        {
+            throw new ParserException($"Parser has reached the Finished state while we are still processing some properties.");
+        }
+
         var isPackageArrayProcessing = isPackageArrayParsingStarted && !isPackageArrayParsingFinished;
         var isFileArrayProcessing = isFileArrayParsingStarted && !isFileArrayParsingFinished;
         var isRelationshipArrayProcessing = isRelationshipArrayParsingStarted && !isRelationshipArrayParsingFinished;
@@ -210,12 +290,14 @@ public class SPDXParser : ISbomParser
             ParserUtils.SkipProperty(stream, ref buffer, ref reader);
 
             var rootPropertiesParser = new RootPropertiesParser(stream);
-            var parserState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
+            var result = rootPropertiesParser.MoveNext(ref buffer, ref reader);
             ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
 
             isFinalBlock = reader.IsFinalBlock;
             readerState = reader.CurrentState;
-            return parserState;
+            currentRootPropertyName = result.PropertyName;
+            nextTokenString = result.NextToken;
+            return result.State;
         }
     }
 
@@ -263,8 +345,11 @@ public class SPDXParser : ISbomParser
                 if (reader.TokenType == JsonTokenType.EndArray)
                 {
                     var rootPropertiesParser = new RootPropertiesParser(stream);
-                    CurrentState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
-                    stateChangedInPreviousOperation = true;
+                    var rootParserResult = rootPropertiesParser.MoveNext(ref buffer, ref reader);
+                    CurrentState = rootParserResult.State;
+                    currentRootPropertyName = rootParserResult.PropertyName;
+                    nextTokenString = rootParserResult.NextToken;
+
                     isExternalReferencesArrayParsingFinished = true;
                 }
 
@@ -287,12 +372,12 @@ public class SPDXParser : ISbomParser
             throw new ParserException($"The parser is not currently enumerating relationships. Current state: {CurrentState}");
         }
 
-        while (GetPackages(stream, out SPDXRelationship sbomRelationship) != 0)
+        while (GetRelationships(stream, out SPDXRelationship sbomRelationship) != 0)
         {
             yield return sbomRelationship.ToSbomRelationship();
         }
 
-        long GetPackages(Stream stream, out SPDXRelationship sbomRelationship)
+        long GetRelationships(Stream stream, out SPDXRelationship sbomRelationship)
         {
             try
             {
@@ -323,8 +408,11 @@ public class SPDXParser : ISbomParser
                 if (reader.TokenType == JsonTokenType.EndArray)
                 {
                     var rootPropertiesParser = new RootPropertiesParser(stream);
-                    CurrentState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
-                    stateChangedInPreviousOperation = true;
+                    var rootParserResult = rootPropertiesParser.MoveNext(ref buffer, ref reader);
+                    CurrentState = rootParserResult.State;
+                    currentRootPropertyName = rootParserResult.PropertyName;
+                    nextTokenString = rootParserResult.NextToken;
+                    
                     isRelationshipArrayParsingFinished = true;
                 }
 
@@ -383,8 +471,11 @@ public class SPDXParser : ISbomParser
                 if (reader.TokenType == JsonTokenType.EndArray)
                 {
                     var rootPropertiesParser = new RootPropertiesParser(stream);
-                    CurrentState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
-                    stateChangedInPreviousOperation = true;
+                    var rootParserResult = rootPropertiesParser.MoveNext(ref buffer, ref reader);
+                    CurrentState = rootParserResult.State;
+                    currentRootPropertyName = rootParserResult.PropertyName;
+                    nextTokenString = rootParserResult.NextToken;
+                    
                     isPackageArrayParsingFinished = true;
                 }
 
@@ -443,8 +534,11 @@ public class SPDXParser : ISbomParser
                 if (reader.TokenType == JsonTokenType.EndArray)
                 {
                     var rootPropertiesParser = new RootPropertiesParser(stream);
-                    CurrentState = rootPropertiesParser.MoveNext(ref buffer, ref reader);
-                    stateChangedInPreviousOperation = true;
+                    var rootParserResult = rootPropertiesParser.MoveNext(ref buffer, ref reader);
+                    CurrentState = rootParserResult.State;
+                    currentRootPropertyName = rootParserResult.PropertyName;
+                    nextTokenString = rootParserResult.NextToken;
+                    
                     isFileArrayParsingFinished = true;
                 }
 

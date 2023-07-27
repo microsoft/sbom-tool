@@ -46,6 +46,12 @@ public enum ParserState
     INTERNAL_SKIP,
 
     /// <summary>
+    /// The parser is in a state where its processing a metadata property. In this state
+    /// the metadata object is not yet complete. This parser should never be in this state externally.
+    /// </summary>
+    INTERNAL_METADATA,
+
+    /// <summary>
     /// The parser has completed parsing the SBOM.
     /// </summary>
     FINISHED

@@ -116,6 +116,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                         case Contracts.Enums.ParserState.NONE:
                             break;
                         case Contracts.Enums.ParserState.METADATA:
+                            _ = sbomParser.GetMetadata();
                             break;
                         case Contracts.Enums.ParserState.INTERNAL_SKIP:
                             break;

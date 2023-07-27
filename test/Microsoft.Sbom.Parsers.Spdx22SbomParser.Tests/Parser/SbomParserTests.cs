@@ -42,6 +42,10 @@ public class SbomParserTests
         Assert.AreEqual(0, parser.GetReferences().Count());
 
         state = parser.Next();
+        Assert.AreEqual(ParserState.METADATA, state);
+        _ = parser.GetMetadata();
+
+        state = parser.Next();
         Assert.AreEqual(ParserState.FINISHED, state);
     }
 
@@ -116,6 +120,12 @@ public class SbomParserTests
             {
                 // Do nothing.
                 parser.GetRelationships().ToList();
+            }
+
+            if (parser.CurrentState == ParserState.METADATA)
+            {
+                // Do nothing
+                _ = parser.GetMetadata();
             }
         }
     }
