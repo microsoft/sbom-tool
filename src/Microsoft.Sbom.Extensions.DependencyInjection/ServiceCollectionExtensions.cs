@@ -91,7 +91,7 @@ public static class ServiceCollectionExtensions
                     .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
                     .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
                     .CreateBootstrapLogger();
-            })  
+            })
             .AddTransient<IWorkflow<SbomValidationWorkflow>, SbomValidationWorkflow>()
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
