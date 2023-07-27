@@ -104,8 +104,8 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public Spdx22Metadata GetMetadata()
     {
-        CurrentState = ParserState.FINISHED;
         metadataStateProcessed = true;
+        CurrentState = ParserState.FINISHED;
         return metadata;
     }
 
