@@ -189,7 +189,7 @@ public static class ServiceCollectionExtensions
             .ConfigureLoggingProviders()
             .ConfigureComponentDetectors()
             .ConfigureComponentDetectionSharedServices()
-            .ConfigureComponentDetectionCommandLineServices();
+            .ConfigureComponentDetectionCommandLineServices(logLevel);
 
         return services;
     }
@@ -215,7 +215,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection ConfigureComponentDetectionCommandLineServices(this IServiceCollection services)
+    public static IServiceCollection ConfigureComponentDetectionCommandLineServices(this IServiceCollection services, LogEventLevel logLevel)
     {
         services.AddSingleton<IScanArguments, BcdeArguments>();
         services.AddSingleton<IScanArguments, BcdeDevArguments>();
@@ -227,8 +227,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IDetectorProcessingService, DetectorProcessingService>();
         services.AddSingleton<ILogger<DetectorProcessingService>>(x =>
          {
-             // Override lower log levels to Information for Orchestrator
-             var logLevel = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? LogEventLevel.Information;
              if (logLevel == LogEventLevel.Warning || logLevel == LogEventLevel.Error || logLevel == LogEventLevel.Fatal)
              {
                  logLevel = LogEventLevel.Information;
