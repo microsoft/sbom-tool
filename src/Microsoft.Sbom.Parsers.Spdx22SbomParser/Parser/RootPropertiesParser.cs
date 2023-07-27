@@ -49,7 +49,7 @@ internal ref struct RootPropertiesParser
             // If the end of the Json Object is reached, return parser Finished state.
             if (reader.TokenType == JsonTokenType.EndObject)
             {
-                return new ParserStateResult(ParserState.FINISHED, null);
+                return new ParserStateResult(ParserState.METADATA, null);
             }
 
             ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);

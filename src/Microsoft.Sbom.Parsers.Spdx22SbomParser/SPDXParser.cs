@@ -1,11 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.PortableExecutable;
 using System.Text.Json;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
@@ -45,6 +43,7 @@ public class SPDXParser : ISbomParser
     private bool isFinalBlock;
     private string? currentRootPropertyName;
     private string? nextTokenString;
+    private bool metadataStateProcessed = false;
     private readonly Spdx22Metadata metadata = new ();
 
     // For unit tests only.
@@ -104,13 +103,14 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public Spdx22Metadata GetMetadata()
     {
-        throw new NotImplementedException();
+        parserState = ParserState.FINISHED;
+        return metadata;
     }
 
     /// <inheritdoc/>
     public ParserState Next()
     {
-        if (parserState == ParserState.FINISHED ||
+        if (parserState == ParserState.METADATA ||
             (parserState != ParserState.NONE && parserState != ParserState.INTERNAL_SKIP && parserState != ParserState.INTERNAL_METADATA))
         {
             return parserState;
@@ -154,7 +154,7 @@ public class SPDXParser : ISbomParser
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
                     ParserUtils.Read(stream, ref buffer, ref reader);
-                    resultState = ParserState.FINISHED;
+                    resultState = ParserState.METADATA;
                 }
 
                 isFinalBlock = reader.IsFinalBlock;
@@ -225,6 +225,11 @@ public class SPDXParser : ISbomParser
 
     private void ValidateParsingComplete()
     {
+        if (!metadataStateProcessed)
+        {
+            throw new ParserException($"Parser has reached the Finished state while we are still processing some properties.");
+        }
+
         var isPackageArrayProcessing = isPackageArrayParsingStarted && !isPackageArrayParsingFinished;
         var isFileArrayProcessing = isFileArrayParsingStarted && !isFileArrayParsingFinished;
         var isRelationshipArrayProcessing = isRelationshipArrayParsingStarted && !isRelationshipArrayParsingFinished;
