@@ -18,6 +18,7 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog.Events;
+using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
@@ -55,7 +56,7 @@ public class SBOMComponentsWalkerTests
             scannedComponents.Add(scannedComponent);
         }
 
-        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
+        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
 
         var scanResult = new ScanResult
         {
@@ -100,7 +101,7 @@ public class SBOMComponentsWalkerTests
         };
         scannedComponents.Add(nonSbomComponent);
 
-        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
+        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
 
         var scanResult = new ScanResult
         {

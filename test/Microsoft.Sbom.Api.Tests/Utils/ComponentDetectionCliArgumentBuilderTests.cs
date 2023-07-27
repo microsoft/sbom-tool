@@ -36,7 +36,7 @@ public class ComponentDetectionCliArgumentBuilderTests
 
         var builder = new ComponentDetectionCliArgumentBuilder()
             .Scan()
-            .Verbosity(ComponentDetection.Common.VerbosityMode.Verbose)
+            .Verbosity(ComponentDetection.Contracts.VerbosityMode.Verbose)
             .SourceDirectory("X:/hello/world");
 
         var result = builder.Build();
@@ -139,7 +139,7 @@ public class ComponentDetectionCliArgumentBuilderTests
 
         var builder = new ComponentDetectionCliArgumentBuilder()
             .Scan()
-            .Verbosity(ComponentDetection.Common.VerbosityMode.Normal)
+            .Verbosity(ComponentDetection.Contracts.VerbosityMode.Normal)
             .SourceDirectory("X:/")
             .ParseAndAddArgs("--ManifestFile Hello --DirectoryExclusionList X:/hello")
             .AddArg("Help");
@@ -229,7 +229,7 @@ public class ComponentDetectionCliArgumentBuilderTests
 
         var build = new ComponentDetectionCliArgumentBuilder()
             .Scan()
-            .Verbosity(ComponentDetection.Common.VerbosityMode.Verbose)
+            .Verbosity(ComponentDetection.Contracts.VerbosityMode.Verbose)
             .SourceDirectory("X:/path with spaces/")
             .AddDetectorArg("DetectorName", "X:/complex/path with spaces");
 

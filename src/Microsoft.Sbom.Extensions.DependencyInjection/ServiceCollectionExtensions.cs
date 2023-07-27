@@ -2,7 +2,33 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Concurrent;
+using Microsoft.ComponentDetection.Common;
+using Microsoft.ComponentDetection.Contracts;
+using Microsoft.ComponentDetection.Detectors.CocoaPods;
+using Microsoft.ComponentDetection.Detectors.Dockerfile;
+using Microsoft.ComponentDetection.Detectors.Go;
+using Microsoft.ComponentDetection.Detectors.Gradle;
+using Microsoft.ComponentDetection.Detectors.Ivy;
+using Microsoft.ComponentDetection.Detectors.Linux;
+using Microsoft.ComponentDetection.Detectors.Maven;
+using Microsoft.ComponentDetection.Detectors.Npm;
+using Microsoft.ComponentDetection.Detectors.NuGet;
+using Microsoft.ComponentDetection.Detectors.Pip;
+using Microsoft.ComponentDetection.Detectors.Pnpm;
+using Microsoft.ComponentDetection.Detectors.Poetry;
+using Microsoft.ComponentDetection.Detectors.Ruby;
+using Microsoft.ComponentDetection.Detectors.Rust;
+using Microsoft.ComponentDetection.Detectors.Spdx;
+using Microsoft.ComponentDetection.Detectors.Vcpkg;
+using Microsoft.ComponentDetection.Detectors.Yarn;
+using Microsoft.ComponentDetection.Detectors.Yarn.Parsers;
+using Microsoft.ComponentDetection.Orchestrator;
+using Microsoft.ComponentDetection.Orchestrator.ArgumentSets;
+using Microsoft.ComponentDetection.Orchestrator.Experiments;
+using Microsoft.ComponentDetection.Orchestrator.Services;
+using Microsoft.ComponentDetection.Orchestrator.Services.GraphTranslation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Extensions;
@@ -32,6 +58,8 @@ using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Extensions.Logging;
+using IComponentDetector = Microsoft.ComponentDetection.Contracts.IComponentDetector;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Extensions.DependencyInjection;
@@ -59,9 +87,10 @@ public static class ServiceCollectionExtensions
             .AddTransient<ILogger>(x =>
             {
                 logLevel = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? logLevel;
-                return new LoggerConfiguration().MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
+                return Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
                     .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
-                    .CreateLogger();
+                    .CreateBootstrapLogger();
             })
             .AddTransient<IWorkflow<SbomValidationWorkflow>, SbomValidationWorkflow>()
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
@@ -94,7 +123,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>, ExternalDocumentReferenceGenerator>()
             .AddTransient<RelationshipGenerator>()
             .AddTransient<ConfigSanitizer>()
-            .AddTransient<ComponentDetector>()
+            .AddTransient<Api.Utils.IComponentDetector, ComponentDetector>()
             .AddTransient<IMetadataBuilderFactory, MetadataBuilderFactory>()
             .AddTransient<FileInfoWriter>()
             .AddTransient<ComponentToExternalReferenceInfoConverter>()
@@ -155,8 +184,121 @@ public static class ServiceCollectionExtensions
                     manifestData.HashesMap = new ConcurrentDictionary<string, Checksum[]>(manifestData.HashesMap, osUtils.GetFileSystemStringComparer());
                 }
 
-                return manifestData;          
-            }); 
+                return manifestData;
+            })
+            .ConfigureLoggingProviders()
+            .ConfigureComponentDetectors()
+            .ConfigureComponentDetectionSharedServices()
+            .ConfigureComponentDetectionCommandLineServices(logLevel);
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureLoggingProviders(this IServiceCollection services)
+    {
+        var providers = new LoggerProviderCollection();
+        services.AddSingleton(providers);
+        services.AddSingleton<ILoggerFactory>(sc =>
+        {
+            var providerCollection = sc.GetService<LoggerProviderCollection>();
+            var factory = new SerilogLoggerFactory(null, true, providerCollection);
+
+            foreach (var provider in sc.GetServices<ILoggerProvider>())
+            {
+                factory.AddProvider(provider);
+            }
+
+            return factory;
+        });
+        services.AddLogging(l => l.AddFilter<SerilogLoggerProvider>(null, LogLevel.Trace));
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureComponentDetectionCommandLineServices(this IServiceCollection services, LogEventLevel logLevel)
+    {
+        services.AddSingleton<IScanArguments, BcdeArguments>();
+        services.AddSingleton<IScanArguments, BcdeDevArguments>();
+        services.AddSingleton<IScanArguments, ListDetectionArgs>();
+        services.AddSingleton<IArgumentHandlingService, BcdeDevCommandService>();
+        services.AddSingleton<IArgumentHandlingService, BcdeScanCommandService>();
+        services.AddSingleton<IArgumentHandlingService, DetectorListingCommandService>();
+        services.AddSingleton<IBcdeScanExecutionService, BcdeScanExecutionService>();
+        services.AddSingleton<IDetectorProcessingService, DetectorProcessingService>();
+        services.AddSingleton<ILogger<DetectorProcessingService>>(x =>
+         {
+             if (logLevel == LogEventLevel.Warning || logLevel == LogEventLevel.Error || logLevel == LogEventLevel.Fatal)
+             {
+                 logLevel = LogEventLevel.Information;
+             }
+             
+             // Customize the logging configuration for Orchestrator here
+             Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
+                .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
+                .CreateBootstrapLogger();
+             
+             return new SerilogLoggerConverter<DetectorProcessingService>(Log.Logger);
+         });
+        services.AddSingleton<IDetectorRestrictionService, DetectorRestrictionService>();
+        services.AddSingleton<IArgumentHelper, ArgumentHelper>();
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureComponentDetectionSharedServices(this IServiceCollection services)
+    {
+        services.AddSingleton<Orchestrator>();
+        services.AddSingleton<IFileWritingService, FileWritingService>();
+        services.AddSingleton<IArgumentHelper, ArgumentHelper>();
+        services.AddSingleton<ICommandLineInvocationService, CommandLineInvocationService>();
+        services.AddSingleton<IComponentStreamEnumerableFactory, ComponentStreamEnumerableFactory>();
+        services.AddSingleton<IConsoleWritingService, ConsoleWritingService>();
+        services.AddSingleton<IDockerService, DockerService>();
+        services.AddSingleton<IEnvironmentVariableService, EnvironmentVariableService>();
+        services.AddSingleton<IObservableDirectoryWalkerFactory, FastDirectoryWalkerFactory>();
+        services.AddSingleton<IFileUtilityService, FileUtilityService>();
+        services.AddSingleton<IFileWritingService, FileWritingService>();
+        services.AddSingleton<IGraphTranslationService, DefaultGraphTranslationService>();
+        services.AddSingleton<IPathUtilityService, PathUtilityService>();
+        services.AddSingleton<ISafeFileEnumerableFactory, SafeFileEnumerableFactory>();
+        services.AddSingleton<IExperimentService, ExperimentService>();
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureComponentDetectors(this IServiceCollection services)
+    {
+        services.AddSingleton<IComponentDetector, PodComponentDetector>();
+        services.AddSingleton<IComponentDetector, CondaLockComponentDetector>();
+        services.AddSingleton<IComponentDetector, DockerfileComponentDetector>();
+        services.AddSingleton<IComponentDetector, GoComponentDetector>();
+        services.AddSingleton<IComponentDetector, GradleComponentDetector>();
+        services.AddSingleton<IComponentDetector, IvyDetector>();
+        services.AddSingleton<ILinuxScanner, LinuxScanner>();
+        services.AddSingleton<IComponentDetector, LinuxContainerDetector>();
+        services.AddSingleton<IMavenCommandService, MavenCommandService>();
+        services.AddSingleton<IMavenStyleDependencyGraphParserService, MavenStyleDependencyGraphParserService>();
+        services.AddSingleton<IComponentDetector, MvnCliComponentDetector>();
+        services.AddSingleton<IComponentDetector, NpmComponentDetector>();
+        services.AddSingleton<IComponentDetector, NpmComponentDetectorWithRoots>();
+        services.AddSingleton<IComponentDetector, NpmLockfile3Detector>();
+        services.AddSingleton<IComponentDetector, NuGetComponentDetector>();
+        services.AddSingleton<IComponentDetector, NuGetPackagesConfigDetector>();
+        services.AddSingleton<IComponentDetector, NuGetProjectModelProjectCentricComponentDetector>();
+        services.AddSingleton<IPyPiClient, PyPiClient>();
+        services.AddSingleton<IPythonCommandService, PythonCommandService>();
+        services.AddSingleton<IPythonResolver, PythonResolver>();
+        services.AddSingleton<IComponentDetector, PipComponentDetector>();
+        services.AddSingleton<IComponentDetector, PnpmComponentDetector>();
+        services.AddSingleton<IComponentDetector, PoetryComponentDetector>();
+        services.AddSingleton<IComponentDetector, RubyComponentDetector>();
+        services.AddSingleton<IComponentDetector, RustCrateDetector>();
+        services.AddSingleton<IComponentDetector, Spdx22ComponentDetector>();
+        services.AddSingleton<IComponentDetector, VcpkgComponentDetector>();
+        services.AddSingleton<IYarnLockParser, YarnLockParser>();
+        services.AddSingleton<IYarnLockFileFactory, YarnLockFileFactory>();
+        services.AddSingleton<IComponentDetector, YarnLockComponentDetector>();
 
         return services;
     }
