@@ -6,6 +6,7 @@ using System.IO;
 using System.Text.Json;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Exceptions;
+using Microsoft.Sbom.Utils;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -18,6 +19,14 @@ internal ref struct RootPropertiesParser
     private const string PackagesProperty = "packages";
     private const string RelationshipsProperty = "relationships";
     private const string ExternalDocumentRefsProperty = "externalDocumentRefs";
+    private const string SpdxVersionProperty = "spdxVersion";
+    private const string DataLicenseProperty = "dataLicense";
+    private const string SpdxIdProperty = "SPDXID";
+    private const string NameProperty = "name";
+    private const string DocumentNamespaceProperty = "documentNamespace";
+    private const string CreationInfoProperty = "creationInfo";
+    private const string DocumentDescribesProperty = "documentDescribes";
+
     private readonly Stream stream;
 
     public RootPropertiesParser(Stream stream)
@@ -25,7 +34,7 @@ internal ref struct RootPropertiesParser
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
     }
 
-    internal ParserState MoveNext(ref byte[] buffer, ref Utf8JsonReader reader)
+    internal ParserStateResult MoveNext(ref byte[] buffer, ref Utf8JsonReader reader)
     {
         if (buffer is null || buffer.Length == 0)
         {
@@ -40,7 +49,7 @@ internal ref struct RootPropertiesParser
             // If the end of the Json Object is reached, return parser Finished state.
             if (reader.TokenType == JsonTokenType.EndObject)
             {
-                return ParserState.FINISHED;
+                return new ParserStateResult(ParserState.FINISHED, null);
             }
 
             ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);
@@ -48,7 +57,7 @@ internal ref struct RootPropertiesParser
         }
         catch (EndOfStreamException)
         {
-            return ParserState.FINISHED;
+            return new ParserStateResult(ParserState.FINISHED, null);
         }
         catch (JsonException e)
         {
@@ -56,20 +65,36 @@ internal ref struct RootPropertiesParser
         }
     }
 
-    private ParserState ParseNextPropertyAsParserState(ref Utf8JsonReader reader, ref byte[] buffer)
+    private ParserStateResult ParseNextPropertyAsParserState(ref Utf8JsonReader reader, ref byte[] buffer)
     {
-        var nextState = reader.GetString() switch
+        var propertyName = reader.GetString();
+        var nextState = propertyName switch
         {
             FilesProperty => ParserState.FILES,
             PackagesProperty => ParserState.PACKAGES,
             RelationshipsProperty => ParserState.RELATIONSHIPS,
             ExternalDocumentRefsProperty => ParserState.REFERENCES,
+            SpdxVersionProperty => ParserState.INTERNAL_METADATA,
+            DataLicenseProperty => ParserState.INTERNAL_METADATA,
+            SpdxIdProperty => ParserState.INTERNAL_METADATA,
+            NameProperty => ParserState.INTERNAL_METADATA,
+            DocumentNamespaceProperty => ParserState.INTERNAL_METADATA,
+            CreationInfoProperty => ParserState.INTERNAL_METADATA,
+            DocumentDescribesProperty => ParserState.INTERNAL_METADATA,
             _ => ParserState.INTERNAL_SKIP,
         };
 
         // Consume the PropertyName token.
         ParserUtils.Read(stream, ref buffer, ref reader);
+        var nextToken = string.Empty;
+        
+        // Capture the next token if the reader has already consumed it.
+        if (reader.TokenStartIndex < reader.BytesConsumed) 
+        {
+            nextToken = ParserUtils.GetNextTokenString(ref reader);
+        }
+
         ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
-        return nextState;
+        return new ParserStateResult(nextState, propertyName, nextToken);
     }
 }

@@ -42,6 +42,28 @@ internal class ParserUtils
         }
     }
 
+    public static string GetNextTokenString(ref Utf8JsonReader reader)
+    {
+        var tokenString = reader.TokenType switch
+        {
+            JsonTokenType.None => string.Empty,
+            JsonTokenType.StartObject => "{",
+            JsonTokenType.EndObject => "}",
+            JsonTokenType.StartArray => "[",
+            JsonTokenType.EndArray => "]",
+            JsonTokenType.PropertyName => reader.GetString(),
+            JsonTokenType.Comment => reader.GetComment(),
+            JsonTokenType.String => reader.GetString(),
+            JsonTokenType.Number => reader.TryGetInt64(out var l) ? l.ToString() : reader.GetDouble().ToString(),
+            JsonTokenType.True => "true",
+            JsonTokenType.False => "false",
+            JsonTokenType.Null => "null",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        return tokenString ?? string.Empty;
+    }
+
     /// <summary>
     /// Asserts if the reader is at the current expected token.
     /// </summary>
