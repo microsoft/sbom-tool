@@ -1,5 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -94,7 +97,7 @@ public class SPDXParser : ISbomParser
         }
     }
 
-    private readonly ManifestInfo spdxManifestInfo = new ManifestInfo
+    private readonly ManifestInfo spdxManifestInfo = new ()
     {
         Name = Constants.SPDXName,
         Version = Constants.SPDXVersion
@@ -103,7 +106,8 @@ public class SPDXParser : ISbomParser
     /// <inheritdoc/>
     public Spdx22Metadata GetMetadata()
     {
-        parserState = ParserState.FINISHED;
+        CurrentState = ParserState.FINISHED;
+        metadataStateProcessed = true;
         return metadata;
     }
 
@@ -183,6 +187,10 @@ public class SPDXParser : ISbomParser
         {
             var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
             
+            // The root properties parser consumes the value of the property as well. For example,
+            // "spdxId": "SPDXID", root parser would have already consumed the SPDXID string. To 
+            // work around this issue, the root parser will return the next token which we store in 
+            // nextTokenString and use it here instead of doing a reader.ReadString().
             switch (currentRootPropertyName)
             {
                 case Constants.SPDXVersionHeaderName:
@@ -195,6 +203,11 @@ public class SPDXParser : ISbomParser
                     metadata.Name = nextTokenString;
                     break;
                 case Constants.DocumentNamespaceHeaderName:
+                    if (string.IsNullOrEmpty(nextTokenString))
+                    {
+                        throw new ParserException($"Document namespace URI is null or empty.");
+                    }
+
                     metadata.DocumentNamespace = new Uri(nextTokenString);
                     break;
                 case Constants.CreationInfoHeaderName:

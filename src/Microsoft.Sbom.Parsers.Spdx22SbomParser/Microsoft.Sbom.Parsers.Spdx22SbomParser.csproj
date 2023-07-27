@@ -6,7 +6,6 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>SPDX2.2 parser for SBOM tool.</Description>
     <SignAssembly>True</SignAssembly>
-    <Nullable>enable</Nullable>
     <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
