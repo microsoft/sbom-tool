@@ -46,7 +46,7 @@ public class SPDXParser : ISbomParser
     private string? nextTokenString;
     private bool metadataStateProcessed = false;
     private readonly Spdx22Metadata metadata = new();
-    private IEnumerable<ParserState> statesToSkip;
+    private readonly IEnumerable<ParserState> statesToSkip;
 
     // For unit tests only.
     private readonly bool ignoreValidation = false;
@@ -70,7 +70,7 @@ public class SPDXParser : ISbomParser
     }
 
     public SPDXParser(Stream stream)
-        : this(stream, Array.Empty<ParserState>(), Constants.ReadBufferSize, false)
+        : this(stream, Enumerable.Empty<ParserState>(), Constants.ReadBufferSize, false)
     {
     }
 
@@ -229,7 +229,7 @@ public class SPDXParser : ISbomParser
                     throw new ParserException($"Unknown metadata property {currentRootPropertyName} found while parsing metadata.");
             }
 
-            var rootPropertiesParser = new RootPropertiesParser(stream);
+            var rootPropertiesParser = new RootPropertiesParser(stream, this.statesToSkip);
             var result = rootPropertiesParser.MoveNext(ref buffer, ref reader);
             ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
 
@@ -259,17 +259,17 @@ public class SPDXParser : ISbomParser
         }
 
         var missingProps = new List<string>();
-        if (!isPackageArrayParsingStarted)
+        if (!isPackageArrayParsingStarted && !this.statesToSkip.Contains(ParserState.PACKAGES))
         {
             missingProps.Add("packages");
         }
 
-        if (!isFileArrayParsingStarted)
+        if (!isFileArrayParsingStarted && !this.statesToSkip.Contains(ParserState.FILES))
         {
             missingProps.Add("files");
         }
 
-        if (!isRelationshipArrayParsingStarted)
+        if (!isRelationshipArrayParsingStarted && !this.statesToSkip.Contains(ParserState.FILES))
         {
             missingProps.Add("relationships");
         }
@@ -296,7 +296,7 @@ public class SPDXParser : ISbomParser
             var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
             ParserUtils.SkipProperty(stream, ref buffer, ref reader);
 
-            var rootPropertiesParser = new RootPropertiesParser(stream);
+            var rootPropertiesParser = new RootPropertiesParser(stream, this.statesToSkip);
             var result = rootPropertiesParser.MoveNext(ref buffer, ref reader);
             ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);
 
@@ -351,7 +351,7 @@ public class SPDXParser : ISbomParser
 
                 if (reader.TokenType == JsonTokenType.EndArray)
                 {
-                    var rootPropertiesParser = new RootPropertiesParser(stream);
+                    var rootPropertiesParser = new RootPropertiesParser(stream, this.statesToSkip);
                     var rootParserResult = rootPropertiesParser.MoveNext(ref buffer, ref reader);
                     CurrentState = rootParserResult.State;
                     currentRootPropertyName = rootParserResult.PropertyName;
@@ -414,7 +414,7 @@ public class SPDXParser : ISbomParser
 
                 if (reader.TokenType == JsonTokenType.EndArray)
                 {
-                    var rootPropertiesParser = new RootPropertiesParser(stream);
+                    var rootPropertiesParser = new RootPropertiesParser(stream, this.statesToSkip);
                     var rootParserResult = rootPropertiesParser.MoveNext(ref buffer, ref reader);
                     CurrentState = rootParserResult.State;
                     currentRootPropertyName = rootParserResult.PropertyName;
@@ -477,7 +477,7 @@ public class SPDXParser : ISbomParser
 
                 if (reader.TokenType == JsonTokenType.EndArray)
                 {
-                    var rootPropertiesParser = new RootPropertiesParser(stream);
+                    var rootPropertiesParser = new RootPropertiesParser(stream, this.statesToSkip);
                     var rootParserResult = rootPropertiesParser.MoveNext(ref buffer, ref reader);
                     CurrentState = rootParserResult.State;
                     currentRootPropertyName = rootParserResult.PropertyName;
@@ -540,7 +540,7 @@ public class SPDXParser : ISbomParser
 
                 if (reader.TokenType == JsonTokenType.EndArray)
                 {
-                    var rootPropertiesParser = new RootPropertiesParser(stream);
+                    var rootPropertiesParser = new RootPropertiesParser(stream, this.statesToSkip);
                     var rootParserResult = rootPropertiesParser.MoveNext(ref buffer, ref reader);
                     CurrentState = rootParserResult.State;
                     currentRootPropertyName = rootParserResult.PropertyName;

@@ -209,7 +209,7 @@ internal class ParserUtils
                 }
 
                 Read(stream, ref buffer, ref reader);
-                
+
                 if (reader.TokenType == JsonTokenType.StartObject)
                 {
                     objectCount++;
@@ -260,6 +260,11 @@ internal class ParserUtils
         else
         {
             bytesRead = stream.Read(buffer);
+
+            if (bytesRead < buffer.Length)
+            {
+                bytesRead = stream.Read(buffer.AsSpan(bytesRead));
+            }
         }
 
         reader = new Utf8JsonReader(buffer, isFinalBlock: bytesRead == 0, reader.CurrentState);
