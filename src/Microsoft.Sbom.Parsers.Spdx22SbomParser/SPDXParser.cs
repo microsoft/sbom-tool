@@ -96,7 +96,7 @@ public class SPDXParser : ISbomParser
         }
     }
 
-    private readonly ManifestInfo spdxManifestInfo = new()
+    private readonly ManifestInfo spdxManifestInfo = new ()
     {
         Name = Constants.SPDXName,
         Version = Constants.SPDXVersion
@@ -104,6 +104,11 @@ public class SPDXParser : ISbomParser
 
     public void SkipStates(IEnumerable<ParserState> statesToSkip)
     {
+        if (this.parserState != ParserState.NONE)
+        {
+            throw new InvalidOperationException($"{SkipStates} can only be called before the first call to Next().");
+        }
+
         this.statesToSkip = statesToSkip;
     }
 

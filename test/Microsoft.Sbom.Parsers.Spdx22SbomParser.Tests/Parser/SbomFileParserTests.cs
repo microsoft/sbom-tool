@@ -13,12 +13,36 @@ namespace Microsoft.Sbom.Parser;
 public class SbomFileParserTests
 {
     [TestMethod]
+    public void SkipSbomFiles_AfterNextFailsTest()
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);
+        using var stream = new MemoryStream(bytes);
+
+        SPDXParser parser = new (stream, ignoreValidation: true);
+        while (parser.Next() != ParserState.FINISHED)
+        {
+            if (parser.CurrentState == ParserState.METADATA)
+            {
+                parser.GetMetadata();
+                break;
+            }
+            else if (parser.CurrentState == ParserState.FILES)
+            {
+                parser.GetFiles();
+                break;
+            }
+        }
+
+        Assert.ThrowsException<InvalidOperationException>(() => parser.SkipStates(new[] { ParserState.FILES }));
+    }
+
+    [TestMethod]
     public void SkipSbomFilesTest()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, ignoreValidation: true);
+        SPDXParser parser = new (stream, ignoreValidation: true);
         parser.SkipStates(new[] { ParserState.FILES });
         while (parser.Next() != ParserState.FINISHED)
         {
