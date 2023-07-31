@@ -46,7 +46,7 @@ public class SPDXParser : ISbomParser
     private string? nextTokenString;
     private bool metadataStateProcessed = false;
     private readonly Spdx22Metadata metadata = new();
-    private IEnumerable<ParserState>? statesToSkip;
+    private IEnumerable<ParserState> statesToSkip;
 
     // For unit tests only.
     private readonly bool ignoreValidation = false;
@@ -70,16 +70,22 @@ public class SPDXParser : ISbomParser
     }
 
     public SPDXParser(Stream stream)
-        : this(stream, Constants.ReadBufferSize, false)
+        : this(stream, Array.Empty<ParserState>(), Constants.ReadBufferSize, false)
+    {
+    }
+
+    public SPDXParser(Stream stream, IEnumerable<ParserState> statesToSkip)
+        : this(stream, statesToSkip, Constants.ReadBufferSize, false)
     {
     }
 
     // Used in unit tests
-    internal SPDXParser(Stream stream, int bufferSize = Constants.ReadBufferSize, bool ignoreValidation = false)
+    internal SPDXParser(Stream stream, IEnumerable<ParserState> statesToSkip, int bufferSize = Constants.ReadBufferSize, bool ignoreValidation = false)
     {
         buffer = new byte[bufferSize];
         readerState = default;
         isFinalBlock = false;
+        this.statesToSkip = statesToSkip;
         this.ignoreValidation = ignoreValidation;
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
 
@@ -101,16 +107,6 @@ public class SPDXParser : ISbomParser
         Name = Constants.SPDXName,
         Version = Constants.SPDXVersion
     };
-
-    public void SkipStates(IEnumerable<ParserState> statesToSkip)
-    {
-        if (this.parserState != ParserState.NONE)
-        {
-            throw new InvalidOperationException($"{SkipStates} can only be called before the first call to Next().");
-        }
-
-        this.statesToSkip = statesToSkip;
-    }
 
     /// <inheritdoc/>
     public Spdx22Metadata GetMetadata()
