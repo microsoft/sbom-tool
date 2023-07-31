@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Exceptions;
@@ -28,10 +30,12 @@ internal ref struct RootPropertiesParser
     private const string DocumentDescribesProperty = "documentDescribes";
 
     private readonly Stream stream;
+    private readonly IEnumerable<ParserState> statesToSkip;
 
-    public RootPropertiesParser(Stream stream)
+    public RootPropertiesParser(Stream stream, IEnumerable<ParserState>? statesToSkip = null)
     {
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
+        this.statesToSkip = statesToSkip ?? Enumerable.Empty<ParserState>();
     }
 
     internal ParserStateResult MoveNext(ref byte[] buffer, ref Utf8JsonReader reader)
@@ -68,6 +72,7 @@ internal ref struct RootPropertiesParser
     private ParserStateResult ParseNextPropertyAsParserState(ref Utf8JsonReader reader, ref byte[] buffer)
     {
         var propertyName = reader.GetString();
+
         var nextState = propertyName switch
         {
             FilesProperty => ParserState.FILES,
@@ -87,11 +92,16 @@ internal ref struct RootPropertiesParser
         // Consume the PropertyName token.
         ParserUtils.Read(stream, ref buffer, ref reader);
         var nextToken = string.Empty;
-        
+
         // Capture the next token if the reader has already consumed it.
-        if (reader.TokenStartIndex < reader.BytesConsumed) 
+        if (reader.TokenStartIndex < reader.BytesConsumed)
         {
             nextToken = ParserUtils.GetNextTokenString(ref reader);
+        }
+
+        if (this.statesToSkip.Contains(nextState))
+        {
+            nextState = ParserState.INTERNAL_SKIP;
         }
 
         ParserUtils.GetMoreBytesFromStream(stream, ref buffer, ref reader);

@@ -45,40 +45,47 @@ public class SPDXParser : ISbomParser
     private string? currentRootPropertyName;
     private string? nextTokenString;
     private bool metadataStateProcessed = false;
-    private readonly Spdx22Metadata metadata = new ();
+    private readonly Spdx22Metadata metadata = new();
+    private IEnumerable<ParserState> statesToSkip;
 
     // For unit tests only.
     private readonly bool ignoreValidation = false;
 
     public ParserState CurrentState
     {
-        get 
+        get
         {
-            return parserState; 
+            return parserState;
         }
 
-        private set 
+        private set
         {
             if (value == ParserState.FINISHED && !ignoreValidation)
             {
                 ValidateParsingComplete();
             }
 
-            parserState = value; 
+            parserState = value;
         }
     }
 
     public SPDXParser(Stream stream)
-        : this(stream, Constants.ReadBufferSize, false)
+        : this(stream, Array.Empty<ParserState>(), Constants.ReadBufferSize, false)
+    {
+    }
+
+    public SPDXParser(Stream stream, IEnumerable<ParserState> statesToSkip)
+        : this(stream, statesToSkip, Constants.ReadBufferSize, false)
     {
     }
 
     // Used in unit tests
-    internal SPDXParser(Stream stream, int bufferSize = Constants.ReadBufferSize, bool ignoreValidation = false)
+    internal SPDXParser(Stream stream, IEnumerable<ParserState> statesToSkip, int bufferSize = Constants.ReadBufferSize, bool ignoreValidation = false)
     {
         buffer = new byte[bufferSize];
         readerState = default;
         isFinalBlock = false;
+        this.statesToSkip = statesToSkip;
         this.ignoreValidation = ignoreValidation;
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
 
@@ -124,14 +131,14 @@ public class SPDXParser : ISbomParser
             nextState = SkipInternalProperties();
         }
 
-        if (nextState == ParserState.INTERNAL_METADATA) 
+        if (nextState == ParserState.INTERNAL_METADATA)
         {
             nextState = ProcessInternalMetadataProperties();
         }
 
         CurrentState = nextState;
         return nextState;
-        
+
         ParserState MoveToNextState()
         {
             try
@@ -146,7 +153,7 @@ public class SPDXParser : ISbomParser
                     isParsingStarted = true;
                 }
 
-                var parser = new RootPropertiesParser(stream);
+                var parser = new RootPropertiesParser(stream, statesToSkip);
                 var result = parser.MoveNext(ref buffer, ref reader);
                 var resultState = result.State;
                 currentRootPropertyName = result.PropertyName;
@@ -184,7 +191,7 @@ public class SPDXParser : ISbomParser
         ParserState ProcessPropertyInternal()
         {
             var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
-            
+
             // The root properties parser consumes the value of the property as well. For example,
             // "spdxId": "SPDXID", root parser would have already consumed the SPDXID string. To 
             // work around this issue, the root parser will return the next token which we store in 
@@ -412,7 +419,7 @@ public class SPDXParser : ISbomParser
                     CurrentState = rootParserResult.State;
                     currentRootPropertyName = rootParserResult.PropertyName;
                     nextTokenString = rootParserResult.NextToken;
-                    
+
                     isRelationshipArrayParsingFinished = true;
                 }
 
@@ -475,7 +482,7 @@ public class SPDXParser : ISbomParser
                     CurrentState = rootParserResult.State;
                     currentRootPropertyName = rootParserResult.PropertyName;
                     nextTokenString = rootParserResult.NextToken;
-                    
+
                     isPackageArrayParsingFinished = true;
                 }
 
@@ -538,7 +545,7 @@ public class SPDXParser : ISbomParser
                     CurrentState = rootParserResult.State;
                     currentRootPropertyName = rootParserResult.PropertyName;
                     nextTokenString = rootParserResult.NextToken;
-                    
+
                     isFileArrayParsingFinished = true;
                 }
 
