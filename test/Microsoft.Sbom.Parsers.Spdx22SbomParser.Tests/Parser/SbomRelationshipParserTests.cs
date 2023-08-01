@@ -51,7 +51,7 @@ public class SbomRelationshipParserTests
 
         var state = parser.Next();
         Assert.AreEqual(ParserState.RELATIONSHIPS, state);
-        
+
         stream.Close();
 
         parser.GetRelationships().GetEnumerator().MoveNext();
@@ -64,12 +64,12 @@ public class SbomRelationshipParserTests
         using var stream = new MemoryStream();
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
-         
+
         SPDXParser parser = new (stream, Array.Empty<ParserState>(), ignoreValidation: true);
 
         var state = parser.Next();
         Assert.AreEqual(ParserState.RELATIONSHIPS, state);
-        
+
         parser.GetRelationships().GetEnumerator().MoveNext();
     }
 

@@ -32,10 +32,10 @@ internal ref struct RootPropertiesParser
     private readonly Stream stream;
     private readonly IEnumerable<ParserState> statesToSkip;
 
-    public RootPropertiesParser(Stream stream, IEnumerable<ParserState>? statesToSkip = null)
+    public RootPropertiesParser(Stream stream, IEnumerable<ParserState> statesToSkip)
     {
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
-        this.statesToSkip = statesToSkip ?? Enumerable.Empty<ParserState>();
+        this.statesToSkip = statesToSkip;
     }
 
     internal ParserStateResult MoveNext(ref byte[] buffer, ref Utf8JsonReader reader)
