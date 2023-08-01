@@ -261,6 +261,7 @@ internal class ParserUtils
         {
             bytesRead = stream.Read(buffer);
 
+            // stream.Read doesn't always return the whole buffer length, so we need to fill the rest
             if (bytesRead < buffer.Length)
             {
                 bytesRead = stream.Read(buffer.AsSpan(bytesRead));
