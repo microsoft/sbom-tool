@@ -7,21 +7,12 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.SignValidator.Tests;
 
 [TestClass]
 public class SignValidationProviderTests
 {
-    private IMock<ILogger> mockLogger;
-
-    [TestInitialize]
-    public void Setup()
-    {
-        mockLogger = new Mock<ILogger>();
-    }
-
     [TestMethod]
     public void SignValidationProvider_AddsValidator_Succeeds()
     {

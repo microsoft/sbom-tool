@@ -7,8 +7,6 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest;
-using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
@@ -23,14 +21,8 @@ public class FileInfoWriter
 {
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;
     private readonly ILogger log;
-    private readonly IFileSystemUtilsExtension fileSystemUtilsExtension;
-    private readonly IConfiguration configuration;
 
-    public FileInfoWriter(
-        ManifestGeneratorProvider manifestGeneratorProvider,
-        ILogger log,
-        IFileSystemUtilsExtension fileSystemUtilsExtension,
-        IConfiguration configuration)
+    public FileInfoWriter(ManifestGeneratorProvider manifestGeneratorProvider, ILogger log)
     {
         if (manifestGeneratorProvider is null)
         {
@@ -39,8 +31,6 @@ public class FileInfoWriter
 
         this.manifestGeneratorProvider = manifestGeneratorProvider;
         this.log = log ?? throw new ArgumentNullException(nameof(log));
-        this.fileSystemUtilsExtension = fileSystemUtilsExtension ?? throw new ArgumentNullException(nameof(fileSystemUtilsExtension));
-        this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     public (ChannelReader<JsonDocWithSerializer> result, ChannelReader<FileValidationResult> errors) Write(ChannelReader<InternalSbomFileInfo> fileInfos, IList<ISbomConfig> filesArraySupportingSBOMs)
