@@ -302,7 +302,7 @@ public class ManifestGenerationWorkflowTests
             { externalDocumentReferenceProvider }
         };
 
-        var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object);
+        var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object, mockLogger.Object);
 
         var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
