@@ -18,7 +18,6 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog.Events;
-using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
@@ -62,7 +61,7 @@ public class PackagesWalkerTests
 
         scannedComponents.Add(scannedComponentOther);
 
-        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
+        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
 
         var scanResult = new ScanResult
         {
@@ -115,7 +114,7 @@ public class PackagesWalkerTests
 
         scannedComponents.Add(scannedComponentOther);
 
-        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
+        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
 
         var scanResult = new ScanResult
         {
@@ -148,7 +147,7 @@ public class PackagesWalkerTests
     [TestMethod]
     public void ScanWithNullOrEmptyPathSuccessTest()
     {
-        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
+        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
 
         var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object);
         walker.GetComponents(null);
@@ -160,7 +159,7 @@ public class PackagesWalkerTests
     [TestMethod]
     public async Task ScanFailureTestAsync()
     {
-        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
+        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
 
         var scanResult = new ScanResult
         {
@@ -208,7 +207,7 @@ public class PackagesWalkerTests
 
         scannedComponents.Add(scannedComponentOther);
 
-        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
+        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
 
         var scanResult = new ScanResult
         {
