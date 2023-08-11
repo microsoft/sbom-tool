@@ -16,10 +16,10 @@ namespace Microsoft.Sbom.Api.Utils;
 public class ComponentDetectorCachedExecutor
 {
     private readonly ILogger log;
-    private readonly IComponentDetector detector;
+    private readonly ComponentDetector detector;
     private ConcurrentDictionary<int, ScanResult> results;
 
-    public ComponentDetectorCachedExecutor(ILogger log, IComponentDetector detector)
+    public ComponentDetectorCachedExecutor(ILogger log, ComponentDetector detector)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.detector = detector ?? throw new ArgumentNullException(nameof(detector));
