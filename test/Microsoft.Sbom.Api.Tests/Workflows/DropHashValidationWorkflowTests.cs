@@ -33,7 +33,6 @@ namespace Microsoft.Sbom.Api.Workflows.Tests;
 public class DropHashValidationWorkflowTests : ValidationWorkflowTestsBase
 {
     private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
-    private readonly Mock<ISbomPackageDetailsRecorder> recorder = new Mock<ISbomPackageDetailsRecorder>();
     private readonly Mock<IOSUtils> mockOSUtils = new Mock<IOSUtils>();
     private readonly Mock<IFileSystemUtilsExtension> fileSystemExtension = new Mock<IFileSystemUtilsExtension>();
 

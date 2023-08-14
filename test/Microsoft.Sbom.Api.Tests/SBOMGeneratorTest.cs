@@ -12,7 +12,6 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Entities;
@@ -34,7 +33,6 @@ public class SBOMGeneratorTest
     private Mock<IHashAlgorithmProvider> mockHashAlgorithmProvider;
     private Mock<IAssemblyConfig> mockAssemblyConfig;
     private RuntimeConfiguration runtimeConfiguration;
-    private Mock<IConfiguration> mockConfiguration;
 
     [TestInitialize]
     public void Setup()
@@ -49,7 +47,6 @@ public class SBOMGeneratorTest
         mockGeneratorProvider = new Mock<ManifestGeneratorProvider>(null);
         mockHashAlgorithmProvider = new Mock<IHashAlgorithmProvider>();
         mockAssemblyConfig = new Mock<IAssemblyConfig>();
-        mockConfiguration = new Mock<IConfiguration>();
 
         mockSanitizer = new Mock<ConfigSanitizer>(mockHashAlgorithmProvider.Object, fileSystemMock.Object, mockAssemblyConfig.Object);
 

@@ -244,9 +244,7 @@ public class ManifestGenerationWorkflowTests
             new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
             new FileInfoWriter(
                 manifestGeneratorProvider,
-                mockLogger.Object,
-                fileSystemUtilsExtensionMock.Object,
-                configurationMock.Object),
+                mockLogger.Object),
             new InternalSBOMFileInfoDeduplicator(),
             new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object));
 
@@ -265,9 +263,7 @@ public class ManifestGenerationWorkflowTests
             new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
             new FileInfoWriter(
                 manifestGeneratorProvider,
-                mockLogger.Object,
-                fileSystemUtilsExtensionMock.Object,
-                configurationMock.Object),
+                mockLogger.Object),
             new InternalSBOMFileInfoDeduplicator(),
             new FileListEnumerator(fileSystemMock.Object, mockLogger.Object));
 
