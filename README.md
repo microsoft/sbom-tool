@@ -42,6 +42,14 @@ curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/downlo
 chmod +x sbom-tool
 ```
 
+#### Linux/macOS (Homebrew)
+```bash
+brew install sbom-tool
+```
+
+> [!NOTE]
+> This Formulae requires the `x86_64` architecture, ARM is not supported at this time. For details see [#223](https://github.com/microsoft/sbom-tool/issues/223).
+
 #### Building SBOM tool as docker image
 
 Clone this repo and build the docker image.
