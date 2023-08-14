@@ -10,6 +10,7 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
+using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
@@ -24,14 +25,18 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
 
     private readonly IRecorder recorder;
 
+    private readonly ILogger logger;
+
     public FileArrayGenerator(
         ISbomConfigProvider sbomConfigs,
         IEnumerable<ISourcesProvider> sourcesProviders,
-        IRecorder recorder)
+        IRecorder recorder,
+        ILogger logger)
     {
         this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
         this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+        this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <summary>
@@ -61,6 +66,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
                 {
                     config.JsonSerializer.StartJsonArray(filesArrayHeaderName);
                     filesArraySupportingSBOMs.Add(config);
+                    this.logger.Verbose("Started writing files array for {configFile}.", config.ManifestJsonFilePath);
                 }
             }
 
