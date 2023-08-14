@@ -11,7 +11,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageVersion Include="MinVer" Version="2.5.0"/>
-        <PackageVersion Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0"/>
+        <PackageVersion Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.2"/>
         <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1"/>
         <PackageVersion Include="Newtonsoft.Json" Version="13.0.1"/>
         <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118"/>
