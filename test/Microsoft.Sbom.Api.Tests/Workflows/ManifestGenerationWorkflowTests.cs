@@ -40,7 +40,6 @@ using Newtonsoft.Json.Linq;
 using Serilog.Events;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
-using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Workflows.Tests;
@@ -57,7 +56,7 @@ public class ManifestGenerationWorkflowTests
     private readonly Mock<IOSUtils> mockOSUtils = new Mock<IOSUtils>();
     private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>();
     private readonly Mock<IMetadataProvider> mockMetadataProvider = new Mock<IMetadataProvider>();
-    private readonly Mock<ComponentDetectorCachedExecutor> mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
+    private readonly Mock<ComponentDetectorCachedExecutor> mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<ComponentDetector>().Object);
     private readonly Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>> relationshipArrayGenerator = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>();
     private readonly Mock<ComponentToPackageInfoConverter> packageInfoConverterMock = new Mock<ComponentToPackageInfoConverter>();
     private readonly Mock<ISBOMReaderForExternalDocumentReference> sBOMReaderForExternalDocumentReferenceMock = new Mock<ISBOMReaderForExternalDocumentReference>();
@@ -302,7 +301,7 @@ public class ManifestGenerationWorkflowTests
             { externalDocumentReferenceProvider }
         };
 
-        var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object);
+        var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object, mockLogger.Object);
 
         var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 

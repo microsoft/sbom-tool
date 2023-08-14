@@ -55,7 +55,7 @@ public class ConcurrentSha256HashValidator
         var newValue = fileHashesDictionary.FileHashes.AddOrUpdate(internalFileInfo.Path, fileHashes, (key, oldValue) =>
         {
             // This means a file with the same location was already added to the dictionary.
-            if (oldValue.GetHash(internalFileInfo.FileLocation) != null)
+            if (oldValue?.GetHash(internalFileInfo.FileLocation) != null)
             {
                 failureResult = new FileValidationResult
                 {
@@ -66,7 +66,7 @@ public class ConcurrentSha256HashValidator
                 return null;
             }
 
-            oldValue.SetHash(internalFileInfo.FileLocation, sha256Checksum);
+            oldValue?.SetHash(internalFileInfo.FileLocation, sha256Checksum);
             return oldValue;
         });
 
@@ -77,7 +77,7 @@ public class ConcurrentSha256HashValidator
         }
 
         // If we have the files from both locations present in the hash, validate if the hashes match.
-        if (newValue.FileLocation == Sbom.Entities.FileLocation.All)
+        if (newValue?.FileLocation == Sbom.Entities.FileLocation.All)
         {
             if (string.Equals(newValue.OnDiskHash.ChecksumValue, newValue.SBOMFileHash.ChecksumValue, StringComparison.InvariantCultureIgnoreCase))
             {

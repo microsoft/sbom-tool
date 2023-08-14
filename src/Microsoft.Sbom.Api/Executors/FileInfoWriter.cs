@@ -68,6 +68,7 @@ public class FileInfoWriter
         {
             foreach (var config in filesArraySupportingSBOMs)
             {
+                log.Verbose("Generating json for file {file} into {config}", sbomFile.Path, config.ManifestJsonFilePath);
                 var generationResult = manifestGeneratorProvider
                     .Get(config.ManifestInfo)
                     .GenerateJsonDocument(sbomFile);

@@ -57,8 +57,10 @@ public class DirectoryWalker
         {
             try
             {
+                log.Verbose("Enumerating files under the directory {path}", path);
                 foreach (var file in fileSystemUtils.GetFilesInDirectory(path, followSymlinks))
                 {
+                    log.Verbose("Found file {file}.", file);
                     await output.Writer.WriteAsync(file);
                 }
 
