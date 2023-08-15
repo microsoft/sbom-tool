@@ -38,7 +38,7 @@ public class SPDXFile
     /// Gets or sets contains the license information actually found in the file, if any. 
     /// </summary>
     [JsonPropertyName("licenseInfoInFiles")]
-    public List<string> LicenseInfoInFiles { get; set; }
+    public IEnumerable<string> LicenseInfoInFiles { get; set; }
 
     /// <summary>
     /// Gets or sets copyright holder of the package, as well as any dates present.
