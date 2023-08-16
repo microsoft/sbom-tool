@@ -17,7 +17,7 @@
         <PackageVersion Include="Serilog.Extensions.Hosting" Version="7.0.0"/>
         <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118"/>
         <PackageVersion Include="System.Text.Json" Version="7.0.3" />
-        <PackageVersion Include="System.Composition.AttributedModel" Version="1.4.1"/>
+        <PackageVersion Include="System.Composition.AttributedModel" Version="7.0.0"/>
         <PackageVersion Include="System.Composition.Convention" Version="1.4.1"/>
         <PackageVersion Include="System.Composition.Hosting" Version="1.4.1"/>
         <PackageVersion Include="System.Composition.Runtime" Version="1.4.1"/>
