@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils;
 public class ComponentDetectorCachedExecutorTest
 {
     private readonly Mock<ILogger> logger = new Mock<ILogger>();
-    private readonly Mock<ComponentDetector> detector = new Mock<ComponentDetector>();
+    private readonly Mock<IComponentDetector> detector = new Mock<IComponentDetector>();
 
     [TestInitialize]
     public void TestInitialize()

@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.ComponentDetection.Common;
+using Microsoft.ComponentDetection.Contracts;
 using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Utils;
