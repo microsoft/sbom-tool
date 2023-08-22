@@ -35,7 +35,6 @@ public abstract class ComponentDetectionBaseWalker
     private readonly ISbomConfigProvider sbomConfigs;
     private readonly IFileSystemUtils fileSystemUtils;
 
-    public readonly HashSet<string> ListOfApiReadyComponents = new HashSet<string>();
     public readonly Dictionary<string, string> LicenseDictionary = new Dictionary<string, string>();
     private bool hasRun = false;
 
