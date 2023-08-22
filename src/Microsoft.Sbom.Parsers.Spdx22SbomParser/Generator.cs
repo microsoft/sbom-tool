@@ -92,8 +92,8 @@ public class Generator : IManifestGenerator
     private void EnsureRequiredHashesPresent(Sbom.Contracts.Checksum[] fileHashes)
     {
         foreach (var hashAlgorithmName in from hashAlgorithmName in RequiredHashAlgorithms
-                 where !fileHashes.Select(fh => fh.Algorithm).Contains(hashAlgorithmName)
-                 select hashAlgorithmName)
+                                          where !fileHashes.Select(fh => fh.Algorithm).Contains(hashAlgorithmName)
+                                          select hashAlgorithmName)
         {
             throw new MissingHashValueException($"The hash value for algorithm {hashAlgorithmName} is missing from {nameof(fileHashes)}");
         }
@@ -157,7 +157,7 @@ public class Generator : IManifestGenerator
             VersionInfo = packageInfo.PackageVersion,
             DownloadLocation = packageInfo.PackageSource ?? Constants.NoAssertionValue,
             CopyrightText = packageInfo.CopyrightText ?? Constants.NoAssertionValue,
-            LicenseConcluded = packageInfo.LicenseInfo?.Concluded ?? Constants.NoAssertionValue,
+            LicenseConcluded = GetLicenseInfo(packageInfo),
             LicenseDeclared = packageInfo.LicenseInfo?.Declared ?? Constants.NoAssertionValue,
             LicenseInfoFromFiles = packageInfo.FilesAnalyzed ? Constants.NoAssertionListValue : null,
             FilesAnalyzed = packageInfo.FilesAnalyzed,
@@ -185,6 +185,19 @@ public class Generator : IManifestGenerator
         }
 
         return path;
+    }
+
+    // We check if we have license information for the package that is being written. If not we fall back to "NOASSERTION". This is helpful in ensuring we don't write malformed SBOMs in the case something went wrong with the API request.
+    private string GetLicenseInfo(SbomPackage package)
+    {
+        GlobalLicenseDictionary.LicenseDictionary.TryGetValue(package.PackageName, out string licenseText);
+
+        if (licenseText is null)
+        {
+            return Constants.NoAssertionValue;
+        }
+
+        return licenseText;
     }
 
     public GenerationResult GenerateRootPackage(
