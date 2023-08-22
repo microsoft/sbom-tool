@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Collections.Generic;
 
 // I know use of a global state is not ideal. I could use feedback on how to achieve this in a better way.
 public static class GlobalLicenseDictionary
