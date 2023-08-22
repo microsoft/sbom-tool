@@ -92,8 +92,8 @@ public class Generator : IManifestGenerator
     private void EnsureRequiredHashesPresent(Sbom.Contracts.Checksum[] fileHashes)
     {
         foreach (var hashAlgorithmName in from hashAlgorithmName in RequiredHashAlgorithms
-                                          where !fileHashes.Select(fh => fh.Algorithm).Contains(hashAlgorithmName)
-                                          select hashAlgorithmName)
+                 where !fileHashes.Select(fh => fh.Algorithm).Contains(hashAlgorithmName)
+                 select hashAlgorithmName)
         {
             throw new MissingHashValueException($"The hash value for algorithm {hashAlgorithmName} is missing from {nameof(fileHashes)}");
         }
