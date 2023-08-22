@@ -127,6 +127,27 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     }
 
     [TestMethod]
+    public void ConanComponent_ToSbomPackage()
+    {
+        var md5 = Guid.NewGuid().ToString();
+        var sha1Hash = Guid.NewGuid().ToString();
+
+        var conanComponent = new ConanComponent("name", "version", md5, sha1Hash);
+        var scannedComponent = new ScannedComponent() { Component = conanComponent };
+
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+
+        Assert.IsNotNull(sbomPackage.Id);
+        Assert.IsNotNull(sbomPackage.PackageUrl);
+        Assert.AreEqual(conanComponent.Name, sbomPackage.PackageName);
+        Assert.AreEqual(conanComponent.Version, sbomPackage.PackageVersion);
+        Assert.IsNotNull(sbomPackage.Checksum.First(x => x.ChecksumValue == conanComponent.Md5Hash));
+        Assert.IsNotNull(sbomPackage.Checksum.First(x => x.ChecksumValue == conanComponent.Sha1Hash));
+        Assert.AreEqual(conanComponent.PackageSourceURL, sbomPackage.PackageSource);
+        Assert.AreEqual(conanComponent.Supplier, sbomPackage.Supplier);
+    }
+
+    [TestMethod]
     public void CondaComponent_ToSbomPackage()
     {
         var condaComponent = new CondaComponent("name", "version", "build", "channel", "subdir", "namespace", "http://microsoft.com", "md5");
