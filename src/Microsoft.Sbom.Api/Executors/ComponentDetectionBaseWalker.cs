@@ -129,8 +129,8 @@ public abstract class ComponentDetectionBaseWalker
                 foreach (var scannedComponent in uniqueComponents)
                 {
                     string[] parts = scannedComponent.Component.Id.Split(' ');
-                    string componentVersion = scannedComponent.Component.PackageUrl.Version;
-                    string componentType = scannedComponent.Component.PackageUrl.Type.ToLower();
+                    string componentVersion = scannedComponent.Component.PackageUrl?.Version;
+                    string componentType = scannedComponent.Component.PackageUrl?.Type.ToLower();
 
                     if (parts.Length > 2)
                     {
