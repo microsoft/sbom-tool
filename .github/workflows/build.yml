@@ -5,11 +5,20 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  
+    
+permissions:
+  contents: read
+
 jobs:
-  windows_job:
-    name: Windows
-    runs-on: windows-latest
+  build:
+    name: build-${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - 'windows-latest'
+          - 'ubuntu-latest'
+          - 'macos-latest'
 
     env:
         OFFICIAL_BUILD: 'True'
@@ -24,6 +33,7 @@ jobs:
 
       - name: Verify files contain copyright header
         run: .\scripts\verification\Verify-LicenceHeader.ps1 -Target .\src -LicenseHeaderPath .\scripts\verification\LicenseHeader.txt -Extensions *.xaml,*.xml,*.cs,*.ps1 -AddIfAbsent $false
+        shell: pwsh
       
       - name: Restore dependencies
         run: dotnet restore 
@@ -31,29 +41,5 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
       
-      - name: Test
-        run: dotnet test --no-build --verbosity normal
-
-  linux_job:
-    name: Linux
-    runs-on: ubuntu-latest
-
-    env:
-        OFFICIAL_BUILD: 'True'
-        # Set the build number in MinVer.
-        MINVERBUILDMETADATA: build.${{github.run_number}}
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v2
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --no-restore
-
       - name: Test
         run: dotnet test --no-build --verbosity normal
