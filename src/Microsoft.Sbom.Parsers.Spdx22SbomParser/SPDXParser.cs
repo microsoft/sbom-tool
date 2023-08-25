@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
@@ -96,7 +97,7 @@ public class SPDXParser : ISbomParser
         }
 
         // Utf8JsonReader will not handle BOM's, so we need to "eat" them before.
-        this.stream.Position = GetCursor(this.stream);
+        this.stream.Position = GetStartPosition(this.stream);
 
         // Fill up the buffer.
         if (!stream.CanRead || stream.Read(buffer) == 0)
@@ -104,47 +105,14 @@ public class SPDXParser : ISbomParser
             throw new EndOfStreamException();
         }
 
-        static int GetCursor(Stream stream)
+        static int GetStartPosition(Stream stream)
         {
-            // UTF-32, big-endian
-            if (IsMatch(stream, new byte[] { 0x00, 0x00, 0xFE, 0xFF }))
-            {
-                return 4;
-            }
-
-            // UTF-32, little-endian
-            if (IsMatch(stream, new byte[] { 0xFF, 0xFE, 0x00, 0x00 }))
-            {
-                return 4;
-            }
-
-            // UTF-16, big-endian
-            if (IsMatch(stream, new byte[] { 0xFE, 0xFF }))
-            {
-                return 2;
-            }
-
-            // UTF-16, little-endian
-            if (IsMatch(stream, new byte[] { 0xFF, 0xFE }))
-            {
-                return 2;
-            }
-
-            // UTF-8
-            if (IsMatch(stream, new byte[] { 0xEF, 0xBB, 0xBF }))
-            {
-                return 3;
-            }
-
-            return 0;
-        }
-
-        static bool IsMatch(Stream stream, byte[] match)
-        {
+            var bom = Encoding.UTF8.Preamble.ToArray();
             stream.Position = 0;
-            var buffer = new byte[match.Length];
+            var buffer = new byte[bom.Length];
             stream.Read(buffer, 0, buffer.Length);
-            return !buffer.Where((t, i) => t != match[i]).Any();
+
+            return Enumerable.SequenceEqual(buffer, bom) ? 3 : 0;
         }
     }
 
