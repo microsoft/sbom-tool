@@ -18,7 +18,7 @@ public static class ScannedComponentExtensions
     /// <summary>
     /// Converts a <see cref="ScannedComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    public static SbomPackage? ToSbomPackage(this ScannedComponent component, AdapterReport report)
+    public static SbomPackage? ToSbomPackage(this ExtendedScannedComponent component, AdapterReport report)
     {
         return component.Component switch
         {
@@ -29,8 +29,8 @@ public static class ScannedComponentExtensions
             GoComponent goComponent => goComponent.ToSbomPackage(),
             LinuxComponent linuxComponent => linuxComponent.ToSbomPackage(),
             MavenComponent mavenComponent => mavenComponent.ToSbomPackage(),
-            NpmComponent npmComponent => npmComponent.ToSbomPackage(),
-            NuGetComponent nuGetComponent => nuGetComponent.ToSbomPackage(),
+            NpmComponent npmComponent => npmComponent.ToSbomPackage(component?.License),
+            NuGetComponent nuGetComponent => nuGetComponent.ToSbomPackage(component?.License), // Extending the TypedComponent class from CD was not possible so I end up with adding the license as a property of the ScannedComponent class through the ExtendedScannedComponent class, and passing that license to the ToSbomPackage method.
             OtherComponent otherComponent => otherComponent.ToSbomPackage(),
             PipComponent pipComponent => pipComponent.ToSbomPackage(),
             PodComponent podComponent => podComponent.ToSbomPackage(),

@@ -35,7 +35,7 @@ public class ComponentDetectionToSBOMPackageAdapter
 
         try
         {
-            ScanResult? componentDetectionScanResult = JsonConvert.DeserializeObject<ScanResult>(File.ReadAllText(bcdeOutputPath));
+            ExtendedScanResult? componentDetectionScanResult = (ExtendedScanResult)JsonConvert.DeserializeObject<ScanResult>(File.ReadAllText(bcdeOutputPath));
 
             if (componentDetectionScanResult == null)
             {
