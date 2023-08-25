@@ -12,17 +12,27 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection;
 /// </summary>
 internal static class NuGetComponentExtensions
 {
-    /// <summary>
-    /// Converts a <see cref="NuGetComponent"/> to an <see cref="SbomPackage"/>.
-    /// </summary>
-    public static SbomPackage? ToSbomPackage(this NuGetComponent nuGetComponent) => new ()
+    public static SbomPackage? ToSbomPackage(this NuGetComponent nuGetComponent, string? license = null)
     {
-        Id = nuGetComponent.Id,
-        PackageUrl = nuGetComponent.PackageUrl?.ToString(),
-        PackageName = nuGetComponent.Name,
-        PackageVersion = nuGetComponent.Version,
-        Supplier = nuGetComponent.Authors?.Any() == true ? $"Organization: {nuGetComponent.Authors.First()}" : null,
-        FilesAnalyzed = false,
-        Type = "nuget"
-    };
+        var sbomPackage = new SbomPackage
+        {
+            Id = nuGetComponent.Id,
+            PackageUrl = nuGetComponent.PackageUrl?.ToString(),
+            PackageName = nuGetComponent.Name,
+            PackageVersion = nuGetComponent.Version,
+            Supplier = nuGetComponent.Authors?.Any() == true ? $"Organization: {nuGetComponent.Authors.First()}" : null,
+            FilesAnalyzed = false,
+            Type = "nuget"
+        };
+
+        if (license != null)
+        {
+            sbomPackage.LicenseInfo = new LicenseInfo
+            {
+                Concluded = license,
+            };
+        }
+
+        return sbomPackage;
+    }
 }

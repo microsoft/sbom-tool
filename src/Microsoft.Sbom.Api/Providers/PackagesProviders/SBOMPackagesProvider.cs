@@ -23,8 +23,9 @@ public class SBOMPackagesProvider : CommonPackagesProvider<SbomPackage>
         ChannelUtils channelUtils,
         ILogger logger,
         ISbomConfigProvider sbomConfigs,
-        PackageInfoJsonWriter packageInfoJsonWriter)
-        : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter)
+        PackageInfoJsonWriter packageInfoJsonWriter,
+        ILicenseInformationFetcher licenseInformationFetcher)
+        : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter, licenseInformationFetcher)
     {
     }
 

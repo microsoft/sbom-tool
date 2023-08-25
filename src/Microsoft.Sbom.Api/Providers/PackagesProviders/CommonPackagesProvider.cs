@@ -30,7 +30,8 @@ public abstract class CommonPackagesProvider<T> : EntityToJsonProviderBase<T>
         ChannelUtils channelUtils,
         ILogger logger,
         ISbomConfigProvider sbomConfigs,
-        PackageInfoJsonWriter packageInfoJsonWriter)
+        PackageInfoJsonWriter packageInfoJsonWriter,
+        ILicenseInformationFetcher licenseInformationFetcher)
         : base(configuration, channelUtils, logger)
     {
         this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));

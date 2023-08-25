@@ -148,6 +148,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IHashAlgorithmProvider, HashAlgorithmProvider>()
             .AddSingleton<IAssemblyConfig, AssemblyConfig>()
             .AddSingleton<ComponentDetectorCachedExecutor>()
+            .AddSingleton<ILicenseInformationFetcher, LicenseInformationFetcher>()
             .AddSingleton<InternalSBOMFileInfoDeduplicator>()
             .AddSingleton<ExternalReferenceInfoToPathConverter>()
             .AddSingleton<ExternalReferenceDeduplicator>()
@@ -226,20 +227,20 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IBcdeScanExecutionService, BcdeScanExecutionService>();
         services.AddSingleton<IDetectorProcessingService, DetectorProcessingService>();
         services.AddSingleton<ILogger<DetectorProcessingService>>(x =>
-         {
-             if (logLevel == LogEventLevel.Warning || logLevel == LogEventLevel.Error || logLevel == LogEventLevel.Fatal)
-             {
-                 logLevel = LogEventLevel.Information;
-             }
-             
-             // Customize the logging configuration for Orchestrator here
-             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
-                .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
-                .CreateBootstrapLogger();
-             
-             return new SerilogLoggerConverter<DetectorProcessingService>(Log.Logger);
-         });
+        {
+            if (logLevel == LogEventLevel.Warning || logLevel == LogEventLevel.Error || logLevel == LogEventLevel.Fatal)
+            {
+                logLevel = LogEventLevel.Information;
+            }
+
+            // Customize the logging configuration for Orchestrator here
+            Log.Logger = new LoggerConfiguration()
+               .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
+               .WriteTo.Console(outputTemplate: Api.Utils.Constants.LoggerTemplate)
+               .CreateBootstrapLogger();
+
+            return new SerilogLoggerConverter<DetectorProcessingService>(Log.Logger);
+        });
         services.AddSingleton<IDetectorRestrictionService, DetectorRestrictionService>();
         services.AddSingleton<IArgumentHelper, ArgumentHelper>();
 
