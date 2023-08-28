@@ -117,7 +117,7 @@ public abstract class ComponentDetectionBaseWalker
             List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(uniqueComponents);
 
             // Check that an API call hasn't already been made. During the first execution of this class this list is empty (because we are detecting the files section of the SBOM). During the second execution we have all the components in the project. There are subsequent executions but not important in this scenario.
-            if (!hasRun && listOfComponentsForApi.Count > 0)
+            if (!hasRun && listOfComponentsForApi?.Count > 0)
             {
                 hasRun = true;
 
@@ -142,19 +142,18 @@ public abstract class ComponentDetectionBaseWalker
                 string componentName = scannedComponent.Component.PackageUrl?.Name;
                 string componentVersion = scannedComponent.Component.PackageUrl?.Version;
 
-                ScannedComponentWithLicense extendedComponent = new ScannedComponentWithLicense
-                {
-                    LocationsFoundAt = scannedComponent.LocationsFoundAt,
-                    Component = scannedComponent.Component,
-                    ContainerDetailIds = scannedComponent.ContainerDetailIds,
-                    DependencyScope = scannedComponent.DependencyScope,
-                    ContainerLayerIds = scannedComponent.ContainerLayerIds,
-                    DetectorId = scannedComponent.DetectorId,
-                    IsDevelopmentDependency = scannedComponent.IsDevelopmentDependency,
-                    TopLevelReferrers = scannedComponent.TopLevelReferrers,
-                };
+                ScannedComponentWithLicense extendedComponent;
 
-                if (LicenseDictionary.ContainsKey($"{componentName}@{componentVersion}"))
+                if (scannedComponent is ScannedComponentWithLicense existingExtendedComponent)
+                {
+                    extendedComponent = existingExtendedComponent;
+                }
+                else
+                {
+                    extendedComponent = new ScannedComponentWithLicense(scannedComponent); // Assuming a copy constructor is defined
+                }
+
+                if (LicenseDictionary != null && LicenseDictionary.ContainsKey($"{componentName}@{componentVersion}"))
                 {
                     extendedComponent.License = LicenseDictionary[$"{componentName}@{componentVersion}"];
                 }
