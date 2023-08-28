@@ -18,7 +18,7 @@ public static class ScannedComponentExtensions
     /// <summary>
     /// Converts a <see cref="ScannedComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    public static SbomPackage? ToSbomPackage(this ExtendedScannedComponent component, AdapterReport report)
+    public static SbomPackage? ToSbomPackage(this ScannedComponentWithLicense component, AdapterReport report)
     {
         return component.Component switch
         {

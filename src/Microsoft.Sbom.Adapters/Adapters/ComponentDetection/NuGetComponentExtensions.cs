@@ -12,27 +12,19 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection;
 /// </summary>
 internal static class NuGetComponentExtensions
 {
-    public static SbomPackage? ToSbomPackage(this NuGetComponent nuGetComponent, string? license = null)
+    /// <summary>
+    /// Converts a <see cref="NuGetComponent"/> to an <see cref="SbomPackage"/>.
+    /// </summary>
+    /// <param name="license"> License information for the package that component that is being converted.</param>
+    public static SbomPackage? ToSbomPackage(this NuGetComponent nuGetComponent, string? license = null) => new ()
     {
-        var sbomPackage = new SbomPackage
-        {
-            Id = nuGetComponent.Id,
-            PackageUrl = nuGetComponent.PackageUrl?.ToString(),
-            PackageName = nuGetComponent.Name,
-            PackageVersion = nuGetComponent.Version,
-            Supplier = nuGetComponent.Authors?.Any() == true ? $"Organization: {nuGetComponent.Authors.First()}" : null,
-            FilesAnalyzed = false,
-            Type = "nuget"
-        };
-
-        if (license != null)
-        {
-            sbomPackage.LicenseInfo = new LicenseInfo
-            {
-                Concluded = license,
-            };
-        }
-
-        return sbomPackage;
-    }
+        Id = nuGetComponent.Id,
+        PackageUrl = nuGetComponent.PackageUrl?.ToString(),
+        PackageName = nuGetComponent.Name,
+        PackageVersion = nuGetComponent.Version,
+        Supplier = nuGetComponent.Authors?.Any() == true ? $"Organization: {nuGetComponent.Authors.First()}" : null,
+        LicenseInfo = string.IsNullOrWhiteSpace(license) ? null : new LicenseInfo { Concluded = license },
+        FilesAnalyzed = false,
+        Type = "nuget"
+    };
 }

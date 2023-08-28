@@ -3,7 +3,7 @@ using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.Sbom.Adapters.Report;
 using Microsoft.Sbom.Contracts;
 
-public class ExtendedScannedComponent : ScannedComponent
+public class ScannedComponentWithLicense : ScannedComponent
 {
     public string? License { get; set; }
 
