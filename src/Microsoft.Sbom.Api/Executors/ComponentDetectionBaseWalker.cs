@@ -44,7 +44,8 @@ public abstract class ComponentDetectionBaseWalker
         ComponentDetectorCachedExecutor componentDetector,
         IConfiguration configuration,
         ISbomConfigProvider sbomConfigs,
-        IFileSystemUtils fileSystemUtils, ILicenseInformationFetcher licenseInformationFetcher)
+        IFileSystemUtils fileSystemUtils,
+        ILicenseInformationFetcher licenseInformationFetcher)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.componentDetector = componentDetector ?? throw new ArgumentNullException(nameof(componentDetector));
@@ -141,7 +142,7 @@ public abstract class ComponentDetectionBaseWalker
                 string componentName = scannedComponent.Component.PackageUrl?.Name;
                 string componentVersion = scannedComponent.Component.PackageUrl?.Version;
 
-                ExtendedScannedComponent extendedComponent = new ExtendedScannedComponent
+                ScannedComponentWithLicense extendedComponent = new ScannedComponentWithLicense
                 {
                     LocationsFoundAt = scannedComponent.LocationsFoundAt,
                     Component = scannedComponent.Component,

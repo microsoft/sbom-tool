@@ -6,7 +6,7 @@ using Newtonsoft.Json.Serialization;
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
 
 [JsonObject(MemberSerialization.OptOut, NamingStrategyType = typeof(CamelCaseNamingStrategy))]
-public class ExtendedScanResult : ScanResult
+public sealed class ScanResultWithLicense : ScanResult
 {
-    new public IEnumerable<ExtendedScannedComponent> ComponentsFound { get; set; }
+    public new IEnumerable<ScannedComponentWithLicense> ComponentsFound { get; init; }
 }

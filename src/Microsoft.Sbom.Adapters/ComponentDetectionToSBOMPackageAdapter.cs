@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.Sbom.Adapters.Report;
 using Microsoft.Sbom.Contracts;
@@ -35,7 +34,7 @@ public class ComponentDetectionToSBOMPackageAdapter
 
         try
         {
-            ExtendedScanResult? componentDetectionScanResult = (ExtendedScanResult)JsonConvert.DeserializeObject<ScanResult>(File.ReadAllText(bcdeOutputPath));
+            ScanResultWithLicense? componentDetectionScanResult = JsonConvert.DeserializeObject<ScanResultWithLicense>(File.ReadAllText(bcdeOutputPath));
 
             if (componentDetectionScanResult == null)
             {

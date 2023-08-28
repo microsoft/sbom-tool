@@ -15,33 +15,22 @@ internal static class NpmComponentExtensions
     /// <summary>
     /// Converts a <see cref="NpmComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    public static SbomPackage? ToSbomPackage(this NpmComponent npmComponent, string? license = null)
+    /// <param name="license"> License information for the package that component that is being converted.</param>
+    public static SbomPackage? ToSbomPackage(this NpmComponent npmComponent, string? license = null) => new ()
     {
-        var sbomPackage = new SbomPackage
+        Id = npmComponent.Id,
+        PackageUrl = npmComponent.PackageUrl?.ToString(),
+        PackageName = npmComponent.Name,
+        PackageVersion = npmComponent.Version,
+        Checksum = new[]
         {
-            Id = npmComponent.Id,
-            PackageUrl = npmComponent.PackageUrl?.ToString(),
-            PackageName = npmComponent.Name,
-            PackageVersion = npmComponent.Version,
-            Checksum = new[]
-            {
-                new Checksum { ChecksumValue = npmComponent.Hash },
-            },
-            Supplier = npmComponent.Author?.AsSupplier(),
-            FilesAnalyzed = false,
-            Type = "npm"
-        };
-
-        if (license != null)
-        {
-            sbomPackage.LicenseInfo = new LicenseInfo
-            {
-                Concluded = license,
-            };
-        }
-
-        return sbomPackage;
-    }
+            new Checksum { ChecksumValue = npmComponent.Hash },
+        },
+        Supplier = npmComponent.Author?.AsSupplier(),
+        LicenseInfo = string.IsNullOrWhiteSpace(license) ? null : new LicenseInfo { Concluded = license },
+        FilesAnalyzed = false,
+        Type = "npm"
+    };
 
     /// <summary>
     /// Converts the <see cref="NpmAuthor"/> to an SPDX Supplier. 
