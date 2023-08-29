@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,7 +23,7 @@ public class LicenseInformationFetcherTests
     }
 
     [TestMethod]
-    public async Task ConvertComponentsToListForApi_Npm()
+    public void ConvertComponentsToListForApi_Npm()
     {
         LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockLicenseInformationService.Object);
 
@@ -48,7 +47,7 @@ public class LicenseInformationFetcherTests
     }
 
     [TestMethod]
-    public async Task ConvertComponentToListForApi_NuGet()
+    public void ConvertComponentToListForApi_NuGet()
     {
         LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockLicenseInformationService.Object);
 
@@ -69,11 +68,5 @@ public class LicenseInformationFetcherTests
 
         Assert.AreEqual("nuget/nuget/-/nugetpackage/1.0.0", listOfComponentsForApi[0]);
         Assert.AreEqual("nuget/nuget/@nugetpackage/testpackage/1.0.0", listOfComponentsForApi[1]);
-    }
-
-    [TestMethod]
-    public async Task GetComponentsWithFiltering()
-    {
-        
     }
 }
