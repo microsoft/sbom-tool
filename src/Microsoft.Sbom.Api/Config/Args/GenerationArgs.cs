@@ -113,6 +113,6 @@ public class GenerationArgs : CommonArgs
     /// If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.
     /// </summary>
     [ArgShortcut("li")]
-    [ArgDescription("If set, validation will fail if there are no packages detected in the sbom.")]
+    [ArgDescription("If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.")]
     public bool FetchLicenseInformation { get; set; }
 }
