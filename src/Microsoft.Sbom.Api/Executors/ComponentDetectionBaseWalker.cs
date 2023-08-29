@@ -114,29 +114,33 @@ public abstract class ComponentDetectionBaseWalker
 
             var uniqueComponents = FilterScannedComponents(scanResult);
 
-            List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(uniqueComponents);
-
-            // Check that an API call hasn't already been made. During the first execution of this class this list is empty (because we are detecting the files section of the SBOM). During the second execution we have all the components in the project. There are subsequent executions but not important in this scenario.
-            if (!hasRun && listOfComponentsForApi?.Count > 0)
+            // Check if the configuration is set to fetch license information.
+            if (configuration.FetchLicenseInformation.Value)
             {
-                hasRun = true;
+                List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(uniqueComponents);
 
-                List<HttpResponseMessage> apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi);
-
-                foreach (HttpResponseMessage response in apiResponses)
+                // Check that an API call hasn't already been made. During the first execution of this class this list is empty (because we are detecting the files section of the SBOM). During the second execution we have all the components in the project. There are subsequent executions but not important in this scenario.
+                if (!hasRun && listOfComponentsForApi?.Count > 0)
                 {
-                    Dictionary<string, string> licenseInfo = await licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(response);
+                    hasRun = true;
 
-                    if (licenseInfo != null)
+                    List<HttpResponseMessage> apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi);
+
+                    foreach (HttpResponseMessage response in apiResponses)
                     {
-                          licenseInformationFetcher.AppendLicensesToDictionary(licenseInfo);
+                        Dictionary<string, string> licenseInfo = await licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(response);
+
+                        if (licenseInfo != null)
+                        {
+                            licenseInformationFetcher.AppendLicensesToDictionary(licenseInfo);
+                        }
                     }
                 }
             }
 
             LicenseDictionary = licenseInformationFetcher.GetLicenseDictionary();
 
-            // This loop converts every ScannedComponent into an ExtendedScannedComponent and adds the license information to it. This was done because directly casting a ScannedComponent to an ExtendedScannedComponent does not work.
+            // Converts every ScannedComponent into an ExtendedScannedComponent and attempts to add license information before writing to the channel.
             foreach (ScannedComponent scannedComponent in uniqueComponents)
             {
                 string componentName = scannedComponent.Component.PackageUrl?.Name;

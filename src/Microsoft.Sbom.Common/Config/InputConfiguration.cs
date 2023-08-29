@@ -136,4 +136,8 @@ public class InputConfiguration : IConfiguration
     /// <inheritdoc cref="IConfiguration.FailIfNoPackages" />
     [DefaultValue(false)]
     public ConfigurationSetting<bool> FailIfNoPackages { get; set; }
+
+    /// <inheritdoc cref="IConfiguration.FetchLicenseInformation" />
+    [DefaultValue(false)]
+    public ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
 }

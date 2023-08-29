@@ -51,18 +51,8 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                     case "npm":
                         listOfComponentsForApi.Add($"{componentType}/npmjs/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
                         break;
-                    case "pypi":
-                        listOfComponentsForApi.Add($"{componentType}/pypi/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
-                        break;
-                    case "maven":
-                        listOfComponentsForApi.Add($"{componentType}/mavencentral/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
-                        // listOfComponentsForApi.Add($"{clearlyDefinedType}/mavengoogle/{clearlyDefinedNamespace}/{clearlyDefinedName}/{clearlyDefinedRevision}");
-                        break;
                     case "nuget":
                         listOfComponentsForApi.Add($"{componentType}/nuget/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
-                        break;
-                    case "pod":
-                        listOfComponentsForApi.Add($"{componentType}/cocoapods/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
                         break;
 
                     default:

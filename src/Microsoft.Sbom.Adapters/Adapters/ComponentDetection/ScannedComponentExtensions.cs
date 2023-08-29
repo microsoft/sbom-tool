@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Adapters.ComponentDetection.Logging;
 using Microsoft.Sbom.Adapters.Report;
@@ -11,12 +10,12 @@ using Microsoft.Sbom.Contracts;
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
 
 /// <summary>
-/// Extensions methods for <see cref="ScannedComponent"/>.
+/// Extensions methods for <see cref="ScannedComponentWithLicense"/>.
 /// </summary>
 public static class ScannedComponentExtensions
 {
     /// <summary>
-    /// Converts a <see cref="ScannedComponent"/> to an <see cref="SbomPackage"/>.
+    /// Converts a <see cref="ScannedComponentWithLicense"/> to an <see cref="SbomPackage"/>.
     /// </summary>
     public static SbomPackage? ToSbomPackage(this ScannedComponentWithLicense component, AdapterReport report)
     {
@@ -30,7 +29,7 @@ public static class ScannedComponentExtensions
             LinuxComponent linuxComponent => linuxComponent.ToSbomPackage(),
             MavenComponent mavenComponent => mavenComponent.ToSbomPackage(),
             NpmComponent npmComponent => npmComponent.ToSbomPackage(component?.License),
-            NuGetComponent nuGetComponent => nuGetComponent.ToSbomPackage(component?.License), // Extending the TypedComponent class from CD was not possible so I end up with adding the license as a property of the ScannedComponent class through the ExtendedScannedComponent class, and passing that license to the ToSbomPackage method.
+            NuGetComponent nuGetComponent => nuGetComponent.ToSbomPackage(component?.License),
             OtherComponent otherComponent => otherComponent.ToSbomPackage(),
             PipComponent pipComponent => pipComponent.ToSbomPackage(),
             PodComponent podComponent => podComponent.ToSbomPackage(),

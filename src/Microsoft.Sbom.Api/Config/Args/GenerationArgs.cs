@@ -108,4 +108,11 @@ public class GenerationArgs : CommonArgs
                     "asking the user for confirmation. The new manifest directory will then be created at this location and the generated SBOM " +
                     "will be stored there.")]
     public bool? DeleteManifestDirIfPresent { get; set; }
+
+    /// <summary>
+    /// If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.
+    /// </summary>
+    [ArgShortcut("li")]
+    [ArgDescription("If set, validation will fail if there are no packages detected in the sbom.")]
+    public bool FetchLicenseInformation { get; set; }
 }

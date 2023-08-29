@@ -46,6 +46,7 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<bool>> followSymlinks = new ();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> deleteManifestDirIfPresent = new ();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> failIfNoPackages = new ();
+    private static readonly AsyncLocal<ConfigurationSetting<bool>> fetchLicenseInformation = new ();
     private static readonly AsyncLocal<ConfigurationSetting<LogEventLevel>> verbosity = new ();
 
     /// <inheritdoc cref="IConfiguration.BuildDropPath" />
@@ -293,5 +294,13 @@ public class Configuration : IConfiguration
     {
         get => failIfNoPackages.Value;
         set => failIfNoPackages.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.FetchLicenseInformation" />
+    [DefaultValue(false)]
+    public ConfigurationSetting<bool> FetchLicenseInformation
+    {
+        get => fetchLicenseInformation.Value;
+        set => fetchLicenseInformation.Value = value;
     }
 }
