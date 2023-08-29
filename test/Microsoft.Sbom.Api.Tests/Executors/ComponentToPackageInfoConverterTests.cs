@@ -114,6 +114,33 @@ public class ComponentToPackageInfoConverterTests
     }
 
     [TestMethod]
+    public async Task ConvertNuGet_LicensePopulated()
+    {
+        var scannedComponent = new ScannedComponentWithLicense
+        {
+            Component = new NuGetComponent("nugetpackage", "1.0.0") { Authors = null },
+            License = "MIT"
+        };
+
+        var packageInfo = await ConvertScannedComponent(scannedComponent);
+
+        Assert.AreEqual("MIT", packageInfo.LicenseInfo.Concluded);
+    }
+
+    [TestMethod]
+    public async Task ConvertNuGet_LicenseNotPopulated()
+    {
+        var scannedComponent = new ScannedComponentWithLicense
+        {
+            Component = new NuGetComponent("nugetpackage", "1.0.0") { Authors = null },
+        };
+
+        var packageInfo = await ConvertScannedComponent(scannedComponent);
+
+        Assert.IsNull(packageInfo.LicenseInfo?.Concluded);
+    }
+
+    [TestMethod]
     public async Task ConvertNpm_AuthorPopulated_Name()
     {
         var scannedComponent = new ScannedComponentWithLicense
@@ -150,6 +177,33 @@ public class ComponentToPackageInfoConverterTests
         var packageInfo = await ConvertScannedComponent(scannedComponent);
 
         Assert.IsNull(packageInfo.Supplier);
+    }
+
+    [TestMethod]
+    public async Task ConvertNpm_LicensePopulated()
+    {
+        var scannedComponent = new ScannedComponentWithLicense
+        {
+            Component = new NpmComponent("npmpackage", "1.0.0") { Author = null },
+            License = "MIT"
+        };
+
+        var packageInfo = await ConvertScannedComponent(scannedComponent);
+
+        Assert.AreEqual("MIT", packageInfo.LicenseInfo.Concluded);
+    }
+
+    [TestMethod]
+    public async Task ConvertNpm_LicenseNotPopulated()
+    {
+        var scannedComponent = new ScannedComponentWithLicense
+        {
+            Component = new NpmComponent("npmpackage", "1.0.0") { Author = null },
+        };
+
+        var packageInfo = await ConvertScannedComponent(scannedComponent);
+
+        Assert.IsNull(packageInfo.LicenseInfo?.Concluded);
     }
 
     [TestMethod]

@@ -132,6 +132,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<FileListEnumerator>()
             .AddTransient<ISBOMReaderForExternalDocumentReference, SPDXSBOMReaderForExternalDocumentReference>()
             .AddTransient<SBOMMetadata>()
+            .AddTransient<LicenseInformationService>()
             .AddSingleton<IOSUtils, OSUtils>()
             .AddSingleton<IEnvironmentWrapper, EnvironmentWrapper>()
             .AddSingleton<IFileSystemUtilsExtension, FileSystemUtilsExtension>()
