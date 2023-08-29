@@ -115,7 +115,7 @@ public abstract class ComponentDetectionBaseWalker
             var uniqueComponents = FilterScannedComponents(scanResult);
 
             // Check if the configuration is set to fetch license information.
-            if (configuration.FetchLicenseInformation.Value)
+            if (configuration.FetchLicenseInformation?.Value == true)
             {
                 List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(uniqueComponents);
 
