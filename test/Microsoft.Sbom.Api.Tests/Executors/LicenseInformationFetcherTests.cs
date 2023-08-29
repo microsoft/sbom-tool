@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Sbom.Api.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ILogger = Serilog.ILogger;
@@ -68,5 +69,27 @@ public class LicenseInformationFetcherTests
 
         Assert.AreEqual("nuget/nuget/-/nugetpackage/1.0.0", listOfComponentsForApi[0]);
         Assert.AreEqual("nuget/nuget/@nugetpackage/testpackage/1.0.0", listOfComponentsForApi[1]);
+    }
+
+    [TestMethod]
+    public void ConvertClearlyDefinedApiResponseToList_GoodResponse()
+    {
+        string expectedKey = "json5@2.2.3";
+        string expectedValue = "MIT";
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockLicenseInformationService.Object);
+
+        Dictionary<string,string> licensesDictionary = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(HttpRequestUtils.GoodClearlyDefinedAPIResponse);
+
+        CollectionAssert.Contains(licensesDictionary, new KeyValuePair<string, string>(expectedKey, expectedValue));
+    }
+
+    [TestMethod]
+    public void ConvertClearlyDefinedApiResponseToList_BadResponse()
+    {
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockLicenseInformationService.Object);
+
+        Dictionary<string, string> licensesDictionary = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(HttpRequestUtils.BadClearlyDefinedAPIResponse);
+
+        Assert.AreEqual(0, licensesDictionary.Count);
     }
 }

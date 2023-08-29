@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Newtonsoft.Json.Linq;
@@ -65,21 +64,19 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
         return listOfComponentsForApi;
     }
 
-    public async Task<List<HttpResponseMessage>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi)
+    public async Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi)
     {
         return await licenseInformationService.FetchLicenseInformationFromAPI(listOfComponentsForApi);
     }
 
     // Will attempt to extract license information from a clearlyDefined batch API response. Will always return a dictionary which may be empty depending on the response.
-    public async Task<Dictionary<string, string>> ConvertClearlyDefinedApiResponseToList(HttpResponseMessage httpResponse)
+    public Dictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent)
     {
         Dictionary<string, string> extractedLicenses = new Dictionary<string, string>();
 
-        if (httpResponse.IsSuccessStatusCode)
+        try
         {
-            string responseContent = await httpResponse.Content.ReadAsStringAsync();
-
-            JObject responseObject = JObject.Parse(responseContent); // Parse the JSON string
+            JObject responseObject = JObject.Parse(httpResponseContent); // Parse the JSON string
 
             foreach (JToken packageInfoToken in responseObject.Values())
             {
@@ -104,9 +101,10 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                 }
             }
         }
-        else
+        catch
         {
-            log.Error($"Error while fetching license information from API.");
+            log.Error("Encountered error while attempting to parse response. License information may not be fully recorded.");
+            return extractedLicenses;
         }
 
         return extractedLicenses;
