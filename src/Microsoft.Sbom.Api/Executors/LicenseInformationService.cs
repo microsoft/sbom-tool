@@ -55,7 +55,7 @@ public class LicenseInformationService
                 // Format and display the TimeSpan value.
                 string elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}.{ts.Milliseconds % 10:00}";
 
-                log.Information($"Retrieved license information for {batch.Count} components in {elapsedTime}.");
+                log.Information($"Received response for {batch.Count} components in {elapsedTime}.");
             }
         }
 
