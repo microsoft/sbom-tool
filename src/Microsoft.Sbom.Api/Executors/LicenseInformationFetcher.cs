@@ -4,9 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Newtonsoft.Json.Linq;
@@ -17,16 +15,16 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
 {
     private readonly ILogger log;
     private readonly ConcurrentDictionary<string, string> licenseDictionary = new ConcurrentDictionary<string, string>();
+    private readonly LicenseInformationService licenseInformationService;
 
-    public LicenseInformationFetcher(ILogger log)
+    public LicenseInformationFetcher(ILogger log, LicenseInformationService licenseInformationService)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
+        this.licenseInformationService = licenseInformationService ?? throw new ArgumentNullException(nameof(licenseInformationService));
     }
 
     public List<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents)
     {
-        // var clearlyDefinedExpand = "-files";
-
         List<string> listOfComponentsForApi = new List<string>();
 
         foreach (var scannedComponent in scannedComponents)
@@ -48,7 +46,6 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                     componentName = clearlyDefinedNameParts[1];
                 }
 
-                // Each componentType has it's own edge cases. So more work is needed before I can add more types.
                 switch (componentType)
                 {
                     case "npm":
@@ -80,44 +77,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
 
     public async Task<List<HttpResponseMessage>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi)
     {
-        int batchSize = 400;
-        List<HttpResponseMessage> responses = new List<HttpResponseMessage>();
-
-        for (int i = 0; i < listOfComponentsForApi.Count; i += batchSize)
-        {
-            List<string> batch = listOfComponentsForApi.Skip(i).Take(batchSize).ToList();
-            string formattedData = "[" + string.Join(",", batch.Select(item => $"\"{item}\"")) + "]";
-
-            log.Information($"Retrieving license information for {batch.Count} components...");
-
-            using (HttpClient httpClient = new HttpClient())
-            {
-                string url = "https://api.clearlydefined.io/definitions";
-                var content = new StringContent(formattedData, Encoding.UTF8, "application/json");
-
-                // Set the headers individually
-                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-                httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-
-                // start timer
-                var watch = System.Diagnostics.Stopwatch.StartNew();
-
-                responses.Add(await httpClient.PostAsync(url, content));
-
-                // stop timer
-                watch.Stop();
-
-                // Get the elapsed time as a TimeSpan value.
-                TimeSpan ts = watch.Elapsed;
-
-                // Format and display the TimeSpan value.
-                string elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}.{ts.Milliseconds % 10:00}";
-
-                log.Information($"Retrieved license information for {batch.Count} components in {elapsedTime}.");
-            }
-        }
-
-        return responses;
+        return await licenseInformationService.FetchLicenseInformationFromAPI(listOfComponentsForApi);
     }
 
     // Will attempt to extract license information from a clearlyDefined batch API response. Will always return a dictionary which may be empty depending on the response.
@@ -156,7 +116,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
         }
         else
         {
-            log.Error($"Error while fetching license information from API: {httpResponse.IsSuccessStatusCode}");
+            log.Error($"Error while fetching license information from API.");
         }
 
         return extractedLicenses;

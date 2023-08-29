@@ -150,7 +150,8 @@ public abstract class ComponentDetectionBaseWalker
                 }
                 else
                 {
-                    extendedComponent = new ScannedComponentWithLicense(scannedComponent); // Assuming a copy constructor is defined
+                    // Use copy constructor to pass over all the properties to the ScanndedComponentWithLicense.
+                    extendedComponent = new ScannedComponentWithLicense(scannedComponent);
                 }
 
                 if (LicenseDictionary != null && LicenseDictionary.ContainsKey($"{componentName}@{componentVersion}"))
