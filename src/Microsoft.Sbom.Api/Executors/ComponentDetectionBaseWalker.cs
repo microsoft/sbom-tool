@@ -5,7 +5,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
@@ -124,11 +123,11 @@ public abstract class ComponentDetectionBaseWalker
                 {
                     hasRun = true;
 
-                    List<HttpResponseMessage> apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi);
+                    List<string> apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi);
 
-                    foreach (HttpResponseMessage response in apiResponses)
+                    foreach (string response in apiResponses)
                     {
-                        Dictionary<string, string> licenseInfo = await licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(response);
+                        Dictionary<string, string> licenseInfo = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(response);
 
                         if (licenseInfo != null)
                         {

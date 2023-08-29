@@ -3,7 +3,6 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 
@@ -22,7 +21,7 @@ public interface ILicenseInformationFetcher
     /// </summary>
     /// <param name="listOfComponentsForApi"> A list of strings formatted into a list of strings that can be used to call the batch ClearlyDefined API.</param>
     /// <returns></returns>
-    Task<List<HttpResponseMessage>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi);
+    Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi);
 
     /// <summary>
     /// Gets the dictionary of licenses that were fetched from the ClearlyDefined API.
@@ -35,7 +34,7 @@ public interface ILicenseInformationFetcher
     /// </summary>
     /// <param name="httpResponse"> The response from a ClearlyDefined API request.</param>
     /// <returns></returns>
-    Task<Dictionary<string, string>> ConvertClearlyDefinedApiResponseToList(HttpResponseMessage httpResponse);
+    Dictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent);
 
     /// <summary>
     /// Appends the licenses from the partialLicenseDictionary to the licenseDictionary.

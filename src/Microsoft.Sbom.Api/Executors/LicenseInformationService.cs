@@ -19,10 +19,11 @@ public class LicenseInformationService
         this.log = log ?? throw new ArgumentNullException(nameof(log));
     }
 
-    public async Task<List<HttpResponseMessage>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi)
+    public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi)
     {
         int batchSize = 400;
         List<HttpResponseMessage> responses = new List<HttpResponseMessage>();
+        List<string> responseContent = new List<string>();
 
         for (int i = 0; i < listOfComponentsForApi.Count; i += batchSize)
         {
@@ -58,6 +59,18 @@ public class LicenseInformationService
             }
         }
 
-        return responses;
+        foreach (HttpResponseMessage response in responses)
+        {
+            if (response.IsSuccessStatusCode)
+            {
+                responseContent.Add(await response.Content.ReadAsStringAsync());
+            }
+            else
+            {
+                log.Error($"Error encountered while fetching license information from API.");
+            }
+        }
+
+        return responseContent;
     }
 }
