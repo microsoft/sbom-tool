@@ -171,4 +171,9 @@ public class ConfigFile
     /// If set to true, we will fail the validation if no packages are found in the build drop.
     /// </summary>
     public bool? FailIfNoPackages { get; set; }
+
+    /// <summary>
+    /// If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.
+    /// </summary>
+    public bool? FetchLicenseInformation { get; set; }
 }

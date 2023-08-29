@@ -190,4 +190,9 @@ public interface IConfiguration
     /// If set to true, validation will fail if the SBOM does not contain any packages.
     /// </summary>
     ConfigurationSetting<bool> FailIfNoPackages { get; set; }
+
+    /// <summary>
+    /// If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.
+    /// </summary>
+    ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
 }
