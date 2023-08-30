@@ -32,7 +32,7 @@ public class LicenseInformationService
             List<string> batch = listOfComponentsForApi.Skip(i).Take(batchSize).ToList();
             string formattedData = "[" + string.Join(",", batch.Select(item => $"\"{item}\"")) + "]";
 
-            log.Information($"Retrieving license information for {batch.Count} components...");
+            log.Debug($"Retrieving license information for {batch.Count} components...");
 
             using (HttpClient httpClient = new HttpClient())
             {
