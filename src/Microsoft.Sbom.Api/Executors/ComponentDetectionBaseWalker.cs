@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
@@ -134,10 +135,12 @@ public abstract class ComponentDetectionBaseWalker
                             licenseInformationFetcher.AppendLicensesToDictionary(licenseInfo);
                         }
                     }
+
+                    LicenseDictionary = licenseInformationFetcher.GetLicenseDictionary();
+
+                    log.Information($"Found license information for {LicenseDictionary.Count} out of {uniqueComponents.Count()} unique components.");
                 }
             }
-
-            LicenseDictionary = licenseInformationFetcher.GetLicenseDictionary();
 
             // Converts every ScannedComponent into an ExtendedScannedComponent and attempts to add license information before writing to the channel.
             foreach (ScannedComponent scannedComponent in uniqueComponents)
