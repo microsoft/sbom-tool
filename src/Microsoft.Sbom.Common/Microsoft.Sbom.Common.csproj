@@ -13,7 +13,7 @@
     <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="System.Private.Uri" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" />
-    <PackageReference Include="Mono.Posix.NETStandard" />
+    <PackageReference Include="Mono.Posix" />
   </ItemGroup>
 
   <ItemGroup>
