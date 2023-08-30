@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Serilog;
 
@@ -23,14 +24,14 @@ public class LicenseInformationService
 
     public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi)
     {
-        int batchSize = 400;
+        int batchSize = 500;
         List<HttpResponseMessage> responses = new List<HttpResponseMessage>();
         List<string> responseContent = new List<string>();
 
         for (int i = 0; i < listOfComponentsForApi.Count; i += batchSize)
         {
             List<string> batch = listOfComponentsForApi.Skip(i).Take(batchSize).ToList();
-            string formattedData = "[" + string.Join(",", batch.Select(item => $"\"{item}\"")) + "]";
+            string formattedData = JsonSerializer.Serialize(batch);
 
             log.Debug($"Retrieving license information for {batch.Count} components...");
 

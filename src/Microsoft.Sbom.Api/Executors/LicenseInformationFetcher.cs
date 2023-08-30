@@ -13,8 +13,8 @@ namespace Microsoft.Sbom.Api.Executors;
 public class LicenseInformationFetcher : ILicenseInformationFetcher
 {
     private readonly ILogger log;
-    private readonly ConcurrentDictionary<string, string> licenseDictionary = new ConcurrentDictionary<string, string>();
     private readonly LicenseInformationService licenseInformationService;
+    private readonly ConcurrentDictionary<string, string> licenseDictionary = new ConcurrentDictionary<string, string>();
 
     public LicenseInformationFetcher(ILogger log, LicenseInformationService licenseInformationService)
     {
