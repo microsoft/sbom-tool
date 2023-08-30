@@ -41,21 +41,28 @@ public class LicenseInformationService
                 content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
                 httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-                // start timer
-                var watch = System.Diagnostics.Stopwatch.StartNew();
+                try
+                {
+                    // start timer
+                    var watch = System.Diagnostics.Stopwatch.StartNew();
 
-                responses.Add(await httpClient.PostAsync(uri, content));
+                    responses.Add(await httpClient.PostAsync(uri, content));
 
-                // stop timer
-                watch.Stop();
+                    // stop timer
+                    watch.Stop();
 
-                // Get the elapsed time as a TimeSpan value.
-                TimeSpan ts = watch.Elapsed;
+                    // Get the elapsed time as a TimeSpan value.
+                    TimeSpan ts = watch.Elapsed;
 
-                // Format and display the TimeSpan value.
-                string elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}.{ts.Milliseconds % 10:00}";
+                    // Format and display the TimeSpan value.
+                    string elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}.{ts.Milliseconds % 10:00}";
 
-                log.Information($"Received response for {batch.Count} components in {elapsedTime}.");
+                    log.Information($"Received response for {batch.Count} components in {elapsedTime}.");
+                }
+                catch (Exception e)
+                {
+                    log.Error($"Error encountered while fetching license information from API: {e.Message}");
+                }
             }
         }
 
