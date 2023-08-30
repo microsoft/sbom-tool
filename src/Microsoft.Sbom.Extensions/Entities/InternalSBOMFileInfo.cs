@@ -46,7 +46,7 @@ public class InternalSbomFileInfo
     /// <summary>
     /// Gets or sets contains the list of file types for this file.
     /// </summary>
-    public List<FileType> FileTypes { get; set; }
+    public IEnumerable<FileType> FileTypes { get; set; }
 
     /// <summary>
     /// Gets or sets the source location type of this file.
