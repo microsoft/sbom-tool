@@ -1,11 +1,14 @@
-name: "Create new tag"
+name: Create new tag
 
 on: 
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag (example v0.1.5)"
+        description: 'Tag (example v0.1.5)'
         required: true
+        
+permissions:
+  contents: write
 
 jobs:
   create-tag:

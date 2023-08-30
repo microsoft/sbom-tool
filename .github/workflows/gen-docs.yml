@@ -1,4 +1,4 @@
-name: 'Generate docs'
+name: Generate docs
 
 on:
   workflow_dispatch:
@@ -9,22 +9,17 @@ on:
       - 'src/Microsoft.Sbom.Api/Config/Args/*.cs'
       - 'src/Microsoft.Sbom.Common/Config/IConfiguration.cs'
 
+permissions:
+  contents: write
+
 jobs:
   gen-docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
-
-      - name: Restore dependencies
-        run: dotnet restore 
-        
-      - name: Build
-        run: dotnet build --no-restore
 
       - name: Generate docs
         run: |
