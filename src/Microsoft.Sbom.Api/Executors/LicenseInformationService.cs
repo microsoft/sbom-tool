@@ -63,7 +63,7 @@ public class LicenseInformationService
                 }
                 catch (Exception e)
                 {
-                    log.Error($"Error encountered while fetching license information from API: {e.Message}");
+                    log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {e.Message}");
                 }
             }
         }
@@ -76,7 +76,7 @@ public class LicenseInformationService
             }
             else
             {
-                log.Error($"Error encountered while fetching license information from API resulting SBOM may have incomplete license information. Request returned status code: {response.StatusCode}");
+                log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information. Request returned status code: {response.StatusCode}");
             }
         }
 
