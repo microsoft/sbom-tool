@@ -3,8 +3,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Serilog;
@@ -38,13 +40,13 @@ public class LicenseInformationService
                 var content = new StringContent(formattedData, Encoding.UTF8, "application/json");
 
                 // Set the headers individually
-                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-                httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 try
                 {
                     // start timer
-                    var watch = System.Diagnostics.Stopwatch.StartNew();
+                    var watch = Stopwatch.StartNew();
 
                     responses.Add(await httpClient.PostAsync(uri, content));
 
@@ -74,7 +76,7 @@ public class LicenseInformationService
             }
             else
             {
-                log.Error($"Error encountered while fetching license information from API.");
+                log.Error($"Error encountered while fetching license information from API resulting SBOM may have incomplete license information. Request returned status code: {response.StatusCode}");
             }
         }
 
