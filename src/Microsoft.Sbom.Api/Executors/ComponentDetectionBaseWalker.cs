@@ -34,7 +34,7 @@ public abstract class ComponentDetectionBaseWalker
     private readonly ILicenseInformationFetcher licenseInformationFetcher;
 
     public ConcurrentDictionary<string, string> LicenseDictionary = new ConcurrentDictionary<string, string>();
-    private bool hasRun = false;
+    private bool licenseInformationRetrieved = false;
 
     private ComponentDetectionCliArgumentBuilder cliArgumentBuilder;
 
@@ -119,9 +119,9 @@ public abstract class ComponentDetectionBaseWalker
                 List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(uniqueComponents);
 
                 // Check that an API call hasn't already been made. During the first execution of this class this list is empty (because we are detecting the files section of the SBOM). During the second execution we have all the components in the project. There are subsequent executions but not important in this scenario.
-                if (!hasRun && listOfComponentsForApi?.Count > 0)
+                if (!licenseInformationRetrieved && listOfComponentsForApi?.Count > 0)
                 {
-                    hasRun = true;
+                    licenseInformationRetrieved = true;
 
                     List<string> apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi);
 
