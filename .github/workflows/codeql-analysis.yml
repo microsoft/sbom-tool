@@ -56,7 +56,7 @@ jobs:
         # queries: security-extended,security-and-quality
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v3
 
     - name: dotnet restore
       run: dotnet restore

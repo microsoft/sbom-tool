@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.IO;
-using System.Security.AccessControl;
 
 namespace Microsoft.Sbom.Common;
 
@@ -45,9 +44,7 @@ public interface IFileSystemUtils
     bool FileExists(string path);
 
     string GetDirectoryName(string filePath);
-        
-    DirectorySecurity GetDirectorySecurity(string directoryPath);
-        
+
     bool DirectoryHasReadPermissions(string directoryPath);
         
     bool DirectoryHasWritePermissions(string directoryPath);

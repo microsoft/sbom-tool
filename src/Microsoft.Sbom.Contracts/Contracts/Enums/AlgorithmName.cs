@@ -45,7 +45,7 @@ public class AlgorithmName : IEquatable<AlgorithmName>
 
     public override int GetHashCode()
     {
-        return Name == null ? 0 : Name.GetHashCode();
+        return Name == null ? 0 : Name.GetHashCode(StringComparison.OrdinalIgnoreCase);
     }
 
     public static bool operator ==(AlgorithmName left, AlgorithmName right)

@@ -81,7 +81,7 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternal
             IList<ExternalDocumentReferenceInfo> externalDocumentReferenceInfos = new List<ExternalDocumentReferenceInfo>();
             await foreach (string file in sbomFileLocation.ReadAllAsync())
             {
-                if (!file.EndsWith(Constants.SPDXFileExtension))
+                if (!file.EndsWith(Constants.SPDXFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     log.Warning($"The file {file} is not an spdx document.");
                 }

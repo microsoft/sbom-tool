@@ -22,5 +22,5 @@ public class CreationInfo
     /// SBOM. This could be the person or organization name, or tool name, etc.
     /// </summary>
     [JsonPropertyName("creators")]
-    public List<string> Creators { get; set; }
+    public IEnumerable<string> Creators { get; set; }
 }

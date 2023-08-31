@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
@@ -38,7 +39,7 @@ public class SPDXFile
     /// Gets or sets contains the license information actually found in the file, if any. 
     /// </summary>
     [JsonPropertyName("licenseInfoInFiles")]
-    public List<string> LicenseInfoInFiles { get; set; }
+    public IEnumerable<string> LicenseInfoInFiles { get; set; }
 
     /// <summary>
     /// Gets or sets copyright holder of the package, as well as any dates present.
@@ -51,5 +52,5 @@ public class SPDXFile
     /// </summary>
     [JsonPropertyName("fileTypes")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public List<SPDXFileType> FileTypes { get; set; }
+    public IEnumerable FileTypes { get; set; }
 }

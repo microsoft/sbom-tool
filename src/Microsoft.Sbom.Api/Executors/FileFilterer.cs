@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
