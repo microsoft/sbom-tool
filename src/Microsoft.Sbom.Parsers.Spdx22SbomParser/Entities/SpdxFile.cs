@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
@@ -51,5 +52,5 @@ public class SPDXFile
     /// </summary>
     [JsonPropertyName("fileTypes")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public List<SPDXFileType> FileTypes { get; set; }
+    public IEnumerable FileTypes { get; set; }
 }

@@ -100,7 +100,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
 
         Assert.IsTrue(errors.Report?.Count == 1);
         Assert.IsTrue(errors.Report.First().Type == AdapterReportItemType.Failure);
-        Assert.IsTrue(errors.Report.First().Details.Contains($"Unable to parse bcde-output.json"));
+        Assert.IsTrue(errors.Report.First().Details.Contains("Unable to parse bcde-output.json", StringComparison.Ordinal));
         Assert.IsTrue(packages.Count == 0);
     }
 

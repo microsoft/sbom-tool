@@ -120,7 +120,7 @@ internal ref struct SbomExternalDocumentReferenceParser
             missingProps.Add(nameof(spdxExternalDocumentReference.Checksum));
         }
 
-        if (missingProps.Count() > 0)
+        if (missingProps.Any())
         {
             throw new ParserException($"Missing required value(s) for external document reference object at position {stream.Position}: {string.Join(",", missingProps)}");
         }

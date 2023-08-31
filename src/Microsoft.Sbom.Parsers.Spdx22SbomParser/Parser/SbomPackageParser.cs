@@ -142,7 +142,7 @@ internal ref struct SbomPackageParser
             }
         }
 
-        if (missingProps.Count() > 0)
+        if (missingProps.Any())
         {
             throw new ParserException($"Missing required value(s) for package object at position {stream.Position}: {string.Join(",", missingProps)}");
         }

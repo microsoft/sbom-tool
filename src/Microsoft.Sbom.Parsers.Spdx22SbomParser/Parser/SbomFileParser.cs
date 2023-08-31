@@ -97,7 +97,7 @@ internal ref struct SbomFileParser
         // before adding a new dependency.
         var missingProps = new List<string>();
        
-        if (sbomFile.FileChecksums == null || sbomFile.FileChecksums.Where(c => c.Algorithm == AlgorithmName.SHA256.Name).Count() == 0)
+        if (sbomFile.FileChecksums == null || sbomFile.FileChecksums.All(c => c.Algorithm != AlgorithmName.SHA256.Name))
         {
             missingProps.Add(nameof(sbomFile.FileChecksums));
         }
