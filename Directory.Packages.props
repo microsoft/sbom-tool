@@ -46,6 +46,6 @@
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
         <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
         <PackageVersion Include="Scrutor" Version="4.2.0" />
-        <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+        <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     </ItemGroup>
 </Project>
