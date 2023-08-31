@@ -29,7 +29,7 @@
         <PackageVersion Include="Microsoft.ComponentDetection.Orchestrator" Version="$(ComponentDetectionPackageVersion)" />
         <PackageVersion Include="Microsoft.ComponentDetection.Detectors" Version="$(ComponentDetectionPackageVersion)" />
         <PackageVersion Include="packageurl-dotnet" Version="1.1.0" />
-        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.4.0-preview-20220726-02" />
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
         <PackageVersion Include="MSTest.TestFramework" Version="3.1.1" />
         <PackageVersion Include="MSTest.TestAdapter" Version="3.1.1" />
         <PackageVersion Include="coverlet.collector" Version="3.1.0" />
