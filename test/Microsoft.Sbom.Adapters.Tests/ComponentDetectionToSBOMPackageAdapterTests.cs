@@ -61,7 +61,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         // Successful conversion
         Assert.IsNotNull(errors.Report);
         Assert.IsTrue(errors.Report?.Count == 1);
-        Assert.IsTrue(errors.Report[0].Type == AdapterReportItemType.Success);
+        Assert.IsTrue(errors.Report.First().Type == AdapterReportItemType.Success);
             
         // Converted packaged is present and valid
         Assert.IsTrue(packages?.Count == 1);
@@ -89,7 +89,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
 
         Assert.IsTrue(packages?.Count == 0);
         Assert.IsTrue(errors.Report?.Count == 1); // Should still be successful even with no components
-        Assert.IsTrue(errors.Report[0].Type == AdapterReportItemType.Success);
+        Assert.IsTrue(errors.Report.First().Type == AdapterReportItemType.Success);
     }
 
     [TestMethod]
@@ -99,8 +99,8 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var (errors, packages) = GenerateJsonFileForTestAndRun(json);
 
         Assert.IsTrue(errors.Report?.Count == 1);
-        Assert.IsTrue(errors.Report[0].Type == AdapterReportItemType.Failure);
-        Assert.IsTrue(errors.Report[0].Details.Contains($"Unable to parse bcde-output.json"));
+        Assert.IsTrue(errors.Report.First().Type == AdapterReportItemType.Failure);
+        Assert.IsTrue(errors.Report.First().Details.Contains("Unable to parse bcde-output.json", StringComparison.Ordinal));
         Assert.IsTrue(packages.Count == 0);
     }
 

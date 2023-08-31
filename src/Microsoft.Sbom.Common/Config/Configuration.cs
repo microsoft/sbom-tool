@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Contracts;
@@ -13,7 +14,8 @@ using Serilog.Events;
 
 namespace Microsoft.Sbom.Common.Config;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.NamingRules", "SA1311:Static readonly fields should begin with upper-case letter", Justification = "Private fields with the same name as public properties.")]
+[SuppressMessage("StyleCop.CSharp.NamingRules", "SA1311:Static readonly fields should begin with upper-case letter", Justification = "Private fields with the same name as public properties.")]
+[SuppressMessage("Naming", "CA1724:Type names should not match namespaces", Justification = "This is the configuration class")]
 public class Configuration : IConfiguration
 {
     private static readonly AsyncLocal<ConfigurationSetting<string>> buildDropPath = new ();

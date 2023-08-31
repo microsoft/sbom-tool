@@ -97,7 +97,7 @@ internal ref struct SbomFileParser
         // before adding a new dependency.
         var missingProps = new List<string>();
        
-        if (sbomFile.FileChecksums == null || sbomFile.FileChecksums.Where(c => c.Algorithm == AlgorithmName.SHA256.Name).Count() == 0)
+        if (sbomFile.FileChecksums == null || sbomFile.FileChecksums.All(c => c.Algorithm != AlgorithmName.SHA256.Name))
         {
             missingProps.Add(nameof(sbomFile.FileChecksums));
         }
@@ -122,12 +122,12 @@ internal ref struct SbomFileParser
             missingProps.Add(nameof(sbomFile.LicenseConcluded));
         }
 
-        if (sbomFile.LicenseInfoInFiles == null || sbomFile.LicenseInfoInFiles.Count == 0)
+        if (sbomFile.LicenseInfoInFiles == null || !sbomFile.LicenseInfoInFiles.Any())
         {
             missingProps.Add(nameof(sbomFile.LicenseInfoInFiles));
         }
 
-        if (missingProps.Count() > 0)
+        if (missingProps.Count > 0)
         {
             throw new ParserException($"Missing required value(s) for file object at position {stream.Position}: {string.Join(",", missingProps)}");
         }

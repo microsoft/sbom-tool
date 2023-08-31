@@ -104,7 +104,7 @@ internal ref struct SbomPackageParser
             missingProps.Add(nameof(sbomPackage.LicenseConcluded));
         }
 
-        if (sbomPackage.FilesAnalyzed && (sbomPackage.LicenseInfoFromFiles == null || sbomPackage.LicenseInfoFromFiles?.Count == 0))
+        if (sbomPackage.FilesAnalyzed && (sbomPackage.LicenseInfoFromFiles == null || sbomPackage.LicenseInfoFromFiles?.Count() == 0))
         {
             missingProps.Add(nameof(sbomPackage.LicenseInfoFromFiles));
         }
@@ -142,7 +142,7 @@ internal ref struct SbomPackageParser
             }
         }
 
-        if (missingProps.Count() > 0)
+        if (missingProps.Any())
         {
             throw new ParserException($"Missing required value(s) for package object at position {stream.Position}: {string.Join(",", missingProps)}");
         }

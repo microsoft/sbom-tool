@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
 
 namespace Microsoft.Sbom.Common;
 
@@ -37,8 +36,6 @@ public abstract class FileSystemUtils : IFileSystemUtils
         true => Directory.GetFiles(path),
         false => Directory.GetFiles(path, SearchAllFilesAndFolders, dontFollowSymlinks)
     };
-
-    public DirectorySecurity GetDirectorySecurity(string directoryPath) => new DirectoryInfo(directoryPath).GetAccessControl();
 
     public string JoinPaths(string root, string relativePath) => Path.Join(root, relativePath);
 

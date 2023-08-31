@@ -28,7 +28,7 @@ public class SbomFile
     /// <summary>
     /// Gets or sets contains any license information actually found in the file. 
     /// </summary>
-    public List<string> LicenseInfoInFiles { get; set; }
+    public IEnumerable<string> LicenseInfoInFiles { get; set; }
 
     /// <summary>
     /// Gets or sets the relative path to the BuildDropPath of the file in the SBOM.
