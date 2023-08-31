@@ -6,6 +6,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Newtonsoft.Json.Linq;
 using Serilog;
 
@@ -13,12 +15,14 @@ namespace Microsoft.Sbom.Api.Executors;
 public class LicenseInformationFetcher : ILicenseInformationFetcher
 {
     private readonly ILogger log;
+    private readonly IRecorder recorder;
     private readonly LicenseInformationService licenseInformationService;
     private readonly ConcurrentDictionary<string, string> licenseDictionary = new ConcurrentDictionary<string, string>();
 
-    public LicenseInformationFetcher(ILogger log, LicenseInformationService licenseInformationService)
+    public LicenseInformationFetcher(ILogger log, IRecorder recorder, LicenseInformationService licenseInformationService)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
+        this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.licenseInformationService = licenseInformationService ?? throw new ArgumentNullException(nameof(licenseInformationService));
     }
 
@@ -61,6 +65,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
             }
         }
 
+        log.Debug($"List of components for ClearlyDefinedApi: {string.Join(", ", listOfComponentsForApi)}");
         return listOfComponentsForApi;
     }
 
@@ -70,7 +75,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
     }
 
     // Will attempt to extract license information from a clearlyDefined batch API response. Will always return a dictionary which may be empty depending on the response.
-    public Dictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent)
+    public Dictionary<string, string> ConvertClearlyDefinedApiResponseToDictionary(string httpResponseContent)
     {
         Dictionary<string, string> extractedLicenses = new Dictionary<string, string>();
 
@@ -100,11 +105,13 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                     extractedLicenses.TryAdd($"{packageName}@{packageVersion}", declaredLicense);
                 }
             }
+
+            recorder.AddToTotalCountOfLicenses(extractedLicenses.Count);
         }
         catch
         {
+            recorder.RecordException(new ClearlyDefinedResponseParsingException(httpResponseContent));
             log.Error("Encountered error while attempting to parse response. License information may not be fully recorded.");
-            return extractedLicenses;
         }
 
         return extractedLicenses;

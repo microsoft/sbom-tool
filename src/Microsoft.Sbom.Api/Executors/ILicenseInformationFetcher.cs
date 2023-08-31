@@ -34,7 +34,7 @@ public interface ILicenseInformationFetcher
     /// </summary>
     /// <param name="httpResponse"> The response from a ClearlyDefined API request.</param>
     /// <returns></returns>
-    Dictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent);
+    Dictionary<string, string> ConvertClearlyDefinedApiResponseToDictionary(string httpResponseContent);
 
     /// <summary>
     /// Appends the licenses from the partialLicenseDictionary to the licenseDictionary.

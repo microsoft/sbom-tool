@@ -35,6 +35,12 @@ public interface IRecorder
     public void RecordTotalNumberOfPackages(int count);
 
     /// <summary>
+    /// Adds onto the total count of licenses that were retrieved from the API.
+    /// </summary>
+    /// <param name="count">Count of licenses to be added.</param>
+    public void AddToTotalCountOfLicenses(int count);
+
+    /// <summary>
     /// Records a SBOM format that we used during the execution of the SBOM tool.
     /// </summary>
     /// <param name="manifestInfo">The SBOM format as a <see cref="ManifestInfo"/> object.</param>

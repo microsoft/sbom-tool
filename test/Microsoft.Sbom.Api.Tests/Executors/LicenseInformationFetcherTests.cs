@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -15,18 +16,20 @@ namespace Microsoft.Sbom.Api.Executors.Tests;
 public class LicenseInformationFetcherTests
 {
     private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private Mock<IRecorder> mockRecorder;
     private Mock<LicenseInformationService> mockLicenseInformationService;
 
     [TestInitialize]
     public void Setup()
     {
-        mockLicenseInformationService = new Mock<LicenseInformationService>(mockLogger.Object);
+        mockRecorder = new Mock<IRecorder>();
+        mockLicenseInformationService = new Mock<LicenseInformationService>(mockLogger.Object, mockRecorder.Object);
     }
 
     [TestMethod]
     public void ConvertComponentsToListForApi_Npm()
     {
-        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockLicenseInformationService.Object);
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
 
         List<ScannedComponent> scannedComponents = new List<ScannedComponent>
         {
@@ -50,7 +53,7 @@ public class LicenseInformationFetcherTests
     [TestMethod]
     public void ConvertComponentToListForApi_NuGet()
     {
-        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockLicenseInformationService.Object);
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
 
         List<ScannedComponent> scannedComponents = new List<ScannedComponent>
         {
@@ -76,9 +79,9 @@ public class LicenseInformationFetcherTests
     {
         string expectedKey = "json5@2.2.3";
         string expectedValue = "MIT";
-        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockLicenseInformationService.Object);
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
 
-        Dictionary<string,string> licensesDictionary = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(HttpRequestUtils.GoodClearlyDefinedAPIResponse);
+        Dictionary<string,string> licensesDictionary = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToDictionary(HttpRequestUtils.GoodClearlyDefinedAPIResponse);
 
         CollectionAssert.Contains(licensesDictionary, new KeyValuePair<string, string>(expectedKey, expectedValue));
     }
@@ -86,9 +89,9 @@ public class LicenseInformationFetcherTests
     [TestMethod]
     public void ConvertClearlyDefinedApiResponseToList_BadResponse()
     {
-        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockLicenseInformationService.Object);
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
 
-        Dictionary<string, string> licensesDictionary = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(HttpRequestUtils.BadClearlyDefinedAPIResponse);
+        Dictionary<string, string> licensesDictionary = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToDictionary(HttpRequestUtils.BadClearlyDefinedAPIResponse);
 
         Assert.AreEqual(0, licensesDictionary.Count);
     }

@@ -54,4 +54,9 @@ public class SBOMTelemetry
     /// of the exception.
     /// </summary>
     public IDictionary<string, string> Exceptions { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total number of licenses detected in the SBOM.
+    /// </summary>
+    public int TotalLicensesDetected { get; set; }
 }

@@ -128,7 +128,7 @@ public abstract class ComponentDetectionBaseWalker
 
                     foreach (string response in apiResponses)
                     {
-                        Dictionary<string, string> licenseInfo = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(response);
+                        Dictionary<string, string> licenseInfo = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToDictionary(response);
 
                         if (licenseInfo != null)
                         {

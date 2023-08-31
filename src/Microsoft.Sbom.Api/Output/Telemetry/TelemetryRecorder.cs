@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
@@ -32,6 +33,7 @@ public class TelemetryRecorder : IRecorder
     private readonly IDictionary<string, object> switches = new Dictionary<string, object>();
     private readonly IList<Exception> exceptions = new List<Exception>();
     private int totalNumberOfPackages = 0;
+    private int totalNumberOfLicenses = 0;
     private IList<FileValidationResult> errors = new List<FileValidationResult>();
     private Result result = Result.Success;
 
@@ -204,6 +206,15 @@ public class TelemetryRecorder : IRecorder
     }
 
     /// <summary>
+    /// Adds onto the total count of licenses that were retrieved from the API.
+    /// </summary>
+    /// <param name="licenseCount">The count of licenses that are to be added to the total.</param>
+    public void AddToTotalCountOfLicenses(int licenseCount)
+    {
+        Interlocked.Add(ref this.totalNumberOfLicenses, licenseCount);
+    }
+
+    /// <summary>
     /// Record a switch that was used during the execution of the SBOM tool.
     /// </summary>
     /// <param name="switchName">The name of the switch or environment variable.</param>
@@ -263,7 +274,8 @@ public class TelemetryRecorder : IRecorder
                 Parameters = Configuration,
                 SBOMFormatsUsed = sbomFormatsUsed,
                 Switches = this.switches,
-                Exceptions = this.exceptions.ToDictionary(k => k.GetType().ToString(), v => v.Message)
+                Exceptions = this.exceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),
+                TotalLicensesDetected = this.totalNumberOfLicenses
             };
 
             // Log to logger.
