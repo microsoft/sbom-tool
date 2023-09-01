@@ -97,7 +97,7 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
                     if (signValidator == null)
                     {
                         log.Warning($"ValidateSignature switch is true, but couldn't find a sign validator for the current OS, skipping validation.");
-                    } 
+                    }
                     else
                     {
                         if (!signValidator.Validate())
