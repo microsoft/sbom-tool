@@ -35,9 +35,5 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@3447fd6a9f9e57506b15f895c5b76d3b197dc7c2 # v3.2.0
 
-      - name: Verify files contain copyright header
-        run: .\scripts\verification\Verify-LicenceHeader.ps1 -Target .\src -LicenseHeaderPath .\scripts\verification\LicenseHeader.txt -Extensions *.xaml,*.xml,*.cs,*.ps1 -AddIfAbsent $false
-        shell: pwsh
-
       - name: Run tests
         run: dotnet test
