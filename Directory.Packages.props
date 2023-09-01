@@ -9,44 +9,44 @@
     <PropertyGroup>
         <ComponentDetectionPackageVersion>3.6.2</ComponentDetectionPackageVersion>
     </PropertyGroup>
-    <ItemGroup>
-        <PackageVersion Include="MinVer" Version="2.5.0"/>
-        <PackageVersion Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.2"/>
-        <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1"/>
-        <PackageVersion Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageVersion Include="Serilog.Extensions.Hosting" Version="7.0.0"/>
-        <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118"/>
-        <PackageVersion Include="System.Text.Json" Version="7.0.3" />
-        <PackageVersion Include="System.Memory" Version="4.5.5"/>
-        <PackageVersion Include="System.Reactive" Version="5.0.0"/>
-        <PackageVersion Include="System.Runtime.Loader" Version="4.3.0"/>
-        <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.11.1"/>
-        <PackageVersion Include="Serilog.Sinks.Console" Version="4.1.0"/>
-        <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
-		<PackageVersion Include="Mono.Unix" Version="7.1.0-final.1.21458.1" />
-        <PackageVersion Include="Microsoft.ComponentDetection.Contracts" Version="$(ComponentDetectionPackageVersion)" />
-        <PackageVersion Include="Microsoft.ComponentDetection.Common" Version="$(ComponentDetectionPackageVersion)" />
-        <PackageVersion Include="Microsoft.ComponentDetection.Orchestrator" Version="$(ComponentDetectionPackageVersion)" />
-        <PackageVersion Include="Microsoft.ComponentDetection.Detectors" Version="$(ComponentDetectionPackageVersion)" />
-        <PackageVersion Include="packageurl-dotnet" Version="1.1.0" />
-        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.4.0-preview-20220726-02" />
-        <PackageVersion Include="MSTest.TestFramework" Version="3.1.1" />
-        <PackageVersion Include="MSTest.TestAdapter" Version="3.1.1" />
-        <PackageVersion Include="coverlet.collector" Version="3.1.0" />
-        <PackageVersion Include="Moq" Version="4.17.2" />
+     <ItemGroup>
         <PackageVersion Include="AutoMapper" Version="10.1.1" />
-        <PackageVersion Include="PowerArgs" Version="3.6.0" />
-        <PackageVersion Include="System.Threading.Channels" Version="6.0.0" />
-        <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
-        <PackageVersion Include="NuGet.Frameworks" Version="6.7.0"/>
-        <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
-        <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="6.0.0" />
-        <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
-        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+        <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+        <PackageVersion Include="coverlet.collector" Version="6.0.0" />
+        <PackageVersion Include="FluentAssertions" Version="6.12.0" />
+        <PackageVersion Include="MSTest.TestAdapter" Version="3.1.1" />
+        <PackageVersion Include="MSTest.TestFramework" Version="3.1.1" />
+        <PackageVersion Include="Microsoft.ComponentDetection.Common" Version="$(ComponentDetectionPackageVersion)" />
+        <PackageVersion Include="Microsoft.ComponentDetection.Contracts" Version="$(ComponentDetectionPackageVersion)" />
+        <PackageVersion Include="Microsoft.ComponentDetection.Detectors" Version="$(ComponentDetectionPackageVersion)" />
+        <PackageVersion Include="Microsoft.ComponentDetection.Orchestrator" Version="$(ComponentDetectionPackageVersion)" />
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
         <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+        <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
+        <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.7.30" />
+        <PackageVersion Include="MinVer" Version="4.3.0" />
+        <PackageVersion Include="Mono.Unix" Version="7.1.0-final.1.21458.1" />
+        <PackageVersion Include="Moq" Version="4.17.2" />
+        <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageVersion Include="NuGet.Frameworks" Version="6.7.0" />
+        <PackageVersion Include="packageurl-dotnet" Version="1.1.0" />
+        <PackageVersion Include="PowerArgs" Version="3.6.0" />
         <PackageVersion Include="Scrutor" Version="4.2.0" />
-        <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-        <PackageVersion Include="Serilog.AspNetCore" Version="6.1.0" />
+        <PackageVersion Include="Serilog.Extensions.Hosting" Version="7.0.0" />
+        <PackageVersion Include="Serilog.Sinks.Console" Version="4.1.0" />
+        <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.507" />
+        <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+        <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
+        <PackageVersion Include="System.Memory" Version="4.5.5" />
+        <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
+        <PackageVersion Include="System.Reactive" Version="5.0.0" />
+        <PackageVersion Include="System.Runtime.Loader" Version="4.3.0" />
+        <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="6.0.0" />
+        <PackageVersion Include="System.Text.Json" Version="7.0.3" />
+        <PackageVersion Include="System.Threading.Channels" Version="6.0.0" />
+        <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.11.1" />
+        <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     </ItemGroup>
 </Project>
