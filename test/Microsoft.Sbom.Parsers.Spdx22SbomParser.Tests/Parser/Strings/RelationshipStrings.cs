@@ -1,4 +1,7 @@
-﻿﻿namespace Microsoft.Sbom.Parser.Strings;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace Microsoft.Sbom.Parser.Strings;
 
 internal readonly struct RelationshipStrings
 {
@@ -49,7 +52,7 @@ internal readonly struct RelationshipStrings
               ""relatedSpdxElement"": ""SPDXRef-Package-342BA5C11805FDDCAF3A2BF48BFDCAB5C0240793089F89196209A39C580902E6"",
               ""spdxElementId"": ""SPDXRef-RootPackage"",
               ""additionalProperty"": {
-                    ""childAddtionalProperty"": ""Additional property value"" 
+                    ""childAddtionalProperty"": ""Additional property value""
                   }
             }]}";
 

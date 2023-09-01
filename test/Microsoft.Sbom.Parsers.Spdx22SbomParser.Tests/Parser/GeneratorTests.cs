@@ -1,4 +1,7 @@
-﻿using Microsoft.Sbom.Contracts;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -31,7 +34,7 @@ public class GeneratorTests
     {
         var generator = new Generator();
         var expected = "[\"NOASSERTION\"]";
-            
+
         const string PackageUrl = "packageUrl";
         var packageInfo = new SbomPackage
         {
