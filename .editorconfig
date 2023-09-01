@@ -938,10 +938,6 @@ dotnet_diagnostic.CS8001.severity = suggestion
 # CS8632: The annotation for nullable reference types should only be used in code within a '#nullable' annotations context. 
 dotnet_diagnostic.CS8632.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0004
-# IDE0004: Cast is redundant
-dotnet_diagnostic.IDE0004.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0005
 # IDE0005: Using directive is unnecessary
 dotnet_diagnostic.IDE0005.severity = suggestion

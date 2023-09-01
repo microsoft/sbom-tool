@@ -54,7 +54,7 @@ public class InternalMetadataProviderIdentityExtensionsTests
 
         var actualPackageVersion = mdProviderMock.Object.GetPackageVersion();
 
-        Assert.AreEqual(packageVersion as string, actualPackageVersion);
+        Assert.AreEqual(packageVersion, actualPackageVersion);
     }
 
     [TestMethod]
@@ -112,7 +112,7 @@ public class InternalMetadataProviderIdentityExtensionsTests
 
         var actualPackageName = mdProviderMock.Object.GetPackageName();
 
-        Assert.AreEqual(packageName as string, actualPackageName);
+        Assert.AreEqual(packageName, actualPackageName);
     }
 
     [TestMethod]
@@ -170,7 +170,7 @@ public class InternalMetadataProviderIdentityExtensionsTests
         object packageSupplier = "Microsoft";
         Uri namespaceUri = new Uri("https://test.com/");
         string expectedSwidPurlPattern = @"^pkg:swid\/Microsoft\/test.com\/name@1\.0\.0\?tag_id=.*";
-  
+
         mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageSupplier, out packageSupplier))
             .Returns(true);
         mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageVersion, out packageVersion))
