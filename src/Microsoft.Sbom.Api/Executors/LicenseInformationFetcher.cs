@@ -55,7 +55,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                         break;
 
                     default:
-                        log.Warning($"The component type {componentType} is not supported by ClearlyDefined.");
+                        log.Debug($"License retrieval for component type {componentType} is not supported yet.");
                         break;
                 }
             }

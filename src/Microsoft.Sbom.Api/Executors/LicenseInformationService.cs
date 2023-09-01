@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -16,10 +15,13 @@ namespace Microsoft.Sbom.Api.Executors;
 public class LicenseInformationService
 {
     private readonly ILogger log;
+    private readonly HttpClient httpClient;
+    private const int ClientTimeoutMinutes = 6;
 
-    public LicenseInformationService(ILogger log)
+    public LicenseInformationService(ILogger log, HttpClient httpClient)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
+        this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     }
 
     public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi)
@@ -28,6 +30,11 @@ public class LicenseInformationService
         List<HttpResponseMessage> responses = new List<HttpResponseMessage>();
         List<string> responseContent = new List<string>();
 
+        Uri uri = new Uri("https://api.clearlydefined.io/definitions");
+        
+        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        httpClient.Timeout = TimeSpan.FromMinutes(ClientTimeoutMinutes);
+
         for (int i = 0; i < listOfComponentsForApi.Count; i += batchSize)
         {
             List<string> batch = listOfComponentsForApi.Skip(i).Take(batchSize).ToList();
@@ -35,37 +42,16 @@ public class LicenseInformationService
 
             log.Debug($"Retrieving license information for {batch.Count} components...");
 
-            using (HttpClient httpClient = new HttpClient())
+            var content = new StringContent(formattedData, Encoding.UTF8, "application/json");
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            try
+            {   
+                responses.Add(await httpClient.PostAsync(uri, content));
+            }
+            catch (Exception e)
             {
-                Uri uri = new Uri("https://api.clearlydefined.io/definitions");
-                var content = new StringContent(formattedData, Encoding.UTF8, "application/json");
-
-                // Set the headers individually
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                try
-                {
-                    // start timer
-                    var watch = Stopwatch.StartNew();
-
-                    responses.Add(await httpClient.PostAsync(uri, content));
-
-                    // stop timer
-                    watch.Stop();
-
-                    // Get the elapsed time as a TimeSpan value.
-                    TimeSpan ts = watch.Elapsed;
-
-                    // Format and display the TimeSpan value.
-                    string elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}.{ts.Milliseconds % 10:00}";
-
-                    log.Debug($"Received response for {batch.Count} components in {elapsedTime}.");
-                }
-                catch (Exception e)
-                {
-                    log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {e.Message}");
-                }
+                log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {e.Message}");
             }
         }
 
