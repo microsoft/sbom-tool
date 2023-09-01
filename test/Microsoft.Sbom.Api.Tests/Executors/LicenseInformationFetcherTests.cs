@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Net.Http;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Tests;
@@ -15,12 +16,13 @@ namespace Microsoft.Sbom.Api.Executors.Tests;
 public class LicenseInformationFetcherTests
 {
     private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<HttpClient> mockHttpClient = new Mock<HttpClient>();
     private Mock<LicenseInformationService> mockLicenseInformationService;
 
     [TestInitialize]
     public void Setup()
     {
-        mockLicenseInformationService = new Mock<LicenseInformationService>(mockLogger.Object);
+        mockLicenseInformationService = new Mock<LicenseInformationService>(mockLogger.Object, mockHttpClient.Object);
     }
 
     [TestMethod]

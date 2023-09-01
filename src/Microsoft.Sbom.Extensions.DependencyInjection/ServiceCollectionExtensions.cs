@@ -191,7 +191,8 @@ public static class ServiceCollectionExtensions
             .ConfigureLoggingProviders()
             .ConfigureComponentDetectors()
             .ConfigureComponentDetectionSharedServices()
-            .ConfigureComponentDetectionCommandLineServices(logLevel);
+            .ConfigureComponentDetectionCommandLineServices(logLevel)
+            .AddHttpClient<LicenseInformationService>();
 
         return services;
     }

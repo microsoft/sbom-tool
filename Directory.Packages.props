@@ -53,5 +53,6 @@
         <PackageVersion Include="Scrutor" Version="4.2.0" />
         <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
         <PackageVersion Include="Serilog.AspNetCore" Version="6.1.0" />
+		<PackageVersion Include="Microsoft.Extensions.Http" Version="7.0.0" />
     </ItemGroup>
 </Project>
