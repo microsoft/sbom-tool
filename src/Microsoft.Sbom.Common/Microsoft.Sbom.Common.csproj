@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>        
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>Utility classes for SBOM generation.</Description>
     <RootNamespace>Microsoft.Sbom.Common</RootNamespace>
