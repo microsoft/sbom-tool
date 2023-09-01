@@ -28,20 +28,16 @@ jobs:
         MINVERBUILDMETADATA: build.${{github.run_number}}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+        with:
+          fetch-depth: 0
       
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@3447fd6a9f9e57506b15f895c5b76d3b197dc7c2 # v3.2.0
 
       - name: Verify files contain copyright header
         run: .\scripts\verification\Verify-LicenceHeader.ps1 -Target .\src -LicenseHeaderPath .\scripts\verification\LicenseHeader.txt -Extensions *.xaml,*.xml,*.cs,*.ps1 -AddIfAbsent $false
         shell: pwsh
-      
-      - name: Restore dependencies
-        run: dotnet restore 
-        
-      - name: Build
-        run: dotnet build --no-restore
-      
-      - name: Test
-        run: dotnet test --no-build --verbosity normal
+
+      - name: Run tests
+        run: dotnet test
