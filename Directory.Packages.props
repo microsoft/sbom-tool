@@ -23,7 +23,7 @@
         <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.11.1"/>
         <PackageVersion Include="Serilog.Sinks.Console" Version="4.1.0"/>
         <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
-		<PackageVersion Include="Mono.Posix" Version="7.1.0-final.1.21458.1" />
+		<PackageVersion Include="Mono.Unix" Version="7.1.0-final.1.21458.1" />
         <PackageVersion Include="Microsoft.ComponentDetection.Contracts" Version="$(ComponentDetectionPackageVersion)" />
         <PackageVersion Include="Microsoft.ComponentDetection.Common" Version="$(ComponentDetectionPackageVersion)" />
         <PackageVersion Include="Microsoft.ComponentDetection.Orchestrator" Version="$(ComponentDetectionPackageVersion)" />
