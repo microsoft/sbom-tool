@@ -493,10 +493,6 @@ dotnet_diagnostic.SA1028.severity = suggestion
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.SA1101.severity = suggestion
 
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1108.md
-# SA1108: Block statements should not contain embedded comments
-dotnet_diagnostic.SA1108.severity = suggestion
-
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1117.md
 # SA1117: Parameters should be on same line or separate lines
 dotnet_diagnostic.SA1117.severity = suggestion
