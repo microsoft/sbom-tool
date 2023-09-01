@@ -1038,10 +1038,6 @@ dotnet_diagnostic.IDE0070.severity = suggestion
 # IDE0072: Add missing cases to switch statement
 dotnet_diagnostic.IDE0072.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0073
-# IDE0073: Remove unnecessary parentheses
-dotnet_diagnostic.IDE0073.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0074
 # IDE0074: Use compound assignment
 dotnet_diagnostic.IDE0074.severity = suggestion

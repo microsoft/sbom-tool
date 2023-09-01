@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -213,11 +216,11 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var outputWriterMock = new Mock<IOutputWriter>();
         var recorder = new Mock<IRecorder>();
         var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
-           
+
         sbomParser.SetupSequence(p => p.Next())
             .Returns(ParserState.FILES)
             .Returns(ParserState.FINISHED);
-            
+
         var parserStateQueue = new Queue<ParserState>();
         parserStateQueue.Enqueue(ParserState.FILES);
         parserStateQueue.Enqueue(ParserState.FINISHED);
@@ -313,7 +316,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             fileConverter,
             FileHashesDictionarySingleton.Instance,
             spdxFileFilterer);
-            
+
         var validator = new SbomParserBasedValidationWorkflow(
             recorder.Object,
             signValidationProviderMock.Object,
@@ -321,9 +324,9 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             manifestParserProvider.Object,
             configurationMock.Object,
             sbomConfigs.Object,
-            filesValidator, 
+            filesValidator,
             validationResultGenerator,
-            outputWriterMock.Object, 
+            outputWriterMock.Object,
             fileSystemMock.Object);
 
         var result = await validator.RunAsync();
@@ -337,7 +340,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var missingFileErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.MissingFile).ToList();
         Assert.AreEqual(1, missingFileErrors.Count);
         Assert.AreEqual("./child2/grandchild2/file10", missingFileErrors.First().Path);
-            
+
         var invalidHashErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.InvalidHash).ToList();
         Assert.AreEqual(1, invalidHashErrors.Count);
         Assert.AreEqual("./child2/grandchild1/file9", invalidHashErrors.First().Path);
