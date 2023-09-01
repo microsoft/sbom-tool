@@ -46,7 +46,7 @@ public class RelationshipGeneratorTest
         // This timeout will cause an OperationCanceledException to be thrown if the channel is orphaned
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
 
-        // This will immidately return if the channel is closed.  
+        // This will immidately return if the channel is closed.
         //  If the channel is orphaned this will block until the timeout is reached
         //  which will fail the test.
         await channel.WaitToReadAsync(cts.Token);

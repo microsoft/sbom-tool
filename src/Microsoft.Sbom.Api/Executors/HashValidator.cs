@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Api.Executors;
 /// <summary>
 /// Given a list of <see cref="FileInfo"/> objects, and a <see cref="ManifestData"/>
 /// object, validates if the file hash matches the hash provided in the manifest data.
-/// 
+///
 /// Used only in the Validation action.
 /// </summary>
 public class HashValidator

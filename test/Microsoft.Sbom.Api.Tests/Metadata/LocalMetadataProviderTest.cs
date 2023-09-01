@@ -48,7 +48,7 @@ public class LocalMetadataProviderTest
         config.PackageVersion = new ConfigurationSetting<string>("version");
         config.PackageSupplier = null;
         config.GenerationTimestamp = null;
-   
+
         LocalMetadataProvider localMetadataProvider = new LocalMetadataProvider(config);
         Assert.AreEqual(4, localMetadataProvider.MetadataDictionary.Count);
         Assert.IsFalse(localMetadataProvider.MetadataDictionary.ContainsKey(MetadataKey.PackageSupplier));

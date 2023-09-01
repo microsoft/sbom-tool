@@ -18,7 +18,7 @@ public class Generator : ISbomService<GenerationArgs>
 
     public Generator(
         IWorkflow<SbomGenerationWorkflow> generationWorkflow,
-        IRecorder recorder) 
+        IRecorder recorder)
     {
         this.generationWorkflow = generationWorkflow;
         this.recorder = recorder;

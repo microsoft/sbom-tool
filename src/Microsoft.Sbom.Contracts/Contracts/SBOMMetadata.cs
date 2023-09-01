@@ -4,7 +4,7 @@
 namespace Microsoft.Sbom.Contracts;
 
 /// <summary>
-/// Use this class to provide addtional metadata to the SBOM generator 
+/// Use this class to provide addtional metadata to the SBOM generator
 /// about your specific environment.
 /// </summary>
 public class SBOMMetadata
@@ -41,19 +41,19 @@ public class SBOMMetadata
     public string Branch { get; set; }
 
     /// <summary>
-    /// Gets or sets the name of the package this SBOM represents. If this is not provided we will 
+    /// Gets or sets the name of the package this SBOM represents. If this is not provided we will
     /// try to generate a unique package name based on the build name and id.
     /// </summary>
     public string PackageName { get; set; }
 
     /// <summary>
-    /// Gets or sets the version of the package this SBOM represents. If this is not provided we will 
+    /// Gets or sets the version of the package this SBOM represents. If this is not provided we will
     /// try to generate a unique package name based on the build name and id.
     /// </summary>
     public string PackageVersion { get; set; }
 
     /// <summary>
-    /// Gets or sets the version of the package this SBOM represents. If this is not provided we will 
+    /// Gets or sets the version of the package this SBOM represents. If this is not provided we will
     /// try to generate a unique package name based on the build name and id.
     /// </summary>
     public string PackageSupplier { get; set; }

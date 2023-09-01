@@ -21,7 +21,7 @@ public enum AdapterReportItemType
 public class AdapterReportItem
 {
     public AdapterReportItemType Type { get; set; }
-        
+
     public string Details { get; set; }
 
     public AdapterReportItem(AdapterReportItemType type, string details)

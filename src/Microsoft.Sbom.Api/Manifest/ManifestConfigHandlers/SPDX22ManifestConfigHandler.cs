@@ -22,7 +22,7 @@ public class SPDX22ManifestConfigHandler : IManifestConfigHandler
 
     private string ManifestDirPath => configuration.ManifestDirPath?.Value;
 
-    // directory path for SPDX 2.2 is 
+    // directory path for SPDX 2.2 is
     // root/_manifest/spdx_2.2/
     private string SbomDirPath => fileSystemUtils.JoinPaths(ManifestDirPath, $"{Constants.SPDX22ManifestInfo.Name.ToLower()}_{Constants.SPDX22ManifestInfo.Version.ToLower()}");
 
@@ -65,7 +65,7 @@ public class SPDX22ManifestConfigHandler : IManifestConfigHandler
         };
 
         // For generation the default behavior is to always return true
-        // as we generate all the current formats of SBOM. Only override if the -mi 
+        // as we generate all the current formats of SBOM. Only override if the -mi
         // argument is specified.
         if (configuration.ManifestToolAction == ManifestToolActions.Generate)
         {

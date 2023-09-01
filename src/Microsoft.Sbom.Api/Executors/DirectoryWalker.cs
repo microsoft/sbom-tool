@@ -14,7 +14,7 @@ using Serilog;
 namespace Microsoft.Sbom.Api.Executors;
 
 /// <summary>
-/// Given a directory path, walks the subtree and returns all the 
+/// Given a directory path, walks the subtree and returns all the
 /// files in the directory.
 /// </summary>
 public class DirectoryWalker

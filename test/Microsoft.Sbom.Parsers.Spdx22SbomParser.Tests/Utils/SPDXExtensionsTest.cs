@@ -141,7 +141,7 @@ public class SPDXExtensionsTest
         {
             var value = referenceCategory.ToNormalizedString();
             Assert.IsFalse(
-                value.Contains('_'), 
+                value.Contains('_'),
                 $"The value {value} of the {nameof(ReferenceCategory)} enum contains an underscore character.");
         }
     }

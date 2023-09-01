@@ -193,7 +193,7 @@ public static class SPDXExtensions
     /// </remarks>
     private static string GetStringHash(string str)
     {
-        var hash = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(str)); 
+        var hash = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(str));
         var spdxId = BitConverter.ToString(hash).Replace("-", string.Empty);
         return spdxId;
     }

@@ -13,7 +13,7 @@ namespace Microsoft.Sbom.Api.Config;
 
 /// <summary>
 /// This is the schema for the config file that is used to provide
-/// the validator with additional params in a JSON format. Most of 
+/// the validator with additional params in a JSON format. Most of
 /// these fields can also be provided through the command line. In case
 /// of a conflict (same value provided in config file and command line, we
 /// throw an input error.
@@ -121,7 +121,7 @@ public class ConfigFile
     /// <summary>
     /// Gets or sets if specified, we will store the generated telemetry for the execution
     /// of the SBOM tool at this path.
-    /// </summary>        
+    /// </summary>
     public string TelemetryFilePath { get; set; }
 
     /// <summary>

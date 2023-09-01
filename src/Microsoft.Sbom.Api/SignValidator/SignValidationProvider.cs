@@ -10,7 +10,7 @@ using Microsoft.Sbom.Extensions;
 namespace Microsoft.Sbom.Api.SignValidator;
 
 /// <summary>
-/// Factory class that provides a <see cref="ISignValidator"/> implementation based on the 
+/// Factory class that provides a <see cref="ISignValidator"/> implementation based on the
 /// current operating system type.
 /// </summary>
 public class SignValidationProvider : ISignValidationProvider

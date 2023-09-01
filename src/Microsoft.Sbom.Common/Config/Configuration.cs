@@ -185,7 +185,7 @@ public class Configuration : IConfiguration
     }
 
     /// <inheritdoc cref="IConfiguration.PackageName" />
-    public ConfigurationSetting<string> PackageName 
+    public ConfigurationSetting<string> PackageName
     {
         get => packageName.Value;
         set => packageName.Value = value;

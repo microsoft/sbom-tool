@@ -17,8 +17,8 @@ public class ComponentDetectionCliArgumentBuilder
     private string action;
     private VerbosityMode verbosity = VerbosityMode.Quiet;
     private string sourceDirectory;
-    private Dictionary<string, string> detectorArgs = new Dictionary<string, string>() { 
-        { TimeoutArgsParamName, TimeoutDefaultSeconds.ToString() } 
+    private Dictionary<string, string> detectorArgs = new Dictionary<string, string>() {
+        { TimeoutArgsParamName, TimeoutDefaultSeconds.ToString() }
     };
 
     private Dictionary<string, string> keyValueArgs = new Dictionary<string, string>();

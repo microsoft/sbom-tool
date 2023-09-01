@@ -8,7 +8,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 
 /// <summary>
 /// Defines a reference to an external source of additional information, metadata,
-/// enumerations, asset identifiers, or downloadable content believed to be 
+/// enumerations, asset identifiers, or downloadable content believed to be
 /// relevant to a Package.
 /// </summary>
 public class ExternalReference

@@ -14,7 +14,7 @@ public interface IJsonArrayGenerator<T>
     where T : IJsonArrayGenerator<T>
 {
     /// <summary>
-    /// Generates an array in the json serializer with the headerName and writes all elements of the 
+    /// Generates an array in the json serializer with the headerName and writes all elements of the
     /// specific type into the array.
     /// </summary>
     /// <returns>The list of failures.</returns>

@@ -22,7 +22,7 @@ public class HashCodeGenerator : IHashCodeGenerator
     }
 
     /// <summary>
-    /// Given a file path, returns a list of <see cref="Checksum"/>for the file 
+    /// Given a file path, returns a list of <see cref="Checksum"/>for the file
     /// for each hash algorithm name provided in <paramref name="hashAlgorithmNames"/>.
     /// </summary>
     /// <param name="filePath">The path of the file.</param>

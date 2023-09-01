@@ -11,14 +11,14 @@ namespace Microsoft.Sbom.Extensions;
 /// <summary>
 /// The manifest tool uses this interface to generate a manifest (JSON format currently)
 /// for a given build artifact.
-/// 
-/// The manifest tool uses the name of this library to inject it at runtime. For that, please make sure 
+///
+/// The manifest tool uses the name of this library to inject it at runtime. For that, please make sure
 /// that the dll that implements this interface has the word "Manifest" in it.
 /// </summary>
 public interface IManifestGenerator
 {
     /// <summary>
-    /// This function is called by the manifest tool upon initialization to get the 
+    /// This function is called by the manifest tool upon initialization to get the
     /// manifest this library can generate.
     /// </summary>
     /// <returns>A <see cref="ManifestInfo">manifest</see> this library can generate.</returns>
@@ -26,7 +26,7 @@ public interface IManifestGenerator
 
     /// <summary>
     /// Syncrhonously generates a JSON element from the given fileInfo object.
-    /// 
+    ///
     /// The JsonDocument implements <see cref="System.IDisposable"/>, the caller of this function
     /// has the responsibility to dispose this object.
     /// </summary>
@@ -35,9 +35,9 @@ public interface IManifestGenerator
 
     /// <summary>
     /// Generates a JSON element representation of the <paramref name="packageInfo"/> object.
-    /// 
+    ///
     /// The JsonDocument implements <see cref="System.IDisposable"/>, the caller of this function
-    /// has the responsibility to dispose this object, so don't use 'using' or dispose this object 
+    /// has the responsibility to dispose this object, so don't use 'using' or dispose this object
     /// in this function.
     /// </summary>
     /// <param name="packageInfo">The current package that needs to be serialized.</param>
@@ -47,9 +47,9 @@ public interface IManifestGenerator
     /// <summary>
     /// Generate and return the package this SBOM describes. The <see cref="GenerationData"/> object can be used
     /// to add more information to the final object.
-    /// 
+    ///
     /// The JsonDocument implements <see cref="System.IDisposable"/>, the caller of this function
-    /// has the responsibility to dispose this object, so don't use 'using' or dispose this object 
+    /// has the responsibility to dispose this object, so don't use 'using' or dispose this object
     /// in this function.
     /// </summary>
     /// <param name="internalMetadataProvider">The <see cref="IInternalMetadataProvider"/> object provides
@@ -60,9 +60,9 @@ public interface IManifestGenerator
 
     /// <summary>
     /// Generate and return the JSON relationship information between this SBOM and its elements.
-    /// 
+    ///
     /// The JsonDocument implements <see cref="System.IDisposable"/>, the caller of this function
-    /// has the responsibility to dispose this object, so don't use 'using' or dispose this object 
+    /// has the responsibility to dispose this object, so don't use 'using' or dispose this object
     /// in this function.
     /// </summary>
     /// <param name="relationship"></param>
@@ -71,9 +71,9 @@ public interface IManifestGenerator
 
     /// <summary>
     /// Generate and return the JSON relationship information between this SBOM and external documents such as SBOMs.
-    /// 
+    ///
     /// The JsonDocument implements <see cref="System.IDisposable"/>, the caller of this function
-    /// has the responsibility to dispose this object, so don't use 'using' or dispose this object 
+    /// has the responsibility to dispose this object, so don't use 'using' or dispose this object
     /// in this function.
     /// </summary>
     /// <param name="externalDocumentReferenceInfo"></param>

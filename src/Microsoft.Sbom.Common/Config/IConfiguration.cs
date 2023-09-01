@@ -30,7 +30,7 @@ public interface IConfiguration
     ConfigurationSetting<string> BuildComponentPath { get; set; }
 
     /// <summary>
-    /// Gets or sets full file name of a list file that contains all files to be 
+    /// Gets or sets full file name of a list file that contains all files to be
     /// validated.
     /// </summary>
     ConfigurationSetting<string> BuildListFile { get; set; }
@@ -121,7 +121,7 @@ public interface IConfiguration
 
     /// <summary>
     /// Gets or sets a list of <see cref="SbomFile"/> files provided to us from the API.
-    /// We won't traverse the build root path to get a list of files if this is set, and 
+    /// We won't traverse the build root path to get a list of files if this is set, and
     /// use the list provided here instead.
     /// </summary>
     ConfigurationSetting<IEnumerable<SbomFile>> FilesList { get; set; }
@@ -145,7 +145,7 @@ public interface IConfiguration
     ConfigurationSetting<string> DockerImagesToScan { get; set; }
 
     /// <summary>
-    /// Gets or sets full file path to a file that contains list of external SBOMs to be 
+    /// Gets or sets full file path to a file that contains list of external SBOMs to be
     /// included as External document reference.
     /// </summary>
     ConfigurationSetting<string> ExternalDocumentReferenceListFile { get; set; }

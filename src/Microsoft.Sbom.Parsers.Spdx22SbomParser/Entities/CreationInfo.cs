@@ -16,7 +16,7 @@ public class CreationInfo
     /// </summary>
     [JsonPropertyName("created")]
     public string Created { get; set; }
-        
+
     /// <summary>
     /// Gets or sets a list of strings that specify metadata about the creators of this
     /// SBOM. This could be the person or organization name, or tool name, etc.

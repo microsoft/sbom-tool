@@ -28,7 +28,7 @@ public class DirectoryPathIsWritableValidator : ConfigValidator
     {
         if (paramValue != null && paramValue is string value && !string.IsNullOrEmpty(value))
         {
-            // check if directory exist 
+            // check if directory exist
             if (!fileSystemUtils.DirectoryExists(value))
             {
                 throw new ValidationArgException($"{paramName} directory not found for '{value}'");

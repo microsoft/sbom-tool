@@ -150,7 +150,7 @@ public class FilesValidator
     {
         var errors = new List<ChannelReader<FileValidationResult>>();
         var filesWithHashes = new List<ChannelReader<FileValidationResult>>();
-            
+
         // Enumerate files from SBOM
         var (sbomFiles, sbomFileErrors) = enumeratorChannel.Enumerate(sbomParser.GetFiles);
         errors.Add(sbomFileErrors);
