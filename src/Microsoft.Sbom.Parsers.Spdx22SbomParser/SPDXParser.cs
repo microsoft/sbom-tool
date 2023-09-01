@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
@@ -90,15 +91,28 @@ public class SPDXParser : ISbomParser
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
 
         // Validate buffer is not of 0 length.
-        if (buffer is null || buffer.Length == 0)
+        if (buffer.Length == 0)
         {
             throw new ArgumentException($"The {nameof(buffer)} value can't be null or of 0 length.");
         }
+
+        // Utf8JsonReader will not handle BOM's, so we need to "eat" them before.
+        this.stream.Position = GetStartPosition(this.stream);
 
         // Fill up the buffer.
         if (!stream.CanRead || stream.Read(buffer) == 0)
         {
             throw new EndOfStreamException();
+        }
+
+        static int GetStartPosition(Stream stream)
+        {
+            var bom = Encoding.UTF8.Preamble.ToArray();
+            stream.Position = 0;
+            var buffer = new byte[bom.Length];
+            stream.Read(buffer, 0, buffer.Length);
+
+            return Enumerable.SequenceEqual(buffer, bom) ? 3 : 0;
         }
     }
 

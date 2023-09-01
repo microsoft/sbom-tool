@@ -179,7 +179,7 @@ public class Generator : IManifestGenerator
 
     private string EnsureRelativePathStartsWithDot(string path)
     {
-        if (!path.StartsWith("."))
+        if (!path.StartsWith(".", StringComparison.Ordinal))
         {
             return "." + path;
         }

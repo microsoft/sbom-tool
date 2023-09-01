@@ -62,12 +62,12 @@ internal readonly ref struct CreationInfoParser
             missingProps.Add(nameof(this.creationInfo.Created));
         }
 
-        if (this.creationInfo.Creators == null || this.creationInfo.Creators.Count() == 0)
+        if (this.creationInfo.Creators == null || !this.creationInfo.Creators.Any())
         {
             missingProps.Add(nameof(this.creationInfo.Creators));
         }
 
-        if (missingProps.Count() > 0)
+        if (missingProps.Any())
         {
             throw new ParserException($"Missing required value(s) for creationInfo object at position {stream.Position}: {string.Join(",", missingProps)}");
         }

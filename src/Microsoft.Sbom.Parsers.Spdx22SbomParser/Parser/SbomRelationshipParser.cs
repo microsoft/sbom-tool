@@ -123,7 +123,7 @@ internal ref struct SbomRelationshipParser
             missingProps.Add(nameof(sbomRelationship.SourceElementId));
         }
 
-        if (missingProps.Count() > 0)
+        if (missingProps.Any())
         {
             throw new ParserException($"Missing required value(s) for relationship object at position {stream.Position}: {string.Join(",", missingProps)}");
         }

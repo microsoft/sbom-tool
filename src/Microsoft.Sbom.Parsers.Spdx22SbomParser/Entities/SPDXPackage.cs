@@ -60,7 +60,7 @@ public class SPDXPackage
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("licenseInfoFromFiles")]
-    public List<string> LicenseInfoFromFiles { get; set; }
+    public IEnumerable<string> LicenseInfoFromFiles { get; set; }
 
     /// <summary>
     /// Gets or sets contains a list of licenses the have been declared by the authors of the package.
