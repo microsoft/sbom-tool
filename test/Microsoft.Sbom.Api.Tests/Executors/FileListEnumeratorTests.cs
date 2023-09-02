@@ -8,14 +8,15 @@ using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
+
+using Microsoft.Extensions.Logging;
 
 [TestClass]
 public class FileListEnumeratorTests
 {
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<FileListEnumerator>> mockLogger = new();
 
     [TestMethod]
     public async Task ListWalkerTests_ValidListFile_SucceedsAsync()

@@ -21,11 +21,13 @@ using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Tests.Executors;
 
+using Microsoft.Extensions.Logging;
+
 [TestClass]
 public class SPDXSBOMReaderForExternalDocumentReferenceTests
 {
     private readonly Mock<IHashCodeGenerator> mockHashGenerator = new Mock<IHashCodeGenerator>();
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<SPDXSBOMReaderForExternalDocumentReference>> mockLogger = new();
     private readonly ISbomConfigProvider sbomConfigs;
     private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;

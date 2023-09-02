@@ -11,16 +11,17 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
-/// This class generates an array of external document references. 
+/// This class generates an array of external document references.
 /// </summary>
 public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDocumentReferenceGenerator>
 {
-    private readonly ILogger log;
+    private readonly ILogger<ExternalDocumentReferenceGenerator> log;
 
     private readonly ISbomConfigProvider sbomConfigs;
 
@@ -29,7 +30,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
     private readonly IRecorder recorder;
 
     public ExternalDocumentReferenceGenerator(
-        ILogger log,
+        ILogger<ExternalDocumentReferenceGenerator> log,
         ISbomConfigProvider sbomConfigs,
         IEnumerable<ISourcesProvider> sourcesProviders,
         IRecorder recorder)
@@ -50,7 +51,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
                 .Where(s => s.IsSupported(ProviderType.ExternalDocumentReference));
             if (!sourcesProviders.Any())
             {
-                log.Debug($"No source providers found for {ProviderType.ExternalDocumentReference}");
+                log.LogDebug($"No source providers found for {ProviderType.ExternalDocumentReference}");
                 return totalErrors;
             }
 

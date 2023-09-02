@@ -6,14 +6,15 @@ using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Tests.Utils;
+
+using Microsoft.Extensions.Logging;
 
 [TestClass]
 public class ComponentDetectorCachedExecutorTest
 {
-    private readonly Mock<ILogger> logger = new Mock<ILogger>();
+    private readonly Mock<ILogger<ComponentDetectorCachedExecutor>> logger = new();
     private readonly Mock<IComponentDetector> detector = new Mock<IComponentDetector>();
 
     [TestInitialize]

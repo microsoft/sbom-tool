@@ -10,20 +10,21 @@ using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
-/// Uses the <see cref="IManifestGenerator"/> to write a json object that contains 
+/// Uses the <see cref="IManifestGenerator"/> to write a json object that contains
 /// a file path and its associated hashes.
 /// </summary>
 public class FileInfoWriter
 {
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;
-    private readonly ILogger log;
+    private readonly ILogger<FileInfoWriter> log;
 
-    public FileInfoWriter(ManifestGeneratorProvider manifestGeneratorProvider, ILogger log)
+    public FileInfoWriter(ManifestGeneratorProvider manifestGeneratorProvider, ILogger<FileInfoWriter> log)
     {
         if (manifestGeneratorProvider is null)
         {
@@ -59,7 +60,7 @@ public class FileInfoWriter
         {
             foreach (var config in filesArraySupportingSBOMs)
             {
-                log.Verbose("Generating json for file {file} into {config}", sbomFile.Path, config.ManifestJsonFilePath);
+                log.LogTrace("Generating json for file {File} into {Config}", sbomFile.Path, config.ManifestJsonFilePath);
                 var generationResult = manifestGeneratorProvider
                     .Get(config.ManifestInfo)
                     .GenerateJsonDocument(sbomFile);
@@ -81,7 +82,7 @@ public class FileInfoWriter
         }
         catch (Exception e)
         {
-            log.Debug($"Encountered an error while generating json for file {sbomFile.Path}: {e.Message}");
+            log.LogDebug($"Encountered an error while generating json for file {sbomFile.Path}: {e.Message}");
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = ErrorType.JsonSerializationError,

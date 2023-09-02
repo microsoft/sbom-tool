@@ -10,9 +10,10 @@ using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.Sbom.Adapters.Report;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Contracts;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
+
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Takes a <see cref="ScannedComponent"/> object and converts it to a <see cref="PackageInfo"/>
@@ -20,13 +21,13 @@ namespace Microsoft.Sbom.Api.Executors;
 /// </summary>
 public class ComponentToPackageInfoConverter
 {
-    private readonly ILogger log;
+    private readonly ILogger<ComponentToPackageInfoConverter> log;
 
     // TODO: Remove and use interface
     // For unit testing only
     public ComponentToPackageInfoConverter() { }
 
-    public ComponentToPackageInfoConverter(ILogger log)
+    public ComponentToPackageInfoConverter(ILogger<ComponentToPackageInfoConverter> log)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
     }
@@ -55,7 +56,7 @@ public class ComponentToPackageInfoConverter
 
                     if (sbom == null)
                     {
-                        log.Debug($"Unable to serialize component '{scannedComponent.Component.Id}' of type '{scannedComponent.DetectorId}'. " +
+                        log.LogDebug($"Unable to serialize component '{scannedComponent.Component.Id}' of type '{scannedComponent.DetectorId}'. " +
                                   $"This component won't be included in the generated SBOM.");
                     }
                     else
@@ -65,7 +66,7 @@ public class ComponentToPackageInfoConverter
                 }
                 catch (Exception e)
                 {
-                    log.Debug($"Encountered an error while processing package {scannedComponent.Component.Id}: {e.Message}");
+                    log.LogDebug($"Encountered an error while processing package {scannedComponent.Component.Id}: {e.Message}");
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
                         ErrorType = ErrorType.PackageError,

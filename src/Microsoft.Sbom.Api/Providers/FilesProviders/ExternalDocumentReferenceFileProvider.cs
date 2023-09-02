@@ -13,8 +13,10 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
-/// Provider for external document reference file supported only when 
+/// Provider for external document reference file supported only when
 /// ExternalDocumentReferenceListFile is provided in the generation arguments.
 /// </summary>
 public class ExternalDocumentReferenceFileProvider : PathBasedFileToJsonProviderBase
@@ -24,7 +26,7 @@ public class ExternalDocumentReferenceFileProvider : PathBasedFileToJsonProvider
     public ExternalDocumentReferenceFileProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger log,
+        ILogger<ExternalDocumentReferenceFileProvider> log,
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
@@ -39,7 +41,7 @@ public class ExternalDocumentReferenceFileProvider : PathBasedFileToJsonProvider
     {
         if (providerType == ProviderType.Files && !string.IsNullOrWhiteSpace(Configuration.ExternalDocumentReferenceListFile?.Value))
         {
-            Log.Debug($"Using the {nameof(ExternalDocumentReferenceFileProvider)} provider for the files workflow.");
+            this.Log.LogDebug($"Using the {nameof(ExternalDocumentReferenceFileProvider)} provider for the files workflow.");
             return true;
         }
 

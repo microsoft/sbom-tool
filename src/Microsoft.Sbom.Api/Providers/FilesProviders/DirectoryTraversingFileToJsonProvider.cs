@@ -13,6 +13,8 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
 /// Traverse a given folder recursively to generate a list of files to be serialized.
 /// </summary>
@@ -23,7 +25,7 @@ public class DirectoryTraversingFileToJsonProvider : PathBasedFileToJsonProvider
     public DirectoryTraversingFileToJsonProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger log,
+        ILogger<DirectoryTraversingFileToJsonProvider> log,
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
@@ -42,7 +44,7 @@ public class DirectoryTraversingFileToJsonProvider : PathBasedFileToJsonProvider
             // Thus, this condition should be to check that all the remaining configurations for file inputs are null.
             if (string.IsNullOrWhiteSpace(Configuration.BuildListFile?.Value) && Configuration.FilesList?.Value == null)
             {
-                Log.Debug($"Using the {nameof(DirectoryTraversingFileToJsonProvider)} provider for the files workflow.");
+                this.Log.LogDebug($"Using the {nameof(DirectoryTraversingFileToJsonProvider)} provider for the files workflow.");
                 return true;
             }
         }

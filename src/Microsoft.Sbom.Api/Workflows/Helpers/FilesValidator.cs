@@ -11,9 +11,10 @@ using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
+
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Validates over files present in the SBOM file and on disk.
@@ -23,7 +24,7 @@ public class FilesValidator
     private readonly DirectoryWalker directoryWalker;
     private readonly IConfiguration configuration;
     private readonly ChannelUtils channelUtils = new ();
-    private readonly ILogger log;
+    private readonly ILogger<FilesValidator> log;
     private readonly FileHasher fileHasher;
     private readonly ManifestFolderFilterer fileFilterer;
     private readonly ConcurrentSha256HashValidator hashValidator;
@@ -35,7 +36,7 @@ public class FilesValidator
     public FilesValidator(
         DirectoryWalker directoryWalker,
         IConfiguration configuration,
-        ILogger log,
+        ILogger<FilesValidator> log,
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         ConcurrentSha256HashValidator hashValidator,
@@ -123,10 +124,10 @@ public class FilesValidator
         var (files, dirErrors) = directoryWalker.GetFilesRecursively(configuration.BuildDropPath.Value);
         errors.Add(dirErrors);
 
-        log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
+        log.LogDebug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
         var splitFilesChannels = channelUtils.Split(files, configuration.Parallelism.Value);
 
-        log.Debug("Waiting for the workflow to finish...");
+        log.LogDebug("Waiting for the workflow to finish...");
         foreach (var fileChannel in splitFilesChannels)
         {
             // Filter files
@@ -150,15 +151,15 @@ public class FilesValidator
     {
         var errors = new List<ChannelReader<FileValidationResult>>();
         var filesWithHashes = new List<ChannelReader<FileValidationResult>>();
-            
+
         // Enumerate files from SBOM
         var (sbomFiles, sbomFileErrors) = enumeratorChannel.Enumerate(sbomParser.GetFiles);
         errors.Add(sbomFileErrors);
 
-        log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
+        log.LogDebug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
         var splitFilesChannels = channelUtils.Split(sbomFiles, configuration.Parallelism.Value);
 
-        log.Debug("Waiting for the workflow to finish...");
+        log.LogDebug("Waiting for the workflow to finish...");
         foreach (var fileChannel in splitFilesChannels)
         {
             // Convert files to internal SBOM format.

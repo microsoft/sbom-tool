@@ -6,9 +6,10 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Filters;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
+
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Filters out folders for which we don't generate hashes, such as anything under the _manifest folder.
@@ -16,11 +17,11 @@ namespace Microsoft.Sbom.Api.Executors;
 public class ManifestFolderFilterer
 {
     private readonly IFilter<ManifestFolderFilter> manifestFolderFilter;
-    private readonly ILogger log;
+    private readonly ILogger<ManifestFolderFilter> log;
 
     public ManifestFolderFilterer(
         IFilter<ManifestFolderFilter> manifestFolderFilter,
-        ILogger log)
+        ILogger<ManifestFolderFilter> log)
     {
         ArgumentNullException.ThrowIfNull(manifestFolderFilter);
         ArgumentNullException.ThrowIfNull(log);
@@ -66,7 +67,7 @@ public class ManifestFolderFilterer
         }
         catch (Exception e)
         {
-            log.Debug($"Encountered an error while filtering file {file}: {e.Message}");
+            log.LogDebug($"Encountered an error while filtering file {file}: {e.Message}");
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = ErrorType.Other,

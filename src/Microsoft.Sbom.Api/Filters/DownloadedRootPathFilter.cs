@@ -7,19 +7,20 @@ using System.IO;
 using System.Linq;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Filters;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
-/// This filter checks if the path of a file matches the provided 
-/// root path filter, and returns true if it does. 
+/// This filter checks if the path of a file matches the provided
+/// root path filter, and returns true if it does.
 /// </summary>
 public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
 {
     private readonly IConfiguration configuration;
     private readonly IFileSystemUtils fileSystemUtils;
-    private readonly ILogger logger;
+    private readonly ILogger<DownloadedRootPathFilter> logger;
 
     private bool skipValidation;
     private HashSet<string> validPaths;
@@ -27,7 +28,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
     public DownloadedRootPathFilter(
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
-        ILogger logger)
+        ILogger<DownloadedRootPathFilter> logger)
     {
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
@@ -38,11 +39,11 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
 
     /// <summary>
     /// Returns true if filePath is present in root path filters.
-    /// 
+    ///
     /// For example, say filePath is /root/parent1/parent2/child1/child2.txt, then if the root path
     /// filters contains /root/parent1/ or /root/parent1/parent2/ in it, this filePath with return true,
     /// but if the root path contains /root/parent3/, this filePath will return false.
-    /// 
+    ///
     /// </summary>
     /// <param name="filePath">The file path to validate.</param>
     /// <returns></returns>
@@ -74,7 +75,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
     /// </summary>
     public void Init()
     {
-        logger.Verbose("Adding root path filter valid paths");
+        logger.LogTrace("Adding root path filter valid paths");
         skipValidation = true;
 
         if (configuration.RootPathFilter != null && !string.IsNullOrWhiteSpace(configuration.RootPathFilter.Value))
@@ -89,7 +90,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
 
             foreach (var validPath in validPaths)
             {
-                logger.Verbose($"Added valid path {validPath}");
+                logger.LogTrace($"Added valid path {validPath}");
             }
         }
     }

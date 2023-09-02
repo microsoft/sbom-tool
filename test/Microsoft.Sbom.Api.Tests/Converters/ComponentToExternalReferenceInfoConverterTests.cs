@@ -12,14 +12,15 @@ using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Tests.Converters;
+
+using Microsoft.Extensions.Logging;
 
 [TestClass]
 public class ComponentToExternalReferenceInfoConverterTests
 {
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<ComponentToExternalReferenceInfoConverter>> mockLogger = new();
 
     [TestMethod]
     public async Task When_ConvertingComponentToExternalDocRefInfo_WithCommonCase_ThenTestPass()

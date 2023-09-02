@@ -23,10 +23,12 @@ using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Tests.Executors;
 
+using Microsoft.Extensions.Logging;
+
 [TestClass]
 public class ExternalDocumentReferenceWriterTest
 {
-    private Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private Mock<ILogger<MetadataBuilder>> mockLogger = new();
     private Mock<IRecorder> recorderMock = new Mock<IRecorder>();
     private Mock<IFileSystemUtils> fileSystemUtilsMock = new Mock<IFileSystemUtils>();
 

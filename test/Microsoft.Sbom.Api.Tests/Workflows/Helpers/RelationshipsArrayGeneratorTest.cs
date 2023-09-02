@@ -17,10 +17,11 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers;
+
+using Microsoft.Extensions.Logging;
 
 [TestClass]
 public class RelationshipsArrayGeneratorTest
@@ -30,8 +31,8 @@ public class RelationshipsArrayGeneratorTest
     private readonly Mock<IRecorder> recorderMock = new Mock<IRecorder>();
     private readonly Mock<ISbomConfigProvider> sbomConfigsMock = new Mock<ISbomConfigProvider>();
     private readonly Mock<RelationshipGenerator> relationshipGeneratorMock = new Mock<RelationshipGenerator>(new ManifestGeneratorProvider(null));
-    private readonly Mock<ILogger> loggerMock = new Mock<ILogger>();
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<RelationshipsArrayGenerator>> relationshipLoggerMock = new();
+    private readonly Mock<ILogger<MetadataBuilder>> metadataLoggerMock = new();
     private readonly Mock<IFileSystemUtils> fileSystemUtilsMock = new Mock<IFileSystemUtils>();
     private readonly ManifestGeneratorProvider manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
     private ISbomPackageDetailsRecorder recorder;
@@ -64,10 +65,10 @@ public class RelationshipsArrayGeneratorTest
                 }
             });
         relationshipGeneratorMock.CallBase = true;
-        relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), loggerMock.Object, sbomConfigsMock.Object, recorderMock.Object);
+        relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), this.relationshipLoggerMock.Object, sbomConfigsMock.Object, recorderMock.Object);
         manifestGeneratorProvider.Init();
         metadataBuilder = new MetadataBuilder(
-            mockLogger.Object,
+            this.metadataLoggerMock.Object,
             manifestGeneratorProvider,
             Constants.TestManifestInfo,
             recorderMock.Object);

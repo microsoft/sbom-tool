@@ -17,10 +17,12 @@ using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
 
 namespace Microsoft.Sbom.Api.Executors;
+
+using System.IO;
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Given a list of file paths, returns a <see cref="FileInfo"/> object containing the
@@ -67,7 +69,7 @@ public class FileHasher
     public FileHasher(
         IHashCodeGenerator hashCodeGenerator,
         IManifestPathConverter manifestPathConverter,
-        ILogger log,
+        ILogger<FileHasher> log,
         IConfiguration configuration,
         ISbomConfigProvider sbomConfigs,
         ManifestGeneratorProvider manifestGeneratorProvider,
@@ -144,7 +146,7 @@ public class FileHasher
                 ManifestData.HashesMap.Remove(relativeFilePath);
             }
 
-            log.Error($"Encountered an error while generating hash for file {file}: {e.Message}");
+            log.LogError($"Encountered an error while generating hash for file {file}: {e.Message}");
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = Entities.ErrorType.Other,

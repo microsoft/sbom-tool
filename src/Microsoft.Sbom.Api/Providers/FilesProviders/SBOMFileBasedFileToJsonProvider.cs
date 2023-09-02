@@ -15,6 +15,8 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
 /// Serializes a list of <see cref="SbomFile"/> objects provided through the API to SBOM Json objects.
 /// </summary>
@@ -29,7 +31,7 @@ public class SbomFileBasedFileToJsonProvider : EntityToJsonProviderBase<SbomFile
     public SbomFileBasedFileToJsonProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger logger,
+        ILogger<SbomFileBasedFileToJsonProvider> logger,
         FileInfoWriter fileHashWriter,
         SbomFileToFileInfoConverter sbomFileToFileInfoConverter,
         InternalSBOMFileInfoDeduplicator fileInfo)
@@ -51,7 +53,7 @@ public class SbomFileBasedFileToJsonProvider : EntityToJsonProviderBase<SbomFile
         {
             if (Configuration.FilesList?.Value != null && string.IsNullOrWhiteSpace(Configuration.BuildListFile?.Value))
             {
-                Log.Debug($"Using the {nameof(SbomFileBasedFileToJsonProvider)} provider for the files workflow.");
+                this.Log.LogDebug($"Using the {nameof(SbomFileBasedFileToJsonProvider)} provider for the files workflow.");
                 return true;
             }
         }

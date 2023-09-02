@@ -5,14 +5,15 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Filters.Tests;
+
+using Microsoft.Extensions.Logging;
 
 [TestClass]
 public class DownloadedRootPathFilterTests
 {
-    private readonly Mock<ILogger> logger = new Mock<ILogger>();
+    private readonly Mock<ILogger<DownloadedRootPathFilter>> logger = new();
 
     [TestMethod]
     public void DownloadedRootPathFilterTest_NoFilterPath_Succeeds()

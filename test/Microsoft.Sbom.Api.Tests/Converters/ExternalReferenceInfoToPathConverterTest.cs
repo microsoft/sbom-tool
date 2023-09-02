@@ -10,14 +10,15 @@ using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Tests.Converters;
+
+using Microsoft.Extensions.Logging;
 
 [TestClass]
 public class ExternalReferenceInfoToPathConverterTest
 {
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<ExternalReferenceInfoToPathConverter>> mockLogger = new();
 
     [TestMethod]
     public async Task When_ConvertingExternalDocRefInfoToPath_WithCommonCase_ThenTestPass()

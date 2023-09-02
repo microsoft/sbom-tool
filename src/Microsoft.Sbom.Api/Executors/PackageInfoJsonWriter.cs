@@ -9,22 +9,23 @@ using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
-/// Uses the <see cref="IManifestGenerator"/> to write a json object that contains 
+/// Uses the <see cref="IManifestGenerator"/> to write a json object that contains
 /// a format specific representation of the <see cref="PackageInfo"/>.
 /// </summary>
 public class PackageInfoJsonWriter
 {
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;
-    private readonly ILogger log;
+    private readonly ILogger<PackageInfoJsonWriter> log;
 
     public PackageInfoJsonWriter(
         ManifestGeneratorProvider manifestGeneratorProvider,
-        ILogger log)
+        ILogger<PackageInfoJsonWriter> log)
     {
         if (manifestGeneratorProvider is null)
         {
@@ -69,7 +70,7 @@ public class PackageInfoJsonWriter
         }
         catch (Exception e)
         {
-            log.Debug($"Encountered an error while generating json for packageInfo {packageInfo}: {e.Message}");
+            log.LogDebug($"Encountered an error while generating json for packageInfo {packageInfo}: {e.Message}");
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = ErrorType.JsonSerializationError,

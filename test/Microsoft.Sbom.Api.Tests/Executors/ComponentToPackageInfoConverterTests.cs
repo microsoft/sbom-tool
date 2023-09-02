@@ -18,15 +18,16 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using HashAlgorithmName = Microsoft.Sbom.Contracts.Enums.AlgorithmName;
-using ILogger = Serilog.ILogger;
 using PackageInfo = Microsoft.Sbom.Contracts.SbomPackage;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
 
+using Microsoft.Extensions.Logging;
+
 [TestClass]
 public class ComponentToPackageInfoConverterTests
 {
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<ComponentToPackageInfoConverter>> mockLogger = new();
     private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;
 

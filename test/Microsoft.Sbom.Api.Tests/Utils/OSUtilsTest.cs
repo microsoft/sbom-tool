@@ -10,10 +10,12 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Tests.Utils;
 
+using Microsoft.Extensions.Logging;
+
 [TestClass]
 public class OSUtilsTest
 {
-    private readonly Mock<ILogger> logger = new Mock<ILogger>();
+    private readonly Mock<ILogger<OSUtils>> logger = new();
 
     private readonly Mock<IEnvironmentWrapper> environment = new Mock<IEnvironmentWrapper>();
 
@@ -61,7 +63,7 @@ public class OSUtilsTest
 
         Assert.AreEqual("true", osUtils.GetEnvironmentVariable(Variable));
         environment.VerifyAll();
-        logger.Verify(o => o.Warning($"There are duplicate environment variables in different case for {Variable}, the value used is true"), Times.Once());
+        logger.Verify(o => o.LogWarning($"There are duplicate environment variables in different case for {Variable}, the value used is true"), Times.Once());
     }
 
     [TestMethod]

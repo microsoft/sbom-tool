@@ -11,9 +11,11 @@ using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
+
+using Microsoft.Extensions.Logging;
+using ILogger = Serilog.ILogger;
 
 /// <summary>
 /// Filter files that match various filter criteria from the channel stream.
@@ -21,13 +23,13 @@ namespace Microsoft.Sbom.Api.Executors;
 public class FileFilterer
 {
     private readonly IFilter<DownloadedRootPathFilter> rootPathFilter;
-    private readonly ILogger log;
+    private readonly ILogger<FileFilterer> log;
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IConfiguration configuration;
 
     public FileFilterer(
         IFilter<DownloadedRootPathFilter> rootPathFilter,
-        ILogger log,
+        ILogger<FileFilterer> log,
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils)
     {
@@ -59,7 +61,7 @@ public class FileFilterer
     private async Task FilterFiles(InternalSbomFileInfo file, Channel<FileValidationResult> errors, Channel<InternalSbomFileInfo> output)
     {
         try
-        {                
+        {
             // Resolve ../ in paths to absolute paths.
             var fullPath = Path.GetFullPath(fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, file.Path));
 
@@ -77,7 +79,7 @@ public class FileFilterer
                     });
 
                     return;
-                }          
+                }
             }
 
             // Filter paths that are not present on disk.
@@ -92,11 +94,11 @@ public class FileFilterer
                 return;
             }
 
-            await output.Writer.WriteAsync(file);   
+            await output.Writer.WriteAsync(file);
         }
         catch (Exception e)
         {
-            log.Debug($"Encountered an error while filtering file {file.Path}: {e.Message}");
+            log.LogDebug($"Encountered an error while filtering file {file.Path}: {e.Message}");
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = ErrorType.Other,
