@@ -1,4 +1,7 @@
-﻿namespace Microsoft.Sbom.Parser.Strings;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace Microsoft.Sbom.Parser.Strings;
 
 internal readonly struct ExternalDocumentReferenceStrings
 {
@@ -77,7 +80,7 @@ internal readonly struct ExternalDocumentReferenceStrings
             ""checksumValue"": ""08ec1a34d54ae4e28e8b3c4cf6c5c141e67d1af1""
             },
           ""additionalProperty"": {
-                    ""childAddtionalProperty"": ""Additional property value"" 
+                    ""childAddtionalProperty"": ""Additional property value""
          }}]}";
 
     public const string JsonExtDocumentRefsStringAdditionalArray = @"{

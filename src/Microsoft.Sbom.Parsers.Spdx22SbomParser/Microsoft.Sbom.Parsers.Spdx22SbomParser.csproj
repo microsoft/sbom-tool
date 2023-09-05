@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Microsoft.Sbom.Parsers.Spdx22SbomParser</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>SPDX2.2 parser for SBOM tool.</Description>
