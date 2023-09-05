@@ -46,6 +46,7 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<string>> namespaceUriBase = new ();
     private static readonly AsyncLocal<ConfigurationSetting<string>> generationTimestamp = new ();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> followSymlinks = new ();
+    private static readonly AsyncLocal<ConfigurationSetting<bool>> fetchLicenseInformation = new ();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> deleteManifestDirIfPresent = new ();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> failIfNoPackages = new ();
     private static readonly AsyncLocal<ConfigurationSetting<LogEventLevel>> verbosity = new ();
