@@ -55,19 +55,21 @@ public static class ApiConfigurationBuilder
 
         RuntimeConfiguration sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
 
-        var configuration = new InputConfiguration();
-        configuration.BuildDropPath = GetConfigurationSetting(rootPath);
-        configuration.ManifestDirPath = GetConfigurationSetting(manifestDirPath);
-        configuration.ManifestToolAction = ManifestToolActions.Generate;
-        configuration.PackageName = GetConfigurationSetting(metadata.PackageName);
-        configuration.PackageVersion = GetConfigurationSetting(metadata.PackageVersion);
-        configuration.PackageSupplier = GetConfigurationSetting(metadata.PackageSupplier);
-        configuration.Parallelism = GetConfigurationSetting(sanitizedRuntimeConfiguration.WorkflowParallelism);
-        configuration.GenerationTimestamp = GetConfigurationSetting(sanitizedRuntimeConfiguration.GenerationTimestamp);
-        configuration.NamespaceUriBase = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriBase);
-        configuration.NamespaceUriUniquePart = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriUniquePart);
-        configuration.FollowSymlinks = GetConfigurationSetting(sanitizedRuntimeConfiguration.FollowSymlinks);
-        configuration.DeleteManifestDirIfPresent = GetConfigurationSetting(sanitizedRuntimeConfiguration.DeleteManifestDirectoryIfPresent);
+        var configuration = new InputConfiguration
+        {
+            BuildDropPath = GetConfigurationSetting(rootPath),
+            ManifestDirPath = GetConfigurationSetting(manifestDirPath),
+            ManifestToolAction = ManifestToolActions.Generate,
+            PackageName = GetConfigurationSetting(metadata.PackageName),
+            PackageVersion = GetConfigurationSetting(metadata.PackageVersion),
+            PackageSupplier = GetConfigurationSetting(metadata.PackageSupplier),
+            Parallelism = GetConfigurationSetting(sanitizedRuntimeConfiguration.WorkflowParallelism),
+            GenerationTimestamp = GetConfigurationSetting(sanitizedRuntimeConfiguration.GenerationTimestamp),
+            NamespaceUriBase = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriBase),
+            NamespaceUriUniquePart = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriUniquePart),
+            FollowSymlinks = GetConfigurationSetting(sanitizedRuntimeConfiguration.FollowSymlinks),
+            DeleteManifestDirIfPresent = GetConfigurationSetting(sanitizedRuntimeConfiguration.DeleteManifestDirectoryIfPresent),
+        };
 
         SetVerbosity(sanitizedRuntimeConfiguration, configuration);
 
@@ -128,17 +130,19 @@ public static class ApiConfigurationBuilder
 
         var sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
 
-        var configuration = new InputConfiguration();
-        configuration.BuildDropPath = GetConfigurationSetting(buildDropPath);
-        configuration.ManifestDirPath = GetConfigurationSetting(manifestDirPath);
-        configuration.ManifestToolAction = ManifestToolActions.Validate;
-        configuration.OutputPath = GetConfigurationSetting(outputPath);
-        configuration.HashAlgorithm = GetConfigurationSetting(algorithmName ?? AlgorithmName.SHA256);
-        configuration.RootPathFilter = GetConfigurationSetting(rootPathFilter);
-        configuration.ValidateSignature = GetConfigurationSetting(validateSignature);
-        configuration.IgnoreMissing = GetConfigurationSetting(ignoreMissing);
-        configuration.Parallelism = GetConfigurationSetting(sanitizedRuntimeConfiguration.WorkflowParallelism);
-        configuration.ManifestInfo = ConvertSbomSpecificationToManifestInfo(specifications);
+        var configuration = new InputConfiguration
+        {
+            BuildDropPath = GetConfigurationSetting(buildDropPath),
+            ManifestDirPath = GetConfigurationSetting(manifestDirPath),
+            ManifestToolAction = ManifestToolActions.Validate,
+            OutputPath = GetConfigurationSetting(outputPath),
+            HashAlgorithm = GetConfigurationSetting(algorithmName ?? AlgorithmName.SHA256),
+            RootPathFilter = GetConfigurationSetting(rootPathFilter),
+            ValidateSignature = GetConfigurationSetting(validateSignature),
+            IgnoreMissing = GetConfigurationSetting(ignoreMissing),
+            Parallelism = GetConfigurationSetting(sanitizedRuntimeConfiguration.WorkflowParallelism),
+            ManifestInfo = ConvertSbomSpecificationToManifestInfo(specifications),
+        };
 
         SetVerbosity(sanitizedRuntimeConfiguration, configuration);
 
