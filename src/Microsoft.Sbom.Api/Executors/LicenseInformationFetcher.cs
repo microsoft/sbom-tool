@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
+
 public class LicenseInformationFetcher : ILicenseInformationFetcher
 {
     private readonly ILogger log;
@@ -38,7 +39,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                 var componentName = scannedComponent.Component.PackageUrl?.Name;
 
                 // If the clearlyDefinedName contains a / then split it and use the first part as the clearlyDefinedNamespace and the second part as the clearlyDefinedName
-                if (componentName.Contains("/"))
+                if (componentName.Contains('/'))
                 {
                     string[] clearlyDefinedNameParts = componentName.Split('/');
                     clearlyDefinedNamespace = clearlyDefinedNameParts[0];
@@ -76,7 +77,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
 
         try
         {
-            JObject responseObject = JObject.Parse(httpResponseContent); // Parse the JSON string
+            JObject responseObject = JObject.Parse(httpResponseContent);
 
             foreach (JToken packageInfoToken in responseObject.Values())
             {
