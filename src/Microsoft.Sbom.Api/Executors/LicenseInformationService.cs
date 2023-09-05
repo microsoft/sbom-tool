@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
+
 public class LicenseInformationService
 {
     private readonly ILogger log;
