@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
@@ -9,6 +10,7 @@ using System.Security.Principal;
 
 namespace Microsoft.Sbom.Common;
 
+[SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "This is a Windows only implementation")]
 public class WindowsFileSystemUtils : FileSystemUtils
 {
     override public bool DirectoryHasReadPermissions(string directoryPath) => DirectoryHasRights(directoryPath, FileSystemRights.Read);

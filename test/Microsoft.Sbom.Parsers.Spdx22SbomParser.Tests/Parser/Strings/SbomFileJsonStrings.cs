@@ -1,4 +1,7 @@
-﻿namespace Microsoft.Sbom.Parser.Strings;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace Microsoft.Sbom.Parser.Strings;
 
 internal struct SbomFileJsonStrings
 {
@@ -116,7 +119,7 @@ internal struct SbomFileJsonStrings
                 ],
                 ""copyrightText"": ""NOASSERTION""
             }]}";
-          
+
     public const string GoodJsonWith1FileAdditionalValueArrayPropertyString = @"{
             ""files"": [
             {
@@ -146,7 +149,7 @@ internal struct SbomFileJsonStrings
                 ""fileName"": ""./file1"",
                 ""SPDXID"": ""SPDXRef-File--sbom-tool-win-x64.exe-E55F25E239D8D3572D75D5CDC5CA24899FD4993F"",
                 ""additionalProperty"": [
-                    {""childAddtionalProperty"": ""Additional property value"" 
+                    {""childAddtionalProperty"": ""Additional property value""
                 }],
                 ""checksums"": [
                 {
@@ -213,7 +216,7 @@ internal struct SbomFileJsonStrings
 
     public const string JsonWith1FileMissingIDString = @"{
             ""files"": [
-            {                
+            {
                 ""fileName"": ""./file1"",
                 ""checksums"": [
                 {

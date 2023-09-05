@@ -118,7 +118,7 @@ public class SPDXExtensionsTest
         var spdxId = spdxPackage.AddSpdxId(packageInfo);
 
         Assert.AreEqual(spdxId, spdxPackage.SpdxId);
-        Assert.IsTrue(spdxId.StartsWith(spdxIdPrefex));
+        Assert.IsTrue(spdxId.StartsWith(spdxIdPrefex, StringComparison.Ordinal));
         Assert.IsTrue(spdxIdAllowedCharsRegex.IsMatch(spdxId.Split(spdxIdPrefex)[1]));
     }
 

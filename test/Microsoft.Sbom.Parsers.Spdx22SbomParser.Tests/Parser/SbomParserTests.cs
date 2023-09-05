@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Sbom.Contracts.Enums;
@@ -11,6 +14,45 @@ namespace Microsoft.Sbom.Parser;
 [TestClass]
 public class SbomParserTests
 {
+    [TestMethod]
+    public void ParseWithBOMTest()
+    {
+        var utf8BOM = Encoding.UTF8.GetString(Encoding.UTF8.Preamble);
+        byte[] bytes = Encoding.UTF8.GetBytes(utf8BOM + SbomParserStrings.JsonWithAll4Properties);
+        using var stream = new MemoryStream(bytes);
+
+        var parser = new SPDXParser(stream);
+
+        Assert.AreEqual(ParserState.NONE, parser.CurrentState);
+
+        var state = parser.Next();
+        Assert.AreEqual(ParserState.FILES, state);
+
+        Assert.AreEqual(0, parser.GetFiles().Count());
+
+        state = parser.Next();
+        Assert.AreEqual(ParserState.PACKAGES, state);
+
+        Assert.AreEqual(0, parser.GetPackages().Count());
+
+        state = parser.Next();
+        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
+
+        Assert.AreEqual(0, parser.GetRelationships().Count());
+
+        state = parser.Next();
+        Assert.AreEqual(ParserState.REFERENCES, state);
+
+        Assert.AreEqual(0, parser.GetReferences().Count());
+
+        state = parser.Next();
+        Assert.AreEqual(ParserState.METADATA, state);
+        _ = parser.GetMetadata();
+
+        state = parser.Next();
+        Assert.AreEqual(ParserState.FINISHED, state);
+    }
+
     [TestMethod]
     public void ParseMultiplePropertiesTest()
     {

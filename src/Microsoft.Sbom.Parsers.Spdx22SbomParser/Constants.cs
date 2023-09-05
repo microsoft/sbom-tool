@@ -54,7 +54,7 @@ internal class Constants
     /// <summary>
     /// The <see cref="NoAssertionValue"/> value as a list with a single item.
     /// </summary>
-    internal static List<string> NoAssertionListValue = new List<string> { NoAssertionValue };
+    internal static IEnumerable<string> NoAssertionListValue = new List<string> { NoAssertionValue };
 
     internal static ManifestInfo Spdx22ManifestInfo = new ManifestInfo
     {

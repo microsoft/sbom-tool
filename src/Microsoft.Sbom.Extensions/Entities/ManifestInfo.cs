@@ -50,9 +50,9 @@ public class ManifestInfo : IEquatable<ManifestInfo>
         };
     }
 
-    public override bool Equals(object other)
+    public override bool Equals(object obj)
     {
-        return Equals(other as ManifestInfo);
+        return Equals(obj as ManifestInfo);
     }
 
     public static bool operator ==(ManifestInfo obj1, ManifestInfo obj2)
