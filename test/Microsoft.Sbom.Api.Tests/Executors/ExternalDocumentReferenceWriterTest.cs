@@ -50,12 +50,16 @@ public class ExternalDocumentReferenceWriterTest
             Recorder = new SbomPackageDetailsRecorder()
         };
 
-        ExternalDocumentReferenceInfo externalDocumentReferenceInfo = new ExternalDocumentReferenceInfo();
-        externalDocumentReferenceInfo.ExternalDocumentName = "name";
-        externalDocumentReferenceInfo.DocumentNamespace = "namespace";
-        var checksum = new Checksum();
-        checksum.Algorithm = AlgorithmName.SHA1;
-        checksum.ChecksumValue = "abc";
+        ExternalDocumentReferenceInfo externalDocumentReferenceInfo = new ExternalDocumentReferenceInfo
+        {
+            ExternalDocumentName = "name",
+            DocumentNamespace = "namespace"
+        };
+        var checksum = new Checksum
+        {
+            Algorithm = AlgorithmName.SHA1,
+            ChecksumValue = "abc"
+        };
         externalDocumentReferenceInfo.Checksum = new List<Checksum> { checksum };
 
         var externalDocumentReferenceInfos = new List<ExternalDocumentReferenceInfo> { externalDocumentReferenceInfo };

@@ -33,9 +33,11 @@ public class RelationshipGeneratorTest
         var r = new Relationship() { RelationshipType = RelationshipType.DEPENDS_ON };
         var rs = new List<Relationship> { r };
 
-        var mi = new ManifestInfo();
-        mi.Name = "Test";
-        mi.Version = "1";
+        var mi = new ManifestInfo
+        {
+            Name = "Test",
+            Version = "1",
+        };
         mock.Setup(m => m.RegisterManifest()).Returns(mi);
         m.Init();
 
@@ -65,9 +67,11 @@ public class RelationshipGeneratorTest
         var r2 = new Relationship() { RelationshipType = RelationshipType.CONTAINS, SourceElementId = "three", TargetElementId = "four" };
         var rs = new List<Relationship> { r, r2 };
 
-        var mi = new ManifestInfo();
-        mi.Name = "Test";
-        mi.Version = "1";
+        var mi = new ManifestInfo
+        {
+            Name = "Test",
+            Version = "1",
+        };
         mock.Setup(m => m.RegisterManifest()).Returns(mi);
         m.Init();
 
@@ -104,9 +108,11 @@ public class RelationshipGeneratorTest
         var rg = new RelationshipGenerator(m);
         var rs = new List<Relationship>();
 
-        var mi = new ManifestInfo();
-        mi.Name = "Test";
-        mi.Version = "1";
+        var mi = new ManifestInfo
+        {
+            Name = "Test",
+            Version = "1",
+        };
         mock.Setup(m => m.RegisterManifest()).Returns(mi);
         m.Init();
 

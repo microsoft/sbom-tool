@@ -950,10 +950,6 @@ dotnet_diagnostic.IDE0009.severity = suggestion
 # IDE0010: Add missing cases
 dotnet_diagnostic.IDE0010.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0017
-# IDE0017: Simplify object initialization
-dotnet_diagnostic.IDE0017.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0019
 # IDE0019: Use pattern matching
 dotnet_diagnostic.IDE0019.severity = suggestion
