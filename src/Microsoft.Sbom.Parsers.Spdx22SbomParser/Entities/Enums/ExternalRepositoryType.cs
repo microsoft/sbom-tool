@@ -22,7 +22,7 @@ public enum ExternalRepositoryType
     #endregion
 
     #region Persistent-Id
-        
+
     swh,
 
     #endregion

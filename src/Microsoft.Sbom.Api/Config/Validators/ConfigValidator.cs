@@ -8,7 +8,7 @@ using Microsoft.Sbom.Api.Utils;
 namespace Microsoft.Sbom.Common.Config.Validators;
 
 /// <summary>
-/// Abstract class from which all validators must inherit. 
+/// Abstract class from which all validators must inherit.
 /// This class only validates configuration properties that are of the type <see cref="ConfigurationSetting{T}"/>.
 /// </summary>
 public abstract class ConfigValidator

@@ -58,7 +58,7 @@ public class LocalMetadataProvider : IMetadataProvider, IDefaultMetadataProvider
 
             // Add generation timestamp
             metadataDictionary.AddIfKeyNotPresentAndValueNotNull(MetadataKey.GenerationTimestamp, configuration.GenerationTimestamp?.Value);
-                
+
             return metadataDictionary;
         }
     }

@@ -9,7 +9,7 @@ using Microsoft.Sbom.Extensions.Entities;
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 
 /// <summary>
-/// Validates files in a folder against their checksums stored in an SPDX 2.2 SBOM. 
+/// Validates files in a folder against their checksums stored in an SPDX 2.2 SBOM.
 /// </summary>
 public class Validator : IManifestInterface
 {
@@ -21,7 +21,7 @@ public class Validator : IManifestInterface
         Version = Constants.SPDXVersion
     };
 
-    public ManifestData ParseManifest(string manifest) 
+    public ManifestData ParseManifest(string manifest)
         => throw new NotImplementedException($"Currently we don't support parsing complete SPDX 2.2 SBOMs");
 
     public ManifestInfo[] RegisterManifest() => new[] { spdxManifestInfo };

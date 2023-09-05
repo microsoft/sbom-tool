@@ -31,7 +31,7 @@ internal static class NpmComponentExtensions
     };
 
     /// <summary>
-    /// Converts the <see cref="NpmAuthor"/> to an SPDX Supplier. 
+    /// Converts the <see cref="NpmAuthor"/> to an SPDX Supplier.
     /// </summary>
     private static string AsSupplier(this NpmAuthor npmAuthor) => (npmAuthor.Name, npmAuthor.Email) switch
     {

@@ -15,7 +15,7 @@ public class FileEntity : Entity
     /// Gets the path of the file as included in the SBOM.
     /// </summary>
     public string Path { get; private set; }
-        
+
     /// <nodoc />
     public FileEntity(string path, string id = null)
         : base(EntityType.File, id)

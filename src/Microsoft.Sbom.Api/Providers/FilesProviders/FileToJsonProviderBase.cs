@@ -25,7 +25,7 @@ public abstract class FileToJsonProviderBase<T> : ISourcesProvider
     private readonly ILogger log;
 
     private readonly ChannelUtils channelUtils;
-        
+
     public FileToJsonProviderBase(IConfiguration configuration, ILogger log, ChannelUtils channelUtils)
     {
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));

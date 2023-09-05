@@ -31,7 +31,7 @@ public class SbomConfigProvider : ISbomConfigProvider
                 // Exit fast if config map is already initialized.
                 return configsDictionary;
             }
-               
+
             // Initialize new config map.
             configsDictionary = new Dictionary<ManifestInfo, ISbomConfig>();
             foreach (var configHandler in manifestConfigHandlers)

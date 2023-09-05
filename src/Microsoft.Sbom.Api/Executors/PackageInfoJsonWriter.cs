@@ -14,7 +14,7 @@ using Serilog;
 namespace Microsoft.Sbom.Api.Executors;
 
 /// <summary>
-/// Uses the <see cref="IManifestGenerator"/> to write a json object that contains 
+/// Uses the <see cref="IManifestGenerator"/> to write a json object that contains
 /// a format specific representation of the <see cref="PackageInfo"/>.
 /// </summary>
 public class PackageInfoJsonWriter

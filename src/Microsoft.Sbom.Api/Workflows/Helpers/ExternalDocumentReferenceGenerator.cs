@@ -16,7 +16,7 @@ using Serilog;
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
 /// <summary>
-/// This class generates an array of external document references. 
+/// This class generates an array of external document references.
 /// </summary>
 public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDocumentReferenceGenerator>
 {

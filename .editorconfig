@@ -557,10 +557,6 @@ dotnet_diagnostic.SA1500.severity = suggestion
 # SA1502: Element should not be on a single line
 dotnet_diagnostic.SA1502.severity = suggestion
 
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1518.md
-# SA1518: Use line endings correctly
-dotnet_diagnostic.SA1518.severity = suggestion
-
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1600.md
 # SA1600: Elements should be documented
 dotnet_diagnostic.SA1600.severity = suggestion

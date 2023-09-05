@@ -149,7 +149,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
 
                 try
                 {
-                    // Delete the generated temp folder if necessary 
+                    // Delete the generated temp folder if necessary
                     if (fileSystemUtils.DirectoryExists(fileSystemUtils.GetSbomToolTempPath()))
                     {
                         fileSystemUtils.DeleteDir(fileSystemUtils.GetSbomToolTempPath(), true);
@@ -158,11 +158,11 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 catch (Exception e)
                 {
                     log.Warning($"Unable to delete the temp directory {fileSystemUtils.GetSbomToolTempPath()}", e);
-                }          
+                }
             }
         }
     }
-        
+
     private void DeleteManifestFolder(string sbomDir)
     {
         try
@@ -211,7 +211,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
 
         try
         {
-            // If the _manifest directory already exists, we must delete it first to avoid having 
+            // If the _manifest directory already exists, we must delete it first to avoid having
             // multiple SBOMs for the same drop. However, the default behaviour is to fail with an
             // Exception since we don't want to inadvertently delete someone else's data. This behaviour
             // can be overridden by setting an environment variable.

@@ -44,7 +44,7 @@ public abstract class ComponentDetectionBaseWalker
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.componentDetector = componentDetector ?? throw new ArgumentNullException(nameof(componentDetector));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs)); 
+        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
     }
 

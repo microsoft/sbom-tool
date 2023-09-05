@@ -610,7 +610,7 @@ public class DropHashValidationWorkflowTests : ValidationWorkflowTestsBase
 
         var signValidationProviderMock = new Mock<ISignValidationProvider>();
         signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
-            
+
         var recorderMock = new Mock<IRecorder>().Object;
 
         var configurationMock = new Mock<IConfiguration>();

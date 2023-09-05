@@ -23,7 +23,7 @@ internal class Constants
     internal const string DocumentNamespaceHeaderName = "documentNamespace";
     internal const string CreationInfoHeaderName = "creationInfo";
     internal const string DocumentDescribesHeaderName = "documentDescribes";
-        
+
     internal const string PackagesArrayHeaderName = "packages";
     internal const string FilesArrayHeaderName = "files";
     internal const string RelationshipsArrayHeaderName = "relationships";

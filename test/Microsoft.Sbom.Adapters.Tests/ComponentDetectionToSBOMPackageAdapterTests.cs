@@ -42,7 +42,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
                                  ""hash"": null,
                                  ""type"": ""Npm"",
                                  ""id"": ""@microsoft/yarn-graph-builder 1.0.0 - Npm"",
-                                 ""author"": { 
+                                 ""author"": {
                                     ""name"": ""some-name""
                                  }
                                },
@@ -62,13 +62,13 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         Assert.IsNotNull(errors.Report);
         Assert.IsTrue(errors.Report?.Count == 1);
         Assert.IsTrue(errors.Report.First().Type == AdapterReportItemType.Success);
-            
+
         // Converted packaged is present and valid
         Assert.IsTrue(packages?.Count == 1);
         Assert.IsNotNull(packages[0]);
         Assert.AreEqual(packages[0].PackageName, "@microsoft/yarn-graph-builder");
         Assert.AreEqual(packages[0].PackageVersion, "1.0.0");
-            
+
         // This one contains no checksums, so verify that it is null
         Assert.IsNotNull(packages[0].Checksum);
         var checksums = packages[0].Checksum?.ToList();
@@ -118,7 +118,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     public void CargoComponent_ToSbomPackage()
     {
         var cargoComponent = new CargoComponent("name", "version");
-        var scannedComponent = new ScannedComponent() { Component = cargoComponent }; 
+        var scannedComponent = new ScannedComponent() { Component = cargoComponent };
 
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 

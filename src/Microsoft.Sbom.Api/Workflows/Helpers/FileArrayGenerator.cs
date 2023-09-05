@@ -15,7 +15,7 @@ using ILogger = Serilog.ILogger;
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
 /// <summary>
-/// This class generates an array of filenames and hashes based on the format of the SBOM. 
+/// This class generates an array of filenames and hashes based on the format of the SBOM.
 /// </summary>
 public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
 {
@@ -41,7 +41,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
 
     /// <summary>
     /// Traverses all the files inside the buildDropPath, and serializes the SBOM using the JSON serializer creating
-    /// an array object whose key is defined by <paramref name="headerName"/>. Upon failure, returns a list of 
+    /// an array object whose key is defined by <paramref name="headerName"/>. Upon failure, returns a list of
     /// <see cref="FileValidationResult"/> objects that can be used to trace the error.
     /// </summary>
     /// <param name="jsonSerializer">The serializer used to write the SBOM.</param>

@@ -155,7 +155,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 };
 
                 await outputWriter.WriteAsync(JsonSerializer.Serialize(validationResultOutput, options));
-                    
+
                 validFailures = fileValidationFailures.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType));
 
                 if (configuration.IgnoreMissing.Value)

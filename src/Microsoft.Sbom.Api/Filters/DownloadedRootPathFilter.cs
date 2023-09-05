@@ -12,8 +12,8 @@ using Serilog;
 namespace Microsoft.Sbom.Api.Filters;
 
 /// <summary>
-/// This filter checks if the path of a file matches the provided 
-/// root path filter, and returns true if it does. 
+/// This filter checks if the path of a file matches the provided
+/// root path filter, and returns true if it does.
 /// </summary>
 public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
 {
@@ -38,11 +38,11 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
 
     /// <summary>
     /// Returns true if filePath is present in root path filters.
-    /// 
+    ///
     /// For example, say filePath is /root/parent1/parent2/child1/child2.txt, then if the root path
     /// filters contains /root/parent1/ or /root/parent1/parent2/ in it, this filePath with return true,
     /// but if the root path contains /root/parent3/, this filePath will return false.
-    /// 
+    ///
     /// </summary>
     /// <param name="filePath">The file path to validate.</param>
     /// <returns></returns>
