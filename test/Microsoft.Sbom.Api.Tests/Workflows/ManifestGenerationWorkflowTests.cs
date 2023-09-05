@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -62,6 +62,7 @@ public class ManifestGenerationWorkflowTests
     private readonly Mock<ComponentToPackageInfoConverter> packageInfoConverterMock = new Mock<ComponentToPackageInfoConverter>();
     private readonly Mock<ISBOMReaderForExternalDocumentReference> sBOMReaderForExternalDocumentReferenceMock = new Mock<ISBOMReaderForExternalDocumentReference>();
     private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new Mock<IFileSystemUtilsExtension>();
+    private readonly Mock<ILicenseInformationFetcher> licenseInformationFetcherMock = new Mock<ILicenseInformationFetcher>();
 
     [TestInitialize]
     public void Setup()
@@ -277,7 +278,8 @@ public class ManifestGenerationWorkflowTests
                 manifestGeneratorProvider,
                 mockLogger.Object),
             packageInfoConverterMock.Object,
-            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object));
+            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object, licenseInformationFetcherMock.Object),
+            licenseInformationFetcherMock.Object);
 
         var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider(
             configurationMock.Object,

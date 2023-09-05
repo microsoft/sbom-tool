@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
-using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.Sbom.Adapters.Report;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Contracts;
@@ -39,7 +38,7 @@ public class ComponentToPackageInfoConverter
         Task.Run(async () =>
         {
             var report = new AdapterReport();
-            await foreach (ScannedComponent scannedComponent in componentReader.ReadAllAsync())
+            await foreach (ScannedComponentWithLicense scannedComponent in componentReader.ReadAllAsync())
             {
                 await ConvertComponentToPackage(scannedComponent, output, errors);
             }
@@ -47,7 +46,7 @@ public class ComponentToPackageInfoConverter
             output.Writer.Complete();
             errors.Writer.Complete();
 
-            async Task ConvertComponentToPackage(ScannedComponent scannedComponent, Channel<SbomPackage> output, Channel<FileValidationResult> errors)
+            async Task ConvertComponentToPackage(ScannedComponentWithLicense scannedComponent, Channel<SbomPackage> output, Channel<FileValidationResult> errors)
             {
                 try
                 {

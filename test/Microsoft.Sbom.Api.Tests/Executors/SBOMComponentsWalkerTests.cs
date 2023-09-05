@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -30,6 +30,7 @@ public class SBOMComponentsWalkerTests
     private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
     private readonly Mock<ISbomConfigProvider> mockSbomConfigs = new Mock<ISbomConfigProvider>();
     private readonly Mock<IFileSystemUtils> mockFileSystem = new Mock<IFileSystemUtils>();
+    private readonly Mock<ILicenseInformationFetcher> mockLicenseInformationFetcher = new Mock<ILicenseInformationFetcher>();
 
     public SBOMComponentsWalkerTests()
     {
@@ -44,10 +45,10 @@ public class SBOMComponentsWalkerTests
     [TestMethod]
     public async Task GetComponents()
     {
-        var scannedComponents = new List<ScannedComponent>();
+        var scannedComponents = new List<ScannedComponentWithLicense>();
         for (int i = 1; i < 4; i++)
         {
-            var scannedComponent = new ScannedComponent
+            var scannedComponent = new ScannedComponentWithLicense
             {
                 Component = new SpdxComponent("SPDX-2.2", new Uri("http://test.uri"), "componentName", $"123{i}", "abcdef", $"path{i}"),
                 DetectorId = "SPDX22SBOM"
@@ -65,7 +66,7 @@ public class SBOMComponentsWalkerTests
         };
 
         mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
-        var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object);
+        var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
         var discoveredComponents = await packagesChannelReader.output.ReadAllAsync().ToListAsync();
@@ -82,10 +83,10 @@ public class SBOMComponentsWalkerTests
     [TestMethod]
     public async Task GetComponentsWithFiltering()
     {
-        var scannedComponents = new List<ScannedComponent>();
+        var scannedComponents = new List<ScannedComponentWithLicense>();
         for (int i = 1; i < 4; i++)
         {
-            var scannedComponent = new ScannedComponent
+            var scannedComponent = new ScannedComponentWithLicense
             {
                 Component = new SpdxComponent("SPDX-2.2", new Uri("http://test.uri"), "componentName", $"123{i}", "abcdef", $"path{i}"),
                 DetectorId = "SPDX22SBOM"
@@ -94,7 +95,7 @@ public class SBOMComponentsWalkerTests
             scannedComponents.Add(scannedComponent);
         }
 
-        var nonSbomComponent = new ScannedComponent
+        var nonSbomComponent = new ScannedComponentWithLicense
         {
             Component = new NpmComponent("componentName", "123"),
             DetectorId = "notSPDX22SBOM"
@@ -110,7 +111,7 @@ public class SBOMComponentsWalkerTests
         };
 
         mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
-        var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object);
+        var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
         var discoveredComponents = await packagesChannelReader.output.ReadAllAsync().ToListAsync();
