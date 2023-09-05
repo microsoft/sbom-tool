@@ -14,8 +14,10 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
-/// Provider for external document reference. supported only when 
+/// Provider for external document reference. supported only when
 /// ExternalDocumentReferenceListFile is provided in the generation arguments.
 /// </summary>
 public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string>
@@ -31,7 +33,7 @@ public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string
     public ExternalDocumentReferenceProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger logger,
+        ILogger<ExternalDocumentReferenceProvider> logger,
         FileListEnumerator listWalker,
         ISBOMReaderForExternalDocumentReference spdxSbomReaderForExternalDocumentReference,
         ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
@@ -48,7 +50,7 @@ public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string
     {
         if (providerType == ProviderType.ExternalDocumentReference && !string.IsNullOrWhiteSpace(Configuration.ExternalDocumentReferenceListFile?.Value))
         {
-            Log.Debug($"Using the {nameof(ExternalDocumentReferenceProvider)} provider for the external documents workflow.");
+            this.Log.LogDebug($"Using the {nameof(ExternalDocumentReferenceProvider)} provider for the external documents workflow.");
             return true;
         }
 

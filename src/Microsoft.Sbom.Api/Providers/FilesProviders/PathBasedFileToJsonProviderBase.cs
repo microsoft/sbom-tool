@@ -13,6 +13,8 @@ using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
 /// Abstract base class for all file path based providers. This assumes that we are getting a list of file
 /// paths to process as a string.
@@ -30,7 +32,7 @@ public abstract class PathBasedFileToJsonProviderBase : EntityToJsonProviderBase
     public PathBasedFileToJsonProviderBase(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        Serilog.ILogger log,
+        ILogger<PathBasedFileToJsonProviderBase> log,
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,

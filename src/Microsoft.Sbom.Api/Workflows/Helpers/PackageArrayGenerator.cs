@@ -11,16 +11,17 @@ using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
+
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Generates a packages array that contains a list of all the packages that are referenced in this project.
 /// </summary>
 public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
 {
-    private readonly ILogger log;
+    private readonly ILogger<PackageArrayGenerator> log;
 
     private readonly ISbomConfigProvider sbomConfigs;
 
@@ -29,7 +30,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
     private readonly IRecorder recorder;
 
     public PackageArrayGenerator(
-        ILogger log,
+        ILogger<PackageArrayGenerator> log,
         ISbomConfigProvider sbomConfigs,
         IEnumerable<ISourcesProvider> sourcesProviders,
         IRecorder recorder)
@@ -75,10 +76,10 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
 
             if (totalJsonDocumentsWritten == 0)
             {
-                log.Warning($"There were no packages detected during the generation workflow.");
+                log.LogWarning($"There were no packages detected during the generation workflow.");
             }
 
-            log.Debug($"Wrote {totalJsonDocumentsWritten} package elements in the SBOM.");
+            log.LogDebug($"Wrote {totalJsonDocumentsWritten} package elements in the SBOM.");
 
             // +1 is added to the totalJsonDocumentsWritten to account for the root package of the SBOM.
             recorder.RecordTotalNumberOfPackages(totalJsonDocumentsWritten + 1);

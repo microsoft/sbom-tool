@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Common;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
+
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Takes a data file containing a list of files and enumerates each file in the list.
@@ -20,14 +21,14 @@ namespace Microsoft.Sbom.Api.Executors;
 public class FileListEnumerator
 {
     private readonly IFileSystemUtils fileSystemUtils;
-    private readonly ILogger log;
+    private readonly ILogger<FileListEnumerator> log;
 
     /// <summary>
     /// FileListEnumerator constructor for dependency injection.
     /// </summary>
     /// <param name="fileSystemUtils">IFileSystemUtils interface used for this instance.</param>
     /// <param name="log">Ilogger interface used for this instance.</param>
-    public FileListEnumerator(IFileSystemUtils fileSystemUtils, ILogger log)
+    public FileListEnumerator(IFileSystemUtils fileSystemUtils, ILogger<FileListEnumerator> log)
     {
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         this.log = log ?? throw new ArgumentNullException(nameof(log));
@@ -46,7 +47,7 @@ public class FileListEnumerator
             throw new ArgumentException($"'{nameof(listFile)}' cannot be null or whitespace.", nameof(listFile));
         }
 
-        log.Debug($"Enumerating all files from {nameof(listFile)}.");
+        log.LogDebug($"Enumerating all files from {nameof(listFile)}.");
 
         if (!fileSystemUtils.FileExists(listFile))
         {

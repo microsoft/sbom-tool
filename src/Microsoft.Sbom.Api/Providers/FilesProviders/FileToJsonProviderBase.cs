@@ -9,9 +9,10 @@ using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
+
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// An abstract base class for all files providers. This class defines the main workflow for files generation, which all
@@ -22,11 +23,11 @@ public abstract class FileToJsonProviderBase<T> : ISourcesProvider
 {
     private readonly IConfiguration configuration;
 
-    private readonly ILogger log;
+    private readonly ILogger<FileToJsonProviderBase<T>> log;
 
     private readonly ChannelUtils channelUtils;
-        
-    public FileToJsonProviderBase(IConfiguration configuration, ILogger log, ChannelUtils channelUtils)
+
+    public FileToJsonProviderBase(IConfiguration configuration, ILogger<FileToJsonProviderBase<T>> log, ChannelUtils channelUtils)
     {
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.log = log ?? throw new ArgumentNullException(nameof(log));
@@ -42,10 +43,10 @@ public abstract class FileToJsonProviderBase<T> : ISourcesProvider
         var (files, dirErrors) = GetFilesChannel();
         errors.Add(dirErrors);
 
-        log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
+        log.LogDebug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
         var splitFilesChannels = channelUtils.Split(files, configuration.Parallelism.Value);
 
-        log.Debug("Running the files generation workflow ...");
+        log.LogDebug("Running the files generation workflow ...");
         foreach (var fileChannel in splitFilesChannels)
         {
             var (jsonDoc, convertErrors) = ConvertToJson(fileChannel, requiredConfigs);

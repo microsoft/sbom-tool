@@ -15,6 +15,8 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.PackagesProviders;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
 /// Calls the component detector to get a list of packages in the current project and serializes them to Json.
 /// </summary>
@@ -27,7 +29,7 @@ public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent
     public CGScannedPackagesProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger logger,
+        ILogger<CGScannedPackagesProvider> logger,
         ISbomConfigProvider sbomConfigs,
         PackageInfoJsonWriter packageInfoJsonWriter,
         ComponentToPackageInfoConverter packageInfoConverter,
@@ -45,7 +47,7 @@ public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent
             if (Configuration.PackagesList?.Value == null)
             {
                 // If no other packages providers are present, use this one.
-                Log.Debug($"Using the {nameof(CGScannedPackagesProvider)} provider for the packages workflow.");
+                this.Log.LogDebug($"Using the {nameof(CGScannedPackagesProvider)} provider for the packages workflow.");
                 return true;
             }
         }

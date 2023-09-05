@@ -6,9 +6,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Serilog;
 
 namespace Microsoft.Sbom.Common;
+
+using Microsoft.Extensions.Logging;
 
 public class OSUtils : IOSUtils
 {
@@ -21,13 +22,13 @@ public class OSUtils : IOSUtils
         OSPlatform.Linux
     };
 
-    private readonly ILogger logger;
+    private readonly ILogger<OSUtils> logger;
 
     private readonly IEnvironmentWrapper environment;
 
     private Dictionary<string, string> environmentVariables;
 
-    public OSUtils(ILogger logger, IEnvironmentWrapper environment)
+    public OSUtils(ILogger<OSUtils> logger, IEnvironmentWrapper environment)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.environment = environment ?? throw new ArgumentException(nameof(environment));
@@ -62,7 +63,7 @@ public class OSUtils : IOSUtils
         catch (InvalidOperationException)
         {
             var firstEnvVarInstance = variableNameValues.First();
-            logger.Warning($"There are duplicate environment variables in different case for {variableName}, the value used is {firstEnvVarInstance}");
+            logger.LogWarning($"There are duplicate environment variables in different case for {variableName}, the value used is {firstEnvVarInstance}");
             return firstEnvVarInstance;
         }
     }

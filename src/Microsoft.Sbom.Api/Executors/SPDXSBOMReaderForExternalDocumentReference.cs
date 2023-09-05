@@ -16,11 +16,12 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ErrorType = Microsoft.Sbom.Api.Entities.ErrorType;
 
 namespace Microsoft.Sbom.Api.Executors;
+
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Reads SPDX json format SBOM file.
@@ -28,7 +29,7 @@ namespace Microsoft.Sbom.Api.Executors;
 public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternalDocumentReference
 {
     private readonly IHashCodeGenerator hashCodeGenerator;
-    private readonly ILogger log;
+    private readonly ILogger<SPDXSBOMReaderForExternalDocumentReference> log;
     private readonly ISbomConfigProvider sbomConfigs;
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;
     private AlgorithmName[] hashAlgorithmNames;
@@ -54,7 +55,7 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternal
 
     public SPDXSBOMReaderForExternalDocumentReference(
         IHashCodeGenerator hashCodeGenerator,
-        ILogger log,
+        ILogger<SPDXSBOMReaderForExternalDocumentReference> log,
         ISbomConfigProvider sbomConfigs,
         ManifestGeneratorProvider manifestGeneratorProvider,
         IFileSystemUtils fileSystemUtils)
@@ -83,7 +84,7 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternal
             {
                 if (!file.EndsWith(Constants.SPDXFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    log.Warning($"The file {file} is not an spdx document.");
+                    log.LogWarning($"The file {file} is not an spdx document.");
                 }
                 else
                 {
@@ -97,7 +98,7 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternal
                     }
                     catch (JsonException e)
                     {
-                        log.Error($"Encountered an error while parsing the external SBOM file {file}: {e.Message}");
+                        log.LogError($"Encountered an error while parsing the external SBOM file {file}: {e.Message}");
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
                             ErrorType = ErrorType.Other,
@@ -106,7 +107,7 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternal
                     }
                     catch (HashGenerationException e)
                     {
-                        log.Debug($"Encountered an error while generating hash for file {file}: {e.Message}");
+                        log.LogDebug($"Encountered an error while generating hash for file {file}: {e.Message}");
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
                             ErrorType = ErrorType.Other,
@@ -115,7 +116,7 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternal
                     }
                     catch (Exception e)
                     {
-                        log.Debug($"Encountered an error while generating externalDocumentReferenceInfo from file {file}: {e.Message}");
+                        log.LogDebug($"Encountered an error while generating externalDocumentReferenceInfo from file {file}: {e.Message}");
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
                             ErrorType = ErrorType.Other,

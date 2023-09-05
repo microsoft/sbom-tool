@@ -10,9 +10,10 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common.Extensions;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Manifest.Configuration;
+
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Provides a list of configs for all the SBOM formats that need to be generated.
@@ -31,7 +32,7 @@ public class SbomConfigProvider : ISbomConfigProvider
                 // Exit fast if config map is already initialized.
                 return configsDictionary;
             }
-               
+
             // Initialize new config map.
             configsDictionary = new Dictionary<ManifestInfo, ISbomConfig>();
             foreach (var configHandler in manifestConfigHandlers)
@@ -70,13 +71,13 @@ public class SbomConfigProvider : ISbomConfigProvider
 
     private readonly IEnumerable<IManifestConfigHandler> manifestConfigHandlers;
     private readonly IEnumerable<IMetadataProvider> metadataProviders;
-    private readonly ILogger logger;
+    private readonly ILogger<SbomConfigProvider> logger;
     private readonly IRecorder recorder;
 
     public SbomConfigProvider(
         IEnumerable<IManifestConfigHandler> manifestConfigHandlers,
         IEnumerable<IMetadataProvider> metadataProviders,
-        ILogger logger,
+        ILogger<SbomConfigProvider> logger,
         IRecorder recorder)
     {
         this.manifestConfigHandlers = manifestConfigHandlers ?? throw new ArgumentNullException(nameof(manifestConfigHandlers));
@@ -142,7 +143,7 @@ public class SbomConfigProvider : ISbomConfigProvider
     {
         if (MetadataDictionary.TryGetValue(key, out object value))
         {
-            logger.Debug($"Found value for header {key} in internal metadata.");
+            logger.LogDebug($"Found value for header {key} in internal metadata.");
             return value;
         }
 
@@ -153,7 +154,7 @@ public class SbomConfigProvider : ISbomConfigProvider
     {
         if (MetadataDictionary.ContainsKey(key))
         {
-            logger.Debug($"Found value for header {key} in internal metadata.");
+            logger.LogDebug($"Found value for header {key} in internal metadata.");
             value = MetadataDictionary[key];
             return true;
         }
@@ -204,7 +205,7 @@ public class SbomConfigProvider : ISbomConfigProvider
             return provider.GetDocumentNamespaceUri();
         }
 
-        logger.Error($"Unable to find any provider to generate the namespace.");
+        logger.LogError($"Unable to find any provider to generate the namespace.");
         throw new Exception($"Unable to find any provider to generate the namespace.");
     }
 

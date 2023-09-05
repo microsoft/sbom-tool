@@ -17,6 +17,8 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
 /// Provider for external document reference which leverage component detection tool
 /// to discover SBOM files.
@@ -34,7 +36,7 @@ public class CGExternalDocumentReferenceProvider : EntityToJsonProviderBase<Scan
     public CGExternalDocumentReferenceProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger logger,
+        ILogger<CGExternalDocumentReferenceProvider> logger,
         ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter,
         ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
         SBOMComponentsWalker sbomComponentsWalker,
@@ -51,7 +53,7 @@ public class CGExternalDocumentReferenceProvider : EntityToJsonProviderBase<Scan
     {
         if (providerType == ProviderType.ExternalDocumentReference)
         {
-            Log.Debug($"Using the {nameof(CGExternalDocumentReferenceProvider)} provider for the external documents workflow.");
+            this.Log.LogDebug($"Using the {nameof(CGExternalDocumentReferenceProvider)} provider for the external documents workflow.");
             return true;
         }
 

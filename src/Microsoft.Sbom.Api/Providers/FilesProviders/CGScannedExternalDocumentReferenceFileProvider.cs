@@ -16,6 +16,8 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
 /// Provider for external document reference which leverage component detection tool
 /// to discover SBOM files.
@@ -33,7 +35,7 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
     public CGScannedExternalDocumentReferenceFileProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger log, FileHasher fileHasher,
+        ILogger<CGScannedExternalDocumentReferenceFileProvider> log, FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
         InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
@@ -53,7 +55,7 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
     {
         if (providerType == ProviderType.Files)
         {
-            Log.Debug($"Using the {nameof(CGScannedExternalDocumentReferenceFileProvider)} provider for the files workflow.");
+            this.Log.LogDebug($"Using the {nameof(CGScannedExternalDocumentReferenceFileProvider)} provider for the files workflow.");
             return true;
         }
 

@@ -17,16 +17,17 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using Serilog.Events;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
-using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors;
+
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Abstract class that runs component detection tool in the given folder.
 /// </summary>
 public abstract class ComponentDetectionBaseWalker
 {
-    private readonly ILogger log;
+    private readonly ILogger<ComponentDetectionBaseWalker> log;
     private readonly ComponentDetectorCachedExecutor componentDetector;
     private readonly IConfiguration configuration;
     private readonly ISbomConfigProvider sbomConfigs;
@@ -35,7 +36,7 @@ public abstract class ComponentDetectionBaseWalker
     private ComponentDetectionCliArgumentBuilder cliArgumentBuilder;
 
     public ComponentDetectionBaseWalker(
-        ILogger log,
+        ILogger<ComponentDetectionBaseWalker> log,
         ComponentDetectorCachedExecutor componentDetector,
         IConfiguration configuration,
         ISbomConfigProvider sbomConfigs,
@@ -44,7 +45,7 @@ public abstract class ComponentDetectionBaseWalker
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.componentDetector = componentDetector ?? throw new ArgumentNullException(nameof(componentDetector));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs)); 
+        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
     }
 
@@ -52,7 +53,7 @@ public abstract class ComponentDetectionBaseWalker
     {
         if (fileSystemUtils.FileExists(buildComponentDirPath))
         {
-            log.Debug($"Scanning for packages under the root path {buildComponentDirPath}.");
+            log.LogDebug($"Scanning for packages under the root path {buildComponentDirPath}.");
         }
 
         // If the buildComponentDirPath is null or empty, make sure we have a ManifestDirPath and create a new temp directory with a random name.
@@ -121,7 +122,7 @@ public abstract class ComponentDetectionBaseWalker
             }
             catch (Exception e)
             {
-                log.Error($"Unknown error while running CD scan: {e}");
+                log.LogError($"Unknown error while running CD scan: {e}");
                 await errors.Writer.WriteAsync(new ComponentDetectorException("Unknown exception", e));
                 return;
             }

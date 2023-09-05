@@ -13,6 +13,8 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
 /// Takes in a list of files provided in a text file and only serializes those files.
 /// The files in the list should be present on the disk and should be inside the build drop folder.
@@ -21,7 +23,7 @@ public class FileListBasedFileToJsonProvider : PathBasedFileToJsonProviderBase
 {
     private readonly FileListEnumerator listWalker;
 
-    public FileListBasedFileToJsonProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, FileInfoWriter fileHashWriter, InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator, FileListEnumerator listWalker)
+    public FileListBasedFileToJsonProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger<FileListBasedFileToJsonProvider> log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, FileInfoWriter fileHashWriter, InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator, FileListEnumerator listWalker)
         : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
     {
         this.listWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));
@@ -34,7 +36,7 @@ public class FileListBasedFileToJsonProvider : PathBasedFileToJsonProviderBase
             // Return true only if the BuildListFile parameter is provided.
             if (!string.IsNullOrWhiteSpace(Configuration.BuildListFile?.Value))
             {
-                Log.Debug($"Using the {nameof(FileListBasedFileToJsonProvider)} provider for the files workflow.");
+                this.Log.LogDebug($"Using the {nameof(FileListBasedFileToJsonProvider)} provider for the files workflow.");
                 return true;
             }
         }

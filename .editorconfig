@@ -814,6 +814,10 @@ dotnet_diagnostic.CA1825.severity = suggestion
 # CA1829: Use Length/Count property instead of Count() when available
 dotnet_diagnostic.CA1829.severity = suggestion
 
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1848
+# CA1848: Use the LoggerMessage delegates
+dotnet_diagnostic.CA1848.severity = suggestion
+
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1849
 # CA1849: '...' synchronously blocks. Await '...' instead.
 dotnet_diagnostic.CA1849.severity = suggestion
@@ -885,6 +889,10 @@ dotnet_diagnostic.CA2231.severity = suggestion
 # https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/quality-rules/ca2235
 # CA2235: Mark all non-serializable fields
 dotnet_diagnostic.CA2235.severity = suggestion
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2254
+# CA2254: Template should be a static expression
+dotnet_diagnostic.CA2254.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs1570
 # CS1570: XML comment has badly formed XML -- '...'

@@ -18,9 +18,10 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows;
+
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Defines the workflow steps for the drop validation action.
@@ -36,7 +37,7 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
     private readonly ManifestFolderFilterer fileFilterer;
     private readonly ValidationResultGenerator validationResultGenerator;
     private readonly IOutputWriter outputWriter;
-    private readonly ILogger log;
+    private readonly ILogger<SbomValidationWorkflow> log;
     private readonly ISignValidationProvider signValidationProvider;
     private readonly ManifestFileFilterer manifestFileFilterer;
     private readonly IRecorder recorder;
@@ -51,7 +52,7 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
         ManifestData manifestData,
         ValidationResultGenerator validationResultGenerator,
         IOutputWriter outputWriter,
-        ILogger log,
+        ILogger<SbomValidationWorkflow> log,
         ISignValidationProvider signValidationProvider,
         ManifestFileFilterer manifestFileFilterer,
         IRecorder recorder)
@@ -83,7 +84,7 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
         {
             try
             {
-                log.Debug("Starting validation workflow.");
+                log.LogDebug("Starting validation workflow.");
                 DateTime start = DateTime.Now;
 
                 IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
@@ -96,13 +97,13 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
 
                     if (signValidator == null)
                     {
-                        log.Warning($"ValidateSignature switch is true, but couldn't find a sign validator for the current OS, skipping validation.");
+                        log.LogWarning($"ValidateSignature switch is true, but couldn't find a sign validator for the current OS, skipping validation.");
                     }
                     else
                     {
                         if (!signValidator.Validate())
                         {
-                            log.Error("Sign validation failed.");
+                            log.LogError("Sign validation failed.");
                             return false;
                         }
                     }
@@ -117,10 +118,10 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
                 var manifestFilterErrors = manifestFileFilterer.FilterManifestFiles();
                 errors.Add(manifestFilterErrors);
 
-                log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
+                log.LogDebug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
                 var splitFilesChannels = channelUtils.Split(files, configuration.Parallelism.Value);
 
-                log.Debug("Waiting for the workflow to finish...");
+                log.LogDebug("Waiting for the workflow to finish...");
                 foreach (var fileChannel in splitFilesChannels)
                 {
                     // Filter files
@@ -166,12 +167,12 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
                 // Failure
                 if (successCount < 0)
                 {
-                    log.Error("Error running the workflow, failing without publishing results.");
+                    log.LogError("Error running the workflow, failing without publishing results.");
                     return false;
                 }
 
                 DateTime end = DateTime.Now;
-                log.Debug("Finished workflow, gathering results.");
+                log.LogDebug("Finished workflow, gathering results.");
 
                 // 6. Generate JSON output
                 validationResultOutput = validationResultGenerator
@@ -195,7 +196,7 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
 
                 if (configuration.IgnoreMissing.Value)
                 {
-                    log.Warning("Not including missing files on disk as -IgnoreMissing switch is on.");
+                    log.LogWarning("Not including missing files on disk as -IgnoreMissing switch is on.");
                     validFailures = validFailures.Where(a => a.ErrorType != ErrorType.MissingFile);
                 }
 
@@ -204,8 +205,8 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
             catch (Exception e)
             {
                 recorder.RecordException(e);
-                log.Error("Encountered an error while validating the drop.");
-                log.Error($"Error details: {e.Message}");
+                log.LogError("Encountered an error while validating the drop.");
+                log.LogError($"Error details: {e.Message}");
                 return false;
             }
             finally
@@ -230,31 +231,31 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
             return;
         }
 
-        log.Verbose(string.Empty);
-        log.Verbose("------------------------------------------------------------");
-        log.Verbose("Individual file validation results");
-        log.Verbose("------------------------------------------------------------");
-        log.Verbose(string.Empty);
+        log.LogTrace(string.Empty);
+        log.LogTrace("------------------------------------------------------------");
+        log.LogTrace("Individual file validation results");
+        log.LogTrace("------------------------------------------------------------");
+        log.LogTrace(string.Empty);
 
-        log.Verbose("Additional files not in the manifest: ");
-        log.Verbose(string.Empty);
-        validFailures.Where(vf => vf.ErrorType == ErrorType.AdditionalFile).ForEach(f => log.Verbose(f.Path));
-        log.Verbose("------------------------------------------------------------");
+        log.LogTrace("Additional files not in the manifest: ");
+        log.LogTrace(string.Empty);
+        validFailures.Where(vf => vf.ErrorType == ErrorType.AdditionalFile).ForEach(f => log.LogTrace(f.Path));
+        log.LogTrace("------------------------------------------------------------");
 
-        log.Verbose("Files with invalid hashes:");
-        log.Verbose(string.Empty);
-        validFailures.Where(vf => vf.ErrorType == ErrorType.InvalidHash).ForEach(f => log.Verbose(f.Path));
-        log.Verbose("------------------------------------------------------------");
+        log.LogTrace("Files with invalid hashes:");
+        log.LogTrace(string.Empty);
+        validFailures.Where(vf => vf.ErrorType == ErrorType.InvalidHash).ForEach(f => log.LogTrace(f.Path));
+        log.LogTrace("------------------------------------------------------------");
 
-        log.Verbose("Files in the manifest missing from the disk:");
-        log.Verbose(string.Empty);
-        validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => log.Verbose(f.Path));
-        log.Verbose("------------------------------------------------------------");
+        log.LogTrace("Files in the manifest missing from the disk:");
+        log.LogTrace(string.Empty);
+        validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => log.LogTrace(f.Path));
+        log.LogTrace("------------------------------------------------------------");
 
-        log.Verbose("Unknown file failures:");
-        log.Verbose(string.Empty);
-        validFailures.Where(vf => vf.ErrorType == ErrorType.Other).ForEach(f => log.Verbose(f.Path));
-        log.Verbose("------------------------------------------------------------");
+        log.LogTrace("Unknown file failures:");
+        log.LogTrace(string.Empty);
+        validFailures.Where(vf => vf.ErrorType == ErrorType.Other).ForEach(f => log.LogTrace(f.Path));
+        log.LogTrace("------------------------------------------------------------");
     }
 
     private void LogResultsSummary(ValidationResult validationResultOutput, IEnumerable<FileValidationResult> validFailures)
@@ -265,22 +266,22 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
             return;
         }
 
-        log.Debug(string.Empty);
-        log.Debug("------------------------------------------------------------");
-        log.Debug("Validation Summary");
-        log.Debug("------------------------------------------------------------");
-        log.Debug(string.Empty);
+        log.LogDebug(string.Empty);
+        log.LogDebug("------------------------------------------------------------");
+        log.LogDebug("Validation Summary");
+        log.LogDebug("------------------------------------------------------------");
+        log.LogDebug(string.Empty);
 
-        log.Debug($"Validation Result . . . . . . . . . . . . . . . .{validationResultOutput.Result}");
-        log.Debug($"Total execution time (sec) . . . . . . . . . . . {validationResultOutput.Summary.TotalExecutionTimeInSeconds}");
-        log.Debug($"Files failed . . . . . . . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesFailedCount}");
-        log.Debug($"Files successfully validated . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesSuccessfulCount}");
-        log.Debug($"Total files validated. . . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesValidatedCount}");
-        log.Debug($"Total files in manifest. . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.TotalFilesInManifest}");
-        log.Debug($"");
-        log.Debug($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
-        log.Debug($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
-        log.Debug($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
-        log.Debug($"Unknown file failures . . . . . . . . . . . . .  {validFailures.Count(v => v.ErrorType == ErrorType.Other)}");
+        log.LogDebug($"Validation Result . . . . . . . . . . . . . . . .{validationResultOutput.Result}");
+        log.LogDebug($"Total execution time (sec) . . . . . . . . . . . {validationResultOutput.Summary.TotalExecutionTimeInSeconds}");
+        log.LogDebug($"Files failed . . . . . . . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesFailedCount}");
+        log.LogDebug($"Files successfully validated . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesSuccessfulCount}");
+        log.LogDebug($"Total files validated. . . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesValidatedCount}");
+        log.LogDebug($"Total files in manifest. . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.TotalFilesInManifest}");
+        log.LogDebug($"");
+        log.LogDebug($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
+        log.LogDebug($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
+        log.LogDebug($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
+        log.LogDebug($"Unknown file failures . . . . . . . . . . . . .  {validFailures.Count(v => v.ErrorType == ErrorType.Other)}");
     }
 }

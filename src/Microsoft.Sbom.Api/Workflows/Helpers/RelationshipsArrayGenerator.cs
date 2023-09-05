@@ -11,9 +11,10 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
+
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Generates an array of relationships between different elements of the SBOM.
@@ -24,7 +25,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
 
     private readonly ChannelUtils channelUtils;
 
-    private readonly ILogger log;
+    private readonly ILogger<RelationshipsArrayGenerator> log;
 
     private readonly ISbomConfigProvider sbomConfigs;
 
@@ -33,7 +34,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
     public RelationshipsArrayGenerator(
         RelationshipGenerator generator,
         ChannelUtils channelUtils,
-        ILogger log,
+        ILogger<RelationshipsArrayGenerator> log,
         ISbomConfigProvider sbomConfigs,
         IRecorder recorder)
     {
@@ -105,7 +106,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                         sbomConfig.JsonSerializer.Write(jsonDoc);
                     }
 
-                    log.Debug($"Wrote {count} relationship elements in the SBOM.");
+                    log.LogDebug($"Wrote {count} relationship elements in the SBOM.");
 
                     // Write the end of the array.
                     sbomConfig.JsonSerializer.EndJsonArray();

@@ -20,15 +20,16 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
 
+using Microsoft.Extensions.Logging;
+
 [TestClass]
 public class FileHasherTests
 {
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<FileHasher>> mockLogger = new();
     private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
 
     private readonly ConcurrentDictionary<string, Checksum[]> hashDict = new ConcurrentDictionary<string, Checksum[]>();

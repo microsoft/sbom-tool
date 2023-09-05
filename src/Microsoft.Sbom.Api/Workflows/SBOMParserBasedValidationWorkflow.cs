@@ -21,10 +21,11 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using PowerArgs;
-using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows;
+
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Validates a SBOM against a given drop path. Uses the <see cref="ISbomParser"/> to read
@@ -34,7 +35,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 {
     private readonly IRecorder recorder;
     private readonly ISignValidationProvider signValidationProvider;
-    private readonly ILogger log;
+    private readonly ILogger<SbomParserBasedValidationWorkflow> log;
     private readonly IManifestParserProvider manifestParserProvider;
     private readonly IConfiguration configuration;
     private readonly ISbomConfigProvider sbomConfigs;
@@ -43,7 +44,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
     private readonly IOutputWriter outputWriter;
     private readonly IFileSystemUtils fileSystemUtils;
 
-    public SbomParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ILogger log, IManifestParserProvider manifestParserProvider, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
+    public SbomParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ILogger<SbomParserBasedValidationWorkflow> log, IManifestParserProvider manifestParserProvider, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
     {
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.signValidationProvider = signValidationProvider ?? throw new ArgumentNullException(nameof(signValidationProvider));
@@ -81,13 +82,13 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
                     if (signValidator == null)
                     {
-                        log.Warning($"ValidateSignature switch is true, but couldn't find a sign validator for the current OS, skipping validation.");
+                        log.LogWarning($"ValidateSignature switch is true, but couldn't find a sign validator for the current OS, skipping validation.");
                     }
                     else
                     {
                         if (!signValidator.Validate())
                         {
-                            log.Error("Sign validation failed.");
+                            log.LogError("Sign validation failed.");
                             return false;
                         }
                     }
@@ -134,7 +135,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     });
                 }
 
-                log.Debug("Finished workflow, gathering results.");
+                log.LogDebug("Finished workflow, gathering results.");
 
                 // Generate JSON output
                 validationResultOutput = validationResultGenerator
@@ -155,12 +156,12 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 };
 
                 await outputWriter.WriteAsync(JsonSerializer.Serialize(validationResultOutput, options));
-                    
+
                 validFailures = fileValidationFailures.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType));
 
                 if (configuration.IgnoreMissing.Value)
                 {
-                    log.Warning("Not including missing files on disk as -IgnoreMissing switch is on.");
+                    log.LogWarning("Not including missing files on disk as -IgnoreMissing switch is on.");
                     validFailures = validFailures.Where(a => a.ErrorType != ErrorType.MissingFile);
                 }
 
@@ -169,8 +170,8 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
             catch (Exception e)
             {
                 recorder.RecordException(e);
-                log.Error("Encountered an error while validating the drop.");
-                log.Error($"Error details: {e.Message}");
+                log.LogError("Encountered an error while validating the drop.");
+                log.LogError($"Error details: {e.Message}");
                 return false;
             }
             finally

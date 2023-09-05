@@ -10,12 +10,13 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
-using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
-/// This class generates an array of filenames and hashes based on the format of the SBOM. 
+/// This class generates an array of filenames and hashes based on the format of the SBOM.
 /// </summary>
 public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
 {
@@ -25,13 +26,13 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
 
     private readonly IRecorder recorder;
 
-    private readonly ILogger logger;
+    private readonly ILogger<FileArrayGenerator> logger;
 
     public FileArrayGenerator(
         ISbomConfigProvider sbomConfigs,
         IEnumerable<ISourcesProvider> sourcesProviders,
         IRecorder recorder,
-        ILogger logger)
+        ILogger<FileArrayGenerator> logger)
     {
         this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
         this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
@@ -41,7 +42,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
 
     /// <summary>
     /// Traverses all the files inside the buildDropPath, and serializes the SBOM using the JSON serializer creating
-    /// an array object whose key is defined by <paramref name="headerName"/>. Upon failure, returns a list of 
+    /// an array object whose key is defined by <paramref name="headerName"/>. Upon failure, returns a list of
     /// <see cref="FileValidationResult"/> objects that can be used to trace the error.
     /// </summary>
     /// <param name="jsonSerializer">The serializer used to write the SBOM.</param>
@@ -66,7 +67,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
                 {
                     config.JsonSerializer.StartJsonArray(filesArrayHeaderName);
                     filesArraySupportingSBOMs.Add(config);
-                    this.logger.Verbose("Started writing files array for {configFile}.", config.ManifestJsonFilePath);
+                    this.logger.LogTrace("Started writing files array for {ConfigFile}.", config.ManifestJsonFilePath);
                 }
             }
 
