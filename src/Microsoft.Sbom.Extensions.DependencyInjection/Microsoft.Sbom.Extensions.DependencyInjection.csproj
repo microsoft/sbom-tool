@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
-    <PackageRefernece Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="Scrutor" />
   </ItemGroup>
 
