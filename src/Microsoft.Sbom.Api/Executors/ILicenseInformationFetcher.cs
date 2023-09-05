@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 
 namespace Microsoft.Sbom.Api.Executors;
+
 public interface ILicenseInformationFetcher
 {
     /// <summary>
