@@ -1078,6 +1078,10 @@ dotnet_diagnostic.IDE0270.severity = suggestion
 # IDE1006: Naming rule violation: These words must begin with upper case characters: ...
 dotnet_diagnostic.IDE1006.severity = suggestion
 
+# https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/warnings/il3000
+# IL3000: Avoid accessing Assembly file path when publishing as a single file
+dotnet_diagnostic.IL3000.severity = suggestion
+
 ##########################################
 # Provided by Microsoft.VisualStudio.Threading.Analyzers
 # https://github.com/Microsoft/vs-threading
