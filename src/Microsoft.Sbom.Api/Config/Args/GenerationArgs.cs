@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using PowerArgs;
@@ -108,4 +108,11 @@ public class GenerationArgs : CommonArgs
                     "asking the user for confirmation. The new manifest directory will then be created at this location and the generated SBOM " +
                     "will be stored there.")]
     public bool? DeleteManifestDirIfPresent { get; set; }
+
+    /// <summary>
+    /// If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.
+    /// </summary>
+    [ArgShortcut("li")]
+    [ArgDescription("If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.")]
+    public bool FetchLicenseInformation { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -46,6 +46,7 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<string>> namespaceUriBase = new ();
     private static readonly AsyncLocal<ConfigurationSetting<string>> generationTimestamp = new ();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> followSymlinks = new ();
+    private static readonly AsyncLocal<ConfigurationSetting<bool>> fetchLicenseInformation = new ();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> deleteManifestDirIfPresent = new ();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> failIfNoPackages = new ();
     private static readonly AsyncLocal<ConfigurationSetting<LogEventLevel>> verbosity = new ();
@@ -295,5 +296,13 @@ public class Configuration : IConfiguration
     {
         get => failIfNoPackages.Value;
         set => failIfNoPackages.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.FetchLicenseInformation" />
+    [DefaultValue(false)]
+    public ConfigurationSetting<bool> FetchLicenseInformation
+    {
+        get => fetchLicenseInformation.Value;
+        set => fetchLicenseInformation.Value = value;
     }
 }

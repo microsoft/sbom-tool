@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.ComponentDetection.Contracts.Internal;
@@ -15,7 +15,8 @@ internal static class NpmComponentExtensions
     /// <summary>
     /// Converts a <see cref="NpmComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    public static SbomPackage? ToSbomPackage(this NpmComponent npmComponent) => new ()
+    /// <param name="license"> License information for the package that component that is being converted.</param>
+    public static SbomPackage? ToSbomPackage(this NpmComponent npmComponent, string? license = null) => new()
     {
         Id = npmComponent.Id,
         PackageUrl = npmComponent.PackageUrl?.ToString(),
@@ -26,6 +27,7 @@ internal static class NpmComponentExtensions
             new Checksum { ChecksumValue = npmComponent.Hash },
         },
         Supplier = npmComponent.Author?.AsSupplier(),
+        LicenseInfo = string.IsNullOrWhiteSpace(license) ? null : new LicenseInfo { Concluded = license },
         FilesAnalyzed = false,
         Type = "npm"
     };
