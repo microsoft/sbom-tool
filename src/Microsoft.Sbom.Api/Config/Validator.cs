@@ -25,8 +25,8 @@ public class Validator : ISbomService<ValidationArgs>
         IConfiguration configuration,
         IWorkflow<SbomValidationWorkflow> validationWorkflow,
         IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow,
-        IRecorder recorder) 
-    { 
+        IRecorder recorder)
+    {
         this.validationWorkflow = validationWorkflow;
         this.parserValidationWorkflow = parserValidationWorkflow;
         this.configuration = configuration;

@@ -26,11 +26,11 @@ public class GenerationArgs : CommonArgs
 
     /// <summary>
     /// Gets or sets the file path containing a list of files for which the manifest file will be generated.
-    /// List file is an unordered set of files formated as one file per line separated 
+    /// List file is an unordered set of files formated as one file per line separated
     /// by Environment.NewLine. Blank lines are discarded.
     /// </summary>
     [ArgShortcut("bl")]
-    [ArgDescription("The file path to a file containing a list of files one file per line for which the SBOM" + 
+    [ArgDescription("The file path to a file containing a list of files one file per line for which the SBOM" +
                     " file will be generated. Only files listed in the file will be inlcuded in the generated SBOM.")]
     public string BuildListFile { get; set; }
 

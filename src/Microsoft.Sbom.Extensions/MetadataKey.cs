@@ -45,7 +45,7 @@ public enum MetadataKey
     GenerationTimestamp,
 
     /// <summary>
-    /// Please note these variables will be empty when the SBOM generator 
+    /// Please note these variables will be empty when the SBOM generator
     /// is not run inside an Azure DevOps Pipeline. For more information about
     /// these variables, go to
     /// https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml#build-variables-devops-services

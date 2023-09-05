@@ -29,7 +29,7 @@ public interface ISbomConfigProvider : IDisposable, IAsyncDisposable, IInternalM
     bool TryGet(ManifestInfo manifestInfo, out ISbomConfig sbomConfig);
 
     /// <summary>
-    /// Gets a list of the <see cref="ManifestInfo"/>s that are included in the 
+    /// Gets a list of the <see cref="ManifestInfo"/>s that are included in the
     /// SbomConfigProvider object.
     /// </summary>
     /// <returns></returns>
@@ -43,12 +43,12 @@ public interface ISbomConfigProvider : IDisposable, IAsyncDisposable, IInternalM
     IDisposable StartJsonSerialization();
 
     /// <summary>
-    /// Starts the JSON serialization of all the included ISbomConfig objects asynchronously. 
+    /// Starts the JSON serialization of all the included ISbomConfig objects asynchronously.
     /// This returns a <see cref="IAsyncDisposable"/> object that is used to clean up the JSON streams.
     /// </summary>
     /// <returns></returns>
     IAsyncDisposable StartJsonSerializationAsync();
-       
+
     /// <summary>
     /// Helper method to operate an action on each included configs.
     /// </summary>

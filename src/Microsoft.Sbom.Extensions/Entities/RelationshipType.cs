@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace Microsoft.Sbom.Extensions.Entities;
 
 /// <summary>
-/// Defines the type of <see cref="Relationship"/> between the source and the 
+/// Defines the type of <see cref="Relationship"/> between the source and the
 /// target element.
 /// </summary>
 /// <remarks>
@@ -37,9 +37,9 @@ public enum RelationshipType
     /// The source element describes the target element.
     /// </summary>
     /// <example>
-    /// An SPDX document WildFly.spdx describes package ‘WildFly’. 
-    /// Note this is a logical relationship to help organize related items within 
-    /// an SPDX document that is mandatory if more than one package or set of files 
+    /// An SPDX document WildFly.spdx describes package ‘WildFly’.
+    /// Note this is a logical relationship to help organize related items within
+    /// an SPDX document that is mandatory if more than one package or set of files
     /// (not in a package) is present.
     /// </example>
     DESCRIBES,

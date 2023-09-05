@@ -29,7 +29,7 @@ public class GenerationData // TODO: Move to contracts
     public IList<string> SPDXFileIds { get; set; }
 
     /// <summary>
-    /// Gets or sets a list of all the unique ids that were generated for each package that was 
+    /// Gets or sets a list of all the unique ids that were generated for each package that was
     /// traversed for this SBOM.
     /// </summary>
     public IList<string> PackageIds { get; set; }

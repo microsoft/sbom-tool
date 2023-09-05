@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Microsoft.Sbom.Api.Utils;
 
 /// <summary>
-/// Provides deduplication of T objects inside a channel. 
+/// Provides deduplication of T objects inside a channel.
 /// </summary>
 public abstract class ChannelDeduplicator<T>
 {

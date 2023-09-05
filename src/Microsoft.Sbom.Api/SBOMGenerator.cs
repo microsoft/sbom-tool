@@ -32,10 +32,10 @@ public class SbomGenerator : ISBOMGenerator
     private readonly ConfigSanitizer configSanitizer;
 
     public SbomGenerator(
-        IWorkflow<SbomGenerationWorkflow> generationWorkflow, 
-        ManifestGeneratorProvider generatorProvider, 
-        IRecorder recorder, 
-        IEnumerable<ConfigValidator> configValidators, 
+        IWorkflow<SbomGenerationWorkflow> generationWorkflow,
+        ManifestGeneratorProvider generatorProvider,
+        IRecorder recorder,
+        IEnumerable<ConfigValidator> configValidators,
         ConfigSanitizer configSanitizer)
     {
         this.generationWorkflow = generationWorkflow;

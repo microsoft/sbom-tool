@@ -186,7 +186,7 @@ public class ConfigSanitizer
             };
         }
 
-        // If the user provides the parameter even when the assembly attribute is provided, 
+        // If the user provides the parameter even when the assembly attribute is provided,
         // show a warning on the console.
         if (!string.IsNullOrWhiteSpace(configuration.NamespaceUriBase?.Value))
         {
@@ -223,8 +223,8 @@ public class ConfigSanitizer
             return configuration.PackageSupplier;
         }
 
-        return new ConfigurationSetting<string> 
-        { 
+        return new ConfigurationSetting<string>
+        {
             Source = SettingSource.Default,
             Value = assemblyConfig.DefaultPackageSupplier
         };

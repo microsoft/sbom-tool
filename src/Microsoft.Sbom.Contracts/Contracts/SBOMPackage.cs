@@ -9,7 +9,7 @@ namespace Microsoft.Sbom.Contracts;
 /// A structure that represents a package in a SBOM.
 /// </summary>
 public class SbomPackage
-{ 
+{
     /// <summary>
     /// Gets or sets the unique identifier of this package.
     /// </summary>
@@ -26,7 +26,7 @@ public class SbomPackage
     public string PackageVersion { get; set; }
 
     /// <summary>
-    /// Gets or sets the package url (PURL) for this package. This provides a search string to 
+    /// Gets or sets the package url (PURL) for this package. This provides a search string to
     /// download the package from a given package manager.
     /// </summary>
     public string PackageUrl { get; set; }
@@ -37,7 +37,7 @@ public class SbomPackage
     public string PackageSource { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether specifies if indiviudal files inside this package were analyzed 
+    /// Gets or sets a value indicating whether specifies if indiviudal files inside this package were analyzed
     /// to gather additional data.
     /// </summary>
     public bool FilesAnalyzed { get; set; }

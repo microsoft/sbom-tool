@@ -4,7 +4,7 @@
 namespace Microsoft.Sbom.Api;
 
 /// <summary>
-/// Defines the exit code returned by the ManifestTool executable. 
+/// Defines the exit code returned by the ManifestTool executable.
 /// </summary>
 public enum ExitCode
 {

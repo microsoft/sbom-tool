@@ -6,14 +6,14 @@ using Microsoft.Sbom.Extensions.Entities;
 namespace Microsoft.Sbom.Extensions;
 
 /// <summary>
-/// Provides internally generated metadata that can be used to create 
+/// Provides internally generated metadata that can be used to create
 /// the metadata dictionary for the current SBOM format.
 /// </summary>
 public interface IInternalMetadataProvider
 {
     /// <summary>
     /// Get the metadata object for the given item.
-    /// 
+    ///
     /// Throws an <see cref="System.Exception"/> if the item is not found.
     /// </summary>
     /// <param name="key">The <see cref="MetadataKey"/> for the item.</param>
@@ -43,7 +43,7 @@ public interface IInternalMetadataProvider
     GenerationData GetGenerationData(ManifestInfo manifestInfo);
 
     /// <summary>
-    /// Gets the namespace URI for the SBOM document that is unique within this build environment. 
+    /// Gets the namespace URI for the SBOM document that is unique within this build environment.
     /// </summary>
     /// <returns></returns>
     string GetSBOMNamespaceUri();

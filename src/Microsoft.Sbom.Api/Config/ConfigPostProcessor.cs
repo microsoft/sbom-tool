@@ -97,7 +97,7 @@ public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration
             });
         }
 
-        // Fall through, only primitive types are currently supported. 
+        // Fall through, only primitive types are currently supported.
         // Add more primitive types if needed here.
     }
 }

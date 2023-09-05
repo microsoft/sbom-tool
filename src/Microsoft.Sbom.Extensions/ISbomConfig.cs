@@ -7,7 +7,7 @@ using Microsoft.Sbom.Extensions.Entities;
 namespace Microsoft.Sbom.Extensions;
 
 /// <summary>
-/// Represents a configuration object for a given SBOM Format. It holds all the 
+/// Represents a configuration object for a given SBOM Format. It holds all the
 /// relevant serializers and generation data for the given SBOM format.
 /// </summary>
 public interface ISbomConfig : IDisposable, IAsyncDisposable

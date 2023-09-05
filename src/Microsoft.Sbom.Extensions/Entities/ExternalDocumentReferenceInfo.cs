@@ -22,7 +22,7 @@ public class ExternalDocumentReferenceInfo // TODO: Move to Contracts
     public string DocumentNamespace { get; set; }
 
     /// <summary>
-    /// Gets or sets checksums of the SBOM file. 
+    /// Gets or sets checksums of the SBOM file.
     /// </summary>
     public IEnumerable<Checksum> Checksum { get; set; }
 

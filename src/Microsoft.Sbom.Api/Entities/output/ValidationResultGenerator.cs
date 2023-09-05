@@ -56,7 +56,7 @@ public class ValidationResultGenerator
     /// Retuns the <see cref="ValidationResultGenerator"/> for chaining.
     /// </summary>
     /// <param name="nodeValidationResults"></param>
-    /// <returns><see cref="ValidationResultGenerator"/>.</returns>       
+    /// <returns><see cref="ValidationResultGenerator"/>.</returns>
     public ValidationResultGenerator WithValidationResults(IList<FileValidationResult> nodeValidationResults)
     {
         NodeValidationResults = nodeValidationResults ?? new List<FileValidationResult>();
@@ -74,7 +74,7 @@ public class ValidationResultGenerator
 
         validationErrors = NodeValidationResults.Where(r => !Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
         skippedErrors = NodeValidationResults.Where(r => Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
-            
+
         if (configuration.IgnoreMissing.Value)
         {
             validationErrors.RemoveAll(e => e.ErrorType == ErrorType.MissingFile);

@@ -11,7 +11,7 @@ namespace Microsoft.Sbom.Contracts;
 public class SbomGenerationResult
 {
     /// <summary>
-    /// Gets or sets a value indicating whether is set to true if the SBOM generation was successful, that is when 
+    /// Gets or sets a value indicating whether is set to true if the SBOM generation was successful, that is when
     /// the <see cref="Errors"/> list is empty.
     /// </summary>
     public bool IsSuccessful { get; set; }

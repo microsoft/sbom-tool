@@ -9,17 +9,17 @@ namespace Microsoft.Sbom.Extensions;
 /// <summary>
 /// The validator will use this interface to register a manifest parsing library
 /// which it will later use to parse a given manifest file.
-/// 
-/// The manifest tool uses the name of this library to inject it at runtime. For that, please make sure 
+///
+/// The manifest tool uses the name of this library to inject it at runtime. For that, please make sure
 /// that the assembly that implements this interface has the word "Manifest" in it.
 /// </summary>
 public interface IManifestInterface
 {
     /// <summary>
-    /// This function is called by the validator upon initialization to get all the 
+    /// This function is called by the validator upon initialization to get all the
     /// manifest versions this library can parse.
     /// </summary>
-    /// <returns>An version sorted array in ascending order of 
+    /// <returns>An version sorted array in ascending order of
     /// <see cref="ManifestInfo">manifests</see> this library can parse.</returns>
     ManifestInfo[] RegisterManifest();
 

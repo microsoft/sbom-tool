@@ -6,7 +6,7 @@ using Microsoft.Sbom.Extensions.Entities;
 namespace Microsoft.Sbom.Api.Utils;
 
 /// <summary>
-/// Provides deduplication of ExternalDocumentReferenceInfo objects inside a channel. 
+/// Provides deduplication of ExternalDocumentReferenceInfo objects inside a channel.
 /// </summary>
 public class ExternalReferenceDeduplicator : ChannelDeduplicator<ExternalDocumentReferenceInfo>
 {

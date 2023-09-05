@@ -58,7 +58,7 @@ public class ConfigSanitizerTests
     }
 
     /// <summary>
-    /// This method returns a configuration object with all the properties set to standard values, 
+    /// This method returns a configuration object with all the properties set to standard values,
     /// which won't make the test fail. Change one value that you are testing in order to ensure you
     /// are testing the correct config.
     /// </summary>

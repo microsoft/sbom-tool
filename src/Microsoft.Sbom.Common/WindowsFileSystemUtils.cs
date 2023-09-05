@@ -21,15 +21,15 @@ public class WindowsFileSystemUtils : FileSystemUtils
     private bool DirectoryHasRights(string directoryPath, FileSystemRights fileSystemRights)
     {
         try
-        {   
+        {
             WindowsIdentity current = WindowsIdentity.GetCurrent();
             var directoryInfo = new DirectoryInfo(directoryPath);
 
             return HasAccessControlType(AccessControlType.Allow) && !HasAccessControlType(AccessControlType.Deny);
-                
+
             // Check if the current user has or does not have the specified rights (either Allow or Deny)
             bool HasAccessControlType(AccessControlType accessControlType)
-            { 
+            {
                 var accessRules = directoryInfo.GetAccessControl().GetAccessRules(true, true, typeof(SecurityIdentifier))
                     .Cast<FileSystemAccessRule>()
                     .Any(rule => (current.Groups.Contains(rule.IdentityReference) || current.User.Equals(rule.IdentityReference))
