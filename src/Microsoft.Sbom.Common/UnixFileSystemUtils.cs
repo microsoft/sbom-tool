@@ -8,13 +8,13 @@ namespace Microsoft.Sbom.Common;
 
 internal class UnixFileSystemUtils : FileSystemUtils
 {
-    override public bool DirectoryHasReadPermissions(string directoryPath)
+    public override bool DirectoryHasReadPermissions(string directoryPath)
     {
         var directoryInfo = new UnixDirectoryInfo(directoryPath);
         return directoryInfo.CanAccess(AccessModes.R_OK) && directoryInfo.CanAccess(AccessModes.F_OK);
     }
 
-    override public bool DirectoryHasWritePermissions(string directoryPath)
+    public override bool DirectoryHasWritePermissions(string directoryPath)
     {
         var directoryInfo = new UnixDirectoryInfo(directoryPath);
         return directoryInfo.CanAccess(AccessModes.W_OK) && directoryInfo.CanAccess(AccessModes.F_OK);

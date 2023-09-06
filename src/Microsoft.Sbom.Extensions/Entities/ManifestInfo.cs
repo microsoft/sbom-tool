@@ -24,12 +24,10 @@ public class ManifestInfo : IEquatable<ManifestInfo>
 
     /// <summary>
     /// Parses the manifest info from a string
-    /// The format is <name>:<version>
+    /// The format is <code>&lt;name&gt;:&lt;version&gt;</code>
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1629:Documentation text should end with a period",
-        Justification = "Code element in comment.")]
     public static ManifestInfo Parse(string value)
     {
         if (string.IsNullOrEmpty(value))

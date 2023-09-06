@@ -58,8 +58,14 @@ public class SbomGenerator : ISBOMGenerator
         // Get scan configuration
         var inputConfiguration = ApiConfigurationBuilder.GetConfiguration(
             rootPath,
-            manifestDirPath, null, null, metadata, specifications,
-            runtimeConfiguration, externalDocumentReferenceListFile, componentPath);
+            manifestDirPath,
+            null,
+            null,
+            metadata,
+            specifications,
+            runtimeConfiguration,
+            externalDocumentReferenceListFile,
+            componentPath);
 
         // Validate the configuration
         inputConfiguration = ValidateConfig(inputConfiguration);
@@ -99,8 +105,14 @@ public class SbomGenerator : ISBOMGenerator
         ArgumentNullException.ThrowIfNull(manifestDirPath);
 
         var inputConfiguration = ApiConfigurationBuilder.GetConfiguration(
-            rootPath, manifestDirPath, files, packages, metadata, specifications,
-            runtimeConfiguration, externalDocumentReferenceListFile);
+            rootPath,
+            manifestDirPath,
+            files,
+            packages,
+            metadata,
+            specifications,
+            runtimeConfiguration,
+            externalDocumentReferenceListFile);
         inputConfiguration = ValidateConfig(inputConfiguration);
 
         inputConfiguration.ToConfiguration();
