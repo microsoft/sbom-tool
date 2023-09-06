@@ -481,14 +481,6 @@ dotnet_diagnostic.CA1859.severity = none
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers
 ##########################################
 
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1000.md
-# SA1000: Keywords should be spaced correctly
-dotnet_diagnostic.SA1000.severity = suggestion
-
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1028.md
-# SA1028: Code should not contain trailing whitespace
-dotnet_diagnostic.SA1028.severity = suggestion
-
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1101.md
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.SA1101.severity = suggestion

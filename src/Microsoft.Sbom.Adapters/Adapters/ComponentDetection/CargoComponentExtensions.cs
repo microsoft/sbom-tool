@@ -14,7 +14,7 @@ internal static class CargoComponentExtensions
     /// <summary>
     /// Converts a <see cref="CargoComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    public static SbomPackage? ToSbomPackage(this CargoComponent cargoComponent) => new ()
+    public static SbomPackage? ToSbomPackage(this CargoComponent cargoComponent) => new()
     {
         Id = cargoComponent.Id,
         PackageUrl = cargoComponent.PackageUrl?.ToString(),

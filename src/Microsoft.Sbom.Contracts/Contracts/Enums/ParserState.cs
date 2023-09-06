@@ -4,7 +4,7 @@
 namespace Microsoft.Sbom.Contracts.Enums;
 
 /// <summary>
-/// Defines the current state of the SBOM parser. 
+/// Defines the current state of the SBOM parser.
 /// </summary>
 public enum ParserState
 {
@@ -40,7 +40,7 @@ public enum ParserState
 
     /// <summary>
     /// The parser is in a state where its returned a property that needs to be skipped.
-    /// This parser will never be in this state externally, internally we will try to move 
+    /// This parser will never be in this state externally, internally we will try to move
     /// to the next available state when we reach this state.
     /// </summary>
     INTERNAL_SKIP,

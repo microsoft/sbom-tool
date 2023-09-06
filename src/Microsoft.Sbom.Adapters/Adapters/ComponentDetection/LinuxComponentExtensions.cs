@@ -14,7 +14,7 @@ internal static class LinuxComponentExtensions
     /// <summary>
     /// Converts a <see cref="LinuxComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    public static SbomPackage? ToSbomPackage(this LinuxComponent linuxComponent) => new ()
+    public static SbomPackage? ToSbomPackage(this LinuxComponent linuxComponent) => new()
     {
         Id = linuxComponent.Id,
         PackageUrl = linuxComponent.PackageUrl?.ToString(),

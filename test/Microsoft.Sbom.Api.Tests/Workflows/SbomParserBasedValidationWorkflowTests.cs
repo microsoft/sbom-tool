@@ -38,11 +38,11 @@ namespace Microsoft.Sbom.Workflows;
 [TestClass]
 public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBase
 {
-    private readonly Mock<ILogger> mockLogger = new ();
-    private readonly Mock<IOSUtils> mockOSUtils = new ();
-    private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new ();
-    private readonly Mock<ISignValidator> signValidatorMock = new ();
-    private readonly Mock<ISignValidationProvider> signValidationProviderMock = new ();
+    private readonly Mock<ILogger> mockLogger = new();
+    private readonly Mock<IOSUtils> mockOSUtils = new();
+    private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new();
+    private readonly Mock<ISignValidator> signValidatorMock = new();
+    private readonly Mock<ISignValidationProvider> signValidationProviderMock = new();
 
     [TestInitialize]
     public void Init()
