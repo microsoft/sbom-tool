@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -30,6 +30,7 @@ public class PackagesWalkerTests
     private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
     private readonly Mock<ISbomConfigProvider> mockSbomConfigs = new Mock<ISbomConfigProvider>();
     private readonly Mock<IFileSystemUtils> mockFileSystemUtils = new Mock<IFileSystemUtils>();
+    private readonly Mock<ILicenseInformationFetcher> mockLicenseInformationFetcher = new Mock<ILicenseInformationFetcher>();
 
     public PackagesWalkerTests()
     {
@@ -44,10 +45,10 @@ public class PackagesWalkerTests
     [TestMethod]
     public async Task ScanSuccessTestAsync()
     {
-        var scannedComponents = new List<ScannedComponent>();
+        var scannedComponents = new List<ScannedComponentWithLicense>();
         for (int i = 1; i < 4; i++)
         {
-            var scannedComponent = new ScannedComponent
+            var scannedComponent = new ScannedComponentWithLicense
             {
                 Component = new NpmComponent("componentName", $"{i}")
             };
@@ -55,7 +56,7 @@ public class PackagesWalkerTests
             scannedComponents.Add(scannedComponent);
         }
 
-        var scannedComponentOther = new ScannedComponent
+        var scannedComponentOther = new ScannedComponentWithLicense
         {
             Component = new NpmComponent("componentName", "3")
         };
@@ -71,12 +72,12 @@ public class PackagesWalkerTests
         };
 
         mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
-        var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object);
+        var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
         int countDistinctComponents = 0;
 
-        await foreach (ScannedComponent package in packagesChannelReader.output.ReadAllAsync())
+        await foreach (ScannedComponentWithLicense package in packagesChannelReader.output.ReadAllAsync())
         {
             countDistinctComponents++;
             Assert.IsTrue(scannedComponents.Remove(package));
@@ -95,10 +96,10 @@ public class PackagesWalkerTests
     [TestMethod]
     public async Task ScanCombinePackagesWithSameNameDifferentCase()
     {
-        var scannedComponents = new List<ScannedComponent>();
+        var scannedComponents = new List<ScannedComponentWithLicense>();
         for (int i = 1; i < 4; i++)
         {
-            var scannedComponent = new ScannedComponent
+            var scannedComponent = new ScannedComponentWithLicense
             {
                 Component = new NpmComponent("componentName", $"{i}")
             };
@@ -106,7 +107,7 @@ public class PackagesWalkerTests
             scannedComponents.Add(scannedComponent);
         }
 
-        var scannedComponentOther = new ScannedComponent
+        var scannedComponentOther = new ScannedComponentWithLicense
         {
             // Component with changed case. should also match 'componentName' and
             // thus only 3 components should be detected.
@@ -124,12 +125,12 @@ public class PackagesWalkerTests
         };
 
         mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
-        var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object);
+        var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
         int countDistinctComponents = 0;
 
-        await foreach (ScannedComponent package in packagesChannelReader.output.ReadAllAsync())
+        await foreach (ScannedComponentWithLicense package in packagesChannelReader.output.ReadAllAsync())
         {
             countDistinctComponents++;
             Assert.IsTrue(scannedComponents.Remove(package));
@@ -150,7 +151,7 @@ public class PackagesWalkerTests
     {
         var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
 
-        var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object);
+        var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object, mockLicenseInformationFetcher.Object);
         walker.GetComponents(null);
         walker.GetComponents(string.Empty);
 
@@ -169,7 +170,7 @@ public class PackagesWalkerTests
         };
 
         mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
-        var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object);
+        var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
         ComponentDetectorException actualError = null;
 
@@ -190,10 +191,10 @@ public class PackagesWalkerTests
     [TestMethod]
     public async Task ScanIgnoreSbomComponents()
     {
-        var scannedComponents = new List<ScannedComponent>();
+        var scannedComponents = new List<ScannedComponentWithLicense>();
         for (int i = 1; i < 4; i++)
         {
-            var scannedComponent = new ScannedComponent
+            var scannedComponent = new ScannedComponentWithLicense
             {
                 Component = new NpmComponent("componentName", $"{i}")
             };
@@ -201,7 +202,7 @@ public class PackagesWalkerTests
             scannedComponents.Add(scannedComponent);
         }
 
-        var scannedComponentOther = new ScannedComponent
+        var scannedComponentOther = new ScannedComponentWithLicense
         {
             Component = new SpdxComponent("SPDX-2.2", new Uri("http://test.com"), "componentName", "123", "abcdf", "path1")
         };
@@ -217,7 +218,7 @@ public class PackagesWalkerTests
         };
 
         mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
-        var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object);
+        var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
         var discoveredComponents = await packagesChannelReader.output.ReadAllAsync().ToListAsync();

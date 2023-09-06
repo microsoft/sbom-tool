@@ -11,10 +11,10 @@ using Microsoft.Sbom.Extensions;
 namespace Microsoft.Sbom.Api.Output;
 
 /// <summary>
-/// This implements the custom serializer for writing json output by the Manifest 
-/// tool. This serializer is optimized for writing a lot of array values, and some 
+/// This implements the custom serializer for writing json output by the Manifest
+/// tool. This serializer is optimized for writing a lot of array values, and some
 /// additional metadata.
-/// 
+///
 /// It holds a <see cref="Utf8JsonWriter"/> object inside which is disposable.
 /// </summary>
 public sealed class ManifestToolJsonSerializer : IManifestToolJsonSerializer
@@ -48,7 +48,7 @@ public sealed class ManifestToolJsonSerializer : IManifestToolJsonSerializer
     }
 
     /// <summary>
-    /// This writes a json document to the underlying stream. 
+    /// This writes a json document to the underlying stream.
     /// We also call dispose on the JsonDocument once we finish writing.
     /// </summary>
     /// <param name="jsonDocument">The json document.</param>
@@ -93,7 +93,7 @@ public sealed class ManifestToolJsonSerializer : IManifestToolJsonSerializer
     public void StartJsonObject() => jsonWriter.WriteStartObject();
 
     /// <summary>
-    /// Writes the end JSON object. Must be called after finishing writing to 
+    /// Writes the end JSON object. Must be called after finishing writing to
     /// the serializer to close the json object.
     /// </summary>
     public void FinalizeJsonObject() => jsonWriter.WriteEndObject();

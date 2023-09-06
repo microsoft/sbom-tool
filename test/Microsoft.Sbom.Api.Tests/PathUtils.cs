@@ -6,8 +6,8 @@ using System.IO;
 namespace Microsoft.Sbom.Api.Tests;
 
 /// <summary>
-/// This class is responsible for providing Path functions that are provided 
-/// in either .net framework or .net core. 
+/// This class is responsible for providing Path functions that are provided
+/// in either .net framework or .net core.
 /// </summary>
 /// <remarks>
 /// Comments are from API.

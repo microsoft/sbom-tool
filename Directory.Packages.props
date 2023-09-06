@@ -11,7 +11,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageVersion Include="AutoMapper" Version="10.1.1" />
-        <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+        <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
         <PackageVersion Include="coverlet.collector" Version="6.0.0" />
         <PackageVersion Include="FluentAssertions" Version="6.12.0" />
         <PackageVersion Include="MSTest.TestAdapter" Version="3.1.1" />
@@ -22,6 +22,7 @@
         <PackageVersion Include="Microsoft.ComponentDetection.Orchestrator" Version="$(ComponentDetectionPackageVersion)" />
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
         <PackageVersion Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+        <PackageVersion Include="Microsoft.Extensions.Http" Version="7.0.0" />
         <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
         <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
@@ -43,7 +44,6 @@
         <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
         <PackageVersion Include="System.Reactive" Version="5.0.0" />
         <PackageVersion Include="System.Runtime.Loader" Version="4.3.0" />
-        <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="6.0.0" />
         <PackageVersion Include="System.Text.Json" Version="7.0.3" />
         <PackageVersion Include="System.Threading.Channels" Version="6.0.0" />
         <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.11.1" />

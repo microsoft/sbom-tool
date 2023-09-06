@@ -21,7 +21,7 @@ internal static class OtherComponentExtensions
         PackageName = otherComponent.Name,
         PackageVersion = otherComponent.Version,
         PackageSource = otherComponent.DownloadUrl?.ToString(),
-        Checksum = new[] 
+        Checksum = new[]
         {
             new Checksum { ChecksumValue = otherComponent.Hash },
         },

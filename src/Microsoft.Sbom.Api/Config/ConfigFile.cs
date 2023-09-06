@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -13,7 +13,7 @@ namespace Microsoft.Sbom.Api.Config;
 
 /// <summary>
 /// This is the schema for the config file that is used to provide
-/// the validator with additional params in a JSON format. Most of 
+/// the validator with additional params in a JSON format. Most of
 /// these fields can also be provided through the command line. In case
 /// of a conflict (same value provided in config file and command line, we
 /// throw an input error.
@@ -121,7 +121,7 @@ public class ConfigFile
     /// <summary>
     /// Gets or sets if specified, we will store the generated telemetry for the execution
     /// of the SBOM tool at this path.
-    /// </summary>        
+    /// </summary>
     public string TelemetryFilePath { get; set; }
 
     /// <summary>
@@ -171,4 +171,9 @@ public class ConfigFile
     /// If set to true, we will fail the validation if no packages are found in the build drop.
     /// </summary>
     public bool? FailIfNoPackages { get; set; }
+
+    /// <summary>
+    /// If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.
+    /// </summary>
+    public bool? FetchLicenseInformation { get; set; }
 }

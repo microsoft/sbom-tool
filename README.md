@@ -6,7 +6,7 @@
 
 ## Introduction
 
-The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 compatible SBOMs for any variety of artifacts.
+The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 compatible SBOMs for any variety of artifacts. The tool uses the [Component Detection](https://github.com/microsoft/component-detection) libraries to detect components and the [ClearlyDefined](https://github.com/clearlydefined/clearlydefined) API to populate license information for these components.
 
 ## Table of Contents
 

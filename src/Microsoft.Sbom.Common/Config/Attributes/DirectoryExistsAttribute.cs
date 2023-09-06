@@ -6,7 +6,7 @@ using System;
 namespace Microsoft.Sbom.Common.Config.Attributes;
 
 /// <summary>
-/// Checks if the path specified by the string property is a valid directory, and 
+/// Checks if the path specified by the string property is a valid directory, and
 /// checks appropriate permissions for the directory.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]

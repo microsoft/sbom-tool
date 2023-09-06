@@ -23,7 +23,6 @@
         <PackageReference Include="Serilog.Sinks.Console" />
         <PackageReference Include="System.IO.FileSystem.AccessControl" />
         <PackageReference Include="System.Private.Uri" />
-        <PackageReference Include="System.Security.Cryptography.ProtectedData" />
         <PackageReference Include="System.Threading.Channels" />
         <PackageReference Include="System.Threading.Tasks.Extensions" />
     </ItemGroup>
@@ -39,7 +38,7 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
-  
+
     <ItemGroup>
       <ProjectReference Include="..\Microsoft.Sbom.Adapters\Microsoft.Sbom.Adapters.csproj" />
       <ProjectReference Include="..\Microsoft.Sbom.Common\Microsoft.Sbom.Common.csproj" />

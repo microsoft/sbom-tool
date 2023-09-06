@@ -24,7 +24,7 @@ public class SPDXFile
 
     /// <summary>
     /// Gets or sets provide a unique identifier to match analysis information on each specific file in a package.
-    /// </summary>    
+    /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("checksums")]
     public List<Checksum> FileChecksums { get; set; }
@@ -36,7 +36,7 @@ public class SPDXFile
     public string LicenseConcluded { get; set; }
 
     /// <summary>
-    /// Gets or sets contains the license information actually found in the file, if any. 
+    /// Gets or sets contains the license information actually found in the file, if any.
     /// </summary>
     [JsonPropertyName("licenseInfoInFiles")]
     public IEnumerable<string> LicenseInfoInFiles { get; set; }

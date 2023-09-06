@@ -6,7 +6,7 @@ namespace Microsoft.Sbom.Api.Convertors;
 public interface IManifestPathConverter
 {
     /// <summary>
-    /// Convert a file path from a relative path to a path format 
+    /// Convert a file path from a relative path to a path format
     /// that the manifest implements.
     /// </summary>
     /// <param name="path">The relative path of the file.</param>

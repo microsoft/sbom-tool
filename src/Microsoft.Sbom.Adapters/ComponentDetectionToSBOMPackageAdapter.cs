@@ -1,11 +1,10 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.Sbom.Adapters.Report;
 using Microsoft.Sbom.Contracts;
@@ -35,7 +34,7 @@ public class ComponentDetectionToSBOMPackageAdapter
 
         try
         {
-            ScanResult? componentDetectionScanResult = JsonConvert.DeserializeObject<ScanResult>(File.ReadAllText(bcdeOutputPath));
+            ScanResultWithLicense? componentDetectionScanResult = JsonConvert.DeserializeObject<ScanResultWithLicense>(File.ReadAllText(bcdeOutputPath));
 
             if (componentDetectionScanResult == null)
             {

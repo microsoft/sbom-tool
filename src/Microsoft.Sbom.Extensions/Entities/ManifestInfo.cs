@@ -28,7 +28,7 @@ public class ManifestInfo : IEquatable<ManifestInfo>
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1629:Documentation text should end with a period", 
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1629:Documentation text should end with a period",
         Justification = "Code element in comment.")]
     public static ManifestInfo Parse(string value)
     {

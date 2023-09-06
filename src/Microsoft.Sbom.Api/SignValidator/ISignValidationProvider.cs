@@ -6,7 +6,7 @@ using Microsoft.Sbom.Extensions;
 namespace Microsoft.Sbom.Api.SignValidator;
 
 /// <summary>
-/// A type that provides a <see cref="ISignValidator"/> implementation based on the 
+/// A type that provides a <see cref="ISignValidator"/> implementation based on the
 /// current operating system type.
 /// </summary>
 public interface ISignValidationProvider

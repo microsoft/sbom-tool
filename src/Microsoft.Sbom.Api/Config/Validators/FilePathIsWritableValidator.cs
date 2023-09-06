@@ -37,7 +37,7 @@ public class FilePathIsWritableValidator : ConfigValidator
                 throw new ValidationArgException($"Unable to get directory for '{value}': {e.Message}");
             }
 
-            // check if directory exist 
+            // check if directory exist
             if (!fileSystemUtils.DirectoryExists(directoryPath))
             {
                 throw new ValidationArgException($"{paramName} directory not found for '{value}'");

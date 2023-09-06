@@ -17,7 +17,7 @@ public interface IMetadataProvider
     IDictionary<MetadataKey, object> MetadataDictionary { get; }
 
     /// <summary>
-    /// Gets the namespace URI for the SBOM document that is unique within this build environment. 
+    /// Gets the namespace URI for the SBOM document that is unique within this build environment.
     /// </summary>
     public string GetDocumentNamespaceUri();
 

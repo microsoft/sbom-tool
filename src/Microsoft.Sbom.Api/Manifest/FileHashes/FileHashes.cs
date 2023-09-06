@@ -16,7 +16,7 @@ public class FileHashes
     /// The hash of the file that was calculated based on the on disk file.
     /// </summary>
     public Checksum OnDiskHash { get; private set; }
-        
+
     /// <summary>
     /// The hash of the file that was read from the SBOM file.
     /// </summary>
@@ -51,11 +51,11 @@ public class FileHashes
     {
         switch (fileLocation)
         {
-            case FileLocation.OnDisk: 
+            case FileLocation.OnDisk:
                 OnDiskHash = checksum;
                 break;
-            case FileLocation.InSbomFile: 
-                SBOMFileHash = checksum; 
+            case FileLocation.InSbomFile:
+                SBOMFileHash = checksum;
                 break;
             default:
                 break;

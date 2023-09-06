@@ -15,7 +15,7 @@ using Serilog;
 namespace Microsoft.Sbom.Api.Executors;
 
 /// <summary>
-/// Uses the <see cref="IManifestGenerator"/> to write a json object that contains 
+/// Uses the <see cref="IManifestGenerator"/> to write a json object that contains
 /// a file path and its associated hashes.
 /// </summary>
 public class FileInfoWriter

@@ -6,7 +6,7 @@ using Microsoft.Sbom.Extensions.Entities;
 namespace Microsoft.Sbom.Api.Output.Telemetry.Entities;
 
 /// <summary>
-/// Represents a SBOM file object and contains additional properties 
+/// Represents a SBOM file object and contains additional properties
 /// related to the file.
 /// </summary>
 public class SBOMFile

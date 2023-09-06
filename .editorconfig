@@ -557,10 +557,6 @@ dotnet_diagnostic.SA1500.severity = suggestion
 # SA1502: Element should not be on a single line
 dotnet_diagnostic.SA1502.severity = suggestion
 
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1518.md
-# SA1518: Use line endings correctly
-dotnet_diagnostic.SA1518.severity = suggestion
-
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1600.md
 # SA1600: Elements should be documented
 dotnet_diagnostic.SA1600.severity = suggestion
@@ -954,10 +950,6 @@ dotnet_diagnostic.IDE0009.severity = suggestion
 # IDE0010: Add missing cases
 dotnet_diagnostic.IDE0010.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0017
-# IDE0017: Simplify object initialization
-dotnet_diagnostic.IDE0017.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0019
 # IDE0019: Use pattern matching
 dotnet_diagnostic.IDE0019.severity = suggestion
@@ -1081,6 +1073,10 @@ dotnet_diagnostic.IDE0270.severity = suggestion
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide1006
 # IDE1006: Naming rule violation: These words must begin with upper case characters: ...
 dotnet_diagnostic.IDE1006.severity = suggestion
+
+# https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/warnings/il3000
+# IL3000: Avoid accessing Assembly file path when publishing as a single file
+dotnet_diagnostic.IL3000.severity = suggestion
 
 ##########################################
 # Provided by Microsoft.VisualStudio.Threading.Analyzers

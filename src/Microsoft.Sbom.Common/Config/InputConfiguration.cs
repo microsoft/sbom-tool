@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -136,4 +136,8 @@ public class InputConfiguration : IConfiguration
     /// <inheritdoc cref="IConfiguration.FailIfNoPackages" />
     [DefaultValue(false)]
     public ConfigurationSetting<bool> FailIfNoPackages { get; set; }
+
+    /// <inheritdoc cref="IConfiguration.FetchLicenseInformation" />
+    [DefaultValue(false)]
+    public ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
 }

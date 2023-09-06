@@ -24,7 +24,7 @@ public interface ISBOMGenerator
     /// for. If this is not provided, we will generate SBOMs for all the available formats.</param>
     /// <param name="runtimeConfiguration">Configuration to tweak the SBOM generator workflow.</param>
     /// <param name="manifestDirPath">Output directory. If null defaults to rootPath.</param>
-    /// <returns>The result object that indicates if the generation succeeded, and a list of 
+    /// <returns>The result object that indicates if the generation succeeded, and a list of
     /// errors if it failed along with telemetry.</returns>
     Task<SbomGenerationResult> GenerateSbomAsync(
         string rootPath,
@@ -46,7 +46,7 @@ public interface ISBOMGenerator
     /// for. If this is not provided, we will generate SBOMs for all the available formats.</param>
     /// <param name="runtimeConfiguration">Configuration to tweak the SBOM generator workflow.</param>
     /// <param name="manifestDirPath">Output directory. If null defaults to rootPath joined to _manifest.</param>
-    /// <returns>The result object that indicates if the generation succeeded, and a list of 
+    /// <returns>The result object that indicates if the generation succeeded, and a list of
     /// errors if it failed along with telemetry.</returns>
     Task<SbomGenerationResult> GenerateSbomAsync(
         string rootPath,
@@ -58,8 +58,8 @@ public interface ISBOMGenerator
         string externalDocumentReferenceListFile = null);
 
     /// <summary>
-    /// Each SBOM specification requires that each file and package have a specific list of hashes 
-    /// generated for them. Use this function to get a list of the required hash algorithms for your 
+    /// Each SBOM specification requires that each file and package have a specific list of hashes
+    /// generated for them. Use this function to get a list of the required hash algorithms for your
     /// SBOM specification. The SBOM generator may throw an exception if a hash algorithm value is missing.
     /// </summary>
     /// <param name="specification">The SBOM specification.</param>

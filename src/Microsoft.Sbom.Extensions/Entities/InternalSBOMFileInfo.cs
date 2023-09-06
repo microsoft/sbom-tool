@@ -29,7 +29,7 @@ public class InternalSbomFileInfo
     public string LicenseConcluded { get; set; }
 
     /// <summary>
-    /// Gets or sets contains any license information actually found in the file. 
+    /// Gets or sets contains any license information actually found in the file.
     /// </summary>
     public IEnumerable<string> LicenseInfoInFiles { get; set; }
 
