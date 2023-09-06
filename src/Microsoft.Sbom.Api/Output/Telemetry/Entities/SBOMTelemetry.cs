@@ -32,7 +32,7 @@ public class SBOMTelemetry
     public IConfiguration Parameters { get; set; }
 
     /// <summary>
-    /// Gets or sets a list of the SBOM formats and related file properties that was used in the 
+    /// Gets or sets a list of the SBOM formats and related file properties that was used in the
     /// generation/validation of the SBOM.
     /// </summary>
     public IList<SBOMFile> SBOMFormatsUsed { get; set; }

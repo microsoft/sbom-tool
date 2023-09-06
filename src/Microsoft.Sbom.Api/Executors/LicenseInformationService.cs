@@ -50,6 +50,8 @@ public class LicenseInformationService : ILicenseInformationService
             var content = new StringContent(formattedData, Encoding.UTF8, "application/json");
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
             try
             {
                 responses.Add(await httpClient.PostAsync(uri, content));
@@ -58,6 +60,10 @@ public class LicenseInformationService : ILicenseInformationService
             {
                 log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {e.Message}");
             }
+
+            stopwatch.Stop();
+
+            log.Debug($"Retrieving license information for {batch.Count} components took {stopwatch.Elapsed.TotalSeconds} seconds");
         }
 
         foreach (HttpResponseMessage response in responses)
