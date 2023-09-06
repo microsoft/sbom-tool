@@ -14,7 +14,7 @@ internal static class RubyGemsComponentExtensions
     /// <summary>
     /// Converts a <see cref="RubyGemsComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    public static SbomPackage? ToSbomPackage(this RubyGemsComponent rubyGemsComponent) => new ()
+    public static SbomPackage? ToSbomPackage(this RubyGemsComponent rubyGemsComponent) => new()
     {
         Id = rubyGemsComponent.Id,
         PackageUrl = rubyGemsComponent.PackageUrl?.ToString(),

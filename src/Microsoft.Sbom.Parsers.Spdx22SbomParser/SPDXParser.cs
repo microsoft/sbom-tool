@@ -116,7 +116,7 @@ public class SPDXParser : ISbomParser
         }
     }
 
-    private readonly ManifestInfo spdxManifestInfo = new ()
+    private readonly ManifestInfo spdxManifestInfo = new()
     {
         Name = Constants.SPDXName,
         Version = Constants.SPDXVersion
@@ -207,8 +207,8 @@ public class SPDXParser : ISbomParser
             var reader = new Utf8JsonReader(buffer, isFinalBlock: isFinalBlock, readerState);
 
             // The root properties parser consumes the value of the property as well. For example,
-            // "spdxId": "SPDXID", root parser would have already consumed the SPDXID string. To 
-            // work around this issue, the root parser will return the next token which we store in 
+            // "spdxId": "SPDXID", root parser would have already consumed the SPDXID string. To
+            // work around this issue, the root parser will return the next token which we store in
             // nextTokenString and use it here instead of doing a reader.ReadString().
             switch (currentRootPropertyName)
             {

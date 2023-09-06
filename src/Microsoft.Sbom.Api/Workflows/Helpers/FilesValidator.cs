@@ -22,7 +22,7 @@ public class FilesValidator
 {
     private readonly DirectoryWalker directoryWalker;
     private readonly IConfiguration configuration;
-    private readonly ChannelUtils channelUtils = new ();
+    private readonly ChannelUtils channelUtils = new();
     private readonly ILogger log;
     private readonly FileHasher fileHasher;
     private readonly ManifestFolderFilterer fileFilterer;

@@ -33,7 +33,7 @@ internal ref struct SbomPackageParser
     private const string HasFilesProperty = "hasFiles";
     private const string ExternalRefsProperty = "externalRefs";
     private readonly Stream stream;
-    private readonly SPDXPackage sbomPackage = new ();
+    private readonly SPDXPackage sbomPackage = new();
 
     public SbomPackageParser(Stream stream)
     {
@@ -124,7 +124,7 @@ internal ref struct SbomPackageParser
             missingProps.Add(nameof(sbomPackage.Supplier));
         }
 
-        if (sbomPackage.PackageVerificationCode != null 
+        if (sbomPackage.PackageVerificationCode != null
             && string.IsNullOrWhiteSpace(sbomPackage.PackageVerificationCode.PackageVerificationCodeValue))
         {
             missingProps.Add(nameof(sbomPackage.PackageVerificationCode));
@@ -249,7 +249,7 @@ internal ref struct SbomPackageParser
 
     private ExternalReference ParseExternalReference(ref Utf8JsonReader reader, ref byte[] buffer)
     {
-        ExternalReference reference = new ();
+        ExternalReference reference = new();
 
         // Read the opening { of the object
         ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.StartObject);
@@ -302,7 +302,7 @@ internal ref struct SbomPackageParser
 
     private PackageVerificationCode ParsePackageVerificationCodeObject(ref byte[] buffer, ref Utf8JsonReader reader)
     {
-        PackageVerificationCode packageVerificationCode = new ();
+        PackageVerificationCode packageVerificationCode = new();
 
         // Read the opening { of the object
         ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.StartObject);

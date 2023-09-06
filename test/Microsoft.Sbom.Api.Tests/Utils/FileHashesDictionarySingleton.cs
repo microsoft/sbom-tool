@@ -21,7 +21,7 @@ public sealed class FileHashesDictionarySingleton
         => dictionary = new FileHashesDictionary(new ConcurrentDictionary<string, FileHashes>(StringComparer.InvariantCultureIgnoreCase));
 
     private static readonly Lazy<FileHashesDictionarySingleton> Lazy =
-        new (() => new FileHashesDictionarySingleton());
+        new(() => new FileHashesDictionarySingleton());
 
     public static FileHashesDictionary Instance => Lazy.Value.dictionary;
 

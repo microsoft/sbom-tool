@@ -15,7 +15,7 @@ public class Validator : IManifestInterface
 {
     public string Version { get; set; }
 
-    private readonly ManifestInfo spdxManifestInfo = new ()
+    private readonly ManifestInfo spdxManifestInfo = new()
     {
         Name = Constants.SPDXName,
         Version = Constants.SPDXVersion
