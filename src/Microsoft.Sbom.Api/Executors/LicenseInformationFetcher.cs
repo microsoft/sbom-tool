@@ -18,10 +18,10 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
 {
     private readonly ILogger log;
     private readonly IRecorder recorder;
-    private readonly LicenseInformationService licenseInformationService;
+    private readonly ILicenseInformationService licenseInformationService;
     private readonly ConcurrentDictionary<string, string> licenseDictionary = new ConcurrentDictionary<string, string>();
 
-    public LicenseInformationFetcher(ILogger log, IRecorder recorder, LicenseInformationService licenseInformationService)
+    public LicenseInformationFetcher(ILogger log, IRecorder recorder, ILicenseInformationService licenseInformationService)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
@@ -108,7 +108,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
             }
 
             // Filter out undefined licenses.
-            foreach (var kvp in extractedLicenses.Where(kvp => kvp.Value == "NOASSERTION" || kvp.Value == "Unlicense" || kvp.Value == "OTHER").ToList())
+            foreach (var kvp in extractedLicenses.Where(kvp => kvp.Value.ToLower() == "noassertion" || kvp.Value.ToLower() == "unlicense" || kvp.Value.ToLower() == "other").ToList())
             {
                 extractedLicenses.Remove(kvp.Key);
             }

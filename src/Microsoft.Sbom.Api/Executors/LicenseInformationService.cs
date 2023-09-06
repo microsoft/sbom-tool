@@ -15,7 +15,7 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
-public class LicenseInformationService
+public class LicenseInformationService : ILicenseInformationService
 {
     private readonly ILogger log;
     private readonly IRecorder recorder;

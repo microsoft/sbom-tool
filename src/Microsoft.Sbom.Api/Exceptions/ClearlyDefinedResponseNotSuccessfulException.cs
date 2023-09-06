@@ -6,7 +6,7 @@ using System;
 namespace Microsoft.Sbom.Api.Exceptions;
 
 /// <summary>
-/// Exception during argument validation used to indicate when we don't have access to a path passed as argument.
+/// Exception thrown when response from ClearlyDefined is not successful.
 /// </summary>
 [Serializable]
 public class ClearlyDefinedResponseNotSuccessfulException : Exception

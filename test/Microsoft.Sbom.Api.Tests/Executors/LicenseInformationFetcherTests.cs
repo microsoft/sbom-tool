@@ -18,14 +18,7 @@ public class LicenseInformationFetcherTests
 {
     private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
     private readonly Mock<IRecorder> mockRecorder = new Mock<IRecorder>();
-    private readonly Mock<HttpClient> mockHttpClient = new Mock<HttpClient>();
-    private Mock<LicenseInformationService> mockLicenseInformationService;
-
-    [TestInitialize]
-    public void Setup()
-    {
-        mockLicenseInformationService = new Mock<LicenseInformationService>(mockLogger.Object, mockRecorder.Object, mockHttpClient.Object);
-    }
+    private readonly Mock<ILicenseInformationService> mockLicenseInformationService = new Mock<ILicenseInformationService>();
 
     [TestMethod]
     public void ConvertComponentsToListForApi_Npm()
