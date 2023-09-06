@@ -62,9 +62,9 @@ public abstract class FileSystemUtils : IFileSystemUtils
         Constants.DefaultStreamBufferSize,
         FileOptions.Asynchronous);
 
-    abstract public bool DirectoryHasReadPermissions(string directoryPath);
+    public abstract bool DirectoryHasReadPermissions(string directoryPath);
 
-    abstract public bool DirectoryHasWritePermissions(string directoryPath);
+    public abstract bool DirectoryHasWritePermissions(string directoryPath);
 
     public DirectoryInfo CreateDirectory(string path) => Directory.CreateDirectory(path);
 
