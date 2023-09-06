@@ -24,7 +24,7 @@ public class LicenseInformationFetcherTests
     [TestInitialize]
     public void Setup()
     {
-        mockLicenseInformationService = new Mock<LicenseInformationService>(mockLogger.Object, mockHttpClient.Object);
+        mockLicenseInformationService = new Mock<LicenseInformationService>(mockLogger.Object, mockRecorder.Object, mockHttpClient.Object);
     }
 
     [TestMethod]
