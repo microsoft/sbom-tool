@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -89,7 +89,7 @@ public class Generator : IManifestGenerator
 
     // Throws a <see cref="MissingHashValueException"/> if the filehashes are missing
     // any of the required hashes
-    private void EnsureRequiredHashesPresent(Sbom.Contracts.Checksum[] fileHashes)
+    private void EnsureRequiredHashesPresent(Contracts.Checksum[] fileHashes)
     {
         foreach (var hashAlgorithmName in from hashAlgorithmName in RequiredHashAlgorithms
                  where !fileHashes.Select(fh => fh.Algorithm).Contains(hashAlgorithmName)

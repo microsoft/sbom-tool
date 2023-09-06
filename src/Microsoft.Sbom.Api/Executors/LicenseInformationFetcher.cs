@@ -4,8 +4,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Newtonsoft.Json.Linq;
 using Serilog;
 
@@ -14,12 +17,14 @@ namespace Microsoft.Sbom.Api.Executors;
 public class LicenseInformationFetcher : ILicenseInformationFetcher
 {
     private readonly ILogger log;
-    private readonly LicenseInformationService licenseInformationService;
+    private readonly IRecorder recorder;
+    private readonly ILicenseInformationService licenseInformationService;
     private readonly ConcurrentDictionary<string, string> licenseDictionary = new ConcurrentDictionary<string, string>();
 
-    public LicenseInformationFetcher(ILogger log, LicenseInformationService licenseInformationService)
+    public LicenseInformationFetcher(ILogger log, IRecorder recorder, ILicenseInformationService licenseInformationService)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
+        this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.licenseInformationService = licenseInformationService ?? throw new ArgumentNullException(nameof(licenseInformationService));
     }
 
@@ -101,9 +106,18 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                     extractedLicenses.TryAdd($"{packageName}@{packageVersion}", declaredLicense);
                 }
             }
+
+            // Filter out undefined licenses.
+            foreach (var kvp in extractedLicenses.Where(kvp => kvp.Value.ToLower() == "noassertion" || kvp.Value.ToLower() == "unlicense" || kvp.Value.ToLower() == "other").ToList())
+            {
+                extractedLicenses.Remove(kvp.Key);
+            }
+
+            recorder.AddToTotalCountOfLicenses(extractedLicenses.Count);
         }
         catch
         {
+            recorder.RecordException(new ClearlyDefinedResponseParsingException("Encountered error while attempting to parse response. License information may not be fully recorded."));
             log.Error("Encountered error while attempting to parse response. License information may not be fully recorded.");
             return extractedLicenses;
         }
