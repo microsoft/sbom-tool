@@ -509,10 +509,6 @@ dotnet_diagnostic.SA1203.severity = suggestion
 # SA1204: Static elements must appear before instance elements
 dotnet_diagnostic.SA1204.severity = suggestion
 
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1206.md
-# SA1206: Declaration keywords should follow order
-dotnet_diagnostic.SA1206.severity = suggestion
-
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1207.md
 # SA1207: Member attributes should follow the order
 dotnet_diagnostic.SA1207.severity = suggestion
