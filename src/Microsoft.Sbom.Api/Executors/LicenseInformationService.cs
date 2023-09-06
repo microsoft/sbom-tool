@@ -9,6 +9,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
@@ -16,12 +18,14 @@ namespace Microsoft.Sbom.Api.Executors;
 public class LicenseInformationService
 {
     private readonly ILogger log;
+    private readonly IRecorder recorder;
     private readonly HttpClient httpClient;
     private const int ClientTimeoutMinutes = 6;
 
-    public LicenseInformationService(ILogger log, HttpClient httpClient)
+    public LicenseInformationService(ILogger log, IRecorder recorder, HttpClient httpClient)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
+        this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     }
 
@@ -65,6 +69,7 @@ public class LicenseInformationService
             else
             {
                 log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information. Request returned status code: {response.StatusCode}");
+                recorder.RecordException(new ClearlyDefinedResponseNotSuccessfulException($"Request returned status code: {response.StatusCode}"));
             }
         }
 

@@ -28,6 +28,7 @@ using Microsoft.ComponentDetection.Orchestrator.Experiments;
 using Microsoft.ComponentDetection.Orchestrator.Services;
 using Microsoft.ComponentDetection.Orchestrator.Services.GraphTranslation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
@@ -84,7 +85,7 @@ public static class ServiceCollectionExtensions
         services
             .AddSingleton<IConfiguration, Configuration>()
             .AddTransient(_ => FileSystemUtilsProvider.CreateInstance())
-            .AddTransient<ILogger>(x =>
+            .AddTransient(x =>
             {
                 logLevel = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? logLevel;
                 return Log.Logger = new LoggerConfiguration()
