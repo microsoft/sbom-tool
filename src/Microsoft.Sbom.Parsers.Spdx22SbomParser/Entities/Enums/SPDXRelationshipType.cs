@@ -6,9 +6,9 @@ using System.Text.Json.Serialization;
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
 
 /// <summary>
-/// Defines the type of <see cref="SPDXRelationship"/> between the source and the 
+/// Defines the type of <see cref="SPDXRelationship"/> between the source and the
 /// target element.
-/// 
+///
 /// Full definition here: https://spdx.github.io/spdx-spec/7-relationships-between-SPDX-elements/#71-relationship.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
