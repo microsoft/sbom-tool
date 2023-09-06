@@ -9,19 +9,23 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
-public class LicenseInformationService
+public class LicenseInformationService : ILicenseInformationService
 {
     private readonly ILogger log;
+    private readonly IRecorder recorder;
     private readonly HttpClient httpClient;
     private const int ClientTimeoutMinutes = 6;
 
-    public LicenseInformationService(ILogger log, HttpClient httpClient)
+    public LicenseInformationService(ILogger log, IRecorder recorder, HttpClient httpClient)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
+        this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     }
 
@@ -46,6 +50,8 @@ public class LicenseInformationService
             var content = new StringContent(formattedData, Encoding.UTF8, "application/json");
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
             try
             {
                 responses.Add(await httpClient.PostAsync(uri, content));
@@ -54,6 +60,10 @@ public class LicenseInformationService
             {
                 log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {e.Message}");
             }
+
+            stopwatch.Stop();
+
+            log.Debug($"Retrieving license information for {batch.Count} components took {stopwatch.Elapsed.TotalSeconds} seconds");
         }
 
         foreach (HttpResponseMessage response in responses)
@@ -65,6 +75,7 @@ public class LicenseInformationService
             else
             {
                 log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information. Request returned status code: {response.StatusCode}");
+                recorder.RecordException(new ClearlyDefinedResponseNotSuccessfulException($"Request returned status code: {response.StatusCode}"));
             }
         }
 
