@@ -13,9 +13,9 @@ namespace Microsoft.Sbom.Common;
 [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "This is a Windows only implementation")]
 public class WindowsFileSystemUtils : FileSystemUtils
 {
-    override public bool DirectoryHasReadPermissions(string directoryPath) => DirectoryHasRights(directoryPath, FileSystemRights.Read);
+    public override bool DirectoryHasReadPermissions(string directoryPath) => DirectoryHasRights(directoryPath, FileSystemRights.Read);
 
-    override public bool DirectoryHasWritePermissions(string directoryPath) => DirectoryHasRights(directoryPath, FileSystemRights.Write);
+    public override bool DirectoryHasWritePermissions(string directoryPath) => DirectoryHasRights(directoryPath, FileSystemRights.Write);
 
     // Get the collection of authorization rules that apply to the directory
     private bool DirectoryHasRights(string directoryPath, FileSystemRights fileSystemRights)
