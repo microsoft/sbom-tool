@@ -11,7 +11,7 @@ using SPDXChecksum = Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Checksum;
 namespace Microsoft.Sbom.Utils;
 
 /// <summary>
-/// Provides extension methods to convert a SPDX object to 
+/// Provides extension methods to convert a SPDX object to
 /// the equivalent internal object as defined in Sbom.Contracts.
 /// </summary>
 internal static class SPDXToSbomFormatConverterExtensions
@@ -91,7 +91,7 @@ internal static class SPDXToSbomFormatConverterExtensions
     }
 
     /// <summary>
-    /// Gets the PURL from a <see cref="ExternalReference"/> object using the Locator property. 
+    /// Gets the PURL from a <see cref="ExternalReference"/> object using the Locator property.
     /// </summary>
     /// <param name="externalReference"></param>
     /// <returns></returns>

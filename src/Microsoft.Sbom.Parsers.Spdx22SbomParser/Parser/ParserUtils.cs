@@ -24,7 +24,7 @@ internal class ParserUtils
 
     /// <summary>
     /// Read the next JSON token in the reader from the input buffer.
-    /// If the buffer is small and doesn't contain all the text for the next token, 
+    /// If the buffer is small and doesn't contain all the text for the next token,
     /// a call to GetMoreBytesFromStream is made to read more data into the buffer.
     /// </summary>
     /// <exception cref="EndOfStreamException"></exception>
@@ -82,7 +82,7 @@ internal class ParserUtils
     }
 
     /// <summary>
-    /// Assert that the current token is either one of the tokens specified 
+    /// Assert that the current token is either one of the tokens specified
     /// in the <paramref name="expectedTokenTypes"/>.
     /// </summary>
     /// <param name="stream"></param>
@@ -150,9 +150,9 @@ internal class ParserUtils
 
     /// <summary>
     /// Returns the next string value for a given property, for example:
-    /// 
+    ///
     /// { "TestProperty": "TestProperty Value" }
-    /// 
+    ///
     /// Will return "TestProperty Value".
     /// </summary>
     /// <param name="reader"></param>
@@ -273,9 +273,9 @@ internal class ParserUtils
 
     /// <summary>
     /// Returns the next boolean value for a given property, for example:
-    /// 
+    ///
     /// { "TestProperty": false }
-    /// 
+    ///
     /// Will return false.
     /// </summary>
     /// <param name="reader"></param>

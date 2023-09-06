@@ -294,14 +294,14 @@ public class ConfigSanitizerTests
         if (!isWindows)
         {
             var config = GetConfigurationBaseObject();
-            config.ManifestDirPath = new ($"\\{nameof(config.ManifestDirPath)}\\", SettingSource.Default);
-            config.BuildDropPath = new ($"\\{nameof(config.BuildDropPath)}\\", SettingSource.Default);
-            config.OutputPath = new ($"\\{nameof(config.OutputPath)}\\", SettingSource.Default);
-            config.ConfigFilePath = new ($"\\{nameof(config.ConfigFilePath)}\\", SettingSource.Default);
-            config.RootPathFilter = new ($"\\{nameof(config.RootPathFilter)}\\", SettingSource.Default);
-            config.BuildComponentPath = new ($"\\{nameof(config.BuildComponentPath)}\\", SettingSource.Default);
-            config.CatalogFilePath = new ($"\\{nameof(config.CatalogFilePath)}\\", SettingSource.Default);
-            config.TelemetryFilePath = new ($"\\{nameof(config.TelemetryFilePath)}\\", SettingSource.Default);
+            config.ManifestDirPath = new($"\\{nameof(config.ManifestDirPath)}\\", SettingSource.Default);
+            config.BuildDropPath = new($"\\{nameof(config.BuildDropPath)}\\", SettingSource.Default);
+            config.OutputPath = new($"\\{nameof(config.OutputPath)}\\", SettingSource.Default);
+            config.ConfigFilePath = new($"\\{nameof(config.ConfigFilePath)}\\", SettingSource.Default);
+            config.RootPathFilter = new($"\\{nameof(config.RootPathFilter)}\\", SettingSource.Default);
+            config.BuildComponentPath = new($"\\{nameof(config.BuildComponentPath)}\\", SettingSource.Default);
+            config.CatalogFilePath = new($"\\{nameof(config.CatalogFilePath)}\\", SettingSource.Default);
+            config.TelemetryFilePath = new($"\\{nameof(config.TelemetryFilePath)}\\", SettingSource.Default);
 
             config.ManifestToolAction = action;
             configSanitizer.SanitizeConfig(config);

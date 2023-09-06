@@ -14,19 +14,19 @@ public interface IFileSystemUtils
     bool DirectoryExists(string path);
 
     DirectoryInfo CreateDirectory(string path);
-        
+
     IEnumerable<string> GetFilesInDirectory(string path, bool followSymlinks = true);
-        
+
     IEnumerable<string> GetDirectories(string path, bool followSymlinks = true);
-        
+
     Stream OpenRead(string filePath);
-        
+
     Stream OpenWrite(string filePath);
-        
+
     string ReadAllText(string filePath);
-        
+
     void WriteAllText(string filePath, string contents);
-        
+
     string JoinPaths(string root, string relativePath);
 
     string JoinPaths(string root, string relativePath, string secondRelativePath);
@@ -46,9 +46,9 @@ public interface IFileSystemUtils
     string GetDirectoryName(string filePath);
 
     bool DirectoryHasReadPermissions(string directoryPath);
-        
+
     bool DirectoryHasWritePermissions(string directoryPath);
-        
+
     void DeleteFile(string filePath);
 
     /// <summary>
@@ -71,6 +71,6 @@ public interface IFileSystemUtils
     string GetSbomToolTempPath();
 
     string GetFullPath(string path);
-    
+
     DirectoryInfo GetParentDirectory(string path);
 }

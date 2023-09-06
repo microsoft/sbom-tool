@@ -59,7 +59,7 @@ public class SbomParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithAll4Properties);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new (stream);
+        SPDXParser parser = new(stream);
 
         Assert.AreEqual(ParserState.NONE, parser.CurrentState);
 
@@ -137,7 +137,7 @@ public class SbomParserTests
 
     private void IterateAllProperties(Stream stream)
     {
-        SPDXParser parser = new (stream);
+        SPDXParser parser = new(stream);
         while (parser.Next() != ParserState.FINISHED)
         {
             if (parser.CurrentState == ParserState.PACKAGES)

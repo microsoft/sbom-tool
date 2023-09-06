@@ -21,12 +21,12 @@ public class ParserException : Exception
     {
     }
 
-    public ParserException(string message, Exception innerException) 
+    public ParserException(string message, Exception innerException)
         : base(message, innerException)
     {
     }
 
-    protected ParserException(SerializationInfo info, StreamingContext context) 
+    protected ParserException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
     }
