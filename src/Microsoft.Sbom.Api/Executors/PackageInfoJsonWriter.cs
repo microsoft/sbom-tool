@@ -54,7 +54,10 @@ public class PackageInfoJsonWriter
         return (result, errors);
     }
 
-    private async Task GenerateJson(IList<ISbomConfig> packagesArraySupportingConfigs, SbomPackage packageInfo, Channel<JsonDocWithSerializer> result,
+    private async Task GenerateJson(
+        IList<ISbomConfig> packagesArraySupportingConfigs,
+        SbomPackage packageInfo,
+        Channel<JsonDocWithSerializer> result,
         Channel<FileValidationResult> errors)
     {
         try

@@ -485,10 +485,6 @@ dotnet_diagnostic.CA1859.severity = none
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.SA1101.severity = suggestion
 
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1117.md
-# SA1117: Parameters should be on same line or separate lines
-dotnet_diagnostic.SA1117.severity = suggestion
-
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1124.md
 # SA1124: Do not use regions
 dotnet_diagnostic.SA1124.severity = suggestion

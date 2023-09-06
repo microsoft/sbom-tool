@@ -171,8 +171,6 @@ public interface IConfiguration
     /// <summary>
     /// Gets or sets a timestamp in the format <code>yyyy-MM-ddTHH:mm:ssZ</code> that will be used as the generated timestamp for the SBOM.
     /// </summary>
-    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1629:Documentation text should end with a period",
-        Justification = "Code element in comment.")]
     ConfigurationSetting<string> GenerationTimestamp { get; set; }
 
     /// <summary>

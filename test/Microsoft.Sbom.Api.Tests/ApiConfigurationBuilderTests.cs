@@ -124,8 +124,13 @@ public class ApiConfigurationBuilderTests
         };
 
         var config = ApiConfigurationBuilder.GetConfiguration(
-            RootPath, string.Empty, null, null,
-            metadata, null, runtime);
+            RootPath,
+            string.Empty,
+            null,
+            null,
+            this.metadata,
+            null,
+            runtime);
 
         Assert.AreEqual(output, config.Verbosity.Value);
     }
