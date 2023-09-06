@@ -51,7 +51,7 @@ public class ValidationWorkflowTestsBase
         ["/child2/grandchild2/file10"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "missingfile" } }
     };
 
-    protected ManifestData GetDefaultManifestData() => new ()
+    protected ManifestData GetDefaultManifestData() => new()
     {
         HashesMap = new ConcurrentDictionary<string, Checksum[]>(GetFilesDictionary(), StringComparer.InvariantCultureIgnoreCase)
     };

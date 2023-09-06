@@ -15,7 +15,7 @@ internal static class DockerReferenceComponentExtensions
     /// <summary>
     /// Converts a <see cref="DockerReferenceComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    public static SbomPackage? ToSbomPackage(this DockerReferenceComponent dockerReferenceComponent) => new ()
+    public static SbomPackage? ToSbomPackage(this DockerReferenceComponent dockerReferenceComponent) => new()
     {
         Id = dockerReferenceComponent.Id,
         PackageUrl = dockerReferenceComponent.PackageUrl?.ToString(),
