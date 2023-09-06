@@ -33,7 +33,8 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
     public CGScannedExternalDocumentReferenceFileProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger log, FileHasher fileHasher,
+        ILogger log,
+        FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
         InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
