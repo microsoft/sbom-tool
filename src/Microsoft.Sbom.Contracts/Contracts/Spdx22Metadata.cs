@@ -40,7 +40,7 @@ public class Spdx22Metadata
     /// Information about the package this SPDX document represents.
     /// </summary>
     public IEnumerable<string> DocumentDescribes { get; set; }
-    
+
     /// <summary>
     /// The id of the spdx document.
     /// </summary>
