@@ -11,7 +11,9 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
 /// https://spdx.github.io/spdx-spec/appendix-VI-external-repository-identifiers/.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
-[SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:Element should begin with upper-case letter",
+[SuppressMessage(
+    "StyleCop.CSharp.NamingRules",
+    "SA1300:Element should begin with upper-case letter",
     Justification = "These are enum types that are case sensitive and defined by external code.")]
 public enum ExternalRepositoryType
 {
