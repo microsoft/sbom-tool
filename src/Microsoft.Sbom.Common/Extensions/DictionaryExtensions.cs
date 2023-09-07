@@ -15,15 +15,15 @@ public static class DictionaryExtensions
     /// Adds the value to the dictionary only if the value is not null,
     /// and the if dictionary already doesn't contain the given key.
     /// </summary>
-    /// <typeparam name="Tkey"></typeparam>
+    /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
     /// <param name="dictionary"></param>
     /// <param name="key"></param>
     /// <param name="value"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    public static void AddIfKeyNotPresentAndValueNotNull<Tkey, TValue>(
-        this IDictionary<Tkey, TValue> dictionary,
-        Tkey key,
+    public static void AddIfKeyNotPresentAndValueNotNull<TKey, TValue>(
+        this IDictionary<TKey, TValue> dictionary,
+        TKey key,
         TValue value)
     {
         if (dictionary is null)

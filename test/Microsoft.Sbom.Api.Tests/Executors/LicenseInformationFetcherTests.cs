@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Net.Http;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -16,19 +16,13 @@ namespace Microsoft.Sbom.Api.Executors.Tests;
 public class LicenseInformationFetcherTests
 {
     private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
-    private readonly Mock<HttpClient> mockHttpClient = new Mock<HttpClient>();
-    private Mock<LicenseInformationService> mockLicenseInformationService;
-
-    [TestInitialize]
-    public void Setup()
-    {
-        mockLicenseInformationService = new Mock<LicenseInformationService>(mockLogger.Object, mockHttpClient.Object);
-    }
+    private readonly Mock<IRecorder> mockRecorder = new Mock<IRecorder>();
+    private readonly Mock<ILicenseInformationService> mockLicenseInformationService = new Mock<ILicenseInformationService>();
 
     [TestMethod]
     public void ConvertComponentsToListForApi_Npm()
     {
-        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockLicenseInformationService.Object);
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
 
         List<ScannedComponent> scannedComponents = new List<ScannedComponent>
         {
@@ -52,7 +46,7 @@ public class LicenseInformationFetcherTests
     [TestMethod]
     public void ConvertComponentToListForApi_NuGet()
     {
-        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockLicenseInformationService.Object);
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
 
         List<ScannedComponent> scannedComponents = new List<ScannedComponent>
         {
@@ -74,11 +68,83 @@ public class LicenseInformationFetcherTests
     }
 
     [TestMethod]
+    public void ConvertComponentToListForApi_Pypi()
+    {
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
+
+        List<ScannedComponent> scannedComponents = new List<ScannedComponent>
+        {
+            new ScannedComponent
+            {
+               Component = new PipComponent("pippackage", "1.0.0")
+            }
+        };
+
+        List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(scannedComponents);
+
+        Assert.AreEqual("pypi/pypi/-/pippackage/1.0.0", listOfComponentsForApi[0]);
+    }
+
+    [TestMethod]
+    public void ConvertComponentToListForApi_Gem()
+    {
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
+
+        List<ScannedComponent> scannedComponents = new List<ScannedComponent>
+        {
+            new ScannedComponent
+            {
+               Component = new RubyGemsComponent("gempackage", "1.0.0")
+            }
+        };
+
+        List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(scannedComponents);
+
+        Assert.AreEqual("gem/rubygems/-/gempackage/1.0.0", listOfComponentsForApi[0]);
+    }
+
+    [TestMethod]
+    public void ConvertComponentToListForApi_Pod()
+    {
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
+
+        List<ScannedComponent> scannedComponents = new List<ScannedComponent>
+        {
+            new ScannedComponent
+            {
+               Component = new PodComponent("podpackage", "1.0.0")
+            }
+        };
+
+        List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(scannedComponents);
+
+        Assert.AreEqual("pod/cocoapods/-/podpackage/1.0.0", listOfComponentsForApi[0]);
+    }
+
+    [TestMethod]
+    public void ConvertComponentToListForApi_Crate()
+    {
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
+
+        List<ScannedComponent> scannedComponents = new List<ScannedComponent>
+        {
+            new ScannedComponent
+            {
+               Component = new CargoComponent("cratepackage", "1.0.0")
+            }
+        };
+
+        List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(scannedComponents);
+
+        Assert.AreEqual("crate/cratesio/-/cratepackage/1.0.0", listOfComponentsForApi[0]);
+    }
+
+    [TestMethod]
     public void ConvertClearlyDefinedApiResponseToList_GoodResponse()
     {
         string expectedKey = "json5@2.2.3";
         string expectedValue = "MIT";
-        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockLicenseInformationService.Object);
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
 
         Dictionary<string, string> licensesDictionary = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(HttpRequestUtils.GoodClearlyDefinedAPIResponse);
 
@@ -88,7 +154,7 @@ public class LicenseInformationFetcherTests
     [TestMethod]
     public void ConvertClearlyDefinedApiResponseToList_BadResponse()
     {
-        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockLicenseInformationService.Object);
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
 
         Dictionary<string, string> licensesDictionary = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(HttpRequestUtils.BadClearlyDefinedAPIResponse);
 

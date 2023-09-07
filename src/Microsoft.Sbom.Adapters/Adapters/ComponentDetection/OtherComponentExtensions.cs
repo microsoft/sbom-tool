@@ -14,7 +14,7 @@ internal static class OtherComponentExtensions
     /// <summary>
     /// Converts a <see cref="OtherComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    public static SbomPackage? ToSbomPackage(this OtherComponent otherComponent) => new ()
+    public static SbomPackage? ToSbomPackage(this OtherComponent otherComponent) => new()
     {
         Id = otherComponent.Id,
         PackageUrl = otherComponent.PackageUrl?.ToString(),

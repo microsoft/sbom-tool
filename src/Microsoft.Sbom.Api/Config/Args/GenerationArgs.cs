@@ -114,5 +114,5 @@ public class GenerationArgs : CommonArgs
     /// </summary>
     [ArgShortcut("li")]
     [ArgDescription("If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.")]
-    public bool FetchLicenseInformation { get; set; }
+    public bool? FetchLicenseInformation { get; set; }
 }

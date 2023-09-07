@@ -22,7 +22,7 @@ internal ref struct SbomRelationshipParser
     private const string RelationshipTypeProperty = "relationshipType";
 
     private readonly Stream stream;
-    private readonly SPDXRelationship sbomRelationship = new ();
+    private readonly SPDXRelationship sbomRelationship = new();
 
     public SbomRelationshipParser(Stream stream)
     {

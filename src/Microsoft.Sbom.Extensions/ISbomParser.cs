@@ -53,7 +53,7 @@ public interface ISbomParser
     IEnumerable<SBOMReference> GetReferences();
 
     /// <summary>
-    /// Returns a <see cref="SBOMMetadata"/> object using the metadata defined in the 
+    /// Returns a <see cref="SBOMMetadata"/> object using the metadata defined in the
     /// current SBOM.
     /// </summary>
     /// <param name="stream"></param>
@@ -61,10 +61,10 @@ public interface ISbomParser
     Spdx22Metadata GetMetadata();
 
     /// <summary>
-    /// This function is called by the sbom tool upon initialization to get all the 
+    /// This function is called by the sbom tool upon initialization to get all the
     /// manifest versions this library can parse.
     /// </summary>
-    /// <returns>An version sorted array in ascending order of 
+    /// <returns>An version sorted array in ascending order of
     /// <see cref="ManifestInfo">manifests</see> this library can parse.</returns>
     ManifestInfo[] RegisterManifest();
 

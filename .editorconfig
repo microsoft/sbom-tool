@@ -481,21 +481,9 @@ dotnet_diagnostic.CA1859.severity = none
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers
 ##########################################
 
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1000.md
-# SA1000: Keywords should be spaced correctly
-dotnet_diagnostic.SA1000.severity = suggestion
-
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1028.md
-# SA1028: Code should not contain trailing whitespace
-dotnet_diagnostic.SA1028.severity = suggestion
-
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1101.md
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.SA1101.severity = suggestion
-
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1117.md
-# SA1117: Parameters should be on same line or separate lines
-dotnet_diagnostic.SA1117.severity = suggestion
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1124.md
 # SA1124: Do not use regions
@@ -520,10 +508,6 @@ dotnet_diagnostic.SA1203.severity = suggestion
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1204.md
 # SA1204: Static elements must appear before instance elements
 dotnet_diagnostic.SA1204.severity = suggestion
-
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1206.md
-# SA1206: Declaration keywords should follow order
-dotnet_diagnostic.SA1206.severity = suggestion
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1207.md
 # SA1207: Member attributes should follow the order
@@ -749,10 +733,6 @@ dotnet_diagnostic.CA1707.severity = suggestion
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1711
 # CA1711: Identifiers should not have incorrect suffix
 dotnet_diagnostic.CA1711.severity = suggestion
-
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1715
-# CA1715: Prefix generic type names with 'T'
-dotnet_diagnostic.CA1715.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1716
 # CA1716: Identifiers should not match keywords

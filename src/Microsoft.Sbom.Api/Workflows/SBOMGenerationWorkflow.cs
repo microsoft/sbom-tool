@@ -182,9 +182,10 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         }
         catch (Exception e)
         {
-            log.Warning(
+            this.log.Warning(
                 $"Manifest generation failed, however we were " +
-                $"unable to delete the partially generated manifest.json file and the {sbomDir} directory.", e);
+                $"unable to delete the partially generated manifest.json file and the {sbomDir} directory.",
+                e);
         }
     }
 

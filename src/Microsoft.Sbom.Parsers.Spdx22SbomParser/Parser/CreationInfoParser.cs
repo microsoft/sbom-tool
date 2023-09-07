@@ -17,7 +17,7 @@ namespace Microsoft.Sbom.Parser;
 internal readonly ref struct CreationInfoParser
 {
     private readonly Stream stream;
-    private readonly MetadataCreationInfo creationInfo = new ();
+    private readonly MetadataCreationInfo creationInfo = new();
 
     public CreationInfoParser(Stream stream)
     {
@@ -30,7 +30,7 @@ internal readonly ref struct CreationInfoParser
         {
             throw new ArgumentException($"The {nameof(buffer)} value can't be null or of 0 length.");
         }
-        
+
         // Read the start { of this object.
         ParserUtils.SkipNoneTokens(stream, ref buffer, ref reader);
         ParserUtils.AssertTokenType(stream, ref reader, JsonTokenType.StartObject);

@@ -15,7 +15,7 @@ internal static class DockerImageComponentExtensions
     /// <summary>
     /// Converts a <see cref="DockerImageComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    public static SbomPackage? ToSbomPackage(this DockerImageComponent dockerImageComponent) => new ()
+    public static SbomPackage? ToSbomPackage(this DockerImageComponent dockerImageComponent) => new()
     {
         Id = dockerImageComponent.Id,
         PackageUrl = dockerImageComponent.PackageUrl?.ToString(),

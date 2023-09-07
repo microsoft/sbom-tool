@@ -28,7 +28,7 @@ public static class Constants
         Version = "1.0.0"
     };
 
-    public static List<Entities.ErrorType> SkipFailureReportingForErrors = new ()
+    public static List<Entities.ErrorType> SkipFailureReportingForErrors = new()
     {
         Entities.ErrorType.ManifestFolder,
         Entities.ErrorType.FilteredRootPath,
