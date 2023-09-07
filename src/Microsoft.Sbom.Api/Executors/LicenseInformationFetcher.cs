@@ -59,6 +59,18 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                     case "nuget":
                         listOfComponentsForApi.Add($"{componentType}/nuget/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
                         break;
+                    case "gem":
+                        listOfComponentsForApi.Add($"{componentType}/rubygems/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
+                        break;
+                    case "pypi":
+                        listOfComponentsForApi.Add($"{componentType}/pypi/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
+                        break;
+                    case "cargo":
+                        listOfComponentsForApi.Add($"crate/cratesio/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
+                        break;
+                    case "cocoapods":
+                        listOfComponentsForApi.Add($"pod/{componentType}/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
+                        break;
 
                     default:
                         log.Debug($"License retrieval for component type {componentType} is not supported yet.");

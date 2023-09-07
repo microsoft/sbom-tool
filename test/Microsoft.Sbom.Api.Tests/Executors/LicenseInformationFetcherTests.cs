@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Net.Http;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Output.Telemetry;
@@ -66,6 +65,78 @@ public class LicenseInformationFetcherTests
 
         Assert.AreEqual("nuget/nuget/-/nugetpackage/1.0.0", listOfComponentsForApi[0]);
         Assert.AreEqual("nuget/nuget/@nugetpackage/testpackage/1.0.0", listOfComponentsForApi[1]);
+    }
+
+    [TestMethod]
+    public void ConvertComponentToListForApi_Pypi()
+    {
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
+
+        List<ScannedComponent> scannedComponents = new List<ScannedComponent>
+        {
+            new ScannedComponent
+            {
+               Component = new PipComponent("pippackage", "1.0.0")
+            }
+        };
+
+        List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(scannedComponents);
+
+        Assert.AreEqual("pypi/pypi/-/pippackage/1.0.0", listOfComponentsForApi[0]);
+    }
+
+    [TestMethod]
+    public void ConvertComponentToListForApi_Gem()
+    {
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
+
+        List<ScannedComponent> scannedComponents = new List<ScannedComponent>
+        {
+            new ScannedComponent
+            {
+               Component = new RubyGemsComponent("gempackage", "1.0.0")
+            }
+        };
+
+        List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(scannedComponents);
+
+        Assert.AreEqual("gem/rubygems/-/gempackage/1.0.0", listOfComponentsForApi[0]);
+    }
+
+    [TestMethod]
+    public void ConvertComponentToListForApi_Pod()
+    {
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
+
+        List<ScannedComponent> scannedComponents = new List<ScannedComponent>
+        {
+            new ScannedComponent
+            {
+               Component = new PodComponent("podpackage", "1.0.0")
+            }
+        };
+
+        List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(scannedComponents);
+
+        Assert.AreEqual("pod/cocoapods/-/podpackage/1.0.0", listOfComponentsForApi[0]);
+    }
+
+    [TestMethod]
+    public void ConvertComponentToListForApi_Crate()
+    {
+        LicenseInformationFetcher licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
+
+        List<ScannedComponent> scannedComponents = new List<ScannedComponent>
+        {
+            new ScannedComponent
+            {
+               Component = new CargoComponent("cratepackage", "1.0.0")
+            }
+        };
+
+        List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(scannedComponents);
+
+        Assert.AreEqual("crate/cratesio/-/cratepackage/1.0.0", listOfComponentsForApi[0]);
     }
 
     [TestMethod]

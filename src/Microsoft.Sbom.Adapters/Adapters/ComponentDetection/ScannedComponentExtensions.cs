@@ -21,7 +21,7 @@ public static class ScannedComponentExtensions
     {
         return component.Component switch
         {
-            CargoComponent cargoComponent => cargoComponent.ToSbomPackage(),
+            CargoComponent cargoComponent => cargoComponent.ToSbomPackage(component?.License),
             CondaComponent condaComponent => condaComponent.ToSbomPackage(),
             DockerImageComponent dockerImageComponent => dockerImageComponent.ToSbomPackage(),
             GitComponent gitComponent => gitComponent.ToSbomPackage(),
@@ -31,9 +31,9 @@ public static class ScannedComponentExtensions
             NpmComponent npmComponent => npmComponent.ToSbomPackage(component?.License),
             NuGetComponent nuGetComponent => nuGetComponent.ToSbomPackage(component?.License),
             OtherComponent otherComponent => otherComponent.ToSbomPackage(),
-            PipComponent pipComponent => pipComponent.ToSbomPackage(),
-            PodComponent podComponent => podComponent.ToSbomPackage(),
-            RubyGemsComponent rubyGemsComponent => rubyGemsComponent.ToSbomPackage(),
+            PipComponent pipComponent => pipComponent.ToSbomPackage(component?.License),
+            PodComponent podComponent => podComponent.ToSbomPackage(component?.License),
+            RubyGemsComponent rubyGemsComponent => rubyGemsComponent.ToSbomPackage(component?.License),
             null => Error(report => report.LogNullComponent(nameof(ToSbomPackage))),
             _ => Error(report => report.LogNoConversionFound(component.Component.GetType(), component.Component))
         };
