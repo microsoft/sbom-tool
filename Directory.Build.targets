@@ -2,7 +2,7 @@
 
     <Target Name="Versioning" BeforeTargets="MinVer">
         <PropertyGroup Label="Build">
-            <MinVerDefaultPreReleasePhase>preview</MinVerDefaultPreReleasePhase>
+            <MinVerDefaultPreReleaseIdentifiers>preview.0</MinVerDefaultPreReleaseIdentifiers>
             <MinVerTagPrefix>v</MinVerTagPrefix>
         </PropertyGroup>
     </Target>
