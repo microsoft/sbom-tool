@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -69,6 +69,7 @@ public static class ApiConfigurationBuilder
             NamespaceUriUniquePart = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriUniquePart),
             FollowSymlinks = GetConfigurationSetting(sanitizedRuntimeConfiguration.FollowSymlinks),
             DeleteManifestDirIfPresent = GetConfigurationSetting(sanitizedRuntimeConfiguration.DeleteManifestDirectoryIfPresent),
+            FetchLicenseInformation = GetConfigurationSetting(sanitizedRuntimeConfiguration.FetchLicenseInformation),
         };
 
         SetVerbosity(sanitizedRuntimeConfiguration, configuration);
