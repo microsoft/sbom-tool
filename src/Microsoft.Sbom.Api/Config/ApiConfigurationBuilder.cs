@@ -69,7 +69,6 @@ public static class ApiConfigurationBuilder
             NamespaceUriUniquePart = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriUniquePart),
             FollowSymlinks = GetConfigurationSetting(sanitizedRuntimeConfiguration.FollowSymlinks),
             DeleteManifestDirIfPresent = GetConfigurationSetting(sanitizedRuntimeConfiguration.DeleteManifestDirectoryIfPresent),
-            FetchLicenseInformation = GetConfigurationSetting(sanitizedRuntimeConfiguration.FetchLicenseInformation),
         };
 
         SetVerbosity(sanitizedRuntimeConfiguration, configuration);
