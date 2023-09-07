@@ -12,6 +12,40 @@ The Sbom tool generates a SBOM for any build artifact.
 GlobalOption    Description
 Help (-?, -h)   Prints this help message
 
+Actions
+
+  Validate -options - Validate a build artifact using the manifest. Optionally also verify the signing certificate of the manfiest.
+
+    Option                   Description
+    BuildDropPath (-b)       The root folder of the drop directory to validate.
+    ManifestDirPath (-m)     The path of the directory where the manifest will be validated. If this parameter  
+                             is not specified, the manifest will be validated in {BuildDropPath}/_manifest      
+                             directory.
+    OutputPath (-o)          The path where the output json should be written.
+    CatalogFilePath (-C)     This parameter is deprecated and will not be used, we will automatically detect the
+                             catalog file using our standard directory structure.The path of signed catalog     
+                             file that is used to verify the signature of the manifest json file.
+    ValidateSignature (-s)   If set, will validate the manifest using the signed catalog file.
+    IgnoreMissing (-im)      If set, will not fail validation on the files presented in Manifest but missing on 
+                             the disk.
+    RootPathFilter (-r)      If you're downloading only a part of the drop using the '-r' or 'root' parameter in
+                             the drop client, specify the same string value here in order to skip validating    
+                             paths that are not downloaded.
+    HashAlgorithm (-Ha)      The Hash algorithm to use while verifying or generating the hash value of a file   
+    Verbosity (-V)           Display this amount of detail in the logging output.
+                             Verbose
+                             Debug
+                             Information
+                             Warning
+                             Error
+                             Fatal
+    Parallelism (-P)         The number of parallel threads to use for the workflows.
+    ConfigFilePath (-Co)     The json file that contains the configuration for the DropValidator.
+    TelemetryFilePath (-t)   Specify a file where we should write detailed telemetry for the workflow.
+    FollowSymlinks (-F)      If set to false, we will not follow symlinks while traversing the build drop       
+                             folder. Default is set to 'true'.
+    ManifestInfo (-mi)       A list of the name and version of the manifest format that we are using.
+
 Generate - Generate a SBOM for all the files in the given build drop folder, and the packages in the components path.
 
 Usage - Microsoft.Sbom.Tool Generate -options
@@ -48,6 +82,10 @@ NamespaceUriUniquePart (-nsu)             A unique valid URI part that will be a
 NamespaceUriBase (-nsb)                   The base path of the SBOM namespace URI.
 GenerationTimestamp (-gt)                 A timestamp in the format 'yyyy-MM-ddTHH:mm:ssZ' that will be used as the
                                           generated timestamp for the SBOM.
+DeleteManifestDirIfPresent (-D)           If set to true, we will delete any previous manifest directories that are
+                                          already present in the ManifestDirPath without asking the user for
+                                          confirmation. The new manifest directory will then be created at this
+                                          location and the generated SBOM will be stored there.
 Verbosity (-V)                            Display this amount of detail in the logging output.
                                           Verbose
                                           Debug
