@@ -775,10 +775,6 @@ dotnet_diagnostic.CA1813.severity = suggestion
 # CA1815: Override equals and operator equals on value types
 dotnet_diagnostic.CA1815.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1816
-# CA1816: Call GC.SuppressFinalize correctly
-dotnet_diagnostic.CA1816.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1819
 # CA1819: Properties should not return arrays
 dotnet_diagnostic.CA1819.severity = suggestion
