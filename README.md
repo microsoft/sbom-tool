@@ -25,30 +25,44 @@ We distribute executables and SBOM files of the tool in [GitHub Releases](https:
 
 Please check the [CLI Reference](docs/sbom-tool-cli-reference.md) document for additional help regarding the CLI tool.
 
-#### Windows (PowerShell)
+#### Package managers
+
+##### WinGet
+
+```sh
+winget install Microsoft.SbomTool
+```
+
+##### Homebrew
+
+> [!NOTE]
+> This Formulae requires the `x86_64` architecture, ARM is not supported at this time. For details see [#223](https://github.com/microsoft/sbom-tool/issues/223).
+
+```bash
+brew install sbom-tool
+```
+
+#### Manual download
+
+##### Windows (PowerShell)
+
 ```powershell
 Invoke-WebRequest -Uri "https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-win-x64.exe" -OutFile "sbom-tool.exe"
 ```
 
-#### Linux (curl)
+##### Linux (curl)
+
 ```bash
 curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
 chmod +x sbom-tool
 ```
 
-#### macOS (curl)
+##### macOS (curl)
+
 ```bash
 curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-osx-x64
 chmod +x sbom-tool
 ```
-
-#### Linux/macOS (Homebrew)
-```bash
-brew install sbom-tool
-```
-
-> [!NOTE]
-> This Formulae requires the `x86_64` architecture, ARM is not supported at this time. For details see [#223](https://github.com/microsoft/sbom-tool/issues/223).
 
 #### Building SBOM tool as docker image
 
