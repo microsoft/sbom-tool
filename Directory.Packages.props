@@ -33,7 +33,7 @@
         <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageVersion Include="NuGet.Frameworks" Version="6.7.0" />
         <PackageVersion Include="packageurl-dotnet" Version="1.1.0" />
-        <PackageVersion Include="PowerArgs" Version="3.6.0" />
+        <PackageVersion Include="PowerArgs" Version="4.0.2" />
         <PackageVersion Include="Scrutor" Version="4.2.0" />
         <PackageVersion Include="Serilog.Extensions.Hosting" Version="7.0.0" />
         <PackageVersion Include="Serilog.Sinks.Console" Version="4.1.0" />
