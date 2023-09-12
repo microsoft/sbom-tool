@@ -49,6 +49,18 @@ internal static class SPDXToSbomFormatConverterExtensions
     /// <returns></returns>
     internal static SbomPackage ToSbomPackage(this SPDXPackage spdxPackage)
     {
+        if (spdxPackage.FilesAnalyzed &&
+            (spdxPackage.LicenseInfoFromFiles == null || !spdxPackage.LicenseInfoFromFiles.Any()))
+        {
+            throw new ParserException("Package license list was empty.");
+        }
+
+        if (spdxPackage.PackageVerificationCode is not null
+            && string.IsNullOrEmpty(spdxPackage.PackageVerificationCode.PackageVerificationCodeValue))
+        {
+            throw new ParserException("Package verification code was null or empty.");
+        }
+
         return new SbomPackage
         {
             Checksum = spdxPackage.Checksums?.Select(c => c.ToSbomChecksum()),

@@ -140,7 +140,7 @@ public class SbomPackageParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new TestSPDXParser(stream, bufferSize: 0);
 
         await parser.ParseAsync(CancellationToken.None);
     }

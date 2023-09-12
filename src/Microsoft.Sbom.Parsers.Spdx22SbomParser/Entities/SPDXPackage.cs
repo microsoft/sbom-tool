@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -14,6 +14,7 @@ public class SPDXPackage
     /// <summary>
     /// Gets or sets name of the package.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 
@@ -27,6 +28,7 @@ public class SPDXPackage
     /// <summary>
     /// Gets or sets unique Identifier for elements in SPDX document.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("SPDXID")]
     public string SpdxId { get; set; }
 
@@ -52,6 +54,7 @@ public class SPDXPackage
     /// <summary>
     /// Gets or sets contain the license the SPDX file creator has concluded as the package or alternative values.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("licenseConcluded")]
     public string LicenseConcluded { get; set; }
 
@@ -65,12 +68,14 @@ public class SPDXPackage
     /// <summary>
     /// Gets or sets contains a list of licenses the have been declared by the authors of the package.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("licenseDeclared")]
     public string LicenseDeclared { get; set; }
 
     /// <summary>
     /// Gets or sets copyright holder of the package, as well as any dates present.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("copyrightText")]
     public string CopyrightText { get; set; }
 
@@ -101,6 +106,7 @@ public class SPDXPackage
     /// <summary>
     /// Gets or sets the name and optional contact information of the person or organization that built this package.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("supplier")]
     public string Supplier { get; set; }
 

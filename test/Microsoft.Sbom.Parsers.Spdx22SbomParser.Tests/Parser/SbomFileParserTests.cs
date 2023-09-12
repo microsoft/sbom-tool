@@ -21,8 +21,9 @@ public class SbomFileParserTests
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);
         using var stream = new MemoryStream(bytes);
+        var skippedProperties = new[] { "files" };
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new TestSPDXParser(stream, skippedProperties);
 
         await parser.ParseAsync(CancellationToken.None);
     }

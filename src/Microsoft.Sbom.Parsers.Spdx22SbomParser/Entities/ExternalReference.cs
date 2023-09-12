@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Text.Json.Serialization;
@@ -16,6 +16,7 @@ public class ExternalReference
     /// <summary>
     /// Gets or sets the category for the external reference.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("referenceCategory")]
     public string ReferenceCategory { get; set; }
 
@@ -30,6 +31,7 @@ public class ExternalReference
     /// Gets or sets a unique string without any spaces that specifies a location where the package specific information
     /// can be located. The locator constraints are defined by the <see cref="Type"/>.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("referenceLocator")]
     public string Locator { get; set; }
 }

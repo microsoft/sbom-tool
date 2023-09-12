@@ -27,14 +27,12 @@ public class LargeJsonParser
     {
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
         this.handlers = handlers ?? throw new ArgumentNullException(nameof(handlers));
-        this.jsonSerializerOptions = jsonSerializerOptions ?? new JsonSerializerOptions()
-        {
-        };
+        this.jsonSerializerOptions = jsonSerializerOptions ?? new JsonSerializerOptions();
 
         this.buffer = new byte[bufferSize];
 
         // Validate buffer is not of 0 length.
-        if (buffer.Length == 0)
+        if (this.buffer.Length == 0)
         {
             throw new ArgumentException($"The {nameof(this.buffer)} value can't be null or of 0 length.");
         }
@@ -83,19 +81,25 @@ public class LargeJsonParser
                 this.isParsingStarted = true;
             }
 
-            // Eat the previous token.
-            ParserUtils.Read(this.stream, ref this.buffer, ref reader);
+            ParserUtils.Read(stream, ref buffer, ref reader);
 
             // If the end of the Json Object is reached, return null to indicate completion.
             if (reader.TokenType == JsonTokenType.EndObject)
             {
                 return null;
             }
+            else if (reader.TokenType == JsonTokenType.EndArray)
+            {
+                // yield returning json arrays means we can't pass it the same Utf8JsonReader ref, so we need to create a new one.
+                // BUT when we do that we end up consuming the next token, so we need to leave it in the array case to be eatten by the next caller.
+                ParserUtils.Read(this.stream, ref buffer, ref reader);
+            }
 
             ParserUtils.AssertTokenType(this.stream, ref reader, JsonTokenType.PropertyName);
             var propertyName = reader.GetString() ?? throw new NotImplementedException();
 
-            ParserUtils.Read(this.stream, ref buffer, ref reader);
+            ParserUtils.Read(this.stream, ref this.buffer, ref reader);
+
             ParserStateResult resultState;
             if (this.handlers.ContainsKey(propertyName))
             {
@@ -148,7 +152,7 @@ public class LargeJsonParser
             case ParameterType.Object:
                 ParserUtils.AssertTokenType(this.stream, ref reader, JsonTokenType.StartObject);
                 var objType = handler.GetType().GetGenericArguments()[0];
-                var obj = this.GetObject(objType, ref reader);
+                var obj = this.GetObject(objType, ref reader, consumeEnding: true);
                 result = obj;
                 break;
             case ParameterType.Array:
@@ -169,10 +173,10 @@ public class LargeJsonParser
         {
             JsonTokenType.String => reader.GetString(),
             JsonTokenType.Number => reader.GetInt32(),
-            JsonTokenType.StartArray => throw new NotImplementedException(),
-            JsonTokenType.StartObject => throw new NotImplementedException(),
+            JsonTokenType.StartArray => this.GetArray(typeof(JsonNode)),
+            JsonTokenType.StartObject => this.GetObject(typeof(JsonNode), ref reader, consumeEnding: true),
             JsonTokenType.True => true,
-            JsonTokenType.False => (object)false,
+            JsonTokenType.False => false,
             JsonTokenType.None => throw new NotImplementedException(),
             JsonTokenType.EndObject => throw new NotImplementedException(),
             JsonTokenType.EndArray => throw new NotImplementedException(),
@@ -200,10 +204,14 @@ public class LargeJsonParser
         }
     }
 
-    private object GetObject(Type type, ref Utf8JsonReader reader)
+    private object GetObject(Type type, ref Utf8JsonReader reader, bool consumeEnding)
     {
-        var jsonObject = this.ReadObject(ref reader);
-        var result = jsonObject.Deserialize(type, this.jsonSerializerOptions);
+        var jsonObject = this.ReadObject(ref reader, consumeEnding);
+        object? result = jsonObject;
+        if (type != typeof(JsonNode))
+        {
+            result = jsonObject.Deserialize(type, this.jsonSerializerOptions);
+        }
 
         if (result is null)
         {
@@ -229,6 +237,10 @@ public class LargeJsonParser
             {
                 ParserUtils.SkipFirstArrayToken(this.stream, ref this.buffer, ref reader);
             }
+            else
+            {
+                ParserUtils.Read(this.stream, ref this.buffer, ref reader);
+            }
 
             object? result;
             if (reader.TokenType == JsonTokenType.EndArray)
@@ -237,7 +249,7 @@ public class LargeJsonParser
             }
             else
             {
-                result = this.GetObject(type, ref reader);
+                result = this.GetObject(type, ref reader, consumeEnding: false);
             }
 
             if (reader.TokenType == JsonTokenType.EndArray)
@@ -258,12 +270,17 @@ public class LargeJsonParser
         }
     }
 
-    private JsonNode ReadObject(ref Utf8JsonReader reader)
+    private JsonNode ReadObject(ref Utf8JsonReader reader, bool consumeEnding = true)
     {
         ParserUtils.AssertTokenType(this.stream, ref reader, JsonTokenType.StartObject);
         var obj = JsonNode.Parse(ref reader) ?? throw new NotImplementedException();
         ParserUtils.AssertTokenType(this.stream, ref reader, JsonTokenType.EndObject);
-        ParserUtils.Read(this.stream, ref this.buffer, ref reader);
+
+        if (consumeEnding)
+        {
+            ParserUtils.Read(this.stream, ref this.buffer, ref reader);
+        }
+
         return obj;
     }
 }

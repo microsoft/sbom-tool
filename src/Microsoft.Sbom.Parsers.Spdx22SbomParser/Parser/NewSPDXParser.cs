@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -61,54 +62,66 @@ public abstract class NewSPDXParser
 
     public async Task ParseAsync(CancellationToken cancellationToken)
     {
-        var result = this.parser.Next();
-        while (result is not null)
+        JsonStreaming.ParserStateResult? result = null;
+        do
         {
-            switch (result.FieldName)
-            {
-                case ReferenceProperty:
-                    if (result.Result is not IEnumerable<object> spdxReferences)
-                    {
-                        throw new InvalidDataException("Didn't match expected types");
-                    }
-
-                    var references = spdxReferences.Select(r => ((SpdxExternalDocumentReference)r).ToSbomReference());
-                    await this.HandleReferencesAsync(references, cancellationToken);
-                    break;
-                case PackagesProperty:
-                    if (result.Result is not IEnumerable<object> spdxPackages)
-                    {
-                        throw new InvalidDataException("Didn't match expected types");
-                    }
-
-                    var packages = spdxPackages.Select(p => ((SPDXPackage)p).ToSbomPackage());
-                    await this.HandlePackagesAsync(packages, cancellationToken);
-                    break;
-                case RelationshipsProperty:
-                    if (result.Result is not IEnumerable<object> spdxRelationships)
-                    {
-                        throw new InvalidDataException("Didn't match expected types");
-                    }
-
-                    var relationships = spdxRelationships.Select(r => ((SPDXRelationship)r).ToSbomRelationship());
-                    await this.HandleRelationshipsAsync(relationships, cancellationToken);
-                    break;
-                case FilesProperty:
-                    if (result.Result is not IEnumerable<object> spdxFiles)
-                    {
-                        throw new InvalidDataException("Didn't match expected types");
-                    }
-
-                    var files = spdxFiles.Select(f => ((SPDXFile)f).ToSbomFile());
-                    await this.HandleFilesAsync(files, cancellationToken);
-                    break;
-                default:
-                    this.metadata.Add(result.FieldName, result.Result);
-                    break;
-            }
-
             result = this.parser.Next();
+            if (result is not null)
+            {
+                if (result.Result is not null)
+                {
+                    switch (result.FieldName)
+                    {
+                        case ReferenceProperty:
+                            if (result.Result is not IEnumerable<object> spdxReferences)
+                            {
+                                throw new InvalidDataException("Didn't match expected types");
+                            }
+
+                            var references = spdxReferences.Select(r => ((SpdxExternalDocumentReference)r).ToSbomReference());
+                            await this.HandleReferencesAsync(references, cancellationToken);
+                            break;
+                        case PackagesProperty:
+                            if (result.Result is not IEnumerable<object> spdxPackages)
+                            {
+                                throw new InvalidDataException("Didn't match expected types");
+                            }
+
+                            var packages = spdxPackages.Select(p => ((SPDXPackage)p).ToSbomPackage());
+                            await this.HandlePackagesAsync(packages, cancellationToken);
+                            break;
+                        case RelationshipsProperty:
+                            if (result.Result is not IEnumerable<object> spdxRelationships)
+                            {
+                                throw new InvalidDataException("Didn't match expected types");
+                            }
+
+                            var relationships = spdxRelationships.Select(r => ((SPDXRelationship)r).ToSbomRelationship());
+                            await this.HandleRelationshipsAsync(relationships, cancellationToken);
+                            break;
+                        case FilesProperty:
+                            if (result.Result is not IEnumerable<object> spdxFiles)
+                            {
+                                throw new InvalidDataException("Didn't match expected types");
+                            }
+
+                            var files = spdxFiles.Select(f => ((SPDXFile)f).ToSbomFile());
+                            await this.HandleFilesAsync(files, cancellationToken);
+                            break;
+                        default:
+                            var r = result.Result;
+                            if (result.Result is IEnumerable<JsonNode> enumResult)
+                            {
+                                r = enumResult.ToList();
+                            }
+
+                            this.metadata.Add(result.FieldName, r);
+                            break;
+                    }
+                }
+            }
         }
+        while (result is not null);
     }
 
     public abstract Task HandleFilesAsync(IEnumerable<SbomFile> files, CancellationToken cancellationToken);
