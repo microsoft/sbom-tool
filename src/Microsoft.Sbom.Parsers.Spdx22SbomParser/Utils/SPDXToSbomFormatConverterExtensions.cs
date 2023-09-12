@@ -1,9 +1,11 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
 using System.Linq;
+using JsonStreaming;
 using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using SbomChecksum = Microsoft.Sbom.Contracts.Checksum;
 using SPDXChecksum = Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Checksum;
@@ -23,9 +25,15 @@ internal static class SPDXToSbomFormatConverterExtensions
     /// <returns></returns>
     internal static SbomFile ToSbomFile(this SPDXFile spdxFile)
     {
+        var checksums = spdxFile.FileChecksums?.Select(c => c.ToSbomChecksum());
+        if (checksums.All(c => c.Algorithm != AlgorithmName.SHA256))
+        {
+            throw new ParserException("File hash is missing a SHA256 value");
+        }
+
         return new SbomFile
         {
-            Checksum = spdxFile.FileChecksums?.Select(c => c.ToSbomChecksum()),
+            Checksum = checksums,
             FileCopyrightText = spdxFile.FileCopyrightText,
             Id = spdxFile.SPDXId,
             Path = spdxFile.FileName,
@@ -110,7 +118,7 @@ internal static class SPDXToSbomFormatConverterExtensions
     {
         return new SbomChecksum
         {
-            Algorithm = new Contracts.Enums.AlgorithmName(spdxChecksums.Algorithm, null),
+            Algorithm = new AlgorithmName(spdxChecksums.Algorithm, null),
             ChecksumValue = spdxChecksums.ChecksumValue,
         };
     }

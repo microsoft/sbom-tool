@@ -1,27 +1,17 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Sbom.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 
-namespace Microsoft.Sbom.Parser;
+namespace JsonStreaming;
 
 /// <summary>
 /// Utility methods for parsing that are shared by all parsers.
 /// </summary>
 internal class ParserUtils
 {
-    private const string AlgorithmProperty = "algorithm";
-    private const string ChecksumValueProperty = "checksumValue";
-
     /// <summary>
     /// Read the next JSON token in the reader from the input buffer.
     /// If the buffer is small and doesn't contain all the text for the next token,
@@ -77,7 +67,7 @@ internal class ParserUtils
 
         if (reader.TokenType != expectedTokenType)
         {
-            throw new ParserException($"Expected a '{Constants.JsonTokenStrings[(byte)expectedTokenType]}' token at position {stream.Position}");
+            throw new ParserException($"Expected a '{Constants.JsonTokenStrings[(byte)expectedTokenType]}' token at position {stream.Position} but got {Constants.JsonTokenStrings[(byte)reader.TokenType]}");
         }
     }
 
@@ -158,7 +148,7 @@ internal class ParserUtils
     /// <param name="reader"></param>
     /// <param name="buffer"></param>
     /// <returns>The next string value.</returns>
-    internal static string ParseNextString(Stream stream, ref Utf8JsonReader reader)
+    internal static string? ParseNextString(Stream stream, ref Utf8JsonReader reader)
     {
         AssertTokenType(stream, ref reader, JsonTokenType.String);
         return reader.GetString();
@@ -295,9 +285,9 @@ internal class ParserUtils
     /// <param name="reader"></param>
     /// <param name="buffer"></param>
     /// <returns></returns>
-    internal static List<string> ParseListOfStrings(Stream stream, ref Utf8JsonReader reader, ref byte[] buffer)
+    internal static List<string?> ParseListOfStrings(Stream stream, ref Utf8JsonReader reader, ref byte[] buffer)
     {
-        var strings = new List<string>();
+        var strings = new List<string?>();
 
         // Read the opening [ of the array
         AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
@@ -315,50 +305,5 @@ internal class ParserUtils
 
         AssertTokenType(stream, ref reader, JsonTokenType.EndArray);
         return strings;
-    }
-
-    /// <summary>
-    /// Parse a <see cref="Checksum"/> object.
-    /// </summary>
-    /// <param name="reader"></param>
-    /// <param name="buffer"></param>
-    /// <returns></returns>
-    internal static Checksum ParseChecksumObject(Stream stream, ref Utf8JsonReader reader, ref byte[] buffer)
-    {
-        var checksum = new Checksum();
-
-        // Read the opening { of the object
-        AssertTokenType(stream, ref reader, JsonTokenType.StartObject);
-
-        // Move to the first property token
-        Read(stream, ref buffer, ref reader);
-        AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);
-
-        while (reader.TokenType != JsonTokenType.EndObject)
-        {
-            switch (reader.GetString())
-            {
-                case AlgorithmProperty:
-                    Read(stream, ref buffer, ref reader);
-                    checksum.Algorithm = ParseNextString(stream, ref reader);
-                    break;
-
-                case ChecksumValueProperty:
-                    Read(stream, ref buffer, ref reader);
-                    checksum.ChecksumValue = ParseNextString(stream, ref reader);
-                    break;
-
-                default:
-                    SkipProperty(stream, ref buffer, ref reader);
-                    break;
-            }
-
-            // Read the end } of this object or the next property name.
-            Read(stream, ref buffer, ref reader);
-        }
-
-        AssertTokenType(stream, ref reader, JsonTokenType.EndObject);
-
-        return checksum;
     }
 }

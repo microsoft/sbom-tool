@@ -1,11 +1,11 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.IO;
-using System.Linq;
 using System.Text;
-using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Exceptions;
+using System.Threading;
+using System.Threading.Tasks;
+using JsonStreaming;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -15,80 +15,42 @@ namespace Microsoft.Sbom.Parser;
 public class SbomParserTests
 {
     [TestMethod]
-    public void ParseWithBOMTest()
+    public async Task ParseWithBOMTest()
     {
         var utf8BOM = Encoding.UTF8.GetString(Encoding.UTF8.Preamble);
         byte[] bytes = Encoding.UTF8.GetBytes(utf8BOM + SbomParserStrings.JsonWithAll4Properties);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new SPDXParser(stream);
+        var parser = new TestSPDXParser(stream);
 
-        Assert.AreEqual(ParserState.NONE, parser.CurrentState);
+        await parser.ParseAsync(CancellationToken.None);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.FILES, state);
+        Assert.AreEqual(0, parser.FilesCount);
 
-        Assert.AreEqual(0, parser.GetFiles().Count());
+        Assert.AreEqual(0, parser.PackageCount);
 
-        state = parser.Next();
-        Assert.AreEqual(ParserState.PACKAGES, state);
+        Assert.AreEqual(0, parser.RelationshipCount);
 
-        Assert.AreEqual(0, parser.GetPackages().Count());
-
-        state = parser.Next();
-        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
-
-        Assert.AreEqual(0, parser.GetRelationships().Count());
-
-        state = parser.Next();
-        Assert.AreEqual(ParserState.REFERENCES, state);
-
-        Assert.AreEqual(0, parser.GetReferences().Count());
-
-        state = parser.Next();
-        Assert.AreEqual(ParserState.METADATA, state);
-        _ = parser.GetMetadata();
-
-        state = parser.Next();
-        Assert.AreEqual(ParserState.FINISHED, state);
+        Assert.AreEqual(0, parser.ReferenceCount);
     }
 
     [TestMethod]
-    public void ParseMultiplePropertiesTest()
+    public async Task ParseMultiplePropertiesTest()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithAll4Properties);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream);
+        var parser = new TestSPDXParser(stream);
 
-        Assert.AreEqual(ParserState.NONE, parser.CurrentState);
+        await parser.ParseAsync(CancellationToken.None);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.FILES, state);
+        Assert.AreEqual(0, parser.FilesCount);
 
-        Assert.AreEqual(0, parser.GetFiles().Count());
+        Assert.AreEqual(0, parser.PackageCount);
 
-        state = parser.Next();
-        Assert.AreEqual(ParserState.PACKAGES, state);
+        Assert.AreEqual(0, parser.RelationshipCount);
 
-        Assert.AreEqual(0, parser.GetPackages().Count());
-
-        state = parser.Next();
-        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
-
-        Assert.AreEqual(0, parser.GetRelationships().Count());
-
-        state = parser.Next();
-        Assert.AreEqual(ParserState.REFERENCES, state);
-
-        Assert.AreEqual(0, parser.GetReferences().Count());
-
-        state = parser.Next();
-        Assert.AreEqual(ParserState.METADATA, state);
-        _ = parser.GetMetadata();
-
-        state = parser.Next();
-        Assert.AreEqual(ParserState.FINISHED, state);
+        Assert.AreEqual(0, parser.ReferenceCount);
     }
 
     [DataTestMethod]
@@ -96,11 +58,11 @@ public class SbomParserTests
     [DataRow(SbomParserStrings.JsonWithMissingPackages)]
     [DataRow(SbomParserStrings.JsonWithMissingRelationships)]
     [ExpectedException(typeof(ParserException))]
-    public void MissingPropertyThrows(string json)
+    public async Task MissingPropertyThrows(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
-        IterateAllProperties(stream);
+        await IterateAllPropertiesAsync(stream);
     }
 
     [DataTestMethod]
@@ -110,65 +72,34 @@ public class SbomParserTests
     [DataRow(SbomParserStrings.MalformedJsonIncorrectPackagesType)]
     [DataRow(SbomParserStrings.MalformedJsonIncorrectRelationshipsType)]
     [ExpectedException(typeof(ParserException))]
-    public void MalformedJsonThrows(string json)
+    public async Task MalformedJsonThrows(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
-        IterateAllProperties(stream);
+        await IterateAllPropertiesAsync(stream);
     }
 
     [DataTestMethod]
     [DataRow(SbomParserStrings.MalformedJsonEmptyJsonObject)]
     [DataRow(SbomParserStrings.MalformedJsonEmptyArrayObject)]
-    public void MalformedJsonEmptyValuesDoesntThrow(string json)
+    public async Task MalformedJsonEmptyValuesDoesntThrow(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
-        IterateAllProperties(stream);
+        await IterateAllPropertiesAsync(stream);
     }
 
     [TestMethod]
-    public void MissingReferencesDoesntThrow()
+    public async Task MissingReferencesDoesntThrow()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithMissingReferences);
         using var stream = new MemoryStream(bytes);
-        IterateAllProperties(stream);
+        await IterateAllPropertiesAsync(stream);
     }
 
-    private void IterateAllProperties(Stream stream)
+    private async Task IterateAllPropertiesAsync(Stream stream)
     {
-        SPDXParser parser = new(stream);
-        while (parser.Next() != ParserState.FINISHED)
-        {
-            if (parser.CurrentState == ParserState.PACKAGES)
-            {
-                // Do nothing.
-                parser.GetPackages().ToList();
-            }
-
-            if (parser.CurrentState == ParserState.FILES)
-            {
-                // Do nothing.
-                parser.GetFiles().ToList();
-            }
-
-            if (parser.CurrentState == ParserState.REFERENCES)
-            {
-                // Do nothing.
-                parser.GetReferences().ToList();
-            }
-
-            if (parser.CurrentState == ParserState.RELATIONSHIPS)
-            {
-                // Do nothing.
-                parser.GetRelationships().ToList();
-            }
-
-            if (parser.CurrentState == ParserState.METADATA)
-            {
-                // Do nothing
-                _ = parser.GetMetadata();
-            }
-        }
+        var parser = new TestSPDXParser(stream);
+        await parser.ParseAsync(CancellationToken.None);
     }
 }

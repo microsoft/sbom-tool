@@ -1,11 +1,12 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.IO;
 using System.Text;
-using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Exceptions;
+using System.Threading;
+using System.Threading.Tasks;
+using JsonStreaming;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,91 +17,61 @@ namespace Microsoft.Sbom.Parser;
 public class SbomFileParserTests
 {
     [TestMethod]
-    public void SkipSbomFilesTest()
+    public async Task SkipSbomFilesTest()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, new[] { ParserState.FILES }, ignoreValidation: true);
+        var parser = new TestSPDXParser(stream);
 
-        while (parser.Next() != ParserState.FINISHED)
-        {
-            if (parser.CurrentState == ParserState.METADATA)
-            {
-                break;
-            }
-
-            Assert.Fail("Never should have reached this point.");
-        }
+        await parser.ParseAsync(CancellationToken.None);
     }
 
     [TestMethod]
-    public void ParseSbomFilesTest()
+    public async Task ParseSbomFilesTest()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new TestSPDXParser(stream);
 
-        var count = 0;
+        await parser.ParseAsync(CancellationToken.None);
 
-        while (parser.Next() != ParserState.FINISHED)
-        {
-            if (parser.CurrentState == ParserState.METADATA)
-            {
-                break;
-            }
-
-            Assert.AreEqual(ParserState.FILES, parser.CurrentState);
-
-            foreach (var file in parser.GetFiles())
-            {
-                count++;
-                Assert.IsNotNull(file);
-            }
-        }
-
-        Assert.AreEqual(2, count);
+        Assert.AreEqual(2, parser.FilesCount);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
     public void NullStreamThrows()
     {
-        new SbomFileParser(null);
+        _ = new TestSPDXParser(null);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ObjectDisposedException))]
-    public void StreamClosedTestReturnsNull()
+    public async Task StreamClosedTestReturnsNull()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new TestSPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.FILES, state);
+        await parser.ParseAsync(CancellationToken.None);
 
         stream.Close();
-
-        parser.GetFiles().GetEnumerator().MoveNext();
     }
 
     [TestMethod]
     [ExpectedException(typeof(EndOfStreamException))]
-    public void StreamEmptyTestReturnsNull()
+    public async Task StreamEmptyTestReturnsNull()
     {
         using var stream = new MemoryStream();
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new TestSPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.FILES, state);
-
-        parser.GetFiles().GetEnumerator().MoveNext();
+        await parser.ParseAsync(CancellationToken.None);
     }
 
     [DataTestMethod]
@@ -114,17 +85,14 @@ public class SbomFileParserTests
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingCopyrightAndPathString)]
     [TestMethod]
     [ExpectedException(typeof(ParserException))]
-    public void MissingPropertiesTest_Throws(string json)
+    public async Task MissingPropertiesTest_Throws(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new TestSPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.FILES, state);
-
-        parser.GetFiles().GetEnumerator().MoveNext();
+        await parser.ParseAsync(CancellationToken.None);
     }
 
     [DataTestMethod]
@@ -133,20 +101,14 @@ public class SbomFileParserTests
     [DataRow(SbomFileJsonStrings.GoodJsonWith1FileAdditionalStringPropertyString)]
     [DataRow(SbomFileJsonStrings.GoodJsonWith1FileAdditionalValueArrayPropertyString)]
     [TestMethod]
-    public void IgnoresAdditionalPropertiesTest(string json)
+    public async Task IgnoresAdditionalPropertiesTest(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new TestSPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.FILES, state);
-
-        foreach (var file in parser.GetFiles())
-        {
-            Assert.IsNotNull(file);
-        }
+        await parser.ParseAsync(CancellationToken.None);
     }
 
     [DataTestMethod]
@@ -155,45 +117,38 @@ public class SbomFileParserTests
     [DataRow(SbomFileJsonStrings.MalformedJsonEmptyObjectNoArrayEnd)]
     [TestMethod]
     [ExpectedException(typeof(ParserException))]
-    public void MalformedJsonTest_Throws(string json)
+    public async Task MalformedJsonTest_Throws(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new TestSPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.FILES, state);
-
-        parser.GetFiles().GetEnumerator().MoveNext();
+        await parser.ParseAsync(CancellationToken.None);
     }
 
     [TestMethod]
-    public void EmptyArray_ValidJson()
+    public async Task EmptyArray_ValidJson()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.JsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new TestSPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.FILES, state);
+        await parser.ParseAsync(CancellationToken.None);
 
-        parser.GetFiles().GetEnumerator().MoveNext();
+        Assert.AreEqual(0, parser.FilesCount);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void NullOrEmptyBuffer_Throws()
+    public async Task NullOrEmptyBuffer_Throws()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), 0, ignoreValidation: true);
+        var parser = new TestSPDXParser(stream, bufferSize: 0);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.FILES, state);
-
-        parser.GetFiles().GetEnumerator().MoveNext();
+        await parser.ParseAsync(CancellationToken.None);
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -26,5 +26,5 @@ public class Validator : IManifestInterface
 
     public ManifestInfo[] RegisterManifest() => new[] { spdxManifestInfo };
 
-    public ISbomParser CreateParser(Stream stream) => new SPDXParser(stream);
+    public ISbomParser CreateParser(Stream stream) => throw new NotImplementedException();
 }
