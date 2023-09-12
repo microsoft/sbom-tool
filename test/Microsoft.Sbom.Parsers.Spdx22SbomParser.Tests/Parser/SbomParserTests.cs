@@ -99,7 +99,7 @@ public class SbomParserTests
 
     private async Task IterateAllPropertiesAsync(Stream stream)
     {
-        var parser = new TestSPDXParser(stream);
+        var parser = new TestSPDXParser(stream, requiredFields: true);
         await parser.ParseAsync(CancellationToken.None);
     }
 }

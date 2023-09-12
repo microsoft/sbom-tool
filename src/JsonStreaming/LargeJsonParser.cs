@@ -81,7 +81,7 @@ public class LargeJsonParser
                 this.isParsingStarted = true;
             }
 
-            ParserUtils.Read(stream, ref buffer, ref reader);
+            ParserUtils.Read(this.stream, ref this.buffer, ref reader);
 
             // If the end of the Json Object is reached, return null to indicate completion.
             if (reader.TokenType == JsonTokenType.EndObject)
@@ -92,7 +92,7 @@ public class LargeJsonParser
             {
                 // yield returning json arrays means we can't pass it the same Utf8JsonReader ref, so we need to create a new one.
                 // BUT when we do that we end up consuming the next token, so we need to leave it in the array case to be eatten by the next caller.
-                ParserUtils.Read(this.stream, ref buffer, ref reader);
+                ParserUtils.Read(this.stream, ref this.buffer, ref reader);
             }
 
             ParserUtils.AssertTokenType(this.stream, ref reader, JsonTokenType.PropertyName);
@@ -110,16 +110,14 @@ public class LargeJsonParser
                 resultState = this.HandleExtraProperty(ref reader, propertyName);
             }
 
-            ParserUtils.GetMoreBytesFromStream(this.stream, ref this.buffer, ref reader);
-
-            // If the end of the Json Object is reached, return null to indicate completion.
-            if (reader.TokenType == JsonTokenType.EndObject)
+            // Array ending is a special case where we need to leave the reader in the same state as we found it.
+            if (reader.TokenType != JsonTokenType.StartArray)
             {
-                return null;
-            }
+                ParserUtils.GetMoreBytesFromStream(this.stream, ref this.buffer, ref reader);
 
-            this.isFinalBlock = reader.IsFinalBlock;
-            this.readerState = reader.CurrentState;
+                this.isFinalBlock = reader.IsFinalBlock;
+                this.readerState = reader.CurrentState;
+            }
 
             return resultState;
         }
@@ -157,6 +155,13 @@ public class LargeJsonParser
                 break;
             case ParameterType.Array:
                 ParserUtils.AssertTokenType(this.stream, ref reader, JsonTokenType.StartArray);
+
+                // We can't pass the current reader along, so we need to save it's state for it.
+                ParserUtils.GetMoreBytesFromStream(this.stream, ref this.buffer, ref reader);
+
+                this.isFinalBlock = reader.IsFinalBlock;
+                this.readerState = reader.CurrentState;
+
                 var aryType = handler.GetType().GetGenericArguments()[0];
                 result = this.GetArray(aryType);
                 break;
@@ -169,14 +174,21 @@ public class LargeJsonParser
 
     private ParserStateResult HandleExtraProperty(ref Utf8JsonReader reader, string propertyName)
     {
-        var result = reader.TokenType switch
+        // We skip objects and arrays to avoid having to parse them.
+        if (reader.TokenType is JsonTokenType.StartArray or JsonTokenType.StartObject)
+        {
+            ParserUtils.SkipProperty(this.stream, ref this.buffer, ref reader);
+            return new ParserStateResult(propertyName, null);
+        }
+
+        object? result = reader.TokenType switch
         {
             JsonTokenType.String => reader.GetString(),
             JsonTokenType.Number => reader.GetInt32(),
-            JsonTokenType.StartArray => this.GetArray(typeof(JsonNode)),
-            JsonTokenType.StartObject => this.GetObject(typeof(JsonNode), ref reader, consumeEnding: true),
             JsonTokenType.True => true,
             JsonTokenType.False => false,
+            JsonTokenType.StartArray => throw new NotImplementedException(),
+            JsonTokenType.StartObject => throw new NotImplementedException(),
             JsonTokenType.None => throw new NotImplementedException(),
             JsonTokenType.EndObject => throw new NotImplementedException(),
             JsonTokenType.EndArray => throw new NotImplementedException(),
@@ -246,15 +258,11 @@ public class LargeJsonParser
             if (reader.TokenType == JsonTokenType.EndArray)
             {
                 result = null;
+                this.arrayFinishing = true;
             }
             else
             {
                 result = this.GetObject(type, ref reader, consumeEnding: false);
-            }
-
-            if (reader.TokenType == JsonTokenType.EndArray)
-            {
-                this.arrayFinishing = true;
             }
 
             ParserUtils.GetMoreBytesFromStream(this.stream, ref this.buffer, ref reader);

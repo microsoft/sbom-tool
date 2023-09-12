@@ -23,7 +23,7 @@ public class SbomFileParserTests
         using var stream = new MemoryStream(bytes);
         var skippedProperties = new[] { "files" };
 
-        var parser = new TestSPDXParser(stream, skippedProperties);
+        var parser = new TestSPDXParser(stream, skippedProperties: skippedProperties);
 
         await parser.ParseAsync(CancellationToken.None);
     }
@@ -57,9 +57,11 @@ public class SbomFileParserTests
 
         var parser = new TestSPDXParser(stream);
 
-        await parser.ParseAsync(CancellationToken.None);
+        var task = parser.ParseAsync(CancellationToken.None);
 
         stream.Close();
+
+        await task;
     }
 
     [TestMethod]
@@ -110,6 +112,8 @@ public class SbomFileParserTests
         var parser = new TestSPDXParser(stream);
 
         await parser.ParseAsync(CancellationToken.None);
+
+        Assert.AreEqual(1, parser.FilesCount);
     }
 
     [DataTestMethod]

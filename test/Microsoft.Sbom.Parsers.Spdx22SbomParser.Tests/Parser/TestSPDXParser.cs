@@ -20,8 +20,10 @@ public class TestSPDXParser : NewSPDXParser
 
     public int? FilesCount { get; private set; } = null;
 
-    public TestSPDXParser(Stream stream, IEnumerable<string>? skippedProperties = null, int? bufferSize = null)
-        : base(stream, skippedProperties, bufferSize: bufferSize)
+    public TestSPDXParser(Stream stream, bool requiredFields = false, IEnumerable<string>? skippedProperties = null, int? bufferSize = null)
+#pragma warning disable CS0618 // Type or member is obsolete
+        : base(stream, requiredFields, skippedProperties, bufferSize: bufferSize)
+#pragma warning restore CS0618 // Type or member is obsolete
     {
     }
 

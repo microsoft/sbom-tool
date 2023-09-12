@@ -3,4 +3,5 @@
 
 namespace JsonStreaming;
 
-public record PropertyHandler<T>(ParameterType ParameterType) : PropertyHandler(ParameterType);
+public record PropertyHandler<T>(ParameterType ParameterType)
+    : PropertyHandler(ParameterType);
