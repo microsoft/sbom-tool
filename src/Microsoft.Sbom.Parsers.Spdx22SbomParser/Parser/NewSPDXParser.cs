@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.PortableExecutable;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using JsonStreaming;
@@ -35,6 +34,7 @@ public class NewSPDXParser
 
     private readonly IList<string> observedFieldNames = new List<string>();
     private readonly bool requiredFieldsCheck = true;
+    private readonly JsonSerializerOptions jsonSerializerOptions;
 
     [Obsolete("For tests only")]
     internal NewSPDXParser(
@@ -54,6 +54,7 @@ public class NewSPDXParser
         JsonSerializerOptions? jsonSerializerOptions = null,
         int? bufferSize = null)
     {
+        this.jsonSerializerOptions = jsonSerializerOptions ?? new JsonSerializerOptions();
         var handlers = new Dictionary<string, PropertyHandler>
         {
             { ReferenceProperty, new PropertyHandler<SpdxExternalDocumentReference>(ParameterType.Array) },
@@ -92,7 +93,7 @@ public class NewSPDXParser
                 this.observedFieldNames.Add(result.FieldName);
                 if (result.Result is not null)
                 {
-                    if (result.explicitField)
+                    if (result.ExplicitField)
                     {
                         return result;
                     }
@@ -135,64 +136,53 @@ public class NewSPDXParser
             switch (kvp.Key)
             {
                 case Constants.SPDXVersionHeaderName:
-                    if (kvp.Value is string version)
-                    {
-                        spdxMetadata.SpdxVersion = version;
-                        break;
-                    }
-                    else
-                    {
-                        throw new ParserException($"SPDX version is not a string");
-                    }
-
+                    spdxMetadata.SpdxVersion = this.Coerse<string>(kvp.Key, kvp.Value);
+                    break;
                 case Constants.DataLicenseHeaderName:
-                    if (kvp.Value is string dataLicense)
-                    {
-                        spdxMetadata.DataLicense = dataLicense;
-                        break;
-                    }
-                    else
-                    {
-                        throw new ParserException($"Data license is not a string");
-                    }
-
+                    spdxMetadata.DataLicense = this.Coerse<string>(kvp.Key, kvp.Value);
+                    break;
                 case Constants.DocumentNameHeaderName:
-                    if (kvp.Value is string documentName)
-                    {
-                        spdxMetadata.Name = documentName;
-                        break;
-                    }
-                    else
-                    {
-                        throw new ParserException($"DocumentName is not a string");
-                    }
-
+                    spdxMetadata.Name = this.Coerse<string>(kvp.Key, kvp.Value);
+                    break;
                 case Constants.DocumentNamespaceHeaderName:
-                    if (kvp.Value is string documentNamespace)
-                    {
-                        spdxMetadata.DocumentNamespace = new Uri(documentNamespace);
-                        break;
-                    }
-                    else
-                    {
-                        throw new ParserException($"DocumentNamespace is not a string");
-                    }
-
+                    spdxMetadata.DocumentNamespace = new Uri(this.Coerse<string>(kvp.Key, kvp.Value));
+                    break;
                 case Constants.CreationInfoHeaderName:
-                    var parser = new CreationInfoParser(stream);
-spdxMetadata.CreationInfo = parser.GetCreationInfo(ref buffer, ref reader);
+                    spdxMetadata.CreationInfo = this.Coerse<MetadataCreationInfo>(kvp.Key, kvp.Value);
                     break;
                 case Constants.DocumentDescribesHeaderName:
-                    spdxMetadata.DocumentDescribes = ParserUtils.ParseListOfStrings(stream, ref reader, ref buffer);
+                    spdxMetadata.DocumentDescribes = this.Coerse<List<string>>(kvp.Key, kvp.Value);
                     break;
                 case Constants.SPDXIDHeaderName:
-                    spdxMetadata.SpdxId = nextTokenString;
+                    spdxMetadata.SpdxId = this.Coerse<string>(kvp.Key, kvp.Value);
                     break;
                 default:
-                    throw new ParserException($"Unknown metadata property {currentRootPropertyName} found while parsing metadata.");
+                    break;
             }
         }
 
         return spdxMetadata;
+    }
+
+    private T Coerse<T>(string name, object? value)
+    {
+        if (value is T t)
+        {
+            return t;
+        }
+        else if (value is JsonNode jsonNode && typeof(T) == typeof(JsonNode))
+        {
+            var deserialized = JsonSerializer.Deserialize<T>(jsonNode, this.jsonSerializerOptions);
+            if (deserialized is not null)
+            {
+                return deserialized;
+            }
+            else
+            {
+                throw new ParserException($"Failed to deserialize {name} to {typeof(T).Name}");
+            }
+        }
+
+        throw new ParserException($"Expected type {typeof(T).Name} for {name} but got {value?.GetType().Name ?? "null"}");
     }
 }

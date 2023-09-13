@@ -3,8 +3,6 @@
 
 using System.IO;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using JsonStreaming;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,45 +10,45 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Sbom.Parser;
 
 [TestClass]
-public class SbomParserTests
+public class SbomParserTests : SbomParserTestsBase
 {
     [TestMethod]
-    public async Task ParseWithBOMTest()
+    public void ParseWithBOMTest()
     {
         var utf8BOM = Encoding.UTF8.GetString(Encoding.UTF8.Preamble);
         byte[] bytes = Encoding.UTF8.GetBytes(utf8BOM + SbomParserStrings.JsonWithAll4Properties);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new NewSPDXParser(stream);
 
-        await parser.ParseAsync(CancellationToken.None);
+        var result = this.Parse(parser);
 
-        Assert.AreEqual(0, parser.FilesCount);
+        Assert.AreEqual(0, result.FilesCount);
 
-        Assert.AreEqual(0, parser.PackageCount);
+        Assert.AreEqual(0, result.PackagesCount);
 
-        Assert.AreEqual(0, parser.RelationshipCount);
+        Assert.AreEqual(0, result.RelationshipsCount);
 
-        Assert.AreEqual(0, parser.ReferenceCount);
+        Assert.AreEqual(0, result.ReferencesCount);
     }
 
     [TestMethod]
-    public async Task ParseMultiplePropertiesTest()
+    public void ParseMultiplePropertiesTest()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithAll4Properties);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new NewSPDXParser(stream);
 
-        await parser.ParseAsync(CancellationToken.None);
+        var result = this.Parse(parser);
 
-        Assert.AreEqual(0, parser.FilesCount);
+        Assert.AreEqual(0, result.FilesCount);
 
-        Assert.AreEqual(0, parser.PackageCount);
+        Assert.AreEqual(0, result.PackagesCount);
 
-        Assert.AreEqual(0, parser.RelationshipCount);
+        Assert.AreEqual(0, result.RelationshipsCount);
 
-        Assert.AreEqual(0, parser.ReferenceCount);
+        Assert.AreEqual(0, result.ReferencesCount);
     }
 
     [DataTestMethod]
@@ -58,11 +56,11 @@ public class SbomParserTests
     [DataRow(SbomParserStrings.JsonWithMissingPackages)]
     [DataRow(SbomParserStrings.JsonWithMissingRelationships)]
     [ExpectedException(typeof(ParserException))]
-    public async Task MissingPropertyThrows(string json)
+    public void MissingPropertyThrows(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
-        await IterateAllPropertiesAsync(stream);
+        this.IterateAllPropertiesAsync(stream);
     }
 
     [DataTestMethod]
@@ -72,34 +70,34 @@ public class SbomParserTests
     [DataRow(SbomParserStrings.MalformedJsonIncorrectPackagesType)]
     [DataRow(SbomParserStrings.MalformedJsonIncorrectRelationshipsType)]
     [ExpectedException(typeof(ParserException))]
-    public async Task MalformedJsonThrows(string json)
+    public void MalformedJsonThrows(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
-        await IterateAllPropertiesAsync(stream);
+        this.IterateAllPropertiesAsync(stream);
     }
 
     [DataTestMethod]
     [DataRow(SbomParserStrings.MalformedJsonEmptyJsonObject)]
     [DataRow(SbomParserStrings.MalformedJsonEmptyArrayObject)]
-    public async Task MalformedJsonEmptyValuesDoesntThrow(string json)
+    public void MalformedJsonEmptyValuesDoesntThrow(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
-        await IterateAllPropertiesAsync(stream);
+        this.IterateAllPropertiesAsync(stream);
     }
 
     [TestMethod]
-    public async Task MissingReferencesDoesntThrow()
+    public void MissingReferencesDoesntThrow()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithMissingReferences);
         using var stream = new MemoryStream(bytes);
-        await IterateAllPropertiesAsync(stream);
+        this.IterateAllPropertiesAsync(stream);
     }
 
-    private async Task IterateAllPropertiesAsync(Stream stream)
+    private ParserResults IterateAllPropertiesAsync(Stream stream)
     {
-        var parser = new TestSPDXParser(stream, requiredFields: true);
-        await parser.ParseAsync(CancellationToken.None);
+        var parser = new NewSPDXParser(stream);
+        return this.Parse(parser);
     }
 }

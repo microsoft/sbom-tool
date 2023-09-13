@@ -4,8 +4,6 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using JsonStreaming;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
@@ -14,59 +12,56 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Sbom.Parser;
 
 [TestClass]
-public class SbomPackageParserTests
+public class SbomPackageParserTests : SbomParserTestsBase
 {
     [TestMethod]
-    public async Task ParseSbomPackagesTest()
+    public void ParseSbomPackagesTest()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new NewSPDXParser(stream);
 
-        await parser.ParseAsync(CancellationToken.None);
+        var result = this.Parse(parser);
 
-        Assert.AreEqual(3, parser.PackageCount);
+        Assert.AreEqual(3, result.PackagesCount);
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ObjectDisposedException))]
-    public async Task StreamClosedTestReturnsNull()
+    public void StreamClosedTestReturnsNull()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream, block: true);
+        var parser = new NewSPDXParser(stream);
 
-        var task = parser.ParseAsync(CancellationToken.None);
-        stream.Close();
-        await task;
+        Assert.ThrowsException<ObjectDisposedException>(() => this.Parse(parser, stream, close: true));
     }
 
     [TestMethod]
     [ExpectedException(typeof(EndOfStreamException))]
-    public async Task StreamEmptyTestReturnsNull()
+    public void StreamEmptyTestReturnsNull()
     {
         using var stream = new MemoryStream();
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new NewSPDXParser(stream);
 
-        await parser.ParseAsync(CancellationToken.None);
+        var result = this.Parse(parser);
     }
 
     [DataTestMethod]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingDownloadLocation)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingVersionInfo)]
-    public async Task MissingPropertiesTest_DoesNotThrow(string json)
+    public void MissingPropertiesTest_DoesNotThrow(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new NewSPDXParser(stream);
 
-        await parser.ParseAsync(CancellationToken.None);
+        var result = this.Parse(parser);
     }
 
     [DataTestMethod]
@@ -82,14 +77,14 @@ public class SbomPackageParserTests
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingPackageVerificationCode)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageFilesAnalyzedTrueAndMissingLicenseInfoFromFiles)]
     [ExpectedException(typeof(ParserException))]
-    public async Task MissingPropertiesTest_Throws(string json)
+    public void MissingPropertiesTest_Throws(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new NewSPDXParser(stream);
 
-        await parser.ParseAsync(CancellationToken.None);
+        var result = this.Parse(parser);
     }
 
     [DataTestMethod]
@@ -97,14 +92,14 @@ public class SbomPackageParserTests
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalArray)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalObject)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalArrayNoKey)]
-    public async Task IgnoresAdditionalPropertiesTest(string json)
+    public void IgnoresAdditionalPropertiesTest(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new NewSPDXParser(stream);
 
-        await parser.ParseAsync(CancellationToken.None);
+        var result = this.Parse(parser);
     }
 
     [DataTestMethod]
@@ -113,36 +108,36 @@ public class SbomPackageParserTests
     [DataRow(SbomPackageStrings.MalformedJsonEmptyObjectNoArrayEnd)]
     [TestMethod]
     [ExpectedException(typeof(ParserException))]
-    public async Task MalformedJsonTest_Throws(string json)
+    public void MalformedJsonTest_Throws(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new NewSPDXParser(stream);
 
-        await parser.ParseAsync(CancellationToken.None);
+        var result = this.Parse(parser);
     }
 
     [TestMethod]
-    public async Task EmptyArray_ValidJson()
+    public void EmptyArray_ValidJson()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.MalformedJsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new NewSPDXParser(stream);
 
-        await parser.ParseAsync(CancellationToken.None);
+        var result = this.Parse(parser);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public async Task NullOrEmptyBuffer_Throws()
+    public void NullOrEmptyBuffer_Throws()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream, bufferSize: 0);
+        var parser = new NewSPDXParser(stream, bufferSize: 0);
 
-        await parser.ParseAsync(CancellationToken.None);
+        var result = this.Parse(parser);
     }
 }
