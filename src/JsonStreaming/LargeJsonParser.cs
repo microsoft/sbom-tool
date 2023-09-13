@@ -69,6 +69,7 @@ public class LargeJsonParser
 
         try
         {
+            // TODO: Warn if a previous IEnumerator wasn't finished.
             var reader = new Utf8JsonReader(this.buffer, isFinalBlock: this.isFinalBlock, this.readerState);
 
             if (!this.isParsingStarted)

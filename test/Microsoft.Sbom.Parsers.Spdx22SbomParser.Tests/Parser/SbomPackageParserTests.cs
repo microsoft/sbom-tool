@@ -36,10 +36,11 @@ public class SbomPackageParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new TestSPDXParser(stream, block: true);
 
-        await parser.ParseAsync(CancellationToken.None);
+        var task = parser.ParseAsync(CancellationToken.None);
         stream.Close();
+        await task;
     }
 
     [TestMethod]

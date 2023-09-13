@@ -55,7 +55,7 @@ public class SbomFileParserTests
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new TestSPDXParser(stream);
+        var parser = new TestSPDXParser(stream, block: true);
 
         var task = parser.ParseAsync(CancellationToken.None);
 
