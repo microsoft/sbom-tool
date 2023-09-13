@@ -47,7 +47,7 @@ internal static class SPDXToSbomFormatConverterExtensions
     /// </summary>
     /// <param name="spdxPackage"></param>
     /// <returns></returns>
-    internal static SbomPackage ToSbomPackage(this SPDXPackage spdxPackage)
+    public static SbomPackage ToSbomPackage(this SPDXPackage spdxPackage)
     {
         if (spdxPackage.FilesAnalyzed &&
             (spdxPackage.LicenseInfoFromFiles == null || !spdxPackage.LicenseInfoFromFiles.Any()))

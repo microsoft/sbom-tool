@@ -3,4 +3,4 @@
 
 namespace JsonStreaming;
 
-public record ParserStateResult(string FieldName, object? Result);
+public record ParserStateResult(string FieldName, object? Result, bool ExplicitField);

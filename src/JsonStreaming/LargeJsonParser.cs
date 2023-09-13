@@ -18,6 +18,7 @@ public class LargeJsonParser
     private bool isFinalBlock;
     private bool isParsingStarted = false;
     private bool arrayFinishing = false;
+    private bool enumeratorActive = false;
 
     public LargeJsonParser(
         Stream stream,
@@ -62,9 +63,9 @@ public class LargeJsonParser
     /// <remarks>If the result object is an enumerable you MUST ensure that you've walked it entirely before calling next again.</remarks>
     public ParserStateResult? Next()
     {
-        if (this.handlers is null)
+        if (this.enumeratorActive)
         {
-            throw new InvalidOperationException("Handlers must be initialized before calling Next.");
+            throw new ParserException("You must walk the entire enumerable from the previous result before calling Next() again.");
         }
 
         try
@@ -170,7 +171,7 @@ public class LargeJsonParser
                 throw new InvalidOperationException($"Unknown {nameof(ParameterType)}: {handler.Type}");
         }
 
-        return new ParserStateResult(propertyName, result);
+        return new ParserStateResult(propertyName, result, ExplicitField: true);
     }
 
     private ParserStateResult HandleExtraProperty(ref Utf8JsonReader reader, string propertyName)
@@ -179,7 +180,7 @@ public class LargeJsonParser
         if (reader.TokenType is JsonTokenType.StartArray or JsonTokenType.StartObject)
         {
             ParserUtils.SkipProperty(this.stream, ref this.buffer, ref reader);
-            return new ParserStateResult(propertyName, null);
+            return new ParserStateResult(propertyName, Result: null, ExplicitField: false);
         }
 
         object? result = reader.TokenType switch
@@ -198,11 +199,12 @@ public class LargeJsonParser
             JsonTokenType.Null => throw new NotImplementedException(),
             _ => throw new InvalidOperationException($"Unknown {nameof(JsonTokenType)}: {reader.TokenType}"),
         };
-        return new ParserStateResult(propertyName, result);
+        return new ParserStateResult(propertyName, result, ExplicitField: true);
     }
 
     private IEnumerable<object> GetArray(Type type)
     {
+        this.enumeratorActive = true;
         while (true)
         {
             var obj = this.ReadArrayObject(type);
@@ -212,6 +214,7 @@ public class LargeJsonParser
             }
             else
             {
+                this.enumeratorActive = false;
                 yield break;
             }
         }

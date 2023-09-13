@@ -5,24 +5,23 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading;
-using System.Threading.Tasks;
 using JsonStreaming;
 using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
-using Microsoft.Sbom.Utils;
 
 namespace Microsoft.Sbom.Parser;
 
 #nullable enable
-public abstract class NewSPDXParser
+public class NewSPDXParser
 {
     public const string FilesProperty = "files";
-    private const string ReferenceProperty = "externalDocumentRefs";
-    private const string PackagesProperty = "packages";
-    private const string RelationshipsProperty = "relationships";
+    public const string ReferenceProperty = "externalDocumentRefs";
+    public const string PackagesProperty = "packages";
+    public const string RelationshipsProperty = "relationships";
 
     private readonly LargeJsonParser parser;
 
@@ -34,6 +33,7 @@ public abstract class NewSPDXParser
         RelationshipsProperty,
     };
 
+    private readonly IList<string> observedFieldNames = new List<string>();
     private readonly bool requiredFieldsCheck = true;
 
     [Obsolete("For tests only")]
@@ -80,65 +80,32 @@ public abstract class NewSPDXParser
         }
     }
 
-    public async Task ParseAsync(CancellationToken cancellationToken)
+    public ParserStateResult? Next()
     {
-        JsonStreaming.ParserStateResult? result = null;
-        var observedFieldNames = new List<string>();
+        // TODO: what happens if we call Next after already reaching the end?
+        ParserStateResult? result;
         do
         {
             result = this.parser.Next();
             if (result is not null)
             {
-                observedFieldNames.Add(result.FieldName);
+                this.observedFieldNames.Add(result.FieldName);
                 if (result.Result is not null)
                 {
-                    switch (result.FieldName)
+                    if (result.explicitField)
                     {
-                        case ReferenceProperty:
-                            if (result.Result is not IEnumerable<object> spdxReferences)
-                            {
-                                throw new InvalidDataException("Didn't match expected types");
-                            }
+                        return result;
+                    }
+                    else
+                    {
+                        var r = result.Result;
+                        if (result.Result is IEnumerable<object> enumResult)
+                        {
+                            r = enumResult.ToList();
+                        }
 
-                            var references = spdxReferences.Select(r => ((SpdxExternalDocumentReference)r).ToSbomReference());
-                            await this.HandleReferencesAsync(references, cancellationToken);
-                            break;
-                        case PackagesProperty:
-                            if (result.Result is not IEnumerable<object> spdxPackages)
-                            {
-                                throw new InvalidDataException("Didn't match expected types");
-                            }
-
-                            var packages = spdxPackages.Select(p => ((SPDXPackage)p).ToSbomPackage());
-                            await this.HandlePackagesAsync(packages, cancellationToken);
-                            break;
-                        case RelationshipsProperty:
-                            if (result.Result is not IEnumerable<object> spdxRelationships)
-                            {
-                                throw new InvalidDataException("Didn't match expected types");
-                            }
-
-                            var relationships = spdxRelationships.Select(r => ((SPDXRelationship)r).ToSbomRelationship());
-                            await this.HandleRelationshipsAsync(relationships, cancellationToken);
-                            break;
-                        case FilesProperty:
-                            if (result.Result is not IEnumerable<object> spdxFiles)
-                            {
-                                throw new InvalidDataException("Didn't match expected types");
-                            }
-
-                            var files = spdxFiles.Select(f => ((SPDXFile)f).ToSbomFile());
-                            await this.HandleFilesAsync(files, cancellationToken);
-                            break;
-                        default:
-                            var r = result.Result;
-                            if (result.Result is IEnumerable<JsonNode> enumResult)
-                            {
-                                r = enumResult.ToList();
-                            }
-
-                            this.metadata.Add(result.FieldName, r);
-                            break;
+                        this.metadata.Add(result.FieldName, r);
+                        break;
                     }
                 }
             }
@@ -149,19 +116,83 @@ public abstract class NewSPDXParser
         {
             foreach (var requiredField in RequiredFields)
             {
-                if (!observedFieldNames.Contains(requiredField))
+                if (!this.observedFieldNames.Contains(requiredField))
                 {
                     throw new ParserException($"Required field {requiredField} was not found in the SPDX file");
                 }
             }
         }
+
+        return null;
     }
 
-    public abstract Task HandleFilesAsync(IEnumerable<SbomFile> files, CancellationToken cancellationToken);
+    // TODO: Only allow calling this after everyting has been parsed?
+    public Spdx22Metadata GetMetadata()
+    {
+        var spdxMetadata = new Spdx22Metadata();
+        foreach (var kvp in this.metadata)
+        {
+            switch (kvp.Key)
+            {
+                case Constants.SPDXVersionHeaderName:
+                    if (kvp.Value is string version)
+                    {
+                        spdxMetadata.SpdxVersion = version;
+                        break;
+                    }
+                    else
+                    {
+                        throw new ParserException($"SPDX version is not a string");
+                    }
 
-    public abstract Task HandleReferencesAsync(IEnumerable<SBOMReference> references, CancellationToken cancellationToken);
+                case Constants.DataLicenseHeaderName:
+                    if (kvp.Value is string dataLicense)
+                    {
+                        spdxMetadata.DataLicense = dataLicense;
+                        break;
+                    }
+                    else
+                    {
+                        throw new ParserException($"Data license is not a string");
+                    }
 
-    public abstract Task HandleRelationshipsAsync(IEnumerable<SBOMRelationship> relationships, CancellationToken cancellationToken);
+                case Constants.DocumentNameHeaderName:
+                    if (kvp.Value is string documentName)
+                    {
+                        spdxMetadata.Name = documentName;
+                        break;
+                    }
+                    else
+                    {
+                        throw new ParserException($"DocumentName is not a string");
+                    }
 
-    public abstract Task HandlePackagesAsync(IEnumerable<SbomPackage> packages, CancellationToken cancellationToken);
+                case Constants.DocumentNamespaceHeaderName:
+                    if (kvp.Value is string documentNamespace)
+                    {
+                        spdxMetadata.DocumentNamespace = new Uri(documentNamespace);
+                        break;
+                    }
+                    else
+                    {
+                        throw new ParserException($"DocumentNamespace is not a string");
+                    }
+
+                case Constants.CreationInfoHeaderName:
+                    var parser = new CreationInfoParser(stream);
+spdxMetadata.CreationInfo = parser.GetCreationInfo(ref buffer, ref reader);
+                    break;
+                case Constants.DocumentDescribesHeaderName:
+                    spdxMetadata.DocumentDescribes = ParserUtils.ParseListOfStrings(stream, ref reader, ref buffer);
+                    break;
+                case Constants.SPDXIDHeaderName:
+                    spdxMetadata.SpdxId = nextTokenString;
+                    break;
+                default:
+                    throw new ParserException($"Unknown metadata property {currentRootPropertyName} found while parsing metadata.");
+            }
+        }
+
+        return spdxMetadata;
+    }
 }
