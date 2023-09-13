@@ -69,12 +69,12 @@ public class SbomParserTests : SbomParserTestsBase
     [DataRow(SbomParserStrings.MalformedJsonIncorrectFilesType)]
     [DataRow(SbomParserStrings.MalformedJsonIncorrectPackagesType)]
     [DataRow(SbomParserStrings.MalformedJsonIncorrectRelationshipsType)]
-    [ExpectedException(typeof(ParserException))]
     public void MalformedJsonThrows(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
-        this.IterateAllPropertiesAsync(stream);
+
+        Assert.ThrowsException<ParserException>(() => this.IterateAllPropertiesAsync(stream));
     }
 
     [DataTestMethod]

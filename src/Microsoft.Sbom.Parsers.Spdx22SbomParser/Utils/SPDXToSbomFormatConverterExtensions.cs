@@ -16,7 +16,7 @@ namespace Microsoft.Sbom.Utils;
 /// Provides extension methods to convert a SPDX object to
 /// the equivalent internal object as defined in Sbom.Contracts.
 /// </summary>
-internal static class SPDXToSbomFormatConverterExtensions
+public static class SPDXToSbomFormatConverterExtensions
 {
     /// <summary>
     /// Converts a <see cref="SPDXFile"/> object to a <see cref="SbomFile"/> object.
@@ -100,7 +100,7 @@ internal static class SPDXToSbomFormatConverterExtensions
     /// </summary>
     /// <param name="spdxExternalDocumentReference"></param>
     /// <returns></returns>
-    internal static SBOMReference ToSbomReference(this SpdxExternalDocumentReference spdxExternalDocumentReference)
+    public static SBOMReference ToSbomReference(this SpdxExternalDocumentReference spdxExternalDocumentReference)
     {
         return new SBOMReference
         {

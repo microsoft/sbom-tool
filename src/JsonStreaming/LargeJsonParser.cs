@@ -20,6 +20,9 @@ public class LargeJsonParser
     private bool arrayFinishing = false;
     private bool enumeratorActive = false;
 
+    // TODO: Throw this away
+    private string? previousParameter = null;
+
     public LargeJsonParser(
         Stream stream,
         IReadOnlyDictionary<string, PropertyHandler> handlers,
@@ -104,7 +107,7 @@ public class LargeJsonParser
 
             ParserUtils.AssertTokenType(this.stream, ref reader, JsonTokenType.PropertyName);
             var propertyName = reader.GetString() ?? throw new NotImplementedException();
-
+            this.previousParameter = propertyName;
             ParserUtils.Read(this.stream, ref this.buffer, ref reader);
 
             ParserStateResult resultState;
@@ -178,7 +181,7 @@ public class LargeJsonParser
             JsonTokenType.Number => reader.GetInt32(),
             JsonTokenType.True => true,
             JsonTokenType.False => false,
-            JsonTokenType.StartArray => this.ParseObject(ref reader, typeof(JsonNode)),
+            JsonTokenType.StartArray => this.ParseObject(ref reader, typeof(JsonNode), consumeEnding: false),
             JsonTokenType.StartObject => this.ParseObject(ref reader, typeof(JsonNode)),
             JsonTokenType.None => throw new NotImplementedException(),
             JsonTokenType.EndObject => throw new NotImplementedException(),
@@ -204,9 +207,9 @@ public class LargeJsonParser
         return this.GetArray(objType);
     }
 
-    private object ParseObject(ref Utf8JsonReader reader, Type objType)
+    private object ParseObject(ref Utf8JsonReader reader, Type objType, bool consumeEnding = false)
     {
-        return this.GetObject(objType, ref reader, consumeEnding: true);
+        return this.GetObject(objType, ref reader, consumeEnding);
     }
 
     private IEnumerable<object> GetArray(Type type)
