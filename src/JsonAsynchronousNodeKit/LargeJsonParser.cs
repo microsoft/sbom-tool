@@ -157,7 +157,7 @@ public class LargeJsonParser
                 break;
             case ParameterType.Object:
                 var objType = handler.GetType().GetGenericArguments()[0];
-                result = this.ParseObject(ref reader, objType);
+                result = this.GetObject(objType, ref reader);
                 break;
             case ParameterType.Array:
                 var aryType = handler.GetType().GetGenericArguments()[0];
@@ -205,11 +205,6 @@ public class LargeJsonParser
         return this.GetArray(objType);
     }
 
-    private object ParseObject(ref Utf8JsonReader reader, Type objType, bool consumeEnding = false)
-    {
-        return this.GetObject(objType, ref reader, consumeEnding);
-    }
-
     private IEnumerable<object> GetArray(Type type)
     {
         this.enumeratorActive = true;
@@ -228,37 +223,13 @@ public class LargeJsonParser
         }
     }
 
-    private object GetObject(Type type, ref Utf8JsonReader reader, bool consumeEnding)
-    {
-        var jsonObject = this.ReadObject(ref reader, consumeEnding);
-        object? result = jsonObject;
-        if (type != typeof(JsonNode))
-        {
-            result = jsonObject.Deserialize(type, this.jsonSerializerOptions);
-        }
-
-        if (result is null)
-        {
-            throw new NotImplementedException();
-        }
-
-        return result;
-    }
-
     private object? ReadArrayObject(Type type)
     {
         try
         {
             var reader = new Utf8JsonReader(this.buffer, this.isFinalBlock, this.readerState);
 
-            if (reader.TokenType == JsonTokenType.StartArray)
-            {
-                ParserUtils.SkipFirstArrayToken(this.stream, ref this.buffer, ref reader);
-            }
-            else
-            {
-                ParserUtils.Read(this.stream, ref this.buffer, ref reader);
-            }
+            ParserUtils.Read(this.stream, ref this.buffer, ref reader);
 
             object? result;
             if (reader.TokenType == JsonTokenType.EndArray)
@@ -267,7 +238,7 @@ public class LargeJsonParser
             }
             else
             {
-                result = this.GetObject(type, ref reader, consumeEnding: false);
+                result = this.GetObject(type, ref reader);
             }
 
             ParserUtils.GetMoreBytesFromStream(this.stream, ref this.buffer, ref reader);
@@ -283,14 +254,20 @@ public class LargeJsonParser
         }
     }
 
-    private JsonNode ReadObject(ref Utf8JsonReader reader, bool consumeEnding = true)
+    private object GetObject(Type type, ref Utf8JsonReader reader)
     {
-        var obj = ParserUtils.ParseObject(this.stream, ref this.buffer, ref reader);
-        if (consumeEnding)
+        var jsonObject = ParserUtils.ParseObject(this.stream, ref this.buffer, ref reader);
+        object? result = jsonObject;
+        if (type != typeof(JsonNode))
         {
-            ParserUtils.Read(this.stream, ref this.buffer, ref reader);
+            result = jsonObject.Deserialize(type, this.jsonSerializerOptions);
         }
 
-        return obj;
+        if (result is null)
+        {
+            throw new NotImplementedException();
+        }
+
+        return result;
     }
 }
