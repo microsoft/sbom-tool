@@ -193,7 +193,7 @@ public class LargeJsonParser
             JsonTokenType.Null => throw new NotImplementedException(),
             _ => throw new InvalidOperationException($"Unknown {nameof(JsonTokenType)}: {reader.TokenType}"),
         };
-        return new ParserStateResult(propertyName, result, ExplicitField: true, YieldReturn: false);
+        return new ParserStateResult(propertyName, result, ExplicitField: false, YieldReturn: false);
     }
 
     private IEnumerable<object> ParseArray(ref Utf8JsonReader reader, Type objType)

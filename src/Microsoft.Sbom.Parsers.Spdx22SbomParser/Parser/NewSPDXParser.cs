@@ -93,11 +93,7 @@ public class NewSPDXParser
                 this.observedFieldNames.Add(result.FieldName);
                 if (result.Result is not null)
                 {
-                    if (result.ExplicitField)
-                    {
-                        return result;
-                    }
-                    else
+                    if (!result.ExplicitField)
                     {
                         var r = result.Result;
                         if (result.Result is IEnumerable<object> enumResult)
@@ -106,8 +102,9 @@ public class NewSPDXParser
                         }
 
                         this.metadata.Add(result.FieldName, r);
-                        break;
                     }
+
+                    return result;
                 }
             }
         }
@@ -151,7 +148,7 @@ public class NewSPDXParser
                     spdxMetadata.CreationInfo = this.Coerse<MetadataCreationInfo>(kvp.Key, kvp.Value);
                     break;
                 case Constants.DocumentDescribesHeaderName:
-                    spdxMetadata.DocumentDescribes = this.Coerse<List<string>>(kvp.Key, kvp.Value);
+                    spdxMetadata.DocumentDescribes = ((List<object>)kvp.Value!).Cast<string>();
                     break;
                 case Constants.SPDXIDHeaderName:
                     spdxMetadata.SpdxId = this.Coerse<string>(kvp.Key, kvp.Value);
@@ -170,7 +167,7 @@ public class NewSPDXParser
         {
             return t;
         }
-        else if (value is JsonNode jsonNode && typeof(T) == typeof(JsonNode))
+        else if (value is JsonNode jsonNode)
         {
             var deserialized = JsonSerializer.Deserialize<T>(jsonNode, this.jsonSerializerOptions);
             if (deserialized is not null)
