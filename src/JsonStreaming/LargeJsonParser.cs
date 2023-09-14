@@ -17,7 +17,6 @@ public class LargeJsonParser
     private JsonReaderState readerState;
     private bool isFinalBlock;
     private bool isParsingStarted = false;
-    private bool arrayFinishing = false;
     private bool enumeratorActive = false;
     private ParserStateResult? previousResultState = null;
 
@@ -93,7 +92,7 @@ public class LargeJsonParser
             {
                 return null;
             }
-            else if (reader.TokenType == JsonTokenType.EndArray)
+            else if (this.previousResultState is not null && this.previousResultState.YieldReturn && reader.TokenType == JsonTokenType.EndArray)
             {
                 // yield returning json arrays means we can't pass it the same Utf8JsonReader ref, so we need to create a new one.
                 // BUT when we do that we end up consuming the next token, so we need to leave it in the array case to be eatten by the next caller.
@@ -130,7 +129,7 @@ public class LargeJsonParser
                 this.readerState = reader.CurrentState;
             }
 
-            this.previousState = resultState;
+            this.previousResultState = resultState;
 
             return resultState;
         }
@@ -254,12 +253,6 @@ public class LargeJsonParser
     {
         try
         {
-            if (this.arrayFinishing)
-            {
-                this.arrayFinishing = false;
-                return null;
-            }
-
             var reader = new Utf8JsonReader(this.buffer, this.isFinalBlock, this.readerState);
 
             if (reader.TokenType == JsonTokenType.StartArray)
@@ -275,7 +268,6 @@ public class LargeJsonParser
             if (reader.TokenType == JsonTokenType.EndArray)
             {
                 result = null;
-                this.arrayFinishing = true;
             }
             else
             {
@@ -295,7 +287,7 @@ public class LargeJsonParser
         }
     }
 
-    private JsonNode ReadObject(ref Utf8JsonReader reader, bool consumeEnding = true, int depth = 0)
+    private JsonNode ReadObject(ref Utf8JsonReader reader, bool consumeEnding = true)
     {
         var obj = ParserUtils.ParseObject(this.stream, ref this.buffer, ref reader);
         if (consumeEnding)
