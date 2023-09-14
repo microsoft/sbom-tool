@@ -294,7 +294,23 @@ public class LargeJsonParser
 
     private JsonNode ReadObject(ref Utf8JsonReader reader, bool consumeEnding = true)
     {
-        var obj = JsonNode.Parse(ref reader) ?? throw new NotImplementedException();
+        JsonNode? obj = null;
+
+        // We need to loop here because the reader might not have enough bytes to parse the object.
+        // Thankfully JsonNode.Parse resets the reader to the previous state if it fails.
+        do
+        {
+            try
+            {
+                obj = JsonNode.Parse(ref reader) ?? throw new NotImplementedException();
+            }
+            catch (JsonException ex) when (ex.Message.StartsWith("The input does not contain any JSON tokens.", StringComparison.Ordinal))
+            {
+                // Double the size of the buffer until we can actually contain the whole object.
+                ParserUtils.GetMoreBytesFromStream(this.stream, ref this.buffer, ref reader);
+            }
+        }
+        while (obj is null);
 
         if (consumeEnding)
         {
