@@ -55,6 +55,7 @@ public abstract class SbomParserTestsBase
                         results.ReferencesCount = count;
                         break;
                     case NewSPDXParser.RelationshipsProperty:
+                        results.Relationships = list?.Cast<SPDXRelationship>();
                         results.RelationshipsCount = count;
                         break;
                 }

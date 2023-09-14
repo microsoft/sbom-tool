@@ -4,6 +4,7 @@
 using System.Data;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace JsonStreaming;
 
@@ -259,6 +260,68 @@ internal class ParserUtils
         }
 
         reader = new Utf8JsonReader(buffer, isFinalBlock: bytesRead == 0, reader.CurrentState);
+    }
+
+    internal static JsonObject ParseObject(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
+    {
+        AssertTokenType(stream, ref reader, JsonTokenType.StartObject);
+
+        var node = new JsonObject();
+
+        JsonNode? value = null;
+        while (reader.TokenType != JsonTokenType.EndObject || value is JsonObject)
+        {
+            Read(stream, ref buffer, ref reader);
+            if (reader.TokenType == JsonTokenType.EndObject)
+            {
+                break;
+            }
+
+            AssertTokenType(stream, ref reader, JsonTokenType.PropertyName);
+            var propertyName = reader.GetString()!;
+            Read(stream, ref buffer, ref reader);
+            value = ParseValue(stream, ref buffer, ref reader);
+            node.Add(propertyName, value);
+        }
+
+        return node;
+    }
+
+    internal static JsonNode? ParseValue(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
+    {
+        return reader.TokenType switch
+        {
+            JsonTokenType.StartObject => ParseObject(stream, ref buffer, ref reader),
+            JsonTokenType.StartArray => ParseArray(stream, ref buffer, ref reader),
+            JsonTokenType.Number => reader.GetDouble(),
+            JsonTokenType.String => reader.GetString(),
+            JsonTokenType.True => true,
+            JsonTokenType.False => false,
+            JsonTokenType.Null => null,
+            _ => throw new InvalidOperationException($"Unexpected token type {reader.TokenType}"),
+        };
+    }
+
+    internal static JsonArray ParseArray(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
+    {
+        AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
+
+        var node = new JsonArray();
+
+        JsonNode? value = null;
+        while (reader.TokenType != JsonTokenType.EndArray || value is JsonArray)
+        {
+            Read(stream, ref buffer, ref reader);
+            if (reader.TokenType == JsonTokenType.EndArray)
+            {
+                break;
+            }
+
+            value = ParseValue(stream, ref buffer, ref reader);
+            node.Add(value);
+        }
+
+        return node;
     }
 
     /// <summary>

@@ -44,7 +44,6 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     [DataRow(RelationshipStrings.JsonRelationshipsStringMissingElementId)]
     [DataRow(RelationshipStrings.JsonRelationshipsStringMissingRelatedElement)]
     [TestMethod]
-    [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
@@ -52,7 +51,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
 
         var parser = new NewSPDXParser(stream, bufferSize: 50);
 
-        var result = this.Parse(parser);
+        Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 
     [DataTestMethod]
