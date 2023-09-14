@@ -19,6 +19,7 @@ public class LargeJsonParser
     private bool isParsingStarted = false;
     private bool arrayFinishing = false;
     private bool enumeratorActive = false;
+    private ParserStateResult? previousResultState = null;
 
     // TODO: Throw this away
     private string? previousParameter = null;
@@ -129,6 +130,8 @@ public class LargeJsonParser
                 this.readerState = reader.CurrentState;
             }
 
+            this.previousState = resultState;
+
             return resultState;
         }
         catch (JsonException ex)
@@ -175,14 +178,14 @@ public class LargeJsonParser
     private ParserStateResult HandleExtraProperty(ref Utf8JsonReader reader, string propertyName)
     {
         // We skip objects and arrays to avoid having to parse them.
-        var result = reader.TokenType switch
+        object? result = reader.TokenType switch
         {
             JsonTokenType.String => reader.GetString(),
             JsonTokenType.Number => reader.GetInt32(),
             JsonTokenType.True => true,
             JsonTokenType.False => false,
-            JsonTokenType.StartArray => this.ParseObject(ref reader, typeof(JsonNode), consumeEnding: false),
-            JsonTokenType.StartObject => this.ParseObject(ref reader, typeof(JsonNode)),
+            JsonTokenType.StartArray => ParserUtils.ParseArray(this.stream, ref this.buffer, ref reader),
+            JsonTokenType.StartObject => ParserUtils.ParseObject(this.stream, ref this.buffer, ref reader),
             JsonTokenType.None => throw new NotImplementedException(),
             JsonTokenType.EndObject => throw new NotImplementedException(),
             JsonTokenType.EndArray => throw new NotImplementedException(),
