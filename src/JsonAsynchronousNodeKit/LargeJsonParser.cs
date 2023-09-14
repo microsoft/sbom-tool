@@ -20,9 +20,6 @@ public class LargeJsonParser
     private bool enumeratorActive = false;
     private ParserStateResult? previousResultState = null;
 
-    // TODO: Throw this away
-    private string? previousParameter = null;
-
     public LargeJsonParser(
         Stream stream,
         IReadOnlyDictionary<string, PropertyHandler> handlers,
@@ -107,7 +104,6 @@ public class LargeJsonParser
 
             ParserUtils.AssertTokenType(this.stream, ref reader, JsonTokenType.PropertyName);
             var propertyName = reader.GetString() ?? throw new NotImplementedException();
-            this.previousParameter = propertyName;
             ParserUtils.Read(this.stream, ref this.buffer, ref reader);
 
             ParserStateResult resultState;
