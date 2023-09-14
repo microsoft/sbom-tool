@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\JsonAsynchronousNodeKit\JsonAsynchronousNodeKit.csproj" />
     <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
   </ItemGroup>
 

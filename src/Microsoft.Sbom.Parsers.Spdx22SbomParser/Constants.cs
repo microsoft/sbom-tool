@@ -6,7 +6,7 @@ using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 
-internal class Constants
+public static class Constants
 {
     internal const string SPDXName = "SPDX";
     internal const string SPDXVersion = "2.2";
@@ -24,10 +24,10 @@ internal class Constants
     internal const string CreationInfoHeaderName = "creationInfo";
     internal const string DocumentDescribesHeaderName = "documentDescribes";
 
-    internal const string PackagesArrayHeaderName = "packages";
-    internal const string FilesArrayHeaderName = "files";
-    internal const string RelationshipsArrayHeaderName = "relationships";
-    internal const string ExternalDocumentRefArrayHeaderName = "externalDocumentRefs";
+    public const string PackagesArrayHeaderName = "packages";
+    public const string FilesArrayHeaderName = "files";
+    public const string RelationshipsArrayHeaderName = "relationships";
+    public const string ExternalDocumentRefArrayHeaderName = "externalDocumentRefs";
 
     #endregion
 

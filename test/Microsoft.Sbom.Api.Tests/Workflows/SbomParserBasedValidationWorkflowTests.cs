@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Executors;
@@ -26,14 +27,19 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.Parser;
 using Microsoft.Sbom.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ErrorType = Microsoft.Sbom.Api.Entities.ErrorType;
+using Spdx22Constatns = Microsoft.Sbom.Parsers.Spdx22SbomParser.Constants;
+using SpdxChecksum = Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Checksum;
 
 namespace Microsoft.Sbom.Workflows;
+
+#nullable enable
 
 [TestClass]
 public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBase
@@ -70,21 +76,14 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var recorder = new Mock<IRecorder>();
         var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
 
+        var dictionary = GetSpdxFilesDictionary();
+        dictionary["/child2/grandchild1/file9"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child2/grandchild1/file9hash" } };
+        dictionary["/child2/grandchild1/file7"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child2/grandchild1/file7hash" } };
+        dictionary["/child2/grandchild1/file10"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child2/grandchild1/file10hash" } };
+
         sbomParser.SetupSequence(p => p.Next())
-            .Returns(ParserState.FILES)
-            .Returns(ParserState.FINISHED);
-
-        var parserStateQueue = new Queue<ParserState>();
-        parserStateQueue.Enqueue(ParserState.FILES);
-        parserStateQueue.Enqueue(ParserState.FINISHED);
-        sbomParser.SetupGet(p => p.CurrentState).Returns(parserStateQueue.Dequeue());
-        var dictionary = GetFilesDictionary();
-
-        dictionary["/child2/grandchild1/file9"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/grandchild1/file9hash" } };
-        dictionary["/child2/grandchild1/file7"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/grandchild1/file7hash" } };
-        dictionary["/child2/grandchild1/file10"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/grandchild1/file10hash" } };
-
-        sbomParser.Setup(p => p.GetFiles()).Returns(GetSBOMFiles(dictionary));
+            .Returns(new FilesResult(new ParserStateResult(Spdx22Constatns.FilesArrayHeaderName, GetSpdxFiles(dictionary), ExplicitField: true, YieldReturn: true)))
+            .Returns((ParserStateResult?)null);
 
         manifestInterface.Setup(m => m.CreateParser(It.IsAny<Stream>()))
             .Returns(sbomParser.Object);
@@ -218,15 +217,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
 
         sbomParser.SetupSequence(p => p.Next())
-            .Returns(ParserState.FILES)
-            .Returns(ParserState.FINISHED);
-
-        var parserStateQueue = new Queue<ParserState>();
-        parserStateQueue.Enqueue(ParserState.FILES);
-        parserStateQueue.Enqueue(ParserState.FINISHED);
-        sbomParser.SetupGet(p => p.CurrentState).Returns(parserStateQueue.Dequeue());
-
-        sbomParser.Setup(p => p.GetFiles()).Returns(GetSBOMFiles(GetFilesDictionary()));
+            .Returns(new FilesResult(new ParserStateResult(Spdx22Constatns.FilesArrayHeaderName, GetSpdxFiles(GetSpdxFilesDictionary()), ExplicitField: true, YieldReturn: true)))
+            .Returns((ParserStateResult?)null);
 
         manifestInterface.Setup(m => m.CreateParser(It.IsAny<Stream>()))
             .Returns(sbomParser.Object);

@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using JsonStreaming;
+using JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
@@ -23,7 +23,7 @@ public static class SPDXToSbomFormatConverterExtensions
     /// </summary>
     /// <param name="spdxFile"></param>
     /// <returns></returns>
-    internal static SbomFile ToSbomFile(this SPDXFile spdxFile)
+    public static SbomFile ToSbomFile(this SPDXFile spdxFile)
     {
         var checksums = spdxFile.FileChecksums?.Select(c => c.ToSbomChecksum());
         if (checksums.All(c => c.Algorithm != AlgorithmName.SHA256))

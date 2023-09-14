@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace JsonStreaming;
+namespace JsonAsynchronousNodeKit;
 
 /// <summary>
 /// Utility methods for parsing that are shared by all parsers.

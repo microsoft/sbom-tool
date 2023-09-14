@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Manifest;
@@ -20,9 +21,11 @@ using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Parser;
 using PowerArgs;
 using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
+using Spdx22Constants = Microsoft.Sbom.Parsers.Spdx22SbomParser.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows;
 
@@ -96,35 +99,35 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 int successfullyValidatedFiles = 0;
                 List<FileValidationResult> fileValidationFailures = null;
 
-                while (sbomParser.Next() != Contracts.Enums.ParserState.FINISHED)
+                ParserStateResult? result = null;
+                do
                 {
-                    switch (sbomParser.CurrentState)
+                    result = sbomParser.Next();
+                    if (result is not null)
                     {
-                        case Contracts.Enums.ParserState.FILES:
-                            (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(sbomParser);
-                            break;
-                        case Contracts.Enums.ParserState.PACKAGES:
-                            var packages = sbomParser.GetPackages().ToList();
-                            totalNumberOfPackages = packages.Count();
-                            break;
-                        case Contracts.Enums.ParserState.RELATIONSHIPS:
-                            sbomParser.GetRelationships().ToList();
-                            break;
-                        case Contracts.Enums.ParserState.REFERENCES:
-                            sbomParser.GetReferences().ToList();
-                            break;
-                        case Contracts.Enums.ParserState.NONE:
-                            break;
-                        case Contracts.Enums.ParserState.METADATA:
-                            _ = sbomParser.GetMetadata();
-                            break;
-                        case Contracts.Enums.ParserState.INTERNAL_SKIP:
-                            break;
-                        case Contracts.Enums.ParserState.FINISHED:
-                            break;
-                        default: break;
+                        switch (result)
+                        {
+                            case FilesResult filesResult:
+                                (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(filesResult.Files);
+                                break;
+                            case PackagesResult packagesResult:
+                                var packages = packagesResult.Packages.ToList();
+                                totalNumberOfPackages = packages.Count();
+                                break;
+                            case RelationshipsResult relationshipsResult:
+                                relationshipsResult.Relationships.ToList();
+                                break;
+                            case ExternalDocumentReferencesResult externalRefResult:
+                                externalRefResult.References.ToList();
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
+                while (result is not null);
+
+                _ = sbomParser.GetMetadata();
 
                 if (configuration.FailIfNoPackages?.Value == true && totalNumberOfPackages <= 1)
                 {

@@ -11,7 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
     <ProjectReference Include="..\Microsoft.Sbom.Extensions\Microsoft.Sbom.Extensions.csproj" />
-    <ProjectReference Include="..\JsonStreaming\JsonStreaming.csproj" />
+    <ProjectReference Include="..\JsonAsynchronousNodeKit\JsonAsynchronousNodeKit.csproj" />
   </ItemGroup>
   
   <ItemGroup>

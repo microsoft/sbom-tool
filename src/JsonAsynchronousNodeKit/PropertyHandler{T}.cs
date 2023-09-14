@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace JsonStreaming;
+namespace JsonAsynchronousNodeKit;
 
-public record PropertyHandler(ParameterType Type);
+public record PropertyHandler<T>(ParameterType ParameterType)
+    : PropertyHandler(ParameterType);

@@ -3,7 +3,7 @@
 
 using System.IO;
 using System.Text;
-using JsonStreaming;
+using JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

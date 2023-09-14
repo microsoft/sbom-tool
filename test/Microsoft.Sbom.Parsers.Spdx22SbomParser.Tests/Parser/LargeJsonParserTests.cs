@@ -2,12 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using JsonStreaming;
+using JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parser.Strings;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Sbom.Parser;

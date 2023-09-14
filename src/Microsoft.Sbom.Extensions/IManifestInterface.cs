@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.IO;
 using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Extensions;
@@ -28,6 +29,13 @@ public interface IManifestInterface
     /// <param name="manifest">The string contents of the manifest file.</param>
     /// <returns>The manifest mapped to an instance of a <see cref="ManifestData"/> object.</returns>
     ManifestData ParseManifest(string manifest);
+
+    /// <summary>
+    /// Creates a parser object for the given SBOM file stream.
+    /// </summary>
+    /// <param name="stream">The stream for the SBOM file.</param>
+    /// <returns></returns>
+    ISbomParser CreateParser(Stream stream);
 
     /// <summary>
     /// Gets or sets the version of this <see cref="IManifestInterface"/>.

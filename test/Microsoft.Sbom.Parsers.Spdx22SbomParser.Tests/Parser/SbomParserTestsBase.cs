@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using JsonStreaming;
+using JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 
 namespace Microsoft.Sbom.Parser;

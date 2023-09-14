@@ -7,15 +7,17 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using JsonStreaming;
+using JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 
 namespace Microsoft.Sbom.Parser;
 
+// TODO: New Name
 #nullable enable
-public class NewSPDXParser
+public class NewSPDXParser : ISbomParser
 {
     public const string FilesProperty = "files";
     public const string ReferenceProperty = "externalDocumentRefs";
@@ -101,7 +103,25 @@ public class NewSPDXParser
                             r = enumResult.ToList();
                         }
 
-                        this.metadata.Add(result.FieldName, r);
+                        this.metadata.TryAdd(result.FieldName, r);
+                    }
+                    else
+                    {
+                        switch (result.FieldName)
+                        {
+                            case FilesProperty:
+                                result = new FilesResult(result);
+                                break;
+                            case PackagesProperty:
+                                result = new PackagesResult(result);
+                                break;
+                            case RelationshipsProperty:
+                                result = new RelationshipsResult(result);
+                                break;
+                            case ReferenceProperty:
+                                result = new ExternalDocumentReferencesResult(result);
+                                break;
+                        }
                     }
 
                     return result;
@@ -161,6 +181,8 @@ public class NewSPDXParser
         return spdxMetadata;
     }
 
+    public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { spdxManifestInfo };
+
     private T Coerse<T>(string name, object? value)
     {
         if (value is T t)
@@ -182,4 +204,10 @@ public class NewSPDXParser
 
         throw new ParserException($"Expected type {typeof(T).Name} for {name} but got {value?.GetType().Name ?? "null"}");
     }
+
+    private readonly ManifestInfo spdxManifestInfo = new()
+    {
+        Name = Constants.SPDXName,
+        Version = Constants.SPDXVersion
+    };
 }

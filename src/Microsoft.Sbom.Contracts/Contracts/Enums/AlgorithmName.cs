@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -61,6 +61,36 @@ public class AlgorithmName : IEquatable<AlgorithmName>
     public static bool operator !=(AlgorithmName left, AlgorithmName right)
     {
         return !(left == right);
+    }
+
+    public static AlgorithmName FromString(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentNullException(nameof(name));
+        }
+
+        if (string.Equals(name, SHA1.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            return SHA1;
+        }
+
+        if (string.Equals(name, SHA256.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            return SHA256;
+        }
+
+        if (string.Equals(name, SHA512.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            return SHA512;
+        }
+
+        if (string.Equals(name, MD5.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            return MD5;
+        }
+
+        throw new ArgumentException($"Unknown hash algorithm '{name}'.", nameof(name));
     }
 
     /// <summary>

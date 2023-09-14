@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace JsonStreaming;
+namespace JsonAsynchronousNodeKit;
 
 public class LargeJsonParser
 {
