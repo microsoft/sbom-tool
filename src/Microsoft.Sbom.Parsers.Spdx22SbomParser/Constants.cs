@@ -31,6 +31,8 @@ public static class Constants
 
     #endregion
 
+    internal const int ReadBufferSize = 4096;
+
     #region Value format strings
 
     internal const string SPDXDocumentNameFormatString = "{0} {1}";
@@ -58,9 +60,7 @@ public static class Constants
 
     internal static ManifestInfo Spdx22ManifestInfo = new ManifestInfo
     {
-        Name = Constants.SPDXName,
-        Version = Constants.SPDXVersion
+        Name = SPDXName,
+        Version = SPDXVersion
     };
-
-    internal const int ReadBufferSize = 4096;
 }

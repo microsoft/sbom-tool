@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Text;
 using JsonAsynchronousNodeKit;
+using JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -76,7 +77,6 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     [DataRow(RelationshipStrings.MalformedJsonRelationshipsStringBadRelationshipType)]
     [DataRow(RelationshipStrings.MalformedJsonRelationshipsString)]
     [TestMethod]
-    [ExpectedException(typeof(ParserException))]
     public void MalformedJsonTest_Throws(string json)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(json);
@@ -84,7 +84,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
 
         var parser = new NewSPDXParser(stream);
 
-        var result = this.Parse(parser);
+        _ = Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 
     [TestMethod]

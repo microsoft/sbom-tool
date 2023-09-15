@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Data;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using JsonAsynchronousNodeKit.Exceptions;
@@ -38,28 +36,6 @@ internal static class ParserUtils
         }
     }
 
-    internal static string GetNextTokenString(ref Utf8JsonReader reader)
-    {
-        var tokenString = reader.TokenType switch
-        {
-            JsonTokenType.None => string.Empty,
-            JsonTokenType.StartObject => "{",
-            JsonTokenType.EndObject => "}",
-            JsonTokenType.StartArray => "[",
-            JsonTokenType.EndArray => "]",
-            JsonTokenType.PropertyName => reader.GetString(),
-            JsonTokenType.Comment => reader.GetComment(),
-            JsonTokenType.String => reader.GetString(),
-            JsonTokenType.Number => reader.TryGetInt64(out var l) ? l.ToString() : reader.GetDouble().ToString(),
-            JsonTokenType.True => "true",
-            JsonTokenType.False => "false",
-            JsonTokenType.Null => "null",
-            _ => throw new ArgumentOutOfRangeException()
-        };
-
-        return tokenString ?? string.Empty;
-    }
-
     /// <summary>
     /// Asserts if the reader is at the current expected token.
     /// </summary>
@@ -81,36 +57,6 @@ internal static class ParserUtils
     }
 
     /// <summary>
-    /// Assert that the current token is either one of the tokens specified
-    /// in the <paramref name="expectedTokenTypes"/>.
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <param name="reader"></param>
-    /// <param name="expectedTokenTypes"></param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="ParserException"></exception>
-    internal static void AssertEitherTokenTypes(Stream stream, ref Utf8JsonReader reader, JsonTokenType[] expectedTokenTypes)
-    {
-        if (stream is null)
-        {
-            throw new ArgumentNullException(nameof(stream));
-        }
-
-        foreach (var tokenType in expectedTokenTypes)
-        {
-            if (reader.TokenType == tokenType)
-            {
-                // Found at least one of the expected tokens.
-                return;
-            }
-        }
-
-        // If control ends up here, no expected tokens matched.
-        var expectedTokenTypesStr = string.Join(",", expectedTokenTypes.Select(t => Constants.JsonTokenStrings[(byte)t]));
-        throw new ParserException($"Expected either one of a '{expectedTokenTypesStr}' token at position {stream.Position}");
-    }
-
-    /// <summary>
     /// Helper method to move the reader from a None token type to the next available token.
     /// </summary>
     /// <param name="stream"></param>
@@ -125,45 +71,6 @@ internal static class ParserUtils
     }
 
     /// <summary>
-    /// Skips the first [ token from the stream.
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <param name="buffer"></param>
-    /// <param name="reader"></param>
-    internal static void SkipFirstArrayToken(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
-    {
-        // Ensure first value is an array and read that so that we are the { token.
-        SkipNoneTokens(stream, ref buffer, ref reader);
-        AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
-        Read(stream, ref buffer, ref reader);
-    }
-
-    /// <summary>
-    /// Helper method that can be used to display a byte readonlyspan for logging.
-    /// </summary>
-    /// <returns></returns>
-    internal static string GetStringValue(ReadOnlySpan<byte> valueSpan)
-    {
-        return Encoding.UTF8.GetString(valueSpan.ToArray());
-    }
-
-    /// <summary>
-    /// Returns the next string value for a given property, for example:
-    ///
-    /// { "TestProperty": "TestProperty Value" }
-    ///
-    /// Will return "TestProperty Value".
-    /// </summary>
-    /// <param name="reader"></param>
-    /// <param name="buffer"></param>
-    /// <returns>The next string value.</returns>
-    internal static string? ParseNextString(Stream stream, ref Utf8JsonReader reader)
-    {
-        AssertTokenType(stream, ref reader, JsonTokenType.String);
-        return reader.GetString();
-    }
-
-    /// <summary>
     /// Reads and discards any given value for a property. If the value is an arry or object
     /// it reads and discards the whole array or object.
     /// </summary>
@@ -174,7 +81,7 @@ internal static class ParserUtils
     {
         if (reader.TokenType == JsonTokenType.StartArray)
         {
-            int arrayCount = 1;
+            var arrayCount = 1;
             while (true)
             {
                 if (reader.TokenType == JsonTokenType.EndArray)
@@ -196,7 +103,7 @@ internal static class ParserUtils
         }
         else if (reader.TokenType == JsonTokenType.StartObject)
         {
-            int objectCount = 1;
+            var objectCount = 1;
             while (true)
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
@@ -335,51 +242,5 @@ internal static class ParserUtils
         }
 
         return node;
-    }
-
-    /// <summary>
-    /// Returns the next boolean value for a given property, for example:
-    ///
-    /// { "TestProperty": false }
-    ///
-    /// Will return false.
-    /// </summary>
-    /// <param name="reader"></param>
-    /// <param name="buffer"></param>
-    /// <returns>The next boolean value.</returns>
-    internal static bool ParseNextBoolean(Stream stream, ref Utf8JsonReader reader)
-    {
-        AssertEitherTokenTypes(stream, ref reader, new JsonTokenType[] { JsonTokenType.True, JsonTokenType.False });
-        return reader.GetBoolean();
-    }
-
-    /// <summary>
-    /// Parse an array of strings. For example
-    /// "prop": ["Value1", "Value2", "Value3"].
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <param name="reader"></param>
-    /// <param name="buffer"></param>
-    /// <returns></returns>
-    internal static List<string?> ParseListOfStrings(Stream stream, ref Utf8JsonReader reader, ref byte[] buffer)
-    {
-        var strings = new List<string?>();
-
-        // Read the opening [ of the array
-        AssertTokenType(stream, ref reader, JsonTokenType.StartArray);
-
-        while (reader.TokenType != JsonTokenType.EndArray)
-        {
-            Read(stream, ref buffer, ref reader);
-            if (reader.TokenType == JsonTokenType.EndArray)
-            {
-                break;
-            }
-
-            strings.Add(reader.GetString());
-        }
-
-        AssertTokenType(stream, ref reader, JsonTokenType.EndArray);
-        return strings;
     }
 }

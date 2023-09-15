@@ -4,7 +4,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 

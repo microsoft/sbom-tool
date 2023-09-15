@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using JsonAsynchronousNodeKit;
+using JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;

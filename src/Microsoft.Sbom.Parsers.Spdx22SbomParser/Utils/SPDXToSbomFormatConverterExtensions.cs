@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using JsonAsynchronousNodeKit;
+using JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
@@ -117,7 +117,7 @@ public static class SPDXToSbomFormatConverterExtensions
     /// <returns></returns>
     internal static string ToPurl(this IList<ExternalReference> externalReference)
     {
-        var packageManagerReference = externalReference?.Where(e => e.ReferenceCategory.Replace("_", "-") == "PACKAGE-MANAGER")?.First();
+        var packageManagerReference = externalReference?.Where(e => e.ReferenceCategory.Replace("_", "-", System.StringComparison.Ordinal) == "PACKAGE-MANAGER")?.First();
         return packageManagerReference?.Locator;
     }
 
