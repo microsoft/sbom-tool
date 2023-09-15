@@ -3,7 +3,6 @@
 
 namespace JsonAsynchronousNodeKit;
 
-// TODO: subclass this to things like "FileParserStateResult"
 public record ParserStateResult(
     string FieldName,
     object? Result,

@@ -3,7 +3,7 @@
 
 using System.Runtime.Serialization;
 
-namespace JsonAsynchronousNodeKit;
+namespace JsonAsynchronousNodeKit.Exceptions;
 
 /// <summary>
 /// Thrown when the SPDX parser detects an error in the JSON file.

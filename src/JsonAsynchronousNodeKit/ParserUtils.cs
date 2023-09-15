@@ -5,21 +5,26 @@ using System.Data;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using JsonAsynchronousNodeKit.Exceptions;
 
 namespace JsonAsynchronousNodeKit;
 
 /// <summary>
 /// Utility methods for parsing that are shared by all parsers.
 /// </summary>
-internal class ParserUtils
+internal static class ParserUtils
 {
     /// <summary>
     /// Read the next JSON token in the reader from the input buffer.
     /// If the buffer is small and doesn't contain all the text for the next token,
     /// a call to GetMoreBytesFromStream is made to read more data into the buffer.
     /// </summary>
-    /// <exception cref="EndOfStreamException"></exception>
-    public static void Read(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
+    /// <param name="stream">The <see cref="Stream"/> to read from.</param>
+    /// <param name="buffer">The buffer to  read from.</param>
+    /// <param name="reader">The <see cref="Utf8JsonReader"/> to read from.</param>
+    /// <exception cref="EndOfStreamException">If the stream unexpectedly ended.</exception>
+    /// <exception cref="ArgumentNullException">If an argument was null when that is not allowed.</exception>
+    internal static void Read(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
         if (stream is null)
         {
@@ -33,7 +38,7 @@ internal class ParserUtils
         }
     }
 
-    public static string GetNextTokenString(ref Utf8JsonReader reader)
+    internal static string GetNextTokenString(ref Utf8JsonReader reader)
     {
         var tokenString = reader.TokenType switch
         {
@@ -58,7 +63,10 @@ internal class ParserUtils
     /// <summary>
     /// Asserts if the reader is at the current expected token.
     /// </summary>
-    /// <exception cref="ParserException"></exception>
+    /// <param name="stream">The <see cref="Stream"/> to read from.</param>
+    /// <param name="reader">The <see cref="Utf8JsonReader"/> to read from.</param>
+    /// <param name="expectedTokenType">The expected token type.</param>
+    /// <exception cref="ParserException">When the token was not as expected.</exception>
     internal static void AssertTokenType(Stream stream, ref Utf8JsonReader reader, JsonTokenType expectedTokenType)
     {
         if (stream is null)
@@ -157,10 +165,11 @@ internal class ParserUtils
 
     /// <summary>
     /// Reads and discards any given value for a property. If the value is an arry or object
-    /// it reads and discards the whole array or object
+    /// it reads and discards the whole array or object.
     /// </summary>
-    /// <param name="reader"></param>
+    /// <param name="stream"></param>
     /// <param name="buffer"></param>
+    /// <param name="reader"></param>
     internal static void SkipProperty(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
         if (reader.TokenType == JsonTokenType.StartArray)
@@ -217,7 +226,9 @@ internal class ParserUtils
     /// <param name="stream"></param>
     /// <param name="buffer"></param>
     /// <param name="reader"></param>
-    public static void GetMoreBytesFromStream(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentException"></exception>"
+    internal static void GetMoreBytesFromStream(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
         if (stream is null)
         {
@@ -287,20 +298,22 @@ internal class ParserUtils
         return node;
     }
 
-    internal static JsonNode? ParseValue(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
+    internal static JsonNode? ParseValue(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader) => reader.TokenType switch
     {
-        return reader.TokenType switch
-        {
-            JsonTokenType.StartObject => ParseObject(stream, ref buffer, ref reader),
-            JsonTokenType.StartArray => ParseArray(stream, ref buffer, ref reader),
-            JsonTokenType.Number => reader.GetDouble(),
-            JsonTokenType.String => reader.GetString(),
-            JsonTokenType.True => true,
-            JsonTokenType.False => false,
-            JsonTokenType.Null => null,
-            _ => throw new InvalidOperationException($"Unexpected token type {reader.TokenType}"),
-        };
-    }
+        JsonTokenType.StartObject => ParseObject(stream, ref buffer, ref reader),
+        JsonTokenType.StartArray => ParseArray(stream, ref buffer, ref reader),
+        JsonTokenType.Number => reader.GetDouble(),
+        JsonTokenType.String => reader.GetString(),
+        JsonTokenType.True => true,
+        JsonTokenType.False => false,
+        JsonTokenType.Null => null,
+        JsonTokenType.None or
+        JsonTokenType.EndObject or
+        JsonTokenType.EndArray or
+        JsonTokenType.PropertyName or
+        JsonTokenType.Comment or
+        _ => throw new InvalidOperationException($"Unexpected token type {reader.TokenType}"),
+    };
 
     internal static JsonArray ParseArray(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
