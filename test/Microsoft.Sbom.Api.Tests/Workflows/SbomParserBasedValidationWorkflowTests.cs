@@ -34,7 +34,6 @@ using Moq;
 using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ErrorType = Microsoft.Sbom.Api.Entities.ErrorType;
-using Spdx22Constatns = Microsoft.Sbom.Parsers.Spdx22SbomParser.Constants;
 using SpdxChecksum = Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Checksum;
 
 namespace Microsoft.Sbom.Workflows;
@@ -82,7 +81,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         dictionary["/child2/grandchild1/file10"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child2/grandchild1/file10hash" } };
 
         sbomParser.SetupSequence(p => p.Next())
-            .Returns(new FilesResult(new ParserStateResult(Spdx22Constatns.FilesArrayHeaderName, GetSpdxFiles(dictionary), ExplicitField: true, YieldReturn: true)))
+            .Returns(new FilesResult(new ParserStateResult(SPDXParser.FilesProperty, GetSpdxFiles(dictionary), ExplicitField: true, YieldReturn: true)))
             .Returns((ParserStateResult?)null);
 
         manifestInterface.Setup(m => m.CreateParser(It.IsAny<Stream>()))
@@ -217,7 +216,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
 
         sbomParser.SetupSequence(p => p.Next())
-            .Returns(new FilesResult(new ParserStateResult(Spdx22Constatns.FilesArrayHeaderName, GetSpdxFiles(GetSpdxFilesDictionary()), ExplicitField: true, YieldReturn: true)))
+            .Returns(new FilesResult(new ParserStateResult(SPDXParser.FilesProperty, GetSpdxFiles(GetSpdxFilesDictionary()), ExplicitField: true, YieldReturn: true)))
             .Returns((ParserStateResult?)null);
 
         manifestInterface.Setup(m => m.CreateParser(It.IsAny<Stream>()))

@@ -27,5 +27,5 @@ public class Validator : IManifestInterface
 
     public ManifestInfo[] RegisterManifest() => new[] { spdxManifestInfo };
 
-    public ISbomParser CreateParser(Stream stream) => new NewSPDXParser(stream);
+    public ISbomParser CreateParser(Stream stream) => new SPDXParser(stream);
 }

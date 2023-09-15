@@ -20,7 +20,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
 
@@ -33,7 +33,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         Assert.ThrowsException<ObjectDisposedException>(() => this.Parse(parser, stream, close: true));
     }
@@ -46,7 +46,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
     }
@@ -59,7 +59,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
     }
@@ -82,7 +82,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
     }
@@ -97,7 +97,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
     }
@@ -113,7 +113,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
     }
@@ -124,7 +124,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.MalformedJsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
     }
@@ -136,7 +136,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream, bufferSize: 0);
+        var parser = new SPDXParser(stream, bufferSize: 0);
 
         var result = this.Parse(parser);
     }

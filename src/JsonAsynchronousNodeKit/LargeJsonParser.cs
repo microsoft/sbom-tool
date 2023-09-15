@@ -11,7 +11,8 @@ namespace JsonAsynchronousNodeKit;
 /// <summary>
 /// Allows for parsing large json objects without loading the entire object into memory. Large json arrays use a yield return to avoid having the whole enumerable in memory at once.
 /// </summary>
-/// <remarks>This class is not Thread-safe since the stream and JsonReaders assume a single forward-only reader.
+/// <remarks>
+/// This class is not Thread-safe since the stream and JsonReaders assume a single forward-only reader.
 /// Because of the use of recursion in the GetObject method, this class is also not suitable for parsing very deep json objects.
 /// </remarks>
 public class LargeJsonParser

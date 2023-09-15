@@ -20,7 +20,7 @@ public class SbomParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(utf8BOM + SbomParserStrings.JsonWithAll4Properties);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
 
@@ -39,7 +39,7 @@ public class SbomParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithAll4Properties);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
 
@@ -98,7 +98,7 @@ public class SbomParserTests : SbomParserTestsBase
 
     private ParserResults IterateAllPropertiesAsync(Stream stream)
     {
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
         return this.Parse(parser);
     }
 }

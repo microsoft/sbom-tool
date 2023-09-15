@@ -21,7 +21,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
 
@@ -36,7 +36,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
     }
@@ -50,7 +50,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream, bufferSize: 50);
+        var parser = new SPDXParser(stream, bufferSize: 50);
 
         Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
@@ -66,7 +66,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
 
@@ -82,7 +82,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         _ = Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
@@ -93,7 +93,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.MalformedJsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
 
@@ -107,7 +107,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream, bufferSize: 0);
+        var parser = new SPDXParser(stream, bufferSize: 0);
 
         var result = this.Parse(parser);
     }

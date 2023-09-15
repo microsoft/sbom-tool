@@ -23,7 +23,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
         var skippedProperties = new[] { "files" };
 
-        var parser = new NewSPDXParser(stream, skippedProperties: skippedProperties);
+        var parser = new SPDXParser(stream, skippedProperties: skippedProperties);
 
         var results = this.Parse(parser);
         Assert.IsNull(results.FilesCount);
@@ -35,7 +35,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var results = this.Parse(parser);
 
@@ -45,7 +45,7 @@ public class SbomFileParserTests : SbomParserTestsBase
     [TestMethod]
     public void NullStreamThrows()
     {
-        _ = Assert.ThrowsException<ArgumentNullException>(() => new NewSPDXParser(null));
+        _ = Assert.ThrowsException<ArgumentNullException>(() => new SPDXParser(null));
     }
 
     [TestMethod]
@@ -54,7 +54,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         Assert.ThrowsException<ObjectDisposedException>(() => this.Parse(parser, stream, close: true));
     }
@@ -66,7 +66,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
 
-        Assert.ThrowsException<EndOfStreamException>(() => new NewSPDXParser(stream));
+        Assert.ThrowsException<EndOfStreamException>(() => new SPDXParser(stream));
     }
 
     [TestMethod]
@@ -75,7 +75,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.JsonWith1FileMissingSHA256ChecksumsString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
         Assert.IsNotNull(result);
@@ -97,7 +97,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         _ = Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
@@ -113,7 +113,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
 
@@ -130,7 +130,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
@@ -141,7 +141,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.JsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = this.Parse(parser);
 
@@ -155,7 +155,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream, bufferSize: 0);
+        var parser = new SPDXParser(stream, bufferSize: 0);
         Assert.ThrowsException<ArgumentException>(() => this.Parse(parser));
     }
 }

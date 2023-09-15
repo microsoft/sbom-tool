@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Parser;
 
 public abstract class SbomParserTestsBase
 {
-    public ParserResults Parse(NewSPDXParser parser, Stream? stream = null, bool close = false)
+    public ParserResults Parse(SPDXParser parser, Stream? stream = null, bool close = false)
     {
         var results = new ParserResults();
 
@@ -42,19 +42,19 @@ public abstract class SbomParserTestsBase
                 var count = list?.Count;
                 switch (result.FieldName)
                 {
-                    case NewSPDXParser.FilesProperty:
+                    case SPDXParser.FilesProperty:
                         results.Files = list?.Cast<SPDXFile>();
                         results.FilesCount = count;
                         break;
-                    case NewSPDXParser.PackagesProperty:
+                    case SPDXParser.PackagesProperty:
                         results.Packages = list?.Cast<SPDXPackage>();
                         results.PackagesCount = count;
                         break;
-                    case NewSPDXParser.ReferenceProperty:
+                    case SPDXParser.ReferenceProperty:
                         results.References = list?.Cast<SpdxExternalDocumentReference>();
                         results.ReferencesCount = count;
                         break;
-                    case NewSPDXParser.RelationshipsProperty:
+                    case SPDXParser.RelationshipsProperty:
                         results.Relationships = list?.Cast<SPDXRelationship>();
                         results.RelationshipsCount = count;
                         break;

@@ -19,10 +19,10 @@ public class LargeJsonParserTests
         var bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new NewSPDXParser(stream);
+        var parser = new SPDXParser(stream);
 
         var result = parser.Next();
-        Assert.AreEqual(NewSPDXParser.PackagesProperty, result.FieldName);
+        Assert.AreEqual(SPDXParser.PackagesProperty, result.FieldName);
         if (result.Result is IEnumerable enumerable)
         {
             Assert.IsNotNull(enumerable);

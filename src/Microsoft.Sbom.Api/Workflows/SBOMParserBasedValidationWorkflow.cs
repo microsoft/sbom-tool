@@ -25,7 +25,6 @@ using Microsoft.Sbom.Parser;
 using PowerArgs;
 using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
-using Spdx22Constants = Microsoft.Sbom.Parsers.Spdx22SbomParser.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows;
 
