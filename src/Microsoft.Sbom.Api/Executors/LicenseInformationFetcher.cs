@@ -44,7 +44,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                 var componentName = scannedComponent.Component.PackageUrl?.Name;
 
                 // If the clearlyDefinedName contains a / then split it and use the first part as the clearlyDefinedNamespace and the second part as the clearlyDefinedName
-                if (componentName.Contains('/'))
+                if (!string.IsNullOrEmpty(componentName) && componentName.Contains('/'))
                 {
                     string[] clearlyDefinedNameParts = componentName.Split('/');
                     clearlyDefinedNamespace = clearlyDefinedNameParts[0];
