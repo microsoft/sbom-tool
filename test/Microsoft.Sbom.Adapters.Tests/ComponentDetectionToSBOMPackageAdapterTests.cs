@@ -133,7 +133,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sha1Hash = Guid.NewGuid().ToString();
 
         var conanComponent = new ConanComponent("name", "version", md5, sha1Hash);
-        var scannedComponent = new ScannedComponent() { Component = conanComponent };
+        var scannedComponent = new ScannedComponentWithLicense() { Component = conanComponent };
 
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
@@ -144,7 +144,6 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         Assert.IsNotNull(sbomPackage.Checksum.First(x => x.ChecksumValue == conanComponent.Md5Hash));
         Assert.IsNotNull(sbomPackage.Checksum.First(x => x.ChecksumValue == conanComponent.Sha1Hash));
         Assert.AreEqual(conanComponent.PackageSourceURL, sbomPackage.PackageSource);
-        Assert.AreEqual(conanComponent.Supplier, sbomPackage.Supplier);
     }
 
     [TestMethod]

@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Collections.Generic;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
 
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
+
 internal static class ConanComponentExtension
 {
-    public static SbomPackage? ToSbomPackage(this ConanComponent conanComponent)
+    public static SbomPackage? ToSbomPackage(this ConanComponent conanComponent, string? license = null)
     {
         var lst = new List<Checksum>();
         if (!string.IsNullOrEmpty(conanComponent.Md5Hash))
@@ -26,7 +30,7 @@ internal static class ConanComponentExtension
             });
         }
 
-        return new ()
+        return new()
         {
             Id = conanComponent.Id,
             PackageUrl = conanComponent.PackageUrl?.ToString(),
@@ -34,8 +38,8 @@ internal static class ConanComponentExtension
             PackageVersion = conanComponent.Version,
             PackageSource = conanComponent.PackageSourceURL,
             FilesAnalyzed = false,
+            LicenseInfo = string.IsNullOrWhiteSpace(license) ? null : new LicenseInfo { Concluded = license },
             Checksum = lst,
-            Supplier = conanComponent.Supplier,
             Type = "conan"
         };
     }
