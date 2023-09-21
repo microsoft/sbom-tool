@@ -7,7 +7,7 @@
         </PackageVersion>
     </ItemDefinitionGroup>
     <PropertyGroup>
-        <ComponentDetectionPackageVersion>3.6.4</ComponentDetectionPackageVersion>
+        <ComponentDetectionPackageVersion>3.7.0</ComponentDetectionPackageVersion>
     </PropertyGroup>
     <ItemGroup>
         <PackageVersion Include="AutoMapper" Version="10.1.1" />
