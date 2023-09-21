@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -10,6 +10,7 @@ using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Config.Extensions;
+using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Extensions.DependencyInjection;
 using PowerArgs;
 
@@ -72,6 +73,11 @@ internal class Program
                         .AddSbomTool();
                 })
                 .RunConsoleAsync(x => x.SuppressStatusMessages = true);
+        }
+        catch (AccessDeniedValidationArgException e)
+        {
+            Console.WriteLine(e.Message);
+            Environment.ExitCode = (int)ExitCode.WriteAccessError;
         }
         catch (Exception e)
         {
