@@ -23,6 +23,7 @@ public static class ScannedComponentExtensions
         {
             CargoComponent cargoComponent => cargoComponent.ToSbomPackage(component?.License),
             CondaComponent condaComponent => condaComponent.ToSbomPackage(),
+            ConanComponent conanComponent => conanComponent.ToSbomPackage(component?.License),
             DockerImageComponent dockerImageComponent => dockerImageComponent.ToSbomPackage(),
             GitComponent gitComponent => gitComponent.ToSbomPackage(),
             GoComponent goComponent => goComponent.ToSbomPackage(),
