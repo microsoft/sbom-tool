@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+namespace Microsoft.Sbom.Common;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -8,21 +10,29 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
 
-namespace Microsoft.Sbom.Common;
-
+/// <summary>
+/// Wrapper around file system functions. Used for unit testing.
+/// Windows implementation.
+/// </summary>
 [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "This is a Windows only implementation")]
 public class WindowsFileSystemUtils : FileSystemUtils
 {
-    public override bool DirectoryHasReadPermissions(string directoryPath) => DirectoryHasRights(directoryPath, FileSystemRights.Read);
+    /// <inheritdoc />
+    public override bool DirectoryHasReadPermissions(string directoryPath) => this.DirectoryHasRights(directoryPath, FileSystemRights.Read);
 
-    public override bool DirectoryHasWritePermissions(string directoryPath) => DirectoryHasRights(directoryPath, FileSystemRights.Write);
+    /// <inheritdoc />
+    public override bool DirectoryHasWritePermissions(string directoryPath) =>
+        this.DirectoryHasRights(directoryPath, FileSystemRights.Write);
 
-    // Get the collection of authorization rules that apply to the directory
+    /// <summary>
+    /// Get the collection of authorization rules that apply to the directory.
+    /// </summary>
+    /// <returns>True if the directory has the specified rights, false otherwise.</returns>
     private bool DirectoryHasRights(string directoryPath, FileSystemRights fileSystemRights)
     {
         try
         {
-            WindowsIdentity current = WindowsIdentity.GetCurrent();
+            var current = WindowsIdentity.GetCurrent();
             var directoryInfo = new DirectoryInfo(directoryPath);
 
             return HasAccessControlType(AccessControlType.Allow) && !HasAccessControlType(AccessControlType.Deny);
@@ -32,9 +42,10 @@ public class WindowsFileSystemUtils : FileSystemUtils
             {
                 var accessRules = directoryInfo.GetAccessControl().GetAccessRules(true, true, typeof(SecurityIdentifier))
                     .Cast<FileSystemAccessRule>()
-                    .Any(rule => (current.Groups.Contains(rule.IdentityReference) || current.User.Equals(rule.IdentityReference))
-                                 && ((fileSystemRights & rule.FileSystemRights) == fileSystemRights)
-                                 && (rule.AccessControlType == accessControlType));
+                    .Any(
+                        rule => (current.Groups.Contains(rule.IdentityReference) || current.User.Equals(rule.IdentityReference))
+                                && (fileSystemRights & rule.FileSystemRights) == fileSystemRights
+                                && rule.AccessControlType == accessControlType);
                 return accessRules;
             }
         }
