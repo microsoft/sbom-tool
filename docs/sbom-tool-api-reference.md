@@ -87,7 +87,6 @@ namespace SBOMApiExample
                                                metadata: metadata,
                                                runtimeConfiguration: configuration,
                                                manifestDirPath: sbomOutputPath);
-                Console.WriteLine(result);
                 hostApplicationLifetime.StopApplication();
             });
         }
