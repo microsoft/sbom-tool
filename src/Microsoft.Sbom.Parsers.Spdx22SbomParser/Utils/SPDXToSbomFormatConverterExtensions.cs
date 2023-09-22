@@ -85,7 +85,7 @@ public static class SPDXToSbomFormatConverterExtensions
     /// </summary>
     /// <param name="spdxRelationship"></param>
     /// <returns></returns>
-    internal static SBOMRelationship ToSbomRelationship(this SPDXRelationship spdxRelationship)
+    public static SBOMRelationship ToSbomRelationship(this SPDXRelationship spdxRelationship)
     {
         return new SBOMRelationship
         {
