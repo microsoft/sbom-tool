@@ -60,7 +60,7 @@ The following snippet shows how to set up the `GenerationService` class so that 
 
 Your class must implement the `IHostedService` interface and provide an implementation for the `StartAsync` and `StopAsync` methods. Now you can pass an instance of the `ISBOMGenerator` interface to the constructor of your class. This interface is provided by the SBOM API and can be resolved by the DI framework. The `ISBOMGenerator` interface provides the methods to generate the SBOM.
 
-Descriptions of the arguments to the `GenerateSbomAsync` method can be found [here](#scan-based-sbom-generator-api) and [here](#self-provided-data-based-sbom-generator-api) and can be defined anywhere needed as long as they are passed to the `GenerateSbomAsync()` method.
+Descriptions of the arguments to the `GenerateSbomAsync` method can be found [here](#scan-based-sbom-generator-api) and [here](#self-provided-data-based-sbom-generator-api) and can be defined anywhere needed as long as they are passed to the `GenerateSbomAsync` method.
 
 ```C#
 using Microsoft.Extensions.Hosting;
