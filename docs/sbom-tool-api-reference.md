@@ -5,6 +5,7 @@ The SBOM tool can be called using a C# API. This guide will help you integrate t
 ## Prerequisites
 * You have a .NET project that can ingest packages from nuget.org.
 * Only projects that target .NET 6 or higher are supported, we don't have a .NET Framework implementation for the SBOM API. 
+* You are using [Microsoft Dependency Injection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection) in your project.
 * Add the **SBOMToolsPublic** repository to your nuget.config, you can check the steps to get it added to your project by clicking the **'Connect to Feed'** button on the feed page [here](https://dev.azure.com/mseng/PipelineTools/_artifacts/feed/SBOMToolsPublic)
 
 ## Installation
@@ -18,7 +19,7 @@ Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Micro
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Sbom.Api" Version="0.1.7" />
+    <PackageReference Include="Microsoft.Sbom.Api" Version="1.6.2" />
   </ItemGroup>
 
 </Project>
@@ -26,11 +27,76 @@ Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Micro
 
 ## Getting started 
 
-The main entry point for the SBOM generator is in the `SBOMGenerator` class. Create an instance of the `SBOMGenerator` class as follows.
+The main entry point for the SBOM generator is in the `SBOMGenerator` class. In order to create an instance of the SBOMGenerator class there are a few arguments that need to be provided. These arguments can be resolved 
+through the dependency injection framework. The following code snippet shows how to create an instance of the SBOMGenerator class using the dependency injection framework using a pattern that is common when using this approach.
+
+You can create a Host and add a hosted service that will call the SBOM API along with its dependencies. By calling `.AddSbomTool()` on the service collection, the SBOM API will 
+be added to the dependency injection framework and can be resolved by the hosted service. The hosted service can then be started by calling `RunConsoleAsync` on the host.
 
 ```C#
-using Microsoft.Sbom.Api;
-var generator = new SBOMGenerator();
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Sbom.Extensions.DependencyInjection;
+
+namespace SBOMApiExample;
+class Program
+{
+    public static async Task Main(string[] args)
+    {
+        await Host.CreateDefaultBuilder(args)
+            .ConfigureServices((host, services) =>
+            {
+                services
+                .AddHostedService<GenerationService>()
+                .AddSbomTool();
+            })
+            .RunConsoleAsync(x => x.SuppressStatusMessages = true);
+    }
+}
+```
+
+Now that the entry point is setup, we can define the hosted service. In this example, we will use the `GenerationService` class (This class is user defined) as the hosted service. The `GenerationService` class will be responsible for calling the SBOM API and generating the SBOM.
+The following snippet shows how to set up the `GenerationService` class so that arguments are resolved through DI.
+
+Your class must implement the `IHostedService` interface and provide an implementation for the `StartAsync` and `StopAsync` methods. Now you can pass an instance of the `ISBOMGenerator` interface to the constructor of your class. This interface is provided by the SBOM API and can be resolved by the DI framework. The `ISBOMGenerator` interface provides the methods to generate the SBOM.
+
+Descriptions of the arguments to the `GenerateSbomAsync` method can be found [here](#scan-based-sbom-generator-api) and [here](#self-provided-data-based-sbom-generator-api) and can be defined anywhere needed as long as they are passed to the `GenerateSbomAsync` method.
+
+```C#
+using Microsoft.Extensions.Hosting;
+using Microsoft.Sbom.Contracts;
+
+namespace SBOMApiExample
+{
+    public class GenerationService: IHostedService
+    {
+        private readonly ISBOMGenerator generator;
+        private readonly IHostApplicationLifetime hostApplicationLifetime;
+        public GenerationService(ISBOMGenerator generator, IHostApplicationLifetime hostApplicationLifetime)
+        {
+            this.generator = generator;
+            this.hostApplicationLifetime = hostApplicationLifetime;
+        }
+
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            await Task.Run(async () =>
+            {
+                var result = await generator.GenerateSbomAsync(rootPath: scanPath,
+                                               componentPath: componentPath,
+                                               metadata: metadata,
+                                               runtimeConfiguration: configuration,
+                                               manifestDirPath: sbomOutputPath);
+                Console.WriteLine(result);
+                hostApplicationLifetime.StopApplication();
+            });
+        }
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+    }
+}
 ```
 
 The generator object provides two different API implementations that can be used to generate the SBOM, [scan based](#scan-based-sbom-generator-api) and [self provided data based](#self-provided-data-based-sbom-generator-api).
@@ -112,18 +178,16 @@ RuntimeConfiguration configuration = new RuntimeConfiguration()
 };
 ```
 
-The whole `RuntimeConfiguration` object is optional, and if needed a null value can be provided to the API.
-
 ## Scan based SBOM generator API
 
 The scan based SBOM generator API is very similar to the CLI based tool, as in it takes the source directories as parameters, and scans the directories for components and generates the SBOM for you.
 
 ```C#
 
-var result = await generator.GenerateSBOMAsync(rootPath: scanPath,           
+var result = await generator.GenerateSbomAsync(rootPath: scanPath,
                                                componentPath: componentPath,
                                                metadata: metadata,
-                                               configuration: configuration,
+                                               runtimeConfiguration: configuration,
                                                manifestDirPath: sbomOutputPath);
 
 Assert.True(result.IsSuccessful);
@@ -131,7 +195,7 @@ Assert.False(result.Errors.Any());
 ```
 
 * The `rootPath` here is the path where your build artifacts that are to be published live. All the files here will be scanned and added to the 'files' section in the SBOM. If the `manifestDirPath` parameter is not provided, the generated SBOM will also be placed here inside the `_manifest` folder.
-* The `componentPath` parameter usually contains your source folder, and it will be searched for dependency compenents. All the discovered components will end up in the 'packages' section in the SBOM.
+* The `componentPath` parameter usually contains your source folder, and it will be searched for dependency compenents. All the discovered components will end up in the 'packages' section in the SBOM. This parameter is optional, and if not provided, the SBOM will not contain any packages.
 * The `metadata` and `configuration` parameters accept the [`SBOMMetadata`](#sbommetadata) and [`RuntimeConfiguration`](#runtimeconfiguration) objects respectively.
 * In case you want the generated SBOM to be placed in a different folder, you can provide the path in the `manifestDirPath` parameter. Please note, we will generate a `_manifest` directory at this path and store the SBOMs there.
 
