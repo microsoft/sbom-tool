@@ -1,15 +1,15 @@
 # SBOM API Reference
 
-The SBOM tool can be called using a C# API. This guide will help you integrate the SBOM tool API package in your .NET project.
+Users can use the C#-based SBOM API for calling the SBOM tool. This guide is intended to assist users in integrating the SBOM tool API package in a .NET project.
 
 ## Prerequisites
-* You have a .NET project that can ingest packages from nuget.org.
-* Only projects that target .NET 6 or higher are supported, we don't have a .NET Framework implementation for the SBOM API. 
-* Add the **SBOMToolsPublic** repository to your nuget.config, you can check the steps to get it added to your project by clicking the **'Connect to Feed'** button on the feed page [here](https://dev.azure.com/mseng/PipelineTools/_artifacts/feed/SBOMToolsPublic)
+* A .NET project that can ingest packages from nuget.org.
+* Only projects that target .NET 6 or higher.  This API currently provides no support for implementation of .NET Framework for the SBOM API. 
+* Add the **SBOMToolsPublic** repository to the nuget.config.  Verify the project configuration by clicking the **'Connect to Feed'** button on the feed page [here](https://dev.azure.com/mseng/PipelineTools/_artifacts/feed/SBOMToolsPublic)
 
 ## Installation
 
-Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Microsoft.Sbom.Api) package in your packages configuration. Please follow the steps [here](https://www.nuget.org/packages/Microsoft.Sbom.Api) to add the package to your project. An example to add the package to your `.csproj` file is shown below
+Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Microsoft.Sbom.Api) package configuration by utilizing the steps posted to [here](https://www.nuget.org/packages/Microsoft.Sbom.Api).  A sample `.csproj` file" is:
 
 ```
 <Project Sdk="Microsoft.NET.Sdk">
@@ -26,20 +26,20 @@ Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Micro
 
 ## Getting started 
 
-The main entry point for the SBOM generator is in the `SBOMGenerator` class. Create an instance of the `SBOMGenerator` class as follows.
+The main entry point for the SBOM generator API is the `SBOMGenerator` class. Users can create an instance of the `SBOMGenerator` class:
 
 ```C#
 using Microsoft.Sbom.Api;
 var generator = new SBOMGenerator();
 ```
 
-The generator object provides two different API implementations that can be used to generate the SBOM, [scan based](#scan-based-sbom-generator-api) and [self provided data based](#self-provided-data-based-sbom-generator-api).
+The generator object provides two different API implementations for creating the SBOM file - [scan based](#scan-based-sbom-generator-api) and [self provided data based](#self-provided-data-based-sbom-generator-api).
 
-It also provides 2 additional helper methods explained below
+Below are 2 additional helper methods.
 
 ### GetSupportedSBOMSpecifications
 
-A SBOM format is represented by the `SBOMSpecificiation` object. Each `SBOMSpecification` contains a `name` and a `version`. This structure defines a single format of SBOM, for example, the SPDX 2.2 format can be represented by
+The `SBOMSpecificiation` object represents a SBOM format. Each `SBOMSpecification` contains a `name` and a `version`. This structure defines a single format of SBOM.  Sample SPDX version 2.2 format representations include:
 
 ```C#
 using Microsoft.Sbom.Contracts;
@@ -47,7 +47,7 @@ using Microsoft.Sbom.Contracts;
 var spdx22Specification = new SBOMSpecification("SPDX", "2.2");
 ```
 
-Our tool is designed to support multiple formats of SBOM, however it currently only supports SPDX v2.2. If you have additional SBOM formats that are implememnted, this handy API call can provide you with a list of all the formats that are currently supported by our tool.
+While this API supports the creation of a SBOM output file in multiple formats, it currently only supports the SPDX version 2.2 architecture. Users looking to implement other SBOM architectures can use this API call, which provides the full list of all supported formats.
 
 ```C#
 using Xunit;
@@ -61,7 +61,7 @@ Assert.Equal("2.2", specifications.First().Version);
 
 ### GetRequiredAlgorithms
 
-Each SBOM specification has a list of hash algorithms that are required to be generated for each package and file. This handy API will provide a list of hashing algorithms that are required for a specific SBOM format.
+Each SBOM specification has a list of the required hash algorithms for generating each package and file. This handy API provides the user with that list of hashing algorithms.
 
 ```C#
 
@@ -73,15 +73,15 @@ Assert.True(algorithms.Any(a => a.Name == "SHA1"));
 
 ```
 
-This API is helpful when using the self provided data based API, as the caller would have to provide these hashes for all the packages and files they send as part of the input data.
+This API is a useful tool when utilizing the self-provided data-based API.  The API caller will need to supply these hashes for all the packages and files being sent as part of the input data.
 
 ## Prerequisites for calling the API
 
-In order to call the API, you must first generate one required and one optional data object.
+In order to call the API, the user must first include a minimum of one required object and one optional data object.
 
-### SBOMMetadata
+### SBOM Metadata
 
-The `SBOMMetadata` object provides the SBOM tool with additional metadata that can be used to configure some output metadata values in the SBOM, for example the product name or version.
+The `SBOMMetadata` object provides the API with additional metadata for use in configuring output metadata values in the SBOM file, e.g., product name or version:
 
 ```C#
 
@@ -95,12 +95,12 @@ SBOMMetadata metadata = new SBOMMetadata()
 };
 ```
 
-The metadata object **must** be created and passed to the API as it contains two required values for the SBOM generator to run, the package name and version. These values are used in the generated SBOM to define the name and documentNamespace. The other keys in the metadata object are optional, and the tool may or may not use these values to generate additional metadata in the created SBOM.
+The metadata object **must** be created and passed to the API as it contains two required values needed for the SBOM generator to run (i.e., the package name and version). The API uses these values in the generated SBOM files in order to define the name and documentNamespace. Since the other keys in the metadata object are optional, the API may or may not use these values in order to generate additional metadata in the output SBOM file.
 
 
 ### RuntimeConfiguration
 
-The `RuntimeConfiguration` object contains configuration that affects the actual execution of the SBOM tool. It contains configurations like Verbosity that can affect how much logging is returned by our tool. 
+The `RuntimeConfiguration` object contains details on the configuration that affects the runtime execution of the API. Configurations such as Verbosity can directly impact the extent or quality of the tool's logging output file. 
 
 ```C#
 RuntimeConfiguration configuration = new RuntimeConfiguration()
@@ -112,11 +112,11 @@ RuntimeConfiguration configuration = new RuntimeConfiguration()
 };
 ```
 
-The whole `RuntimeConfiguration` object is optional, and if needed a null value can be provided to the API.
+The whole `RuntimeConfiguration` object is optional.  As needed, the user can provide a null value to the API.
 
-## Scan based SBOM generator API
+## Scan-based SBOM generator API
 
-The scan based SBOM generator API is very similar to the CLI based tool, as in it takes the source directories as parameters, and scans the directories for components and generates the SBOM for you.
+The scan-based SBOM generator API is very similar to the CLI-based tool.  This API uses source directories as parameters.  After scanning the directories for components, the API generates the output SBOM file.
 
 ```C#
 
@@ -130,21 +130,21 @@ Assert.True(result.IsSuccessful);
 Assert.False(result.Errors.Any());
 ```
 
-* The `rootPath` here is the path where your build artifacts that are to be published live. All the files here will be scanned and added to the 'files' section in the SBOM. If the `manifestDirPath` parameter is not provided, the generated SBOM will also be placed here inside the `_manifest` folder.
-* The `componentPath` parameter usually contains your source folder, and it will be searched for dependency compenents. All the discovered components will end up in the 'packages' section in the SBOM.
+* The `rootPath` dictates the destination path for publishing the build artifacts. The API will scan all files in 'rootPath' and will subsequently add them to the 'files' section in the SBOM output file. If the command does not include the `manifestDirPath` parameter, the tool will generate the SBOM inside the default `_manifest` folder.
+* The `componentPath` parameter normally contains the source folder, which the API will search for dependency components. The 'packages' section in the SBOM file will list the discovered components.
 * The `metadata` and `configuration` parameters accept the [`SBOMMetadata`](#sbommetadata) and [`RuntimeConfiguration`](#runtimeconfiguration) objects respectively.
-* In case you want the generated SBOM to be placed in a different folder, you can provide the path in the `manifestDirPath` parameter. Please note, we will generate a `_manifest` directory at this path and store the SBOMs there.
+* As desired, the `manifestDirPath` parameter allows users to specify a full folder path if they want the API to save the SBOM to a directory other than the default `_manifest` location.  The API will store the SBOM file in the `_manifest` subfolder under the user-specified path.
 
-The API is asynchronous and it returns a `SBOMGenerationResult` object. If the generation was successful, the `IsSuccessful` flag is set to `true`. If the generation failed, the errors will be added to the `Errors` list.
-## Self provided data based SBOM generator API
+The API asynchronously returns a `SBOMGenerationResult` object. A successful SBOM file generation will set the `IsSuccessful` flag value to `true`.  A failed generation run will add the errors to the `Errors` list.
+## Self-provided data-based SBOM generator API
 
-There might be occasions where you don't want us to scan for your components, and you already have the list of files and packages you want to include in the SBOM and want to use our tool only to serialize the data in the right format, the self provided data based API is the choice for you.
+There might be occasions where users do not want the API to scan for the target components.  The self-provided data-based API is an ideal choice for those scenarios where users have the list of files and packages for inclusion in the SBOM file.  The self-provided data-based SBOM generator API gives users the ability to serialize the data in the desired format.
 
-You will still have to provide the metadata and runtime objects for this API.
+Users will still have to provide the metadata and runtime objects for this API.
 
 ### SBOMFile
 
-A file inside the SBOM is represented using the `SBOMFile` object. `Path` and `Checksum` are the only required properties, any additional values will be serialized as is to the final SBOM. 
+`Path` and `Checksum` are the only required properties for use in the `SBOMFile` object in order to represent a file inside the SBOM.  The API will serialize any additional values unchanged "as-is" in the output SBOM file. 
 
 ```C#
 var file = new SBOMFile
@@ -158,12 +158,12 @@ var file = new SBOMFile
 };
 ```
 
-The path should be a relative path and should start with a period `.`, and all the path seperators should be forward slashes `/` to comply with the SPDX 2.2 specification.
+The API looks for a relative path starting with a period `.`.  All path separators should include forward slashes `/` in compliance with the SPDX version 2.2 specification.
 
 
 ### SBOMPackage
 
-The SBOM package represents a dependency component for your product. The `PackageName` is the only required property. All other properties will be serialized as is to the output SBOM.
+'SBOMpackage' represents a dependency component for the product. The `PackageName` is the only required property. The API will serialize all other properties unchanged "as-is" in the final output SBOM file.
 
 ```C#
 
@@ -174,7 +174,7 @@ var package = new SBOMPackage
 };
 ```
 
-You can call the API as shown below.
+You can call the API as shown below:
 
 ```C#
 using Microsoft.Sbom.Contracts.Enums;
@@ -187,7 +187,8 @@ var result = await generator.GenerateSBOMAsync(rootPath: scanPath,
                                                manifestDirPath: sbomOutputPath);
 ```
 
-* The `rootPath` is the path where the generated SBOM will be placed. If you are providing the `manifestDirPath` parameter to specify the SBOM generation location, you can use a `null` value here.
-* The `files` parameter contains a list of `SBOMFile` objects, and the `packages` parameter contains a list of `SBOMPackage` objects. 
-* The `metadata` and `runtimeConfiguration` parameters accept the [`SBOMMetadata`](#sbommetadata) and [`RuntimeConfiguration`](#runtimeconfiguration) objects respectively.
-* In case you want the generated SBOM to be placed in a different folder, you can provide the path in the `manifestDirPath` parameter. Please note, we will generate a `_manifest` directory at this path and store the SBOMs there.
+* The `rootPath` specifies the path for placing the output SBOM file. User specifying the destination path with the `manifestDirPath` parameter can  utilize the `null` value for `rootPath`.
+* The `files` parameter contains a list of `SBOMFile` objects.
+* The `packages` parameter contains a list of `SBOMPackage` objects. 
+* The `metadata` and `runtimeConfiguration` parameters accept the [`SBOMMetadata`](#sbommetadata) and [`RuntimeConfiguration`](#runtimeconfiguration) objects (respectively).
+* If users want the API to generate the output SBOM in a different folder other the default location, they need to provide the path in the `manifestDirPath` parameter. Users will find the SBOM file under the `_manifest` directory at the user-specified path.
