@@ -7,7 +7,7 @@
         </PackageVersion>
     </ItemDefinitionGroup>
     <PropertyGroup>
-        <ComponentDetectionPackageVersion>3.6.4</ComponentDetectionPackageVersion>
+        <ComponentDetectionPackageVersion>3.7.0</ComponentDetectionPackageVersion>
     </PropertyGroup>
     <ItemGroup>
         <PackageVersion Include="AutoMapper" Version="10.1.1" />
@@ -28,7 +28,7 @@
         <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
         <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.7.30" />
         <PackageVersion Include="MinVer" Version="4.3.0" />
-        <PackageVersion Include="Mono.Unix" Version="7.1.0-final.1.21458.1" />
+        <PackageVersion Include="Mono.Posix.NETStandard" Version="1.0.0" />
         <PackageVersion Include="Moq" Version="4.17.2" />
         <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageVersion Include="NuGet.Frameworks" Version="6.7.0" />

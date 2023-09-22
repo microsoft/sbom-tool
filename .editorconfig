@@ -469,6 +469,11 @@ dotnet_diagnostic.SA1623.severity = none
 # https://github.com/dotnet/roslyn-analyzers/issues/6852
 dotnet_diagnostic.CA1859.severity = none
 
+# NU5104: A stable release of a package should not have a prerelease dependency
+# Justification: The Mono.Unix package that allows our tool to be built on ARM is labeled as 7.1.0-final.1.21458.1 which is detected as a prerelease dependency.
+# https://learn.microsoft.com/en-us/nuget/reference/errors-and-warnings/nu5104
+dotnet_diagnostic.NU5104.severity = none
+
 ##########################################
 # Temporary rules
 #
@@ -769,10 +774,6 @@ dotnet_diagnostic.CA1813.severity = suggestion
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1815
 # CA1815: Override equals and operator equals on value types
 dotnet_diagnostic.CA1815.severity = suggestion
-
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1816
-# CA1816: Call GC.SuppressFinalize correctly
-dotnet_diagnostic.CA1816.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1819
 # CA1819: Properties should not return arrays
