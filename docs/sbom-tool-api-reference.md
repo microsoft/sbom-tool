@@ -55,7 +55,7 @@ class Program
 }
 ```
 
-Now that the entry point is setup, we can define the hosted service. In this example, we will use the `GenerationService` class (This class is user defined) as the hosted service. The `GenerationService` class will be responsible for calling the SBOM API and generating the SBOM.
+Now that the entry point is set up, we can define the hosted service. In this example, we will use the `GenerationService` class (This class is user defined) as the hosted service. The `GenerationService` class will be responsible for calling the SBOM API and generating the SBOM.
 The following snippet shows how to set up the `GenerationService` class so that arguments are resolved through DI.
 
 Your class must implement the `IHostedService` interface and provide an implementation for the `StartAsync` and `StopAsync` methods. Now you can pass an instance of the `ISBOMGenerator` interface to the constructor of your class. This interface is provided by the SBOM API and can be resolved by the DI framework. The `ISBOMGenerator` interface provides the methods to generate the SBOM.
