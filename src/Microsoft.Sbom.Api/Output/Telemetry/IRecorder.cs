@@ -58,11 +58,18 @@ public interface IRecorder
     public void RecordSwitch(string switchName, object value);
 
     /// <summary>
-    /// Record any exception that was encountered during the exection of the tool.
+    /// Record any exception that was encountered during the execution of the tool.
     /// </summary>
     /// <param name="exception">The exception that was encountered.</param>
     /// <exception cref="ArgumentNullException">If the exception is null.</exception>
     public void RecordException(Exception exception);
+
+    /// <summary>
+    /// Record any exception that was encountered during the execution of API calls.
+    /// </summary>
+    /// <param name="exception">The exception that was encountered.</param>
+    /// <exception cref="ArgumentNullException">If the exception is null.</exception>
+    public void RecordAPIException(Exception exception);
 
     /// <summary>
     /// Finalize the recorder, and log the telemetry.
