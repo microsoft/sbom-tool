@@ -13,6 +13,8 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
+using Microsoft.Sbom.Adapters.ComponentDetection;
+
 /// <summary>
 /// Takes a <see cref="ScannedComponent"/> object and converts it to a <see cref="PackageInfo"/>
 /// object using a <see cref="IPackageInfoConverter"/>.

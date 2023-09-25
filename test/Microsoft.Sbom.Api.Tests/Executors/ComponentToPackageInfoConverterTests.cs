@@ -23,6 +23,8 @@ using PackageInfo = Microsoft.Sbom.Contracts.SbomPackage;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
 
+using Microsoft.Sbom.Adapters.ComponentDetection;
+
 [TestClass]
 public class ComponentToPackageInfoConverterTests
 {
