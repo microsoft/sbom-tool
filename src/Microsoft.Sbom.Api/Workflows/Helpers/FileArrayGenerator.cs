@@ -53,7 +53,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
         {
             IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
 
-            IEnumerable<ISourcesProvider> sourcesProviders = this.sourcesProviders
+            var sourcesProviders = this.sourcesProviders
                 .Where(s => s.IsSupported(ProviderType.Files));
 
             // Write the start of the array, if supported.
@@ -62,7 +62,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
             {
                 var config = sbomConfigs.Get(manifestInfo);
 
-                if (config.MetadataBuilder.TryGetFilesArrayHeaderName(out string filesArrayHeaderName))
+                if (config.MetadataBuilder.TryGetFilesArrayHeaderName(out var filesArrayHeaderName))
                 {
                     config.JsonSerializer.StartJsonArray(filesArrayHeaderName);
                     filesArraySupportingSBOMs.Add(config);
@@ -74,12 +74,12 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
             {
                 var (jsondDocResults, errors) = sourcesProvider.Get(filesArraySupportingSBOMs);
 
-                await foreach (JsonDocWithSerializer jsonResults in jsondDocResults.ReadAllAsync())
+                await foreach (var jsonResults in jsondDocResults.ReadAllAsync())
                 {
                     jsonResults.Serializer.Write(jsonResults.Document);
                 }
 
-                await foreach (FileValidationResult error in errors.ReadAllAsync())
+                await foreach (var error in errors.ReadAllAsync())
                 {
                     // TODO fix errors.
                     if (error.ErrorType != ErrorType.ManifestFolder)
@@ -90,7 +90,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
             }
 
             // Write the end of the array.
-            foreach (ISbomConfig config in filesArraySupportingSBOMs)
+            foreach (var config in filesArraySupportingSBOMs)
             {
                 config.JsonSerializer.EndJsonArray();
             }

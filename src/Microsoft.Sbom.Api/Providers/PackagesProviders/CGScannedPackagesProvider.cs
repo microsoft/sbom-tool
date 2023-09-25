@@ -77,7 +77,7 @@ public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent
     {
         var (output, cdErrors) = packagesWalker.GetComponents(Configuration.BuildComponentPath?.Value);
 
-        if (cdErrors.TryRead(out ComponentDetectorException e))
+        if (cdErrors.TryRead(out var e))
         {
             throw e;
         }

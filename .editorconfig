@@ -919,10 +919,6 @@ dotnet_diagnostic.CS8632.severity = suggestion
 # IDE0005: Using directive is unnecessary
 dotnet_diagnostic.IDE0005.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0007
-# IDE0007:  use 'var' instead of explicit type
-dotnet_diagnostic.IDE0007.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0009
 # IDE0009: Add 'this' or 'Me' qualification
 dotnet_diagnostic.IDE0009.severity = suggestion

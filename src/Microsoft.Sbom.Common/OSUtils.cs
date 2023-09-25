@@ -38,7 +38,7 @@ public class OSUtils : IOSUtils
             environmentVariables.Add(de.Key.ToString(), de.Value.ToString());
         }
 
-        foreach (OSPlatform os in oSPlatforms)
+        foreach (var os in oSPlatforms)
         {
             if (RuntimeInformation.IsOSPlatform(os))
             {

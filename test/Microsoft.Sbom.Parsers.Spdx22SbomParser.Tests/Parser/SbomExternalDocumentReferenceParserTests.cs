@@ -18,7 +18,7 @@ public class SbomExternalDocumentReferenceParserTests
     [TestMethod]
     public void ParseSbomExternalDocumentReferenceTest()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.GoodJsonWith2ExtDocumentRefsString);
+        var bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.GoodJsonWith2ExtDocumentRefsString);
         using var stream = new MemoryStream(bytes);
         var count = 0;
 
@@ -47,7 +47,7 @@ public class SbomExternalDocumentReferenceParserTests
     [ExpectedException(typeof(ObjectDisposedException))]
     public void StreamClosedTestReturnsNull()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.GoodJsonWith2ExtDocumentRefsString);
+        var bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.GoodJsonWith2ExtDocumentRefsString);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
@@ -84,7 +84,7 @@ public class SbomExternalDocumentReferenceParserTests
     [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
@@ -103,7 +103,7 @@ public class SbomExternalDocumentReferenceParserTests
     [TestMethod]
     public void IgnoresAdditionalPropertiesTest(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
@@ -123,7 +123,7 @@ public class SbomExternalDocumentReferenceParserTests
     [ExpectedException(typeof(ParserException))]
     public void MalformedJsonTest_Throws(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
@@ -137,7 +137,7 @@ public class SbomExternalDocumentReferenceParserTests
     [TestMethod]
     public void EmptyArray_ValidJson()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.EmptyArray);
+        var bytes = Encoding.UTF8.GetBytes(ExternalDocumentReferenceStrings.EmptyArray);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
@@ -152,7 +152,7 @@ public class SbomExternalDocumentReferenceParserTests
     [ExpectedException(typeof(ArgumentException))]
     public void NullOrEmptyBuffer_Throws()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
+        var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream, Array.Empty<ParserState>(), 0, ignoreValidation: true);

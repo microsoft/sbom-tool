@@ -35,7 +35,7 @@ public class ManifestFolderFilterer
 
         Task.Run(async () =>
         {
-            await foreach (string file in files.ReadAllAsync())
+            await foreach (var file in files.ReadAllAsync())
             {
                 await FilterFiles(file, errors, output);
             }

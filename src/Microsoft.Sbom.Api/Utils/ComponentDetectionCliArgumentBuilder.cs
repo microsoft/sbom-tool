@@ -191,7 +191,7 @@ public class ComponentDetectionCliArgumentBuilder
         }
 
         var argArray = Args.Convert(args);
-        for (int i = 0; i < argArray.Length; i++)
+        for (var i = 0; i < argArray.Length; i++)
         {
             if (argArray[i].StartsWith("--", StringComparison.Ordinal) && i + 1 < argArray.Length && !argArray[i + 1].StartsWith("--", StringComparison.Ordinal))
             {

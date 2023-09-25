@@ -330,7 +330,7 @@ public class SPDXParser : ISbomParser
             throw new ParserException($"The parser is not currently enumerating references. Current state: {CurrentState}");
         }
 
-        while (GetExternalDocumentReferences(stream, out SpdxExternalDocumentReference spdxExternalDocumentReference) != 0)
+        while (GetExternalDocumentReferences(stream, out var spdxExternalDocumentReference) != 0)
         {
             yield return spdxExternalDocumentReference.ToSbomReference();
         }
@@ -393,7 +393,7 @@ public class SPDXParser : ISbomParser
             throw new ParserException($"The parser is not currently enumerating relationships. Current state: {CurrentState}");
         }
 
-        while (GetRelationships(stream, out SPDXRelationship sbomRelationship) != 0)
+        while (GetRelationships(stream, out var sbomRelationship) != 0)
         {
             yield return sbomRelationship.ToSbomRelationship();
         }
@@ -456,7 +456,7 @@ public class SPDXParser : ISbomParser
             throw new ParserException($"The parser is not currently enumerating packages. Current state: {CurrentState}");
         }
 
-        while (GetPackages(stream, out SPDXPackage sbomPackage) != 0)
+        while (GetPackages(stream, out var sbomPackage) != 0)
         {
             yield return sbomPackage.ToSbomPackage();
         }
@@ -519,7 +519,7 @@ public class SPDXParser : ISbomParser
             throw new ParserException($"The parser is not currently enumerating files. Current state: {CurrentState}");
         }
 
-        while (GetFiles(stream, out SPDXFile sbomFile) != 0)
+        while (GetFiles(stream, out var sbomFile) != 0)
         {
             yield return sbomFile.ToSbomFile();
         }

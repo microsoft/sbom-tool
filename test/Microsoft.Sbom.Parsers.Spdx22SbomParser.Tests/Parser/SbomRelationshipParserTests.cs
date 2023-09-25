@@ -18,7 +18,7 @@ public class SbomRelationshipParserTests
     [TestMethod]
     public void ParseSbomRelationshipsTest()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
+        var bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
         using var stream = new MemoryStream(bytes);
         var count = 0;
 
@@ -47,7 +47,7 @@ public class SbomRelationshipParserTests
     [ExpectedException(typeof(ObjectDisposedException))]
     public void StreamClosedTestReturnsNull()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
+        var bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
@@ -83,7 +83,7 @@ public class SbomRelationshipParserTests
     [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream, Array.Empty<ParserState>(), 50);
@@ -102,7 +102,7 @@ public class SbomRelationshipParserTests
     [TestMethod]
     public void IgnoresAdditionalPropertiesTest(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
@@ -123,7 +123,7 @@ public class SbomRelationshipParserTests
     [ExpectedException(typeof(ParserException))]
     public void MalformedJsonTest_Throws(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
@@ -137,7 +137,7 @@ public class SbomRelationshipParserTests
     [TestMethod]
     public void EmptyArray_ValidJson()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.MalformedJsonEmptyArray);
+        var bytes = Encoding.UTF8.GetBytes(RelationshipStrings.MalformedJsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
@@ -152,7 +152,7 @@ public class SbomRelationshipParserTests
     [ExpectedException(typeof(ArgumentException))]
     public void NullOrEmptyBuffer_Throws()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
+        var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream, Array.Empty<ParserState>(), 0, ignoreValidation: true);

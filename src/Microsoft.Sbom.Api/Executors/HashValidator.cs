@@ -55,7 +55,7 @@ public class HashValidator
             Path = fileHash.Path
         };
 
-        if (manifestData.HashesMap.TryGetValue(fileHash.Path, out Checksum[] expectedHashes))
+        if (manifestData.HashesMap.TryGetValue(fileHash.Path, out var expectedHashes))
         {
             manifestData.HashesMap.Remove(fileHash.Path);
 

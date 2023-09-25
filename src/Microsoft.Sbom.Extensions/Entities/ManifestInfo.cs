@@ -72,7 +72,7 @@ public class ManifestInfo : IEquatable<ManifestInfo>
 
     public override int GetHashCode()
     {
-        int hashCode = 2112831277;
+        var hashCode = 2112831277;
         hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name.ToLowerInvariant());
         hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Version.ToLowerInvariant());
         return hashCode;
