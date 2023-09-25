@@ -20,7 +20,7 @@ public class LicenseInformationService : ILicenseInformationService
     private readonly ILogger log;
     private readonly IRecorder recorder;
     private readonly HttpClient httpClient;
-    private const int ClientTimeoutMinutes = 6;
+    private const int ClientTimeoutSeconds = 30;
 
     public LicenseInformationService(ILogger log, IRecorder recorder, HttpClient httpClient)
     {
@@ -35,10 +35,10 @@ public class LicenseInformationService : ILicenseInformationService
         List<HttpResponseMessage> responses = new List<HttpResponseMessage>();
         List<string> responseContent = new List<string>();
 
-        Uri uri = new Uri("https://api.clearlydefined.io/definitions");
+        Uri uri = new Uri("https://api.clearlydefined.io/definitions?expand=-files");
 
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        httpClient.Timeout = TimeSpan.FromMinutes(ClientTimeoutMinutes);
+        httpClient.Timeout = TimeSpan.FromSeconds(ClientTimeoutSeconds);
 
         for (int i = 0; i < listOfComponentsForApi.Count; i += batchSize)
         {
@@ -59,6 +59,7 @@ public class LicenseInformationService : ILicenseInformationService
             catch (Exception e)
             {
                 log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {e.Message}");
+                recorder.RecordAPIException(new ClearlyDefinedResponseNotSuccessfulException(e.Message));
             }
 
             stopwatch.Stop();
@@ -75,7 +76,7 @@ public class LicenseInformationService : ILicenseInformationService
             else
             {
                 log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information. Request returned status code: {response.StatusCode}");
-                recorder.RecordException(new ClearlyDefinedResponseNotSuccessfulException($"Request returned status code: {response.StatusCode}"));
+                recorder.RecordAPIException(new ClearlyDefinedResponseNotSuccessfulException($"Request returned status code: {response.StatusCode}"));
             }
         }
 
