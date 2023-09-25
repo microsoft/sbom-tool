@@ -38,7 +38,7 @@ public class LicenseInformationService : ILicenseInformationService
         Uri uri = new Uri("https://api.clearlydefined.io/definitions?expand=-files");
 
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        httpClient.Timeout = TimeSpan.FromMilliseconds(ClientTimeoutSeconds);
+        httpClient.Timeout = TimeSpan.FromSeconds(ClientTimeoutSeconds);
 
         for (int i = 0; i < listOfComponentsForApi.Count; i += batchSize)
         {
