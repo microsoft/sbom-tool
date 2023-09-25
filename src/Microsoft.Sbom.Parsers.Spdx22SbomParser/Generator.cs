@@ -80,7 +80,7 @@ public class Generator : IManifestGenerator
             FileCopyrightText = fileInfo.FileCopyrightText ?? Constants.NoAssertionValue,
             LicenseConcluded = fileInfo.LicenseConcluded ?? Constants.NoAssertionValue,
             LicenseInfoInFiles = fileInfo.LicenseInfoInFiles ?? Constants.NoAssertionListValue,
-            FileTypes = fileInfo.FileTypes?.Select(f => GetSPDXFileType(f)).ToList(),
+            FileTypes = fileInfo.FileTypes?.Select(this.GetSPDXFileType).ToList(),
         };
 
         spdxFileElement.AddSpdxId(fileInfo.Path, fileInfo.Checksum);
