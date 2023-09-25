@@ -190,9 +190,8 @@ public class SbomConfigProvider : ISbomConfigProvider
         IMetadataProvider provider = null;
         if (MetadataDictionary.TryGetValue(MetadataKey.BuildEnvironmentName, out var buildEnvironmentName))
         {
-            provider = metadataProviders
-                .Where(p => p.BuildEnvironmentName != null && p.BuildEnvironmentName == buildEnvironmentName as string)
-                .FirstOrDefault();
+            provider = this.metadataProviders
+                .FirstOrDefault(p => p.BuildEnvironmentName != null && p.BuildEnvironmentName == buildEnvironmentName as string);
         }
         else
         {

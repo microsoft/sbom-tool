@@ -46,9 +46,8 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
         {
             IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
 
-            var sourcesProvider = sourcesProviders
-                .Where(s => s.IsSupported(ProviderType.Packages))
-                .FirstOrDefault();
+            var sourcesProvider = this.sourcesProviders
+                .FirstOrDefault(s => s.IsSupported(ProviderType.Packages));
 
             // Write the start of the array, if supported.
             IList<ISbomConfig> packagesArraySupportingConfigs = new List<ISbomConfig>();

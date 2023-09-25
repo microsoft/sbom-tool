@@ -74,7 +74,7 @@ public class ComponentDetectionCliArgumentBuilder
 
         if (keyArgs.Any())
         {
-            var keyArgsCommand = string.Join(" ", keyArgs.Select(x => AsArgumentValue(x)));
+            var keyArgsCommand = string.Join(" ", keyArgs.Select(this.AsArgumentValue));
             command += $" {keyArgsCommand}";
         }
 

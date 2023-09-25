@@ -53,9 +53,7 @@ public class SbomSpecification : IEquatable<SbomSpecification>
         }
 
         var values = value.Split(':');
-        if (values == null
-            || values.Length != 2
-            || values.Any(v => string.IsNullOrWhiteSpace(v)))
+        if (values is not { Length: 2 } || values.Any(string.IsNullOrWhiteSpace))
         {
             throw new ArgumentException($"The SBOM specification string is not formatted correctly. The correct format is <name>:<version>.");
         }
