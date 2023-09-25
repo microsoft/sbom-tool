@@ -32,6 +32,7 @@ public class TelemetryRecorder : IRecorder
     private readonly IDictionary<ManifestInfo, string> sbomFormats = new Dictionary<ManifestInfo, string>();
     private readonly IDictionary<string, object> switches = new Dictionary<string, object>();
     private readonly IList<Exception> exceptions = new List<Exception>();
+    private readonly IList<Exception> apiExceptions = new List<Exception>();
     private int totalNumberOfPackages = 0;
     private int totalNumberOfLicenses = 0;
     private IList<FileValidationResult> errors = new List<FileValidationResult>();
@@ -182,7 +183,7 @@ public class TelemetryRecorder : IRecorder
     }
 
     /// <summary>
-    /// Record any exception that was encountered during the exection of the tool.
+    /// Record any exception that was encountered during the execution of the tool.
     /// </summary>
     /// <param name="exception">The exception that was encountered.</param>
     /// <exception cref="ArgumentNullException">If the exception is null.</exception>
@@ -194,6 +195,21 @@ public class TelemetryRecorder : IRecorder
         }
 
         this.exceptions.Add(exception);
+    }
+
+    /// <summary>
+    /// Record any exception that was encountered during API calls.
+    /// </summary>
+    /// <param name="exception">The exception that was encountered.</param>
+    /// <exception cref="ArgumentNullException">If the exception is null.</exception>
+    public void RecordAPIException(Exception apiException)
+    {
+        if (apiException is null)
+        {
+            throw new ArgumentNullException(nameof(apiException));
+        }
+
+        this.apiExceptions.Add(apiException);
     }
 
     /// <summary>
@@ -275,6 +291,7 @@ public class TelemetryRecorder : IRecorder
                 SBOMFormatsUsed = sbomFormatsUsed,
                 Switches = this.switches,
                 Exceptions = this.exceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),
+                APIExceptions = this.apiExceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),
                 TotalLicensesDetected = this.totalNumberOfLicenses
             };
 
