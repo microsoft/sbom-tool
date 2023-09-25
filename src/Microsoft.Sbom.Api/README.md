@@ -1,5 +1,8 @@
 Generates Software Bill of Materials (SBOM)
 
+See [SBOM API Reference](https://github.com/microsoft/sbom-tool/blob/main/docs/sbom-tool-api-reference.md) for details on how to set up a Generation Service using the Microsoft Dependency
+Injection Library.
+
 #### Scan Sample
 ```C#
 using Microsoft.Extensions.Hosting;
