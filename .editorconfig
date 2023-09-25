@@ -1047,10 +1047,6 @@ dotnet_diagnostic.IDE0220.severity = suggestion
 # IDE0251: Member can be made 'readonly'
 dotnet_diagnostic.IDE0251.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0270
-# IDE0270: Null check can be simplified
-dotnet_diagnostic.IDE0270.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide1006
 # IDE1006: Naming rule violation: These words must begin with upper case characters: ...
 dotnet_diagnostic.IDE1006.severity = suggestion
