@@ -28,7 +28,7 @@ Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Micro
 ## Getting started 
 
 The main entry point for the SBOM generator is in the `SBOMGenerator` class. In order to create an instance of the SBOMGenerator class there are a few arguments that need to be provided. These arguments can be resolved 
-through the dependency injection framework. The following code snippet shows how to create an instance of the SBOMGenerator class using the dependency injection framework using a pattern that is common when using this approach.
+through the dependency injection framework. The following code snippet shows how to create an instance of the SBOMGenerator class using the dependency injection framework in a pattern that is common when using this approach.
 
 You can create a Host and add a hosted service that will call the SBOM API along with its dependencies. By calling `.AddSbomTool()` on the service collection, the SBOM API will 
 be added to the dependency injection framework and can be resolved by the hosted service. The hosted service can then be started by calling `RunConsoleAsync` on the host.
