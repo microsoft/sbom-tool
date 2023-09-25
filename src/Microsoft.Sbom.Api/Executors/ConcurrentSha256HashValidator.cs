@@ -47,7 +47,7 @@ public class ConcurrentSha256HashValidator
 
     private async Task Validate(InternalSbomFileInfo internalFileInfo, Channel<FileValidationResult> output, Channel<FileValidationResult> errors)
     {
-        var sha256Checksum = internalFileInfo.Checksum.Where(c => c.Algorithm == AlgorithmName.SHA256).FirstOrDefault();
+        var sha256Checksum = internalFileInfo.Checksum.FirstOrDefault(c => c.Algorithm == AlgorithmName.SHA256);
         var fileHashes = new FileHashes();
         fileHashes.SetHash(internalFileInfo.FileLocation, sha256Checksum);
         FileValidationResult failureResult = null;

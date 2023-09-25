@@ -1031,10 +1031,6 @@ dotnet_diagnostic.IDE0090.severity = suggestion
 # IDE0110: Discard can be removed
 dotnet_diagnostic.IDE0110.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0120
-# IDE0120: Simplify LINQ expression
-dotnet_diagnostic.IDE0120.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0220
 # IDE0220: 'foreach' statement implicitly converts '...' to '...'
 dotnet_diagnostic.IDE0220.severity = suggestion
