@@ -42,16 +42,15 @@ namespace SBOMApiExample
                 Verbosity = System.Diagnostics.Tracing.EventLevel.Verbose,
             };
 
-            await Task.Run(async () =>
-            {
-                var result = await generator.GenerateSbomAsync(rootPath: scanPath,
-                                               componentPath: componentPath,
-                                               metadata: metadata,
-                                               runtimeConfiguration: configuration,
-                                               manifestDirPath: sbomOutputPath);
-                hostApplicationLifetime.StopApplication();
-            });
+            var result = await generator.GenerateSbomAsync(rootPath: scanPath,
+                                           componentPath: componentPath,
+                                           metadata: metadata,
+                                           runtimeConfiguration: configuration,
+                                           manifestDirPath: sbomOutputPath);
+
+            hostApplicationLifetime.StopApplication();
         }
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
@@ -80,18 +79,17 @@ namespace SBOMApiExample
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(async () =>
-            {
-                var result = await generator.GenerateSbomAsync(
-                    outputDirectory,
-                    sbomFiles,
-                    sbomPackages,
-                    metadata,
-                    new List<SBOMSpecification> { new("SPDX", "2.2") },
-                    new RuntimeConfiguration { DeleteManifestDirectoryIfPresent = true });
-                hostApplicationLifetime.StopApplication();
-            });
+            var result = await generator.GenerateSbomAsync(
+                                outputDirectory,
+                                sbomFiles,
+                                sbomPackages,
+                                metadata,
+                                new List<SBOMSpecification> { new("SPDX", "2.2") },
+                                new RuntimeConfiguration { DeleteManifestDirectoryIfPresent = true });
+
+            hostApplicationLifetime.StopApplication();
         }
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;

@@ -80,16 +80,15 @@ namespace SBOMApiExample
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(async () =>
-            {
-                var result = await generator.GenerateSbomAsync(rootPath: scanPath,
-                                               componentPath: componentPath,
-                                               metadata: metadata,
-                                               runtimeConfiguration: configuration,
-                                               manifestDirPath: sbomOutputPath);
-                hostApplicationLifetime.StopApplication();
-            });
+            var result = await generator.GenerateSbomAsync(rootPath: scanPath,
+                                           componentPath: componentPath,
+                                           metadata: metadata,
+                                           runtimeConfiguration: configuration,
+                                           manifestDirPath: sbomOutputPath);
+
+            hostApplicationLifetime.StopApplication();
         }
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
