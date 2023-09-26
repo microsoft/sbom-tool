@@ -14,6 +14,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Sbom.Adapters.Tests;
 
+using Microsoft.Sbom.Adapters.ComponentDetection;
+
 [TestClass]
 public class ComponentDetectionToSBOMPackageAdapterTests
 {

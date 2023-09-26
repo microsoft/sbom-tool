@@ -22,6 +22,8 @@ using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors;
 
+using Microsoft.Sbom.Adapters.ComponentDetection;
+
 /// <summary>
 /// Abstract class that runs component detection tool in the given folder.
 /// </summary>
