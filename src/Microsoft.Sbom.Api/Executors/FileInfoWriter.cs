@@ -41,7 +41,7 @@ public class FileInfoWriter
 
         Task.Run(async () =>
         {
-            await foreach (InternalSbomFileInfo fileInfo in fileInfos.ReadAllAsync())
+            await foreach (var fileInfo in fileInfos.ReadAllAsync())
             {
                 await Generate(filesArraySupportingSBOMs, fileInfo, result, errors);
             }

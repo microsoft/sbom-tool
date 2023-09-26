@@ -150,7 +150,7 @@ public class ComponentToPackageInfoConverterTests
             Component = new NpmComponent("nugetpackage", "1.0.0", author: new NpmAuthor("Suzy Author"))
         };
 
-        PackageInfo packageInfo = await ConvertScannedComponent(scannedComponent);
+        var packageInfo = await ConvertScannedComponent(scannedComponent);
 
         Assert.AreEqual($"Organization: {((NpmComponent)scannedComponent.Component).Author.Name}", packageInfo.Supplier);
     }
@@ -163,7 +163,7 @@ public class ComponentToPackageInfoConverterTests
             Component = new NpmComponent("nugetpackage", "1.0.0", author: new NpmAuthor("Suzy Author", "suzya@contoso.com"))
         };
 
-        PackageInfo packageInfo = await ConvertScannedComponent(scannedComponent);
+        var packageInfo = await ConvertScannedComponent(scannedComponent);
 
         Assert.AreEqual($"Organization: {((NpmComponent)scannedComponent.Component).Author.Name} ({((NpmComponent)scannedComponent.Component).Author.Email})", packageInfo.Supplier);
     }

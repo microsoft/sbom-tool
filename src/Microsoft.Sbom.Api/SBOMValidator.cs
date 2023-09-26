@@ -24,7 +24,7 @@ public class SbomValidator : ISBOMValidator
 
     public async Task<bool> ValidateSbomAsync()
     {
-        bool isSuccess = await sbomParserBasedValidationWorkflow.RunAsync();
+        var isSuccess = await sbomParserBasedValidationWorkflow.RunAsync();
         await recorder.FinalizeAndLogTelemetryAsync();
 
         var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();

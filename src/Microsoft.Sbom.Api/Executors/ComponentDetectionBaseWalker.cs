@@ -82,7 +82,7 @@ public abstract class ComponentDetectionBaseWalker
         // Enable SPDX22 detector which is disabled by default.
         cliArgumentBuilder.AddDetectorArg("SPDX22SBOM", "EnableIfDefaultOff");
 
-        if (sbomConfigs.TryGet(Constants.SPDX22ManifestInfo, out ISbomConfig spdxSbomConfig))
+        if (sbomConfigs.TryGet(Constants.SPDX22ManifestInfo, out var spdxSbomConfig))
         {
             var directory = Path.GetDirectoryName(spdxSbomConfig.ManifestJsonFilePath);
             if (!string.IsNullOrEmpty(directory))
@@ -119,18 +119,18 @@ public abstract class ComponentDetectionBaseWalker
             // Check if the configuration is set to fetch license information.
             if (configuration.FetchLicenseInformation?.Value == true)
             {
-                List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(uniqueComponents);
+                var listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(uniqueComponents);
 
                 // Check that an API call hasn't already been made. During the first execution of this class this list is empty (because we are detecting the files section of the SBOM). During the second execution we have all the components in the project. There are subsequent executions but not important in this scenario.
                 if (!licenseInformationRetrieved && listOfComponentsForApi?.Count > 0)
                 {
                     licenseInformationRetrieved = true;
 
-                    List<string> apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi);
+                    var apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi);
 
-                    foreach (string response in apiResponses)
+                    foreach (var response in apiResponses)
                     {
-                        Dictionary<string, string> licenseInfo = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(response);
+                        var licenseInfo = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(response);
 
                         if (licenseInfo != null)
                         {
@@ -145,10 +145,10 @@ public abstract class ComponentDetectionBaseWalker
             }
 
             // Converts every ScannedComponent into an ExtendedScannedComponent and attempts to add license information before writing to the channel.
-            foreach (ScannedComponent scannedComponent in uniqueComponents)
+            foreach (var scannedComponent in uniqueComponents)
             {
-                string componentName = scannedComponent.Component.PackageUrl?.Name;
-                string componentVersion = scannedComponent.Component.PackageUrl?.Version;
+                var componentName = scannedComponent.Component.PackageUrl?.Name;
+                var componentVersion = scannedComponent.Component.PackageUrl?.Version;
 
                 ScannedComponentWithLicense extendedComponent;
 

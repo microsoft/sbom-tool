@@ -48,7 +48,7 @@ public class SBOMComponentsWalkerTests
     public async Task GetComponents()
     {
         var scannedComponents = new List<ScannedComponentWithLicense>();
-        for (int i = 1; i < 4; i++)
+        for (var i = 1; i < 4; i++)
         {
             var scannedComponent = new ScannedComponentWithLicense
             {
@@ -73,7 +73,7 @@ public class SBOMComponentsWalkerTests
 
         var discoveredComponents = await packagesChannelReader.output.ReadAllAsync().ToListAsync();
 
-        await foreach (ComponentDetectorException error in packagesChannelReader.error.ReadAllAsync())
+        await foreach (var error in packagesChannelReader.error.ReadAllAsync())
         {
             Assert.Fail($"Caught exception: {error.Message}");
         }
@@ -86,7 +86,7 @@ public class SBOMComponentsWalkerTests
     public async Task GetComponentsWithFiltering()
     {
         var scannedComponents = new List<ScannedComponentWithLicense>();
-        for (int i = 1; i < 4; i++)
+        for (var i = 1; i < 4; i++)
         {
             var scannedComponent = new ScannedComponentWithLicense
             {
@@ -118,7 +118,7 @@ public class SBOMComponentsWalkerTests
 
         var discoveredComponents = await packagesChannelReader.output.ReadAllAsync().ToListAsync();
 
-        await foreach (ComponentDetectorException error in packagesChannelReader.error.ReadAllAsync())
+        await foreach (var error in packagesChannelReader.error.ReadAllAsync())
         {
             Assert.Fail($"Caught exception: {error.Message}");
         }

@@ -76,7 +76,7 @@ public class CGExternalDocumentReferenceProvider : EntityToJsonProviderBase<Scan
     {
         var (output, cdErrors) = sbomComponentsWalker.GetComponents(Configuration.BuildComponentPath?.Value);
 
-        if (cdErrors.TryRead(out ComponentDetectorException e))
+        if (cdErrors.TryRead(out var e))
         {
             throw e;
         }

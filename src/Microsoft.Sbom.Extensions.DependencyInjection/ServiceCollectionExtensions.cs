@@ -174,12 +174,12 @@ public static class ServiceCollectionExtensions
             .AddScoped<ISBOMGenerator, SbomGenerator>()
             .AddSingleton(x =>
             {
-                IFileSystemUtils fileSystemUtils = x.GetRequiredService<IFileSystemUtils>();
-                ISbomConfigProvider sbomConfigs = x.GetRequiredService<ISbomConfigProvider>();
-                IOSUtils osUtils = x.GetRequiredService<IOSUtils>();
-                IConfiguration configuration = x.GetRequiredService<IConfiguration>();
+                var fileSystemUtils = x.GetRequiredService<IFileSystemUtils>();
+                var sbomConfigs = x.GetRequiredService<ISbomConfigProvider>();
+                var osUtils = x.GetRequiredService<IOSUtils>();
+                var configuration = x.GetRequiredService<IConfiguration>();
 
-                ManifestData manifestData = new ManifestData();
+                var manifestData = new ManifestData();
 
                 if (!configuration.ManifestInfo.Value.Contains(Api.Utils.Constants.SPDX22ManifestInfo))
                 {

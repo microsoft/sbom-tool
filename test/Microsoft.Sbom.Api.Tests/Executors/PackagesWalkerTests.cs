@@ -48,7 +48,7 @@ public class PackagesWalkerTests
     public async Task ScanSuccessTestAsync()
     {
         var scannedComponents = new List<ScannedComponentWithLicense>();
-        for (int i = 1; i < 4; i++)
+        for (var i = 1; i < 4; i++)
         {
             var scannedComponent = new ScannedComponentWithLicense
             {
@@ -77,7 +77,7 @@ public class PackagesWalkerTests
         var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
-        int countDistinctComponents = 0;
+        var countDistinctComponents = 0;
 
         await foreach (ScannedComponentWithLicense package in packagesChannelReader.output.ReadAllAsync())
         {
@@ -85,7 +85,7 @@ public class PackagesWalkerTests
             Assert.IsTrue(scannedComponents.Remove(package));
         }
 
-        await foreach (ComponentDetectorException error in packagesChannelReader.error.ReadAllAsync())
+        await foreach (var error in packagesChannelReader.error.ReadAllAsync())
         {
             Assert.Fail($"Caught exception: {error.Message}");
         }
@@ -99,7 +99,7 @@ public class PackagesWalkerTests
     public async Task ScanCombinePackagesWithSameNameDifferentCase()
     {
         var scannedComponents = new List<ScannedComponentWithLicense>();
-        for (int i = 1; i < 4; i++)
+        for (var i = 1; i < 4; i++)
         {
             var scannedComponent = new ScannedComponentWithLicense
             {
@@ -130,7 +130,7 @@ public class PackagesWalkerTests
         var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
-        int countDistinctComponents = 0;
+        var countDistinctComponents = 0;
 
         await foreach (ScannedComponentWithLicense package in packagesChannelReader.output.ReadAllAsync())
         {
@@ -138,7 +138,7 @@ public class PackagesWalkerTests
             Assert.IsTrue(scannedComponents.Remove(package));
         }
 
-        await foreach (ComponentDetectorException error in packagesChannelReader.error.ReadAllAsync())
+        await foreach (var error in packagesChannelReader.error.ReadAllAsync())
         {
             Assert.Fail($"Caught exception: {error.Message}");
         }
@@ -176,12 +176,12 @@ public class PackagesWalkerTests
         var packagesChannelReader = walker.GetComponents("root");
         ComponentDetectorException actualError = null;
 
-        await foreach (ScannedComponent package in packagesChannelReader.output.ReadAllAsync())
+        await foreach (var package in packagesChannelReader.output.ReadAllAsync())
         {
             Assert.Fail("Packages were still returned when the detector failed.");
         }
 
-        await foreach (ComponentDetectorException error in packagesChannelReader.error.ReadAllAsync())
+        await foreach (var error in packagesChannelReader.error.ReadAllAsync())
         {
             actualError = error;
         }
@@ -194,7 +194,7 @@ public class PackagesWalkerTests
     public async Task ScanIgnoreSbomComponents()
     {
         var scannedComponents = new List<ScannedComponentWithLicense>();
-        for (int i = 1; i < 4; i++)
+        for (var i = 1; i < 4; i++)
         {
             var scannedComponent = new ScannedComponentWithLicense
             {
@@ -225,7 +225,7 @@ public class PackagesWalkerTests
 
         var discoveredComponents = await packagesChannelReader.output.ReadAllAsync().ToListAsync();
 
-        await foreach (ComponentDetectorException error in packagesChannelReader.error.ReadAllAsync())
+        await foreach (var error in packagesChannelReader.error.ReadAllAsync())
         {
             Assert.Fail($"Caught exception: {error.Message}");
         }

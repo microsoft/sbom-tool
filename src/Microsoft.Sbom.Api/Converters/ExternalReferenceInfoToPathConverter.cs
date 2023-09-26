@@ -29,7 +29,7 @@ public class ExternalReferenceInfoToPathConverter
 
         Task.Run(async () =>
         {
-            await foreach (ExternalDocumentReferenceInfo externalDocumentRef in externalDocumentRefReader.ReadAllAsync())
+            await foreach (var externalDocumentRef in externalDocumentRefReader.ReadAllAsync())
             {
                 try
                 {

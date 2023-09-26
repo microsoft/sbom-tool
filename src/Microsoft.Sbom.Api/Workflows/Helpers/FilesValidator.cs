@@ -70,16 +70,16 @@ public class FilesValidator
         results.AddRange(inSbomFileResults);
         errors.AddRange(inSbomFileErrors);
 
-        int successCount = 0;
-        ChannelReader<FileValidationResult> resultChannel = channelUtils.Merge(results.ToArray());
-        await foreach (FileValidationResult validationResult in resultChannel.ReadAllAsync())
+        var successCount = 0;
+        var resultChannel = channelUtils.Merge(results.ToArray());
+        await foreach (var validationResult in resultChannel.ReadAllAsync())
         {
             successCount++;
         }
 
-        ChannelReader<FileValidationResult> workflowErrors = channelUtils.Merge(errors.ToArray());
+        var workflowErrors = channelUtils.Merge(errors.ToArray());
 
-        await foreach (FileValidationResult error in workflowErrors.ReadAllAsync())
+        await foreach (var error in workflowErrors.ReadAllAsync())
         {
             failures.Add(error.Path, error);
         }
