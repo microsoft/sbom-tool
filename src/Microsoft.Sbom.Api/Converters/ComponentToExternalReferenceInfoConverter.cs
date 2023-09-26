@@ -34,7 +34,7 @@ public class ComponentToExternalReferenceInfoConverter
 
         Task.Run(async () =>
         {
-            await foreach (ScannedComponent scannedComponent in componentReader.ReadAllAsync())
+            await foreach (var scannedComponent in componentReader.ReadAllAsync())
             {
                 try
                 {

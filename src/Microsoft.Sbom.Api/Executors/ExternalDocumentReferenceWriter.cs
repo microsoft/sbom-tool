@@ -47,7 +47,7 @@ public class ExternalDocumentReferenceWriter
 
         Task.Run(async () =>
         {
-            await foreach (ExternalDocumentReferenceInfo externalDocumentReferenceInfo in externalDocumentReferenceInfos.ReadAllAsync())
+            await foreach (var externalDocumentReferenceInfo in externalDocumentReferenceInfos.ReadAllAsync())
             {
                 foreach (var config in externalDocumentReferenceArraySupportingConfigs)
                 {

@@ -107,7 +107,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     {
         Assert.ThrowsException<ArgumentNullException>(() =>
         {
-            ComponentDetectionToSBOMPackageAdapter adapter = new ComponentDetectionToSBOMPackageAdapter();
+            var adapter = new ComponentDetectionToSBOMPackageAdapter();
             adapter.TryConvert("not/a/real/path");
         });
     }
@@ -272,7 +272,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         Directory.CreateDirectory(baseDirectory);
         File.WriteAllText(bcdeOutputPath, json);
 
-        ComponentDetectionToSBOMPackageAdapter adapter = new ComponentDetectionToSBOMPackageAdapter();
+        var adapter = new ComponentDetectionToSBOMPackageAdapter();
         var (errors, packages) = adapter.TryConvert(bcdeOutputPath);
         var output = packages.ToList();
 

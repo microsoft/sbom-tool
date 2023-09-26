@@ -127,7 +127,7 @@ public class TelemetryRecorder : IRecorder
             throw new ArgumentException($"'{nameof(eventName)}' cannot be null or whitespace.", nameof(eventName));
         }
 
-        TimingRecorder timingRecorder = new TimingRecorder(eventName);
+        var timingRecorder = new TimingRecorder(eventName);
         timingRecorders.Add(timingRecorder);
         return timingRecorder;
     }

@@ -174,7 +174,7 @@ internal class ParserUtils
     {
         if (reader.TokenType == JsonTokenType.StartArray)
         {
-            int arrayCount = 1;
+            var arrayCount = 1;
             while (true)
             {
                 if (reader.TokenType == JsonTokenType.EndArray)
@@ -196,7 +196,7 @@ internal class ParserUtils
         }
         else if (reader.TokenType == JsonTokenType.StartObject)
         {
-            int objectCount = 1;
+            var objectCount = 1;
             while (true)
             {
                 if (reader.TokenType == JsonTokenType.EndObject)

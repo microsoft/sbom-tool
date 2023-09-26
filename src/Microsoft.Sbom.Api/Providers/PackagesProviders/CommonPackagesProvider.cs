@@ -54,7 +54,7 @@ public abstract class CommonPackagesProvider<T> : EntityToJsonProviderBase<T>
                     sbomConfigs.TryGetMetadata(MetadataKey.ImageVersion, out object imageVersionObj))
                 {
                     Log.Debug($"Adding the image OS package to the packages list as a dependency.");
-                    string name = $"Azure Pipelines Hosted Image {imageOsObj}";
+                    var name = $"Azure Pipelines Hosted Image {imageOsObj}";
                     await packageInfos.Writer.WriteAsync(new SbomPackage()
                     {
                         PackageName = name,
