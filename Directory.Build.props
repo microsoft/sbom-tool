@@ -11,6 +11,7 @@
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <NoWarn>$(NoWarn);CA1014;CS8002</NoWarn>
+        <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
     </PropertyGroup>
 
     <PropertyGroup Label="Package">
