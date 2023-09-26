@@ -10,7 +10,7 @@
         <ComponentDetectionPackageVersion>3.7.0</ComponentDetectionPackageVersion>
     </PropertyGroup>
     <ItemGroup>
-        <PackageVersion Include="AutoMapper" Version="10.1.1" />
+        <PackageVersion Include="AutoMapper" Version="12.0.1" />
         <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
         <PackageVersion Include="coverlet.collector" Version="6.0.0" />
         <PackageVersion Include="FluentAssertions" Version="6.12.0" />
