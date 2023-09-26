@@ -23,6 +23,8 @@ using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
 
+using Microsoft.Sbom.Adapters.ComponentDetection;
+
 [TestClass]
 public class PackagesWalkerTests
 {
