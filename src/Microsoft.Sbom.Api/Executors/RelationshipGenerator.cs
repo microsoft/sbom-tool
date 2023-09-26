@@ -37,8 +37,8 @@ public class RelationshipGenerator
                 {
                     while (relationships.MoveNext())
                     {
-                        IManifestGenerator manifestGenerator = manifestGeneratorProvider.Get(manifestInfo);
-                        GenerationResult generationResult = manifestGenerator.GenerateJsonDocument(relationships.Current);
+                        var manifestGenerator = manifestGeneratorProvider.Get(manifestInfo);
+                        var generationResult = manifestGenerator.GenerateJsonDocument(relationships.Current);
                         await output.Writer.WriteAsync(generationResult?.Document);
                     }
                 }

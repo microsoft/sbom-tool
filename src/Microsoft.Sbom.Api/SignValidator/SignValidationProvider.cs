@@ -39,7 +39,7 @@ public class SignValidationProvider : ISignValidationProvider
 
     public ISignValidator Get()
     {
-        if (signValidatorsMap.TryGetValue(osUtils.GetCurrentOSPlatform(), out ISignValidator signValidator))
+        if (signValidatorsMap.TryGetValue(osUtils.GetCurrentOSPlatform(), out var signValidator))
         {
             return signValidator;
         }

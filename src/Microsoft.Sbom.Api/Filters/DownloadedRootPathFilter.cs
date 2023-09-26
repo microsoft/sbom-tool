@@ -58,7 +58,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
             return false;
         }
 
-        bool isValid = false;
+        var isValid = false;
         var normalizedPath = new FileInfo(filePath).FullName;
 
         foreach (var validPath in validPaths)
@@ -81,7 +81,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
         {
             skipValidation = false;
             validPaths = new HashSet<string>();
-            string[] relativeRootPaths = configuration.RootPathFilter.Value.Split(';');
+            var relativeRootPaths = configuration.RootPathFilter.Value.Split(';');
 
             validPaths.UnionWith(relativeRootPaths.Select(r =>
                 new FileInfo(fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, r))

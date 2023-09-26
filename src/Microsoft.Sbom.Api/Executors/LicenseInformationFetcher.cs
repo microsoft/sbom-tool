@@ -30,13 +30,13 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
 
     public List<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents)
     {
-        List<string> listOfComponentsForApi = new List<string>();
+        var listOfComponentsForApi = new List<string>();
 
         foreach (var scannedComponent in scannedComponents)
         {
-            string[] parts = scannedComponent.Component.Id.Split(' ');
-            string componentVersion = scannedComponent.Component.PackageUrl?.Version;
-            string componentType = scannedComponent.Component.PackageUrl?.Type.ToLower();
+            var parts = scannedComponent.Component.Id.Split(' ');
+            var componentVersion = scannedComponent.Component.PackageUrl?.Version;
+            var componentType = scannedComponent.Component.PackageUrl?.Type.ToLower();
 
             if (parts.Length > 2)
             {
@@ -46,7 +46,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                 // If the clearlyDefinedName contains a / then split it and use the first part as the clearlyDefinedNamespace and the second part as the clearlyDefinedName
                 if (!string.IsNullOrEmpty(componentName) && componentName.Contains('/'))
                 {
-                    string[] clearlyDefinedNameParts = componentName.Split('/');
+                    var clearlyDefinedNameParts = componentName.Split('/');
                     clearlyDefinedNamespace = clearlyDefinedNameParts[0];
                     componentName = clearlyDefinedNameParts[1];
                 }
@@ -90,20 +90,20 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
     // Will attempt to extract license information from a clearlyDefined batch API response. Will always return a dictionary which may be empty depending on the response.
     public Dictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent)
     {
-        Dictionary<string, string> extractedLicenses = new Dictionary<string, string>();
+        var extractedLicenses = new Dictionary<string, string>();
 
         try
         {
-            JObject responseObject = JObject.Parse(httpResponseContent);
+            var responseObject = JObject.Parse(httpResponseContent);
 
-            foreach (JToken packageInfoToken in responseObject.Values())
+            foreach (var packageInfoToken in responseObject.Values())
             {
-                JObject packageInfo = packageInfoToken.ToObject<JObject>();
-                JObject coordinates = packageInfo.Value<JObject>("coordinates");
-                string packageNamespace = coordinates.Value<string>("namespace");
-                string packageName = coordinates.Value<string>("name");
-                string packageVersion = coordinates.Value<string>("revision");
-                string declaredLicense = packageInfo
+                var packageInfo = packageInfoToken.ToObject<JObject>();
+                var coordinates = packageInfo.Value<JObject>("coordinates");
+                var packageNamespace = coordinates.Value<string>("namespace");
+                var packageName = coordinates.Value<string>("name");
+                var packageVersion = coordinates.Value<string>("revision");
+                var declaredLicense = packageInfo
                     .Value<JObject>("licensed")
                     .Value<string>("declared");
 
@@ -152,7 +152,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
 
     public string GetFromLicenseDictionary(string key)
     {
-        string value = string.Empty;
+        var value = string.Empty;
 
         if (licenseDictionary.ContainsKey(key))
         {

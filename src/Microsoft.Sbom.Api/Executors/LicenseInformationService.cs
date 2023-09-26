@@ -20,7 +20,7 @@ public class LicenseInformationService : ILicenseInformationService
     private readonly ILogger log;
     private readonly IRecorder recorder;
     private readonly HttpClient httpClient;
-    private const int ClientTimeoutMinutes = 6;
+    private const int ClientTimeoutSeconds = 30;
 
     public LicenseInformationService(ILogger log, IRecorder recorder, HttpClient httpClient)
     {
@@ -31,19 +31,19 @@ public class LicenseInformationService : ILicenseInformationService
 
     public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi)
     {
-        int batchSize = 500;
-        List<HttpResponseMessage> responses = new List<HttpResponseMessage>();
-        List<string> responseContent = new List<string>();
+        var batchSize = 500;
+        var responses = new List<HttpResponseMessage>();
+        var responseContent = new List<string>();
 
-        Uri uri = new Uri("https://api.clearlydefined.io/definitions");
+        var uri = new Uri("https://api.clearlydefined.io/definitions?expand=-files");
 
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        httpClient.Timeout = TimeSpan.FromMinutes(ClientTimeoutMinutes);
+        httpClient.Timeout = TimeSpan.FromSeconds(ClientTimeoutSeconds);
 
-        for (int i = 0; i < listOfComponentsForApi.Count; i += batchSize)
+        for (var i = 0; i < listOfComponentsForApi.Count; i += batchSize)
         {
-            List<string> batch = listOfComponentsForApi.Skip(i).Take(batchSize).ToList();
-            string formattedData = JsonSerializer.Serialize(batch);
+            var batch = listOfComponentsForApi.Skip(i).Take(batchSize).ToList();
+            var formattedData = JsonSerializer.Serialize(batch);
 
             log.Debug($"Retrieving license information for {batch.Count} components...");
 
@@ -59,6 +59,7 @@ public class LicenseInformationService : ILicenseInformationService
             catch (Exception e)
             {
                 log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {e.Message}");
+                recorder.RecordAPIException(new ClearlyDefinedResponseNotSuccessfulException(e.Message));
             }
 
             stopwatch.Stop();
@@ -66,7 +67,7 @@ public class LicenseInformationService : ILicenseInformationService
             log.Debug($"Retrieving license information for {batch.Count} components took {stopwatch.Elapsed.TotalSeconds} seconds");
         }
 
-        foreach (HttpResponseMessage response in responses)
+        foreach (var response in responses)
         {
             if (response.IsSuccessStatusCode)
             {
@@ -75,7 +76,7 @@ public class LicenseInformationService : ILicenseInformationService
             else
             {
                 log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information. Request returned status code: {response.StatusCode}");
-                recorder.RecordException(new ClearlyDefinedResponseNotSuccessfulException($"Request returned status code: {response.StatusCode}"));
+                recorder.RecordAPIException(new ClearlyDefinedResponseNotSuccessfulException($"Request returned status code: {response.StatusCode}"));
             }
         }
 

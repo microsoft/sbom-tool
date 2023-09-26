@@ -30,7 +30,7 @@ public class LocalMetadataProviderTest
         config.PackageName = new ConfigurationSetting<string>("name");
         config.PackageVersion = new ConfigurationSetting<string>("version");
 
-        LocalMetadataProvider localMetadataProvider = new LocalMetadataProvider(config);
+        var localMetadataProvider = new LocalMetadataProvider(config);
         Assert.AreEqual("http://sbom.microsoft/name/version/some-custom-value-here", localMetadataProvider.GetDocumentNamespaceUri());
     }
 
@@ -49,7 +49,7 @@ public class LocalMetadataProviderTest
         config.PackageSupplier = null;
         config.GenerationTimestamp = null;
 
-        LocalMetadataProvider localMetadataProvider = new LocalMetadataProvider(config);
+        var localMetadataProvider = new LocalMetadataProvider(config);
         Assert.AreEqual(4, localMetadataProvider.MetadataDictionary.Count);
         Assert.IsFalse(localMetadataProvider.MetadataDictionary.ContainsKey(MetadataKey.PackageSupplier));
         Assert.IsFalse(localMetadataProvider.MetadataDictionary.ContainsKey(MetadataKey.GenerationTimestamp));

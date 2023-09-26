@@ -919,10 +919,6 @@ dotnet_diagnostic.CS8632.severity = suggestion
 # IDE0005: Using directive is unnecessary
 dotnet_diagnostic.IDE0005.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0007
-# IDE0007:  use 'var' instead of explicit type
-dotnet_diagnostic.IDE0007.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0009
 # IDE0009: Add 'this' or 'Me' qualification
 dotnet_diagnostic.IDE0009.severity = suggestion
@@ -1031,14 +1027,6 @@ dotnet_diagnostic.IDE0090.severity = suggestion
 # IDE0110: Discard can be removed
 dotnet_diagnostic.IDE0110.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0120
-# IDE0120: Simplify LINQ expression
-dotnet_diagnostic.IDE0120.severity = suggestion
-
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0200
-# IDE0200: Lambda expression can be simplified
-dotnet_diagnostic.IDE0200.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0220
 # IDE0220: 'foreach' statement implicitly converts '...' to '...'
 dotnet_diagnostic.IDE0220.severity = suggestion
@@ -1046,10 +1034,6 @@ dotnet_diagnostic.IDE0220.severity = suggestion
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0251
 # IDE0251: Member can be made 'readonly'
 dotnet_diagnostic.IDE0251.severity = suggestion
-
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0270
-# IDE0270: Null check can be simplified
-dotnet_diagnostic.IDE0270.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide1006
 # IDE1006: Naming rule violation: These words must begin with upper case characters: ...

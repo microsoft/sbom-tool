@@ -18,7 +18,7 @@ public class SbomParserTests
     public void ParseWithBOMTest()
     {
         var utf8BOM = Encoding.UTF8.GetString(Encoding.UTF8.Preamble);
-        byte[] bytes = Encoding.UTF8.GetBytes(utf8BOM + SbomParserStrings.JsonWithAll4Properties);
+        var bytes = Encoding.UTF8.GetBytes(utf8BOM + SbomParserStrings.JsonWithAll4Properties);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream);
@@ -56,7 +56,7 @@ public class SbomParserTests
     [TestMethod]
     public void ParseMultiplePropertiesTest()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithAll4Properties);
+        var bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithAll4Properties);
         using var stream = new MemoryStream(bytes);
 
         SPDXParser parser = new(stream);
@@ -98,7 +98,7 @@ public class SbomParserTests
     [ExpectedException(typeof(ParserException))]
     public void MissingPropertyThrows(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
         IterateAllProperties(stream);
     }
@@ -112,7 +112,7 @@ public class SbomParserTests
     [ExpectedException(typeof(ParserException))]
     public void MalformedJsonThrows(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
         IterateAllProperties(stream);
     }
@@ -122,7 +122,7 @@ public class SbomParserTests
     [DataRow(SbomParserStrings.MalformedJsonEmptyArrayObject)]
     public void MalformedJsonEmptyValuesDoesntThrow(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
         IterateAllProperties(stream);
     }
@@ -130,7 +130,7 @@ public class SbomParserTests
     [TestMethod]
     public void MissingReferencesDoesntThrow()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithMissingReferences);
+        var bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithMissingReferences);
         using var stream = new MemoryStream(bytes);
         IterateAllProperties(stream);
     }

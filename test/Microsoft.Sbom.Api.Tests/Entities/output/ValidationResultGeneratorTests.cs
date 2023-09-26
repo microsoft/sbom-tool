@@ -22,7 +22,7 @@ public class ValidationResultGeneratorTests
     public void ValidationResultGenerator_ShouldGenerateReportWithoutFailures()
     {
         var manifestData = GetDefaultManifestData();
-        Mock<IConfiguration> configurationMock = GetDefaultConfigurationMock(ignoreMissing: false);
+        var configurationMock = GetDefaultConfigurationMock(ignoreMissing: false);
 
         var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
         var failures = new List<FileValidationResult>();
@@ -58,7 +58,7 @@ public class ValidationResultGeneratorTests
     public void ValidationResultGenerator_ShouldGenerateReportWithoutFailuresIfIgnoreMissing()
     {
         var manifestData = GetDefaultManifestData();
-        Mock<IConfiguration> configurationMock = GetDefaultConfigurationMock(ignoreMissing: true);
+        var configurationMock = GetDefaultConfigurationMock(ignoreMissing: true);
 
         var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
         var failures = new List<FileValidationResult>();
@@ -94,7 +94,7 @@ public class ValidationResultGeneratorTests
     public void ValidationResultGenerator_IncorrectHashShouldCauseFailure()
     {
         var manifestData = GetDefaultManifestData();
-        Mock<IConfiguration> configurationMock = GetDefaultConfigurationMock(ignoreMissing: false);
+        var configurationMock = GetDefaultConfigurationMock(ignoreMissing: false);
 
         var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
         var failures = new List<FileValidationResult>();
@@ -136,7 +136,7 @@ public class ValidationResultGeneratorTests
     public void ValidationResultGenerator_MissingFileShouldCauseFailure()
     {
         var manifestData = GetDefaultManifestData();
-        Mock<IConfiguration> configurationMock = GetDefaultConfigurationMock(ignoreMissing: false);
+        var configurationMock = GetDefaultConfigurationMock(ignoreMissing: false);
 
         var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
         var failures = new List<FileValidationResult>();
@@ -178,7 +178,7 @@ public class ValidationResultGeneratorTests
     public void ValidationResultGenerator_MissingFileShouldNotCauseFailureIfIgnoreMissing()
     {
         var manifestData = GetDefaultManifestData();
-        Mock<IConfiguration> configurationMock = GetDefaultConfigurationMock(ignoreMissing: true);
+        var configurationMock = GetDefaultConfigurationMock(ignoreMissing: true);
 
         var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
         var failures = new List<FileValidationResult>();
@@ -220,7 +220,7 @@ public class ValidationResultGeneratorTests
     public void ValidationResultGenerator_ShouldFailOnlyOnWrongHashIfIgnoreMissing()
     {
         var manifestData = GetDefaultManifestData();
-        Mock<IConfiguration> configurationMock = GetDefaultConfigurationMock(ignoreMissing: true);
+        var configurationMock = GetDefaultConfigurationMock(ignoreMissing: true);
 
         var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
         var failures = new List<FileValidationResult>();

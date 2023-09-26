@@ -37,7 +37,7 @@ public class Checksum : IEquatable<Checksum>
 
     public override int GetHashCode()
     {
-        int hashCode = 1457973397;
+        var hashCode = 1457973397;
         hashCode = (hashCode * -1521134295) + Algorithm.GetHashCode();
         hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(ChecksumValue);
         return hashCode;
