@@ -80,7 +80,7 @@ public class Generator : IManifestGenerator
             FileCopyrightText = fileInfo.FileCopyrightText ?? Constants.NoAssertionValue,
             LicenseConcluded = fileInfo.LicenseConcluded ?? Constants.NoAssertionValue,
             LicenseInfoInFiles = fileInfo.LicenseInfoInFiles ?? Constants.NoAssertionListValue,
-            FileTypes = fileInfo.FileTypes?.Select(f => GetSPDXFileType(f)).ToList(),
+            FileTypes = fileInfo.FileTypes?.Select(this.GetSPDXFileType).ToList(),
         };
 
         spdxFileElement.AddSpdxId(fileInfo.Path, fileInfo.Checksum);
@@ -297,12 +297,9 @@ public class Generator : IManifestGenerator
             throw new ArgumentNullException(nameof(externalDocumentReferenceInfo.Checksum));
         }
 
-        var sha1Hash = externalDocumentReferenceInfo.Checksum.Where(h => h.Algorithm == AlgorithmName.SHA1).FirstOrDefault();
-
-        if (sha1Hash is null)
-        {
-            throw new MissingHashValueException($"The hash value for algorithm {AlgorithmName.SHA1} is missing from {nameof(externalDocumentReferenceInfo)}");
-        }
+        var sha1Hash = externalDocumentReferenceInfo.Checksum.FirstOrDefault(h => h.Algorithm == AlgorithmName.SHA1) ??
+                       throw new MissingHashValueException(
+                           $"The hash value for algorithm {AlgorithmName.SHA1} is missing from {nameof(externalDocumentReferenceInfo)}");
 
         var checksumValue = sha1Hash.ChecksumValue.ToLower();
         var externalDocumentReferenceElement = new SpdxExternalDocumentReference

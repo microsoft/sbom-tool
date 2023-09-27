@@ -63,7 +63,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
     {
         ValidationResult validationResultOutput = null;
         IEnumerable<FileValidationResult> validFailures = null;
-        int totalNumberOfPackages = 0;
+        var totalNumberOfPackages = 0;
 
         using (recorder.TraceEvent(Events.SBOMValidationWorkflow))
         {
@@ -72,7 +72,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 var sw = Stopwatch.StartNew();
                 var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo.Value.FirstOrDefault());
 
-                using Stream stream = fileSystemUtils.OpenRead(sbomConfig.ManifestJsonFilePath);
+                using var stream = fileSystemUtils.OpenRead(sbomConfig.ManifestJsonFilePath);
                 var manifestInterface = manifestParserProvider.Get(sbomConfig.ManifestInfo);
                 var sbomParser = manifestInterface.CreateParser(stream);
 
@@ -95,7 +95,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                 }
 
-                int successfullyValidatedFiles = 0;
+                var successfullyValidatedFiles = 0;
                 List<FileValidationResult> fileValidationFailures = null;
 
                 ParserStateResult? result = null;

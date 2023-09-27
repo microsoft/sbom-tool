@@ -44,7 +44,7 @@ public abstract class ConfigValidator
             throw new ArgumentException($"'{nameof(propertyName)}' cannot be null or empty", nameof(propertyName));
         }
 
-        Attribute attribute = attributeCollection[supportedAttribute];
+        var attribute = attributeCollection[supportedAttribute];
         if (attribute == null)
         {
             return;

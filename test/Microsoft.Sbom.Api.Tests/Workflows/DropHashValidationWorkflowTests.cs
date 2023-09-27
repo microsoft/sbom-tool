@@ -45,7 +45,7 @@ public class DropHashValidationWorkflowTests : ValidationWorkflowTestsBase
     [TestMethod]
     public async Task DropHashValidationWorkflowTestAsync_ReturnsSuccessAndValidationFailures_Succeeds()
     {
-        Mock<IFileSystemUtils> fileSystemMock = GetDefaultFileSystemMock();
+        var fileSystemMock = GetDefaultFileSystemMock();
         var manifestData = GetDefaultManifestData();
 
         fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
@@ -161,7 +161,7 @@ public class DropHashValidationWorkflowTests : ValidationWorkflowTestsBase
     [TestMethod]
     public async Task DropHashValidationWorkflowTestAsync_NoErrors()
     {
-        Mock<IFileSystemUtils> fileSystemMock = GetDefaultFileSystemMock();
+        var fileSystemMock = GetDefaultFileSystemMock();
 
         fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
             .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
@@ -274,7 +274,7 @@ public class DropHashValidationWorkflowTests : ValidationWorkflowTestsBase
     [TestMethod]
     public async Task DropHashValidationWorkflowTestAsync_IgnoreMissingTrue()
     {
-        Mock<IFileSystemUtils> fileSystemMock = GetDefaultFileSystemMock();
+        var fileSystemMock = GetDefaultFileSystemMock();
 
         fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
             .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
@@ -385,7 +385,7 @@ public class DropHashValidationWorkflowTests : ValidationWorkflowTestsBase
     [TestMethod]
     public async Task DropHashValidationWorkflowTestAsync_IgnoreMissingTrueAndInvalidHashShouldFail()
     {
-        Mock<IFileSystemUtils> fileSystemMock = GetDefaultFileSystemMock();
+        var fileSystemMock = GetDefaultFileSystemMock();
         fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
             .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
 
@@ -495,7 +495,7 @@ public class DropHashValidationWorkflowTests : ValidationWorkflowTestsBase
     [TestMethod]
     public async Task DropHashValidationWorkflowTestAsync_IgnoreMissingFalse()
     {
-        Mock<IFileSystemUtils> fileSystemMock = GetDefaultFileSystemMock();
+        var fileSystemMock = GetDefaultFileSystemMock();
         fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
             .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
 

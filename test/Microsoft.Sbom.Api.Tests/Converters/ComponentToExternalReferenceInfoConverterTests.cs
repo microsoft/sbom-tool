@@ -43,7 +43,7 @@ public class ComponentToExternalReferenceInfoConverterTests
 
         var refs = await results.ReadAllAsync().ToListAsync();
 
-        await foreach (FileValidationResult error in errors.ReadAllAsync())
+        await foreach (var error in errors.ReadAllAsync())
         {
             Assert.Fail($"Caught exception: {error.ErrorType}");
         }

@@ -75,7 +75,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
     {
         IList<FileValidationResult> validErrors = new List<FileValidationResult>();
         string sbomDir = null;
-        bool deleteSBOMDir = false;
+        var deleteSBOMDir = false;
         using (recorder.TraceEvent(Events.SBOMGenerationWorkflow))
         {
             try
@@ -197,7 +197,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
             return;
         }
 
-        string hashFileName = $"{manifestJsonFilePath}.sha256";
+        var hashFileName = $"{manifestJsonFilePath}.sha256";
 
         using var readStream = fileSystemUtils.OpenRead(manifestJsonFilePath);
         using var bufferedStream = new BufferedStream(readStream, 1024 * 32);
@@ -220,7 +220,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
             {
                 bool.TryParse(
                     osUtils.GetEnvironmentVariable(Constants.DeleteManifestDirBoolVariableName),
-                    out bool deleteSbomDirSwitch);
+                    out var deleteSbomDirSwitch);
 
                 recorder.RecordSwitch(Constants.DeleteManifestDirBoolVariableName, deleteSbomDirSwitch);
 

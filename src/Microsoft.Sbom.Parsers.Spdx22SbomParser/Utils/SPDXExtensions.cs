@@ -104,7 +104,7 @@ public static class SPDXExtensions
         }
 
         // Get package identity as package name and package version. If version is empty, just use package name
-        string packageIdentity = $"{packageInfo.Type}-{packageInfo.PackageName}";
+        var packageIdentity = $"{packageInfo.Type}-{packageInfo.PackageName}";
         if (!string.IsNullOrWhiteSpace(packageInfo.PackageVersion))
         {
             packageIdentity = string.Join("-", packageInfo.Type, packageInfo.PackageName, packageInfo.PackageVersion);
@@ -139,7 +139,7 @@ public static class SPDXExtensions
         }
 
         // Get the SHA1 for this file.
-        string sha1Value = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1)
+        var sha1Value = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1)
             .Select(s => s.ChecksumValue)
             .FirstOrDefault();
 
@@ -168,7 +168,7 @@ public static class SPDXExtensions
         }
 
         // Get the SHA1 for this file.
-        string sha1Value = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1)
+        var sha1Value = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1)
             .Select(s => s.ChecksumValue)
             .FirstOrDefault();
 

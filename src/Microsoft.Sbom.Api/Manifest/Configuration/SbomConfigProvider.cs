@@ -36,7 +36,7 @@ public class SbomConfigProvider : ISbomConfigProvider
             configsDictionary = new Dictionary<ManifestInfo, ISbomConfig>();
             foreach (var configHandler in manifestConfigHandlers)
             {
-                if (configHandler.TryGetManifestConfig(out ISbomConfig sbomConfig))
+                if (configHandler.TryGetManifestConfig(out var sbomConfig))
                 {
                     configsDictionary.AddIfKeyNotPresentAndValueNotNull(sbomConfig.ManifestInfo, sbomConfig);
                     recorder.RecordSBOMFormat(sbomConfig.ManifestInfo, sbomConfig.ManifestJsonFilePath);
@@ -140,7 +140,7 @@ public class SbomConfigProvider : ISbomConfigProvider
 
     public object GetMetadata(MetadataKey key)
     {
-        if (MetadataDictionary.TryGetValue(key, out object value))
+        if (MetadataDictionary.TryGetValue(key, out var value))
         {
             logger.Debug($"Found value for header {key} in internal metadata.");
             return value;
@@ -177,7 +177,7 @@ public class SbomConfigProvider : ISbomConfigProvider
 
     public GenerationData GetGenerationData(ManifestInfo manifestInfo)
     {
-        if (ConfigsDictionary.TryGetValue(manifestInfo, out ISbomConfig sbomConfig))
+        if (ConfigsDictionary.TryGetValue(manifestInfo, out var sbomConfig))
         {
             return sbomConfig.Recorder.GetGenerationData();
         }
@@ -188,11 +188,10 @@ public class SbomConfigProvider : ISbomConfigProvider
     public string GetSBOMNamespaceUri()
     {
         IMetadataProvider provider = null;
-        if (MetadataDictionary.TryGetValue(MetadataKey.BuildEnvironmentName, out object buildEnvironmentName))
+        if (MetadataDictionary.TryGetValue(MetadataKey.BuildEnvironmentName, out var buildEnvironmentName))
         {
-            provider = metadataProviders
-                .Where(p => p.BuildEnvironmentName != null && p.BuildEnvironmentName == buildEnvironmentName as string)
-                .FirstOrDefault();
+            provider = this.metadataProviders
+                .FirstOrDefault(p => p.BuildEnvironmentName != null && p.BuildEnvironmentName == buildEnvironmentName as string);
         }
         else
         {

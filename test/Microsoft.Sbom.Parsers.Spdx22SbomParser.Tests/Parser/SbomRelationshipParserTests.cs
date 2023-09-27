@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft. All rights reserved.
+﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -18,7 +18,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     [TestMethod]
     public void ParseSbomRelationshipsTest()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
+        var bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream);
@@ -47,7 +47,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     [TestMethod]
     public void MissingPropertiesTest_Throws(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream, bufferSize: 50);
@@ -63,7 +63,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     [TestMethod]
     public void IgnoresAdditionalPropertiesTest(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream);
@@ -79,7 +79,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     [TestMethod]
     public void MalformedJsonTest_Throws(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream);
@@ -90,7 +90,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     [TestMethod]
     public void EmptyArray_ValidJson()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(RelationshipStrings.MalformedJsonEmptyArray);
+        var bytes = Encoding.UTF8.GetBytes(RelationshipStrings.MalformedJsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream);
@@ -104,7 +104,7 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     [ExpectedException(typeof(ArgumentException))]
     public void NullOrEmptyBuffer_Throws()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
+        var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream, bufferSize: 0);

@@ -84,7 +84,7 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
             try
             {
                 log.Debug("Starting validation workflow.");
-                DateTime start = DateTime.Now;
+                var start = DateTime.Now;
 
                 IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
                 IList<ChannelReader<FileValidationResult>> results = new List<ChannelReader<FileValidationResult>>();
@@ -138,18 +138,18 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
                 }
 
                 // 4. Wait for the pipeline to finish.
-                int successCount = 0;
+                var successCount = 0;
                 var failures = new List<FileValidationResult>();
 
-                ChannelReader<FileValidationResult> resultChannel = channelUtils.Merge(results.ToArray());
-                await foreach (FileValidationResult validationResult in resultChannel.ReadAllAsync())
+                var resultChannel = channelUtils.Merge(results.ToArray());
+                await foreach (var validationResult in resultChannel.ReadAllAsync())
                 {
                     successCount++;
                 }
 
-                ChannelReader<FileValidationResult> workflowErrors = channelUtils.Merge(errors.ToArray());
+                var workflowErrors = channelUtils.Merge(errors.ToArray());
 
-                await foreach (FileValidationResult error in workflowErrors.ReadAllAsync())
+                await foreach (var error in workflowErrors.ReadAllAsync())
                 {
                     failures.Add(error);
                 }
@@ -170,7 +170,7 @@ public class SbomValidationWorkflow : IWorkflow<SbomValidationWorkflow>
                     return false;
                 }
 
-                DateTime end = DateTime.Now;
+                var end = DateTime.Now;
                 log.Debug("Finished workflow, gathering results.");
 
                 // 6. Generate JSON output

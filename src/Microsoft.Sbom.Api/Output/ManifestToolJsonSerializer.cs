@@ -79,8 +79,8 @@ public sealed class ManifestToolJsonSerializer : IManifestToolJsonSerializer
     {
         if (!string.IsNullOrEmpty(jsonString))
         {
-            using JsonDocument document = JsonDocument.Parse(jsonString);
-            foreach (JsonProperty property in document.RootElement.EnumerateObject())
+            using var document = JsonDocument.Parse(jsonString);
+            foreach (var property in document.RootElement.EnumerateObject())
             {
                 property.WriteTo(jsonWriter);
             }

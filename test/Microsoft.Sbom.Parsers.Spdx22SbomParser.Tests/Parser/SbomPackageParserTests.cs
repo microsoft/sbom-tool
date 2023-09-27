@@ -17,7 +17,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [TestMethod]
     public void ParseSbomPackagesTest()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
+        var bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream);
@@ -30,7 +30,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [TestMethod]
     public void StreamClosedTestReturnsNull()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
+        var bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream);
@@ -56,7 +56,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingVersionInfo)]
     public void MissingPropertiesTest_DoesNotThrow(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream);
@@ -79,7 +79,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream);
@@ -94,7 +94,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalArrayNoKey)]
     public void IgnoresAdditionalPropertiesTest(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream);
@@ -110,7 +110,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [ExpectedException(typeof(ParserException))]
     public void MalformedJsonTest_Throws(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream);
@@ -121,7 +121,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [TestMethod]
     public void EmptyArray_ValidJson()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.MalformedJsonEmptyArray);
+        var bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.MalformedJsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream);
@@ -133,7 +133,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [ExpectedException(typeof(ArgumentException))]
     public void NullOrEmptyBuffer_Throws()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
+        var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDXParser(stream, bufferSize: 0);

@@ -38,7 +38,7 @@ public class SbomFileToFileInfoConverter
 
         Task.Run(async () =>
         {
-            await foreach (SbomFile component in componentReader.ReadAllAsync())
+            await foreach (var component in componentReader.ReadAllAsync())
             {
                 await Convert(component, output, errors, fileLocation);
             }
