@@ -34,7 +34,7 @@ public class AssemblyConfig : IAssemblyConfig
 
     private static readonly Lazy<string> AssemblyDirectoryValue = new Lazy<string>(() =>
     {
-        string location = Assembly.GetExecutingAssembly().Location;
+        var location = Assembly.GetExecutingAssembly().Location;
         return Path.GetDirectoryName(location);
     });
 

@@ -22,8 +22,8 @@ public class FileOutputWriter : IOutputWriter
 
     public async Task WriteAsync(string output)
     {
-        using FileStream fs = new FileStream(configuration.OutputPath.Value, FileMode.Create);
-        using StreamWriter outputFile = new StreamWriter(fs);
+        using var fs = new FileStream(configuration.OutputPath.Value, FileMode.Create);
+        using var outputFile = new StreamWriter(fs);
         await outputFile.WriteAsync(output);
     }
 }

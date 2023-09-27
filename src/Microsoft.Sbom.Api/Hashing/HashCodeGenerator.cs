@@ -31,7 +31,7 @@ public class HashCodeGenerator : IHashCodeGenerator
     public Checksum[] GenerateHashes(string filePath, AlgorithmName[] hashAlgorithmNames)
     {
         var fileHashes = new Checksum[hashAlgorithmNames.Length];
-        int i = 0;
+        var i = 0;
 
         using var bufferedStream = new BufferedStream(fileSystemUtils.OpenRead(filePath), 1024 * 32);
 

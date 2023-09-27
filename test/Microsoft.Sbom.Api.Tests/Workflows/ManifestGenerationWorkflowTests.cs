@@ -184,7 +184,7 @@ public class ManifestGenerationWorkflowTests
         manifestFilterMock.Init();
 
         var scannedComponents = new List<ScannedComponent>();
-        for (int i = 1; i < 4; i++)
+        for (var i = 1; i < 4; i++)
         {
             var scannedComponent = new ScannedComponent
             {
@@ -332,8 +332,8 @@ public class ManifestGenerationWorkflowTests
         Assert.AreEqual(resultJson["Definition"], "test");
 
         var outputs = resultJson["Outputs"];
-        JArray sortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
-        JArray expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
+        var sortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
+        var expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
 
         var packages = resultJson["Packages"];
         Assert.IsTrue(packages.Count() == 4);

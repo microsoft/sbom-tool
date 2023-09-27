@@ -90,7 +90,7 @@ public class FileHasherTests
 
         files.Writer.Complete();
 
-        await foreach (InternalSbomFileInfo fileHash in fileHashes.file.ReadAllAsync())
+        await foreach (var fileHash in fileHashes.file.ReadAllAsync())
         {
             Assert.IsTrue(fileList.Remove(fileHash.Path));
             Assert.AreEqual("hash", fileHash.Checksum.First().ChecksumValue);
@@ -155,7 +155,7 @@ public class FileHasherTests
             filesCount++;
         }
 
-        await foreach (FileValidationResult error in fileHashes.error.ReadAllAsync())
+        await foreach (var error in fileHashes.error.ReadAllAsync())
         {
             Assert.AreEqual(Entities.ErrorType.Other, error.ErrorType);
             errorCount++;
@@ -217,7 +217,7 @@ public class FileHasherTests
         var errorCount = 0;
         var filesCount = 0;
 
-        await foreach (InternalSbomFileInfo fileHash in fileHashes.file.ReadAllAsync())
+        await foreach (var fileHash in fileHashes.file.ReadAllAsync())
         {
             Assert.IsTrue(fileList.Remove(fileHash.Path));
             Assert.AreEqual("hash", fileHash.Checksum.First().ChecksumValue);
@@ -225,7 +225,7 @@ public class FileHasherTests
             filesCount++;
         }
 
-        await foreach (FileValidationResult error in fileHashes.error.ReadAllAsync())
+        await foreach (var error in fileHashes.error.ReadAllAsync())
         {
             Assert.AreEqual(Entities.ErrorType.Other, error.ErrorType);
             errorCount++;
@@ -299,7 +299,7 @@ public class FileHasherTests
 
         files.Writer.Complete();
 
-        await foreach (InternalSbomFileInfo fileHash in fileHashes.file.ReadAllAsync())
+        await foreach (var fileHash in fileHashes.file.ReadAllAsync())
         {
             Assert.IsTrue(fileList.Remove(fileHash.Path));
             Assert.AreEqual("hash", fileHash.Checksum.First().ChecksumValue);
