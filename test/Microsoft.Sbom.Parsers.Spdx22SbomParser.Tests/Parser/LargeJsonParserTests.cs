@@ -28,7 +28,7 @@ public class LargeJsonParserTests
             Assert.IsNotNull(enumerable);
             Assert.IsTrue(enumerable.GetEnumerator().MoveNext());
 
-            _ = Assert.ThrowsException<ParserException>(() => parser.Next());
+            _ = Assert.ThrowsException<ParserException>(parser.Next);
         }
         else
         {
