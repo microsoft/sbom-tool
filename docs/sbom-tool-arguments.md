@@ -23,7 +23,7 @@ Actions
                              directory.
     OutputPath (-o)          The path where the output json should be written.
     CatalogFilePath (-C)     This parameter is deprecated and will not be used, we will automatically detect the
-                             catalog file using our standard directory structure.The path of signed catalog     
+                             catalog file using our standard directory structure. The path of signed catalog     
                              file that is used to verify the signature of the manifest json file.
     ValidateSignature (-s)   If set, will validate the manifest using the signed catalog file.
     IgnoreMissing (-im)      If set, will not fail validation on the files presented in Manifest but missing on 
