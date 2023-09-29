@@ -811,10 +811,6 @@ dotnet_diagnostic.CA1852.severity = suggestion
 # CA1854: Prefer 'TryGetValue' over 'ContainsKey' and 'Item' when accessing dictionary items
 dotnet_diagnostic.CA1854.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1859
-# CA1859: Use culture-aware string operations
-dotnet_diagnostic.CA1859.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1860
 # CA1860: Avoid using 'Enumerable.Any()' extension method.
 dotnet_diagnostic.CA1860.severity = suggestion
@@ -822,6 +818,18 @@ dotnet_diagnostic.CA1860.severity = suggestion
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1861
 # CA1861: Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly
 dotnet_diagnostic.CA1861.severity = suggestion
+
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862
+# CA1862: Prefer using 'string.Equals(string, StringComparison)' to perform a case-insensitive comparison
+dotnet_diagnostic.CA1862.severity = suggestion
+
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865
+# CA1865: Use 'string.StartsWith(char)' instead of 'string.StartsWith(string)' when you have a string with a single char
+dotnet_diagnostic.CA1865.severity = suggestion
+
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1869
+# CA1869: Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead.
+dotnet_diagnostic.CA1869.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2000
 # CA2000: Dispose objects before losing scope
@@ -1034,6 +1042,14 @@ dotnet_diagnostic.IDE0220.severity = suggestion
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0251
 # IDE0251: Member can be made 'readonly'
 dotnet_diagnostic.IDE0251.severity = suggestion
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0290
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = suggestion
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0300
+# IDE0290: Collection initialization can be simplified
+dotnet_diagnostic.IDE0300.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide1006
 # IDE1006: Naming rule violation: These words must begin with upper case characters: ...
