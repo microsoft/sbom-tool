@@ -57,7 +57,7 @@ BuildDropPath (-b)                        The root folder of the drop directory 
 BuildComponentPath (-bc)                  The folder containing the build components and packages.
 BuildListFile (-bl)                       The file path to a file containing a list of files one file per line for
                                           which the manifest file will be generated. Only files listed in the file
-                                          will be inlcuded in the generated manifest.
+                                          will be included in the generated manifest.
 ManifestDirPath (-m)                      The path of the directory where the generated manifest files will be
                                           placed. If this parameter is not specified, the files will be placed in
                                           {BuildDropPath}/_manifest directory.
