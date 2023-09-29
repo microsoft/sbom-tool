@@ -14,7 +14,7 @@ Help (-?, -h)   Prints this help message
 
 Actions
 
-  Validate -options - Validate a build artifact using the manifest. Optionally also verify the signing certificate of the manfiest.
+  Validate -options - Validate a build artifact using the manifest. Optionally also verify the signing certificate of the manifest.
 
     Option                   Description
     BuildDropPath (-b)       The root folder of the drop directory to validate.
