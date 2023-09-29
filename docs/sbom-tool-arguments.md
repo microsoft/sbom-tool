@@ -73,7 +73,7 @@ DockerImagesToScan (-di)                  Comma separated list of docker image n
                                           f24c91d6fa298369ab.
 AdditionalComponentDetectorArgs (-cd)     Additional set of arguments for Component Detector.  An appropriate usage
                                           of this would be a space-delimited list of `--key value` pairs,
-                                          respresenting command-line switches.
+                                          representing command-line switches.
 ExternalDocumentReferenceListFile (-er)   The path to a file containing a list of external SBOMs that will be
                                           included as external document reference in the output SBOM. SPDX 2.2 is
                                           the only supported format for now.
