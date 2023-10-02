@@ -32,12 +32,12 @@ public class SbomToolCmdRunner
     public bool Help { get; set; }
 
     /// <summary>
-    /// Validate a build artifact using the manifest. Optionally also verify the signing certificate of the manfiest.
+    /// Validate a build artifact using the manifest. Optionally also verify the signing certificate of the manifest.
     /// </summary>
     /// <param name="validationArgs"></param>
     [ArgActionMethod]
     [ArgDescription("Validate a build artifact using the manifest. " +
-                    "Optionally also verify the signing certificate of the manfiest.")]
+                    "Optionally also verify the signing certificate of the manifest.")]
     public ValidationArgs Validate(ValidationArgs validationArgs)
     {
         return validationArgs;
