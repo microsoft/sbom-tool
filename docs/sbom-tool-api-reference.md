@@ -5,7 +5,7 @@ Users can use the C#-based SBOM API for calling the SBOM tool. This guide is int
 ## Prerequisites
 
 * A .NET project that can ingest packages from nuget.org.
-* Only projects that target .NET 6 or higher.  This API currently provides no support for implementation of .NET Framework for the SBOM API. 
+* Only projects that target .NET 6 or higher. This API currently provides no support for implementation of .NET Framework for the SBOM API. 
 * Add the **SBOMToolsPublic** repository to the nuget.config.  Verify the project configuration by clicking the **'Connect to Feed'** button on the feed page [here](https://dev.azure.com/mseng/PipelineTools/_artifacts/feed/SBOMToolsPublic)
 
 ## Installation
@@ -140,7 +140,7 @@ Assert.True(algorithms.Any(a => a.Name == "SHA1"));
 
 ```
 
-This API is a useful tool when utilizing the self-provided data-based API.  The API caller will need to supply these hashes for all the packages and files being sent as part of the input data.
+This API is a useful tool when utilizing the self-provided data-based API. The API caller will need to supply these hashes for all the packages and files being sent as part of the input data.
 
 ## Prerequisites for calling the API
 
@@ -232,7 +232,7 @@ The API looks for a relative path starting with a period `.`.  All path separato
 
 ### SBOMPackage
 
-'SBOMpackage' represents a dependency component for the product. The `PackageName` is the only required property. The API will serialize all other properties unchanged "as-is" in the final output SBOM file.
+'SBOMPackage' represents a dependency component for the product. The `PackageName` is the only required property. The API will serialize all other properties unchanged "as-is" in the final output SBOM file.
 
 ```C#
 

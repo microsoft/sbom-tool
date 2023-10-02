@@ -14,7 +14,7 @@ Users can find source files in the following folder locations:
 * Tests: `test` folder
 * The core engine (generates SBOMs): `Microsoft.Sbom.Api` project
 
-The sbom tool code is designed to be as extensible as possible.  All the interfaces for extending the SBOM tool are located in the `Microsoft.Sbom.Extensions` project. Once such extension is the `IManifestGenerator` interface, which the SBOM tool uses to serialize a SBOM to a specific format.  The `Microsoft.Sbom.Parsers.Spdx22SbomParser` project implements this interface, allowing the SBOM tool to serialize a SBOM in accordance with the prescribed SPDX version 2.2 standard format. The extensions project has additional interfaces designed to extend the SBOM tool.
+The sbom tool code is designed to be as extensible as possible. All the interfaces for extending the SBOM tool are located in the `Microsoft.Sbom.Extensions` project. Once such extension is the `IManifestGenerator` interface, which the SBOM tool uses to serialize a SBOM to a specific format.  The `Microsoft.Sbom.Parsers.Spdx22SbomParser` project implements this interface, allowing the SBOM tool to serialize a SBOM in accordance with the prescribed SPDX version 2.2 standard format. The extensions project has additional interfaces designed to extend the SBOM tool.
 
 The `Microsoft.Sbom.Common` project contains the base of common code, constants, etc. that all the projects can call.
 
