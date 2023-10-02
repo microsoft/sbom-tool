@@ -31,7 +31,7 @@ public class GenerationArgs : CommonArgs
     /// </summary>
     [ArgShortcut("bl")]
     [ArgDescription("The file path to a file containing a list of files one file per line for which the SBOM" +
-                    " file will be generated. Only files listed in the file will be inlcuded in the generated SBOM.")]
+                    " file will be generated. Only files listed in the file will be included in the generated SBOM.")]
     public string BuildListFile { get; set; }
 
     /// <summary>
@@ -67,7 +67,7 @@ public class GenerationArgs : CommonArgs
     public string DockerImagesToScan { get; set; }
 
     [ArgShortcut("cd")]
-    [ArgDescription("Additional set of arguments for Component Detector.  An appropriate usage of this would be a space-delimited list of `--key value` pairs, respresenting command-line switches.")]
+    [ArgDescription("Additional set of arguments for Component Detector.  An appropriate usage of this would be a space-delimited list of `--key value` pairs, representing command-line switches.")]
     public string AdditionalComponentDetectorArgs { get; set; }
 
     /// <summary>
