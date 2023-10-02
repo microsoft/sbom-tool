@@ -41,7 +41,7 @@ public class ValidationArgs : CommonArgs
     /// Gets or sets the path of the signed catalog file used to validate the manifest.json.
     /// </summary>
     [ArgDescription("This parameter is deprecated and will not be used, we will automatically detect the catalog file " +
-                    "using our standard directory structure." +
+                    "using our standard directory structure. " +
                     "The path of signed catalog file that is used to verify the signature of the manifest json file.")]
     [Obsolete]
     public string CatalogFilePath { get; set; }
