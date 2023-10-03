@@ -5,7 +5,6 @@ using System.Collections.Concurrent;
 using Microsoft.ComponentDetection.Common;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Detectors.CocoaPods;
-using Microsoft.ComponentDetection.Detectors.Conan;
 using Microsoft.ComponentDetection.Detectors.Dockerfile;
 using Microsoft.ComponentDetection.Detectors.Go;
 using Microsoft.ComponentDetection.Detectors.Gradle;
@@ -277,7 +276,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IComponentDetector, PodComponentDetector>();
         services.AddSingleton<IComponentDetector, CondaLockComponentDetector>();
-        services.AddSingleton<IComponentDetector, ConanLockComponentDetector>();
         services.AddSingleton<IComponentDetector, DockerfileComponentDetector>();
         services.AddSingleton<IComponentDetector, GoComponentDetector>();
         services.AddSingleton<IComponentDetector, GradleComponentDetector>();
