@@ -58,7 +58,7 @@ public class LicenseInformationService : ILicenseInformationService
             }
             catch (Exception e)
             {
-                log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {e.Message}");
+                log.Warning($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {e.Message}");
                 recorder.RecordAPIException(new ClearlyDefinedResponseNotSuccessfulException(e.Message));
             }
 
@@ -75,7 +75,7 @@ public class LicenseInformationService : ILicenseInformationService
             }
             else
             {
-                log.Error($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information. Request returned status code: {response.StatusCode}");
+                log.Warning($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information. Request returned status code: {response.StatusCode}");
                 recorder.RecordAPIException(new ClearlyDefinedResponseNotSuccessfulException($"Request returned status code: {response.StatusCode}"));
             }
         }

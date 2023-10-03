@@ -130,7 +130,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
         catch
         {
             recorder.RecordAPIException(new ClearlyDefinedResponseParsingException("Encountered error while attempting to parse response. License information may not be fully recorded."));
-            log.Error("Encountered error while attempting to parse response. License information may not be fully recorded.");
+            log.Warning("Encountered error while attempting to parse response. License information may not be fully recorded.");
             return extractedLicenses;
         }
 
