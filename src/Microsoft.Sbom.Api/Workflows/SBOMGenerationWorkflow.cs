@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -88,6 +88,10 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 if (configuration.ManifestDirPath.IsDefaultSource)
                 {
                     RemoveExistingManifestDirectory();
+                }
+                else
+                {
+                    log.Warning("Manifest directory path was explicitly defined. Will not attempt to delete any existing _manifest directory.");
                 }
 
                 await using (sbomConfigs.StartJsonSerializationAsync())
