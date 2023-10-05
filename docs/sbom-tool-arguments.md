@@ -87,7 +87,8 @@ DeleteManifestDirIfPresent (-D)           If set to true, we will delete any pre
                                           already present in the ManifestDirPath without asking the user for
                                           confirmation. The new manifest directory will then be created at this
                                           location and the generated SBOM will be stored there.
-FetchLicenseInformation (-li)             If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.
+FetchLicenseInformation (-li)             If set to true, we will attempt to fetch license information of packages
+                                          detected in the SBOM from the ClearlyDefinedApi.
 Verbosity (-V)                            Display this amount of detail in the logging output.
                                           Verbose
                                           Debug
