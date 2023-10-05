@@ -28,6 +28,7 @@ Actions
     ValidateSignature (-s)   If set, will validate the manifest using the signed catalog file.
     IgnoreMissing (-im)      If set, will not fail validation on the files presented in Manifest but missing on 
                              the disk.
+    FailIfNoPackages (-n)    If set to true, validation will fail if there are no packages detected in the sbom.
     RootPathFilter (-r)      If you're downloading only a part of the drop using the '-r' or 'root' parameter in
                              the drop client, specify the same string value here in order to skip validating    
                              paths that are not downloaded.
@@ -86,6 +87,8 @@ DeleteManifestDirIfPresent (-D)           If set to true, we will delete any pre
                                           already present in the ManifestDirPath without asking the user for
                                           confirmation. The new manifest directory will then be created at this
                                           location and the generated SBOM will be stored there.
+FetchLicenseInformation (-li)             If set to true, we will attempt to fetch license information of packages
+                                          detected in the SBOM from the ClearlyDefinedApi.
 Verbosity (-V)                            Display this amount of detail in the logging output.
                                           Verbose
                                           Debug
