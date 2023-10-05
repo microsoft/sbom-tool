@@ -84,6 +84,15 @@ To scan a path to populate the files section of the SBOM you could run the follo
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -m c:\outputPath -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1
 ```
 
+### Excluding Directories from Component Scan
+
+You can exclude directories from the component scan by specifying the `-cd` parameter you can pass arguments directly to Component Detection. One of these arguments is `--DirectoryExclusionList`  Filters out specific directories following a minimatch pattern from the component scan which will leave
+the contents of these directories out of the packages section of the SBOM. For example, if you wanted to exclude the `bin` directory from the component scan you would run the following command
+
+```
+./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -cd "--DirectoryExclusionList **/bin/**"
+```
+
 ### Write telemetry to a file
 
 By default, we just log telemetry to the console output. In order to get the telemetry logged to a file, specify the `-t` parameter 
