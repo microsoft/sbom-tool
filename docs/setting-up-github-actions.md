@@ -1,10 +1,10 @@
 # Setting up SBOM generation for GitHub Actions
 
-This document provides an example on how to integrate SBOM tool into GitHub Actions, you may use this as a guide to adding the tool to your GitHub action.
+Users may use the sample code provided below for integrating the SBOM tool into GitHub Actions.
 
 ## Existing setup
 
-In our Github project, the source contains a project called Sample. We also have a workflow that builds the project and saves the generated binaries as a pipeline artifact.
+In this Github project, the source contains a project called 'Sample'.  The workflow builds the project and saves the generated binaries as pipeline artifacts.
 
 ```yaml
 name: Sample
@@ -33,14 +33,14 @@ jobs:
         path: buildOutput
 ```
 
-Upon generation, we see that the artifacts are uploaded to the Actions run page, the generated binaries and other files are placed in the artifact.
+Once the sbom tool produces SBOM, the user can see that the Actions run page now contains the newly generated binares and other file artifacts.
 
 ![actions run](./images/github-workflow-run-details.png)
 ![actions-artifact-without-sbom](./images/github-downloaded-folder-without-sbom.png)
 
 ## Adding the SBOM generation task
 
-We will generate the SBOM for the build artifacts we generate in the previous step. We will store the generated SBOM as part of the build artifacts, as we will be distributing this artifact to our downstream dependencies. 
+The user will now produce the SBOM file for the build artifacts generated during the previous step. The ideal end state is the storage of the final product - the newly-generated SBOM file - as part of the build artifacts for future artifact distribution to the downstream dependencies. 
 
 ```yaml
 name: Sample with SBOM generation
@@ -74,14 +74,16 @@ jobs:
         path: buildOutput
 ```
 
-We added the SBOM generation task after the build ran and produced artifacts in the `buildOutput` folder. The source folder contains the `Sample.csproj` file that contains the dependencies for our project, so we pass it as the parameter to the build components path. The package name, version and namespace base uri are static strings for our tool. We also have set verbosity to `Verbose` right now as we want to see additional output while we test our SBOM generation.
+The SBOM generation task occured after the build ran, thus producing artifacts in the `buildOutput` folder.  Since the source folder contains the `Sample.csproj` file that holds the project's dependencies items, the build components path is an important parameter. The package name, version and namespace base URI are static string in the sbomtool.  The verbosity paramater is set to `Verbose` at this point in order to provide the desired output during the SBOM generation test runs.
 
-Since our tool will place the generation SBOM in the build drop folder (buildOutput folder in our case), our original artifact upload task now also uploads the SBOM to the Actions artifacts as seen below.
+Since the sbom tool will place the final SBOM file in the build drop folder (buildOutput folder in this scenario), the original artifact upload task now also uploads the SBOM to the Actions artifacts as seen below.
 
 ![actions-artifact-with-sbom](./images/github-downloaded-folder-with-sbom.png)
 
-With the above our SBOM has the same retention as the build artifacts for the GitHub Action.
+This line of code produces a SBOM file with the same information as the GitHub Action.
+
+## The information being conveyed in this sentence needs clarification.  What is the reader  learn from "With the above our SBOM has the same retention as the build artifacts for the GitHub Action."
 
 ## Further reading
 
-If your team uses a central repository to store SBOMs, you can generate the SBOM to a special folder using the `-manifestDirPath` parameter, and upload the generated file to the central repository.
+If the organization or team stores the SBOM in a centrally-controlled repository, use the `-manifestDirPath` parameter to specify the intended folder location for the SBOM output file.
