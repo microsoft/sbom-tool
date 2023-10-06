@@ -262,3 +262,81 @@ var result = await generator.GenerateSBOMAsync(rootPath: scanPath,
 * The `packages` parameter contains a list of `SBOMPackage` objects. 
 * The `metadata` and `runtimeConfiguration` parameters accept the [`SBOMMetadata`](#sbommetadata) and [`RuntimeConfiguration`](#runtimeconfiguration) objects (respectively).
 * If users want the API to generate the output SBOM in a different folder other the default location, they need to provide the path in the `manifestDirPath` parameter. Users will find the SBOM file under the `_manifest` directory at the user-specified path.
+
+## SBOM Validation
+
+Now that you have generated the SBOM file, you can validate it using the `SBOMValidator` class. Setup for this will be very similar to the `SBOMGenerator` class. Here is an example:
+
+```C#
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Sbom.Extensions.DependencyInjection;
+
+namespace SBOMApiExample;
+class Program
+{
+    public static async Task Main(string[] args)
+    {
+        await Host.CreateDefaultBuilder(args)
+            .ConfigureServices((host, services) =>
+            {
+                services
+                .AddHostedService<ValidationService>()
+                .AddSbomTool();
+            })
+            .RunConsoleAsync(x => x.SuppressStatusMessages = true);
+    }
+}
+```
+
+After the Host is set up, you can inject the `ISBOMValidator` interface into your service and use it to validate the SBOM file. Here is an example:
+Note that the only arguments required are the `buildDropPath`,  the `outputPath`, and the `SbomSpecification`. The `buildDropPath` is the path to the directory containing the _manifest directory. The `outPath` is the path to the file where the validation output will be written. The only `SbomSpecification` currently supported is `SPDX 2.2`.
+All other arguments are optional.
+
+```C#
+using Microsoft.Extensions.Hosting;
+using Microsoft.Sbom.Contracts;
+
+namespace SBOMApiExample
+{
+    public class ValidationService : IHostedService
+    {
+        private readonly ISBOMValidator sbomValidator;
+        private readonly IHostApplicationLifetime hostApplicationLifetime;
+
+        public ValidationService(
+        ISBOMValidator sbomValidator,
+        IHostApplicationLifetime hostApplicationLifetime)
+        {
+            this.sbomValidator = sbomValidator;
+            this.hostApplicationLifetime = hostApplicationLifetime;
+        }
+
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            string buildDropPath = "C:/repos/samplePath";
+            string outputPath = "C:/temp/ValidationOutput.json";
+            IList<SbomSpecification> spdx22Specification = new List<SbomSpecification>()
+            {
+                new SbomSpecification("SPDX","2.2")
+            };
+
+            RuntimeConfiguration configuration = new RuntimeConfiguration()
+            {
+                Verbosity = System.Diagnostics.Tracing.EventLevel.Information,
+            };
+
+            var result = await sbomValidator.ValidateSbomAsync(buildDropPath, outputPath, spdx22Specification, runtimeConfiguration: configuration);
+
+            
+            hostApplicationLifetime.StopApplication();
+        }
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+    }
+}
+
+```
