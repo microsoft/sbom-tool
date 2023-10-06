@@ -170,6 +170,7 @@ public static class ServiceCollectionExtensions
                     typeof(IManifestInterface)))
                 .AsImplementedInterfaces())
             .AddScoped<ISBOMGenerator, SbomGenerator>()
+            .AddScoped<ISBOMValidator, SbomValidator>()
             .AddSingleton(x =>
             {
                 var fileSystemUtils = x.GetRequiredService<IFileSystemUtils>();
