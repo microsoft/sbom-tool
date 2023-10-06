@@ -315,7 +315,7 @@ namespace SBOMApiExample
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             string buildDropPath = "C:/repos/samplePath";
-            string outputPath = "C:/temp/ValidationOutput.json;
+            string outputPath = "C:/temp/ValidationOutput.json";
             IList<SbomSpecification> spdx22Specification = new List<SbomSpecification>()
             {
                 new SbomSpecification("SPDX","2.2")
