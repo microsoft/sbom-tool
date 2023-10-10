@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -27,6 +27,9 @@ public class SignValidatorNotFoundException : Exception
     {
     }
 
+#if NET8_0_OR_GREATER
+    [Obsolete(DiagnosticId = "SYSLIB0051")] // SerializationInfo type is obsolete as of .NET8
+#endif
     protected SignValidatorNotFoundException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {

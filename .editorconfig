@@ -474,6 +474,16 @@ dotnet_diagnostic.CA1859.severity = none
 # https://learn.microsoft.com/en-us/nuget/reference/errors-and-warnings/nu5104
 dotnet_diagnostic.NU5104.severity = none
 
+# SYSLIB1045: Use 'GeneratedRegexAttribute' to generate the regular expression implemenatation at compile-time
+# Justification: Would not have much impact on us / is only available in .NET8
+# https://learn.microsoft.com/dotnet/fundamentals/syslib-diagnostics/syslib1045
+dotnet_diagnostic.SYSLIB1045.severity = none
+
+# CA1863: Cache a 'CompositeFormat' for repeated use in this formatting operation
+# Justification: Only supported in .NET8. We only use the method in question once.
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1863 (This is the link provided by the error message but shows a 404 error)
+dotnet_diagnostic.CA1863.severity = none
+
 ##########################################
 # Temporary rules
 #
@@ -1058,6 +1068,11 @@ dotnet_diagnostic.IDE1006.severity = suggestion
 # https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/warnings/il3000
 # IL3000: Avoid accessing Assembly file path when publishing as a single file
 dotnet_diagnostic.IL3000.severity = suggestion
+
+#IDE0305: Collection initialization can be simplified
+# Justification: The suggestion leads to a styling error. This suggestion is new to .NET8 and performance issues have been reported with it although fixes have been made we should hold on until full release https://github.com/dotnet/roslyn/issues/69988.
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0305
+dotnet_diagnostic.IDE0305.severity = none
 
 ##########################################
 # Provided by Microsoft.VisualStudio.Threading.Analyzers
