@@ -480,7 +480,7 @@ dotnet_diagnostic.NU5104.severity = none
 dotnet_diagnostic.SYSLIB1045.severity = none
 
 # CA1863: Cache a 'CompositeFormat' for repeated use in this formatting operation
-# Justification: Only supported in .NET8. We only use the method in question once.
+# Justification: Only supported in .NET8.
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1863 (This is the link provided by the error message but shows a 404 error)
 dotnet_diagnostic.CA1863.severity = none
 

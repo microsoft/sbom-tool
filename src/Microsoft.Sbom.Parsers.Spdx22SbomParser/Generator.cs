@@ -114,9 +114,7 @@ public class Generator : IManifestGenerator
         var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
         var packageName = internalMetadataProvider.GetPackageName();
         var packageVersion = internalMetadataProvider.GetPackageVersion();
-#pragma warning disable CA1863
         var documentName = string.Format(Constants.SPDXDocumentNameFormatString, packageName, packageVersion);
-#pragma warning restore CA1863
 
         var creationInfo = new CreationInfo
         {
@@ -218,9 +216,7 @@ public class Generator : IManifestGenerator
             LicenseInfoFromFiles = Constants.NoAssertionListValue,
             FilesAnalyzed = true,
             PackageVerificationCode = internalMetadataProvider.GetPackageVerificationCode(),
-#pragma warning disable CA1863
             Supplier = string.Format(Constants.PackageSupplierFormatString, internalMetadataProvider.GetPackageSupplier()),
-#pragma warning restore CA1863
             HasFiles = internalMetadataProvider.GetPackageFilesList()
         };
 
