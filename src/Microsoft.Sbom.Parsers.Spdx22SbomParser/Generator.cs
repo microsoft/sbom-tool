@@ -114,6 +114,7 @@ public class Generator : IManifestGenerator
         var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
         var packageName = internalMetadataProvider.GetPackageName();
         var packageVersion = internalMetadataProvider.GetPackageVersion();
+
         var documentName = string.Format(Constants.SPDXDocumentNameFormatString, packageName, packageVersion);
 
         var creationInfo = new CreationInfo
