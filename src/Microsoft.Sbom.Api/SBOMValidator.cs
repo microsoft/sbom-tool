@@ -45,7 +45,7 @@ public class SbomValidator : ISBOMValidator
         return isSuccess;
     }
 
-    public async Task<EntityError> ValidateSbomAsync(
+    public async Task<IList<EntityError>> ValidateSbomAsync(
         string buildDropPath,
         string outputPath,
         IList<SbomSpecification> specifications,
