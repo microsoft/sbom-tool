@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Runtime.Serialization;
 
 namespace Microsoft.Sbom.Api.Exceptions;
 
@@ -13,7 +12,6 @@ namespace Microsoft.Sbom.Api.Exceptions;
 /// <remarks>
 /// Thrown out of public classes implementing IPackageInfoConverter so it must also be public.
 /// <remarks>
-[Serializable]
 public class InvalidConverterException : Exception
 {
     public InvalidConverterException()
@@ -27,14 +25,6 @@ public class InvalidConverterException : Exception
 
     public InvalidConverterException(string message, Exception innerException)
         : base(message, innerException)
-    {
-    }
-
-#if NET8_0_OR_GREATER
-    [Obsolete(DiagnosticId = "SYSLIB0051")] // SerializationInfo type is obsolete as of .NET8
-#endif
-    protected InvalidConverterException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
     {
     }
 }
