@@ -45,7 +45,7 @@ public class SbomValidator : ISBOMValidator
         return isSuccess;
     }
 
-    public async Task<bool> ValidateSbomAsync(
+    public async Task<EntityError> ValidateSbomAsync(
         string buildDropPath,
         string outputPath,
         IList<SbomSpecification> specifications,
@@ -80,9 +80,7 @@ public class SbomValidator : ISBOMValidator
         var isSuccess = await sbomParserBasedValidationWorkflow.RunAsync();
         await recorder.FinalizeAndLogTelemetryAsync();
 
-        var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
-
-        return isSuccess;
+        return recorder.Errors.Select(error => error.ToEntityError()).ToList();
     }
 
     private InputConfiguration ValidateConfig(InputConfiguration config)

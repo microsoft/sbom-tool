@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -171,6 +171,13 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 recorder.RecordException(e);
                 log.Error("Encountered an error while validating the drop.");
                 log.Error($"Error details: {e.Message}");
+
+                if (e is FileNotFoundException || e is DirectoryNotFoundException)
+                {
+                    // Bubble up exception if user provided an invalid path/SBOM wasn't found
+                    throw;
+                }
+
                 return false;
             }
             finally
