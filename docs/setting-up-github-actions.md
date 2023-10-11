@@ -82,7 +82,7 @@ Since the sbom tool will place the final SBOM file in the build drop folder (bui
 
 This line of code produces a SBOM file with the same information as the GitHub Action.
 
-## The information being conveyed in this sentence needs clarification.  What is the reader  learn from "With the above our SBOM has the same retention as the build artifacts for the GitHub Action."
+## The above steps give the SBOM the same retention as the build artifacts for the GitHub Action."
 
 ## Further reading
 

@@ -10,7 +10,7 @@ Users can use the C#-based SBOM API for calling the SBOM tool. This guide is int
 
 ## Installation
 
-Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Microsoft.Sbom.Api) package configuration by utilizing the steps posted to [here](https://www.nuget.org/packages/Microsoft.Sbom.Api).  A sample `.csproj` file" is:
+Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Microsoft.Sbom.Api) package configuration by utilizing the steps posted to [here](https://www.nuget.org/packages/Microsoft.Sbom.Api).  A sample `.csproj` file is:
 
 ```
 <Project Sdk="Microsoft.NET.Sdk">
@@ -31,8 +31,8 @@ Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Micro
 The main entry point for the SBOM generator is in the `SBOMGenerator` class. In order to create an instance of the SBOMGenerator class there are a few arguments that need to be provided. These arguments can be resolved 
 through the dependency injection framework. The following code snippet shows how to create an instance of the SBOMGenerator class using the dependency injection framework using a pattern that is common when using this approach.
 
-You can create a Host and add a hosted service that will call the SBOM API along with its dependencies. By calling `.AddSbomTool()` on the service collection, the SBOM API will 
-be added to the dependency injection framework and can be resolved by the hosted service. The hosted service can then be started by calling `RunConsoleAsync` on the host.
+Users can create a Host and add a hosted service for calling the SBOM API along with its dependencies. By calling `.AddSbomTool()` on the service collection, the SBOM API will 
+be added to the dependency injection framework for the host service to resolve. Users can start the hosted service by calling `RunConsoleAsync` on the host.
 
 ```C#
 using Microsoft.Extensions.DependencyInjection;
@@ -56,10 +56,10 @@ class Program
 }
 ```
 
-Now that the entry point is setup, we can define the hosted service. In this example, we will use the `GenerationService` class (This class is user defined) as the hosted service The `GenerationService` class will be responsible for calling the SBOM API and generating the SBOM.
+Now that the entry point is setup, users can define the hosted service. This example uses the `GenerationService` class (this class is user-defined) as the hosted service. The `GenerationService` class will be responsible for calling the SBOM API and generating the SBOM.
 The following snippet shows how to set up the `GenerationService` class so that arguments are resolved through DI.
 
-Your class must implement the `IHostedService` interface and provide an implementation for the `StartAsync` and `StopAsync` methods. Now you can pass an instance of the `ISBOMGenerator` interface to the constructor of your class. This interface is provided by the SBOM API and can be resolved by the DI framework. The `ISBOMGenerator` interface provides the methods to generate the SBOM.
+The class must implement the `IHostedService` interface and provide an implementation for the `StartAsync` and `StopAsync` methods. Now users can pass an instance of the `ISBOMGenerator` interface to the class constructor. The SBOM API provides the interface for the DI framework to resolve. The `ISBOMGenerator` interface provides the options for methods to generate the SBOM.
 
 Descriptions of the arguments to the `GenerateSbomAsync` method can be found [here](#scan-based-sbom-generator-api) and [here](#self-provided-data-based-sbom-generator-api) and can be defined anywhere needed as long as they are passed to the `GenerateSbomAsync` method.
 
@@ -243,7 +243,7 @@ var package = new SBOMPackage
 };
 ```
 
-You can call the API as shown below:
+An example API call is:
 
 ```C#
 using Microsoft.Sbom.Contracts.Enums;
@@ -265,7 +265,7 @@ var result = await generator.GenerateSBOMAsync(rootPath: scanPath,
 
 ## SBOM Validation
 
-Now that you have generated the SBOM file, you can validate it using the `SBOMValidator` class. Setup for this will be very similar to the `SBOMGenerator` class. Here is an example:
+Users can now validate the newly-generated SBOM file using the `SBOMValidator` class. Setup for this class will be very similar to `SBOMGenerator`. Here is an example:
 
 ```C#
 using Microsoft.Extensions.DependencyInjection;
@@ -289,7 +289,7 @@ class Program
 }
 ```
 
-After the Host is set up, you can inject the `ISBOMValidator` interface into your service and use it to validate the SBOM file. Here is an example:
+After setting up the Host, inject the `ISBOMValidator` interface into the service in order to validate the SBOM file. Here is an example:
 Note that the only arguments required are the `buildDropPath`,  the `outputPath`, and the `SbomSpecification`. The `buildDropPath` is the path to the directory containing the _manifest directory. The `outPath` is the path to the file where the validation output will be written. The only `SbomSpecification` currently supported is `SPDX 2.2`.
 All other arguments are optional.
 

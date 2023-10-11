@@ -94,8 +94,7 @@ In order to scan a path to populate the files section of the SBOM, the user can 
 
 ### Excluding Directories from Component Scan
 
-You can exclude directories from the component scan by specifying the `-cd` parameter you can pass arguments directly to Component Detection. One of these arguments is `--DirectoryExclusionList`  Filters out specific directories following a minimatch pattern from the component scan which will leave
-the contents of these directories out of the packages section of the SBOM. For example, if you wanted to exclude the `bin` directory from the component scan you would run the following command
+Users can exclude directories from the component scan by specifying the `-cd` parameter. Users can pass arguments directly to Component Detection. One of these arguments is `--DirectoryExclusionList` which filters out specific directories using a mini-match pattern from the component scan for leaving out user-selected contents of these directories from the packages section in the SBOM file. For example, users wanting to exclude the `bin` directory from the component scan would run the following command:
 
 ```
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -cd "--DirectoryExclusionList **/bin/**"
