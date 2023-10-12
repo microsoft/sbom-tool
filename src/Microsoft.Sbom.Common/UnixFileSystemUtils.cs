@@ -3,11 +3,11 @@
 
 namespace Microsoft.Sbom.Common;
 
-using System.IO;
-
 #if NET6_0
 using Mono.Unix;
 using Mono.Unix.Native;
+#elif NET8_0_OR_GREATER
+using System.IO;
 #endif
 
 /// <summary>
@@ -30,19 +30,18 @@ internal class UnixFileSystemUtils : FileSystemUtils
         var directoryInfo = new UnixDirectoryInfo(directoryPath);
         return directoryInfo.CanAccess(AccessModes.W_OK) && directoryInfo.CanAccess(AccessModes.F_OK);
     }
-#endif
 
-#if NET8_0_OR_GREATER
+#elif NET8_0_OR_GREATER
     public override bool DirectoryHasReadPermissions(string directoryPath)
     {
         var fileMode = File.GetUnixFileMode(directoryPath);
-        return fileMode == (UnixFileMode.GroupRead | UnixFileMode.OtherRead | UnixFileMode.UserRead);
+        return (fileMode & (UnixFileMode.GroupRead | UnixFileMode.OtherRead | UnixFileMode.UserRead)) != 0;
     }
 
     public override bool DirectoryHasWritePermissions(string directoryPath)
     {
         var fileMode = File.GetUnixFileMode(directoryPath);
-        return fileMode == (UnixFileMode.GroupWrite | UnixFileMode.OtherWrite | UnixFileMode.UserWrite);
+        return (fileMode & (UnixFileMode.GroupWrite | UnixFileMode.OtherWrite | UnixFileMode.UserWrite)) != 0;
     }
 #endif
 
