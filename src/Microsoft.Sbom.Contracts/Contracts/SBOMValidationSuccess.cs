@@ -6,6 +6,6 @@ namespace Microsoft.Sbom.Contracts;
 /// <summary>
 /// Represents a successful SBOM validation result.
 /// </summary>
-public class SbomValidationSuccess : SBOMValidationResult
+public class SBOMValidationSuccess : SBOMValidationResult
 {
 }

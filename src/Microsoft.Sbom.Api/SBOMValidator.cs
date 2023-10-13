@@ -4,16 +4,19 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
+using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions;
 using PowerArgs;
 
 namespace Microsoft.Sbom.Api;
@@ -23,16 +26,25 @@ public class SbomValidator : ISBOMValidator
     private readonly IWorkflow<SbomParserBasedValidationWorkflow> sbomParserBasedValidationWorkflow;
     private readonly IRecorder recorder;
     private readonly IEnumerable<ConfigValidator> configValidators;
+    private readonly IConfiguration configuration;
+    private readonly ISbomConfigProvider sbomConfigs;
+    private readonly IFileSystemUtils fileSystemUtils;
 
     public SbomValidator(
         IWorkflow<SbomParserBasedValidationWorkflow> sbomParserBasedValidationWorkflow,
         IRecorder recorder,
         IEnumerable<ConfigValidator> configValidators,
-        ConfigSanitizer configSanitizer)
+        ConfigSanitizer configSanitizer,
+        IConfiguration configuration,
+        ISbomConfigProvider sbomConfigs,
+        IFileSystemUtils fileSystemUtils)
     {
         this.sbomParserBasedValidationWorkflow = sbomParserBasedValidationWorkflow ?? throw new ArgumentNullException(nameof(sbomParserBasedValidationWorkflow));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.configValidators = configValidators;
+        this.configuration = configuration;
+        this.sbomConfigs = sbomConfigs;
+        this.fileSystemUtils = fileSystemUtils;
     }
 
     public async Task<bool> ValidateSbomAsync()
@@ -45,7 +57,7 @@ public class SbomValidator : ISBOMValidator
         return isSuccess;
     }
 
-    public async Task<IList<EntityError>> ValidateSbomAsync(
+    public async Task<SBOMValidationResult> ValidateSbomAsync(
         string buildDropPath,
         string outputPath,
         IList<SbomSpecification> specifications,
@@ -77,10 +89,18 @@ public class SbomValidator : ISBOMValidator
 
         inputConfig.ToConfiguration();
 
+        var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo.Value.FirstOrDefault());
+        var path = sbomConfig.ManifestJsonFilePath;
+        if (!fileSystemUtils.FileExists(sbomConfig.ManifestJsonFilePath))
+        {
+            throw new FileNotFoundException($"Manifest not found in specified location: {sbomConfig.ManifestJsonFilePath}");
+        }
+
         var isSuccess = await sbomParserBasedValidationWorkflow.RunAsync();
         await recorder.FinalizeAndLogTelemetryAsync();
 
-        return recorder.Errors.Select(error => error.ToEntityError()).ToList();
+        var errors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
+        return errors.Any() ? new SBOMValidationFailure(errors) : new SBOMValidationSuccess();
     }
 
     private InputConfiguration ValidateConfig(InputConfiguration config)

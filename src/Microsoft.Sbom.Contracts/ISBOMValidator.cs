@@ -30,7 +30,7 @@ public interface ISBOMValidator
     /// <param name="runtimeConfiguration">The runtime configuration to use for validation.</param>
     /// <param name="algorithmName">The algorithm to use for hashing.</param>
     /// </summary>
-    Task<IList<EntityError>> ValidateSbomAsync(
+    Task<SBOMValidationResult> ValidateSbomAsync(
         string buildDropPath,
         string outputPath,
         IList<SbomSpecification> specifications,
