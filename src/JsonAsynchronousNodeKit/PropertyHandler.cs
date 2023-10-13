@@ -4,3 +4,8 @@
 namespace JsonAsynchronousNodeKit;
 
 public record PropertyHandler(ParameterType Type);
+
+#pragma warning disable SA1402 // File may only contain a single type
+public record PropertyHandler<T>(ParameterType ParameterType)
+#pragma warning restore SA1402 // File may only contain a single type
+    : PropertyHandler(ParameterType);

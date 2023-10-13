@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Linq;
 using JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 
@@ -14,5 +15,5 @@ public record FilesResult : ParserStateResult
     {
     }
 
-    public IEnumerable<SPDXFile> Files => (IEnumerable<SPDXFile>)this.Result!;
+    public IEnumerable<SPDXFile> Files => ((IEnumerable<object>)this.Result!).Select(r => (SPDXFile)r);
 }

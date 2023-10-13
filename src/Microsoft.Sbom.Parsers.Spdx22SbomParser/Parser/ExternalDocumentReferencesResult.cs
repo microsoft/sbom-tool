@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Linq;
 using JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 
@@ -14,5 +15,5 @@ public record class ExternalDocumentReferencesResult : ParserStateResult
     {
     }
 
-    public IEnumerable<SpdxExternalDocumentReference> References => (IEnumerable<SpdxExternalDocumentReference>)this.Result!;
+    public IEnumerable<SpdxExternalDocumentReference> References => ((IEnumerable<object>)this.Result!).Select(r => (SpdxExternalDocumentReference)r);
 }

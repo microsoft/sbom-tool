@@ -48,9 +48,14 @@ public class LargeJsonParser
 
         this.stream.Position = GetStartPosition(this.stream);
 
-        if (!stream.CanRead || stream.Read(this.buffer) == 0)
+        if (!stream.CanRead)
         {
-            throw new EndOfStreamException();
+            throw new NotSupportedException("The stream must be readable.");
+        }
+
+        if (stream.Read(this.buffer) == 0)
+        {
+            throw new EndOfStreamException("No bytes were read from the stream.");
         }
 
         static int GetStartPosition(Stream stream)
@@ -84,6 +89,12 @@ public class LargeJsonParser
             {
                 ParserUtils.SkipNoneTokens(this.stream, ref this.buffer, ref reader);
 
+                // Arrays are legal root objects, but if you expect that you should use `System.Text.Json.JsonSerializer.DeserializeAsyncEnumerable` instead.
+                if (reader.TokenType == JsonTokenType.StartArray)
+                {
+                    throw new ParserException($"For root-level arrays use {nameof(JsonSerializer.DeserializeAsyncEnumerable)}.");
+                }
+
                 ParserUtils.AssertTokenType(this.stream, ref reader, JsonTokenType.StartObject);
                 ParserUtils.GetMoreBytesFromStream(this.stream, ref this.buffer, ref reader);
 
@@ -104,25 +115,13 @@ public class LargeJsonParser
                 ParserUtils.Read(this.stream, ref this.buffer, ref reader);
             }
 
-            // If the end of the Json Object is reached, return null to indicate completion.
-            if (reader.TokenType == JsonTokenType.EndObject)
-            {
-                return null;
-            }
-
             ParserUtils.AssertTokenType(this.stream, ref reader, JsonTokenType.PropertyName);
-            var propertyName = reader.GetString() ?? throw new NotImplementedException();
+            var propertyName = reader.GetString() ?? throw new InvalidOperationException("It should not be possible to have a null PropertyName");
             ParserUtils.Read(this.stream, ref this.buffer, ref reader);
 
-            ParserStateResult resultState;
-            if (this.handlers.ContainsKey(propertyName))
-            {
-                resultState = this.HandleExplicitProperty(ref reader, propertyName);
-            }
-            else
-            {
-                resultState = this.HandleExtraProperty(ref reader, propertyName);
-            }
+            var resultState = this.handlers.ContainsKey(propertyName)
+                ? this.HandleExplicitProperty(ref reader, propertyName)
+                : this.HandleExtraProperty(ref reader, propertyName);
 
             // yield return is a special case where we need to leave the reader in the same state as we found it.
             if (!resultState.YieldReturn)
@@ -168,8 +167,8 @@ public class LargeJsonParser
                 result = this.GetObject(objType, ref reader);
                 break;
             case ParameterType.Array:
-                var aryType = handler.GetType().GetGenericArguments()[0];
-                result = this.ParseArray(ref reader, aryType);
+                var arrType = handler.GetType().GetGenericArguments()[0];
+                result = this.ParseArray(ref reader, arrType);
                 break;
             default:
                 throw new InvalidOperationException($"Unknown {nameof(ParameterType)}: {handler.Type}");
@@ -180,7 +179,6 @@ public class LargeJsonParser
 
     private ParserStateResult HandleExtraProperty(ref Utf8JsonReader reader, string propertyName)
     {
-        // We skip objects and arrays to avoid having to parse them.
         object? result = reader.TokenType switch
         {
             JsonTokenType.String => reader.GetString(),
@@ -273,7 +271,7 @@ public class LargeJsonParser
 
         if (result is null)
         {
-            throw new NotImplementedException();
+            throw new InvalidOperationException($"Deserialization unexpectedly returned null.");
         }
 
         return result;
