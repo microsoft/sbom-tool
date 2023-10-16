@@ -35,13 +35,25 @@ internal class UnixFileSystemUtils : FileSystemUtils
     public override bool DirectoryHasReadPermissions(string directoryPath)
     {
         var fileMode = File.GetUnixFileMode(directoryPath);
-        return (fileMode & (UnixFileMode.GroupRead | UnixFileMode.OtherRead | UnixFileMode.UserRead)) != 0;
+
+        if (fileMode.HasFlag(UnixFileMode.GroupRead) | fileMode.HasFlag(UnixFileMode.UserRead) | fileMode.HasFlag(UnixFileMode.OtherRead))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public override bool DirectoryHasWritePermissions(string directoryPath)
     {
         var fileMode = File.GetUnixFileMode(directoryPath);
-        return (fileMode & (UnixFileMode.GroupWrite | UnixFileMode.OtherWrite | UnixFileMode.UserWrite)) != 0;
+
+        if (fileMode.HasFlag(UnixFileMode.GroupWrite) | fileMode.HasFlag(UnixFileMode.UserWrite) | fileMode.HasFlag(UnixFileMode.OtherWrite))
+        {
+            return true;
+        }
+
+        return false;
     }
 #endif
 
