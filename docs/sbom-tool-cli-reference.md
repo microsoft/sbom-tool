@@ -30,7 +30,7 @@ In this scenario, the user configured the sbom tool to generate an SBOM for all 
 
 By default, the tool will place the generated SBOM inside the `_manifest\spdx_2.2\` subfolder under the path which the -b argument specifies. In this example, the SBOM will be located here: `c:\outputDrop\_manifest\spdx_2.2\manifest.spdx.json`
 
-Successful runs of the tool require full write permissions for the path specified in the -b argument.  User encountering errors when the tool is attempting to write the `_manifest\spdx_2.2\` subfolder should consider these steps:
+Successful runs of the tool require full write permissions for the path specified in the -b argument.  Users encountering errors when the tool is attempting to write the `_manifest\spdx_2.2\` subfolder should consider these steps:
 1. If someone else controls the user's network or hardware settings (such as employer-owned infrastructure), contact the respective network administrator(s) for assistance.
 2. If the user controls their own infrastructure, review and (as needed) update folder security and attribute settings.  Consult the hardware manufacturer or user support communities as needed for further assistance.
 3. Update the path specified in the -b argument to an externally connected hard drive or another alternate folder located off-device. 
