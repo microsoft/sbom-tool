@@ -33,8 +33,7 @@ public class SbomValidator : ISBOMValidator
     public SbomValidator(
         IWorkflow<SbomParserBasedValidationWorkflow> sbomParserBasedValidationWorkflow,
         IRecorder recorder,
-        IEnumerable<ConfigValidator> configValidators,
-        ConfigSanitizer configSanitizer)
+        IEnumerable<ConfigValidator> configValidators)
     {
         this.sbomParserBasedValidationWorkflow = sbomParserBasedValidationWorkflow ?? throw new ArgumentNullException(nameof(sbomParserBasedValidationWorkflow));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
@@ -45,11 +44,10 @@ public class SbomValidator : ISBOMValidator
         IWorkflow<SbomParserBasedValidationWorkflow> sbomParserBasedValidationWorkflow,
         IRecorder recorder,
         IEnumerable<ConfigValidator> configValidators,
-        ConfigSanitizer configSanitizer,
         IConfiguration configuration,
         ISbomConfigProvider sbomConfigs,
         IFileSystemUtils fileSystemUtils)
-        : this(sbomParserBasedValidationWorkflow, recorder, configValidators, configSanitizer)
+        : this(sbomParserBasedValidationWorkflow, recorder, configValidators)
     {
         this.configuration = configuration;
         this.sbomConfigs = sbomConfigs;
