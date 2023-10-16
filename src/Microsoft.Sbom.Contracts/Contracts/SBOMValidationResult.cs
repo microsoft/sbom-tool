@@ -14,7 +14,7 @@ public class SBOMValidationResult
 
     public IList<EntityError> Errors { get; private set; }
 
-    public ValidationResult(bool isSuccess, IList<EntityError> errors)
+    public SBOMValidationResult(bool isSuccess, IList<EntityError> errors)
     {
         this.IsSuccess = isSuccess;
         this.Errors = errors;
