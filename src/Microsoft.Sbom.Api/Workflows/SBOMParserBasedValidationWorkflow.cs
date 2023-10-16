@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -69,7 +69,6 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
             {
                 var sw = Stopwatch.StartNew();
                 var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo.Value.FirstOrDefault());
-
                 using var stream = fileSystemUtils.OpenRead(sbomConfig.ManifestJsonFilePath);
                 var manifestInterface = manifestParserProvider.Get(sbomConfig.ManifestInfo);
                 var sbomParser = manifestInterface.CreateParser(stream);
