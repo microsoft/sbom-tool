@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JsonAsynchronousNodeKit\JsonAsynchronousNodeKit.csproj" />
+    <ProjectReference Include="..\Microsoft.JsonAsynchronousNodeKit\Microsoft.JsonAsynchronousNodeKit.csproj" />
     <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
   </ItemGroup>
 

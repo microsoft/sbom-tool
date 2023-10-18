@@ -4,9 +4,9 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using JsonAsynchronousNodeKit.Exceptions;
+using Microsoft.JsonAsynchronousNodeKit.Exceptions;
 
-namespace JsonAsynchronousNodeKit;
+namespace Microsoft.JsonAsynchronousNodeKit;
 
 /// <summary>
 /// Allows for parsing large json objects without loading the entire object into memory. Large json arrays use a yield return to avoid having the whole enumerable in memory at once.

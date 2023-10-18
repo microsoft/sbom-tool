@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using JsonAsynchronousNodeKit.Exceptions;
+using Microsoft.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;

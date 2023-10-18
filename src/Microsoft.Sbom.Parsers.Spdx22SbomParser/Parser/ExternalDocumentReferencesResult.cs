@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using JsonAsynchronousNodeKit;
+using Microsoft.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 
 namespace Microsoft.Sbom.Parser;

@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Runtime.Serialization;
-
-namespace JsonAsynchronousNodeKit.Exceptions;
+namespace Microsoft.JsonAsynchronousNodeKit.Exceptions;
 
 /// <summary>
 /// Thrown when the parser detects an error in the JSON file.

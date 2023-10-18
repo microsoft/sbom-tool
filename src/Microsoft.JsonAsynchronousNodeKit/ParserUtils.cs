@@ -3,9 +3,9 @@
 
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using JsonAsynchronousNodeKit.Exceptions;
+using Microsoft.JsonAsynchronousNodeKit.Exceptions;
 
-namespace JsonAsynchronousNodeKit;
+namespace Microsoft.JsonAsynchronousNodeKit;
 
 /// <summary>
 /// Utility methods for parsing that are shared by all parsers.
