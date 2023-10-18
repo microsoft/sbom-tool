@@ -8,7 +8,6 @@ namespace JsonAsynchronousNodeKit.Exceptions;
 /// <summary>
 /// Thrown when the parser detects an error in the JSON file.
 /// </summary>
-[Serializable]
 public class ParserException : Exception
 {
     public ParserException()
@@ -22,11 +21,6 @@ public class ParserException : Exception
 
     public ParserException(string message, Exception innerException)
         : base(message, innerException)
-    {
-    }
-
-    protected ParserException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
     {
     }
 }

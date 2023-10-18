@@ -71,7 +71,6 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
             {
                 var sw = Stopwatch.StartNew();
                 var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo.Value.FirstOrDefault());
-
                 using var stream = fileSystemUtils.OpenRead(sbomConfig.ManifestJsonFilePath);
                 var manifestInterface = manifestParserProvider.Get(sbomConfig.ManifestInfo);
                 var sbomParser = manifestInterface.CreateParser(stream);

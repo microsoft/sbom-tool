@@ -27,7 +27,7 @@ steps:
     publishLocation: 'Container'
 ```
 
-In this pipeline, the user first builds the dotnet project.  The generated binaries are stored in the artifacts staging directory. In the final step, upload these artifacts to the pipline artifacts. Any dependent pipeline or release can now consume these binaries using this pipeline artifact.  Check the build pipeline artifacts in the project in order to see the commplete set of binaries generated for the Demo project.
+In this pipeline, the user first builds the dotnet project.  The generated binaries are stored in the artifacts staging directory. In the final step, upload these artifacts to the pipeline artifacts. Any dependent pipeline or release can now consume these binaries using this pipeline artifact.  Check the build pipeline artifacts in the project in order to see the commplete set of binaries generated for the Demo project.
 
 ![ado-artifact-without-sbom](./images/ado-artifacts-without-sbom.png)
 
@@ -62,7 +62,7 @@ steps:
     publishLocation: 'Container'
 ```
 
-This process added the SBOM generation task after the build ran and produced artifacts in the `$(Build.ArtifactStagingDirectory)` directory.  Since the `$(Build.SourcesDirectory)` folder contains the `Demo.csproj` file that contains the dependencies for our project, the user passes the parameter to the build components path. The package name, version and namespace base URI are static strings for the tool. Set the verbosity to `Verbose` at this point in time so tht the user can see additional output while testing the SBOM generation.
+This process added the SBOM generation task after the build ran and produced artifacts in the `$(Build.ArtifactStagingDirectory)` directory.  Since the `$(Build.SourcesDirectory)` folder contains the `Demo.csproj` file that contains the dependencies for our project, the user passes the parameter to the build components path. The package name, version and namespace base URI are static strings for the tool. Set the verbosity to `Verbose` at this point in time so that the user can see additional output while testing the SBOM generation.
 
 Since the sbom tool will place the generated SBOM file into the build drop folder (`$(Build.ArtifactStagingDirectory)` folder in this case), this original artifact upload task now also uploads the SBOM to the Actions artifacts as seen below.
 
