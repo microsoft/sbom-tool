@@ -10,13 +10,13 @@ using Microsoft.Sbom.Contracts;
 /// <summary>
 /// A <see cref="ScannedComponent" /> with license information.
 /// </summary>
-public class ScannedComponentWithLicense : ScannedComponent
+public class ExtendedScannedComponent : ScannedComponent
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ScannedComponentWithLicense" /> class.
+    /// Initializes a new instance of the <see cref="ExtendedScannedComponent" /> class.
     /// </summary>
     /// <param name="other">The <see cref="ScannedComponent" /> to copy properties from.</param>
-    public ScannedComponentWithLicense(ScannedComponent? other = null)
+    public ExtendedScannedComponent(ScannedComponent? other = null)
     {
         if (other == null)
         {
@@ -35,12 +35,22 @@ public class ScannedComponentWithLicense : ScannedComponent
     }
 
     /// <summary>
-    /// Gets or sets the license.
+    /// Gets or sets the license concluded.
     /// </summary>
-    public string? License { get; set; }
+    public string? LicenseConcluded { get; set; }
 
     /// <summary>
-    /// Converts a <see cref="ScannedComponentWithLicense" /> to an <see cref="SbomPackage" />.
+    /// Gets or sets the license declared (This is what is found in the package files).
+    /// </summary>
+    public string? LicenseDeclared { get; set; }
+
+    /// <summary>
+    /// Gets or sets the supplier.
+    /// </summary>
+    public string? Supplier { get; set; }
+
+    /// <summary>
+    /// Converts a <see cref="ExtendedScannedComponent" /> to an <see cref="SbomPackage" />.
     /// </summary>
     /// <param name="report">The <see cref="AdapterReport" /> to use.</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>

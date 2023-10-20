@@ -10,30 +10,30 @@ using Microsoft.Sbom.Contracts;
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
 
 /// <summary>
-/// Extensions methods for <see cref="ScannedComponentWithLicense"/>.
+/// Extensions methods for <see cref="ExtendedScannedComponent"/>.
 /// </summary>
 public static class ScannedComponentExtensions
 {
     /// <summary>
-    /// Converts a <see cref="ScannedComponentWithLicense"/> to an <see cref="SbomPackage"/>.
+    /// Converts a <see cref="ExtendedScannedComponent"/> to an <see cref="SbomPackage"/>.
     /// </summary>
-    public static SbomPackage? ToSbomPackage(this ScannedComponentWithLicense component, AdapterReport report)
+    public static SbomPackage? ToSbomPackage(this ExtendedScannedComponent component, AdapterReport report)
     {
         return component.Component switch
         {
-            CargoComponent cargoComponent => cargoComponent.ToSbomPackage(component?.License),
+            CargoComponent cargoComponent => cargoComponent.ToSbomPackage(component?.LicenseConcluded),
             CondaComponent condaComponent => condaComponent.ToSbomPackage(),
             DockerImageComponent dockerImageComponent => dockerImageComponent.ToSbomPackage(),
             GitComponent gitComponent => gitComponent.ToSbomPackage(),
             GoComponent goComponent => goComponent.ToSbomPackage(),
             LinuxComponent linuxComponent => linuxComponent.ToSbomPackage(),
-            MavenComponent mavenComponent => mavenComponent.ToSbomPackage(),
-            NpmComponent npmComponent => npmComponent.ToSbomPackage(component?.License),
-            NuGetComponent nuGetComponent => nuGetComponent.ToSbomPackage(component?.License),
+            MavenComponent mavenComponent => mavenComponent.ToSbomPackage(component?.LicenseDeclared, component?.Supplier),
+            NpmComponent npmComponent => npmComponent.ToSbomPackage(component?.LicenseConcluded),
+            NuGetComponent nuGetComponent => nuGetComponent.ToSbomPackage(component?.LicenseConcluded, component?.LicenseDeclared, component?.Supplier),
             OtherComponent otherComponent => otherComponent.ToSbomPackage(),
-            PipComponent pipComponent => pipComponent.ToSbomPackage(component?.License),
-            PodComponent podComponent => podComponent.ToSbomPackage(component?.License),
-            RubyGemsComponent rubyGemsComponent => rubyGemsComponent.ToSbomPackage(component?.License),
+            PipComponent pipComponent => pipComponent.ToSbomPackage(component?.LicenseConcluded),
+            PodComponent podComponent => podComponent.ToSbomPackage(component?.LicenseConcluded),
+            RubyGemsComponent rubyGemsComponent => rubyGemsComponent.ToSbomPackage(component?.LicenseConcluded),
             null => Error(report => report.LogNullComponent(nameof(ToSbomPackage))),
             _ => Error(report => report.LogNoConversionFound(component.Component.GetType(), component.Component))
         };

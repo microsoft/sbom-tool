@@ -17,16 +17,16 @@ internal static class PodComponentExtensions
     /// <param name="podComponent">The <see cref="PodComponent" /> to convert.</param>
     /// <param name="license">The license to use.</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>
-    public static SbomPackage? ToSbomPackage(this PodComponent podComponent, string? license = null) => new()
+    public static SbomPackage? ToSbomPackage(this PodComponent podComponent, string? licenseConcluded = null) => new()
     {
         Id = podComponent.Id,
         PackageUrl = podComponent.PackageUrl?.ToString(),
         PackageName = podComponent.Name,
         PackageVersion = podComponent.Version,
         PackageSource = podComponent.SpecRepo,
-        LicenseInfo = string.IsNullOrWhiteSpace(license) ? null : new LicenseInfo
+        LicenseInfo = string.IsNullOrWhiteSpace(licenseConcluded) ? null : new LicenseInfo
         {
-            Concluded = license,
+            Concluded = licenseConcluded,
         },
         FilesAnalyzed = false,
         Type = "pod",
