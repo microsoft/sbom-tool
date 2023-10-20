@@ -17,6 +17,7 @@
         <PackageReference Include="Microsoft.ComponentDetection.Orchestrator" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
         <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="NuGet.Configuration" />
         <PackageReference Include="packageurl-dotnet" />
         <PackageReference Include="PowerArgs" />
         <PackageReference Include="Serilog.Extensions.Hosting" />

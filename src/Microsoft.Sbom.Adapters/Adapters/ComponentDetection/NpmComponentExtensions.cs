@@ -19,7 +19,7 @@ internal static class NpmComponentExtensions
     /// <param name="npmComponent">The <see cref="NpmComponent" /> to convert.</param>
     /// <param name="license"> License information for the package that component that is being converted.</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>
-    public static SbomPackage ToSbomPackage(this NpmComponent npmComponent, string? license = null) => new()
+    public static SbomPackage ToSbomPackage(this NpmComponent npmComponent, string? licenseConcluded = null) => new()
     {
         Id = npmComponent.Id,
         PackageUrl = npmComponent.PackageUrl?.ToString(),
@@ -33,9 +33,9 @@ internal static class NpmComponentExtensions
             },
         },
         Supplier = npmComponent.Author?.AsSupplier(),
-        LicenseInfo = string.IsNullOrWhiteSpace(license) ? null : new LicenseInfo
+        LicenseInfo = string.IsNullOrWhiteSpace(licenseConcluded) ? null : new LicenseInfo
         {
-            Concluded = license,
+            Concluded = licenseConcluded,
         },
         FilesAnalyzed = false,
         Type = "npm",

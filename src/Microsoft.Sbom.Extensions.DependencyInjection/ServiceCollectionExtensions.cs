@@ -152,6 +152,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IAssemblyConfig, AssemblyConfig>()
             .AddSingleton<ComponentDetectorCachedExecutor>()
             .AddSingleton<ILicenseInformationFetcher, LicenseInformationFetcher>()
+            .AddSingleton<IPackageDetailsFactory, PackageDetailsFactory>()
             .AddSingleton<InternalSBOMFileInfoDeduplicator>()
             .AddSingleton<ExternalReferenceInfoToPathConverter>()
             .AddSingleton<ExternalReferenceDeduplicator>()

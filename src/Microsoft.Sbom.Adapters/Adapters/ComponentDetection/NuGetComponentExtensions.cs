@@ -18,16 +18,17 @@ internal static class NuGetComponentExtensions
     /// <param name="nuGetComponent">The <see cref="NuGetComponent" /> to convert.</param>
     /// <param name="license"> License information for the package that component that is being converted.</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>
-    public static SbomPackage ToSbomPackage(this NuGetComponent nuGetComponent, string? license = null) => new()
+    public static SbomPackage ToSbomPackage(this NuGetComponent nuGetComponent, string? licenseConcluded = null, string? licenseDeclared = null, string? supplier = null) => new()
     {
         Id = nuGetComponent.Id,
         PackageUrl = nuGetComponent.PackageUrl?.ToString(),
         PackageName = nuGetComponent.Name,
         PackageVersion = nuGetComponent.Version,
-        Supplier = nuGetComponent.Authors?.Any() == true ? $"Organization: {nuGetComponent.Authors.First()}" : null,
-        LicenseInfo = string.IsNullOrWhiteSpace(license) ? null : new LicenseInfo
+        Supplier = nuGetComponent.Authors?.Any() == true ? $"Organization: {nuGetComponent.Authors.First()}" : supplier,
+        LicenseInfo = string.IsNullOrWhiteSpace(licenseConcluded) && string.IsNullOrEmpty(licenseDeclared) ? null : new LicenseInfo
         {
-            Concluded = license,
+            Concluded = licenseConcluded,
+            Declared = licenseDeclared,
         },
         FilesAnalyzed = false,
         Type = "nuget",

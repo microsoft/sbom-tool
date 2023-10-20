@@ -7,6 +7,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
+using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
@@ -31,6 +32,7 @@ public abstract class CommonPackagesProvider<T> : EntityToJsonProviderBase<T>
         ILogger logger,
         ISbomConfigProvider sbomConfigs,
         PackageInfoJsonWriter packageInfoJsonWriter,
+        IPackageDetailsFactory packageDetailsFactory,
         ILicenseInformationFetcher licenseInformationFetcher)
         : base(configuration, channelUtils, logger)
     {

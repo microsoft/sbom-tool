@@ -9,6 +9,7 @@ using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Executors;
+using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using Serilog;
@@ -34,8 +35,9 @@ public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent
         PackageInfoJsonWriter packageInfoJsonWriter,
         ComponentToPackageInfoConverter packageInfoConverter,
         PackagesWalker packagesWalker,
+        IPackageDetailsFactory packageDetailsFactory,
         ILicenseInformationFetcher licenseInformationFetcher)
-        : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter, licenseInformationFetcher)
+        : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter, packageDetailsFactory, licenseInformationFetcher)
     {
         this.packageInfoConverter = packageInfoConverter ?? throw new ArgumentNullException(nameof(packageInfoConverter));
         this.packagesWalker = packagesWalker ?? throw new ArgumentNullException(nameof(packagesWalker));

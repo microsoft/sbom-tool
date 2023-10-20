@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
@@ -16,13 +16,18 @@ internal static class MavenComponentExtensions
     /// </summary>
     /// <param name="mavenComponent">The <see cref="MavenComponent" /> to convert.</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>
-    public static SbomPackage? ToSbomPackage(this MavenComponent mavenComponent) => new()
+    public static SbomPackage? ToSbomPackage(this MavenComponent mavenComponent, string? licenseDeclared = null, string? supplier = null) => new()
     {
         Id = mavenComponent.Id,
         PackageName = $"{mavenComponent.GroupId}.{mavenComponent.ArtifactId}",
         PackageUrl = mavenComponent.PackageUrl?.ToString(),
         PackageVersion = mavenComponent.Version,
         FilesAnalyzed = false,
+        Supplier = string.IsNullOrEmpty(supplier) ? null : supplier,
+        LicenseInfo = string.IsNullOrEmpty(licenseDeclared) ? null : new LicenseInfo
+        {
+            Declared = licenseDeclared
+        },
         Type = "maven",
     };
 }
