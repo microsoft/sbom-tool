@@ -1,10 +1,14 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PowerArgs;
 using static Microsoft.Sbom.Api.Tests.Utils.ComponentDetectionCliArgumentBuilderTestsExtensions;
 
 namespace Microsoft.Sbom.Api.Tests.Utils;
@@ -17,27 +21,11 @@ public class ComponentDetectionCliArgumentBuilderTests
     [TestMethod]
     public void Build_Simple()
     {
-        var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+        var expected = ExpectedArgs("--SourceDirectory", "X:/")
             .WithDetectorArgs();
 
         var builder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/");
-
-        var result = builder.Build();
-        CollectionAssert.AreEqual(expected, result);
-    }
-
-    [TestMethod]
-    public void Build_Verbosity()
-    {
-        var expected = ExpectedArgs("scan", "--Verbosity", "Verbose", "--SourceDirectory", "X:/hello/world")
-            .WithDetectorArgs();
-
-        var builder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
-            .Verbosity(ComponentDetection.Contracts.VerbosityMode.Verbose)
-            .SourceDirectory("X:/hello/world");
 
         var result = builder.Build();
         CollectionAssert.AreEqual(expected, result);
@@ -46,11 +34,10 @@ public class ComponentDetectionCliArgumentBuilderTests
     [TestMethod]
     public void Build_WithDetectorArgs()
     {
-        var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+        var expected = ExpectedArgs("--SourceDirectory", "X:/")
             .WithDetectorArgs("Hello=World,world=hello");
 
         var builder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/")
             .AddDetectorArg("Hello", "World")
             .AddDetectorArg("world", "hello");
@@ -62,12 +49,11 @@ public class ComponentDetectionCliArgumentBuilderTests
     [TestMethod]
     public void Build_WithArgs()
     {
-        var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+        var expected = ExpectedArgs("--SourceDirectory", "X:/")
             .WithDetectorArgs()
             .WithArgs("--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello");
 
         var builder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/")
             .AddArg("ManifestFile", "Hello")
             .AddArg("--DirectoryExclusionList", "X:/hello");
@@ -79,12 +65,11 @@ public class ComponentDetectionCliArgumentBuilderTests
     [TestMethod]
     public void Build_WithArgsDuplicate()
     {
-        var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+        var expected = ExpectedArgs("--SourceDirectory", "X:/")
             .WithDetectorArgs()
             .WithArgs("--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello");
 
         var builder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/")
             .AddArg("ManifestFile", "Hello")
             .AddArg("--DirectoryExclusionList", "X:/hello")
@@ -98,12 +83,11 @@ public class ComponentDetectionCliArgumentBuilderTests
     [TestMethod]
     public void Build_ParseAndAddArgs()
     {
-        var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+        var expected = ExpectedArgs("--SourceDirectory", "X:/")
             .WithDetectorArgs()
             .WithArgs("--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello");
 
         var builder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/")
             .ParseAndAddArgs("--ManifestFile Hello --DirectoryExclusionList X:/hello");
 
@@ -114,12 +98,11 @@ public class ComponentDetectionCliArgumentBuilderTests
     [TestMethod]
     public void Build_ParseAndAddArgsDuplicate()
     {
-        var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+        var expected = ExpectedArgs("--SourceDirectory", "X:/")
             .WithDetectorArgs()
             .WithArgs("--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello");
 
         var builder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/")
             .ParseAndAddArgs("--ManifestFile Hello --DirectoryExclusionList X:/hello")
             .ParseAndAddArgs("--ManifestFile Hello --DirectoryExclusionList X:/hello")
@@ -133,13 +116,11 @@ public class ComponentDetectionCliArgumentBuilderTests
     [TestMethod]
     public void Build_AddNoValueArgs()
     {
-        var expected = ExpectedArgs("scan", "--Verbosity", "Normal", "--SourceDirectory", "X:/")
+        var expected = ExpectedArgs("--SourceDirectory", "X:/")
             .WithDetectorArgs()
             .WithArgs("--ManifestFile", "Hello", "--DirectoryExclusionList", "X:/hello", "--Help");
 
         var builder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
-            .Verbosity(ComponentDetection.Contracts.VerbosityMode.Normal)
             .SourceDirectory("X:/")
             .ParseAndAddArgs("--ManifestFile Hello --DirectoryExclusionList X:/hello")
             .AddArg("Help");
@@ -151,11 +132,10 @@ public class ComponentDetectionCliArgumentBuilderTests
     [TestMethod]
     public void Build_AddDetectorArgsViaAddArgCombineWithOtherDetectorArgs()
     {
-        var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/")
+        var expected = ExpectedArgs("--SourceDirectory", "X:/")
             .WithDetectorArgs("SPDX=hello,Hello=World,world=hello");
 
         var builder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/")
             .AddArg("DetectorArgs", "SPDX=hello")
             .AddDetectorArg("Hello", "World")
@@ -170,7 +150,6 @@ public class ComponentDetectionCliArgumentBuilderTests
     public void Build_WithNullValue()
     {
         var builder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/")
             .AddArg("ManifestFile", null)
             .AddArg("--DirectoryExclusionList", "X:/hello");
@@ -183,7 +162,6 @@ public class ComponentDetectionCliArgumentBuilderTests
     public void Build_WithInvalidArg()
     {
         var builder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/")
             .AddArg("ManifestFile", "value")
             .AddArg("--", "X:/hello");
@@ -194,11 +172,10 @@ public class ComponentDetectionCliArgumentBuilderTests
     [TestMethod]
     public void Build_WithSpacesSourceDirectory()
     {
-        var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/path with spaces/")
+        var expected = ExpectedArgs("--SourceDirectory", "X:/path with spaces/")
             .WithDetectorArgs();
 
         var build = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/path with spaces/");
 
         var result = build.Build();
@@ -208,12 +185,11 @@ public class ComponentDetectionCliArgumentBuilderTests
     [TestMethod]
     public void Build_WithSpacesInArgument()
     {
-        var expected = ExpectedArgs("scan", "--Verbosity", "Quiet", "--SourceDirectory", "X:/path with spaces/")
+        var expected = ExpectedArgs("--SourceDirectory", "X:/path with spaces/")
             .WithDetectorArgs()
             .WithArgs("--MyArguemnt", "value with spaces");
 
         var build = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/path with spaces/")
             .AddArg("MyArguemnt", "value with spaces");
 
@@ -224,12 +200,10 @@ public class ComponentDetectionCliArgumentBuilderTests
     [TestMethod]
     public void Build_WithSpacesInDetectorArgs()
     {
-        var expected = ExpectedArgs("scan", "--Verbosity", "Verbose", "--SourceDirectory", "X:/path with spaces/")
+        var expected = ExpectedArgs("--SourceDirectory", "X:/path with spaces/")
             .WithDetectorArgs("DetectorName=X:/complex/path with spaces");
 
         var build = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
-            .Verbosity(ComponentDetection.Contracts.VerbosityMode.Verbose)
             .SourceDirectory("X:/path with spaces/")
             .AddDetectorArg("DetectorName", "X:/complex/path with spaces");
 
@@ -244,7 +218,6 @@ public class ComponentDetectionCliArgumentBuilderTests
             .WithDetectorArgs($"Timeout={DefaultTimeout}");
 
         var build = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/");
 
         var result = build.Build();
@@ -258,7 +231,6 @@ public class ComponentDetectionCliArgumentBuilderTests
         var expected = ExpectedArgs().WithDetectorArgs($"Timeout={timeout}");
 
         var build = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/")
             .AddDetectorArg("Timeout", timeout.ToString());
 
@@ -273,13 +245,63 @@ public class ComponentDetectionCliArgumentBuilderTests
         var expected = ExpectedArgs().WithDetectorArgs($"Timeout={timeout},Foo=bar");
 
         var build = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/")
             .AddDetectorArg("Foo", "bar")
             .AddDetectorArg("Timeout", timeout.ToString());
 
         var result = build.Build();
         CollectionAssert.AreEquivalent(expected, result[^2..]);
+    }
+
+    [TestMethod]
+    public void BuildScanSettings_ValidArgs()
+    {
+        var expected = new ScanSettings
+        {
+            ManifestFile = new System.IO.FileInfo("Hello"),
+            DirectoryExclusionList = new string[] { "X:/hello", "X:/world" },
+        };
+
+        var builder = new ComponentDetectionCliArgumentBuilder()
+            .SourceDirectory("X:/")
+            .ParseAndAddArgs("--ManifestFile Hello --DirectoryExclusionList X:/hello;X:/world");
+
+        var parsedArgs = builder.Build();
+
+        var result = builder.BuildScanSettings(parsedArgs);
+
+        Assert.AreEqual(expected.ManifestFile.Name, result.ManifestFile.Name);
+        Assert.AreEqual(expected.DirectoryExclusionList.First(), result.DirectoryExclusionList.First());
+        Assert.AreEqual(expected.DirectoryExclusionList.Count(), result.DirectoryExclusionList.Count());
+    }
+
+    [TestMethod]
+    public void BuildScanSettings_WithDetectorArgs()
+    {
+        var timeout = 32789;
+        var expected = new ScanSettings
+        {
+            DetectorArgs = new Dictionary<string, string>
+            {
+                { "Timeout", timeout.ToString() },
+                { "Foo", "bar" },
+            },
+            SourceDirectory = new System.IO.DirectoryInfo("X:/"),
+        };
+
+        var builder = new ComponentDetectionCliArgumentBuilder()
+            .SourceDirectory("X:/")
+            .AddDetectorArg("Foo", "bar")
+            .AddDetectorArg("Timeout", timeout.ToString());
+
+        var parsedArgs = builder.Build();
+
+        var result = builder.BuildScanSettings(parsedArgs);
+
+        Assert.AreEqual(expected.DetectorArgs.First().Key, result.DetectorArgs.First().Key);
+        Assert.AreEqual(expected.DetectorArgs.First().Value, result.DetectorArgs.First().Value);
+        Assert.AreEqual(expected.DetectorArgs.Count(), result.DetectorArgs.Count());
+        Assert.AreEqual(expected.SourceDirectory.Name, result.SourceDirectory.Name);
     }
 }
 
