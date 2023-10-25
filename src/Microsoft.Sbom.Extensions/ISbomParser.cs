@@ -1,9 +1,11 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.JsonAsynchronousNodeKit;
+#nullable enable
+
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.JsonAsynchronousNodeKit;
 
 namespace Microsoft.Sbom;
 

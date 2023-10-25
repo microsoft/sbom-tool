@@ -7,12 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Microsoft.JsonAsynchronousNodeKit;
-using Microsoft.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser;
+using Microsoft.Sbom.JsonAsynchronousNodeKit;
+using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using SPDXConstants = Microsoft.Sbom.Parsers.Spdx22SbomParser.Constants;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -26,10 +26,10 @@ namespace Microsoft.Sbom.Parser;
 /// </remarks>
 public class SPDXParser : ISbomParser
 {
-    public const string FilesProperty = Constants.FilesArrayHeaderName;
-    public const string ReferenceProperty = Constants.ExternalDocumentRefArrayHeaderName;
-    public const string PackagesProperty = Constants.PackagesArrayHeaderName;
-    public const string RelationshipsProperty = Constants.RelationshipsArrayHeaderName;
+    public const string FilesProperty = SPDXConstants.FilesArrayHeaderName;
+    public const string ReferenceProperty = SPDXConstants.ExternalDocumentRefArrayHeaderName;
+    public const string PackagesProperty = SPDXConstants.PackagesArrayHeaderName;
+    public const string RelationshipsProperty = SPDXConstants.RelationshipsArrayHeaderName;
 
     private static readonly IReadOnlyCollection<string> RequiredFields = new List<string>
     {
@@ -47,8 +47,8 @@ public class SPDXParser : ISbomParser
 
     private readonly ManifestInfo spdxManifestInfo = new()
     {
-        Name = Constants.SPDXName,
-        Version = Constants.SPDXVersion,
+        Name = SPDXConstants.SPDXName,
+        Version = SPDXConstants.SPDXVersion,
     };
 
     private bool parsingComplete = false;
@@ -181,26 +181,26 @@ public class SPDXParser : ISbomParser
         {
             switch (kvp.Key)
             {
-                case Constants.SPDXVersionHeaderName:
-                    spdxMetadata.SpdxVersion = this.Coerse<string>(kvp.Key, kvp.Value);
+                case SPDXConstants.SPDXVersionHeaderName:
+                    spdxMetadata.SpdxVersion = this.Coerce<string>(kvp.Key, kvp.Value);
                     break;
-                case Constants.DataLicenseHeaderName:
-                    spdxMetadata.DataLicense = this.Coerse<string>(kvp.Key, kvp.Value);
+                case SPDXConstants.DataLicenseHeaderName:
+                    spdxMetadata.DataLicense = this.Coerce<string>(kvp.Key, kvp.Value);
                     break;
-                case Constants.DocumentNameHeaderName:
-                    spdxMetadata.Name = this.Coerse<string>(kvp.Key, kvp.Value);
+                case SPDXConstants.DocumentNameHeaderName:
+                    spdxMetadata.Name = this.Coerce<string>(kvp.Key, kvp.Value);
                     break;
-                case Constants.DocumentNamespaceHeaderName:
-                    spdxMetadata.DocumentNamespace = new Uri(this.Coerse<string>(kvp.Key, kvp.Value));
+                case SPDXConstants.DocumentNamespaceHeaderName:
+                    spdxMetadata.DocumentNamespace = new Uri(this.Coerce<string>(kvp.Key, kvp.Value));
                     break;
-                case Constants.CreationInfoHeaderName:
-                    spdxMetadata.CreationInfo = this.Coerse<MetadataCreationInfo>(kvp.Key, kvp.Value);
+                case SPDXConstants.CreationInfoHeaderName:
+                    spdxMetadata.CreationInfo = this.Coerce<MetadataCreationInfo>(kvp.Key, kvp.Value);
                     break;
-                case Constants.DocumentDescribesHeaderName:
+                case SPDXConstants.DocumentDescribesHeaderName:
                     spdxMetadata.DocumentDescribes = ((List<object>)kvp.Value!).Cast<string>();
                     break;
-                case Constants.SPDXIDHeaderName:
-                    spdxMetadata.SpdxId = this.Coerse<string>(kvp.Key, kvp.Value);
+                case SPDXConstants.SPDXIDHeaderName:
+                    spdxMetadata.SpdxId = this.Coerce<string>(kvp.Key, kvp.Value);
                     break;
                 default:
                     break;
@@ -212,7 +212,7 @@ public class SPDXParser : ISbomParser
 
     public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { this.spdxManifestInfo };
 
-    private T Coerse<T>(string name, object? value)
+    private T Coerce<T>(string name, object? value)
     {
         if (value is T t)
         {

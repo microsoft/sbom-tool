@@ -3,7 +3,7 @@
 
 using System.IO;
 using System.Text;
-using Microsoft.JsonAsynchronousNodeKit.Exceptions;
+using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -80,7 +80,7 @@ public class SbomParserTests : SbomParserTestsBase
     [DataTestMethod]
     [DataRow(SbomParserStrings.MalformedJsonEmptyJsonObject)]
     [DataRow(SbomParserStrings.MalformedJsonEmptyArrayObject)]
-    public void MalformedJsonEmptyValuesDoesntThrow(string json)
+    public void MalformedJsonEmptyValuesDoesNotThrow(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
@@ -88,7 +88,7 @@ public class SbomParserTests : SbomParserTestsBase
     }
 
     [TestMethod]
-    public void MissingReferencesDoesntThrow()
+    public void MissingReferencesDoesNotThrow()
     {
         var bytes = Encoding.UTF8.GetBytes(SbomParserStrings.JsonWithMissingReferences);
         using var stream = new MemoryStream(bytes);

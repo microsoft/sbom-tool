@@ -1,11 +1,15 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Microsoft.JsonAsynchronousNodeKit.Exceptions;
+using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 
-namespace Microsoft.JsonAsynchronousNodeKit;
+namespace Microsoft.Sbom.JsonAsynchronousNodeKit;
+
+#nullable enable
 
 /// <summary>
 /// Utility methods for parsing that are shared by all parsers.
@@ -24,7 +28,7 @@ internal static class ParserUtils
     /// <exception cref="ArgumentNullException">If an argument was null when that is not allowed.</exception>
     internal static void Read(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
     {
-        if (stream is null)
+        if (stream == null)
         {
             throw new ArgumentNullException(nameof(stream));
         }
@@ -71,7 +75,7 @@ internal static class ParserUtils
     }
 
     /// <summary>
-    /// Reads and discards any given value for a property. If the value is an arry or object
+    /// Reads and discards any given value for a property. If the value is an array or object
     /// it reads and discards the whole array or object.
     /// </summary>
     /// <param name="stream"></param>

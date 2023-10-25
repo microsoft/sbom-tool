@@ -4,7 +4,7 @@
 using System.Collections;
 using System.IO;
 using System.Text;
-using Microsoft.JsonAsynchronousNodeKit.Exceptions;
+using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

@@ -4,11 +4,10 @@
 using System;
 using System.IO;
 using System.Text;
-using Microsoft.JsonAsynchronousNodeKit;
-using Microsoft.JsonAsynchronousNodeKit.Exceptions;
+using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SbomConstants = Microsoft.Sbom.Parsers.Spdx22SbomParser.Constants;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -33,8 +32,8 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     public void StreamEmptyTestReturnsNull()
     {
         using var stream = new MemoryStream();
-        stream.Read(new byte[Constants.ReadBufferSize]);
-        var buffer = new byte[Constants.ReadBufferSize];
+        stream.Read(new byte[SbomConstants.ReadBufferSize]);
+        var buffer = new byte[SbomConstants.ReadBufferSize];
 
         var parser = new SPDXParser(stream);
 

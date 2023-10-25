@@ -1,12 +1,18 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Microsoft.JsonAsynchronousNodeKit.Exceptions;
+using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 
-namespace Microsoft.JsonAsynchronousNodeKit;
+namespace Microsoft.Sbom.JsonAsynchronousNodeKit;
+
+#nullable enable
 
 /// <summary>
 /// Allows for parsing large json objects without loading the entire object into memory. Large json arrays use a yield return to avoid having the whole enumerable in memory at once.
@@ -15,7 +21,7 @@ namespace Microsoft.JsonAsynchronousNodeKit;
 /// This class is not Thread-safe since the stream and JsonReaders assume a single forward-only reader.
 /// Because of the use of recursion in the GetObject method, this class is also not suitable for parsing very deep json objects.
 /// </remarks>
-public class LargeJsonParser
+internal class LargeJsonParser
 {
     private const int DefaultReadBufferSize = 4096;
     private readonly Stream stream;
@@ -111,7 +117,7 @@ public class LargeJsonParser
             else if (this.previousResultState is not null && this.previousResultState.YieldReturn && reader.TokenType == JsonTokenType.EndArray)
             {
                 // yield returning json arrays means we can't pass it the same Utf8JsonReader ref, so we need to create a new one.
-                // BUT when we do that we end up consuming the next token, so we need to leave it in the array case to be eatten by the next caller.
+                // BUT when we do that we end up consuming the next token, so we need to leave it in the array case to be eaten by the next caller.
                 ParserUtils.Read(this.stream, ref this.buffer, ref reader);
             }
 

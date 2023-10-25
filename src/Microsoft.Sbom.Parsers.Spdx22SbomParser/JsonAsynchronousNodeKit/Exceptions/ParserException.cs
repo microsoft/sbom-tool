@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.JsonAsynchronousNodeKit.Exceptions;
+namespace Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
+
+using System;
 
 /// <summary>
 /// Thrown when the parser detects an error in the JSON file.
