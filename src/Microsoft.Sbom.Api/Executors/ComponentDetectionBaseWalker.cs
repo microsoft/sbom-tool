@@ -98,9 +98,10 @@ public abstract class ComponentDetectionBaseWalker
         async Task Scan(string path)
         {
             cliArgumentBuilder.SourceDirectory(buildComponentDirPath);
+
             var cmdLineParams = configuration.ToComponentDetectorCommandLineParams(cliArgumentBuilder);
 
-            var scanSettings = cliArgumentBuilder.BuildScanSettings(cmdLineParams);
+            var scanSettings = cliArgumentBuilder.BuildScanSettingsFromParsedArgs(cmdLineParams);
 
             var scanResult = await componentDetector.ScanAsync(scanSettings);
 

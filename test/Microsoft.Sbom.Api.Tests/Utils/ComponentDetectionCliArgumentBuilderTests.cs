@@ -268,7 +268,7 @@ public class ComponentDetectionCliArgumentBuilderTests
 
         var parsedArgs = builder.Build();
 
-        var result = builder.BuildScanSettings(parsedArgs);
+        var result = builder.BuildScanSettingsFromParsedArgs(parsedArgs);
 
         Assert.AreEqual(expected.ManifestFile.Name, result.ManifestFile.Name);
         Assert.AreEqual(expected.DirectoryExclusionList.First(), result.DirectoryExclusionList.First());
@@ -296,7 +296,7 @@ public class ComponentDetectionCliArgumentBuilderTests
 
         var parsedArgs = builder.Build();
 
-        var result = builder.BuildScanSettings(parsedArgs);
+        var result = builder.BuildScanSettingsFromParsedArgs(parsedArgs);
 
         Assert.AreEqual(expected.DetectorArgs.First().Key, result.DetectorArgs.First().Key);
         Assert.AreEqual(expected.DetectorArgs.First().Value, result.DetectorArgs.First().Value);

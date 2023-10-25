@@ -40,7 +40,44 @@ public class ComponentDetectionCliArgumentBuilder
         }
     }
 
-    public ScanSettings BuildScanSettings(string[] args)
+    public string[] Build()
+    {
+        Validate();
+
+        var command = $"--{SourceDirectoryParamName} {AsArgumentValue(sourceDirectory)}";
+
+        if (detectorArgs.Any())
+        {
+            var args = string.Join(",", detectorArgs.Select(arg => $"{arg.Key}={AsArgumentValue(arg.Value)}"));
+            var detectorArgsCommand = $"--{DetectorArgsParamName} {args}";
+            command += $" {detectorArgsCommand}";
+        }
+
+        if (keyValueArgs.Any())
+        {
+            var argsList = keyValueArgs
+                .Select(x => new List<string>() { $"--{x.Key}", AsArgumentValue(x.Value) })
+                .SelectMany(x => x)
+                .ToList();
+            var argsCommand = string.Join(" ", argsList);
+            command += $" {argsCommand}";
+        }
+
+        if (keyArgs.Any())
+        {
+            var keyArgsCommand = string.Join(" ", keyArgs.Select(this.AsArgumentValue));
+            command += $" {keyArgsCommand}";
+        }
+
+        return Args.Convert(command.Trim());
+    }
+
+    /// <summary>
+    /// Takes a set of parsed arguments for Component Detection and converts them into a ScanSettings object.
+    /// </summary>
+    /// <param name="args">Set of arguments in the proper format for component detection.</param>
+    /// <returns></returns>
+    public ScanSettings BuildScanSettingsFromParsedArgs(string[] args)
     {
         Validate();
 
@@ -92,38 +129,6 @@ public class ComponentDetectionCliArgumentBuilder
         }
 
         return scanSettings;
-    }
-
-    public string[] Build()
-    {
-        Validate();
-
-        var command = $"--{SourceDirectoryParamName} {AsArgumentValue(sourceDirectory)}";
-
-        if (detectorArgs.Any())
-        {
-            var args = string.Join(",", detectorArgs.Select(arg => $"{arg.Key}={AsArgumentValue(arg.Value)}"));
-            var detectorArgsCommand = $"--{DetectorArgsParamName} {args}";
-            command += $" {detectorArgsCommand}";
-        }
-
-        if (keyValueArgs.Any())
-        {
-            var argsList = keyValueArgs
-                .Select(x => new List<string>() { $"--{x.Key}", AsArgumentValue(x.Value) })
-                .SelectMany(x => x)
-                .ToList();
-            var argsCommand = string.Join(" ", argsList);
-            command += $" {argsCommand}";
-        }
-
-        if (keyArgs.Any())
-        {
-            var keyArgsCommand = string.Join(" ", keyArgs.Select(this.AsArgumentValue));
-            command += $" {keyArgsCommand}";
-        }
-
-        return Args.Convert(command.Trim());
     }
 
     public ComponentDetectionCliArgumentBuilder AddDetectorArg(string name, string value)
