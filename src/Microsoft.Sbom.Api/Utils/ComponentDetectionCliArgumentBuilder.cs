@@ -24,6 +24,7 @@ public class ComponentDetectionCliArgumentBuilder
     private List<string> keyArgs = new List<string>();
 
     private const string SourceDirectoryParamName = "SourceDirectory";
+    private const string DirectoryExclusionListParamName = "DirectoryExclusionList";
     private const string DetectorArgsParamName = "DetectorArgs";
     private const string TimeoutArgsParamName = "Timeout";
     private const int TimeoutDefaultSeconds = 15 * 60; // 15 minutes
@@ -181,6 +182,13 @@ public class ComponentDetectionCliArgumentBuilder
                 }
             }
 
+            return this;
+        }
+
+        // Check if a value already exists for the the DirectoryExclusionList and if so, append the new value to the existing value
+        if (keyValueArgs.ContainsKey(name) && name.Equals(DirectoryExclusionListParamName, StringComparison.OrdinalIgnoreCase))
+        {
+            keyValueArgs[name] = $"{keyValueArgs[name]};{value}";
             return this;
         }
 

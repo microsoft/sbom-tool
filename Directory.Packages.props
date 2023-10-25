@@ -40,7 +40,7 @@
         <PackageVersion Include="Serilog.Sinks.Console" Version="4.1.0" />
         <PackageVersion Include="Serilog.Sinks.File" Version="5.0.0" />
         <PackageVersion Include="Serilog.Sinks.Map" Version="1.0.2" />
-        <PackageVersion Include="Spectre.Console.Cli" Version="0.47.1-preview.0.27" />
+        <PackageVersion Include="Spectre.Console.Cli" Version="0.47.0" />
         <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.507" />
         <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
         <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
