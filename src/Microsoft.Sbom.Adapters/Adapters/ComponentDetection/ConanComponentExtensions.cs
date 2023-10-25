@@ -11,10 +11,10 @@ internal static class ConanComponentExtensions
 {
     public static SbomPackage? ToSbomPackage(this ConanComponent conanComponent)
     {
-        var lst = new List<Checksum>();
+        var checksums = new List<Checksum>();
         if (!string.IsNullOrEmpty(conanComponent.Md5Hash))
         {
-            lst.Add(new Checksum
+            checksums.Add(new Checksum
             {
                 Algorithm = Contracts.Enums.AlgorithmName.MD5,
                 ChecksumValue = conanComponent.Md5Hash
@@ -23,7 +23,7 @@ internal static class ConanComponentExtensions
 
         if (!string.IsNullOrEmpty(conanComponent.Sha1Hash))
         {
-            lst.Add(new Checksum
+            checksums.Add(new Checksum
             {
                 Algorithm = Contracts.Enums.AlgorithmName.SHA1,
                 ChecksumValue = conanComponent.Sha1Hash
@@ -38,7 +38,7 @@ internal static class ConanComponentExtensions
             PackageVersion = conanComponent.Version,
             PackageSource = conanComponent.PackageSourceURL,
             FilesAnalyzed = false,
-            Checksum = lst,
+            Checksum = checksums,
             Type = "conan"
         };
     }
