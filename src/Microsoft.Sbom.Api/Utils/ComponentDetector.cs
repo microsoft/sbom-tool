@@ -1,13 +1,12 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.ComponentDetection.Common;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
-using Microsoft.ComponentDetection.Orchestrator;
+using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Microsoft.ComponentDetection.Orchestrator.Services;
+using Microsoft.ComponentDetection.Orchestrator.Services.GraphTranslation;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Sbom.Api.Utils;
@@ -17,35 +16,35 @@ namespace Microsoft.Sbom.Api.Utils;
 /// </summary>
 public class ComponentDetector : IComponentDetector
 {
-    private readonly IServiceProvider serviceProvider;
-    private readonly IEnumerable<IArgumentHandlingService> argumentHandlers;
-    private readonly IFileWritingService fileWritingService;
-    private readonly IArgumentHelper argumentHelper;
-    private readonly ILogger<Orchestrator> logger;
+    private readonly IEnumerable<ComponentDetection.Contracts.IComponentDetector> detectors;
+    private readonly IDetectorProcessingService detectorProcessingService;
+    private readonly IDetectorRestrictionService detectorRestrictionService;
+    private readonly IGraphTranslationService graphTranslationService;
+    private readonly ILogger<ScanExecutionService> logger;
 
     public ComponentDetector(
-        IServiceProvider serviceProvider,
-        IEnumerable<IArgumentHandlingService> argumentHandlers,
-        IFileWritingService fileWritingService,
-        IArgumentHelper argumentHelper,
-        ILogger<Orchestrator> logger)
+        IEnumerable<ComponentDetection.Contracts.IComponentDetector> detectors,
+        IDetectorProcessingService detectorProcessingService,
+        IDetectorRestrictionService detectorRestrictionService,
+        IGraphTranslationService graphTranslationService,
+        ILogger<ScanExecutionService> logger)
     {
-        this.serviceProvider = serviceProvider;
-        this.argumentHandlers = argumentHandlers;
-        this.fileWritingService = fileWritingService;
-        this.argumentHelper = argumentHelper;
+        this.detectors = detectors;
+        this.detectorProcessingService = detectorProcessingService;
+        this.detectorRestrictionService = detectorRestrictionService;
+        this.graphTranslationService = graphTranslationService;
         this.logger = logger;
     }
 
-    public virtual async Task<ScanResult> ScanAsync(string[] args)
+    public virtual async Task<ScanResult> ScanAsync(ScanSettings args)
     {
-        var orchestrator = new Orchestrator(
-            serviceProvider,
-            argumentHandlers,
-            fileWritingService,
-            argumentHelper,
+        var executionService = new ScanExecutionService(
+            detectors,
+            detectorProcessingService,
+            detectorRestrictionService,
+            graphTranslationService,
             logger);
 
-        return await orchestrator.LoadAsync(args);
+        return await executionService.ExecuteScanAsync(args);
     }
 }
