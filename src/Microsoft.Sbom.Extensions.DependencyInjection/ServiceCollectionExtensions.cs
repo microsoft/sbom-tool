@@ -62,6 +62,7 @@ using Serilog.Events;
 using Serilog.Extensions.Logging;
 using Serilog.Filters;
 using Serilog.Sinks.Map;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using IComponentDetector = Microsoft.ComponentDetection.Contracts.IComponentDetector;
 using ILogger = Serilog.ILogger;
 
@@ -102,7 +103,7 @@ public static class ServiceCollectionExtensions
                     .WriteTo.Map<bool>(
                         LoggingEnricher.PrintStderrPropertyName,
                         (printLogsToStderr, wt) => wt.Logger(lc => lc
-                            .WriteTo.Console(standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
+                            .WriteTo.Console(outputTemplate: Constants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
 
                             // Don't write the detection times table from DetectorProcessingService to the console, only the log file
                             .Filter.ByExcluding(Matching.WithProperty<string>("DetectionTimeLine", x => !string.IsNullOrEmpty(x)))),
