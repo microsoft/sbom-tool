@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Api.Config.Extensions;
@@ -35,14 +35,13 @@ public class ConfigurationCLITests
         var config = mockConfiguration.Object;
 
         var argBuilder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/")
             .AddArg("defaultArg1", "val1")
             .AddArg("defaultArg2", "val2");
 
         var commandLineParams = config.ToComponentDetectorCommandLineParams(argBuilder);
 
-        Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --DetectorArgs Timeout=900 --defaultArg1 val1 --defaultArg2 val2 --DockerImagesToScan the_docker_image --arg1 val1 --arg2 val2", string.Join(" ", commandLineParams));
+        Assert.AreEqual("--SourceDirectory X:/ --DetectorArgs Timeout=900 --defaultArg1 val1 --defaultArg2 val2 --DockerImagesToScan the_docker_image --arg1 val1 --arg2 val2", string.Join(" ", commandLineParams));
     }
 
     [TestMethod]
@@ -51,13 +50,12 @@ public class ConfigurationCLITests
         var config = mockConfiguration.Object;
 
         var argBuilder = new ComponentDetectionCliArgumentBuilder()
-            .Scan()
             .SourceDirectory("X:/")
             .AddArg("defaultArg1", "val1")
             .AddArg("defaultArg2", "val2");
 
         var commandLineParams = config.ToComponentDetectorCommandLineParams(argBuilder);
 
-        Assert.AreEqual("scan --Verbosity Quiet --SourceDirectory X:/ --DetectorArgs Timeout=900 --defaultArg1 val1 --defaultArg2 val2", string.Join(" ", commandLineParams));
+        Assert.AreEqual("--SourceDirectory X:/ --DetectorArgs Timeout=900 --defaultArg1 val1 --defaultArg2 val2", string.Join(" ", commandLineParams));
     }
 }

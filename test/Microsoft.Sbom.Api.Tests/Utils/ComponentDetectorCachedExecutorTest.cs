@@ -1,8 +1,10 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -27,7 +29,7 @@ public class ComponentDetectorCachedExecutorTest
     public async Task Scan()
     {
         var executor = new ComponentDetectorCachedExecutor(logger.Object, detector.Object);
-        var arguments = new string[] { "a", "b", "c" };
+        var arguments = new ScanSettings { SourceDirectory = new DirectoryInfo("test"), Debug = true };
         var expectedResult = new ScanResult();
 
         detector.Setup(x => x.ScanAsync(arguments)).Returns(Task.FromResult(expectedResult));
@@ -40,7 +42,7 @@ public class ComponentDetectorCachedExecutorTest
     public async Task ScanWithCache()
     {
         var executor = new ComponentDetectorCachedExecutor(logger.Object, detector.Object);
-        var arguments = new string[] { "a", "b", "c" };
+        var arguments = new ScanSettings { SourceDirectory = new DirectoryInfo("test"), Debug = true };
         var expectedResult = new ScanResult();
 
         detector.Setup(x => x.ScanAsync(arguments)).Returns(Task.FromResult(expectedResult));

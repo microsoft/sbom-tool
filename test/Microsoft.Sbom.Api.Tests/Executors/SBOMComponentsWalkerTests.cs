@@ -23,6 +23,7 @@ using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
 
+using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Microsoft.Sbom.Adapters.ComponentDetection;
 
 [TestClass]
@@ -67,7 +68,7 @@ public class SBOMComponentsWalkerTests
             ComponentsFound = scannedComponents
         };
 
-        mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
+        mockDetector.Setup(o => o.ScanAsync(It.IsAny<ScanSettings>())).Returns(Task.FromResult(scanResult));
         var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
@@ -112,7 +113,7 @@ public class SBOMComponentsWalkerTests
             ComponentsFound = scannedComponents
         };
 
-        mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
+        mockDetector.Setup(o => o.ScanAsync(It.IsAny<ScanSettings>())).Returns(Task.FromResult(scanResult));
         var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 

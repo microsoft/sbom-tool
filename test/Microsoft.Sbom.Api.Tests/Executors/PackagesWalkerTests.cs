@@ -23,6 +23,7 @@ using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
 
+using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Microsoft.Sbom.Adapters.ComponentDetection;
 
 [TestClass]
@@ -73,7 +74,7 @@ public class PackagesWalkerTests
             ComponentsFound = scannedComponents
         };
 
-        mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
+        mockDetector.Setup(o => o.ScanAsync(It.IsAny<ScanSettings>())).Returns(Task.FromResult(scanResult));
         var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
@@ -126,7 +127,7 @@ public class PackagesWalkerTests
             ComponentsFound = scannedComponents
         };
 
-        mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
+        mockDetector.Setup(o => o.ScanAsync(It.IsAny<ScanSettings>())).Returns(Task.FromResult(scanResult));
         var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
@@ -157,7 +158,7 @@ public class PackagesWalkerTests
         walker.GetComponents(null);
         walker.GetComponents(string.Empty);
 
-        mockDetector.Verify(mock => mock.ScanAsync(It.IsAny<string[]>()), Times.Never());
+        mockDetector.Verify(mock => mock.ScanAsync(It.IsAny<ScanSettings>()), Times.Never());
     }
 
     [TestMethod]
@@ -171,7 +172,7 @@ public class PackagesWalkerTests
             ComponentsFound = null
         };
 
-        mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
+        mockDetector.Setup(o => o.ScanAsync(It.IsAny<ScanSettings>())).Returns(Task.FromResult(scanResult));
         var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
         ComponentDetectorException actualError = null;
@@ -219,7 +220,7 @@ public class PackagesWalkerTests
             ComponentsFound = scannedComponents
         };
 
-        mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
+        mockDetector.Setup(o => o.ScanAsync(It.IsAny<ScanSettings>())).Returns(Task.FromResult(scanResult));
         var walker = new PackagesWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystemUtils.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 

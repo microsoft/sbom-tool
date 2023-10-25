@@ -71,13 +71,7 @@ public abstract class ComponentDetectionBaseWalker
             Directory.CreateDirectory(buildComponentDirPath);
         }
 
-        var verbosity = configuration.Verbosity.Value switch
-        {
-            LogEventLevel.Verbose => VerbosityMode.Verbose,
-            _ => VerbosityMode.Normal,
-        };
-
-        cliArgumentBuilder = new ComponentDetectionCliArgumentBuilder().Scan().Verbosity(verbosity);
+        cliArgumentBuilder = new ComponentDetectionCliArgumentBuilder();
 
         // Enable SPDX22 detector which is disabled by default.
         cliArgumentBuilder.AddDetectorArg("SPDX22SBOM", "EnableIfDefaultOff");
@@ -104,9 +98,12 @@ public abstract class ComponentDetectionBaseWalker
         async Task Scan(string path)
         {
             cliArgumentBuilder.SourceDirectory(buildComponentDirPath);
+
             var cmdLineParams = configuration.ToComponentDetectorCommandLineParams(cliArgumentBuilder);
 
-            var scanResult = await componentDetector.ScanAsync(cmdLineParams);
+            var scanSettings = cliArgumentBuilder.BuildScanSettingsFromParsedArgs(cmdLineParams);
+
+            var scanResult = await componentDetector.ScanAsync(scanSettings);
 
             if (scanResult.ResultCode != ProcessingResultCode.Success)
             {

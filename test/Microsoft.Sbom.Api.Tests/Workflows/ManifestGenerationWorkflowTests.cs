@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
@@ -138,7 +139,6 @@ public class ManifestGenerationWorkflowTests
         configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
         configurationMock.SetupGet(c => c.Parallelism).Returns(new ConfigurationSetting<int> { Value = 3 });
         configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Generate);
-        configurationMock.SetupGet(c => c.Verbosity).Returns(new ConfigurationSetting<LogEventLevel> { Value = LogEventLevel.Information });
         configurationMock.SetupGet(c => c.BuildComponentPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
         configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
 
@@ -200,7 +200,7 @@ public class ManifestGenerationWorkflowTests
             ComponentsFound = scannedComponents
         };
 
-        mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
+        mockDetector.Setup(o => o.ScanAsync(It.IsAny<ScanSettings>())).Returns(Task.FromResult(scanResult));
 
         var packagesChannel = Channel.CreateUnbounded<SbomPackage>();
         var errorsChannel = Channel.CreateUnbounded<FileValidationResult>();
