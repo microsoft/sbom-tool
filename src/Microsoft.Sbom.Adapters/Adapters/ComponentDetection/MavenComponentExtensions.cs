@@ -16,13 +16,18 @@ internal static class MavenComponentExtensions
     /// </summary>
     /// <param name="mavenComponent">The <see cref="MavenComponent" /> to convert.</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>
-    public static SbomPackage? ToSbomPackage(this MavenComponent mavenComponent) => new()
+   public static SbomPackage? ToSbomPackage(this MavenComponent mavenComponent, string? licenseDeclared = null, string? supplier = null) => new()
     {
         Id = mavenComponent.Id,
         PackageName = $"{mavenComponent.GroupId}.{mavenComponent.ArtifactId}",
         PackageUrl = mavenComponent.PackageUrl?.ToString(),
         PackageVersion = mavenComponent.Version,
         FilesAnalyzed = false,
+        Supplier = string.IsNullOrEmpty(supplier) ? null : supplier,
+        LicenseInfo = string.IsNullOrEmpty(licenseDeclared) ? null : new LicenseInfo
+        {
+            Declared = licenseDeclared
+        },
         Type = "maven",
     };
 }

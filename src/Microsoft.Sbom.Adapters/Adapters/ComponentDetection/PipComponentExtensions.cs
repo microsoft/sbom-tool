@@ -17,15 +17,15 @@ internal static class PipComponentExtensions
     /// <param name="pipComponent">The <see cref="PipComponent" /> to convert.</param>
     /// <param name="license">The license to use.</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>
-    public static SbomPackage ToSbomPackage(this PipComponent pipComponent, string? license = null) => new()
+    public static SbomPackage ToSbomPackage(this PipComponent pipComponent, string? licenseConcluded = null) => new()
     {
         Id = pipComponent.Id,
         PackageUrl = pipComponent.PackageUrl?.ToString(),
         PackageName = pipComponent.Name,
         PackageVersion = pipComponent.Version,
-        LicenseInfo = string.IsNullOrWhiteSpace(license) ? null : new LicenseInfo
+        LicenseInfo = string.IsNullOrWhiteSpace(licenseConcluded) ? null : new LicenseInfo
         {
-            Concluded = license,
+            Concluded = licenseConcluded,
         },
         FilesAnalyzed = false,
         Type = "python",

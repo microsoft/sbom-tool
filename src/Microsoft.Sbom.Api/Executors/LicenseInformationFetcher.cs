@@ -120,7 +120,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
             }
 
             // Filter out undefined licenses.
-            foreach (var kvp in extractedLicenses.Where(kvp => kvp.Value.ToLower() == "noassertion" || kvp.Value.ToLower() == "unlicense" || kvp.Value.ToLower() == "other").ToList())
+            foreach (var kvp in extractedLicenses.Where(kvp => kvp.Value.Equals("noassertion", StringComparison.InvariantCultureIgnoreCase) || kvp.Value.Equals("unlicense", StringComparison.InvariantCultureIgnoreCase) || kvp.Value.Equals("other", StringComparison.InvariantCultureIgnoreCase)).ToList())
             {
                 extractedLicenses.Remove(kvp.Key);
             }

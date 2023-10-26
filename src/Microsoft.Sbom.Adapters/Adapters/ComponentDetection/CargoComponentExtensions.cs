@@ -17,15 +17,15 @@ internal static class CargoComponentExtensions
     /// <param name="cargoComponent">The <see cref="CargoComponent" /> to convert.</param>
     /// <param name="license">The license to use for the <see cref="SbomPackage" />.</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>
-    public static SbomPackage ToSbomPackage(this CargoComponent cargoComponent, string? license = null) => new()
+    public static SbomPackage ToSbomPackage(this CargoComponent cargoComponent, string? licenseConcluded = null) => new()
     {
         Id = cargoComponent.Id,
         PackageUrl = cargoComponent.PackageUrl?.ToString(),
         PackageName = cargoComponent.Name,
         PackageVersion = cargoComponent.Version,
-        LicenseInfo = string.IsNullOrWhiteSpace(license) ? null : new LicenseInfo
+        LicenseInfo = string.IsNullOrWhiteSpace(licenseConcluded) ? null : new LicenseInfo
         {
-            Concluded = license,
+            Concluded = licenseConcluded,
         },
         FilesAnalyzed = false,
         Type = "cargo",
