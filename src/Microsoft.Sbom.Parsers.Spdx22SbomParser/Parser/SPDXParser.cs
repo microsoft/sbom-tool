@@ -143,7 +143,7 @@ public class SPDXParser : ISbomParser
                                 result = new ExternalDocumentReferencesResult(result);
                                 break;
                             default:
-                                break;
+                                throw new InvalidDataException($"Explicit field {result.FieldName} is unhandled.");
                         }
                     }
 
