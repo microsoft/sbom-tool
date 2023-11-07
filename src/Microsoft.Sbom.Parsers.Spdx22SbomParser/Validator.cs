@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.Parser;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 

@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Generic;
+#nullable enable
+
 using Microsoft.Sbom.Contracts;
-using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.JsonAsynchronousNodeKit;
 
 namespace Microsoft.Sbom;
 
@@ -18,39 +19,7 @@ public interface ISbomParser
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    ParserState Next();
-
-    /// <summary>
-    /// Returns a list of <see cref="SbomFile"/> objects defined in the
-    /// current SBOM.
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
-    IEnumerable<SbomFile> GetFiles();
-
-    /// <summary>
-    /// Returns a list of <see cref="SbomPackage"/> objects defined in the
-    /// current SBOM.
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
-    IEnumerable<SbomPackage> GetPackages();
-
-    /// <summary>
-    /// Returns a list of <see cref="SBOMRelationship"/> objects defined in the
-    /// current SBOM.
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
-    IEnumerable<SBOMRelationship> GetRelationships();
-
-    /// <summary>
-    /// Returns a list of <see cref="SBOMReference"/> objects defined in the
-    /// current SBOM.
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
-    IEnumerable<SBOMReference> GetReferences();
+    ParserStateResult? Next();
 
     /// <summary>
     /// Returns a <see cref="SBOMMetadata"/> object using the metadata defined in the
@@ -67,9 +36,4 @@ public interface ISbomParser
     /// <returns>An version sorted array in ascending order of
     /// <see cref="ManifestInfo">manifests</see> this library can parse.</returns>
     ManifestInfo[] RegisterManifest();
-
-    /// <summary>
-    /// Get the current state of the parser.
-    /// </summary>
-    public ParserState CurrentState { get; }
 }

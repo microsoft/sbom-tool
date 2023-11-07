@@ -6,10 +6,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Moq;
+using SbomChecksum = Microsoft.Sbom.Contracts.Checksum;
+using SpdxChecksum = Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Checksum;
 
 namespace Microsoft.Sbom.Workflows;
 
@@ -36,30 +38,39 @@ public class ValidationWorkflowTestsBase
         return fileSystemMock;
     }
 
-    protected IDictionary<string, Checksum[]> GetFilesDictionary() => new Dictionary<string, Checksum[]>
+    protected IDictionary<string, SpdxChecksum[]> GetSpdxFilesDictionary() => new Dictionary<string, SpdxChecksum[]>
     {
-        ["/child1/file1"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child1/file1hash" } },
-        ["/child1/file2"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child1/file2hash" } },
-        ["/child2/file3"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/file3hash" } },
-        ["/child2/file4"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/file4hash" } },
-        ["/child2/file5"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/file5hash" } },
-        ["/child3/file11"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child3/file11hash" } },
-        ["/child3/file12"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child3/file12hash" } },
-        ["/child2/grandchild1/file6"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/grandchild1/file6hash" } },
-        ["/child5/file8"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child5/file8hash" } },
-        ["/child2/grandchild1/file9"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "incorrectHash" } },
-        ["/child2/grandchild2/file10"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "missingfile" } }
+        ["/child1/file1"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child1/file1hash" } },
+        ["/child1/file2"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child1/file2hash" } },
+        ["/child2/file3"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child2/file3hash" } },
+        ["/child2/file4"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child2/file4hash" } },
+        ["/child2/file5"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child2/file5hash" } },
+        ["/child3/file11"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child3/file11hash" } },
+        ["/child3/file12"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child3/file12hash" } },
+        ["/child2/grandchild1/file6"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child2/grandchild1/file6hash" } },
+        ["/child5/file8"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child5/file8hash" } },
+        ["/child2/grandchild1/file9"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "incorrectHash" } },
+        ["/child2/grandchild2/file10"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "missingfile" } }
     };
+
+    protected IDictionary<string, SbomChecksum[]> GetSbomFilesDictionary()
+    {
+        var spdxDict = GetSpdxFilesDictionary();
+
+        return spdxDict.ToDictionary(
+            kvp => kvp.Key,
+            kvp => kvp.Value.Select(v => new SbomChecksum { Algorithm = AlgorithmName.FromString(v.Algorithm), ChecksumValue = v.ChecksumValue }).ToArray());
+    }
 
     protected ManifestData GetDefaultManifestData() => new()
     {
-        HashesMap = new ConcurrentDictionary<string, Checksum[]>(GetFilesDictionary(), StringComparer.InvariantCultureIgnoreCase)
+        HashesMap = new ConcurrentDictionary<string, SbomChecksum[]>(GetSbomFilesDictionary(), StringComparer.InvariantCultureIgnoreCase)
     };
 
-    protected IEnumerable<SbomFile> GetSBOMFiles(IDictionary<string, Checksum[]> dictionary) => dictionary
-        .Select(file => new SbomFile
+    protected IEnumerable<SPDXFile> GetSpdxFiles(IDictionary<string, SpdxChecksum[]> dictionary) => dictionary
+        .Select(file => new SPDXFile
         {
-            Path = $".{file.Key}", // Prepend .
-            Checksum = file.Value
+            FileName = $".{file.Key}", // Prepend .
+            FileChecksums = file.Value.ToList(),
         });
 }
