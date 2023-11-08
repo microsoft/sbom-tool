@@ -60,14 +60,7 @@ public class MavenUtils : IMavenUtils
 
             for (var i = 0; i < componentNamespaceParts.Length; i++)
             {
-                if (i == 0)
-                {
-                    pomLocation += $"/{componentNamespaceParts[i]}";
-                }
-                else
-                {
-                    pomLocation += $"/{componentNamespaceParts[i]}";
-                }
+                pomLocation += $"/{componentNamespaceParts[i]}";
             }
         }
 
