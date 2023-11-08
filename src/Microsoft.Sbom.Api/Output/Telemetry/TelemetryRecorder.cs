@@ -19,6 +19,7 @@ using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
 using Serilog;
 using Serilog.Core;
+using Spectre.Console;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Output.Telemetry;
@@ -34,10 +35,12 @@ public class TelemetryRecorder : IRecorder
     private readonly IList<Exception> exceptions = new List<Exception>();
     private readonly IList<Exception> apiExceptions = new List<Exception>();
     private readonly IList<Exception> metadataExceptions = new List<Exception>();
-    private int totalNumberOfPackages = 0;
-    private int totalNumberOfLicenses = 0;
     private IList<FileValidationResult> errors = new List<FileValidationResult>();
     private Result result = Result.Success;
+
+    private int totalNumberOfPackages = 0;
+    private int totalNumberOfLicenses = 0;
+    private int packageDetailsEntries = 0;
 
     public IFileSystemUtils FileSystemUtils { get; }
 
@@ -238,6 +241,15 @@ public class TelemetryRecorder : IRecorder
     }
 
     /// <summary>
+    /// Adds onto the total number of packageDetail entries found by the PackageDetailsFactory.
+    /// </summary>
+    /// <param name="packageDetailsCount">The total packageDetails count after execution of the PackageDetailsFactory.</param>
+    public void AddToTotalNumberOfPackageDetailsEntries(int packageDetailsCount)
+    {
+        Interlocked.Add(ref this.packageDetailsEntries, packageDetailsCount);
+    }
+
+    /// <summary>
     /// Adds onto the total count of licenses that were retrieved from the API.
     /// </summary>
     /// <param name="licenseCount">The count of licenses that are to be added to the total.</param>
@@ -309,7 +321,8 @@ public class TelemetryRecorder : IRecorder
                 Exceptions = this.exceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),
                 APIExceptions = this.apiExceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),
                 MetadataExceptions = this.metadataExceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(g => g.Key, g => g.First().Message),
-                TotalLicensesDetected = this.totalNumberOfLicenses
+                TotalLicensesDetected = this.totalNumberOfLicenses,
+                PackageDetailsEntries = this.packageDetailsEntries
             };
 
             // Log to logger.

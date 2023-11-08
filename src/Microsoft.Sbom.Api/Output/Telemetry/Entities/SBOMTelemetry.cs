@@ -70,4 +70,9 @@ public class SBOMTelemetry
     /// Gets or sets the total number of licenses detected in the SBOM.
     /// </summary>
     public int TotalLicensesDetected { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total number of PackageDetails entries created during the execution of the tool.
+    /// </summary>
+    public int PackageDetailsEntries { get; set; }
 }

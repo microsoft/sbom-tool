@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.PackageDetails;
@@ -16,12 +17,14 @@ namespace Microsoft.Sbom.Api.PackageDetails;
 public class PackageDetailsFactory : IPackageDetailsFactory
 {
     private readonly ILogger log;
+    private readonly IRecorder recorder;
     private readonly IMavenUtils mavenUtils;
     private readonly INugetUtils nugetUtils;
 
-    public PackageDetailsFactory(ILogger log, IMavenUtils mavenUtils, INugetUtils nugetUtils)
+    public PackageDetailsFactory(ILogger log, IRecorder recorder, IMavenUtils mavenUtils, INugetUtils nugetUtils)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
+        this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.mavenUtils = mavenUtils ?? throw new ArgumentNullException(nameof(mavenUtils));
         this.nugetUtils = nugetUtils ?? throw new ArgumentNullException(nameof(nugetUtils));
     }
@@ -59,26 +62,31 @@ public class PackageDetailsFactory : IPackageDetailsFactory
 
     private IDictionary<(string Name, string Version), PackageDetails> ExtractPackageDetailsFromFiles(List<string> packageDetailsPaths)
     {
-        // Create a var called packageDetailsDictionary where the key is a tuple of the package name and version and the value is a PackageDetailsObject
         var packageDetailsDictionary = new ConcurrentDictionary<(string, string), PackageDetails>();
 
         foreach (var path in packageDetailsPaths)
         {
-            // If path ends in .nuspec then it is a nuspec file
             if (!string.IsNullOrEmpty(path) && path.EndsWith(".nuspec", StringComparison.OrdinalIgnoreCase))
             {
                 var nuspecDetails = nugetUtils.ParseNuspec(path);
-                packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.packageDetails);
+                if (!string.IsNullOrEmpty(nuspecDetails.packageDetails.License) && !string.IsNullOrEmpty(nuspecDetails.packageDetails.Supplier))
+                {
+                    packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.packageDetails);
+                }
             }
 
             if (!string.IsNullOrEmpty(path) && path.EndsWith(".pom", StringComparison.OrdinalIgnoreCase))
             {
                 var pomDetails = mavenUtils.ParsePom(path);
-                packageDetailsDictionary.TryAdd((pomDetails.Name, pomDetails.Version), pomDetails.packageDetails);
+                if (!string.IsNullOrEmpty(pomDetails.packageDetails.License) && !string.IsNullOrEmpty(pomDetails.packageDetails.Supplier))
+                {
+                    packageDetailsDictionary.TryAdd((pomDetails.Name, pomDetails.Version), pomDetails.packageDetails);
+                }
             }
         }
 
         log.Debug($"Found data in {packageDetailsDictionary.Count} components out of {packageDetailsPaths.Count} locations");
+        recorder.AddToTotalNumberOfPackageDetailsEntries(packageDetailsDictionary.Count);
 
         return packageDetailsDictionary;
     }

@@ -119,7 +119,10 @@ public abstract class ComponentDetectionBaseWalker
 
             if (configuration.EnablePackageMetadataParsing?.Value == true)
             {
-                packageDetailsDictionary = packageDetailsFactory.GetPackageDetailsDictionary(uniqueComponents);
+                if (uniqueComponents.Any())
+                {
+                    packageDetailsDictionary = packageDetailsFactory.GetPackageDetailsDictionary(uniqueComponents);
+                }
             }
 
             // Check if the configuration is set to fetch license information.
