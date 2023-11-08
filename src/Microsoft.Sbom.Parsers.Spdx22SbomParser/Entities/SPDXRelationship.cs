@@ -20,12 +20,14 @@ public class SPDXRelationship
     /// <summary>
     /// Gets or sets the id of the target element with whom the source element has a relationship.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("relatedSpdxElement")]
     public string TargetElementId { get; set; }
 
     /// <summary>
     /// Gets or sets the id of the target element with whom the source element has a relationship.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("spdxElementId")]
     public string SourceElementId { get; set; }
 }

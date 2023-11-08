@@ -16,11 +16,12 @@ public class ExternalReference
     /// <summary>
     /// Gets or sets the category for the external reference.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("referenceCategory")]
     public string ReferenceCategory { get; set; }
 
     /// <summary>
-    /// Gets or sets type of the external reference. These are definined in an appendix in the SPDX specification.
+    /// Gets or sets type of the external reference. These are defined in an appendix in the SPDX specification.
     /// https://spdx.github.io/spdx-spec/appendix-VI-external-repository-identifiers/.
     /// </summary>
     [JsonPropertyName("referenceType")]
@@ -30,6 +31,7 @@ public class ExternalReference
     /// Gets or sets a unique string without any spaces that specifies a location where the package specific information
     /// can be located. The locator constraints are defined by the <see cref="Type"/>.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("referenceLocator")]
     public string Locator { get; set; }
 }
