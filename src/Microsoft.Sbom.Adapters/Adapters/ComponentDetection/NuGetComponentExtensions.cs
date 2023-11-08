@@ -16,19 +16,19 @@ internal static class NuGetComponentExtensions
     /// Converts a <see cref="NuGetComponent" /> to an <see cref="SbomPackage" />.
     /// </summary>
     /// <param name="nuGetComponent">The <see cref="NuGetComponent" /> to convert.</param>
-    /// <param name="license"> License information for the package that component that is being converted.</param>
+    /// <param name="component">The <see cref="ExtendedScannedComponent"/> version of the NuGetComponent</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>
-    public static SbomPackage ToSbomPackage(this NuGetComponent nuGetComponent, string? licenseConcluded = null, string? licenseDeclared = null, string? supplier = null) => new()
+    public static SbomPackage ToSbomPackage(this NuGetComponent nuGetComponent, ExtendedScannedComponent component) => new()
     {
         Id = nuGetComponent.Id,
         PackageUrl = nuGetComponent.PackageUrl?.ToString(),
         PackageName = nuGetComponent.Name,
         PackageVersion = nuGetComponent.Version,
-        Supplier = nuGetComponent.Authors?.Any() == true ? $"Organization: {nuGetComponent.Authors.First()}" : supplier,
-        LicenseInfo = string.IsNullOrWhiteSpace(licenseConcluded) && string.IsNullOrEmpty(licenseDeclared) ? null : new LicenseInfo
+        Supplier = nuGetComponent.Authors?.Any() == true ? $"Organization: {nuGetComponent.Authors.First()}" : component.Supplier,
+        LicenseInfo = string.IsNullOrWhiteSpace(component.LicenseConcluded) && string.IsNullOrEmpty(component.LicenseDeclared) ? null : new LicenseInfo
         {
-            Concluded = licenseConcluded,
-            Declared = licenseDeclared,
+            Concluded = component.LicenseConcluded,
+            Declared = component.LicenseDeclared,
         },
         FilesAnalyzed = false,
         Type = "nuget",

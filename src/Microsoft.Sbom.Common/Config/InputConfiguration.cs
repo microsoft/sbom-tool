@@ -140,4 +140,7 @@ public class InputConfiguration : IConfiguration
     /// <inheritdoc cref="IConfiguration.FetchLicenseInformation" />
     [DefaultValue(false)]
     public ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
+
+    [DefaultValue(false)]
+    public ConfigurationSetting<bool> EnablePackageMetadataParsing { get; set; }
 }

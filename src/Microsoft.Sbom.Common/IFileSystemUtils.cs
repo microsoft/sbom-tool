@@ -170,4 +170,11 @@ public interface IFileSystemUtils
     /// <param name="path">The absolute or relative path of the file or directory.</param>
     /// <returns>The parent directory.</returns>
     DirectoryInfo GetParentDirectory(string path);
+
+    /// <summary>
+    /// Read all the content of the specified file as an array of bytes.
+    /// </summary>
+    /// <param name="path">The absolute relative path of a file.</param>
+    /// <returns>Byte array content of the file.</returns>
+    byte[] ReadAllBytes(string path);
 }

@@ -44,6 +44,7 @@ using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.SignValidator;
 using Microsoft.Sbom.Api.Utils;
@@ -151,6 +152,8 @@ public static class ServiceCollectionExtensions
             .AddTransient<SBOMMetadata>()
             .AddTransient<ILicenseInformationService, LicenseInformationService>()
             .AddSingleton<IPackageDetailsFactory, PackageDetailsFactory>()
+            .AddSingleton<INugetUtils, NugetUtils>()
+            .AddSingleton<IMavenUtils, MavenUtils>()
             .AddSingleton<IOSUtils, OSUtils>()
             .AddSingleton<IEnvironmentWrapper, EnvironmentWrapper>()
             .AddSingleton<IFileSystemUtilsExtension, FileSystemUtilsExtension>()

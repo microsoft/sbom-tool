@@ -21,19 +21,19 @@ public static class ScannedComponentExtensions
     {
         return component.Component switch
         {
-            CargoComponent cargoComponent => cargoComponent.ToSbomPackage(component?.LicenseConcluded),
+            CargoComponent cargoComponent => cargoComponent.ToSbomPackage(component),
             CondaComponent condaComponent => condaComponent.ToSbomPackage(),
             DockerImageComponent dockerImageComponent => dockerImageComponent.ToSbomPackage(),
             GitComponent gitComponent => gitComponent.ToSbomPackage(),
             GoComponent goComponent => goComponent.ToSbomPackage(),
             LinuxComponent linuxComponent => linuxComponent.ToSbomPackage(),
-            MavenComponent mavenComponent => mavenComponent.ToSbomPackage(component?.LicenseDeclared, component?.Supplier),
-            NpmComponent npmComponent => npmComponent.ToSbomPackage(component?.LicenseConcluded),
-            NuGetComponent nuGetComponent => nuGetComponent.ToSbomPackage(component?.LicenseConcluded, component?.LicenseDeclared, component?.Supplier),
+            MavenComponent mavenComponent => mavenComponent.ToSbomPackage(component),
+            NpmComponent npmComponent => npmComponent.ToSbomPackage(component),
+            NuGetComponent nuGetComponent => nuGetComponent.ToSbomPackage(component),
             OtherComponent otherComponent => otherComponent.ToSbomPackage(),
-            PipComponent pipComponent => pipComponent.ToSbomPackage(component?.LicenseConcluded),
-            PodComponent podComponent => podComponent.ToSbomPackage(component?.LicenseConcluded),
-            RubyGemsComponent rubyGemsComponent => rubyGemsComponent.ToSbomPackage(component?.LicenseConcluded),
+            PipComponent pipComponent => pipComponent.ToSbomPackage(component),
+            PodComponent podComponent => podComponent.ToSbomPackage(component),
+            RubyGemsComponent rubyGemsComponent => rubyGemsComponent.ToSbomPackage(component),
             null => Error(report => report.LogNullComponent(nameof(ToSbomPackage))),
             _ => Error(report => report.LogNoConversionFound(component.Component.GetType(), component.Component))
         };

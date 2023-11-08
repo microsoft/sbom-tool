@@ -72,6 +72,13 @@ public interface IRecorder
     public void RecordAPIException(Exception exception);
 
     /// <summary>
+    /// Record any exception that was encountered during the detection or parsing of individual package metadata files.
+    /// </summary>
+    /// <param name="exception">The exception that was encountered.</param>
+    /// <exception cref="ArgumentNullException">If the exception is null.</exception>
+    public void RecordMetadataException(Exception exception);
+
+    /// <summary>
     /// Finalize the recorder, and log the telemetry.
     /// </summary>
     public Task FinalizeAndLogTelemetryAsync();

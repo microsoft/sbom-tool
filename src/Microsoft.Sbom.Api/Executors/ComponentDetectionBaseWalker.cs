@@ -10,19 +10,18 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Serilog.Events;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors;
-
-using Microsoft.Sbom.Adapters.ComponentDetection;
 
 /// <summary>
 /// Abstract class that runs component detection tool in the given folder.
@@ -38,7 +37,6 @@ public abstract class ComponentDetectionBaseWalker
     private readonly IPackageDetailsFactory packageDetailsFactory;
 
     public ConcurrentDictionary<string, string> LicenseDictionary = new ConcurrentDictionary<string, string>();
-    public ConcurrentDictionary<(string, string), PackageDetailsObject> PackageDetailsDictionary = new ConcurrentDictionary<(string, string), PackageDetailsObject>();
     private bool licenseInformationRetrieved = false;
 
     private ComponentDetectionCliArgumentBuilder cliArgumentBuilder;
@@ -101,6 +99,8 @@ public abstract class ComponentDetectionBaseWalker
 
         async Task Scan(string path)
         {
+            IDictionary<(string Name, string Version), PackageDetails.PackageDetails> packageDetailsDictionary = new ConcurrentDictionary<(string, string), PackageDetails.PackageDetails>();
+
             cliArgumentBuilder.SourceDirectory(buildComponentDirPath);
 
             var cmdLineParams = configuration.ToComponentDetectorCommandLineParams(cliArgumentBuilder);
@@ -117,12 +117,15 @@ public abstract class ComponentDetectionBaseWalker
 
             var uniqueComponents = FilterScannedComponents(scanResult);
 
+            if (configuration.EnablePackageMetadataParsing?.Value == true)
+            {
+                packageDetailsDictionary = packageDetailsFactory.GetPackageDetailsDictionary(uniqueComponents);
+            }
+
             // Check if the configuration is set to fetch license information.
             if (configuration.FetchLicenseInformation?.Value == true)
             {
                 var listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(uniqueComponents);
-
-                PackageDetailsDictionary = packageDetailsFactory.GetPackageDetailsDictionary(uniqueComponents);
 
                 // Check that an API call hasn't already been made. During the first execution of this class this list is empty (because we are detecting the files section of the SBOM). During the second execution we have all the components in the project. There are subsequent executions but not important in this scenario.
                 if (!licenseInformationRetrieved && listOfComponentsForApi?.Count > 0)
@@ -170,10 +173,12 @@ public abstract class ComponentDetectionBaseWalker
                     extendedComponent.LicenseConcluded = LicenseDictionary[$"{componentName}@{componentVersion}"];
                 }
 
-                if (PackageDetailsDictionary != null && PackageDetailsDictionary.ContainsKey((componentName, componentVersion)))
+                if (packageDetailsDictionary != null && packageDetailsDictionary.ContainsKey((componentName, componentVersion)))
                 {
-                    extendedComponent.Supplier = PackageDetailsDictionary[(componentName, componentVersion)].Supplier;
-                    extendedComponent.LicenseDeclared = PackageDetailsDictionary[(componentName, componentVersion)].License;
+                    extendedComponent.Supplier = string.IsNullOrEmpty(packageDetailsDictionary[(componentName, componentVersion)].Supplier) ? null : packageDetailsDictionary[(componentName, componentVersion)].Supplier;
+                    log.Debug($"Supplier: {extendedComponent.Supplier}");
+                    extendedComponent.LicenseDeclared = string.IsNullOrEmpty(packageDetailsDictionary[(componentName, componentVersion)].License) ? null : packageDetailsDictionary[(componentName, componentVersion)].License;
+                    log.Debug($"License Declared: {extendedComponent.LicenseDeclared}");
                 }
 
                 await output.Writer.WriteAsync(extendedComponent);

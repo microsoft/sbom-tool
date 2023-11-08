@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Channels;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
-using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;

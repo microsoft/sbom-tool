@@ -15,18 +15,18 @@ internal static class PodComponentExtensions
     /// Converts a <see cref="PodComponent" /> to an <see cref="SbomPackage" />.
     /// </summary>
     /// <param name="podComponent">The <see cref="PodComponent" /> to convert.</param>
-    /// <param name="license">The license to use.</param>
+    /// <param name="component">The <see cref="ExtendedScannedComponent"/> version of the PodComponent</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>
-    public static SbomPackage? ToSbomPackage(this PodComponent podComponent, string? licenseConcluded = null) => new()
+    public static SbomPackage? ToSbomPackage(this PodComponent podComponent, ExtendedScannedComponent component) => new()
     {
         Id = podComponent.Id,
         PackageUrl = podComponent.PackageUrl?.ToString(),
         PackageName = podComponent.Name,
         PackageVersion = podComponent.Version,
         PackageSource = podComponent.SpecRepo,
-        LicenseInfo = string.IsNullOrWhiteSpace(licenseConcluded) ? null : new LicenseInfo
+        LicenseInfo = string.IsNullOrWhiteSpace(component.LicenseConcluded) ? null : new LicenseInfo
         {
-            Concluded = licenseConcluded,
+            Concluded = component.LicenseConcluded,
         },
         FilesAnalyzed = false,
         Type = "pod",

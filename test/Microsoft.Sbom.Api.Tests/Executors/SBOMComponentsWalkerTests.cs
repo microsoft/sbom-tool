@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
-using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.ComponentDetection.Orchestrator.Commands;
+using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.Sbom.Api.Manifest.Configuration;
+using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
@@ -22,9 +24,6 @@ using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
-
-using Microsoft.ComponentDetection.Orchestrator.Commands;
-using Microsoft.Sbom.Adapters.ComponentDetection;
 
 [TestClass]
 public class SBOMComponentsWalkerTests

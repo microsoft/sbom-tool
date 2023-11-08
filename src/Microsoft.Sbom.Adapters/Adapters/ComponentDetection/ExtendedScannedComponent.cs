@@ -8,7 +8,7 @@ using Microsoft.Sbom.Adapters.Report;
 using Microsoft.Sbom.Contracts;
 
 /// <summary>
-/// A <see cref="ScannedComponent" /> with license information.
+/// A <see cref="ScannedComponent" /> with additional properties extracted from package metadata files.
 /// </summary>
 public class ExtendedScannedComponent : ScannedComponent
 {
