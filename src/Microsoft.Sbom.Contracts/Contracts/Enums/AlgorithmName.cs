@@ -63,6 +63,36 @@ public class AlgorithmName : IEquatable<AlgorithmName>
         return !(left == right);
     }
 
+    public static AlgorithmName FromString(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentNullException(nameof(name));
+        }
+
+        if (string.Equals(name, SHA1.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            return SHA1;
+        }
+
+        if (string.Equals(name, SHA256.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            return SHA256;
+        }
+
+        if (string.Equals(name, SHA512.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            return SHA512;
+        }
+
+        if (string.Equals(name, MD5.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            return MD5;
+        }
+
+        throw new ArgumentException($"Unknown hash algorithm '{name}'.", nameof(name));
+    }
+
     /// <summary>
     /// Gets equivalent to <see cref="HashAlgorithmName.SHA1"/>.
     /// </summary>

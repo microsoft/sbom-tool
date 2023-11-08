@@ -15,6 +15,7 @@ public class PackageVerificationCode
     /// <summary>
     /// Gets or sets the actual package verification code as a hex encoded value.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("packageVerificationCodeValue")]
     public string PackageVerificationCodeValue { get; set; }
 

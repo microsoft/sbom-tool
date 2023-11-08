@@ -6,7 +6,7 @@ using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 
-internal class Constants
+internal static class Constants
 {
     internal const string SPDXName = "SPDX";
     internal const string SPDXVersion = "2.2";
@@ -30,6 +30,8 @@ internal class Constants
     internal const string ExternalDocumentRefArrayHeaderName = "externalDocumentRefs";
 
     #endregion
+
+    internal const int ReadBufferSize = 4096;
 
     #region Value format strings
 
@@ -58,29 +60,7 @@ internal class Constants
 
     internal static ManifestInfo Spdx22ManifestInfo = new ManifestInfo
     {
-        Name = Constants.SPDXName,
-        Version = Constants.SPDXVersion
-    };
-
-    internal const int ReadBufferSize = 4096;
-
-    /// <summary>
-    /// Converts a <see cref="System.Text.Json.JsonTokenType"/> enum to the actual string
-    /// representation of the token.
-    /// </summary>
-    internal static readonly string[] JsonTokenStrings = new string[]
-    {
-        string.Empty, // None
-        "{", // StartObject
-        "}", // EndObject
-        "[", // StartArray
-        "]", // EndArray
-        "PropertyName", // PropertyName
-        "Comment", // Comment
-        "String", // String
-        "Number", // Number
-        "True", // True
-        "False", // False
-        "Null", // Null
+        Name = SPDXName,
+        Version = SPDXVersion
     };
 }
