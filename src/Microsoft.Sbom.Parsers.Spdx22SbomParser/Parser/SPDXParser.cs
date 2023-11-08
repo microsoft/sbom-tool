@@ -59,7 +59,10 @@ public class SPDXParser : ISbomParser
         JsonSerializerOptions? jsonSerializerOptions = null,
         int? bufferSize = null)
     {
-        this.jsonSerializerOptions = jsonSerializerOptions ?? new JsonSerializerOptions();
+        this.jsonSerializerOptions = jsonSerializerOptions ?? new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+        };
         var handlers = new Dictionary<string, PropertyHandler>
         {
             { ReferenceProperty, new PropertyHandler<SpdxExternalDocumentReference>(ParameterType.Array) },
