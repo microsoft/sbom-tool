@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Output.Telemetry;
@@ -92,11 +93,11 @@ public class NugetUtils : INugetUtils
                 if (authors.Contains(','))
                 {
                     var authorsArray = authors.Split(',');
-                    supplierField = string.Join(", ", authorsArray);
+                    supplierField = $"Organization: {authorsArray.First()}";
                 }
                 else
                 {
-                    supplierField = authors;
+                    supplierField = $"Organization: {authors}";
                 }
             }
 

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Output.Telemetry;
@@ -66,22 +67,26 @@ public class PackageDetailsFactory : IPackageDetailsFactory
 
         foreach (var path in packageDetailsPaths)
         {
-            if (!string.IsNullOrEmpty(path) && path.EndsWith(".nuspec", StringComparison.OrdinalIgnoreCase))
+            switch (Path.GetExtension(path)?.ToLowerInvariant())
             {
-                var nuspecDetails = nugetUtils.ParseNuspec(path);
-                if (!string.IsNullOrEmpty(nuspecDetails.packageDetails.License) || !string.IsNullOrEmpty(nuspecDetails.packageDetails.Supplier))
-                {
-                    packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.packageDetails);
-                }
-            }
+                case ".nuspec" when !string.IsNullOrEmpty(path):
+                    var nuspecDetails = nugetUtils.ParseNuspec(path);
+                    if (!string.IsNullOrEmpty(nuspecDetails.packageDetails.License) || !string.IsNullOrEmpty(nuspecDetails.packageDetails.Supplier))
+                    {
+                        packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.packageDetails);
+                    }
 
-            if (!string.IsNullOrEmpty(path) && path.EndsWith(".pom", StringComparison.OrdinalIgnoreCase))
-            {
-                var pomDetails = mavenUtils.ParsePom(path);
-                if (!string.IsNullOrEmpty(pomDetails.packageDetails.License) && !string.IsNullOrEmpty(pomDetails.packageDetails.Supplier))
-                {
-                    packageDetailsDictionary.TryAdd((pomDetails.Name, pomDetails.Version), pomDetails.packageDetails);
-                }
+                    break;
+                case ".pom" when !string.IsNullOrEmpty(path):
+                    var pomDetails = mavenUtils.ParsePom(path);
+                    if (!string.IsNullOrEmpty(pomDetails.packageDetails.License) || !string.IsNullOrEmpty(pomDetails.packageDetails.Supplier))
+                    {
+                        packageDetailsDictionary.TryAdd((pomDetails.Name, pomDetails.Version), pomDetails.packageDetails);
+                    }
+
+                    break;
+                default:
+                    break;
             }
         }
 

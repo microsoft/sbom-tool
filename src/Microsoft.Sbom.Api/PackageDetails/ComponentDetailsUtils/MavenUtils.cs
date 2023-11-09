@@ -97,33 +97,26 @@ public class MavenUtils : IMavenUtils
 
             XmlNode developersNode = doc["project"]?["developers"];
             XmlNode licensesNode = doc["project"]?["licenses"];
+            XmlNode organizationNode = doc["project"]?["organization"];
 
             var name = doc["project"]?["artifactId"]?.InnerText;
             var version = doc["project"]?["version"]?.InnerText;
 
-            if (developersNode != null)
+            if (organizationNode != null)
             {
-                foreach (XmlNode developerNode in developersNode.ChildNodes)
+                var organizationName = organizationNode["name"]?.InnerText;
+                if (!string.IsNullOrEmpty(organizationName))
                 {
-                    var developerName = developerNode["name"]?.InnerText;
-
-                    // Populate the first 3 developers into the supplier field comma separated if a 4th is reached then use et al.
-                    if (!string.IsNullOrEmpty(developerName))
-                    {
-                        if (supplierField.Length == 0)
-                        {
-                            supplierField = developerName;
-                        }
-                        else if (supplierField.Length > 0 && supplierField.Split(',').Length < 3)
-                        {
-                            supplierField += $", {developerName}";
-                        }
-                        else
-                        {
-                            supplierField += " et al.";
-                            break;
-                        }
-                    }
+                    supplierField = $"Organization: {organizationName}";
+                }
+            }
+            else if (developersNode != null)
+            {
+                // Take the first developer name and use it as the supplier when there is no organization listed.
+                var developerName = developersNode["developer"]?["name"]?.InnerText;
+                if (!string.IsNullOrEmpty(developerName))
+                {
+                    supplierField = $"Person: {developerName}";
                 }
             }
 
