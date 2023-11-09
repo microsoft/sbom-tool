@@ -86,7 +86,19 @@ public class NugetUtils : INugetUtils
                 licenseField = license.InnerText;
             }
 
-            supplierField = authors;
+            if (!string.IsNullOrEmpty(authors))
+            {
+                // If authors contains a comma, then split it and put it back together with a comma and space.
+                if (authors.Contains(','))
+                {
+                    var authorsArray = authors.Split(',');
+                    supplierField = string.Join(", ", authorsArray);
+                }
+                else
+                {
+                    supplierField = authors;
+                }
+            }
 
             return (name, version, new PackageDetails(licenseField, supplierField));
         }

@@ -69,7 +69,7 @@ public class PackageDetailsFactory : IPackageDetailsFactory
             if (!string.IsNullOrEmpty(path) && path.EndsWith(".nuspec", StringComparison.OrdinalIgnoreCase))
             {
                 var nuspecDetails = nugetUtils.ParseNuspec(path);
-                if (!string.IsNullOrEmpty(nuspecDetails.packageDetails.License) && !string.IsNullOrEmpty(nuspecDetails.packageDetails.Supplier))
+                if (!string.IsNullOrEmpty(nuspecDetails.packageDetails.License) || !string.IsNullOrEmpty(nuspecDetails.packageDetails.Supplier))
                 {
                     packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.packageDetails);
                 }
@@ -85,7 +85,11 @@ public class PackageDetailsFactory : IPackageDetailsFactory
             }
         }
 
-        log.Debug($"Found data in {packageDetailsDictionary.Count} components out of {packageDetailsPaths.Count} locations");
+        if (packageDetailsPaths.Count > 0)
+        {
+            log.Information($"Found additional information for {packageDetailsDictionary.Count} components out of {packageDetailsPaths.Count} supported components.");
+        }
+
         recorder.AddToTotalNumberOfPackageDetailsEntries(packageDetailsDictionary.Count);
 
         return packageDetailsDictionary;
