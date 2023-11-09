@@ -80,7 +80,7 @@ public class NugetUtilsTests
         Assert.AreEqual("FakePackageName", name);
         Assert.AreEqual("1.0", version);
         Assert.AreEqual("FakeLicense", packageDetails.License);
-        Assert.AreEqual("FakeAuthor", packageDetails.Supplier);
+        Assert.AreEqual("Organization: FakeAuthor", packageDetails.Supplier);
     }
 
     [TestMethod]
@@ -101,7 +101,7 @@ public class NugetUtilsTests
 
         Assert.AreEqual("FakePackageName", name);
         Assert.AreEqual("1.0", version);
-        Assert.AreEqual("FakeAuthor", packageDetails.Supplier);
+        Assert.AreEqual("Organization: FakeAuthor", packageDetails.Supplier);
         Assert.IsTrue(string.IsNullOrEmpty(packageDetails.License));
     }
 

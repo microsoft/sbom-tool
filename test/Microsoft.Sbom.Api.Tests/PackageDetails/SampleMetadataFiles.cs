@@ -53,7 +53,7 @@ public static class SampleMetadataFiles
                         </licenses>
                         </project>";
 
-    public const string PomWithoutLicense = @"<?xml version=""1.0"" encoding=""ISO-8859-1""?>
+    public const string PomWithDevelopersAndOrganization = @"<?xml version=""1.0"" encoding=""ISO-8859-1""?>
                         <project xmlns=""http://maven.apache.org/POM/4.0.0"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
                         xsi:schemaLocation=""http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"">
                         <modelVersion>4.0.0</modelVersion>
@@ -70,6 +70,39 @@ public static class SampleMetadataFiles
                             <roles>
                                 <role>Developer</role>
                             </roles>
+                            </developer>
+                        </developers>
+
+                        <organization>
+                            <name>Microsoft</name>
+                         </organization>
+
+                        </project>";
+
+    public const string PomWithoutLicense = @"<?xml version=""1.0"" encoding=""ISO-8859-1""?>
+                        <project xmlns=""http://maven.apache.org/POM/4.0.0"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
+                        xsi:schemaLocation=""http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"">
+                        <modelVersion>4.0.0</modelVersion>
+
+                        <groupId>org.test</groupId>
+                        <artifactId>test-package</artifactId>
+                        <version>1.3</version>
+                        <packaging>pom</packaging>
+
+                        <developers>
+                            <developer>
+                                <id>SAMPLE</id>
+                                <name>Sample Name</name>
+                                <roles>
+                                    <role>Developer</role>
+                                </roles>
+                            </developer>
+                            <developer>
+                                <id>SAMPLE</id>
+                                <name>Sample Name2</name>
+                                <roles>
+                                    <role>Developer</role>
+                                </roles>
                             </developer>
                         </developers>
                         </project>";
