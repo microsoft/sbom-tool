@@ -19,10 +19,10 @@ public class PackageDetailsFactory : IPackageDetailsFactory
 {
     private readonly ILogger log;
     private readonly IRecorder recorder;
-    private readonly IMavenUtils mavenUtils;
-    private readonly INugetUtils nugetUtils;
+    private readonly IPackageManagerUtils<MavenUtils> mavenUtils;
+    private readonly IPackageManagerUtils<NugetUtils> nugetUtils;
 
-    public PackageDetailsFactory(ILogger log, IRecorder recorder, IMavenUtils mavenUtils, INugetUtils nugetUtils)
+    public PackageDetailsFactory(ILogger log, IRecorder recorder, IPackageManagerUtils<MavenUtils> mavenUtils, IPackageManagerUtils<NugetUtils> nugetUtils)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
@@ -48,10 +48,10 @@ public class PackageDetailsFactory : IPackageDetailsFactory
             switch (componentType)
             {
                 case ComponentType.NuGet:
-                    packageDetailsConfirmedLocations.Add(nugetUtils.GetNuspecLocation(scannedComponent));
+                    packageDetailsConfirmedLocations.Add(nugetUtils.GetMetadataLocation(scannedComponent));
                     break;
                 case ComponentType.Maven:
-                    packageDetailsConfirmedLocations.Add(mavenUtils.GetPomLocation(scannedComponent));
+                    packageDetailsConfirmedLocations.Add(mavenUtils.GetMetadataLocation(scannedComponent));
                     break;
                 default:
                     break;
@@ -67,26 +67,30 @@ public class PackageDetailsFactory : IPackageDetailsFactory
 
         foreach (var path in packageDetailsPaths)
         {
-            switch (Path.GetExtension(path)?.ToLowerInvariant())
+            if (!string.IsNullOrEmpty(path))
             {
-                case ".nuspec" when !string.IsNullOrEmpty(path):
-                    var nuspecDetails = nugetUtils.ParseNuspec(path);
-                    if (!string.IsNullOrEmpty(nuspecDetails.packageDetails.License) || !string.IsNullOrEmpty(nuspecDetails.packageDetails.Supplier))
-                    {
-                        packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.packageDetails);
-                    }
+                switch (Path.GetExtension(path)?.ToLowerInvariant())
+                {
+                    case ".nuspec":
+                        var nuspecDetails = nugetUtils.ParseMetadata(path);
+                        if (!string.IsNullOrEmpty(nuspecDetails.packageDetails.License) || !string.IsNullOrEmpty(nuspecDetails.packageDetails.Supplier))
+                        {
+                            packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.packageDetails);
+                        }
 
-                    break;
-                case ".pom" when !string.IsNullOrEmpty(path):
-                    var pomDetails = mavenUtils.ParsePom(path);
-                    if (!string.IsNullOrEmpty(pomDetails.packageDetails.License) || !string.IsNullOrEmpty(pomDetails.packageDetails.Supplier))
-                    {
-                        packageDetailsDictionary.TryAdd((pomDetails.Name, pomDetails.Version), pomDetails.packageDetails);
-                    }
+                        break;
+                    case ".pom":
+                        var pomDetails = mavenUtils.ParseMetadata(path);
+                        if (!string.IsNullOrEmpty(pomDetails.packageDetails.License) || !string.IsNullOrEmpty(pomDetails.packageDetails.Supplier))
+                        {
+                            packageDetailsDictionary.TryAdd((pomDetails.Name, pomDetails.Version), pomDetails.packageDetails);
+                        }
 
-                    break;
-                default:
-                    break;
+                        break;
+                    default:
+                        log.Verbose($"File extension {Path.GetExtension(path)} is not supported for extracting supplier info.");
+                        break;
+                }
             }
         }
 

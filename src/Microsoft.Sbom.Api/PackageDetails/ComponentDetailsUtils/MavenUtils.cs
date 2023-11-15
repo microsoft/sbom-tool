@@ -6,6 +6,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
 using Serilog;
@@ -15,7 +16,7 @@ namespace Microsoft.Sbom.Api.PackageDetails;
 /// <summary>
 /// Utilities for retrieving information from maven packages that may not be present on the buildDropPath.
 /// </summary>
-public class MavenUtils : IMavenUtils
+public class MavenUtils : IPackageManagerUtils<MavenUtils>
 {
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly ILogger log;
@@ -23,7 +24,7 @@ public class MavenUtils : IMavenUtils
 
     private static readonly string EnvHomePath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "HOMEPATH" : "HOME";
     private static readonly string HomePath = Environment.GetEnvironmentVariable(EnvHomePath);
-    private static readonly string MavenPackagesPath = $"{HomePath}/.m2/repository";
+    private static readonly string MavenPackagesPath = Path.Join(HomePath, ".m2/repository");
 
     private bool MavenPackagesPathHasReadPermissions => fileSystemUtils.DirectoryHasReadPermissions(MavenPackagesPath);
 
@@ -35,11 +36,11 @@ public class MavenUtils : IMavenUtils
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
 
-        userDefinedLocalRepositoryPath = GetLocalRepositoryPath();
+        this.userDefinedLocalRepositoryPath = GetLocalRepositoryPath();
     }
 
     // Takes in a scanned component and attempts to find the associated pom file. If it is not found then it returns null.
-    public string GetPomLocation(ScannedComponent scannedComponent)
+    public string GetMetadataLocation(ScannedComponent scannedComponent)
     {
         var pomLocation = MavenPackagesPath;
 
@@ -56,15 +57,14 @@ public class MavenUtils : IMavenUtils
         // Take the component namespace and split it by "." in order to get the correct path to the .pom
         if (!string.IsNullOrEmpty(componentNamespace))
         {
-            var componentNamespaceParts = componentNamespace.Split('.'); // Example: "org.apache.commons.commons-lang3"
+            var componentNamespacePath = componentNamespace.Replace('.', '/'); // Example: "org/apache/commons/commons-lang3"
 
-            for (var i = 0; i < componentNamespaceParts.Length; i++)
-            {
-                pomLocation += $"/{componentNamespaceParts[i]}";
-            }
+            var relativePomPath = Path.Join(componentNamespacePath, $"/{componentName}/{componentVersion}/{componentName}-{componentVersion}.pom");
+
+            pomLocation = Path.Join(pomLocation, relativePomPath);
         }
 
-        pomLocation += $"/{componentName}/{componentVersion}/{componentName}-{componentVersion}.pom";
+        pomLocation = Path.GetFullPath(pomLocation);
 
         // Check for file permissions on the .m2 directory before attempting to check if the file exists
         if (MavenPackagesPathHasReadPermissions)
@@ -75,14 +75,14 @@ public class MavenUtils : IMavenUtils
             }
             else
             {
-                log.Debug($"Pom location could not be found at: {pomLocation}");
+                log.Verbose($"Pom location could not be found at: {pomLocation}");
             }
         }
 
         return null;
     }
 
-    public (string Name, string Version, PackageDetails packageDetails) ParsePom(string pomLocation)
+    public (string Name, string Version, PackageDetails packageDetails) ParseMetadata(string pomLocation)
     {
         var supplierField = string.Empty;
         var licenseField = string.Empty;
@@ -135,7 +135,7 @@ public class MavenUtils : IMavenUtils
 
             return (name, version, new PackageDetails(licenseField, supplierField));
         }
-        catch (Exception e)
+        catch (PackageMetadataParsingException e)
         {
             log.Error("Error encountered while extracting supplier info from pom file. Supplier information may be incomplete.", e);
             recorder.RecordMetadataException(e);

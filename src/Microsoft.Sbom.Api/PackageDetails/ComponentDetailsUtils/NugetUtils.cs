@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
 using NuGet.Configuration;
@@ -16,7 +17,7 @@ namespace Microsoft.Sbom.Api.PackageDetails;
 /// <summary>
 /// Utilities for retrieving information from maven packages that may not be present on the buildDropPath
 /// </summary>
-public class NugetUtils : INugetUtils
+public class NugetUtils : IPackageManagerUtils<NugetUtils>
 {
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly ILogger log;
@@ -32,7 +33,7 @@ public class NugetUtils : INugetUtils
     }
 
     // Takes in a scanned component and attempts to find the associated nuspec file. If it is not found then it returns null.
-    public string GetNuspecLocation(ScannedComponent scannedComponent)
+    public string GetMetadataLocation(ScannedComponent scannedComponent)
     {
         var nuspecLocation = string.Empty;
 
@@ -42,7 +43,7 @@ public class NugetUtils : INugetUtils
 
         if (componentType == "nuget")
         {
-            nuspecLocation = $"{NugetPackagesPath}/{componentName}/{componentVersion}/{componentName}.nuspec";
+            nuspecLocation = Path.Join(NugetPackagesPath, $"{componentName}/{componentVersion}/{componentName}.nuspec");
         }
 
         // Check for file permissions on the .nuget directory before attempting to check if every file exists
@@ -54,14 +55,14 @@ public class NugetUtils : INugetUtils
             }
             else
             {
-                log.Debug($"Nuspec file could not be found at: {nuspecLocation}");
+                log.Verbose($"Nuspec file could not be found at: {nuspecLocation}");
             }
         }
 
         return null;
     }
 
-    public (string Name, string Version, PackageDetails packageDetails) ParseNuspec(string nuspecPath)
+    public (string Name, string Version, PackageDetails packageDetails) ParseMetadata(string nuspecPath)
     {
         var supplierField = string.Empty;
         var licenseField = string.Empty;
@@ -103,7 +104,7 @@ public class NugetUtils : INugetUtils
 
             return (name, version, new PackageDetails(licenseField, supplierField));
         }
-        catch (Exception e)
+        catch (PackageMetadataParsingException e)
         {
             log.Error("Error encountered while extracting supplier info from nuspec file. Supplier information may be incomplete.", e);
             recorder.RecordMetadataException(e);

@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
@@ -24,10 +25,10 @@ public class MavenUtilsTests
 
     private static readonly string EnvHomePath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "HOMEPATH" : "HOME";
     private static readonly string HomePath = Environment.GetEnvironmentVariable(EnvHomePath);
-    private static readonly string MavenPackagesPath = $"{HomePath}/.m2/repository";
+    private static readonly string MavenPackagesPath = Path.Join(HomePath, ".m2/repository");
 
     [TestMethod]
-    public void GetPomLocation_WhenNuspecExists_ShouldReturnPath()
+    public void GetPomLocation_WhenPomExists_ShouldReturnPath()
     {
         var mavenUtils = new MavenUtils(mockFileSystemUtils.Object, mockLogger.Object, mockRecorder.Object);
 
@@ -36,14 +37,16 @@ public class MavenUtilsTests
             Component = new MavenComponent("testGroupId", "testArtifactId", "1.0.0")
         };
 
-        var expectedPomLocation = $"{MavenPackagesPath}/testgroupid/testartifactid/1.0.0/testartifactid-1.0.0.pom";
+        var pathToPom = Path.Join(MavenPackagesPath, "testgroupid/testartifactid/1.0.0/testartifactid-1.0.0.pom");
+
+        var expectedPath = Path.GetFullPath(pathToPom);
 
         mockFileSystemUtils.Setup(fs => fs.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
 
-        var result = mavenUtils.GetPomLocation(scannedComponent);
+        var result = mavenUtils.GetMetadataLocation(scannedComponent);
 
-        Assert.AreEqual(expectedPomLocation, result);
+        Assert.AreEqual(expectedPath, result);
     }
 
     [TestMethod]
@@ -59,7 +62,7 @@ public class MavenUtilsTests
         mockFileSystemUtils.Setup(fs => fs.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(false);
 
-        var result = mavenUtils.GetPomLocation(scannedComponent);
+        var result = mavenUtils.GetMetadataLocation(scannedComponent);
 
         Assert.IsNull(result);
     }
@@ -78,7 +81,7 @@ public class MavenUtilsTests
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.ReadAllBytes(It.IsAny<string>())).Returns(pomBytes);
 
-        var (name, version, packageDetails) = mavenUtils.ParsePom(pomContent);
+        var (name, version, packageDetails) = mavenUtils.ParseMetadata(pomContent);
 
         Assert.AreEqual("test-package", name);
         Assert.AreEqual("1.3", version);
@@ -100,7 +103,7 @@ public class MavenUtilsTests
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.ReadAllBytes(It.IsAny<string>())).Returns(pomBytes);
 
-        var (name, version, packageDetails) = mavenUtils.ParsePom(pomContent);
+        var (name, version, packageDetails) = mavenUtils.ParseMetadata(pomContent);
 
         Assert.AreEqual("test-package", name);
         Assert.AreEqual("1.3", version);
@@ -122,7 +125,7 @@ public class MavenUtilsTests
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.ReadAllBytes(It.IsAny<string>())).Returns(pomBytes);
 
-        var (name, version, packageDetails) = mavenUtils.ParsePom(pomContent);
+        var (name, version, packageDetails) = mavenUtils.ParseMetadata(pomContent);
 
         Assert.AreEqual("test-package", name);
         Assert.AreEqual("1.3", version);
@@ -143,7 +146,7 @@ public class MavenUtilsTests
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.ReadAllBytes(It.IsAny<string>())).Returns(pomBytes);
 
-        var (name, version, packageDetails) = mavenUtils.ParsePom(pomContent);
+        var (name, version, packageDetails) = mavenUtils.ParseMetadata(pomContent);
 
         Assert.AreEqual("test-package", name);
         Assert.AreEqual("1.3", version);
