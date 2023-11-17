@@ -31,8 +31,14 @@ public interface IRecorder
     /// <summary>
     /// Record the total number of unique packages that were detected during the execution of the SBOM tool.
     /// </summary>
-    /// <param name="packages">Total number of packages encountered while validating the SBOM.</param>
+    /// <param name="count">Total number of packages encountered while validating the SBOM.</param>
     public void RecordTotalNumberOfPackages(int count);
+
+    /// <summary>
+    /// Adds onto the total number of packageDetail entries found by the PackageDetailsFactory.
+    /// </summary>
+    /// <param name="count">The total packageDetails count after execution of the PackageDetailsFactory.</param>
+    public void AddToTotalNumberOfPackageDetailsEntries(int count);
 
     /// <summary>
     /// Adds onto the total count of licenses that were retrieved from the API.
@@ -70,6 +76,13 @@ public interface IRecorder
     /// <param name="exception">The exception that was encountered.</param>
     /// <exception cref="ArgumentNullException">If the exception is null.</exception>
     public void RecordAPIException(Exception exception);
+
+    /// <summary>
+    /// Record any exception that was encountered during the detection or parsing of individual package metadata files.
+    /// </summary>
+    /// <param name="exception">The exception that was encountered.</param>
+    /// <exception cref="ArgumentNullException">If the exception is null.</exception>
+    public void RecordMetadataException(Exception exception);
 
     /// <summary>
     /// Finalize the recorder, and log the telemetry.

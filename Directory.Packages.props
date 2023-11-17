@@ -31,6 +31,7 @@
         <PackageVersion Include="Mono.Posix.NETStandard" Version="1.0.0" Condition="'$(TargetFramework)' == 'net6.0'"/>
         <PackageVersion Include="Moq" Version="4.17.2" />
         <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageVersion Include="NuGet.Configuration" Version="6.7.0" />
         <PackageVersion Include="NuGet.Frameworks" Version="6.7.0" />
         <PackageVersion Include="packageurl-dotnet" Version="1.1.0" />
         <PackageVersion Include="PowerArgs" Version="3.6.0" />

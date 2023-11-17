@@ -44,6 +44,7 @@ using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.SignValidator;
 using Microsoft.Sbom.Api.Utils;
@@ -150,6 +151,9 @@ public static class ServiceCollectionExtensions
             .AddTransient<ISBOMReaderForExternalDocumentReference, SPDXSBOMReaderForExternalDocumentReference>()
             .AddTransient<SBOMMetadata>()
             .AddTransient<ILicenseInformationService, LicenseInformationService>()
+            .AddSingleton<IPackageDetailsFactory, PackageDetailsFactory>()
+            .AddSingleton<IPackageManagerUtils<NugetUtils>, NugetUtils>()
+            .AddSingleton<IPackageManagerUtils<MavenUtils>, MavenUtils>()
             .AddSingleton<IOSUtils, OSUtils>()
             .AddSingleton<IEnvironmentWrapper, EnvironmentWrapper>()
             .AddSingleton<IFileSystemUtilsExtension, FileSystemUtilsExtension>()
@@ -195,7 +199,7 @@ public static class ServiceCollectionExtensions
 
                 var manifestData = new ManifestData();
 
-                if (!configuration.ManifestInfo.Value.Contains(Api.Utils.Constants.SPDX22ManifestInfo))
+                if (!configuration.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
                 {
                     var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo?.Value?.FirstOrDefault());
                     var parserProvider = x.GetRequiredService<IManifestParserProvider>();
