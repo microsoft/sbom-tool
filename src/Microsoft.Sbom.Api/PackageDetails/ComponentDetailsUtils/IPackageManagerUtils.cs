@@ -20,5 +20,5 @@ public interface IPackageManagerUtils<T>
     /// </summary>
     /// <param name="pomLocation">Path to a package metadata file.</param>
     /// <returns>A tuple containing the name, version, and <see cref="PackageDetails"/> of the specified metadata file.</returns>
-    public (string Name, string Version, PackageDetails packageDetails) ParseMetadata(string pomLocation);
+    public ParsedPackageInformation ParseMetadata(string pomLocation);
 }

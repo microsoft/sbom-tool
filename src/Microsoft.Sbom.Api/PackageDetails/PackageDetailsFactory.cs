@@ -73,17 +73,17 @@ public class PackageDetailsFactory : IPackageDetailsFactory
                 {
                     case ".nuspec":
                         var nuspecDetails = nugetUtils.ParseMetadata(path);
-                        if (!string.IsNullOrEmpty(nuspecDetails.packageDetails.License) || !string.IsNullOrEmpty(nuspecDetails.packageDetails.Supplier))
+                        if (!string.IsNullOrEmpty(nuspecDetails.PackageDetails.License) || !string.IsNullOrEmpty(nuspecDetails.PackageDetails.Supplier))
                         {
-                            packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.packageDetails);
+                            packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.PackageDetails);
                         }
 
                         break;
                     case ".pom":
                         var pomDetails = mavenUtils.ParseMetadata(path);
-                        if (!string.IsNullOrEmpty(pomDetails.packageDetails.License) || !string.IsNullOrEmpty(pomDetails.packageDetails.Supplier))
+                        if (!string.IsNullOrEmpty(pomDetails.PackageDetails.License) || !string.IsNullOrEmpty(pomDetails.PackageDetails.Supplier))
                         {
-                            packageDetailsDictionary.TryAdd((pomDetails.Name, pomDetails.Version), pomDetails.packageDetails);
+                            packageDetailsDictionary.TryAdd((pomDetails.Name, pomDetails.Version), pomDetails.PackageDetails);
                         }
 
                         break;

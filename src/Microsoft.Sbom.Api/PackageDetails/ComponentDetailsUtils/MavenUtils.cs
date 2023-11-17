@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#nullable enable
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -23,12 +24,11 @@ public class MavenUtils : IPackageManagerUtils<MavenUtils>
     private readonly IRecorder recorder;
 
     private static readonly string EnvHomePath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "HOMEPATH" : "HOME";
-    private static readonly string HomePath = Environment.GetEnvironmentVariable(EnvHomePath);
+    private static readonly string? HomePath = Environment.GetEnvironmentVariable(EnvHomePath);
     private static readonly string MavenPackagesPath = Path.Join(HomePath, ".m2/repository");
+    private readonly string userDefinedLocalRepositoryPath;
 
     private bool MavenPackagesPathHasReadPermissions => fileSystemUtils.DirectoryHasReadPermissions(MavenPackagesPath);
-
-    private readonly string userDefinedLocalRepositoryPath;
 
     public MavenUtils(IFileSystemUtils fileSystemUtils, ILogger log, IRecorder recorder)
     {
@@ -36,11 +36,11 @@ public class MavenUtils : IPackageManagerUtils<MavenUtils>
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
 
-        this.userDefinedLocalRepositoryPath = GetLocalRepositoryPath();
+        this.userDefinedLocalRepositoryPath = GetLocalRepositoryPath() ?? string.Empty;
     }
 
     // Takes in a scanned component and attempts to find the associated pom file. If it is not found then it returns null.
-    public string GetMetadataLocation(ScannedComponent scannedComponent)
+    public string? GetMetadataLocation(ScannedComponent scannedComponent)
     {
         var pomLocation = MavenPackagesPath;
 
@@ -82,7 +82,7 @@ public class MavenUtils : IPackageManagerUtils<MavenUtils>
         return null;
     }
 
-    public (string Name, string Version, PackageDetails packageDetails) ParseMetadata(string pomLocation)
+    public ParsedPackageInformation? ParseMetadata(string pomLocation)
     {
         var supplierField = string.Empty;
         var licenseField = string.Empty;
@@ -95,12 +95,13 @@ public class MavenUtils : IPackageManagerUtils<MavenUtils>
             var doc = new XmlDocument();
             doc.Load(pomStream);
 
-            XmlNode developersNode = doc["project"]?["developers"];
-            XmlNode licensesNode = doc["project"]?["licenses"];
-            XmlNode organizationNode = doc["project"]?["organization"];
+            XmlNode? projectNode = doc["project"];
+            XmlNode? developersNode = projectNode?["developers"];
+            XmlNode? licensesNode = projectNode?["licenses"];
+            XmlNode? organizationNode = projectNode?["organization"];
 
-            var name = doc["project"]?["artifactId"]?.InnerText;
-            var version = doc["project"]?["version"]?.InnerText;
+            var name = projectNode?["artifactId"]?.InnerText;
+            var version = projectNode?["version"]?.InnerText;
 
             if (organizationNode != null)
             {
@@ -133,14 +134,14 @@ public class MavenUtils : IPackageManagerUtils<MavenUtils>
                 }
             }
 
-            return (name, version, new PackageDetails(licenseField, supplierField));
+            return new ParsedPackageInformation(name, version, new PackageDetails(licenseField, supplierField));
         }
         catch (PackageMetadataParsingException e)
         {
             log.Error("Error encountered while extracting supplier info from pom file. Supplier information may be incomplete.", e);
             recorder.RecordMetadataException(e);
 
-            return (null, null, null);
+            return null;
         }
     }
 
@@ -148,7 +149,7 @@ public class MavenUtils : IPackageManagerUtils<MavenUtils>
     /// Gets the local repository path for the Maven protocol. Returns null if a settings.xml is not found.
     /// </summary>
     /// <returns>The path to the local repository path defined in the settings.xml</returns>
-    private static string GetLocalRepositoryPath()
+    private static string? GetLocalRepositoryPath()
     {
         var m2Path = $"{HomePath}/.m2";
 
@@ -167,7 +168,7 @@ public class MavenUtils : IPackageManagerUtils<MavenUtils>
         return null;
     }
 
-    private static string GetRepositoryPathFromXml(string settingsXmlFilePath)
+    private static string? GetRepositoryPathFromXml(string settingsXmlFilePath)
     {
         var settingsXmlBytes = File.ReadAllBytes(settingsXmlFilePath);
         using var xmlStream = new MemoryStream(settingsXmlBytes, false);

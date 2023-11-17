@@ -62,7 +62,7 @@ public class NugetUtils : IPackageManagerUtils<NugetUtils>
         return null;
     }
 
-    public (string Name, string Version, PackageDetails packageDetails) ParseMetadata(string nuspecPath)
+    public ParsedPackageInformation ParseMetadata(string nuspecPath)
     {
         var supplierField = string.Empty;
         var licenseField = string.Empty;
@@ -102,14 +102,14 @@ public class NugetUtils : IPackageManagerUtils<NugetUtils>
                 }
             }
 
-            return (name, version, new PackageDetails(licenseField, supplierField));
+            return new ParsedPackageInformation(name, version, new PackageDetails(licenseField, supplierField));
         }
         catch (PackageMetadataParsingException e)
         {
             log.Error("Error encountered while extracting supplier info from nuspec file. Supplier information may be incomplete.", e);
             recorder.RecordMetadataException(e);
 
-            return (null, null, null);
+            return null;
         }
     }
 }

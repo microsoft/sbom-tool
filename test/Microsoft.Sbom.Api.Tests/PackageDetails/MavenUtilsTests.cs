@@ -81,12 +81,12 @@ public class MavenUtilsTests
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.ReadAllBytes(It.IsAny<string>())).Returns(pomBytes);
 
-        var (name, version, packageDetails) = mavenUtils.ParseMetadata(pomContent);
+        var parsedInfo = mavenUtils.ParseMetadata(pomContent);
 
-        Assert.AreEqual("test-package", name);
-        Assert.AreEqual("1.3", version);
-        Assert.AreEqual("New BSD License", packageDetails.License);
-        Assert.AreEqual("Person: Sample Name", packageDetails.Supplier);
+        Assert.AreEqual("test-package", parsedInfo.Name);
+        Assert.AreEqual("1.3", parsedInfo.Version);
+        Assert.AreEqual("New BSD License", parsedInfo.PackageDetails.License);
+        Assert.AreEqual("Person: Sample Name", parsedInfo.PackageDetails.Supplier);
     }
 
     [TestMethod]
@@ -103,12 +103,12 @@ public class MavenUtilsTests
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.ReadAllBytes(It.IsAny<string>())).Returns(pomBytes);
 
-        var (name, version, packageDetails) = mavenUtils.ParseMetadata(pomContent);
+        var parsedInfo = mavenUtils.ParseMetadata(pomContent);
 
-        Assert.AreEqual("test-package", name);
-        Assert.AreEqual("1.3", version);
-        Assert.AreEqual("New BSD License", packageDetails.License);
-        Assert.IsTrue(string.IsNullOrEmpty(packageDetails.Supplier));
+        Assert.AreEqual("test-package", parsedInfo.Name);
+        Assert.AreEqual("1.3", parsedInfo.Version);
+        Assert.AreEqual("New BSD License", parsedInfo.PackageDetails.License);
+        Assert.IsTrue(string.IsNullOrEmpty(parsedInfo.PackageDetails.Supplier));
     }
 
     [TestMethod]
@@ -125,12 +125,12 @@ public class MavenUtilsTests
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.ReadAllBytes(It.IsAny<string>())).Returns(pomBytes);
 
-        var (name, version, packageDetails) = mavenUtils.ParseMetadata(pomContent);
+        var parsedInfo = mavenUtils.ParseMetadata(pomContent);
 
-        Assert.AreEqual("test-package", name);
-        Assert.AreEqual("1.3", version);
-        Assert.IsTrue(string.IsNullOrEmpty(packageDetails.License));
-        Assert.AreEqual("Person: Sample Name", packageDetails.Supplier);
+        Assert.AreEqual("test-package", parsedInfo.Name);
+        Assert.AreEqual("1.3", parsedInfo.Version);
+        Assert.IsTrue(string.IsNullOrEmpty(parsedInfo.PackageDetails.License));
+        Assert.AreEqual("Person: Sample Name", parsedInfo.PackageDetails.Supplier);
     }
 
     public void ParsePom_WithOrganizationAndDevelopers_PopulatesAsOrganization()
@@ -146,11 +146,11 @@ public class MavenUtilsTests
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.ReadAllBytes(It.IsAny<string>())).Returns(pomBytes);
 
-        var (name, version, packageDetails) = mavenUtils.ParseMetadata(pomContent);
+        var parsedInfo = mavenUtils.ParseMetadata(pomContent);
 
-        Assert.AreEqual("test-package", name);
-        Assert.AreEqual("1.3", version);
-        Assert.IsTrue(string.IsNullOrEmpty(packageDetails.License));
-        Assert.AreEqual("Organization: Sample Name", packageDetails.Supplier);
+        Assert.AreEqual("test-package", parsedInfo.Name);
+        Assert.AreEqual("1.3", parsedInfo.Version);
+        Assert.IsTrue(string.IsNullOrEmpty(parsedInfo.PackageDetails.License));
+        Assert.AreEqual("Person: Sample Name", parsedInfo.PackageDetails.Supplier);
     }
 }

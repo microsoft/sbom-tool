@@ -75,12 +75,12 @@ public class NugetUtilsTests
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.ReadAllBytes(It.IsAny<string>())).Returns(nuspecBytes);
 
-        var (name, version, packageDetails) = nugetUtils.ParseMetadata(nuspecContent);
+        var parsedPackageInfo = nugetUtils.ParseMetadata(nuspecContent);
 
-        Assert.AreEqual("FakePackageName", name);
-        Assert.AreEqual("1.0", version);
-        Assert.AreEqual("FakeLicense", packageDetails.License);
-        Assert.AreEqual("Organization: FakeAuthor", packageDetails.Supplier);
+        Assert.AreEqual("FakePackageName", parsedPackageInfo.Name);
+        Assert.AreEqual("1.0", parsedPackageInfo.Version);
+        Assert.AreEqual("FakeLicense", parsedPackageInfo.PackageDetails.License);
+        Assert.AreEqual("Organization: FakeAuthor", parsedPackageInfo.PackageDetails.Supplier);
     }
 
     [TestMethod]
@@ -97,12 +97,12 @@ public class NugetUtilsTests
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.ReadAllBytes(It.IsAny<string>())).Returns(nuspecBytes);
 
-        var (name, version, packageDetails) = nugetUtils.ParseMetadata(nuspecContent);
+        var parsedPackageInfo = nugetUtils.ParseMetadata(nuspecContent);
 
-        Assert.AreEqual("FakePackageName", name);
-        Assert.AreEqual("1.0", version);
-        Assert.AreEqual("Organization: FakeAuthor", packageDetails.Supplier);
-        Assert.IsTrue(string.IsNullOrEmpty(packageDetails.License));
+        Assert.AreEqual("FakePackageName", parsedPackageInfo.Name);
+        Assert.AreEqual("1.0", parsedPackageInfo.Version);
+        Assert.AreEqual("Organization: FakeAuthor", parsedPackageInfo.PackageDetails.Supplier);
+        Assert.IsTrue(string.IsNullOrEmpty(parsedPackageInfo.PackageDetails.License));
     }
 
     [TestMethod]
@@ -119,10 +119,10 @@ public class NugetUtilsTests
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.ReadAllBytes(It.IsAny<string>())).Returns(nuspecBytes);
 
-        var (name, version, packageDetails) = nugetUtils.ParseMetadata(nuspecContent);
+        var parsedPackageInfo = nugetUtils.ParseMetadata(nuspecContent);
 
-        Assert.AreEqual("FakePackageName", name);
-        Assert.AreEqual("1.0", version);
-        Assert.IsTrue(string.IsNullOrEmpty(packageDetails.Supplier));
+        Assert.AreEqual("FakePackageName", parsedPackageInfo.Name);
+        Assert.AreEqual("1.0", parsedPackageInfo.Version);
+        Assert.IsTrue(string.IsNullOrEmpty(parsedPackageInfo.PackageDetails.Supplier));
     }
 }
