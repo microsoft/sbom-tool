@@ -75,8 +75,9 @@ public abstract class ComponentDetectionBaseWalker
 
         cliArgumentBuilder = new ComponentDetectionCliArgumentBuilder();
 
-        // Enable SPDX22 detector which is disabled by default.
+        // Enable SPDX22 and ConanLock detector which is disabled by default.
         cliArgumentBuilder.AddDetectorArg("SPDX22SBOM", "EnableIfDefaultOff");
+        cliArgumentBuilder.AddDetectorArg("ConanLock", "EnableIfDefaultOff");
 
         if (sbomConfigs.TryGet(Constants.SPDX22ManifestInfo, out var spdxSbomConfig))
         {
