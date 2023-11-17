@@ -12,7 +12,7 @@ using Newtonsoft.Json.Serialization;
 /// A <see cref="ScanResult" /> with license information.
 /// </summary>
 [JsonObject(MemberSerialization.OptOut, NamingStrategyType = typeof(CamelCaseNamingStrategy))]
-public sealed class ScanResultWithExtendedComponent : ScanResult
+public sealed class ExtendedScanResult : ScanResult
 {
     /// <summary>
     /// Gets or sets the scanned components with license information.
