@@ -10,7 +10,7 @@
         <AnalysisLevel>latest</AnalysisLevel>
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <NoWarn>$(NoWarn);CA1014;CS8002;IDE0290;IDE0300;JSON002;CA1416</NoWarn>
+        <NoWarn>$(NoWarn);CA1014;CS8002;CA1416</NoWarn>
         <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
     </PropertyGroup>
 
