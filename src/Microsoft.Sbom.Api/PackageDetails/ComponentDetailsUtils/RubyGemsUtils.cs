@@ -67,7 +67,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
 
                 if (fileSystemUtils.FileExists(fullGemspecPath))
                 {
-                    return fullGemspecPath;
+                    return Path.GetFullPath(fullGemspecPath);
                 }
             }
         }
