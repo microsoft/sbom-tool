@@ -154,6 +154,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IPackageDetailsFactory, PackageDetailsFactory>()
             .AddSingleton<IPackageManagerUtils<NugetUtils>, NugetUtils>()
             .AddSingleton<IPackageManagerUtils<MavenUtils>, MavenUtils>()
+            .AddSingleton<IPackageManagerUtils<RubyGemsUtils>, RubyGemsUtils>()
             .AddSingleton<IOSUtils, OSUtils>()
             .AddSingleton<IEnvironmentWrapper, EnvironmentWrapper>()
             .AddSingleton<IFileSystemUtilsExtension, FileSystemUtilsExtension>()

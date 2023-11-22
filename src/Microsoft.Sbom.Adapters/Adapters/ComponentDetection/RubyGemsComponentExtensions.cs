@@ -24,9 +24,11 @@ internal static class RubyGemsComponentExtensions
         PackageName = rubyGemsComponent.Name,
         PackageVersion = rubyGemsComponent.Version,
         PackageSource = rubyGemsComponent.Source,
-        LicenseInfo = string.IsNullOrWhiteSpace(component.LicenseConcluded) ? null : new LicenseInfo
+        Supplier = string.IsNullOrEmpty(component.Supplier) ? null : $"Person: {component.Supplier}",
+        LicenseInfo = new LicenseInfo
         {
-            Concluded = component.LicenseConcluded,
+            Concluded = string.IsNullOrEmpty(component.LicenseConcluded) ? null : component.LicenseConcluded,
+            Declared = string.IsNullOrEmpty(component.LicenseDeclared) ? null : component.LicenseDeclared,
         },
         FilesAnalyzed = false,
         Type = "ruby",

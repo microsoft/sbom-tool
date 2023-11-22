@@ -131,4 +131,58 @@ public static class SampleMetadataFiles
                                     <version>1.0</version>
                                 </metadata>-
                             </package>";
+
+    public const string GemspecWithValidAuthorAndLicenses = @"# -*- encoding: utf-8 -*-
+                                                                # stub: sampleGem 1.0.0 ruby lib
+
+                                                                Gem::Specification.new do |s|
+                                                                  s.name = ""sampleGem"".freeze
+                                                                  s.version = ""1.0.0""
+
+                                                                  s.required_rubygems_version = Gem::Requirement.new("">= 0"".freeze) if s.respond_to? :required_rubygems_version=
+                                                                  s.require_paths = [""lib"".freeze]
+                                                                  s.authors = [""John Doe"".freeze, ""Joe Corcoran"".freeze, ""Russell Osborne"".freeze]
+                                                                  s.date = ""2023-10-07""
+                                                                  s.licenses = [""MIT"".freeze, ""Ruby"".freeze]
+                                                                end";
+
+    public const string GemspecWithValidAuthorAndSingleLicense = @"# -*- encoding: utf-8 -*-
+                                                                # stub: sampleGem 1.0.0 ruby lib
+
+                                                                Gem::Specification.new do |s|
+                                                                  s.name = ""sampleGem"".freeze
+                                                                  s.version = ""1.0.0""
+
+                                                                  s.required_rubygems_version = Gem::Requirement.new("">= 0"".freeze) if s.respond_to? :required_rubygems_version=
+                                                                  s.require_paths = [""lib"".freeze]
+                                                                  s.authors = [""John Doe"".freeze, ""Joe Corcoran"".freeze, ""Russell Osborne"".freeze]
+                                                                  s.date = ""2023-10-07""
+                                                                  s.license = [""MIT"".freeze]
+                                                                end";
+
+    public const string GemspecWithoutAuthors = @"# -*- encoding: utf-8 -*-
+                                                                # stub: sampleGem 1.0.0 ruby lib
+
+                                                                Gem::Specification.new do |s|
+                                                                  s.name = ""sampleGem"".freeze
+                                                                  s.version = ""1.0.0""
+
+                                                                  s.required_rubygems_version = Gem::Requirement.new("">= 0"".freeze) if s.respond_to? :required_rubygems_version=
+                                                                  s.require_paths = [""lib"".freeze]
+                                                                  s.date = ""2023-10-07""
+                                                                  s.licenses = [""MIT"".freeze]
+                                                                end";
+
+    public const string GemspecWithoutLicense = @"# -*- encoding: utf-8 -*-
+                                                                # stub: sampleGem 1.0.0 ruby lib
+
+                                                                Gem::Specification.new do |s|
+                                                                  s.name = ""sampleGem"".freeze
+                                                                  s.version = ""1.0.0""
+
+                                                                  s.required_rubygems_version = Gem::Requirement.new("">= 0"".freeze) if s.respond_to? :required_rubygems_version=
+                                                                  s.require_paths = [""lib"".freeze]
+                                                                  s.authors = [""John Doe"".freeze, ""Joe Corcoran"".freeze, ""Russell Osborne"".freeze]
+                                                                  s.date = ""2023-10-07""
+                                                                end";
 }
