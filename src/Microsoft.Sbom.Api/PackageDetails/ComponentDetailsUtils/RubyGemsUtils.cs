@@ -28,7 +28,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
     private readonly ILogger log;
     private readonly IRecorder recorder;
 
-    private readonly string rubyGemsPath;
+    private string rubyGemsPath;
     private string[] potentialGemEnvPaths;
 
     public RubyGemsUtils(IFileSystemUtils fileSystemUtils, ILogger log, IRecorder recorder)
@@ -36,13 +36,16 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
-
-        this.rubyGemsPath = GetRubyGemsSpecificationsPath();
     }
 
     // Takes in a scanned component and attempts to find the associated gemspec file. If it is not found then it returns null.
     public string? GetMetadataLocation(ScannedComponent scannedComponent)
     {
+        if (string.IsNullOrEmpty(rubyGemsPath))
+        {
+            rubyGemsPath = GetRubyGemsSpecificationsPath();
+        }
+
         var gemspecLocation = rubyGemsPath;
 
         if (string.IsNullOrEmpty(gemspecLocation))
