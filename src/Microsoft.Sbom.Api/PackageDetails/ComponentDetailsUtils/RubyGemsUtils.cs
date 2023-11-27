@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Exceptions;
@@ -22,11 +21,14 @@ namespace Microsoft.Sbom.Api.PackageDetails;
 /// </summary>
 public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
 {
+    private const int ExecutableIndex = 1;
+
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly ILogger log;
     private readonly IRecorder recorder;
 
     private readonly string rubyGemsPath;
+    private string[] potentialGemEnvPaths;
 
     public RubyGemsUtils(IFileSystemUtils fileSystemUtils, ILogger log, IRecorder recorder)
     {
@@ -177,26 +179,13 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
         {
             var processStartFindGem = null as ProcessStartInfo;
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            processStartFindGem = new ProcessStartInfo("where", "gem")
             {
-                processStartFindGem = new ProcessStartInfo("where", "gem")
-                {
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-            }
-            else
-            {
-                processStartFindGem = new ProcessStartInfo("which", "gem")
-                {
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-            }
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
 
             using var processFindGem = new Process();
             processFindGem.StartInfo = processStartFindGem;
@@ -206,7 +195,10 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
 
             processFindGem.WaitForExit();
 
-            gemExecutablePath = gemExecutablePath?.Split("\r\n")[1]; // TODO: Address the possibility of 2 results
+            if (!string.IsNullOrEmpty(gemExecutablePath) && gemExecutablePath.Contains("\r\n"))
+            {
+                gemExecutablePath = gemExecutablePath.Split("\r\n")[ExecutableIndex]; // This will result in two paths with the first being the gem executable directory and the second being the path to the actual executable.
+            }
 
             return gemExecutablePath;
         }
@@ -251,10 +243,17 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
 
             processGemEnvPath.WaitForExit();
 
-            var possiblePaths = output.Split(";");
+            if (output.Contains(';'))
+            {
+                potentialGemEnvPaths = output.Split(';');
+            }
+            else if (output.Contains(':'))
+            {
+                potentialGemEnvPaths = output.Split(':');
+            }
 
             // check if any of the paths exist and have read permissions
-            foreach (var path in possiblePaths)
+            foreach (var path in potentialGemEnvPaths)
             {
                 var trimmedPath = path.TrimEnd('\r', '\n');
 
