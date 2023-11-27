@@ -22,14 +22,16 @@ public class PackageDetailsFactory : IPackageDetailsFactory
     private readonly IPackageManagerUtils<MavenUtils> mavenUtils;
     private readonly IPackageManagerUtils<NugetUtils> nugetUtils;
     private readonly IPackageManagerUtils<RubyGemsUtils> rubygemUtils;
+    private readonly IPackageManagerUtils<PypiUtils> pypiUtils;
 
-    public PackageDetailsFactory(ILogger log, IRecorder recorder, IPackageManagerUtils<MavenUtils> mavenUtils, IPackageManagerUtils<NugetUtils> nugetUtils, IPackageManagerUtils<RubyGemsUtils> rubygemUtils)
+    public PackageDetailsFactory(ILogger log, IRecorder recorder, IPackageManagerUtils<MavenUtils> mavenUtils, IPackageManagerUtils<NugetUtils> nugetUtils, IPackageManagerUtils<RubyGemsUtils> rubygemUtils, IPackageManagerUtils<PypiUtils> pypiUtils)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.mavenUtils = mavenUtils ?? throw new ArgumentNullException(nameof(mavenUtils));
         this.nugetUtils = nugetUtils ?? throw new ArgumentNullException(nameof(nugetUtils));
         this.rubygemUtils = rubygemUtils ?? throw new ArgumentNullException(nameof(rubygemUtils));
+        this.pypiUtils = pypiUtils ?? throw new ArgumentNullException(nameof(pypiUtils));
     }
 
     public IDictionary<(string Name, string Version), PackageDetails> GetPackageDetailsDictionary(IEnumerable<ScannedComponent> scannedComponents)
@@ -57,6 +59,9 @@ public class PackageDetailsFactory : IPackageDetailsFactory
                     break;
                 case ComponentType.RubyGems:
                     packageDetailsConfirmedLocations.Add(rubygemUtils.GetMetadataLocation(scannedComponent));
+                    break;
+                case ComponentType.Pip:
+                    packageDetailsConfirmedLocations.Add(pypiUtils.GetMetadataLocation(scannedComponent));
                     break;
                 default:
                     break;
