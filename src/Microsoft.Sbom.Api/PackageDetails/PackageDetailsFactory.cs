@@ -78,7 +78,7 @@ public class PackageDetailsFactory : IPackageDetailsFactory
                 {
                     case ".nuspec":
                         var nuspecDetails = nugetUtils.ParseMetadata(path);
-                        if (!string.IsNullOrEmpty(nuspecDetails.PackageDetails.License) || !string.IsNullOrEmpty(nuspecDetails.PackageDetails.Supplier))
+                        if (!string.IsNullOrEmpty(nuspecDetails?.PackageDetails.License) || !string.IsNullOrEmpty(nuspecDetails?.PackageDetails?.Supplier))
                         {
                             packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.PackageDetails);
                         }
@@ -86,7 +86,7 @@ public class PackageDetailsFactory : IPackageDetailsFactory
                         break;
                     case ".pom":
                         var pomDetails = mavenUtils.ParseMetadata(path);
-                        if (!string.IsNullOrEmpty(pomDetails.PackageDetails.License) || !string.IsNullOrEmpty(pomDetails.PackageDetails.Supplier))
+                        if (!string.IsNullOrEmpty(pomDetails?.PackageDetails?.License) || !string.IsNullOrEmpty(pomDetails?.PackageDetails?.Supplier))
                         {
                             packageDetailsDictionary.TryAdd((pomDetails.Name, pomDetails.Version), pomDetails.PackageDetails);
                         }
@@ -94,7 +94,7 @@ public class PackageDetailsFactory : IPackageDetailsFactory
                         break;
                     case ".gemspec":
                         var gemspecDetails = rubygemUtils.ParseMetadata(path);
-                        if (!string.IsNullOrEmpty(gemspecDetails.PackageDetails.License) || !string.IsNullOrEmpty(gemspecDetails.PackageDetails.Supplier))
+                        if (!string.IsNullOrEmpty(gemspecDetails?.PackageDetails?.License) || !string.IsNullOrEmpty(gemspecDetails?.PackageDetails?.Supplier))
                         {
                             packageDetailsDictionary.TryAdd((gemspecDetails.Name, gemspecDetails.Version), gemspecDetails.PackageDetails);
                         }

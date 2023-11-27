@@ -89,10 +89,10 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
         var licenseField = string.Empty;
 
         // Regex patterns for finding the relevant properties of the .gemspec file.
-        var namePattern = @"s.name\s*=\s*""([^""]+)""";
-        var versionPattern = @"s.version\s*=\s*""([^""]+)""";
-        var authorsPattern = @"s.authors\s*=\s*\[([^\]]+)\]";
-        var licensesPattern = @"s\.licens(?:e|es)\s*=\s*\[([^\]]+)\]";
+        var namePattern = @"(?:s|spec)\.nam(?:e|es)\s*=\s*""([^""]+)""";
+        var versionPattern = @"(?:s|spec)\.version\s*=\s*""([^""]+)""";
+        var authorsPattern = @"(?:s|spec)\.autho(?:r|rs)\s*=\s*\[([^\]]+)\]";
+        var licensesPattern = @"(?:s|spec)\.licens(?:e|es)\s*=\s*\[([^\]]+)\]";
 
         try
         {
@@ -106,41 +106,50 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
             var name = GetMatchesFromPattern(fileContent, namePattern);
             var version = GetMatchesFromPattern(fileContent, versionPattern);
 
-            // We only take the first author to maintain consistency with what we do with the other component types.
-            var supplierList = GetMatchesFromPattern(fileContent, authorsPattern);
-
-            if (supplierList.Any())
+            // Without name and version we cannot map results to a component so we can skip the rest of the logic if name and version aren't succesfully found.
+            if (name.Count == 1 && version.Count == 1)
             {
-                supplierField = supplierList.First().Replace("\".freeze", string.Empty);
-                supplierField = Regex.Unescape(supplierField);
-            }
-            else
-            {
-                supplierField = null;
-            }
+                // We only take the first author to maintain consistency with what we do with the other component types.
+                var supplierList = GetMatchesFromPattern(fileContent, authorsPattern);
 
-            var licenseList = GetMatchesFromPattern(fileContent, licensesPattern);
-
-            if (licenseList.Any())
-            {
-                // Create a list to store processed license entries
-                var processedLicenses = new List<string>();
-
-                // Modify each license entry and add it to the list
-                foreach (var license in licenseList)
+                if (supplierList.Any())
                 {
-                    var licenseEntry = license.Replace("\".freeze", string.Empty);
-                    processedLicenses.Add(licenseEntry);
+                    supplierField = supplierList.First().Replace("\".freeze", string.Empty);
+                    supplierField = Regex.Unescape(supplierField);
+                }
+                else
+                {
+                    supplierField = null;
                 }
 
-                licenseField = string.Join(", ", processedLicenses);
+                var licenseList = GetMatchesFromPattern(fileContent, licensesPattern);
+
+                if (licenseList.Any())
+                {
+                    // Create a list to store processed license entries
+                    var processedLicenses = new List<string>();
+
+                    // Modify each license entry and add it to the list
+                    foreach (var license in licenseList)
+                    {
+                        var licenseEntry = license.Replace("\".freeze", string.Empty);
+                        processedLicenses.Add(licenseEntry);
+                    }
+
+                    licenseField = string.Join(", ", processedLicenses);
+                }
+                else
+                {
+                    licenseField = null;
+                }
+
+                return new ParsedPackageInformation(name.First(), version.First(), new PackageDetails(licenseField, supplierField));
             }
             else
             {
-                licenseField = null;
+                recorder.RecordMetadataException(new PackageMetadataParsingException($"Failed to find name/version for the file {gemspecLocation}"));
+                return null;
             }
-
-            return new ParsedPackageInformation(name.First(), version.First(), new PackageDetails(licenseField, supplierField));
         }
         catch (PackageMetadataParsingException e)
         {
@@ -210,6 +219,16 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
             processFindGem.StartInfo = processStartFindGem;
 
             processFindGem.Start();
+
+            var processExited = processFindGem.WaitForExit(10000); // Timeout set to 10 seconds (10,000 milliseconds)
+
+            if (!processExited)
+            {
+                processFindGem.Kill(); // If the process exceeds the timeout, kill it
+                logger.Error("Process GetRubyGemsSpecificationsPath() timed out.");
+                return null;
+            }
+
             var gemExecutablePath = processFindGem.StandardOutput.ReadToEnd()?.Trim().ToString();
 
             processFindGem.WaitForExit();
@@ -257,6 +276,16 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
             processGemEnvPath.StartInfo = processStartGemEnvPath;
 
             processGemEnvPath.Start();
+
+            var processExited = processGemEnvPath.WaitForExit(10000); // Timeout set to 10 seconds (10,000 milliseconds)
+
+            if (!processExited)
+            {
+                processGemEnvPath.Kill(); // If the process exceeds the timeout, kill it
+                logger.Error("Process GetRubyGemsSpecificationsPath() timed out.");
+                return null;
+            }
+
             var output = processGemEnvPath.StandardOutput.ReadToEnd();
             var error = processGemEnvPath.StandardError.ReadToEnd();
 
