@@ -192,7 +192,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
             }
             else
             {
-                processStartFindGem = new ProcessStartInfo("where", "gem")
+                processStartFindGem = new ProcessStartInfo("which", "gem")
                 {
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
