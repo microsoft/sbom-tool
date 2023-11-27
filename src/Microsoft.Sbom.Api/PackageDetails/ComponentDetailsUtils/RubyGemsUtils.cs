@@ -25,16 +25,16 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
     private const int ExecutableIndex = 1;
 
     private readonly IFileSystemUtils fileSystemUtils;
-    private readonly ILogger log;
+    private readonly ILogger logger;
     private readonly IRecorder recorder;
 
     private string rubyGemsPath;
     private string[] potentialGemEnvPaths;
 
-    public RubyGemsUtils(IFileSystemUtils fileSystemUtils, ILogger log, IRecorder recorder)
+    public RubyGemsUtils(IFileSystemUtils fileSystemUtils, ILogger logger, IRecorder recorder)
     {
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
-        this.log = log ?? throw new ArgumentNullException(nameof(log));
+        this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
     }
 
@@ -142,7 +142,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
         }
         catch (PackageMetadataParsingException e)
         {
-            log.Error("Error encountered while extracting supplier info from gemspec file. Supplier information may be incomplete.", e);
+            logger.Error("Error encountered while extracting supplier info from gemspec file. Supplier information may be incomplete.", e);
             recorder.RecordMetadataException(e);
 
             return null;
@@ -221,7 +221,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
         }
         catch (Exception e)
         {
-            log.Error("Error encountered while finding gem executable path: ", e);
+            logger.Error("Error encountered while finding gem executable path: ", e);
             recorder.RecordMetadataException(e);
             return null;
         }
@@ -239,7 +239,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
 
             if (string.IsNullOrEmpty(gemExecutablePath) || !File.Exists(gemExecutablePath))
             {
-                log.Error("Unable to find gem executable.");
+                logger.Error("Unable to find gem executable.");
                 return null;
             }
 
@@ -286,7 +286,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
         }
         catch (Exception e)
         {
-            log.Error("Error encountered while running 'gem env gempath' command: ", e);
+            logger.Error("Error encountered while running 'gem env gempath' command: ", e);
             recorder.RecordMetadataException(e);
             return null;
         }
