@@ -62,7 +62,17 @@ public class SBOMTelemetry
     public IDictionary<string, string> APIExceptions { get; set; }
 
     /// <summary>
+    /// Gets or sets if any exceptions during detection/parsing of package metadata files was thrown.
+    /// </summary>
+    public IDictionary<string, string> MetadataExceptions { get; set; }
+
+    /// <summary>
     /// Gets or sets the total number of licenses detected in the SBOM.
     /// </summary>
     public int TotalLicensesDetected { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total number of PackageDetails entries created during the execution of the tool.
+    /// </summary>
+    public int PackageDetailsEntries { get; set; }
 }

@@ -21,6 +21,7 @@ using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders;
 using Microsoft.Sbom.Api.Providers.FilesProviders;
@@ -64,6 +65,7 @@ public class ManifestGenerationWorkflowTests
     private readonly Mock<ISBOMReaderForExternalDocumentReference> sBOMReaderForExternalDocumentReferenceMock = new Mock<ISBOMReaderForExternalDocumentReference>();
     private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new Mock<IFileSystemUtilsExtension>();
     private readonly Mock<ILicenseInformationFetcher> licenseInformationFetcherMock = new Mock<ILicenseInformationFetcher>();
+    private readonly Mock<IPackageDetailsFactory> mockPackageDetailsFactory = new Mock<IPackageDetailsFactory>();
 
     [TestInitialize]
     public void Setup()
@@ -278,7 +280,8 @@ public class ManifestGenerationWorkflowTests
                 manifestGeneratorProvider,
                 mockLogger.Object),
             packageInfoConverterMock.Object,
-            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object, licenseInformationFetcherMock.Object),
+            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object, mockPackageDetailsFactory.Object, licenseInformationFetcherMock.Object),
+            mockPackageDetailsFactory.Object,
             licenseInformationFetcherMock.Object);
 
         var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider(
