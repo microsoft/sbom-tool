@@ -56,7 +56,9 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
         var componentName = scannedComponent.Component.PackageUrl?.Name.ToLower();
         var componentVersion = scannedComponent.Component.PackageUrl?.Version;
 
-        var fullGemspecPath = Path.Join(gemspecLocation, $"{componentName}-{componentVersion}.gemspec");
+        var gemspecFileName = $"{componentName}-{componentVersion}.gemspec";
+
+        var fullGemspecPath = Path.Join(gemspecLocation, gemspecFileName);
 
         if (fileSystemUtils.FileExists(fullGemspecPath))
         {
@@ -69,7 +71,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
 
             foreach (var directory in directories)
             {
-                fullGemspecPath = Path.Join(directory, $"{componentName}-{componentVersion}.gemspec");
+                fullGemspecPath = Path.Join(directory, gemspecFileName);
 
                 if (fileSystemUtils.FileExists(fullGemspecPath))
                 {
