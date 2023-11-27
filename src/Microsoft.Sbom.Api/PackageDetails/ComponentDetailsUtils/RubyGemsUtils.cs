@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Exceptions;
@@ -179,13 +180,26 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
         {
             var processStartFindGem = null as ProcessStartInfo;
 
-            processStartFindGem = new ProcessStartInfo("where", "gem")
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
+                processStartFindGem = new ProcessStartInfo("where", "gem")
+                {
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+            }
+            else
+            {
+                processStartFindGem = new ProcessStartInfo("where", "gem")
+                {
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+            }
 
             using var processFindGem = new Process();
             processFindGem.StartInfo = processStartFindGem;
