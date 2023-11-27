@@ -30,6 +30,23 @@ public class SbomFileParserTests : SbomParserTestsBase
     }
 
     [TestMethod]
+    public void MetadataPopulates()
+    {
+        var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);
+        using var stream = new MemoryStream(bytes);
+
+        var parser = new SPDXParser(stream);
+
+        var results = this.Parse(parser);
+        var metadata = parser.GetMetadata();
+
+        Assert.IsNotNull(metadata);
+        Assert.IsNotNull(metadata.CreationInfo);
+        var expectedTime = DateTime.Parse("2023-05-11T00:24:54Z").ToUniversalTime();
+        Assert.AreEqual(expectedTime, metadata.CreationInfo.Created);
+    }
+
+    [TestMethod]
     public void ParseSbomFilesTest()
     {
         var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.GoodJsonWith2FilesString);

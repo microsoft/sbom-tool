@@ -49,7 +49,13 @@ internal struct SbomFileJsonStrings
                 ],
                 ""copyrightText"": ""NOASSERTION""
             }
-        ], ""packages"": [], ""relationships"": []}";
+        ], ""packages"": [], ""relationships"": [],   ""creationInfo"": {
+    ""created"": ""2023-05-11T00:24:54Z"",
+    ""creators"": [
+      ""Organization: Microsoft"",
+      ""Tool: Microsoft.SBOMTool-1.1.0""
+    ]
+  }}";
 
     public const string MalformedJsonEmptyObjectNoArrayEnd = @"{
             ""files"": [{
