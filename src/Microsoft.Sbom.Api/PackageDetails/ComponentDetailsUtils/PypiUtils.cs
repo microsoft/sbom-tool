@@ -38,9 +38,9 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
     // Takes in a scanned component and attempts to find the associated gemspec file. If it is not found then it returns null.
     public string? GetMetadataLocation(ScannedComponent scannedComponent)
     {
-        var gemspecLocation = sitePackagesPath;
+        var pythonDistInfo = sitePackagesPath;
 
-        if (string.IsNullOrEmpty(gemspecLocation))
+        if (string.IsNullOrEmpty(pythonDistInfo))
         {
             return null;
         }
@@ -48,26 +48,11 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
         var componentName = scannedComponent.Component.PackageUrl?.Name.ToLower();
         var componentVersion = scannedComponent.Component.PackageUrl?.Version;
 
-        var fullGemspecPath = Path.Join(gemspecLocation, $"{componentName}-{componentVersion}.gemspec");
+        var fullMetadataPath = Path.Join(pythonDistInfo, $"{componentName}-{componentVersion}.dist-info/metadata");
 
-        if (fileSystemUtils.FileExists(fullGemspecPath))
+        if (fileSystemUtils.DirectoryExists(fullMetadataPath))
         {
-            return fullGemspecPath;
-        }
-        else
-        {
-            // Enumerate directories in the gemspec location and then search for the gemspec file in each directory
-            var directories = fileSystemUtils.GetDirectories(gemspecLocation);
-
-            foreach (var directory in directories)
-            {
-                fullGemspecPath = Path.Join(directory, $"{componentName}-{componentVersion}.gemspec");
-
-                if (fileSystemUtils.FileExists(fullGemspecPath))
-                {
-                    return Path.GetFullPath(fullGemspecPath);
-                }
-            }
+            return fullMetadataPath;
         }
 
         return null;
@@ -86,9 +71,9 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
 
         try
         {
-            if (!fileSystemUtils.FileExists(gemspecLocation))
+            if (!fileSystemUtils.FileExists(gemspecLocation) || string.IsNullOrEmpty(gemspecLocation))
             {
-                throw new PackageMetadataParsingException("Gemspec file not found.");
+                throw new PackageMetadataParsingException("METADATA file not found.");
             }
 
             var fileContent = fileSystemUtils.ReadAllText(gemspecLocation);
@@ -134,7 +119,7 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
         }
         catch (PackageMetadataParsingException e)
         {
-            log.Error("Error encountered while extracting supplier info from gemspec file. Supplier information may be incomplete.", e);
+            log.Error("Error encountered while extracting supplier info from METADATA file. Supplier information may be incomplete.", e);
             recorder.RecordMetadataException(e);
 
             return null;
@@ -197,7 +182,7 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
         }
         catch (Exception e)
         {
-            log.Error("Error encountered while running 'gem env gempath' command: ", e);
+            log.Error("Error encountered while running 'python -m pip show pip location' command: ", e);
             recorder.RecordMetadataException(e);
             return null;
         }
