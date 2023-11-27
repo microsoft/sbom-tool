@@ -50,7 +50,7 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
 
         var fullMetadataPath = Path.Join(pythonDistInfo, $"{componentName}-{componentVersion}.dist-info/metadata");
 
-        if (fileSystemUtils.DirectoryExists(fullMetadataPath))
+        if (fileSystemUtils.FileExists(fullMetadataPath))
         {
             return fullMetadataPath;
         }
@@ -115,7 +115,14 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
                 licenseField = null;
             }
 
-            return new ParsedPackageInformation(name.First(), version.First(), new PackageDetails(licenseField, supplierField));
+            if (name.Any() && version.Any())
+            {
+                return new ParsedPackageInformation(name.First(), version.First(), new PackageDetails(licenseField, supplierField));
+            }
+            else
+            {
+                return null;
+            }
         }
         catch (PackageMetadataParsingException e)
         {
@@ -152,7 +159,23 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
 
     private string ParsePipLocationOutput(string pipLocationCommandOutput)
     {
-        return null;
+        // Split the output by newlines
+        var outputLines = pipLocationCommandOutput.Split(Environment.NewLine);
+
+        // look for the line that starts with "Location: "
+        var locationLine = outputLines.FirstOrDefault(line => line.StartsWith("Location: ", StringComparison.OrdinalIgnoreCase));
+
+        if (locationLine == null)
+        {
+            log.Error("Could not find the line that starts with 'Location: ' in the output of 'python -m pip show pip location' command.");
+            return null;
+        }
+
+        // remove the "Location: " prefix
+        locationLine = locationLine.Substring("Location: ".Length);
+
+        // return the location
+        return locationLine;
     }
 
     private string GetPythonSitePackagesPath()

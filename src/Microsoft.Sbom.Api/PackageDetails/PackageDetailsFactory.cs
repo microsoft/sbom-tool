@@ -8,6 +8,7 @@ using System.IO;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Common.Utils;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.PackageDetails;
@@ -79,11 +80,12 @@ public class PackageDetailsFactory : IPackageDetailsFactory
         {
             if (!string.IsNullOrEmpty(path))
             {
-                switch (Path.GetExtension(path)?.ToLowerInvariant())
+                // Get the final value after the last directory separator. Without using the extension.
+                switch (Path.GetFileName(path))
                 {
                     case ".nuspec":
                         var nuspecDetails = nugetUtils.ParseMetadata(path);
-                        if (!string.IsNullOrEmpty(nuspecDetails.PackageDetails.License) || !string.IsNullOrEmpty(nuspecDetails.PackageDetails.Supplier))
+                        if (!string.IsNullOrEmpty(nuspecDetails?.PackageDetails?.License) || !string.IsNullOrEmpty(nuspecDetails?.PackageDetails?.Supplier))
                         {
                             packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.PackageDetails);
                         }
@@ -91,7 +93,7 @@ public class PackageDetailsFactory : IPackageDetailsFactory
                         break;
                     case ".pom":
                         var pomDetails = mavenUtils.ParseMetadata(path);
-                        if (!string.IsNullOrEmpty(pomDetails.PackageDetails.License) || !string.IsNullOrEmpty(pomDetails.PackageDetails.Supplier))
+                        if (!string.IsNullOrEmpty(pomDetails?.PackageDetails?.License) || !string.IsNullOrEmpty(pomDetails?.PackageDetails?.Supplier))
                         {
                             packageDetailsDictionary.TryAdd((pomDetails.Name, pomDetails.Version), pomDetails.PackageDetails);
                         }
@@ -99,15 +101,29 @@ public class PackageDetailsFactory : IPackageDetailsFactory
                         break;
                     case ".gemspec":
                         var gemspecDetails = rubygemUtils.ParseMetadata(path);
-                        if (!string.IsNullOrEmpty(gemspecDetails.PackageDetails.License) || !string.IsNullOrEmpty(gemspecDetails.PackageDetails.Supplier))
+                        if (!string.IsNullOrEmpty(gemspecDetails?.PackageDetails?.License) || !string.IsNullOrEmpty(gemspecDetails?.PackageDetails?.Supplier))
                         {
                             packageDetailsDictionary.TryAdd((gemspecDetails.Name, gemspecDetails.Version), gemspecDetails.PackageDetails);
                         }
 
                         break;
+
                     default:
-                        log.Verbose($"File extension {Path.GetExtension(path)} is not supported for extracting supplier info.");
-                        break;
+                        if (Path.GetFileName(path).StartsWith("METADATA", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var metadataDetails = pypiUtils.ParseMetadata(path);
+                            if (!string.IsNullOrEmpty(metadataDetails?.PackageDetails?.License) || !string.IsNullOrEmpty(metadataDetails?.PackageDetails?.Supplier))
+                            {
+                                packageDetailsDictionary.TryAdd((metadataDetails.Name, metadataDetails.Version), metadataDetails.PackageDetails);
+                            }
+
+                            break;
+                        }
+                        else
+                        {
+                            log.Verbose($"File extension {Path.GetExtension(path)} is not supported for extracting supplier info.");
+                            break;
+                        }
                 }
             }
         }
