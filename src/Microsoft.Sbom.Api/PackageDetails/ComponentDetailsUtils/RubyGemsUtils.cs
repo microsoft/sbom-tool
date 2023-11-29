@@ -257,7 +257,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
 
                 trimmedPath = Path.Join(trimmedPath, "specifications");
 
-                if (Directory.Exists(trimmedPath))
+                if (fileSystemUtils.DirectoryExists(trimmedPath))
                 {
                     return trimmedPath;
                 }

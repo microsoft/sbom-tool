@@ -145,4 +145,44 @@ public class RubyGemsUtilsTests
 
         Assert.IsNull(gemspecLocation);
     }
+
+    [TestMethod]
+    [DataRow("gem_base/specifications;gem_base/specifications2;gem_base/specifications3")]
+    [DataRow("gem_base/specifications:gem_base/specifications2:gem_base/specifications3")]
+    public void GetMetadataLocation_Handles_Separators(string processExecutorOutput)
+    {
+        var rubyGemsUtils = new RubyGemsUtils(mockFileSystemUtils.Object, mockLogger.Object, mockRecorder.Object, mockProcessExecutor.Object);
+
+        mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
+        mockFileSystemUtils.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
+        mockProcessExecutor.Setup(process => process.ExecuteCommand(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>())).Returns(processExecutorOutput);
+
+        var scannedComponent = new ScannedComponent
+        {
+            Component = new RubyGemsComponent("testName", "1.0.0")
+        };
+
+        var gemspecLocation = rubyGemsUtils.GetMetadataLocation(scannedComponent);
+
+        Assert.IsTrue(gemspecLocation.EndsWith("testname-1.0.0.gemspec", System.StringComparison.OrdinalIgnoreCase));
+    }
+
+    [TestMethod]
+    public void GetMetadataLocation_Executor_Throws()
+    {
+        var rubyGemsUtils = new RubyGemsUtils(mockFileSystemUtils.Object, mockLogger.Object, mockRecorder.Object, mockProcessExecutor.Object);
+
+        mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
+        mockFileSystemUtils.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
+        mockProcessExecutor.Setup(process => process.ExecuteCommand(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>())).Throws(new System.Exception());
+
+        var scannedComponent = new ScannedComponent
+        {
+            Component = new RubyGemsComponent("testName", "1.0.0")
+        };
+
+        var gemspecLocation = rubyGemsUtils.GetMetadataLocation(scannedComponent);
+
+        Assert.IsNull(gemspecLocation);
+    }
 }
