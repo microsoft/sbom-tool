@@ -17,7 +17,7 @@ public class ProcessExecutor : IProcessExecutor
     }
 
     /// <summary>
-    /// Wrapper for starting a process. Returns the standard output as a trimmed string.
+    /// Wrapper for starting a process. Returns the standard output as a trimmed string. Will return null if the process exits with a non-zero exit code or if the process times out.
     /// </summary>
     /// <param name="fileName">File/Program to be executed.</param>
     /// <param name="arguments">Arguments to be supplied to the executable.</param>
