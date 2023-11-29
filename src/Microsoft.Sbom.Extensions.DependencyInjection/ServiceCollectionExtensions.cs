@@ -141,6 +141,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>, ExternalDocumentReferenceGenerator>()
             .AddTransient<RelationshipGenerator>()
             .AddTransient<ConfigSanitizer>()
+            .AddTransient<IProcessExecutor, ProcessExecutor>()
             .AddTransient<Api.Utils.IComponentDetector, ComponentDetector>()
             .AddTransient<IMetadataBuilderFactory, MetadataBuilderFactory>()
             .AddTransient<FileInfoWriter>()

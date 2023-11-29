@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -23,19 +22,19 @@ namespace Microsoft.Sbom.Api.PackageDetails;
 public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
 {
     private const int ExecutableIndex = 1;
+    private string rubyGemsPath;
 
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly ILogger logger;
     private readonly IRecorder recorder;
+    private readonly IProcessExecutor processExecutor;
 
-    private string rubyGemsPath;
-    private string[] potentialGemEnvPaths;
-
-    public RubyGemsUtils(IFileSystemUtils fileSystemUtils, ILogger logger, IRecorder recorder)
+    public RubyGemsUtils(IFileSystemUtils fileSystemUtils, ILogger logger, IRecorder recorder, IProcessExecutor processExecutor)
     {
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+        this.processExecutor = processExecutor ?? throw new ArgumentNullException(nameof(processExecutor));
     }
 
     // Takes in a scanned component and attempts to find the associated gemspec file. If it is not found then it returns null.
@@ -60,9 +59,11 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
 
         var fullGemspecPath = Path.Join(gemspecLocation, gemspecFileName);
 
+        gemspecLocation = Path.GetFullPath(fullGemspecPath);
+
         if (fileSystemUtils.FileExists(fullGemspecPath))
         {
-            return fullGemspecPath;
+            return gemspecLocation;
         }
         else
         {
@@ -71,13 +72,15 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
 
             foreach (var directory in directories)
             {
-                fullGemspecPath = Path.Join(directory, gemspecFileName);
+                gemspecLocation = Path.Join(directory, gemspecFileName);
 
-                if (fileSystemUtils.FileExists(fullGemspecPath))
+                if (fileSystemUtils.FileExists(gemspecLocation))
                 {
-                    return Path.GetFullPath(fullGemspecPath);
+                    return Path.GetFullPath(gemspecLocation);
                 }
             }
+
+            logger.Verbose($"Could not find gemspec file for {gemspecFileName}");
         }
 
         return null;
@@ -106,7 +109,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
             var name = GetMatchesFromPattern(fileContent, namePattern);
             var version = GetMatchesFromPattern(fileContent, versionPattern);
 
-            // Without name and version we cannot map results to a component so we can skip the rest of the logic if name and version aren't succesfully found.
+            // Without name and version we cannot map results to a component so we can skip the rest of the logic if name and version aren't successfully found.
             if (name.Count == 1 && version.Count == 1)
             {
                 // We only take the first author to maintain consistency with what we do with the other component types.
@@ -192,53 +195,23 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
     {
         try
         {
-            var processStartFindGem = null as ProcessStartInfo;
+            var processOutput = string.Empty;
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                processStartFindGem = new ProcessStartInfo("where", "gem")
-                {
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
+               processOutput = processExecutor.ExecuteCommand("where", "gem", 1000);
             }
             else
             {
-                processStartFindGem = new ProcessStartInfo("which", "gem")
-                {
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
+               processOutput = processExecutor.ExecuteCommand("which", "gem", 1000);
             }
 
-            using var processFindGem = new Process();
-            processFindGem.StartInfo = processStartFindGem;
-
-            processFindGem.Start();
-
-            var processExited = processFindGem.WaitForExit(10000); // Timeout set to 10 seconds (10,000 milliseconds)
-
-            if (!processExited)
+            if (!string.IsNullOrEmpty(processOutput) && processOutput.Contains("\r\n"))
             {
-                processFindGem.Kill(); // If the process exceeds the timeout, kill it
-                logger.Error("Process GetRubyGemsSpecificationsPath() timed out.");
-                return null;
+                processOutput = processOutput.Split("\r\n")[ExecutableIndex]; // This will result in two paths with the first being the gem executable directory and the second being the path to the actual executable.
             }
 
-            var gemExecutablePath = processFindGem.StandardOutput.ReadToEnd()?.Trim().ToString();
-
-            processFindGem.WaitForExit();
-
-            if (!string.IsNullOrEmpty(gemExecutablePath) && gemExecutablePath.Contains("\r\n"))
-            {
-                gemExecutablePath = gemExecutablePath.Split("\r\n")[ExecutableIndex]; // This will result in two paths with the first being the gem executable directory and the second being the path to the actual executable.
-            }
-
-            return gemExecutablePath;
+            return processOutput;
         }
         catch (Exception e)
         {
@@ -249,7 +222,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
     }
 
     /// <summary>
-    /// Relies on the FindGemExecutablePath() method to execute 'gem env gempath' to determine the base directory of the .gemspec files
+    /// Relies on the FindGemExecutablePath() method to execute 'gem env gempath' to determine the base directory of the .gemspec files.
     /// </summary>
     /// <returns>Path to the base specifications directory which holds the .gemspec files.</returns>
     private string GetRubyGemsSpecificationsPath()
@@ -257,47 +230,24 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
         try
         {
             var gemExecutablePath = FindGemExecutablePath();
+            var processOutput = string.Empty;
 
-            if (string.IsNullOrEmpty(gemExecutablePath) || !File.Exists(gemExecutablePath))
+            if (string.IsNullOrEmpty(gemExecutablePath) || !fileSystemUtils.FileExists(gemExecutablePath))
             {
                 logger.Error("Unable to find gem executable.");
                 return null;
             }
 
-            var processStartGemEnvPath = new ProcessStartInfo(gemExecutablePath, "env gempath")
+            processOutput = processExecutor.ExecuteCommand(gemExecutablePath, "env gempath", 10000);
+            var potentialGemEnvPaths = new List<string>();
+
+            if (processOutput.Contains(';'))
             {
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
-            using var processGemEnvPath = new Process();
-            processGemEnvPath.StartInfo = processStartGemEnvPath;
-
-            processGemEnvPath.Start();
-
-            var processExited = processGemEnvPath.WaitForExit(10000); // Timeout set to 10 seconds (10,000 milliseconds)
-
-            if (!processExited)
-            {
-                processGemEnvPath.Kill(); // If the process exceeds the timeout, kill it
-                logger.Error("Process GetRubyGemsSpecificationsPath() timed out.");
-                return null;
+                potentialGemEnvPaths.AddRange(processOutput.Split(';'));
             }
-
-            var output = processGemEnvPath.StandardOutput.ReadToEnd();
-            var error = processGemEnvPath.StandardError.ReadToEnd();
-
-            processGemEnvPath.WaitForExit();
-
-            if (output.Contains(';'))
+            else if (processOutput.Contains(':'))
             {
-                potentialGemEnvPaths = output.Split(';');
-            }
-            else if (output.Contains(':'))
-            {
-                potentialGemEnvPaths = output.Split(':');
+                potentialGemEnvPaths.AddRange(processOutput.Split(':'));
             }
 
             // check if any of the paths exist and have read permissions
@@ -313,7 +263,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
                 }
             }
 
-            return output;
+            return processOutput;
         }
         catch (Exception e)
         {
