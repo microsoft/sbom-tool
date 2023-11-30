@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -79,8 +79,8 @@ public sealed class ManifestToolJsonSerializer : IManifestToolJsonSerializer
     {
         if (!string.IsNullOrEmpty(jsonString))
         {
-            using JsonDocument document = JsonDocument.Parse(jsonString);
-            foreach (JsonProperty property in document.RootElement.EnumerateObject())
+            using var document = JsonDocument.Parse(jsonString);
+            foreach (var property in document.RootElement.EnumerateObject())
             {
                 property.WriteTo(jsonWriter);
             }

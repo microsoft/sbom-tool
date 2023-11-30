@@ -474,6 +474,16 @@ dotnet_diagnostic.CA1859.severity = none
 # https://learn.microsoft.com/en-us/nuget/reference/errors-and-warnings/nu5104
 dotnet_diagnostic.NU5104.severity = none
 
+# SYSLIB1045: Use 'GeneratedRegexAttribute' to generate the regular expression implemenatation at compile-time
+# Justification: Would not have much impact on us / is only available in .NET8
+# https://learn.microsoft.com/dotnet/fundamentals/syslib-diagnostics/syslib1045
+dotnet_diagnostic.SYSLIB1045.severity = none
+
+# CA1863: Cache a 'CompositeFormat' for repeated use in this formatting operation
+# Justification: Only supported in .NET8.
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1863 (This is the link provided by the error message but shows a 404 error)
+dotnet_diagnostic.CA1863.severity = none
+
 ##########################################
 # Temporary rules
 #
@@ -811,10 +821,6 @@ dotnet_diagnostic.CA1852.severity = suggestion
 # CA1854: Prefer 'TryGetValue' over 'ContainsKey' and 'Item' when accessing dictionary items
 dotnet_diagnostic.CA1854.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1859
-# CA1859: Use culture-aware string operations
-dotnet_diagnostic.CA1859.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1860
 # CA1860: Avoid using 'Enumerable.Any()' extension method.
 dotnet_diagnostic.CA1860.severity = suggestion
@@ -822,6 +828,18 @@ dotnet_diagnostic.CA1860.severity = suggestion
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1861
 # CA1861: Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly
 dotnet_diagnostic.CA1861.severity = suggestion
+
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862
+# CA1862: Prefer using 'string.Equals(string, StringComparison)' to perform a case-insensitive comparison
+dotnet_diagnostic.CA1862.severity = suggestion
+
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865
+# CA1865: Use 'string.StartsWith(char)' instead of 'string.StartsWith(string)' when you have a string with a single char
+dotnet_diagnostic.CA1865.severity = suggestion
+
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1869
+# CA1869: Avoid creating a new 'JsonSerializerOptions' instance for every serialization operation. Cache and reuse instances instead.
+dotnet_diagnostic.CA1869.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2000
 # CA2000: Dispose objects before losing scope
@@ -918,10 +936,6 @@ dotnet_diagnostic.CS8632.severity = suggestion
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0005
 # IDE0005: Using directive is unnecessary
 dotnet_diagnostic.IDE0005.severity = suggestion
-
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0007
-# IDE0007:  use 'var' instead of explicit type
-dotnet_diagnostic.IDE0007.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0009
 # IDE0009: Add 'this' or 'Me' qualification
@@ -1031,14 +1045,6 @@ dotnet_diagnostic.IDE0090.severity = suggestion
 # IDE0110: Discard can be removed
 dotnet_diagnostic.IDE0110.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0120
-# IDE0120: Simplify LINQ expression
-dotnet_diagnostic.IDE0120.severity = suggestion
-
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0200
-# IDE0200: Lambda expression can be simplified
-dotnet_diagnostic.IDE0200.severity = suggestion
-
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0220
 # IDE0220: 'foreach' statement implicitly converts '...' to '...'
 dotnet_diagnostic.IDE0220.severity = suggestion
@@ -1047,9 +1053,13 @@ dotnet_diagnostic.IDE0220.severity = suggestion
 # IDE0251: Member can be made 'readonly'
 dotnet_diagnostic.IDE0251.severity = suggestion
 
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0270
-# IDE0270: Null check can be simplified
-dotnet_diagnostic.IDE0270.severity = suggestion
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0290
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = suggestion
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0300
+# IDE0290: Collection initialization can be simplified
+dotnet_diagnostic.IDE0300.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide1006
 # IDE1006: Naming rule violation: These words must begin with upper case characters: ...
@@ -1058,6 +1068,11 @@ dotnet_diagnostic.IDE1006.severity = suggestion
 # https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/warnings/il3000
 # IL3000: Avoid accessing Assembly file path when publishing as a single file
 dotnet_diagnostic.IL3000.severity = suggestion
+
+#IDE0305: Collection initialization can be simplified
+# Justification: The suggestion leads to a styling error. This suggestion is new to .NET8 and performance issues have been reported with it although fixes have been made we should hold on until full release https://github.com/dotnet/roslyn/issues/69988.
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0305
+dotnet_diagnostic.IDE0305.severity = none
 
 ##########################################
 # Provided by Microsoft.VisualStudio.Threading.Analyzers

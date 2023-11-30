@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -57,13 +57,13 @@ public class ExternalReferenceInfoToPathConverterTest
 
         var paths = await results.ReadAllAsync().ToListAsync();
 
-        await foreach (FileValidationResult error in errors.ReadAllAsync())
+        await foreach (var error in errors.ReadAllAsync())
         {
             Assert.Fail($"Caught exception: {error.ErrorType}");
         }
 
         var count = 1;
-        await foreach (string path in results.ReadAllAsync())
+        await foreach (var path in results.ReadAllAsync())
         {
             Assert.Equals($"path{count}", path);
             count++;
@@ -108,7 +108,7 @@ public class ExternalReferenceInfoToPathConverterTest
         var paths = await results.ReadAllAsync().ToListAsync();
         var errorList = await errors.ReadAllAsync().ToListAsync();
 
-        await foreach (FileValidationResult error in errors.ReadAllAsync())
+        await foreach (var error in errors.ReadAllAsync())
         {
             Assert.Fail($"Caught exception: {error.ErrorType}");
         }

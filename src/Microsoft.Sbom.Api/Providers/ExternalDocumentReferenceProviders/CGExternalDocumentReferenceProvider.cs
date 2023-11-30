@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -76,7 +76,7 @@ public class CGExternalDocumentReferenceProvider : EntityToJsonProviderBase<Scan
     {
         var (output, cdErrors) = sbomComponentsWalker.GetComponents(Configuration.BuildComponentPath?.Value);
 
-        if (cdErrors.TryRead(out ComponentDetectorException e))
+        if (cdErrors.TryRead(out var e))
         {
             throw e;
         }

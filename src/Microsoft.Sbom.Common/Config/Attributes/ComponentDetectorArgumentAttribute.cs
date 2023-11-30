@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -6,13 +6,13 @@ using System;
 namespace Microsoft.Sbom.Common.Config.Attributes;
 
 /// <summary>
-/// Attribute denoting that an <see cref="Microsoft.Sbom.Api.Config.Configuration" /> property is a Component Detector argument.
+/// Attribute denoting that an <see cref="Sbom.Api.Config.Configuration" /> property is a Component Detector argument.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
 public class ComponentDetectorArgumentAttribute : Attribute
 {
     /// <summary>
-    /// Gets the name of the paramter to be specified when passing the value of the target to Component Detection.
+    /// Gets the name of the parameter to be specified when passing the value of the target to Component Detection.
     /// </summary>
     public string ParameterName { get; } = string.Empty;
 

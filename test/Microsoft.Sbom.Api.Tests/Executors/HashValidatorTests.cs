@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -30,7 +30,7 @@ public class HashValidatorTests
             "TEST2",
             "TEST3"
         };
-        ConcurrentDictionary<string, Checksum[]> hashDict = new ConcurrentDictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
+        var hashDict = new ConcurrentDictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
         foreach (var file in fileList)
         {
             hashDict[file.ToLower()] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hash" } };
@@ -50,7 +50,7 @@ public class HashValidatorTests
         var validator = new HashValidator(configuration.Object, new ManifestData { HashesMap = hashDict });
         var validationResults = validator.Validate(files);
 
-        await foreach (FileValidationResult output in validationResults.output.ReadAllAsync())
+        await foreach (var output in validationResults.output.ReadAllAsync())
         {
             Assert.IsTrue(fileList.Remove(output.Path));
         }
@@ -69,7 +69,7 @@ public class HashValidatorTests
             "TEST3"
         };
 
-        ConcurrentDictionary<string, Checksum[]> hashDict = new ConcurrentDictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
+        var hashDict = new ConcurrentDictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
         foreach (var file in fileList)
         {
             hashDict[file.ToLower()] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hashInvalid" } };
@@ -89,12 +89,12 @@ public class HashValidatorTests
         var validator = new HashValidator(configuration.Object, new ManifestData { HashesMap = hashDict });
         var validationResults = validator.Validate(files);
 
-        await foreach (FileValidationResult output in validationResults.output.ReadAllAsync())
+        await foreach (var output in validationResults.output.ReadAllAsync())
         {
             Assert.IsTrue(fileList.Remove(output.Path));
         }
 
-        await foreach (FileValidationResult error in validationResults.errors.ReadAllAsync())
+        await foreach (var error in validationResults.errors.ReadAllAsync())
         {
             Assert.AreEqual(ErrorType.InvalidHash, error.ErrorType);
             Assert.IsTrue(fileList.Remove(error.Path));
@@ -113,7 +113,7 @@ public class HashValidatorTests
             "TEST3"
         };
 
-        ConcurrentDictionary<string, Checksum[]> hashDict = new ConcurrentDictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
+        var hashDict = new ConcurrentDictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
         foreach (var file in fileList)
         {
             hashDict[file.ToLower()] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hash" } };
@@ -139,13 +139,13 @@ public class HashValidatorTests
         var validator = new HashValidator(configuration.Object, new ManifestData { HashesMap = hashDict });
         var validationResults = validator.Validate(files);
 
-        await foreach (FileValidationResult error in validationResults.errors.ReadAllAsync())
+        await foreach (var error in validationResults.errors.ReadAllAsync())
         {
             Assert.AreEqual(ErrorType.AdditionalFile, error.ErrorType);
             Assert.AreEqual("TEST4", error.Path);
         }
 
-        await foreach (FileValidationResult output in validationResults.output.ReadAllAsync())
+        await foreach (var output in validationResults.output.ReadAllAsync())
         {
             Assert.IsTrue(fileList.Remove(output.Path));
         }

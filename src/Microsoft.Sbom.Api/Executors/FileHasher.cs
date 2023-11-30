@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -99,7 +99,7 @@ public class FileHasher
 
         Task.Run(async () =>
         {
-            await foreach (string file in fileInfo.ReadAllAsync())
+            await foreach (var file in fileInfo.ReadAllAsync())
             {
                 await GenerateHash(file, output, errors, fileLocation, prependDotToPath);
             }
@@ -114,11 +114,11 @@ public class FileHasher
     private async Task GenerateHash(string file, Channel<InternalSbomFileInfo> output, Channel<FileValidationResult> errors, FileLocation fileLocation, bool prependDotToPath = false)
     {
         string relativeFilePath = null;
-        bool isOutsideDropPath = false;
+        var isOutsideDropPath = false;
         try
         {
             (relativeFilePath, isOutsideDropPath) = manifestPathConverter.Convert(file, prependDotToPath);
-            Checksum[] fileHashes = hashCodeGenerator.GenerateHashes(file, HashAlgorithmNames);
+            var fileHashes = hashCodeGenerator.GenerateHashes(file, HashAlgorithmNames);
             if (fileHashes == null || fileHashes.Length == 0 || fileHashes.Any(f => string.IsNullOrEmpty(f.ChecksumValue)))
             {
                 throw new HashGenerationException($"Failed to generate hashes for '{file}'.");

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -11,6 +11,8 @@ using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Entities;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using Microsoft.Sbom.Utils;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -56,7 +58,7 @@ public class FilesValidator
         this.spdxFileFilterer = spdxFileFilterer ?? throw new ArgumentNullException(nameof(spdxFileFilterer));
     }
 
-    public async Task<(int, List<FileValidationResult>)> Validate(ISbomParser sbomParser)
+    public async Task<(int, List<FileValidationResult>)> Validate(IEnumerable<SPDXFile> files)
     {
         var errors = new List<ChannelReader<FileValidationResult>>();
         var results = new List<ChannelReader<FileValidationResult>>();
@@ -66,20 +68,20 @@ public class FilesValidator
         results.AddRange(onDiskFileResults);
         errors.AddRange(onDiskFileErrors);
 
-        var (inSbomFileResults, inSbomFileErrors) = GetInsideSbomFiles(sbomParser);
+        var (inSbomFileResults, inSbomFileErrors) = GetInsideSbomFiles(files);
         results.AddRange(inSbomFileResults);
         errors.AddRange(inSbomFileErrors);
 
-        int successCount = 0;
-        ChannelReader<FileValidationResult> resultChannel = channelUtils.Merge(results.ToArray());
-        await foreach (FileValidationResult validationResult in resultChannel.ReadAllAsync())
+        var successCount = 0;
+        var resultChannel = channelUtils.Merge(results.ToArray());
+        await foreach (var validationResult in resultChannel.ReadAllAsync())
         {
             successCount++;
         }
 
-        ChannelReader<FileValidationResult> workflowErrors = channelUtils.Merge(errors.ToArray());
+        var workflowErrors = channelUtils.Merge(errors.ToArray());
 
-        await foreach (FileValidationResult error in workflowErrors.ReadAllAsync())
+        await foreach (var error in workflowErrors.ReadAllAsync())
         {
             failures.Add(error.Path, error);
         }
@@ -146,13 +148,13 @@ public class FilesValidator
         return (filesWithHashes, errors);
     }
 
-    private (List<ChannelReader<FileValidationResult>>, List<ChannelReader<FileValidationResult>>) GetInsideSbomFiles(ISbomParser sbomParser)
+    private (List<ChannelReader<FileValidationResult>>, List<ChannelReader<FileValidationResult>>) GetInsideSbomFiles(IEnumerable<SPDXFile> files)
     {
         var errors = new List<ChannelReader<FileValidationResult>>();
         var filesWithHashes = new List<ChannelReader<FileValidationResult>>();
 
         // Enumerate files from SBOM
-        var (sbomFiles, sbomFileErrors) = enumeratorChannel.Enumerate(sbomParser.GetFiles);
+        var (sbomFiles, sbomFileErrors) = enumeratorChannel.Enumerate(() => files.Select(f => f.ToSbomFile()));
         errors.Add(sbomFileErrors);
 
         log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");

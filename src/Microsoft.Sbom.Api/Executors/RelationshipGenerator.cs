@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -37,8 +37,8 @@ public class RelationshipGenerator
                 {
                     while (relationships.MoveNext())
                     {
-                        IManifestGenerator manifestGenerator = manifestGeneratorProvider.Get(manifestInfo);
-                        GenerationResult generationResult = manifestGenerator.GenerateJsonDocument(relationships.Current);
+                        var manifestGenerator = manifestGeneratorProvider.Get(manifestInfo);
+                        var generationResult = manifestGenerator.GenerateJsonDocument(relationships.Current);
                         await output.Writer.WriteAsync(generationResult?.Document);
                     }
                 }

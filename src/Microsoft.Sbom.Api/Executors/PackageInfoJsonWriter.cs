@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -42,7 +42,7 @@ public class PackageInfoJsonWriter
 
         Task.Run(async () =>
         {
-            await foreach (SbomPackage packageInfo in packageInfos.ReadAllAsync())
+            await foreach (var packageInfo in packageInfos.ReadAllAsync())
             {
                 await GenerateJson(packagesArraySupportingConfigs, packageInfo, result, errors);
             }
@@ -62,7 +62,7 @@ public class PackageInfoJsonWriter
     {
         try
         {
-            foreach (ISbomConfig sbomConfig in packagesArraySupportingConfigs)
+            foreach (var sbomConfig in packagesArraySupportingConfigs)
             {
                 var generationResult =
                     manifestGeneratorProvider.Get(sbomConfig.ManifestInfo).GenerateJsonDocument(packageInfo);

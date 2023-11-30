@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -50,7 +50,7 @@ public class ExternalDocumentReferenceWriterTest
             Recorder = new SbomPackageDetailsRecorder()
         };
 
-        ExternalDocumentReferenceInfo externalDocumentReferenceInfo = new ExternalDocumentReferenceInfo
+        var externalDocumentReferenceInfo = new ExternalDocumentReferenceInfo
         {
             ExternalDocumentName = "name",
             DocumentNamespace = "namespace"
@@ -76,11 +76,11 @@ public class ExternalDocumentReferenceWriterTest
 
         await foreach (var result in results.ReadAllAsync())
         {
-            JsonElement root = result.Document.RootElement;
+            var root = result.Document.RootElement;
 
             Assert.IsNotNull(root);
 
-            if (root.TryGetProperty("Document", out JsonElement documentNamespace))
+            if (root.TryGetProperty("Document", out var documentNamespace))
             {
                 Assert.AreEqual("namespace", documentNamespace.GetString());
             }
@@ -89,7 +89,7 @@ public class ExternalDocumentReferenceWriterTest
                 Assert.Fail("Document property not found");
             }
 
-            if (root.TryGetProperty("ExternalDocumentId", out JsonElement externalDocumentId))
+            if (root.TryGetProperty("ExternalDocumentId", out var externalDocumentId))
             {
                 Assert.AreEqual("name", externalDocumentId.GetString());
             }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -32,12 +32,12 @@ public class SbomToolCmdRunner
     public bool Help { get; set; }
 
     /// <summary>
-    /// Validate a build artifact using the manifest. Optionally also verify the signing certificate of the manfiest.
+    /// Validate a build artifact using the manifest. Optionally also verify the signing certificate of the manifest.
     /// </summary>
     /// <param name="validationArgs"></param>
     [ArgActionMethod]
     [ArgDescription("Validate a build artifact using the manifest. " +
-                    "Optionally also verify the signing certificate of the manfiest.")]
+                    "Optionally also verify the signing certificate of the manifest.")]
     public ValidationArgs Validate(ValidationArgs validationArgs)
     {
         return validationArgs;

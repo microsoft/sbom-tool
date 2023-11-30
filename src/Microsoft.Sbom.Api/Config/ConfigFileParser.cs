@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -28,7 +28,7 @@ public class ConfigFileParser
             throw new ArgumentNullException($"{nameof(filePath)} cannot be emtpy.");
         }
 
-        using Stream openStream = fileSystemUtils.OpenRead(filePath);
+        using var openStream = fileSystemUtils.OpenRead(filePath);
         return await JsonSerializer.DeserializeAsync<ConfigFile>(openStream);
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Runtime.InteropServices;
@@ -18,7 +18,7 @@ public static class FileSystemUtilsProvider
     /// <returns></returns>
     public static IFileSystemUtils CreateInstance()
     {
-        bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         return isWindows ? new WindowsFileSystemUtils() : new UnixFileSystemUtils();
     }
 }

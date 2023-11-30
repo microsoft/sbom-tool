@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -175,7 +175,7 @@ public class ConfigSanitizer
         // If assembly name is not defined and namespace was not provided then return the default namespace as per spdx spec https://spdx.github.io/spdx-spec/v2.2.2/document-creation-information/#653-examples.
         if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri) && string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
         {
-            string defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SBOMToolVersion}-{Guid.NewGuid()}";
+            var defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SBOMToolVersion}-{Guid.NewGuid()}";
 
             logger.Information($"No namespace URI base provided, using unique generated default value {defaultNamespaceUriBase}");
 

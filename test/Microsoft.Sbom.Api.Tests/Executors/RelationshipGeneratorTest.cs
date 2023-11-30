@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -24,7 +24,7 @@ public class RelationshipGeneratorTest
     [TestMethod]
     public async Task RunShouldHandleExceptionWithoutOrphaningChannel()
     {
-        Mock<IManifestGenerator> mock = new Mock<IManifestGenerator>();
+        var mock = new Mock<IManifestGenerator>();
         mock.Setup(m => m.RegisterManifest()).Returns(new Mock<ManifestInfo>().Object);
 
         var m = new ManifestGeneratorProvider(new IManifestGenerator[] { mock.Object });
@@ -43,7 +43,7 @@ public class RelationshipGeneratorTest
 
         mock.Setup(m => m.GenerateJsonDocument(It.IsAny<Relationship>())).Throws(new InvalidOperationException());
 
-        ChannelReader<JsonDocument> channel = rg.Run(rs.GetEnumerator(), mi);
+        var channel = rg.Run(rs.GetEnumerator(), mi);
 
         // This timeout will cause an OperationCanceledException to be thrown if the channel is orphaned
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
@@ -57,7 +57,7 @@ public class RelationshipGeneratorTest
     [TestMethod]
     public async Task RunShouldReturnTwoResults()
     {
-        Mock<IManifestGenerator> mock = new Mock<IManifestGenerator>();
+        var mock = new Mock<IManifestGenerator>();
         mock.Setup(m => m.RegisterManifest()).Returns(new Mock<ManifestInfo>().Object);
 
         var m = new ManifestGeneratorProvider(new IManifestGenerator[] { mock.Object });
@@ -84,10 +84,10 @@ public class RelationshipGeneratorTest
         mock.Setup(m => m.GenerateJsonDocument(It.Is<Relationship>(r => r.RelationshipType == RelationshipType.DEPENDS_ON))).Returns(g1);
         mock.Setup(m => m.GenerateJsonDocument(It.Is<Relationship>(r => r.RelationshipType == RelationshipType.CONTAINS))).Returns(g2);
 
-        ChannelReader<JsonDocument> channel = rg.Run(rs.GetEnumerator(), mi);
+        var channel = rg.Run(rs.GetEnumerator(), mi);
 
         var docs = new List<JsonDocument>();
-        await foreach (JsonDocument jsonDoc in channel.ReadAllAsync())
+        await foreach (var jsonDoc in channel.ReadAllAsync())
         {
             docs.Add(jsonDoc);
         }
@@ -100,7 +100,7 @@ public class RelationshipGeneratorTest
     [TestMethod]
     public async Task RunShouldNotFailWithNull()
     {
-        Mock<IManifestGenerator> mock = new Mock<IManifestGenerator>();
+        var mock = new Mock<IManifestGenerator>();
         mock.Setup(m => m.RegisterManifest()).Returns(new Mock<ManifestInfo>().Object);
 
         var m = new ManifestGeneratorProvider(new IManifestGenerator[] { mock.Object });
@@ -116,10 +116,10 @@ public class RelationshipGeneratorTest
         mock.Setup(m => m.RegisterManifest()).Returns(mi);
         m.Init();
 
-        ChannelReader<JsonDocument> channel = rg.Run(rs.GetEnumerator(), mi);
+        var channel = rg.Run(rs.GetEnumerator(), mi);
 
         var docs = new List<JsonDocument>();
-        await foreach (JsonDocument jsonDoc in channel.ReadAllAsync())
+        await foreach (var jsonDoc in channel.ReadAllAsync())
         {
             docs.Add(jsonDoc);
         }

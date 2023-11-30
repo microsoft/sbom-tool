@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using Microsoft.ComponentDetection.Contracts;
+using Microsoft.ComponentDetection.Orchestrator.Commands;
 using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Utils;
@@ -14,8 +15,6 @@ namespace Microsoft.Sbom.Api.Utils;
 /// </summary>
 public class ComponentDetectionCliArgumentBuilder
 {
-    private string action;
-    private VerbosityMode verbosity = VerbosityMode.Quiet;
     private string sourceDirectory;
     private Dictionary<string, string> detectorArgs = new Dictionary<string, string>() {
         { TimeoutArgsParamName, TimeoutDefaultSeconds.ToString() }
@@ -24,13 +23,11 @@ public class ComponentDetectionCliArgumentBuilder
     private Dictionary<string, string> keyValueArgs = new Dictionary<string, string>();
     private List<string> keyArgs = new List<string>();
 
-    private const string VerbosityParamName = "Verbosity";
     private const string SourceDirectoryParamName = "SourceDirectory";
+    private const string DirectoryExclusionListParamName = "DirectoryExclusionList";
     private const string DetectorArgsParamName = "DetectorArgs";
     private const string TimeoutArgsParamName = "Timeout";
     private const int TimeoutDefaultSeconds = 15 * 60; // 15 minutes
-
-    private const string ScanAction = "scan";
 
     public ComponentDetectionCliArgumentBuilder()
     {
@@ -38,11 +35,6 @@ public class ComponentDetectionCliArgumentBuilder
 
     private void Validate()
     {
-        if (string.IsNullOrEmpty(action))
-        {
-            throw new ArgumentNullException("Action should be specified.");
-        }
-
         if (string.IsNullOrEmpty(sourceDirectory))
         {
             throw new ArgumentNullException("Source directory should be specified.");
@@ -53,7 +45,7 @@ public class ComponentDetectionCliArgumentBuilder
     {
         Validate();
 
-        var command = $"{action} --{VerbosityParamName} {AsArgumentValue(verbosity.ToString())} --{SourceDirectoryParamName} {AsArgumentValue(sourceDirectory)}";
+        var command = $"--{SourceDirectoryParamName} {AsArgumentValue(sourceDirectory)}";
 
         if (detectorArgs.Any())
         {
@@ -74,28 +66,75 @@ public class ComponentDetectionCliArgumentBuilder
 
         if (keyArgs.Any())
         {
-            var keyArgsCommand = string.Join(" ", keyArgs.Select(x => AsArgumentValue(x)));
+            var keyArgsCommand = string.Join(" ", keyArgs.Select(this.AsArgumentValue));
             command += $" {keyArgsCommand}";
         }
 
         return Args.Convert(command.Trim());
     }
 
-    public ComponentDetectionCliArgumentBuilder Scan()
+    /// <summary>
+    /// Takes a set of parsed arguments for Component Detection and converts them into a ScanSettings object.
+    /// </summary>
+    /// <param name="args">Set of arguments in the proper format for component detection.</param>
+    /// <returns></returns>
+    public ScanSettings BuildScanSettingsFromParsedArgs(string[] args)
     {
-        action = ScanAction;
-        return this;
+        Validate();
+
+        // Create a new instance of ScanSettings
+        var scanSettings = new ScanSettings();
+
+        for (var i = 0; i < args.Length - 1; i++)
+        {
+            var argumentName = args[i];
+            var argumentValue = args[i + 1];
+
+            // Map the argument to the corresponding property in ScanSettings
+            switch (argumentName)
+            {
+                case "--DirectoryExclusionList":
+                    scanSettings.DirectoryExclusionList = argumentValue.Split(';');
+                    break;
+                case "--SourceDirectory":
+                    scanSettings.SourceDirectory = new DirectoryInfo(argumentValue);
+                    break;
+                case "--SourceFileRoot":
+                    scanSettings.SourceFileRoot = new DirectoryInfo(argumentValue);
+                    break;
+                case "--DetectorArgs":
+                    var keyValuePairs = argumentValue.Split(',');
+                    foreach (var keyValue in keyValuePairs)
+                    {
+                        var pair = keyValue.Split('=');
+                        if (pair.Length == 2)
+                        {
+                            scanSettings.DetectorArgs[pair[0]] = pair[1];
+                        }
+                    }
+
+                    break;
+                case "--DetectorCategories":
+                    scanSettings.DetectorCategories = argumentValue.Split(",");
+                    break;
+                case "--ManifestFile":
+                    scanSettings.ManifestFile = new FileInfo(argumentValue);
+                    break;
+                case "--PrintManifest":
+                    scanSettings.PrintManifest = bool.Parse(argumentValue);
+                    break;
+                case "--DockerImagesToScan":
+                    scanSettings.DockerImagesToScan = argumentValue.Split(",");
+                    break;
+            }
+        }
+
+        return scanSettings;
     }
 
     public ComponentDetectionCliArgumentBuilder AddDetectorArg(string name, string value)
     {
         detectorArgs[name] = value;
-        return this;
-    }
-
-    public ComponentDetectionCliArgumentBuilder Verbosity(VerbosityMode verbosity)
-    {
-        this.verbosity = verbosity;
         return this;
     }
 
@@ -129,16 +168,6 @@ public class ComponentDetectionCliArgumentBuilder
             return SourceDirectory(value);
         }
 
-        if (name.Equals(VerbosityParamName, StringComparison.OrdinalIgnoreCase))
-        {
-            if (!Enum.TryParse(value, out VerbosityMode verbosity))
-            {
-                throw new ArgumentException($"Invalid verbosity value provided - {value}.");
-            }
-
-            return Verbosity(verbosity);
-        }
-
         if (name.Equals(DetectorArgsParamName, StringComparison.OrdinalIgnoreCase))
         {
             var detectorArgs = value.Split(",").Select(arg => arg.Trim()).Select(arg => arg.Split("="));
@@ -153,6 +182,13 @@ public class ComponentDetectionCliArgumentBuilder
                 }
             }
 
+            return this;
+        }
+
+        // Check if a key already exists for the --DirectoryExclusionList, if so, check that the value isn't a duplicate. If these conditions are true then append the new value delimited by a semicolon.
+        if (keyValueArgs.ContainsKey(name) && !keyValueArgs.ContainsValue(value) && name.Equals(DirectoryExclusionListParamName, StringComparison.OrdinalIgnoreCase))
+        {
+            keyValueArgs[name] = $"{keyValueArgs[name]};{value}";
             return this;
         }
 
@@ -191,7 +227,7 @@ public class ComponentDetectionCliArgumentBuilder
         }
 
         var argArray = Args.Convert(args);
-        for (int i = 0; i < argArray.Length; i++)
+        for (var i = 0; i < argArray.Length; i++)
         {
             if (argArray[i].StartsWith("--", StringComparison.Ordinal) && i + 1 < argArray.Length && !argArray[i + 1].StartsWith("--", StringComparison.Ordinal))
             {

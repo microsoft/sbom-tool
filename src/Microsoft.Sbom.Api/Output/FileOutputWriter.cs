@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.IO;
@@ -22,8 +22,8 @@ public class FileOutputWriter : IOutputWriter
 
     public async Task WriteAsync(string output)
     {
-        using FileStream fs = new FileStream(configuration.OutputPath.Value, FileMode.Create);
-        using StreamWriter outputFile = new StreamWriter(fs);
+        using var fs = new FileStream(configuration.OutputPath.Value, FileMode.Create);
+        using var outputFile = new StreamWriter(fs);
         await outputFile.WriteAsync(output);
     }
 }

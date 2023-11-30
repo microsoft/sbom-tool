@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -23,7 +23,7 @@ public class IntRangeValidator : ConfigValidator
     {
         if (paramValue != null && paramValue is int value)
         {
-            IntRangeAttribute intRangeAttribute = attribute as IntRangeAttribute;
+            var intRangeAttribute = attribute as IntRangeAttribute;
 
             if (value < intRangeAttribute.MinRange || value > intRangeAttribute.MaxRange)
             {

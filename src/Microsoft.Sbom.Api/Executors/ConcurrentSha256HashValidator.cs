@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -47,7 +47,7 @@ public class ConcurrentSha256HashValidator
 
     private async Task Validate(InternalSbomFileInfo internalFileInfo, Channel<FileValidationResult> output, Channel<FileValidationResult> errors)
     {
-        var sha256Checksum = internalFileInfo.Checksum.Where(c => c.Algorithm == AlgorithmName.SHA256).FirstOrDefault();
+        var sha256Checksum = internalFileInfo.Checksum.FirstOrDefault(c => c.Algorithm == AlgorithmName.SHA256);
         var fileHashes = new FileHashes();
         fileHashes.SetHash(internalFileInfo.FileLocation, sha256Checksum);
         FileValidationResult failureResult = null;

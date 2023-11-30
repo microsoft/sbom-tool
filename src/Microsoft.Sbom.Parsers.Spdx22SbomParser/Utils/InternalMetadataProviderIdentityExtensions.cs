@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -175,16 +175,16 @@ public static class InternalMetadataProviderIdentityExtensions
             throw new ArgumentNullException(nameof(internalMetadataProvider));
         }
 
-        string rootPackageVersion = Uri.EscapeDataString(internalMetadataProvider.GetPackageVersion());
-        string packageSupplierFromMetadata = Uri.EscapeDataString(internalMetadataProvider.GetPackageSupplier());
-        string rootPackageName = Uri.EscapeDataString(internalMetadataProvider.GetPackageName());
+        var rootPackageVersion = Uri.EscapeDataString(internalMetadataProvider.GetPackageVersion());
+        var packageSupplierFromMetadata = Uri.EscapeDataString(internalMetadataProvider.GetPackageSupplier());
+        var rootPackageName = Uri.EscapeDataString(internalMetadataProvider.GetPackageName());
 
-        Uri namespaceUri = new Uri(internalMetadataProvider.GetSBOMNamespaceUri());
+        var namespaceUri = new Uri(internalMetadataProvider.GetSBOMNamespaceUri());
 
         // Generate a guid for the new swid tag Id.
-        string tagId = Guid.NewGuid().ToString();
+        var tagId = Guid.NewGuid().ToString();
 
-        string swidPurl = $"pkg:swid/{packageSupplierFromMetadata}/{namespaceUri.Host}/{rootPackageName}@{rootPackageVersion}?tag_id={tagId}";
+        var swidPurl = $"pkg:swid/{packageSupplierFromMetadata}/{namespaceUri.Host}/{rootPackageName}@{rootPackageVersion}?tag_id={tagId}";
 
         return swidPurl;
     }

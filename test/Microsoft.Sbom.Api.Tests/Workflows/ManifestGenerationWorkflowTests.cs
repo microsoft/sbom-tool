@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
@@ -20,6 +21,7 @@ using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders;
 using Microsoft.Sbom.Api.Providers.FilesProviders;
@@ -63,6 +65,7 @@ public class ManifestGenerationWorkflowTests
     private readonly Mock<ISBOMReaderForExternalDocumentReference> sBOMReaderForExternalDocumentReferenceMock = new Mock<ISBOMReaderForExternalDocumentReference>();
     private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new Mock<IFileSystemUtilsExtension>();
     private readonly Mock<ILicenseInformationFetcher> licenseInformationFetcherMock = new Mock<ILicenseInformationFetcher>();
+    private readonly Mock<IPackageDetailsFactory> mockPackageDetailsFactory = new Mock<IPackageDetailsFactory>();
 
     [TestInitialize]
     public void Setup()
@@ -138,7 +141,6 @@ public class ManifestGenerationWorkflowTests
         configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
         configurationMock.SetupGet(c => c.Parallelism).Returns(new ConfigurationSetting<int> { Value = 3 });
         configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Generate);
-        configurationMock.SetupGet(c => c.Verbosity).Returns(new ConfigurationSetting<LogEventLevel> { Value = LogEventLevel.Information });
         configurationMock.SetupGet(c => c.BuildComponentPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
         configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
 
@@ -184,7 +186,7 @@ public class ManifestGenerationWorkflowTests
         manifestFilterMock.Init();
 
         var scannedComponents = new List<ScannedComponent>();
-        for (int i = 1; i < 4; i++)
+        for (var i = 1; i < 4; i++)
         {
             var scannedComponent = new ScannedComponent
             {
@@ -200,7 +202,7 @@ public class ManifestGenerationWorkflowTests
             ComponentsFound = scannedComponents
         };
 
-        mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
+        mockDetector.Setup(o => o.ScanAsync(It.IsAny<ScanSettings>())).Returns(Task.FromResult(scanResult));
 
         var packagesChannel = Channel.CreateUnbounded<SbomPackage>();
         var errorsChannel = Channel.CreateUnbounded<FileValidationResult>();
@@ -278,7 +280,8 @@ public class ManifestGenerationWorkflowTests
                 manifestGeneratorProvider,
                 mockLogger.Object),
             packageInfoConverterMock.Object,
-            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object, licenseInformationFetcherMock.Object),
+            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object, mockPackageDetailsFactory.Object, licenseInformationFetcherMock.Object),
+            mockPackageDetailsFactory.Object,
             licenseInformationFetcherMock.Object);
 
         var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider(
@@ -332,8 +335,8 @@ public class ManifestGenerationWorkflowTests
         Assert.AreEqual(resultJson["Definition"], "test");
 
         var outputs = resultJson["Outputs"];
-        JArray sortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
-        JArray expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
+        var sortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
+        var expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
 
         var packages = resultJson["Packages"];
         Assert.IsTrue(packages.Count() == 4);

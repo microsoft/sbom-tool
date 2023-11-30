@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ public class ChannelUtils
         {
             async Task Redirect(ChannelReader<T> input)
             {
-                await foreach (T item in input.ReadAllAsync())
+                await foreach (var item in input.ReadAllAsync())
                 {
                     await output.Writer.WriteAsync(item);
                 }
@@ -56,13 +56,13 @@ public class ChannelUtils
         {
             var index = 0;
 
-            await foreach (T item in input.ReadAllAsync())
+            await foreach (var item in input.ReadAllAsync())
             {
                 await outputs[index].Writer.WriteAsync(item);
                 index = (index + 1) % n;
             }
 
-            foreach (Channel<T> ch in outputs)
+            foreach (var ch in outputs)
             {
                 ch.Writer.Complete();
             }

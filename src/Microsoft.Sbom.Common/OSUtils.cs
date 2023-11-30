@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -38,7 +38,7 @@ public class OSUtils : IOSUtils
             environmentVariables.Add(de.Key.ToString(), de.Value.ToString());
         }
 
-        foreach (OSPlatform os in oSPlatforms)
+        foreach (var os in oSPlatforms)
         {
             if (RuntimeInformation.IsOSPlatform(os))
             {

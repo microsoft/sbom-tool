@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -28,7 +28,7 @@ public class DirectoryWalkerTests
     [TestMethod]
     public async Task DirectoryWalkerTests_ValidRoot_SucceedsAsync()
     {
-        HashSet<string> files = new HashSet<string>
+        var files = new HashSet<string>
         {
             @"Test\Sample\NoRead.txt",
             @"Test\Sample\Sample.txt",
@@ -44,17 +44,17 @@ public class DirectoryWalkerTests
 
         var filesChannelReader = new DirectoryWalker(mockFSUtils.Object, mockLogger.Object, mockConfiguration.Object).GetFilesRecursively(@"Test");
 
-        await foreach (string file in filesChannelReader.file.ReadAllAsync())
+        await foreach (var file in filesChannelReader.file.ReadAllAsync())
         {
             Assert.IsTrue(files.Remove(file));
         }
 
-        await foreach (string file in filesChannelReader.file.ReadAllAsync())
+        await foreach (var file in filesChannelReader.file.ReadAllAsync())
         {
             Assert.IsTrue(files.Remove(file));
         }
 
-        await foreach (Entities.FileValidationResult error in filesChannelReader.errors.ReadAllAsync())
+        await foreach (var error in filesChannelReader.errors.ReadAllAsync())
         {
             Assert.Fail($"Error thrown for {error.Path}: {error.ErrorType}");
         }
@@ -76,7 +76,7 @@ public class DirectoryWalkerTests
     [TestMethod]
     public async Task DirectoryWalkerTests_UnreachableFile_FailsAsync()
     {
-        HashSet<string> files = new HashSet<string>
+        var files = new HashSet<string>
         {
             @"Test\SampleBadDir\Test.txt"
         };
@@ -90,14 +90,14 @@ public class DirectoryWalkerTests
         mockFSUtils.Setup(m => m.GetFilesInDirectory(It.Is<string>(d => d == "Failed"), true)).Throws(new UnauthorizedAccessException()).Verifiable();
 
         var filesChannelReader = new DirectoryWalker(mockFSUtils.Object, mockLogger.Object, mockConfiguration.Object).GetFilesRecursively(@"Test");
-        int errorCount = 0;
+        var errorCount = 0;
 
-        await foreach (Entities.FileValidationResult error in filesChannelReader.errors.ReadAllAsync())
+        await foreach (var error in filesChannelReader.errors.ReadAllAsync())
         {
             errorCount++;
         }
 
-        await foreach (string file in filesChannelReader.file.ReadAllAsync())
+        await foreach (var file in filesChannelReader.file.ReadAllAsync())
         {
             Assert.IsTrue(files.Remove(file));
         }

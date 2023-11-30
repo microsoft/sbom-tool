@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -40,21 +40,21 @@ public class SbomApiMetadataProviderTest
     {
         metadata.BuildEnvironmentName = "name";
 
-        SBOMApiMetadataProvider sbomApiMetadataProvider = new SBOMApiMetadataProvider(metadata, config);
+        var sbomApiMetadataProvider = new SBOMApiMetadataProvider(metadata, config);
         Assert.AreEqual("name", sbomApiMetadataProvider.BuildEnvironmentName);
     }
 
     [TestMethod]
     public void SbomApiMetadataProvider_BuildEnvironmentName_WithoutMetadata()
     {
-        SBOMApiMetadataProvider sbomApiMetadataProvider = new SBOMApiMetadataProvider(metadata, config);
+        var sbomApiMetadataProvider = new SBOMApiMetadataProvider(metadata, config);
         Assert.AreEqual(null, sbomApiMetadataProvider.BuildEnvironmentName);
     }
 
     [TestMethod]
     public void SbomApiMetadataProvider_GetDocumentNamespaceUri()
     {
-        SBOMApiMetadataProvider sbomApiMetadataProvider = new SBOMApiMetadataProvider(metadata, config);
+        var sbomApiMetadataProvider = new SBOMApiMetadataProvider(metadata, config);
         Assert.AreEqual("http://sbom.microsoft/packageName/packageVersion/some-custom-value-here", sbomApiMetadataProvider.GetDocumentNamespaceUri());
     }
 

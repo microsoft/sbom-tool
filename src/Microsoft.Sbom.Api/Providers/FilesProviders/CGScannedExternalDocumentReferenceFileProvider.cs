@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -66,7 +66,7 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
         var (sbomOutput, cdErrors) = SBOMComponentsWalker.GetComponents(Configuration.BuildComponentPath?.Value);
         IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
 
-        if (cdErrors.TryRead(out ComponentDetectorException e))
+        if (cdErrors.TryRead(out var e))
         {
             throw e;
         }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -44,7 +44,7 @@ public abstract class ConfigValidator
             throw new ArgumentException($"'{nameof(propertyName)}' cannot be null or empty", nameof(propertyName));
         }
 
-        Attribute attribute = attributeCollection[supportedAttribute];
+        var attribute = attributeCollection[supportedAttribute];
         if (attribute == null)
         {
             return;

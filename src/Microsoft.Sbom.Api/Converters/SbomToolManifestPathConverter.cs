@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -37,11 +37,11 @@ public class SbomToolManifestPathConverter : IManifestPathConverter
 
     public (string, bool) Convert(string path, bool prependDotToPath = false)
     {
-        string dotString = prependDotToPath ? "." : string.Empty;
+        var dotString = prependDotToPath ? "." : string.Empty;
 
         // relativeTo
-        string buildDropPath = configuration.BuildDropPath.Value;
-        bool isOutsideDropPath = false;
+        var buildDropPath = configuration.BuildDropPath.Value;
+        var isOutsideDropPath = false;
         if (path == null)
         {
             throw new ArgumentNullException(nameof(path));
@@ -59,8 +59,8 @@ public class SbomToolManifestPathConverter : IManifestPathConverter
             }
         }
 
-        string relativePath = fileSystemUtils.GetRelativePath(buildDropPath, path);
-        string formattedRelativePath = $"{dotString}/{relativePath.Replace("\\", "/")}";
+        var relativePath = fileSystemUtils.GetRelativePath(buildDropPath, path);
+        var formattedRelativePath = $"{dotString}/{relativePath.Replace("\\", "/")}";
 
         return (formattedRelativePath, isOutsideDropPath);
     }

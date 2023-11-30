@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -39,7 +39,7 @@ public class HashAlgorithmProvider : IHashAlgorithmProvider
             throw new ArgumentException($"'{nameof(algorithmName)}' cannot be null or whitespace.", nameof(algorithmName));
         }
 
-        if (algorithmNameMap.TryGetValue(algorithmName.ToLowerInvariant(), out AlgorithmName value))
+        if (algorithmNameMap.TryGetValue(algorithmName.ToLowerInvariant(), out var value))
         {
             return value;
         }

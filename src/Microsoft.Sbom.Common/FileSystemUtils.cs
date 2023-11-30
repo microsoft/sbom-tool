@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.Sbom.Common;
@@ -103,4 +103,7 @@ public abstract class FileSystemUtils : IFileSystemUtils
 
     /// <inheritdoc />
     public DirectoryInfo GetParentDirectory(string path) => Directory.GetParent(path);
+
+    /// <inheritdoc />
+    public byte[] ReadAllBytes(string path) => File.ReadAllBytes(path);
 }

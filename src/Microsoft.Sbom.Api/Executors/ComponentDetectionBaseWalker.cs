@@ -10,13 +10,14 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Serilog.Events;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ILogger = Serilog.ILogger;
 
@@ -33,6 +34,7 @@ public abstract class ComponentDetectionBaseWalker
     private readonly ISbomConfigProvider sbomConfigs;
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly ILicenseInformationFetcher licenseInformationFetcher;
+    private readonly IPackageDetailsFactory packageDetailsFactory;
 
     public ConcurrentDictionary<string, string> LicenseDictionary = new ConcurrentDictionary<string, string>();
     private bool licenseInformationRetrieved = false;
@@ -45,6 +47,7 @@ public abstract class ComponentDetectionBaseWalker
         IConfiguration configuration,
         ISbomConfigProvider sbomConfigs,
         IFileSystemUtils fileSystemUtils,
+        IPackageDetailsFactory packageDetailsFactory,
         ILicenseInformationFetcher licenseInformationFetcher)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
@@ -52,6 +55,7 @@ public abstract class ComponentDetectionBaseWalker
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+        this.packageDetailsFactory = packageDetailsFactory ?? throw new ArgumentNullException(nameof(packageDetailsFactory));
         this.licenseInformationFetcher = licenseInformationFetcher ?? throw new ArgumentNullException(nameof(licenseInformationFetcher));
     }
 
@@ -69,18 +73,13 @@ public abstract class ComponentDetectionBaseWalker
             Directory.CreateDirectory(buildComponentDirPath);
         }
 
-        var verbosity = configuration.Verbosity.Value switch
-        {
-            LogEventLevel.Verbose => VerbosityMode.Verbose,
-            _ => VerbosityMode.Normal,
-        };
+        cliArgumentBuilder = new ComponentDetectionCliArgumentBuilder();
 
-        cliArgumentBuilder = new ComponentDetectionCliArgumentBuilder().Scan().Verbosity(verbosity);
-
-        // Enable SPDX22 detector which is disabled by default.
+        // Enable SPDX22 and ConanLock detector which is disabled by default.
         cliArgumentBuilder.AddDetectorArg("SPDX22SBOM", "EnableIfDefaultOff");
+        cliArgumentBuilder.AddDetectorArg("ConanLock", "EnableIfDefaultOff");
 
-        if (sbomConfigs.TryGet(Constants.SPDX22ManifestInfo, out ISbomConfig spdxSbomConfig))
+        if (sbomConfigs.TryGet(Constants.SPDX22ManifestInfo, out var spdxSbomConfig))
         {
             var directory = Path.GetDirectoryName(spdxSbomConfig.ManifestJsonFilePath);
             if (!string.IsNullOrEmpty(directory))
@@ -101,10 +100,15 @@ public abstract class ComponentDetectionBaseWalker
 
         async Task Scan(string path)
         {
+            IDictionary<(string Name, string Version), PackageDetails.PackageDetails> packageDetailsDictionary = new ConcurrentDictionary<(string, string), PackageDetails.PackageDetails>();
+
             cliArgumentBuilder.SourceDirectory(buildComponentDirPath);
+
             var cmdLineParams = configuration.ToComponentDetectorCommandLineParams(cliArgumentBuilder);
 
-            var scanResult = await componentDetector.ScanAsync(cmdLineParams);
+            var scanSettings = cliArgumentBuilder.BuildScanSettingsFromParsedArgs(cmdLineParams);
+
+            var scanResult = await componentDetector.ScanAsync(scanSettings);
 
             if (scanResult.ResultCode != ProcessingResultCode.Success)
             {
@@ -114,21 +118,29 @@ public abstract class ComponentDetectionBaseWalker
 
             var uniqueComponents = FilterScannedComponents(scanResult);
 
+            if (configuration.EnablePackageMetadataParsing?.Value == true)
+            {
+                if (uniqueComponents.Any())
+                {
+                    packageDetailsDictionary = packageDetailsFactory.GetPackageDetailsDictionary(uniqueComponents);
+                }
+            }
+
             // Check if the configuration is set to fetch license information.
             if (configuration.FetchLicenseInformation?.Value == true)
             {
-                List<string> listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(uniqueComponents);
+                var listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(uniqueComponents);
 
                 // Check that an API call hasn't already been made. During the first execution of this class this list is empty (because we are detecting the files section of the SBOM). During the second execution we have all the components in the project. There are subsequent executions but not important in this scenario.
                 if (!licenseInformationRetrieved && listOfComponentsForApi?.Count > 0)
                 {
                     licenseInformationRetrieved = true;
 
-                    List<string> apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi);
+                    var apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi);
 
-                    foreach (string response in apiResponses)
+                    foreach (var response in apiResponses)
                     {
-                        Dictionary<string, string> licenseInfo = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(response);
+                        var licenseInfo = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(response);
 
                         if (licenseInfo != null)
                         {
@@ -143,26 +155,32 @@ public abstract class ComponentDetectionBaseWalker
             }
 
             // Converts every ScannedComponent into an ExtendedScannedComponent and attempts to add license information before writing to the channel.
-            foreach (ScannedComponent scannedComponent in uniqueComponents)
+            foreach (var scannedComponent in uniqueComponents)
             {
-                string componentName = scannedComponent.Component.PackageUrl?.Name;
-                string componentVersion = scannedComponent.Component.PackageUrl?.Version;
+                var componentName = scannedComponent.Component.PackageUrl?.Name;
+                var componentVersion = scannedComponent.Component.PackageUrl?.Version;
 
-                ScannedComponentWithLicense extendedComponent;
+                ExtendedScannedComponent extendedComponent;
 
-                if (scannedComponent is ScannedComponentWithLicense existingExtendedComponent)
+                if (scannedComponent is ExtendedScannedComponent existingExtendedScannedComponent)
                 {
-                    extendedComponent = existingExtendedComponent;
+                    extendedComponent = existingExtendedScannedComponent;
                 }
                 else
                 {
-                    // Use copy constructor to pass over all the properties to the ScanndedComponentWithLicense.
-                    extendedComponent = new ScannedComponentWithLicense(scannedComponent);
+                    // Use copy constructor to pass over all the properties to the ExtendedScannedComponent.
+                    extendedComponent = new ExtendedScannedComponent(scannedComponent);
                 }
 
                 if (LicenseDictionary != null && LicenseDictionary.ContainsKey($"{componentName}@{componentVersion}"))
                 {
-                    extendedComponent.License = LicenseDictionary[$"{componentName}@{componentVersion}"];
+                    extendedComponent.LicenseConcluded = LicenseDictionary[$"{componentName}@{componentVersion}"];
+                }
+
+                if (packageDetailsDictionary != null && packageDetailsDictionary.ContainsKey((componentName, componentVersion)))
+                {
+                    extendedComponent.Supplier = string.IsNullOrEmpty(packageDetailsDictionary[(componentName, componentVersion)].Supplier) ? null : packageDetailsDictionary[(componentName, componentVersion)].Supplier;
+                    extendedComponent.LicenseDeclared = string.IsNullOrEmpty(packageDetailsDictionary[(componentName, componentVersion)].License) ? null : packageDetailsDictionary[(componentName, componentVersion)].License;
                 }
 
                 await output.Writer.WriteAsync(extendedComponent);

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Linq;
@@ -55,7 +55,7 @@ public class HashValidator
             Path = fileHash.Path
         };
 
-        if (manifestData.HashesMap.TryGetValue(fileHash.Path, out Checksum[] expectedHashes))
+        if (manifestData.HashesMap.TryGetValue(fileHash.Path, out var expectedHashes))
         {
             manifestData.HashesMap.Remove(fileHash.Path);
 

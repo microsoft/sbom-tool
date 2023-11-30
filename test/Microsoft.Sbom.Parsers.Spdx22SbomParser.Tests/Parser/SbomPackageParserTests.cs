@@ -4,8 +4,7 @@
 using System;
 using System.IO;
 using System.Text;
-using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Exceptions;
+using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,50 +12,30 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Sbom.Parser;
 
 [TestClass]
-public class SbomPackageParserTests
+public class SbomPackageParserTests : SbomParserTestsBase
 {
     [TestMethod]
     public void ParseSbomPackagesTest()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
+        var bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
         using var stream = new MemoryStream(bytes);
-        var count = 0;
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.PACKAGES, state);
+        var result = this.Parse(parser);
 
-        foreach (var package in parser.GetPackages())
-        {
-            count++;
-            Assert.IsNotNull(package);
-        }
-
-        Assert.AreEqual(3, count);
+        Assert.AreEqual(3, result.PackagesCount);
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void NullStreamThrows()
-    {
-        new SbomPackageParser(null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ObjectDisposedException))]
     public void StreamClosedTestReturnsNull()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
+        var bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.GoodJsonWith3PackagesString);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.PACKAGES, state);
-        stream.Close();
-
-        parser.GetPackages().GetEnumerator().MoveNext();
+        Assert.ThrowsException<ObjectDisposedException>(() => this.Parse(parser, stream, close: true));
     }
 
     [TestMethod]
@@ -67,12 +46,9 @@ public class SbomPackageParserTests
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.PACKAGES, state);
-
-        parser.GetPackages().GetEnumerator().MoveNext();
+        var result = this.Parse(parser);
     }
 
     [DataTestMethod]
@@ -80,15 +56,12 @@ public class SbomPackageParserTests
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingVersionInfo)]
     public void MissingPropertiesTest_DoesNotThrow(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.PACKAGES, state);
-
-        parser.GetPackages().GetEnumerator().MoveNext();
+        var result = this.Parse(parser);
     }
 
     [DataTestMethod]
@@ -106,15 +79,12 @@ public class SbomPackageParserTests
     [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.PACKAGES, state);
-
-        parser.GetPackages().GetEnumerator().MoveNext();
+        var result = this.Parse(parser);
     }
 
     [DataTestMethod]
@@ -124,18 +94,12 @@ public class SbomPackageParserTests
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalArrayNoKey)]
     public void IgnoresAdditionalPropertiesTest(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.PACKAGES, state);
-
-        foreach (var package in parser.GetPackages())
-        {
-            Assert.IsNotNull(package);
-        }
+        var result = this.Parse(parser);
     }
 
     [DataTestMethod]
@@ -146,43 +110,34 @@ public class SbomPackageParserTests
     [ExpectedException(typeof(ParserException))]
     public void MalformedJsonTest_Throws(string json)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.PACKAGES, state);
-
-        parser.GetPackages().GetEnumerator().MoveNext();
+        var result = this.Parse(parser);
     }
 
     [TestMethod]
     public void EmptyArray_ValidJson()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.MalformedJsonEmptyArray);
+        var bytes = Encoding.UTF8.GetBytes(SbomPackageStrings.MalformedJsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.PACKAGES, state);
-
-        parser.GetPackages().GetEnumerator().MoveNext();
+        var result = this.Parse(parser);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void NullOrEmptyBuffer_Throws()
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
+        var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), 0, ignoreValidation: true);
+        var parser = new SPDXParser(stream, bufferSize: 0);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.PACKAGES, state);
-
-        parser.GetPackages().GetEnumerator().MoveNext();
+        var result = this.Parse(parser);
     }
 }

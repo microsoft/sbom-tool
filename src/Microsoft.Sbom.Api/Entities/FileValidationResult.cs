@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Sbom.Contracts;
@@ -26,8 +26,8 @@ public class FileValidationResult
     // TODO: Deprecate FileValidationResult to use EntityError
     public EntityError ToEntityError()
     {
-        EntityErrorType errorType = EntityErrorType.Other;
-        EntityType entityType = EntityType.Unknown;
+        var errorType = EntityErrorType.Other;
+        var entityType = EntityType.Unknown;
         Entity entity = null;
 
         switch (ErrorType)

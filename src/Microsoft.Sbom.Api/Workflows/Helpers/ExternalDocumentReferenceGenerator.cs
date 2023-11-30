@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -46,7 +46,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
         {
             IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
 
-            IEnumerable<ISourcesProvider> sourcesProviders = this.sourcesProviders
+            var sourcesProviders = this.sourcesProviders
                 .Where(s => s.IsSupported(ProviderType.ExternalDocumentReference));
             if (!sourcesProviders.Any())
             {
@@ -59,7 +59,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
             foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
             {
                 var config = sbomConfigs.Get(manifestInfo);
-                if (config.MetadataBuilder.TryGetExternalRefArrayHeaderName(out string externalRefArrayHeaderName))
+                if (config.MetadataBuilder.TryGetExternalRefArrayHeaderName(out var externalRefArrayHeaderName))
                 {
                     externalRefArraySupportingConfigs.Add(config);
                     config.JsonSerializer.StartJsonArray(externalRefArrayHeaderName);
@@ -71,15 +71,15 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
                 var (jsonDocResults, errors) = sourcesProvider.Get(externalRefArraySupportingConfigs);
 
                 // Collect all the json elements and write to the serializer.
-                int totalJsonDocumentsWritten = 0;
+                var totalJsonDocumentsWritten = 0;
 
-                await foreach (JsonDocWithSerializer jsonResults in jsonDocResults.ReadAllAsync())
+                await foreach (var jsonResults in jsonDocResults.ReadAllAsync())
                 {
                     jsonResults.Serializer.Write(jsonResults.Document);
                     totalJsonDocumentsWritten++;
                 }
 
-                await foreach (FileValidationResult error in errors.ReadAllAsync())
+                await foreach (var error in errors.ReadAllAsync())
                 {
                     totalErrors.Add(error);
                 }

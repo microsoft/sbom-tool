@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -29,7 +29,7 @@ public class ExternalReferenceInfoToPathConverter
 
         Task.Run(async () =>
         {
-            await foreach (ExternalDocumentReferenceInfo externalDocumentRef in externalDocumentRefReader.ReadAllAsync())
+            await foreach (var externalDocumentRef in externalDocumentRefReader.ReadAllAsync())
             {
                 try
                 {

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -53,9 +53,7 @@ public class SbomSpecification : IEquatable<SbomSpecification>
         }
 
         var values = value.Split(':');
-        if (values == null
-            || values.Length != 2
-            || values.Any(v => string.IsNullOrWhiteSpace(v)))
+        if (values is not { Length: 2 } || values.Any(string.IsNullOrWhiteSpace))
         {
             throw new ArgumentException($"The SBOM specification string is not formatted correctly. The correct format is <name>:<version>.");
         }
@@ -95,7 +93,7 @@ public class SbomSpecification : IEquatable<SbomSpecification>
 
     public override int GetHashCode()
     {
-        int hashCode = 2112831277;
+        var hashCode = 2112831277;
         hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Name);
         hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Version);
         return hashCode;

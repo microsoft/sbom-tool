@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -74,7 +74,7 @@ public class SbomGenerator : ISBOMGenerator
         inputConfiguration.ToConfiguration();
 
         // This is the generate workflow
-        bool isSuccess = await generationWorkflow.RunAsync();
+        var isSuccess = await generationWorkflow.RunAsync();
 
         await recorder.FinalizeAndLogTelemetryAsync();
 
@@ -118,7 +118,7 @@ public class SbomGenerator : ISBOMGenerator
         inputConfiguration.ToConfiguration();
 
         // This is the generate workflow
-        bool result = await generationWorkflow.RunAsync();
+        var result = await generationWorkflow.RunAsync();
 
         return new SbomGenerationResult(result, new List<EntityError>());
     }

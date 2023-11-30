@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -35,7 +35,7 @@ public class ManifestFolderFilterer
 
         Task.Run(async () =>
         {
-            await foreach (string file in files.ReadAllAsync())
+            await foreach (var file in files.ReadAllAsync())
             {
                 await FilterFiles(file, errors, output);
             }

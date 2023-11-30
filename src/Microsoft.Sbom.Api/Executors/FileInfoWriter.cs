@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -41,7 +41,7 @@ public class FileInfoWriter
 
         Task.Run(async () =>
         {
-            await foreach (InternalSbomFileInfo fileInfo in fileInfos.ReadAllAsync())
+            await foreach (var fileInfo in fileInfos.ReadAllAsync())
             {
                 await Generate(filesArraySupportingSBOMs, fileInfo, result, errors);
             }

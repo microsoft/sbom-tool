@@ -7,8 +7,8 @@ using System.Linq;
 using System.Threading.Channels;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Executors;
+using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using Serilog;
@@ -34,8 +34,9 @@ public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent
         PackageInfoJsonWriter packageInfoJsonWriter,
         ComponentToPackageInfoConverter packageInfoConverter,
         PackagesWalker packagesWalker,
+        IPackageDetailsFactory packageDetailsFactory,
         ILicenseInformationFetcher licenseInformationFetcher)
-        : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter, licenseInformationFetcher)
+        : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter, packageDetailsFactory, licenseInformationFetcher)
     {
         this.packageInfoConverter = packageInfoConverter ?? throw new ArgumentNullException(nameof(packageInfoConverter));
         this.packagesWalker = packagesWalker ?? throw new ArgumentNullException(nameof(packagesWalker));
@@ -77,7 +78,7 @@ public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent
     {
         var (output, cdErrors) = packagesWalker.GetComponents(Configuration.BuildComponentPath?.Value);
 
-        if (cdErrors.TryRead(out ComponentDetectorException e))
+        if (cdErrors.TryRead(out var e))
         {
             throw e;
         }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mono.Posix.NETStandard" />
+    <PackageReference Include="Mono.Posix.NETStandard" Condition="'$(TargetFramework)' == 'net6.0'" />
     <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" />
     <PackageReference Include="System.Private.Uri" />

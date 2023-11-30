@@ -7,14 +7,14 @@ using Microsoft.Sbom.Contracts;
 
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
 
-internal static class ConanComponentExtension
+internal static class ConanComponentExtensions
 {
-    public static SbomPackage? ToSbomPackage(this ConanComponent conanComponent, string? license = null)
+    public static SbomPackage? ToSbomPackage(this ConanComponent conanComponent)
     {
-        var lst = new List<Checksum>();
+        var checksums = new List<Checksum>();
         if (!string.IsNullOrEmpty(conanComponent.Md5Hash))
         {
-            lst.Add(new Checksum
+            checksums.Add(new Checksum
             {
                 Algorithm = Contracts.Enums.AlgorithmName.MD5,
                 ChecksumValue = conanComponent.Md5Hash
@@ -23,7 +23,7 @@ internal static class ConanComponentExtension
 
         if (!string.IsNullOrEmpty(conanComponent.Sha1Hash))
         {
-            lst.Add(new Checksum
+            checksums.Add(new Checksum
             {
                 Algorithm = Contracts.Enums.AlgorithmName.SHA1,
                 ChecksumValue = conanComponent.Sha1Hash
@@ -38,8 +38,7 @@ internal static class ConanComponentExtension
             PackageVersion = conanComponent.Version,
             PackageSource = conanComponent.PackageSourceURL,
             FilesAnalyzed = false,
-            LicenseInfo = string.IsNullOrWhiteSpace(license) ? null : new LicenseInfo { Concluded = license },
-            Checksum = lst,
+            Checksum = checksums,
             Type = "conan"
         };
     }

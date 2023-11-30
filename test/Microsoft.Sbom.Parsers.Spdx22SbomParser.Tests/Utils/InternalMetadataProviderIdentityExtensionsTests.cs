@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -47,7 +47,7 @@ public class InternalMetadataProviderIdentityExtensionsTests
     public void GetPackageVersion_WherePackageVersionIsValid_ReturnPackageVersion()
     {
         var mdProviderMock = new Mock<IInternalMetadataProvider>();
-        string packageVersion = "version";
+        var packageVersion = "version";
 
         mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageVersion, out packageVersion))
             .Returns(true);
@@ -63,7 +63,7 @@ public class InternalMetadataProviderIdentityExtensionsTests
     [DataRow(" ", false)]
     public void GetPackageVersion_WherePackageVersionIsNullOrWhitespace_ReturnBuildId(string packageVersion, bool versionExist)
     {
-        string buildId = "buildId";
+        var buildId = "buildId";
         var mdProviderMock = new Mock<IInternalMetadataProvider>();
 
         mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageVersion, out packageVersion))
@@ -105,7 +105,7 @@ public class InternalMetadataProviderIdentityExtensionsTests
     public void GetPackageName_WherePackageNameIsValid_ReturnPackageName()
     {
         var mdProviderMock = new Mock<IInternalMetadataProvider>();
-        string packageName = "name";
+        var packageName = "name";
 
         mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageName, out packageName))
             .Returns(true);
@@ -121,7 +121,7 @@ public class InternalMetadataProviderIdentityExtensionsTests
     [DataRow(" ", false)]
     public void GetPackageName_WherePackageNameIsNullOrWhitespace_ReturnBuildDef(string packageName, bool nameExist)
     {
-        string buildDef = "buildDef";
+        var buildDef = "buildDef";
         var mdProviderMock = new Mock<IInternalMetadataProvider>();
 
         mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageVersion, out packageName))
@@ -163,13 +163,13 @@ public class InternalMetadataProviderIdentityExtensionsTests
     public void GetSwidPurl_Succeeds()
     {
         var mdProviderMock = new Mock<IInternalMetadataProvider>();
-        Guid tagId = Guid.NewGuid();
+        var tagId = Guid.NewGuid();
 
-        string packageName = "name";
-        string packageVersion = "1.0.0";
+        var packageName = "name";
+        var packageVersion = "1.0.0";
         object packageSupplier = "Microsoft";
-        Uri namespaceUri = new Uri("https://test.com/");
-        string expectedSwidPurlPattern = @"^pkg:swid\/Microsoft\/test.com\/name@1\.0\.0\?tag_id=.*";
+        var namespaceUri = new Uri("https://test.com/");
+        var expectedSwidPurlPattern = @"^pkg:swid\/Microsoft\/test.com\/name@1\.0\.0\?tag_id=.*";
 
         mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageSupplier, out packageSupplier))
             .Returns(true);

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.Sbom.Parser.Strings;
@@ -49,7 +49,13 @@ internal struct SbomFileJsonStrings
                 ],
                 ""copyrightText"": ""NOASSERTION""
             }
-        ]}";
+        ], ""packages"": [], ""relationships"": [],   ""creationInfo"": {
+    ""created"": ""2023-05-11T00:24:54Z"",
+    ""creators"": [
+      ""Organization: Microsoft"",
+      ""Tool: Microsoft.SBOMTool-1.1.0""
+    ]
+  }}";
 
     public const string MalformedJsonEmptyObjectNoArrayEnd = @"{
             ""files"": [{
@@ -70,11 +76,11 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ,
                 ""copyrightText"": ""NOASSERTION""
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string MalformedJsonEmptyObject = @"{""files"":{}";
     public const string MalformedJsonEmptyArray = @"{""files"": []";
-    public const string JsonEmptyArray = @"{""files"": []}";
+    public const string JsonEmptyArray = @"{""files"": [], ""packages"": [], ""relationships"": []}";
     public const string MalformedJson = @"{
             ""files"": [
             {
@@ -95,7 +101,7 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string GoodJsonWith1FileAdditionalStringPropertyString = @"{
             ""files"": [
@@ -118,7 +124,7 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string GoodJsonWith1FileAdditionalValueArrayPropertyString = @"{
             ""files"": [
@@ -141,7 +147,7 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string GoodJsonWith1FileAdditionalArrayPropertyString = @"{
             ""files"": [
@@ -166,7 +172,7 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string GoodJsonWith1FileAdditionalObjectPropertyString = @"{
             ""files"": [
@@ -191,7 +197,7 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string JsonWith1FileMissingNameString = @"{
             ""files"": [
@@ -212,7 +218,7 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string JsonWith1FileMissingIDString = @"{
             ""files"": [
@@ -233,7 +239,7 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string JsonWith1FileMissingChecksumsString = @"{
             ""files"": [
@@ -245,7 +251,7 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string JsonWith1FileMissingSHA256ChecksumsString = @"{
             ""files"": [
@@ -263,7 +269,7 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string JsonWith1FileMissingLicenseConcludedString = @"{
             ""files"": [
@@ -284,7 +290,7 @@ internal struct SbomFileJsonStrings
                     ""NOASSERTION""
                 ],
                 ""copyrightText"": ""NOASSERTION""
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string JsonWith1FileMissingLicenseInfoInFilesString = @"{
             ""files"": [
@@ -303,7 +309,7 @@ internal struct SbomFileJsonStrings
                 ],
                 ""licenseConcluded"": ""NOASSERTION"",
                 ""copyrightText"": ""NOASSERTION""
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string JsonWith1FileMissingCopyrightString = @"{
             ""files"": [
@@ -324,7 +330,7 @@ internal struct SbomFileJsonStrings
                 ""licenseInfoInFiles"": [
                     ""NOASSERTION""
                 ]
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 
     public const string JsonWith1FileMissingCopyrightAndPathString = @"{
             ""files"": [
@@ -344,5 +350,5 @@ internal struct SbomFileJsonStrings
                 ""licenseInfoInFiles"": [
                     ""NOASSERTION""
                 ]
-            }]}";
+            }], ""packages"": [], ""relationships"": []}";
 }

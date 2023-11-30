@@ -53,7 +53,7 @@ public static class ApiConfigurationBuilder
             throw new ArgumentNullException(nameof(metadata));
         }
 
-        RuntimeConfiguration sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
+        var sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
 
         var configuration = new InputConfiguration
         {

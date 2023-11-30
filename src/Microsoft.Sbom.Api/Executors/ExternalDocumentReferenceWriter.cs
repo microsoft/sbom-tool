@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -47,7 +47,7 @@ public class ExternalDocumentReferenceWriter
 
         Task.Run(async () =>
         {
-            await foreach (ExternalDocumentReferenceInfo externalDocumentReferenceInfo in externalDocumentReferenceInfos.ReadAllAsync())
+            await foreach (var externalDocumentReferenceInfo in externalDocumentReferenceInfos.ReadAllAsync())
             {
                 foreach (var config in externalDocumentReferenceArraySupportingConfigs)
                 {

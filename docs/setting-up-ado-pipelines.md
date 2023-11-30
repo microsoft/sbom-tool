@@ -1,10 +1,10 @@
-# Adding SBOM generation to your Azure DevOps Pipeline
+# Adding SBOM generation to an Azure DevOps Pipeline
 
-This document provides an example on how to integrate SBOM tool into Azure DevOps Pipelines, you may use this as a guide to adding the tool to your Azure DevOps Pipeline.
+This document provides a sample case for integrating the SBOM tool into Azure DevOps Pipelines.  User may use this guide for adding the tool to an Azure DevOps Pipeline.
 
 ## Existing setup
 
-In our Azure DevOps project, the source contains a project called Demo. We also have a Build pipeline that builds the project and saves the generated binaries as a pipeline artifact.
+In this sample Azure DevOps project, the source contains a project called Demo.  There is also a Build pipeline that builds the project then saves the generated binaries as a pipeline artifact.
 
 ```yaml
 pool:
@@ -27,13 +27,13 @@ steps:
     publishLocation: 'Container'
 ```
 
-In this pipeline, we first build the dotnet project and the generated binaries are stored in the artifacts staging directory. In the final step, we upload these artifacts to the pipline artifacts. Any dependent pipeline or release can now consume these binaries using this pipeline artifact. You can check the build pipeline artifacts for our project, and we see a bunch of binaries generated for the Demo project.
+In this pipeline, the user first builds the dotnet project.  The generated binaries are stored in the artifacts staging directory. In the final step, upload these artifacts to the pipeline artifacts. Any dependent pipeline or release can now consume these binaries using this pipeline artifact.  Check the build pipeline artifacts in the project in order to see the commplete set of binaries generated for the Demo project.
 
 ![ado-artifact-without-sbom](./images/ado-artifacts-without-sbom.png)
 
 ## Adding the SBOM generation task
 
-We will generate the SBOM for the pipeline artifacts we generate in the previous step. We will store the generated SBOM as part of the pipeline artifacts, as we will be distributing this artifact to our downstream dependencies. 
+Now the user can generate the SBOM for the pipeline artifacts which the previous step produced. Ths process will store the generated SBOM as part of the pipeline artifacts so that the user can distribute the artifact to the desired downstream dependencies. 
 
 ```yaml
 pool:
@@ -62,14 +62,14 @@ steps:
     publishLocation: 'Container'
 ```
 
-We added the SBOM generation task after the build ran and produced artifacts in the `$(Build.ArtifactStagingDirectory)` directory. The `$(Build.SourcesDirectory)` folder contains the `Demo.csproj` file that contains the dependencies for our project, so we pass it as the parameter to the build components path. The package name, version and namespace base uri are static strings for our tool. We also have set verbosity to `Verbose` right now as we want to see additional output while we test our SBOM generation.
+This process added the SBOM generation task after the build ran and produced artifacts in the `$(Build.ArtifactStagingDirectory)` directory.  Since the `$(Build.SourcesDirectory)` folder contains the `Demo.csproj` file that contains the dependencies for our project, the user passes the parameter to the build components path. The package name, version and namespace base URI are static strings for the tool. Set the verbosity to `Verbose` at this point in time so that the user can see additional output while testing the SBOM generation.
 
-Since our tool will place the generation SBOM in the build drop folder (`$(Build.ArtifactStagingDirectory)` folder in our case), our original artifact upload task now also uploads the SBOM to the Actions artifacts as seen below.
+Since the sbom tool will place the generated SBOM file into the build drop folder (`$(Build.ArtifactStagingDirectory)` folder in this case), this original artifact upload task now also uploads the SBOM to the Actions artifacts as seen below.
 
 ![ado-artifact-with-sbom](./images/ado-artifacts-with-sbom.png)
 
-With the above our SBOM has the same retention as the pipeline artifacts for the Azure DevOps pipeline.
+The preceding steps will provide the SBOM file with the same retention as the pipeline artifacts for the Azure DevOps pipeline.
 
 ## Further reading
 
-If your team uses a central repository to store SBOMs, you can generate the SBOM to a special folder using the `-manifestDirPath` parameter, and upload the generated file to the central repository.
+Teams using a central repository to store SBOM file can use the `-manifestDirPath` parameter for specifying the location of the central repository.  Users will need to ensure that they have write permissions enabled on the target repository location.
