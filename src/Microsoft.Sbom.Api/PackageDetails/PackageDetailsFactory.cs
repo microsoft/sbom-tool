@@ -22,14 +22,16 @@ public class PackageDetailsFactory : IPackageDetailsFactory
     private readonly IPackageManagerUtils<MavenUtils> mavenUtils;
     private readonly IPackageManagerUtils<NugetUtils> nugetUtils;
     private readonly IPackageManagerUtils<RubyGemsUtils> rubygemUtils;
+    private readonly IPackageManagerUtils<PypiUtils> pypiUtils;
 
-    public PackageDetailsFactory(ILogger log, IRecorder recorder, IPackageManagerUtils<MavenUtils> mavenUtils, IPackageManagerUtils<NugetUtils> nugetUtils, IPackageManagerUtils<RubyGemsUtils> rubygemUtils)
+    public PackageDetailsFactory(ILogger log, IRecorder recorder, IPackageManagerUtils<MavenUtils> mavenUtils, IPackageManagerUtils<NugetUtils> nugetUtils, IPackageManagerUtils<RubyGemsUtils> rubygemUtils, IPackageManagerUtils<PypiUtils> pypiUtils)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.mavenUtils = mavenUtils ?? throw new ArgumentNullException(nameof(mavenUtils));
         this.nugetUtils = nugetUtils ?? throw new ArgumentNullException(nameof(nugetUtils));
         this.rubygemUtils = rubygemUtils ?? throw new ArgumentNullException(nameof(rubygemUtils));
+        this.pypiUtils = pypiUtils ?? throw new ArgumentNullException(nameof(pypiUtils));
     }
 
     public IDictionary<(string Name, string Version), PackageDetails> GetPackageDetailsDictionary(IEnumerable<ScannedComponent> scannedComponents)
@@ -58,6 +60,9 @@ public class PackageDetailsFactory : IPackageDetailsFactory
                 case ComponentType.RubyGems:
                     packageDetailsConfirmedLocations.Add(rubygemUtils.GetMetadataLocation(scannedComponent));
                     break;
+                case ComponentType.Pip:
+                    packageDetailsConfirmedLocations.Add(pypiUtils.GetMetadataLocation(scannedComponent));
+                    break;
                 default:
                     break;
             }
@@ -74,11 +79,11 @@ public class PackageDetailsFactory : IPackageDetailsFactory
         {
             if (!string.IsNullOrEmpty(path))
             {
-                switch (Path.GetExtension(path)?.ToLowerInvariant())
+                switch (Path.GetExtension(path))
                 {
                     case ".nuspec":
                         var nuspecDetails = nugetUtils.ParseMetadata(path);
-                        if (!string.IsNullOrEmpty(nuspecDetails?.PackageDetails.License) || !string.IsNullOrEmpty(nuspecDetails?.PackageDetails?.Supplier))
+                        if (!string.IsNullOrEmpty(nuspecDetails?.PackageDetails?.License) || !string.IsNullOrEmpty(nuspecDetails?.PackageDetails?.Supplier))
                         {
                             packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.PackageDetails);
                         }
@@ -100,9 +105,23 @@ public class PackageDetailsFactory : IPackageDetailsFactory
                         }
 
                         break;
+
                     default:
-                        log.Verbose($"File extension {Path.GetExtension(path)} is not supported for extracting supplier info.");
-                        break;
+                        if (string.Equals(Path.GetFileName(path), "METADATA", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var metadataDetails = pypiUtils.ParseMetadata(path);
+                            if (!string.IsNullOrEmpty(metadataDetails?.PackageDetails?.License) || !string.IsNullOrEmpty(metadataDetails?.PackageDetails?.Supplier))
+                            {
+                                packageDetailsDictionary.TryAdd((metadataDetails.Name, metadataDetails.Version), metadataDetails.PackageDetails);
+                            }
+
+                            break;
+                        }
+                        else
+                        {
+                            log.Verbose($"File extension {Path.GetExtension(path)} is not supported for extracting supplier info.");
+                            break;
+                        }
                 }
             }
         }
