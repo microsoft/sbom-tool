@@ -7,6 +7,7 @@ internal static class Events
 {
     #region Generation
     internal const string SBOMGenerationWorkflow = "Total generation time";
+    internal const string SBOMParseMetadata = "Total metadata parsing time";
     internal const string FilesGeneration = "Files generation time";
     internal const string PackagesGeneration = "Packages generation time";
     internal const string RelationshipsGeneration = "Relationships generation time";
