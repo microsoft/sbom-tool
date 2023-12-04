@@ -195,7 +195,7 @@ public interface IConfiguration
     ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
 
     /// <summary>
-    /// If set to true, we will attempt to locate and parse package metadata files for additional informtion to include in the SBOM such as .nuspec/.pom files in the local package cache.
+    /// If set to true, we will attempt to locate and parse package metadata files for additional information to include in the SBOM such as .nuspec/.pom files in the local package cache.
     /// </summary>
     ConfigurationSetting<bool> EnablePackageMetadataParsing { get; set; }
 }
