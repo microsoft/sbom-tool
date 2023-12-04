@@ -8,6 +8,7 @@ using System.IO;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.Utils;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.PackageDetails;
@@ -34,9 +35,12 @@ public class PackageDetailsFactory : IPackageDetailsFactory
 
     public IDictionary<(string Name, string Version), PackageDetails> GetPackageDetailsDictionary(IEnumerable<ScannedComponent> scannedComponents)
     {
-        var packageDetailsLocations = GetPackageDetailsLocations(scannedComponents);
+        using (recorder.TraceEvent(Events.SBOMParseMetadata))
+        {
+            var packageDetailsLocations = GetPackageDetailsLocations(scannedComponents);
 
-        return ExtractPackageDetailsFromFiles(packageDetailsLocations);
+            return ExtractPackageDetailsFromFiles(packageDetailsLocations);
+        }
     }
 
     private List<string> GetPackageDetailsLocations(IEnumerable<ScannedComponent> scannedComponents)
