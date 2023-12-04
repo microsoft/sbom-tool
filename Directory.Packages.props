@@ -21,7 +21,7 @@
         <PackageVersion Include="Microsoft.ComponentDetection.Detectors" Version="$(ComponentDetectionPackageVersion)" />
         <PackageVersion Include="Microsoft.ComponentDetection.Orchestrator" Version="$(ComponentDetectionPackageVersion)" />
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0-rc.2.23479.6" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
         <PackageVersion Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
         <PackageVersion Include="Microsoft.Extensions.Http" Version="7.0.0" />
         <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
