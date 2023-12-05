@@ -176,4 +176,9 @@ public class ConfigFile
     /// If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.
     /// </summary>
     public bool? FetchLicenseInformation { get; set; }
+
+    /// <summary>
+    /// If set to true, we will attempt to parse metadata information of packages detected in the SBOM from the local package cache.
+    /// </summary>
+    public bool? EnablePackageMetadataParsing { get; set; }
 }
