@@ -77,6 +77,7 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
         var version = string.Empty;
         var supplierField = string.Empty;
         var licenseField = string.Empty;
+        var classifierLicenseField = string.Empty;
 
         try
         {
@@ -85,44 +86,73 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
                 throw new PackageMetadataParsingException("METADATA file not found.");
             }
 
-            var fileContent = fileSystemUtils.ReadAllText(metadataLocation);
-
-            var fileContentLines = fileContent.Split("\n");
-
-            foreach (var line in fileContentLines)
+            using (var streamReader = new StreamReader(metadataLocation))
             {
-                var colonIndex = line.IndexOf(':');
-                if (colonIndex != -1)
+                string line;
+                while ((line = streamReader.ReadLine()) != null)
                 {
-                    var prefix = line.Substring(0, colonIndex).Trim(); // Extract the prefix before the colon
-
-                    switch (prefix.ToLowerInvariant())
+                    var colonIndex = line.IndexOf(':');
+                    if (colonIndex != -1)
                     {
-                        case "name":
-                            name = line.Substring(colonIndex + 1).Trim();
-                            break;
-                        case "version":
-                            version = line.Substring(colonIndex + 1).Trim();
-                            break;
-                        case "author" or "maintainer":
-                            supplierField = line.Substring(colonIndex + 1).Trim();
-                            break;
-/*                        case "author-email":
-                            supplierField = line.Substring(colonIndex + 1).Trim();
-                            break;*/
-                        case "license":
-                            licenseField = line.Substring(colonIndex + 1).Trim();
-                            break;
-                        case "license-expression":
-                            licenseField = line.Substring(colonIndex + 1).Trim();
-                            break;
-                        default:
-                            break;
+                        var prefix = line.Substring(0, colonIndex).Trim(); // Extract the prefix before the colon
+
+                        switch (prefix.ToLowerInvariant())
+                        {
+                            case "name":
+                                name = line.Substring(colonIndex + 1).Trim();
+                                break;
+                            case "version":
+                                version = line.Substring(colonIndex + 1).Trim();
+                                break;
+                            case "author":
+                                supplierField = line.Substring(colonIndex + 1).Trim();
+                                break;
+                            case "maintainer":
+                                supplierField = line.Substring(colonIndex + 1).Trim();
+                                break;
+                            case "author-email":
+                                if (!string.IsNullOrEmpty(supplierField))
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    supplierField = line.Substring(colonIndex + 1).Trim();
+                                    supplierField = FilterEmailFromSupplierField(supplierField);
+                                    break;
+                                }
+
+                            case "maintainer-email":
+                                supplierField = line.Substring(colonIndex + 1).Trim();
+                                supplierField = FilterEmailFromSupplierField(supplierField);
+                                break;
+                            case "license":
+                                licenseField = line.Substring(colonIndex + 1).Trim();
+                                break;
+                            case "license-expression":
+                                licenseField = line.Substring(colonIndex + 1).Trim();
+                                break;
+                            case "classifier":
+                                if (line.Contains("License"))
+                                {
+                                    var splitLine = line.Split("::");
+                                    classifierLicenseField = splitLine[^1].Trim();
+                                }
+
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(version) && !string.IsNullOrEmpty(classifierLicenseField) && !string.IsNullOrEmpty(supplierField))
+                    {
+                        break;
                     }
                 }
             }
 
-            if (string.IsNullOrEmpty(licenseField))
+            if (string.IsNullOrEmpty(licenseField) && string.IsNullOrEmpty(classifierLicenseField))
             {
                 log.Error($"Failed to find any LICENSE information for the package {name}-{version}");
             }
@@ -131,7 +161,7 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
                 log.Error($"Failed to find any SUPPLIER information for the package {name}-{version}");
             }
 
-            return new ParsedPackageInformation(name, version, new PackageDetails(licenseField, supplierField));
+            return new ParsedPackageInformation(name, version, new PackageDetails(classifierLicenseField ?? licenseField, supplierField));
         }
         catch (PackageMetadataParsingException e)
         {
@@ -179,5 +209,34 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
             recorder.RecordMetadataException(e);
             return null;
         }
+    }
+
+    private string FilterEmailFromSupplierField(string supplier)
+    {
+        if (!supplier.Contains('@'))
+        {
+            return supplier;
+        }
+        else
+        {
+            // Look for the text contained in between the < and > characters, then check if that text contains an @ symbol and if it does then remove it including the < and > characters and trim it.
+            var emailRegex = new Regex(@"<(.*)>");
+            var match = emailRegex.Match(supplier);
+            if (match.Success)
+            {
+                var email = match.Groups[1].Value;
+                if (email.Contains('@'))
+                {
+                    supplier = supplier.Replace(match.Value, string.Empty).Trim();
+                    return supplier;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        return null;
     }
 }
