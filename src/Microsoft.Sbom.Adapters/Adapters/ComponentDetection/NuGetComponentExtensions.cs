@@ -32,5 +32,6 @@ internal static class NuGetComponentExtensions
         },
         FilesAnalyzed = false,
         Type = "nuget",
+        DependOn = component.TopLevelReferrers?.FirstOrDefault()?.Id,
     };
 }

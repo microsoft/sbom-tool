@@ -167,12 +167,19 @@ public class Generator : IManifestGenerator
         var packageId = spdxPackage.AddSpdxId(packageInfo);
         spdxPackage.AddPackageUrls(packageInfo);
 
+        var dependOnId = packageInfo.DependOn;
+        if (dependOnId is not null && dependOnId != Constants.RootPackageIdValue)
+        {
+            dependOnId = SPDXExtensions.GenerateSpdxPackageId(packageInfo.DependOn);
+        }
+
         return new GenerationResult
         {
             Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxPackage)),
             ResultMetadata = new ResultMetadata
             {
-                EntityId = packageId
+                EntityId = packageId,
+                DependOn = dependOnId
             }
         };
     }
