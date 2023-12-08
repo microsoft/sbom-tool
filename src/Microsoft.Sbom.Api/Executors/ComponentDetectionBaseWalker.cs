@@ -178,7 +178,7 @@ public abstract class ComponentDetectionBaseWalker
                 }
 
                 if (packageDetailsDictionary != null && packageDetailsDictionary.ContainsKey((componentName, componentVersion)))
-                    {
+                {
                     extendedComponent.Supplier = string.IsNullOrEmpty(packageDetailsDictionary[(componentName, componentVersion)].Supplier) ? null : packageDetailsDictionary[(componentName, componentVersion)].Supplier;
                     extendedComponent.LicenseDeclared = string.IsNullOrEmpty(packageDetailsDictionary[(componentName, componentVersion)].License) ? null : packageDetailsDictionary[(componentName, componentVersion)].License;
                 }
