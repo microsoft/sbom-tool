@@ -83,7 +83,7 @@ public class PackageDetailsFactory : IPackageDetailsFactory
         {
             if (!string.IsNullOrEmpty(path))
             {
-                switch (Path.GetExtension(path))
+                switch (Path.GetExtension(path)?.ToLowerInvariant())
                 {
                     case ".nuspec":
                         var nuspecDetails = nugetUtils.ParseMetadata(path);
