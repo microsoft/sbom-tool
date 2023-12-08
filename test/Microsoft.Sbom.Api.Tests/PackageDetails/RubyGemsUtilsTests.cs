@@ -168,7 +168,7 @@ public class RubyGemsUtilsTests
     }
 
     [TestMethod]
-    public void GetMetadataLocation_Executor_Throws()
+    public void GetMetadataLocation_Executor_Throws_ReturnsNull()
     {
         var rubyGemsUtils = new RubyGemsUtils(mockFileSystemUtils.Object, mockLogger.Object, mockRecorder.Object, mockProcessExecutor.Object);
 

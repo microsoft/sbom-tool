@@ -3,11 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using AutoMapper.Mappers;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
@@ -65,8 +63,19 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
         {
             return fullMetadataPath;
         }
+        else if (componentName.Contains('_'))
+        {
+            log.Verbose($"Could not find metadata for {componentName}-{componentVersion} at: '{fullMetadataPath}' Atempting new path... ");
+            componentName = componentName.Replace('_', '.');
+            fullMetadataPath = Path.Join(pythonDistInfo, $"{componentName}-{componentVersion}.dist-info/metadata");
 
-        log.Error($"Could not find metadata for {componentName}-{componentVersion} at: {fullMetadataPath}");
+            if (fileSystemUtils.FileExists(fullMetadataPath))
+            {
+                return fullMetadataPath;
+            }
+        }
+
+        log.Verbose($"Could not find metadata for {componentName}-{componentVersion} at: {fullMetadataPath}");
 
         return null;
     }
@@ -77,7 +86,8 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
         var version = string.Empty;
         var supplierField = string.Empty;
         var licenseField = string.Empty;
-        var classifierLicenseField = string.Empty;
+        var classifierLicenseField = new List<string>();
+        var stopParsing = false;
 
         try
         {
@@ -86,82 +96,100 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
                 throw new PackageMetadataParsingException("METADATA file not found.");
             }
 
-            using (var streamReader = new StreamReader(metadataLocation))
+            var metadataText = fileSystemUtils.ReadAllText(metadataLocation).Split("\n");
+
+            foreach (var line in metadataText)
             {
-                string line;
-                while ((line = streamReader.ReadLine()) != null)
+                var colonIndex = line.IndexOf(':');
+                if (colonIndex != -1)
                 {
-                    var colonIndex = line.IndexOf(':');
-                    if (colonIndex != -1)
+                    var prefix = line.Substring(0, colonIndex).Trim(); // Extract the prefix before the colon
+
+                    switch (prefix.ToLowerInvariant())
                     {
-                        var prefix = line.Substring(0, colonIndex).Trim(); // Extract the prefix before the colon
-
-                        switch (prefix.ToLowerInvariant())
-                        {
-                            case "name":
-                                name = line.Substring(colonIndex + 1).Trim();
+                        case "name":
+                            name = line.Substring(colonIndex + 1).Trim();
+                            break;
+                        case "version":
+                            version = line.Substring(colonIndex + 1).Trim();
+                            break;
+                        case "author":
+                            supplierField = line.Substring(colonIndex + 1).Trim();
+                            break;
+                        case "maintainer":
+                            supplierField = line.Substring(colonIndex + 1).Trim();
+                            break;
+                        case "author-email":
+                            if (!string.IsNullOrEmpty(supplierField))
+                            {
                                 break;
-                            case "version":
-                                version = line.Substring(colonIndex + 1).Trim();
-                                break;
-                            case "author":
+                            }
+                            else
+                            {
                                 supplierField = line.Substring(colonIndex + 1).Trim();
+                                supplierField = this.FilterEmailFromSupplierField(supplierField);
                                 break;
-                            case "maintainer":
-                                supplierField = line.Substring(colonIndex + 1).Trim();
-                                break;
-                            case "author-email":
-                                if (!string.IsNullOrEmpty(supplierField))
-                                {
-                                    break;
-                                }
-                                else
-                                {
-                                    supplierField = line.Substring(colonIndex + 1).Trim();
-                                    supplierField = FilterEmailFromSupplierField(supplierField);
-                                    break;
-                                }
+                            }
 
-                            case "maintainer-email":
+                        case "maintainer-email":
+                            if (!string.IsNullOrEmpty(supplierField))
+                            {
+                                break;
+                            }
+                            else
+                            {
                                 supplierField = line.Substring(colonIndex + 1).Trim();
                                 supplierField = FilterEmailFromSupplierField(supplierField);
                                 break;
-                            case "license":
-                                licenseField = line.Substring(colonIndex + 1).Trim();
-                                break;
-                            case "license-expression":
-                                licenseField = line.Substring(colonIndex + 1).Trim();
-                                break;
-                            case "classifier":
-                                if (line.Contains("License"))
-                                {
-                                    var splitLine = line.Split("::");
-                                    classifierLicenseField = splitLine[^1].Trim();
-                                }
+                            }
 
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+                        case "license":
+                            licenseField = line.Substring(colonIndex + 1).Trim();
+                            break;
+                        case "license-expression":
+                            licenseField = line.Substring(colonIndex + 1).Trim();
+                            break;
+                        case "classifier":
+                            if (line.Contains("License"))
+                            {
+                                var splitLine = line.Split("::");
+                                classifierLicenseField.Add(splitLine[^1].Trim()); // Take the last value on this case. This is where the actual license is found.
+                            }
 
-                    if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(version) && !string.IsNullOrEmpty(classifierLicenseField) && !string.IsNullOrEmpty(supplierField))
-                    {
-                        break;
+                            break;
+                        case "requires-dist":
+                            stopParsing = true;
+                            break;
+                        default:
+                            break;
                     }
+                }
+
+                if (stopParsing)
+                {
+                    break;
                 }
             }
 
-            if (string.IsNullOrEmpty(licenseField) && string.IsNullOrEmpty(classifierLicenseField))
+            if (classifierLicenseField.Count > 0)
             {
-                log.Error($"Failed to find any LICENSE information for the package {name}-{version}");
-            }
-            else if (string.IsNullOrEmpty(supplierField))
-            {
-                log.Error($"Failed to find any SUPPLIER information for the package {name}-{version}");
+                // convert them into a single string separated by commas
+                licenseField = string.Join(", ", classifierLicenseField);
             }
 
-            return new ParsedPackageInformation(name, version, new PackageDetails(classifierLicenseField ?? licenseField, supplierField));
+            if (string.IsNullOrEmpty(licenseField))
+            {
+                log.Verbose($"Failed to find any LICENSE information for the package {name}-{version}");
+                licenseField = null;
+            }
+
+            if (string.IsNullOrEmpty(supplierField))
+            {
+                log.Verbose($"Failed to find any SUPPLIER information for the package {name}-{version}");
+                supplierField = null;
+            }
+
+            return new ParsedPackageInformation(name, version, new PackageDetails(licenseField, supplierField));
         }
         catch (PackageMetadataParsingException e)
         {
@@ -180,9 +208,9 @@ public class PypiUtils : IPackageManagerUtils<PypiUtils>
         // look for the line that starts with "Location: "
         var locationLine = outputLines.FirstOrDefault(line => line.StartsWith("Location: ", StringComparison.OrdinalIgnoreCase));
 
-        if (locationLine == null)
+        if (string.IsNullOrEmpty(locationLine))
         {
-            log.Error("Could not find the line that starts with 'Location: ' in the output of 'python -m pip show pip location' command.");
+            log.Error("Could not find 'Location: ' in the output of 'python -m pip show pip location' command.");
             return null;
         }
 

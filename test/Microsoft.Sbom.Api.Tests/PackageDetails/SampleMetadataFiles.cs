@@ -185,4 +185,35 @@ public static class SampleMetadataFiles
                                                                   s.authors = [""John Doe"".freeze, ""Joe Corcoran"".freeze, ""Russell Osborne"".freeze]
                                                                   s.date = ""2023-10-07""
                                                                 end";
+
+    public const string PipMetadataValidAuthorAndDualLicense = @"Metadata-Version: 2.1
+                                                                Name: sample-python-package
+                                                                Version: 1.0.0
+                                                                Summary: sample summary text
+                                                                Author: Gustavo Niemeyer
+                                                                Maintainer: Sample Author
+                                                                Platform: UNKNOWN
+                                                                Classifier: Development Status :: 5 - Production/Stable
+                                                                Classifier: Intended Audience :: Developers
+                                                                Classifier: License :: OSI Approved :: BSD License
+                                                                Classifier: License :: OSI Approved :: Apache Software License";
+
+    public const string PipMetadataValidAuthorAndSingleLicense = @"Metadata-Version: 2.1
+                                                                Name: sample-python-package
+                                                                Version: 1.0.0
+                                                                Summary: sample summary text
+                                                                Author: Gustavo Niemeyer
+                                                                Maintainer: Sample Author
+                                                                Platform: UNKNOWN
+                                                                Classifier: Development Status :: 5 - Production/Stable
+                                                                Classifier: Intended Audience :: Developers
+                                                                Classifier: License :: OSI Approved :: BSD License";
+
+    public const string PipMetadataMissingSupplierAndLicense = @"Metadata-Version: 2.1
+                                                                Name: sample-python-package
+                                                                Version: 1.0.0
+                                                                Summary: sample summary text
+                                                                Platform: UNKNOWN
+                                                                Classifier: Development Status :: 5 - Production/Stable
+                                                                Classifier: Intended Audience :: Developers";
 }

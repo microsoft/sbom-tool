@@ -23,7 +23,7 @@ internal static class PipComponentExtensions
         PackageUrl = pipComponent.PackageUrl?.ToString(),
         PackageName = pipComponent.Name,
         PackageVersion = pipComponent.Version,
-        Supplier = string.IsNullOrEmpty(component.Supplier) ? null : $"Person: {component.Supplier}",
+        Supplier = string.IsNullOrEmpty(component.Supplier) ? null : $"Organization: {component.Supplier}",
         LicenseInfo = new LicenseInfo
         {
             Concluded = string.IsNullOrEmpty(component.LicenseConcluded) ? null : component.LicenseConcluded,
