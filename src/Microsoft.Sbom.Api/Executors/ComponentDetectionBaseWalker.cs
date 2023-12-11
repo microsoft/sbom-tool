@@ -82,7 +82,7 @@ public abstract class ComponentDetectionBaseWalker
         if (sbomConfigs.TryGet(Constants.SPDX22ManifestInfo, out var spdxSbomConfig))
         {
             var directory = Path.GetDirectoryName(spdxSbomConfig.ManifestJsonFilePath);
-            directory = Path.GetFullPath(directory);
+            directory = fileSystemUtils.GetFullPath(directory);
             if (!string.IsNullOrEmpty(directory))
             {
                 cliArgumentBuilder.AddArg("DirectoryExclusionList", directory);
