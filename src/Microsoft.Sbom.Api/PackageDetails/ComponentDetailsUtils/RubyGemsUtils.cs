@@ -59,11 +59,11 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
 
         var fullGemspecPath = Path.Join(gemspecLocation, gemspecFileName);
 
-        gemspecLocation = Path.GetFullPath(fullGemspecPath);
+        fullGemspecPath = Path.GetFullPath(fullGemspecPath);
 
         if (fileSystemUtils.FileExists(fullGemspecPath))
         {
-            return gemspecLocation;
+            return fullGemspecPath;
         }
         else
         {
