@@ -3,12 +3,12 @@
 
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Tests.PackageDetails;
 
@@ -16,7 +16,7 @@ namespace Microsoft.Sbom.Api.Tests.PackageDetails;
 public class RubyGemsUtilsTests
 {
     private readonly Mock<IFileSystemUtils> mockFileSystemUtils = new Mock<IFileSystemUtils>();
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<RubyGemsUtils>> mockLogger = new Mock<ILogger<RubyGemsUtils>>();
     private readonly Mock<IRecorder> mockRecorder = new Mock<IRecorder>();
     private readonly Mock<IProcessExecutor> mockProcessExecutor = new Mock<IProcessExecutor>();
 

@@ -7,12 +7,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Tests.PackageDetails;
 
@@ -20,7 +20,7 @@ namespace Microsoft.Sbom.Api.Tests.PackageDetails;
 public class MavenUtilsTests
 {
     private readonly Mock<IFileSystemUtils> mockFileSystemUtils = new Mock<IFileSystemUtils>();
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<MavenUtils>> mockLogger = new Mock<ILogger<MavenUtils>>();
     private readonly Mock<IRecorder> mockRecorder = new Mock<IRecorder>();
 
     private static readonly string EnvHomePath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "HOMEPATH" : "HOME";
