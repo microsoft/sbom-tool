@@ -464,6 +464,11 @@ stylecop.documentation.xmlHeader = false
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md
 dotnet_diagnostic.SA1623.severity = none
 
+# CA1848: Use the LoggerMessage delegates
+# Justification: This rule currently throws an exception for our codebase.
+# https://github.com/dotnet/roslyn-analyzers/issues/6852
+dotnet_diagnostic.CA1859.severity = none
+
 # CA1859: Use concrete types when possible
 # Justification: This rule currently throws an exception for our codebase.
 # https://github.com/dotnet/roslyn-analyzers/issues/6852

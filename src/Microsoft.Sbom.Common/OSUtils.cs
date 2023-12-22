@@ -62,7 +62,7 @@ public class OSUtils : IOSUtils
         catch (InvalidOperationException)
         {
             var firstEnvVarInstance = variableNameValues.First();
-            logger.LogWarning($"There are duplicate environment variables in different case for {variableName}, the value used is {firstEnvVarInstance}");
+            logger.LogWarning("There are duplicate environment variables in different case for {VariableName}, the value used is {FirstEnvVarInstance}", variableName, firstEnvVarInstance);
             return firstEnvVarInstance;
         }
     }
