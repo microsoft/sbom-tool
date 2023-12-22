@@ -466,13 +466,18 @@ dotnet_diagnostic.SA1623.severity = none
 
 # CA1848: Use the LoggerMessage delegates
 # Justification: This rule currently throws an exception for our codebase.
-# https://github.com/dotnet/roslyn-analyzers/issues/6852
-dotnet_diagnostic.CA1859.severity = none
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1848
+dotnet_diagnostic.CA1848.severity = none
 
 # CA1859: Use concrete types when possible
 # Justification: This rule currently throws an exception for our codebase.
 # https://github.com/dotnet/roslyn-analyzers/issues/6852
 dotnet_diagnostic.CA1859.severity = none
+
+# CA2254: Template should be a static expression
+# Justification: This rule currently throws an exception for our codebase.
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2254
+dotnet_diagnostic.CA2254.severity = none
 
 # NU5104: A stable release of a package should not have a prerelease dependency
 # Justification: The Mono.Unix package that allows our tool to be built on ARM is labeled as 7.1.0-final.1.21458.1 which is detected as a prerelease dependency.
