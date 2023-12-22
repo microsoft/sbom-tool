@@ -120,7 +120,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
             }
 
             // Filter out undefined licenses.
-            foreach (var kvp in extractedLicenses.Where(kvp => kvp.Value.ToLower() == "noassertion" || kvp.Value.ToLower() == "unlicense" || kvp.Value.ToLower() == "other").ToList())
+            foreach (var kvp in extractedLicenses.Where(kvp => IsUndefinedLicense(kvp.Value)).ToList())
             {
                 extractedLicenses.Remove(kvp.Key);
             }
@@ -160,5 +160,10 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
         }
 
         return value;
+    }
+
+    private bool IsUndefinedLicense(string license)
+    {
+        return license.Equals("noassertion", StringComparison.InvariantCultureIgnoreCase) || license.Equals("unlicense", StringComparison.InvariantCultureIgnoreCase) || license.Equals("other", StringComparison.InvariantCultureIgnoreCase);
     }
 }

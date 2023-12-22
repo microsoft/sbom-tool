@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Text.Json.Serialization;
@@ -20,12 +20,14 @@ public class SPDXRelationship
     /// <summary>
     /// Gets or sets the id of the target element with whom the source element has a relationship.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("relatedSpdxElement")]
     public string TargetElementId { get; set; }
 
     /// <summary>
     /// Gets or sets the id of the target element with whom the source element has a relationship.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("spdxElementId")]
     public string SourceElementId { get; set; }
 }

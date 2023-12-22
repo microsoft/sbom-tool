@@ -103,4 +103,7 @@ public abstract class FileSystemUtils : IFileSystemUtils
 
     /// <inheritdoc />
     public DirectoryInfo GetParentDirectory(string path) => Directory.GetParent(path);
+
+    /// <inheritdoc />
+    public byte[] ReadAllBytes(string path) => File.ReadAllBytes(path);
 }

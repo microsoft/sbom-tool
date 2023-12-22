@@ -1,13 +1,12 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Runtime.Serialization;
+namespace Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 
-namespace Microsoft.Sbom.Exceptions;
+using System;
 
 /// <summary>
-/// Thrown when the SPDX parser detects an error in the JSON file.
+/// Thrown when the parser detects an error in the JSON file.
 /// </summary>
 public class ParserException : Exception
 {

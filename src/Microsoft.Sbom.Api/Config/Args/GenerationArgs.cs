@@ -115,4 +115,11 @@ public class GenerationArgs : CommonArgs
     [ArgShortcut("li")]
     [ArgDescription("If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.")]
     public bool? FetchLicenseInformation { get; set; }
+
+    /// <summary>
+    /// If set to true, we will attempt to parse license and supplier info from the packages metadata file.
+    /// </summary>
+    [ArgShortcut("pm")]
+    [ArgDescription("If set to true, we will attempt to parse license and supplier info from the packages metadata file.")]
+    public bool? EnablePackageMetadataParsing { get; set; }
 }

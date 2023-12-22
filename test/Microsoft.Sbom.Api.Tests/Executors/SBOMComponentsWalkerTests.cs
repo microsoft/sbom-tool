@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.ComponentDetection.Orchestrator.Commands;
+using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.Sbom.Api.Manifest.Configuration;
+using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
@@ -32,6 +35,7 @@ public class SBOMComponentsWalkerTests
     private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
     private readonly Mock<ISbomConfigProvider> mockSbomConfigs = new Mock<ISbomConfigProvider>();
     private readonly Mock<IFileSystemUtils> mockFileSystem = new Mock<IFileSystemUtils>();
+    private readonly Mock<IPackageDetailsFactory> mockPackageDetailsFactory = new Mock<IPackageDetailsFactory>();
     private readonly Mock<ILicenseInformationFetcher> mockLicenseInformationFetcher = new Mock<ILicenseInformationFetcher>();
 
     public SBOMComponentsWalkerTests()
@@ -47,10 +51,10 @@ public class SBOMComponentsWalkerTests
     [TestMethod]
     public async Task GetComponents()
     {
-        var scannedComponents = new List<ScannedComponentWithLicense>();
+        var scannedComponents = new List<ExtendedScannedComponent>();
         for (var i = 1; i < 4; i++)
         {
-            var scannedComponent = new ScannedComponentWithLicense
+            var scannedComponent = new ExtendedScannedComponent
             {
                 Component = new SpdxComponent("SPDX-2.2", new Uri("http://test.uri"), "componentName", $"123{i}", "abcdef", $"path{i}"),
                 DetectorId = "SPDX22SBOM"
@@ -67,8 +71,8 @@ public class SBOMComponentsWalkerTests
             ComponentsFound = scannedComponents
         };
 
-        mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
-        var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object, mockLicenseInformationFetcher.Object);
+        mockDetector.Setup(o => o.ScanAsync(It.IsAny<ScanSettings>())).Returns(Task.FromResult(scanResult));
+        var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object, mockPackageDetailsFactory.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
         var discoveredComponents = await packagesChannelReader.output.ReadAllAsync().ToListAsync();
@@ -85,10 +89,10 @@ public class SBOMComponentsWalkerTests
     [TestMethod]
     public async Task GetComponentsWithFiltering()
     {
-        var scannedComponents = new List<ScannedComponentWithLicense>();
+        var scannedComponents = new List<ExtendedScannedComponent>();
         for (var i = 1; i < 4; i++)
         {
-            var scannedComponent = new ScannedComponentWithLicense
+            var scannedComponent = new ExtendedScannedComponent
             {
                 Component = new SpdxComponent("SPDX-2.2", new Uri("http://test.uri"), "componentName", $"123{i}", "abcdef", $"path{i}"),
                 DetectorId = "SPDX22SBOM"
@@ -97,7 +101,7 @@ public class SBOMComponentsWalkerTests
             scannedComponents.Add(scannedComponent);
         }
 
-        var nonSbomComponent = new ScannedComponentWithLicense
+        var nonSbomComponent = new ExtendedScannedComponent
         {
             Component = new NpmComponent("componentName", "123"),
             DetectorId = "notSPDX22SBOM"
@@ -112,8 +116,8 @@ public class SBOMComponentsWalkerTests
             ComponentsFound = scannedComponents
         };
 
-        mockDetector.Setup(o => o.ScanAsync(It.IsAny<string[]>())).Returns(Task.FromResult(scanResult));
-        var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object, mockLicenseInformationFetcher.Object);
+        mockDetector.Setup(o => o.ScanAsync(It.IsAny<ScanSettings>())).Returns(Task.FromResult(scanResult));
+        var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object, mockPackageDetailsFactory.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
         var discoveredComponents = await packagesChannelReader.output.ReadAllAsync().ToListAsync();

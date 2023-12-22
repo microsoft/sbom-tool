@@ -20,6 +20,7 @@ using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
 using Serilog;
 using Serilog.Core;
+using Spectre.Console;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Output.Telemetry;
@@ -34,10 +35,13 @@ public class TelemetryRecorder : IRecorder
     private readonly IDictionary<string, object> switches = new Dictionary<string, object>();
     private readonly IList<Exception> exceptions = new List<Exception>();
     private readonly IList<Exception> apiExceptions = new List<Exception>();
-    private int totalNumberOfPackages = 0;
-    private int totalNumberOfLicenses = 0;
+    private readonly IList<Exception> metadataExceptions = new List<Exception>();
     private IList<FileValidationResult> errors = new List<FileValidationResult>();
     private Result result = Result.Success;
+
+    private int totalNumberOfPackages = 0;
+    private int totalNumberOfLicenses = 0;
+    private int packageDetailsEntries = 0;
 
     public IFileSystemUtils FileSystemUtils { get; }
 
@@ -193,12 +197,36 @@ public class TelemetryRecorder : IRecorder
     }
 
     /// <summary>
+    /// Record any exception that was encountered during the detection or parsing of individual package metadata files.
+    /// </summary>
+    /// <param name="exception">The exception that was encountered.</param>
+    /// <exception cref="ArgumentNullException">If the exception is null.</exception>
+    public void RecordMetadataException(Exception metadataException)
+    {
+        if (metadataException is null)
+        {
+            throw new ArgumentNullException();
+        }
+
+        this.metadataExceptions.Add(metadataException);
+    }
+
+    /// <summary>
     /// Record the total number of packages that were processed during the execution of the SBOM tool.
     /// </summary>
     /// <param name="packageCount">The total package count after execution.</param>
     public void RecordTotalNumberOfPackages(int packageCount)
     {
         this.totalNumberOfPackages = packageCount;
+    }
+
+    /// <summary>
+    /// Adds onto the total number of packageDetail entries found by the PackageDetailsFactory.
+    /// </summary>
+    /// <param name="packageDetailsCount">The total packageDetails count after execution of the PackageDetailsFactory.</param>
+    public void AddToTotalNumberOfPackageDetailsEntries(int packageDetailsCount)
+    {
+        Interlocked.Add(ref this.packageDetailsEntries, packageDetailsCount);
     }
 
     /// <summary>
@@ -272,7 +300,9 @@ public class TelemetryRecorder : IRecorder
                 Switches = this.switches,
                 Exceptions = this.exceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),
                 APIExceptions = this.apiExceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),
-                TotalLicensesDetected = this.totalNumberOfLicenses
+                MetadataExceptions = this.metadataExceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(g => g.Key, g => g.First().Message),
+                TotalLicensesDetected = this.totalNumberOfLicenses,
+                PackageDetailsEntries = this.packageDetailsEntries
             };
 
             // Log to logger.

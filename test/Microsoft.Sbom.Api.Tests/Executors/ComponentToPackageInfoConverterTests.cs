@@ -50,24 +50,24 @@ public class ComponentToPackageInfoConverterTests
     [TestMethod]
     public async Task ConvertTestAsync()
     {
-        var scannedComponents = new List<ScannedComponentWithLicense>()
+        var scannedComponents = new List<ExtendedScannedComponent>()
         {
-            new ScannedComponentWithLicense
+            new ExtendedScannedComponent
             {
                 LocationsFoundAt = "test".Split(),
                 Component = new NuGetComponent("nugetpackage", "1.0.0")
             },
-            new ScannedComponentWithLicense
+            new ExtendedScannedComponent
             {
                 LocationsFoundAt = "test".Split(),
                 Component = new NuGetComponent("nugetpackage2", "1.0.0")
             },
-            new ScannedComponentWithLicense
+            new ExtendedScannedComponent
             {
                 LocationsFoundAt = "test".Split(),
                 Component = new GitComponent(new Uri("http://test.uri"), "hash")
             },
-            new ScannedComponentWithLicense
+            new ExtendedScannedComponent
             {
                 LocationsFoundAt = "test".Split(),
                 Component = new MavenComponent("groupId", "artifactId", "1.0.0")
@@ -89,7 +89,7 @@ public class ComponentToPackageInfoConverterTests
     [TestMethod]
     public async Task ConvertNuGet_AuthorPopulated()
     {
-        var scannedComponent = new ScannedComponentWithLicense
+        var scannedComponent = new ExtendedScannedComponent
         {
             Component = new NuGetComponent("nugetpackage", "1.0.0")
             {
@@ -105,7 +105,7 @@ public class ComponentToPackageInfoConverterTests
     [TestMethod]
     public async Task ConvertNuGet_AuthorNotPopulated()
     {
-        var scannedComponent = new ScannedComponentWithLicense
+        var scannedComponent = new ExtendedScannedComponent
         {
             Component = new NuGetComponent("nugetpackage", "1.0.0") { Authors = null }
         };
@@ -116,23 +116,39 @@ public class ComponentToPackageInfoConverterTests
     }
 
     [TestMethod]
-    public async Task ConvertNuGet_LicensePopulated()
+    public async Task ConvertNuGet_LicenseConcludedPopulated()
     {
-        var scannedComponent = new ScannedComponentWithLicense
+        var scannedComponent = new ExtendedScannedComponent
         {
             Component = new NuGetComponent("nugetpackage", "1.0.0") { Authors = null },
-            License = "MIT"
+            LicenseConcluded = "MIT"
         };
 
         var packageInfo = await ConvertScannedComponent(scannedComponent);
 
         Assert.AreEqual("MIT", packageInfo.LicenseInfo.Concluded);
+        Assert.IsNull(packageInfo.LicenseInfo?.Declared);
     }
 
     [TestMethod]
-    public async Task ConvertNuGet_LicenseNotPopulated()
+    public async Task ConvertNuGet_LicenseDeclaredPopulated()
     {
-        var scannedComponent = new ScannedComponentWithLicense
+        var scannedComponent = new ExtendedScannedComponent
+        {
+            Component = new NuGetComponent("nugetpackage", "1.0.0") { Authors = null },
+            LicenseDeclared = "MIT"
+        };
+
+        var packageInfo = await ConvertScannedComponent(scannedComponent);
+
+        Assert.AreEqual("MIT", packageInfo.LicenseInfo.Declared);
+        Assert.IsNull(packageInfo.LicenseInfo?.Concluded);
+    }
+
+    [TestMethod]
+    public async Task ConvertNuGet_LicensesNotPopulated()
+    {
+        var scannedComponent = new ExtendedScannedComponent
         {
             Component = new NuGetComponent("nugetpackage", "1.0.0") { Authors = null },
         };
@@ -140,12 +156,13 @@ public class ComponentToPackageInfoConverterTests
         var packageInfo = await ConvertScannedComponent(scannedComponent);
 
         Assert.IsNull(packageInfo.LicenseInfo?.Concluded);
+        Assert.IsNull(packageInfo.LicenseInfo?.Declared);
     }
 
     [TestMethod]
     public async Task ConvertNpm_AuthorPopulated_Name()
     {
-        var scannedComponent = new ScannedComponentWithLicense
+        var scannedComponent = new ExtendedScannedComponent
         {
             Component = new NpmComponent("nugetpackage", "1.0.0", author: new NpmAuthor("Suzy Author"))
         };
@@ -158,7 +175,7 @@ public class ComponentToPackageInfoConverterTests
     [TestMethod]
     public async Task ConvertNpm_AuthorPopulated_NameAndEmail()
     {
-        var scannedComponent = new ScannedComponentWithLicense
+        var scannedComponent = new ExtendedScannedComponent
         {
             Component = new NpmComponent("nugetpackage", "1.0.0", author: new NpmAuthor("Suzy Author", "suzya@contoso.com"))
         };
@@ -171,7 +188,7 @@ public class ComponentToPackageInfoConverterTests
     [TestMethod]
     public async Task ConvertNpm_AuthorNotPopulated()
     {
-        var scannedComponent = new ScannedComponentWithLicense
+        var scannedComponent = new ExtendedScannedComponent
         {
             Component = new NpmComponent("npmpackage", "1.0.0") { Author = null }
         };
@@ -184,10 +201,10 @@ public class ComponentToPackageInfoConverterTests
     [TestMethod]
     public async Task ConvertNpm_LicensePopulated()
     {
-        var scannedComponent = new ScannedComponentWithLicense
+        var scannedComponent = new ExtendedScannedComponent
         {
             Component = new NpmComponent("npmpackage", "1.0.0") { Author = null },
-            License = "MIT"
+            LicenseConcluded = "MIT"
         };
 
         var packageInfo = await ConvertScannedComponent(scannedComponent);
@@ -198,7 +215,7 @@ public class ComponentToPackageInfoConverterTests
     [TestMethod]
     public async Task ConvertNpm_LicenseNotPopulated()
     {
-        var scannedComponent = new ScannedComponentWithLicense
+        var scannedComponent = new ExtendedScannedComponent
         {
             Component = new NpmComponent("npmpackage", "1.0.0") { Author = null },
         };
@@ -211,21 +228,21 @@ public class ComponentToPackageInfoConverterTests
     [TestMethod]
     public async Task ConvertWorksWithBuildComponentPathNull()
     {
-        var scannedComponents = new List<ScannedComponentWithLicense>()
+        var scannedComponents = new List<ExtendedScannedComponent>()
         {
-            new ScannedComponentWithLicense
+            new ExtendedScannedComponent
             {
                 Component = new NuGetComponent("nugetpackage", "1.0.0")
             },
-            new ScannedComponentWithLicense
+            new ExtendedScannedComponent
             {
                 Component = new NuGetComponent("nugetpackage2", "1.0.0")
             },
-            new ScannedComponentWithLicense
+            new ExtendedScannedComponent
             {
                 Component = new GitComponent(new Uri("http://test.uri"), "hash")
             },
-            new ScannedComponentWithLicense
+            new ExtendedScannedComponent
             {
                 Component = new MavenComponent("groupId", "artifactId", "1.0.0")
             }
@@ -243,7 +260,7 @@ public class ComponentToPackageInfoConverterTests
         Assert.IsFalse(errors?.Any());
     }
 
-    private async Task<PackageInfo> ConvertScannedComponent(ScannedComponentWithLicense scannedComponent)
+    private async Task<PackageInfo> ConvertScannedComponent(ExtendedScannedComponent scannedComponent)
     {
         var componentsChannel = Channel.CreateUnbounded<ScannedComponent>();
         await componentsChannel.Writer.WriteAsync(scannedComponent);

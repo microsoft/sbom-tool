@@ -1,9 +1,11 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using SbomChecksum = Microsoft.Sbom.Contracts.Checksum;
 using SPDXChecksum = Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Checksum;
@@ -14,18 +16,24 @@ namespace Microsoft.Sbom.Utils;
 /// Provides extension methods to convert a SPDX object to
 /// the equivalent internal object as defined in Sbom.Contracts.
 /// </summary>
-internal static class SPDXToSbomFormatConverterExtensions
+public static class SPDXToSbomFormatConverterExtensions
 {
     /// <summary>
     /// Converts a <see cref="SPDXFile"/> object to a <see cref="SbomFile"/> object.
     /// </summary>
     /// <param name="spdxFile"></param>
     /// <returns></returns>
-    internal static SbomFile ToSbomFile(this SPDXFile spdxFile)
+    public static SbomFile ToSbomFile(this SPDXFile spdxFile)
     {
+        var checksums = spdxFile.FileChecksums?.Select(c => c.ToSbomChecksum());
+        if (!checksums.Any() || checksums.All(c => c.Algorithm != AlgorithmName.SHA256))
+        {
+            throw new ParserException("File hash is missing a SHA256 value");
+        }
+
         return new SbomFile
         {
-            Checksum = spdxFile.FileChecksums?.Select(c => c.ToSbomChecksum()),
+            Checksum = checksums,
             FileCopyrightText = spdxFile.FileCopyrightText,
             Id = spdxFile.SPDXId,
             Path = spdxFile.FileName,
@@ -39,8 +47,20 @@ internal static class SPDXToSbomFormatConverterExtensions
     /// </summary>
     /// <param name="spdxPackage"></param>
     /// <returns></returns>
-    internal static SbomPackage ToSbomPackage(this SPDXPackage spdxPackage)
+    public static SbomPackage ToSbomPackage(this SPDXPackage spdxPackage)
     {
+        if (spdxPackage.FilesAnalyzed &&
+            (spdxPackage.LicenseInfoFromFiles == null || !spdxPackage.LicenseInfoFromFiles.Any()))
+        {
+            throw new ParserException("Package license list was empty.");
+        }
+
+        if (spdxPackage.PackageVerificationCode is not null
+            && string.IsNullOrEmpty(spdxPackage.PackageVerificationCode.PackageVerificationCodeValue))
+        {
+            throw new ParserException("Package verification code was null or empty.");
+        }
+
         return new SbomPackage
         {
             Checksum = spdxPackage.Checksums?.Select(c => c.ToSbomChecksum()),
@@ -65,7 +85,7 @@ internal static class SPDXToSbomFormatConverterExtensions
     /// </summary>
     /// <param name="spdxRelationship"></param>
     /// <returns></returns>
-    internal static SBOMRelationship ToSbomRelationship(this SPDXRelationship spdxRelationship)
+    public static SBOMRelationship ToSbomRelationship(this SPDXRelationship spdxRelationship)
     {
         return new SBOMRelationship
         {
@@ -80,7 +100,7 @@ internal static class SPDXToSbomFormatConverterExtensions
     /// </summary>
     /// <param name="spdxExternalDocumentReference"></param>
     /// <returns></returns>
-    internal static SBOMReference ToSbomReference(this SpdxExternalDocumentReference spdxExternalDocumentReference)
+    public static SBOMReference ToSbomReference(this SpdxExternalDocumentReference spdxExternalDocumentReference)
     {
         return new SBOMReference
         {
@@ -97,7 +117,7 @@ internal static class SPDXToSbomFormatConverterExtensions
     /// <returns></returns>
     internal static string ToPurl(this IList<ExternalReference> externalReference)
     {
-        var packageManagerReference = externalReference?.Where(e => e.ReferenceCategory.Replace("_", "-") == "PACKAGE-MANAGER")?.First();
+        var packageManagerReference = externalReference?.Where(e => e.ReferenceCategory.Replace("_", "-", System.StringComparison.Ordinal) == "PACKAGE-MANAGER")?.First();
         return packageManagerReference?.Locator;
     }
 
@@ -110,7 +130,7 @@ internal static class SPDXToSbomFormatConverterExtensions
     {
         return new SbomChecksum
         {
-            Algorithm = new Contracts.Enums.AlgorithmName(spdxChecksums.Algorithm, null),
+            Algorithm = new AlgorithmName(spdxChecksums.Algorithm, null),
             ChecksumValue = spdxChecksums.ChecksumValue,
         };
     }

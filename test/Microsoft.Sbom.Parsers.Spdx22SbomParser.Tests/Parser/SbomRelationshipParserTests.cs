@@ -1,63 +1,30 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.IO;
 using System.Text;
-using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Exceptions;
+using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SbomConstants = Microsoft.Sbom.Parsers.Spdx22SbomParser.Constants;
 
 namespace Microsoft.Sbom.Parser;
 
 [TestClass]
-public class SbomRelationshipParserTests
+public class SbomRelationshipParserTests : SbomParserTestsBase
 {
     [TestMethod]
     public void ParseSbomRelationshipsTest()
     {
         var bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
         using var stream = new MemoryStream(bytes);
-        var count = 0;
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
+        var result = this.Parse(parser);
 
-        foreach (var relationship in parser.GetRelationships())
-        {
-            count++;
-            Assert.IsNotNull(relationship);
-        }
-
-        Assert.AreEqual(2, count);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void NullStreamThrows()
-    {
-        new SbomRelationshipParser(null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ObjectDisposedException))]
-    public void StreamClosedTestReturnsNull()
-    {
-        var bytes = Encoding.UTF8.GetBytes(RelationshipStrings.GoodJsonWith2RelationshipsString);
-        using var stream = new MemoryStream(bytes);
-
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
-
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
-
-        stream.Close();
-
-        parser.GetRelationships().GetEnumerator().MoveNext();
+        Assert.AreEqual(2, result.RelationshipsCount);
     }
 
     [TestMethod]
@@ -65,33 +32,26 @@ public class SbomRelationshipParserTests
     public void StreamEmptyTestReturnsNull()
     {
         using var stream = new MemoryStream();
-        stream.Read(new byte[Constants.ReadBufferSize]);
-        var buffer = new byte[Constants.ReadBufferSize];
+        stream.Read(new byte[SbomConstants.ReadBufferSize]);
+        var buffer = new byte[SbomConstants.ReadBufferSize];
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
-
-        parser.GetRelationships().GetEnumerator().MoveNext();
+        var result = this.Parse(parser);
     }
 
     [DataTestMethod]
     [DataRow(RelationshipStrings.JsonRelationshipsStringMissingElementId)]
     [DataRow(RelationshipStrings.JsonRelationshipsStringMissingRelatedElement)]
     [TestMethod]
-    [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), 50);
+        var parser = new SPDXParser(stream, bufferSize: 50);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
-
-        parser.GetRelationships().GetEnumerator().MoveNext();
+        Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 
     [DataTestMethod]
@@ -105,33 +65,25 @@ public class SbomRelationshipParserTests
         var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
+        var result = this.Parse(parser);
 
-        foreach (var relationship in parser.GetRelationships())
-        {
-            Assert.IsNotNull(relationship);
-        }
+        Assert.IsTrue(result.RelationshipsCount > 0);
     }
 
     [DataTestMethod]
     [DataRow(RelationshipStrings.MalformedJsonRelationshipsStringBadRelationshipType)]
     [DataRow(RelationshipStrings.MalformedJsonRelationshipsString)]
     [TestMethod]
-    [ExpectedException(typeof(ParserException))]
     public void MalformedJsonTest_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
-
-        parser.GetRelationships().GetEnumerator().MoveNext();
+        _ = Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 
     [TestMethod]
@@ -140,12 +92,11 @@ public class SbomRelationshipParserTests
         var bytes = Encoding.UTF8.GetBytes(RelationshipStrings.MalformedJsonEmptyArray);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), ignoreValidation: true);
+        var parser = new SPDXParser(stream);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
+        var result = this.Parse(parser);
 
-        parser.GetRelationships().GetEnumerator().MoveNext();
+        Assert.AreEqual(0, result.RelationshipsCount);
     }
 
     [TestMethod]
@@ -155,11 +106,8 @@ public class SbomRelationshipParserTests
         var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        SPDXParser parser = new(stream, Array.Empty<ParserState>(), 0, ignoreValidation: true);
+        var parser = new SPDXParser(stream, bufferSize: 0);
 
-        var state = parser.Next();
-        Assert.AreEqual(ParserState.RELATIONSHIPS, state);
-
-        parser.GetRelationships().GetEnumerator().MoveNext();
+        var result = this.Parse(parser);
     }
 }
