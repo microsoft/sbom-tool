@@ -7,7 +7,6 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Orchestrator;
-using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -16,13 +15,14 @@ using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Exceptions;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.DependencyInjection;
 using PowerArgs;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Filters;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 internal class Program
 {
@@ -79,28 +79,25 @@ internal class Program
                         })
 
                         .AddSbomTool()
-                        .AddLogging(l => l.ClearProviders()
-                            .AddSerilog(new LoggerConfiguration()
-                            .MinimumLevel.ControlledBy(Interceptor.LogLevel)
-                            .Filter.ByExcluding(Matching.WithProperty("Microsoft.ComponentDetection.Orchestrator.Services.DetectorProcessingService"))
-                            .Filter.ByExcluding(Matching.WithProperty("System.Net.Http.HttpClient"))
-                            .Enrich.With<LoggingEnricher>()
-                            .Enrich.FromLogContext()
-                            .WriteTo.Map(
-                                LoggingEnricher.LogFilePathPropertyName,
-                                (logFilePath, wt) => wt.Async(x => x.File($"{logFilePath}")),
-                                1) // sinkMapCountLimit
-                            .WriteTo.Map<bool>(
-                                LoggingEnricher.PrintStderrPropertyName,
-                                (printLogsToStderr, wt) => wt.Logger(lc => lc
-                                    .WriteTo.Console(outputTemplate: Constants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
+                        .AddLogging(l => l.ClearProviders() // Clear logging providers coming from component-detection libraries
+                        .AddSerilog(new LoggerConfiguration()
+                        .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = LogEventLevel.Debug })
+                        .Enrich.With<LoggingEnricher>()
+                        .Enrich.FromLogContext()
+                        .WriteTo.Map(
+                            LoggingEnricher.LogFilePathPropertyName,
+                            (logFilePath, wt) => wt.Async(x => x.File($"{logFilePath}")),
+                            1) // sinkMapCountLimit
+                        .WriteTo.Map<bool>(
+                            LoggingEnricher.PrintStderrPropertyName,
+                            (printLogsToStderr, wt) => wt.Logger(lc => lc
+                                .WriteTo.Console(outputTemplate: Constants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
 
-                                    // Don't write the detection times table from DetectorProcessingService to the console, only the log file
-                                    .Filter.ByExcluding(Matching.WithProperty<string>("DetectionTimeLine", x => !string.IsNullOrEmpty(x))))
-                                    .Filter.ByExcluding(Matching.WithProperty<string>("System.Net.Http.HttpClient", x => !string.IsNullOrEmpty(x)))
-                                    .Filter.ByExcluding(Matching.FromSource("Microsoft.ComponentDetection.Orchestrator.Services.DetectorProcessingService")),
-                                1) // sinkMapCountLimit
-                            .CreateLogger()));
+                                // Don't write the detection times table from DetectorProcessingService to the console, only the log file
+                                .Filter.ByExcluding(Matching.WithProperty<string>("DetectionTimeLine", x => !string.IsNullOrEmpty(x))))
+                                .Filter.ByExcluding(Matching.FromSource("Microsoft.ComponentDetection.Orchestrator.Services.DetectorProcessingService")),
+                            1) // sinkMapCountLimit
+                        .CreateLogger()));
                 })
                 .RunConsoleAsync(x => x.SuppressStatusMessages = true);
         }

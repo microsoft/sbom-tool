@@ -10,6 +10,7 @@ using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
+
 namespace Microsoft.Sbom.Api.PackageDetails;
 
 /// <summary>
