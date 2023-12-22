@@ -4,12 +4,11 @@
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
-using Microsoft.Extensions.Logging;
 using Microsoft.ComponentDetection.Orchestrator.Commands;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Tests.Utils;
 

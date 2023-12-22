@@ -24,12 +24,11 @@ using Microsoft.ComponentDetection.Detectors.Vcpkg;
 using Microsoft.ComponentDetection.Detectors.Yarn;
 using Microsoft.ComponentDetection.Detectors.Yarn.Parsers;
 using Microsoft.ComponentDetection.Orchestrator;
+using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Microsoft.ComponentDetection.Orchestrator.Experiments;
 using Microsoft.ComponentDetection.Orchestrator.Services;
 using Microsoft.ComponentDetection.Orchestrator.Services.GraphTranslation;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Extensions;
@@ -57,15 +56,9 @@ using Microsoft.Sbom.Common.Extensions;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Interfaces;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
-using Serilog.Core;
 using Serilog.Events;
-using Serilog.Extensions.Logging;
-using Serilog.Filters;
-using Serilog.Sinks.Map;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using IComponentDetector = Microsoft.ComponentDetection.Contracts.IComponentDetector;
-using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Extensions.DependencyInjection;
 
@@ -87,30 +80,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddSbomTool(this IServiceCollection services, LogEventLevel logLevel = LogEventLevel.Information)
     {
         services
-            .AddSingleton<IConfiguration, Configuration>()
             .AddTransient(_ => FileSystemUtilsProvider.CreateInstance())
-            .AddTransient(x =>
-            {
-                logLevel = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? logLevel;
-                return Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
-                    .Filter.ByExcluding(Matching.FromSource("System.Net.Http.HttpClient"))
-                    .Enrich.With<LoggingEnricher>()
-                    .Enrich.FromLogContext()
-                    .WriteTo.Map(
-                        LoggingEnricher.LogFilePathPropertyName,
-                        (logFilePath, wt) => wt.Async(x => x.File($"{logFilePath}")),
-                        1) // sinkMapCountLimit
-                    .WriteTo.Map<bool>(
-                        LoggingEnricher.PrintStderrPropertyName,
-                        (printLogsToStderr, wt) => wt.Logger(lc => lc
-                            .WriteTo.Console(outputTemplate: Constants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
-
-                            // Don't write the detection times table from DetectorProcessingService to the console, only the log file
-                            .Filter.ByExcluding(Matching.WithProperty<string>("DetectionTimeLine", x => !string.IsNullOrEmpty(x)))),
-                        1) // sinkMapCountLimit
-                    .CreateLogger();
-            })
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
             .AddTransient<DirectoryWalker>()
@@ -134,6 +104,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<FileFilterer>()
             .AddTransient<PackagesWalker>()
             .AddTransient<PackageInfoJsonWriter>()
+            .AddTransient<ComponentToPackageInfoConverter>()
             .AddTransient<IJsonArrayGenerator<FileArrayGenerator>, FileArrayGenerator>()
             .AddTransient<IJsonArrayGenerator<PackageArrayGenerator>, PackageArrayGenerator>()
             .AddTransient<IJsonArrayGenerator<RelationshipsArrayGenerator>, RelationshipsArrayGenerator>()
@@ -211,31 +182,10 @@ public static class ServiceCollectionExtensions
 
                 return manifestData;
             })
-            .ConfigureLoggingProviders()
             .ConfigureComponentDetectors()
             .ConfigureComponentDetectionSharedServices()
             .ConfigureComponentDetectionCommandLineServices()
             .AddHttpClient<LicenseInformationService>();
-
-        return services;
-    }
-
-    public static IServiceCollection ConfigureLoggingProviders(this IServiceCollection services)
-    {
-        var providers = new LoggerProviderCollection();
-        services.AddSingleton(providers);
-        services.AddSingleton<ILoggerFactory>(sc =>
-        {
-            var providerCollection = sc.GetService<LoggerProviderCollection>();
-            var factory = new SerilogLoggerFactory(null, true, providerCollection);
-
-            foreach (var provider in sc.GetServices<ILoggerProvider>())
-            {
-                factory.AddProvider(provider);
-            }
-
-            return factory;
-        });
 
         return services;
     }

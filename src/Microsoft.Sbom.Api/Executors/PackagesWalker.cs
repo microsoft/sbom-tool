@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Extensions.Logging;
+using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
@@ -18,8 +19,8 @@ namespace Microsoft.Sbom.Api.Executors;
 /// </summary>
 public class PackagesWalker : ComponentDetectionBaseWalker
 {
-    public PackagesWalker(ILogger<PackagesWalker> log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils, ILicenseInformationFetcher licenseInformationFetcher)
-        : base(log, componentDetector, configuration, sbomConfigs, fileSystemUtils, licenseInformationFetcher)
+    public PackagesWalker(ILogger<PackagesWalker> log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils, IPackageDetailsFactory packageDetailsFactory, ILicenseInformationFetcher licenseInformationFetcher)
+        : base(log, componentDetector, configuration, sbomConfigs, fileSystemUtils, packageDetailsFactory, licenseInformationFetcher)
     {
     }
 

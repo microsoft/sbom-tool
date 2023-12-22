@@ -82,7 +82,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
             {
                 log.LogDebug("Starting SBOM generation workflow.");
 
-                sbomDir = configuration.ManifestDirPath.Value;
+                sbomDir = "C:\\repos\\dropvalidator-cd4.0.6\\_manifest";
 
                 // Don't remove directory if path is provided by user, there could be other files in that directory
                 if (configuration.ManifestDirPath.IsDefaultSource)

@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
-using Microsoft.Extensions.Logging;
 using Microsoft.ComponentDetection.Orchestrator.Commands;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
@@ -40,7 +40,6 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json.Linq;
-using Serilog.Events;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
@@ -298,7 +297,7 @@ public class ManifestGenerationWorkflowTests
                 manifestGeneratorProvider,
                 mockPackageInfoJsonWriterLogger.Object),
             packageInfoConverterMock.Object,
-            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object, mockPackageDetailsFactory.Object, licenseInformationFetcherMock.Object),
+            new PackagesWalker(mockPackagesWalkerLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object, mockPackageDetailsFactory.Object, licenseInformationFetcherMock.Object),
             mockPackageDetailsFactory.Object,
             licenseInformationFetcherMock.Object);
 

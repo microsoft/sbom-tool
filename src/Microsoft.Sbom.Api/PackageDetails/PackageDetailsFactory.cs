@@ -7,10 +7,9 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
-using Serilog;
-
 namespace Microsoft.Sbom.Api.PackageDetails;
 
 /// <summary>
@@ -18,13 +17,13 @@ namespace Microsoft.Sbom.Api.PackageDetails;
 /// </summary>
 public class PackageDetailsFactory : IPackageDetailsFactory
 {
-    private readonly ILogger log;
+    private readonly ILogger<PackageDetailsFactory> log;
     private readonly IRecorder recorder;
     private readonly IPackageManagerUtils<MavenUtils> mavenUtils;
     private readonly IPackageManagerUtils<NugetUtils> nugetUtils;
     private readonly IPackageManagerUtils<RubyGemsUtils> rubygemUtils;
 
-    public PackageDetailsFactory(ILogger log, IRecorder recorder, IPackageManagerUtils<MavenUtils> mavenUtils, IPackageManagerUtils<NugetUtils> nugetUtils, IPackageManagerUtils<RubyGemsUtils> rubygemUtils)
+    public PackageDetailsFactory(ILogger<PackageDetailsFactory> log, IRecorder recorder, IPackageManagerUtils<MavenUtils> mavenUtils, IPackageManagerUtils<NugetUtils> nugetUtils, IPackageManagerUtils<RubyGemsUtils> rubygemUtils)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
@@ -105,7 +104,7 @@ public class PackageDetailsFactory : IPackageDetailsFactory
 
                         break;
                     default:
-                        log.Verbose($"File extension {Path.GetExtension(path)} is not supported for extracting supplier info.");
+                        log.LogTrace($"File extension {Path.GetExtension(path)} is not supported for extracting supplier info.");
                         break;
                 }
             }
@@ -113,7 +112,7 @@ public class PackageDetailsFactory : IPackageDetailsFactory
 
         if (packageDetailsPaths.Count > 0)
         {
-            log.Information($"Found additional information for {packageDetailsDictionary.Count} components out of {packageDetailsPaths.Count} supported components.");
+            log.LogInformation($"Found additional information for {packageDetailsDictionary.Count} components out of {packageDetailsPaths.Count} supported components.");
         }
 
         recorder.AddToTotalNumberOfPackageDetailsEntries(packageDetailsDictionary.Count);

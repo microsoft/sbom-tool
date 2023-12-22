@@ -10,7 +10,6 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
-using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.PackageDetails;
