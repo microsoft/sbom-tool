@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
@@ -21,9 +21,9 @@ namespace Microsoft.Sbom.Api.Executors;
 public class FileInfoWriter
 {
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;
-    private readonly ILogger log;
+    private readonly ILogger<FileInfoWriter> log;
 
-    public FileInfoWriter(ManifestGeneratorProvider manifestGeneratorProvider, ILogger log)
+    public FileInfoWriter(ManifestGeneratorProvider manifestGeneratorProvider, ILogger<FileInfoWriter> log)
     {
         if (manifestGeneratorProvider is null)
         {
@@ -59,7 +59,7 @@ public class FileInfoWriter
         {
             foreach (var config in filesArraySupportingSBOMs)
             {
-                log.Verbose("Generating json for file {file} into {config}", sbomFile.Path, config.ManifestJsonFilePath);
+                log.LogTrace("Generating json for file {File} into {Config}", sbomFile.Path, config.ManifestJsonFilePath);
                 var generationResult = manifestGeneratorProvider
                     .Get(config.ManifestInfo)
                     .GenerateJsonDocument(sbomFile);
@@ -81,7 +81,7 @@ public class FileInfoWriter
         }
         catch (Exception e)
         {
-            log.Debug($"Encountered an error while generating json for file {sbomFile.Path}: {e.Message}");
+            log.LogDebug($"Encountered an error while generating json for file {sbomFile.Path}: {e.Message}");
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = ErrorType.JsonSerializationError,

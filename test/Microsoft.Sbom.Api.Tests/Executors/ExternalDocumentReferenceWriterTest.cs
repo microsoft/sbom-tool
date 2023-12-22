@@ -1,10 +1,10 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Manifest.Configuration;
@@ -18,7 +18,6 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Tests.Executors;
@@ -26,7 +25,8 @@ namespace Microsoft.Sbom.Api.Tests.Executors;
 [TestClass]
 public class ExternalDocumentReferenceWriterTest
 {
-    private Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private Mock<ILogger<MetadataBuilder>> mockLogger = new Mock<ILogger<MetadataBuilder>>();
+    private Mock<ILogger<ExternalDocumentReferenceWriter>> mockExternalDocumentReferenceWriterLogger = new Mock<ILogger<ExternalDocumentReferenceWriter>>();
     private Mock<IRecorder> recorderMock = new Mock<IRecorder>();
     private Mock<IFileSystemUtils> fileSystemUtilsMock = new Mock<IFileSystemUtils>();
 
@@ -71,7 +71,7 @@ public class ExternalDocumentReferenceWriterTest
 
         externalDocumentReferenceInfosChannel.Writer.Complete();
 
-        var externalDocumentReferenceWriter = new ExternalDocumentReferenceWriter(manifestGeneratorProvider, mockLogger.Object);
+        var externalDocumentReferenceWriter = new ExternalDocumentReferenceWriter(manifestGeneratorProvider, mockExternalDocumentReferenceWriterLogger.Object);
         var (results, errors) = externalDocumentReferenceWriter.Write(externalDocumentReferenceInfosChannel, new List<ISbomConfig> { sbomConfig });
 
         await foreach (var result in results.ReadAllAsync())

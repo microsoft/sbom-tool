@@ -1,16 +1,16 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
@@ -23,14 +23,14 @@ public class ManifestFileFilterer
     private readonly ManifestData manifestData;
     private readonly IFilter<DownloadedRootPathFilter> rootPathFilter;
     private readonly IConfiguration configuration;
-    private readonly ILogger log;
+    private readonly ILogger<ManifestFileFilterer> log;
     private readonly IFileSystemUtils fileSystemUtils;
 
     public ManifestFileFilterer(
         ManifestData manifestData,
         IFilter<DownloadedRootPathFilter> rootPathFilter,
         IConfiguration configuration,
-        ILogger log,
+        ILogger<ManifestFileFilterer> log,
         IFileSystemUtils fileSystemUtils)
     {
         this.manifestData = manifestData ?? throw new ArgumentNullException(nameof(manifestData));
@@ -69,7 +69,7 @@ public class ManifestFileFilterer
                 }
                 catch (Exception e)
                 {
-                    log.Debug($"Encountered an error while filtering file {manifestFile} from the manifest: {e.Message}");
+                    log.LogDebug($"Encountered an error while filtering file {manifestFile} from the manifest: {e.Message}");
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
                         ErrorType = ErrorType.Other,

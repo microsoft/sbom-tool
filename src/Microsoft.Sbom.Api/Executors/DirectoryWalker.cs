@@ -1,15 +1,15 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
@@ -20,10 +20,10 @@ namespace Microsoft.Sbom.Api.Executors;
 public class DirectoryWalker
 {
     private readonly IFileSystemUtils fileSystemUtils;
-    private readonly ILogger log;
+    private readonly ILogger<DirectoryWalker> log;
     private readonly bool followSymlinks;
 
-    public DirectoryWalker(IFileSystemUtils fileSystemUtils, ILogger log, IConfiguration configuration)
+    public DirectoryWalker(IFileSystemUtils fileSystemUtils, ILogger<DirectoryWalker> log, IConfiguration configuration)
     {
         if (configuration is null)
         {
@@ -37,13 +37,13 @@ public class DirectoryWalker
 
         if (!followSymlinks)
         {
-            log.Information("FollowSymlinks parameter is set to false, we won't follow symbolic links while traversing the filesystem.");
+            log.LogInformation("FollowSymlinks parameter is set to false, we won't follow symbolic links while traversing the filesystem.");
         }
     }
 
     public (ChannelReader<string> file, ChannelReader<FileValidationResult> errors) GetFilesRecursively(string root)
     {
-        log.Debug($"Enumerating files under the root path {root}.");
+        log.LogDebug($"Enumerating files under the root path {root}.");
 
         if (!fileSystemUtils.DirectoryExists(root))
         {
@@ -57,10 +57,10 @@ public class DirectoryWalker
         {
             try
             {
-                log.Verbose("Enumerating files under the directory {path}", path);
+                log.LogTrace("Enumerating files under the directory {Path}", path);
                 foreach (var file in fileSystemUtils.GetFilesInDirectory(path, followSymlinks))
                 {
-                    log.Verbose("Found file {file}.", file);
+                    log.LogTrace("Found file {File}.", file);
                     await output.Writer.WriteAsync(file);
                 }
 
@@ -69,7 +69,7 @@ public class DirectoryWalker
             }
             catch (Exception e)
             {
-                log.Debug($"Encountered an unknown error for {path}: {e.Message}");
+                log.LogDebug($"Encountered an unknown error for {path}: {e.Message}");
                 await errors.Writer.WriteAsync(new FileValidationResult
                 {
                     ErrorType = ErrorType.Other,

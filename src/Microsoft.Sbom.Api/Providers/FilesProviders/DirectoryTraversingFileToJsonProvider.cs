@@ -1,15 +1,15 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.Threading.Channels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
 
@@ -23,7 +23,7 @@ public class DirectoryTraversingFileToJsonProvider : PathBasedFileToJsonProvider
     public DirectoryTraversingFileToJsonProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger log,
+        ILogger<DirectoryTraversingFileToJsonProvider> log,
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
@@ -42,7 +42,7 @@ public class DirectoryTraversingFileToJsonProvider : PathBasedFileToJsonProvider
             // Thus, this condition should be to check that all the remaining configurations for file inputs are null.
             if (string.IsNullOrWhiteSpace(Configuration.BuildListFile?.Value) && Configuration.FilesList?.Value == null)
             {
-                Log.Debug($"Using the {nameof(DirectoryTraversingFileToJsonProvider)} provider for the files workflow.");
+                Log.LogDebug($"Using the {nameof(DirectoryTraversingFileToJsonProvider)} provider for the files workflow.");
                 return true;
             }
         }

@@ -1,6 +1,7 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,7 +13,7 @@ namespace Microsoft.Sbom.Api.Filters.Tests;
 [TestClass]
 public class DownloadedRootPathFilterTests
 {
-    private readonly Mock<ILogger> logger = new Mock<ILogger>();
+    private readonly Mock<ILogger<DownloadedRootPathFilter>> logger = new Mock<ILogger<DownloadedRootPathFilter>>();
 
     [TestMethod]
     public void DownloadedRootPathFilterTest_NoFilterPath_Succeeds()

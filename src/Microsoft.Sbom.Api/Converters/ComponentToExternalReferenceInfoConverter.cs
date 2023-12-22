@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -7,11 +7,11 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Converters;
 
@@ -20,9 +20,9 @@ namespace Microsoft.Sbom.Api.Converters;
 /// </summary>
 public class ComponentToExternalReferenceInfoConverter
 {
-    private readonly ILogger log;
+    private readonly ILogger<ComponentToExternalReferenceInfoConverter> log;
 
-    public ComponentToExternalReferenceInfoConverter(ILogger log)
+    public ComponentToExternalReferenceInfoConverter(ILogger<ComponentToExternalReferenceInfoConverter> log)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
     }
@@ -43,7 +43,7 @@ public class ComponentToExternalReferenceInfoConverter
                 }
                 catch (Exception e)
                 {
-                    log.Debug($"Encountered an error while converting SBOM component {scannedComponent.Component.Id} to external reference: {e.Message}");
+                    log.LogDebug($"Encountered an error while converting SBOM component {scannedComponent.Component.Id} to external reference: {e.Message}");
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
                         ErrorType = Entities.ErrorType.PackageError,

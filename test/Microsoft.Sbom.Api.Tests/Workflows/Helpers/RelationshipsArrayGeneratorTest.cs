@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Manifest.Configuration;
@@ -17,7 +18,6 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers;
@@ -30,8 +30,8 @@ public class RelationshipsArrayGeneratorTest
     private readonly Mock<IRecorder> recorderMock = new Mock<IRecorder>();
     private readonly Mock<ISbomConfigProvider> sbomConfigsMock = new Mock<ISbomConfigProvider>();
     private readonly Mock<RelationshipGenerator> relationshipGeneratorMock = new Mock<RelationshipGenerator>(new ManifestGeneratorProvider(null));
-    private readonly Mock<ILogger> loggerMock = new Mock<ILogger>();
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<RelationshipsArrayGenerator>> mockRelationshipsArrayGeneratorLogger = new Mock<ILogger<RelationshipsArrayGenerator>>();
+    private readonly Mock<ILogger<MetadataBuilder>> mockMetadataBuilderLogger = new Mock<ILogger<MetadataBuilder>>();
     private readonly Mock<IFileSystemUtils> fileSystemUtilsMock = new Mock<IFileSystemUtils>();
     private readonly ManifestGeneratorProvider manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
     private ISbomPackageDetailsRecorder recorder;
@@ -64,10 +64,10 @@ public class RelationshipsArrayGeneratorTest
                 }
             });
         relationshipGeneratorMock.CallBase = true;
-        relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), loggerMock.Object, sbomConfigsMock.Object, recorderMock.Object);
+        relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), mockRelationshipsArrayGeneratorLogger.Object, sbomConfigsMock.Object, recorderMock.Object);
         manifestGeneratorProvider.Init();
         metadataBuilder = new MetadataBuilder(
-            mockLogger.Object,
+            mockMetadataBuilderLogger.Object,
             manifestGeneratorProvider,
             Constants.TestManifestInfo,
             recorderMock.Object);

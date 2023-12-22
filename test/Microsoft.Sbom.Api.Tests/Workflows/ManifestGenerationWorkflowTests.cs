@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
@@ -41,7 +42,6 @@ using Serilog.Events;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
-using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Workflows.Tests;
 
@@ -52,12 +52,30 @@ public class ManifestGenerationWorkflowTests
 
     private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
     private readonly Mock<IConfiguration> configurationMock = new Mock<IConfiguration>();
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<SbomConfigProvider>> mockSbomConfigProividerLogger = new Mock<ILogger<SbomConfigProvider>>();
+    private readonly Mock<ILogger<MetadataBuilder>> mockMetadataBuilderLogger = new Mock<ILogger<MetadataBuilder>>();
+    private readonly Mock<ILogger<DirectoryTraversingFileToJsonProvider>> mockDirectoryTraversingFileToJsonProviderLogger = new Mock<ILogger<DirectoryTraversingFileToJsonProvider>>();
+    private readonly Mock<ILogger<FileHasher>> mockFileHasherLogger = new Mock<ILogger<FileHasher>>();
+    private readonly Mock<ILogger<SbomGenerationWorkflow>> mockSbomGenerationWorkflowLogger = new Mock<ILogger<SbomGenerationWorkflow>>();
+    private readonly Mock<ILogger<ManifestFolderFilterer>> mockManifestFolderFiltererLogger = new Mock<ILogger<ManifestFolderFilterer>>();
+    private readonly Mock<ILogger<FileInfoWriter>> mockFileInfoWriterLogger = new Mock<ILogger<FileInfoWriter>>();
+    private readonly Mock<ILogger<PackagesWalker>> mockPackagesWalkerLogger = new Mock<ILogger<PackagesWalker>>();
+    private readonly Mock<ILogger<PackageArrayGenerator>> mockPackageArrayGeneratorLogger = new Mock<ILogger<PackageArrayGenerator>>();
+    private readonly Mock<ILogger<FileListBasedFileToJsonProvider>> mockFileListBasedFileToJsonProviderLogger = new Mock<ILogger<FileListBasedFileToJsonProvider>>();
+    private readonly Mock<ILogger<FileArrayGenerator>> mockFileArrayGeneratorLogger = new Mock<ILogger<FileArrayGenerator>>();
+    private readonly Mock<ILogger<DirectoryWalker>> mockDirectoryWalkerLogger = new Mock<ILogger<DirectoryWalker>>();
+    private readonly Mock<ILogger<PackageInfoJsonWriter>> mockPackageInfoJsonWriterLogger = new Mock<ILogger<PackageInfoJsonWriter>>();
+    private readonly Mock<ILogger<FileListEnumerator>> mockFileListEnumeratorLogger = new Mock<ILogger<FileListEnumerator>>();
+    private readonly Mock<ILogger<ExternalDocumentReferenceProvider>> mockExternalDocumentReferenceProviderLogger = new Mock<ILogger<ExternalDocumentReferenceProvider>>();
+    private readonly Mock<ILogger<ExternalDocumentReferenceWriter>> mockExternalDocumentReferenceWriterLogger = new Mock<ILogger<ExternalDocumentReferenceWriter>>();
+    private readonly Mock<ILogger<CGScannedPackagesProvider>> mockCGScannedPackagesProviderLogger = new Mock<ILogger<CGScannedPackagesProvider>>();
+    private readonly Mock<ILogger<ExternalDocumentReferenceGenerator>> mockExternalDocumentReferenceGeneratorLogger = new Mock<ILogger<ExternalDocumentReferenceGenerator>>();
+    private static readonly Mock<ILogger<ComponentDetectorCachedExecutor>> MockComponentDetectorCachedExecutorLogger = new Mock<ILogger<ComponentDetectorCachedExecutor>>();
     private readonly Mock<IHashCodeGenerator> hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
     private readonly Mock<IOSUtils> mockOSUtils = new Mock<IOSUtils>();
     private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>();
     private readonly Mock<IMetadataProvider> mockMetadataProvider = new Mock<IMetadataProvider>();
-    private readonly Mock<ComponentDetectorCachedExecutor> mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
+    private readonly Mock<ComponentDetectorCachedExecutor> mockDetector = new Mock<ComponentDetectorCachedExecutor>(MockComponentDetectorCachedExecutorLogger.Object, new Mock<IComponentDetector>().Object);
     private readonly Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>> relationshipArrayGenerator = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>();
     private readonly Mock<ComponentToPackageInfoConverter> packageInfoConverterMock = new Mock<ComponentToPackageInfoConverter>();
     private readonly Mock<ISBOMReaderForExternalDocumentReference> sBOMReaderForExternalDocumentReferenceMock = new Mock<ISBOMReaderForExternalDocumentReference>();
@@ -83,7 +101,7 @@ public class ManifestGenerationWorkflowTests
         manifestGeneratorProvider.Init();
 
         var metadataBuilder = new MetadataBuilder(
-            mockLogger.Object,
+            mockMetadataBuilderLogger.Object,
             manifestGeneratorProvider,
             Constants.TestManifestInfo,
             recorderMock.Object);
@@ -108,7 +126,7 @@ public class ManifestGenerationWorkflowTests
         var sbomConfigs = new SbomConfigProvider(
             new IManifestConfigHandler[] { mockConfigHandler.Object },
             new IMetadataProvider[] { mockMetadataProvider.Object },
-            mockLogger.Object,
+            mockSbomConfigProividerLogger.Object,
             recorderMock.Object);
 
         using var manifestStream = new MemoryStream();
@@ -234,62 +252,62 @@ public class ManifestGenerationWorkflowTests
         var directoryTraversingProvider = new DirectoryTraversingFileToJsonProvider(
             configurationMock.Object,
             new ChannelUtils(),
-            mockLogger.Object,
+            mockDirectoryTraversingFileToJsonProviderLogger.Object,
             new FileHasher(
                 hashCodeGeneratorMock.Object,
                 new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
-                mockLogger.Object,
+                mockFileHasherLogger.Object,
                 configurationMock.Object,
                 sbomConfigs,
                 manifestGeneratorProvider,
                 new FileTypeUtils()),
-            new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
+            new ManifestFolderFilterer(manifestFilterMock, mockManifestFolderFiltererLogger.Object),
             new FileInfoWriter(
                 manifestGeneratorProvider,
-                mockLogger.Object),
+                mockFileInfoWriterLogger.Object),
             new InternalSBOMFileInfoDeduplicator(),
-            new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object));
+            new DirectoryWalker(fileSystemMock.Object, mockDirectoryWalkerLogger.Object, configurationMock.Object));
 
         var fileListBasedProvider = new FileListBasedFileToJsonProvider(
             configurationMock.Object,
             new ChannelUtils(),
-            mockLogger.Object,
+            mockFileListBasedFileToJsonProviderLogger.Object,
             new FileHasher(
                 hashCodeGeneratorMock.Object,
                 new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
-                mockLogger.Object,
+                mockFileHasherLogger.Object,
                 configurationMock.Object,
                 sbomConfigs,
                 manifestGeneratorProvider,
                 new FileTypeUtils()),
-            new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object),
+            new ManifestFolderFilterer(manifestFilterMock, mockManifestFolderFiltererLogger.Object),
             new FileInfoWriter(
                 manifestGeneratorProvider,
-                mockLogger.Object),
+                mockFileInfoWriterLogger.Object),
             new InternalSBOMFileInfoDeduplicator(),
-            new FileListEnumerator(fileSystemMock.Object, mockLogger.Object));
+            new FileListEnumerator(fileSystemMock.Object, mockFileListEnumeratorLogger.Object));
 
         var cgPackagesProvider = new CGScannedPackagesProvider(
             configurationMock.Object,
             new ChannelUtils(),
-            mockLogger.Object,
+            mockCGScannedPackagesProviderLogger.Object,
             sbomConfigs,
             new PackageInfoJsonWriter(
                 manifestGeneratorProvider,
-                mockLogger.Object),
+                mockPackageInfoJsonWriterLogger.Object),
             packageInfoConverterMock.Object,
-            new PackagesWalker(mockLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object, licenseInformationFetcherMock.Object),
+            new PackagesWalker(mockPackagesWalkerLogger.Object, mockDetector.Object, configurationMock.Object, sbomConfigs, fileSystemMock.Object, licenseInformationFetcherMock.Object),
             licenseInformationFetcherMock.Object);
 
         var externalDocumentReferenceProvider = new ExternalDocumentReferenceProvider(
             configurationMock.Object,
             new ChannelUtils(),
-            mockLogger.Object,
-            new FileListEnumerator(fileSystemMock.Object, mockLogger.Object),
+            mockExternalDocumentReferenceProviderLogger.Object,
+            new FileListEnumerator(fileSystemMock.Object, mockFileListEnumeratorLogger.Object),
             sBOMReaderForExternalDocumentReferenceMock.Object,
             new ExternalDocumentReferenceWriter(
                 manifestGeneratorProvider,
-                mockLogger.Object),
+                mockExternalDocumentReferenceWriterLogger.Object),
             new ExternalReferenceDeduplicator());
 
         var sourcesProvider = new List<ISourcesProvider>
@@ -300,11 +318,11 @@ public class ManifestGenerationWorkflowTests
             { externalDocumentReferenceProvider }
         };
 
-        var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object, mockLogger.Object);
+        var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object, mockFileArrayGeneratorLogger.Object);
 
-        var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
+        var packageArrayGenerator = new PackageArrayGenerator(mockPackageArrayGeneratorLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
-        var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
+        var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockExternalDocumentReferenceGeneratorLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
         relationshipArrayGenerator
             .Setup(r => r.GenerateAsync())
@@ -313,7 +331,7 @@ public class ManifestGenerationWorkflowTests
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,
             fileSystemMock.Object,
-            mockLogger.Object,
+            mockSbomGenerationWorkflowLogger.Object,
             fileArrayGenerator,
             packageArrayGenerator,
             relationshipArrayGenerator.Object,
@@ -343,7 +361,7 @@ public class ManifestGenerationWorkflowTests
         configurationMock.VerifyAll();
         fileSystemMock.VerifyAll();
         hashCodeGeneratorMock.VerifyAll();
-        mockLogger.VerifyAll();
+        mockSbomGenerationWorkflowLogger.VerifyAll();
         fileSystemMock.Verify(x => x.FileExists(jsonFilePath), Times.Once);
         fileSystemMock.Verify(x => x.WriteAllText($"{jsonFilePath}.sha256", It.IsAny<string>()), Times.Once);
     }
@@ -363,7 +381,7 @@ public class ManifestGenerationWorkflowTests
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,
             fileSystemMock.Object,
-            mockLogger.Object,
+            mockSbomGenerationWorkflowLogger.Object,
             new Mock<IJsonArrayGenerator<FileArrayGenerator>>().Object,
             new Mock<IJsonArrayGenerator<PackageArrayGenerator>>().Object,
             new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>().Object,
@@ -395,7 +413,7 @@ public class ManifestGenerationWorkflowTests
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,
             fileSystemMock.Object,
-            mockLogger.Object,
+            mockSbomGenerationWorkflowLogger.Object,
             fileArrayGeneratorMock.Object,
             new Mock<IJsonArrayGenerator<PackageArrayGenerator>>().Object,
             new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>().Object,

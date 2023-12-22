@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors;
 
@@ -18,7 +18,7 @@ namespace Microsoft.Sbom.Api.Executors;
 /// </summary>
 public class SBOMComponentsWalker : ComponentDetectionBaseWalker
 {
-    public SBOMComponentsWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils, ILicenseInformationFetcher licenseInformationFetcher)
+    public SBOMComponentsWalker(ILogger<SBOMComponentsWalker> log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils, ILicenseInformationFetcher licenseInformationFetcher)
         : base(log, componentDetector, configuration, sbomConfigs, fileSystemUtils, licenseInformationFetcher)
     {
     }

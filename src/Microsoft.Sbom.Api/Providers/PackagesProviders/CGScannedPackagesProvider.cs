@@ -6,12 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.PackagesProviders;
 
@@ -29,7 +28,7 @@ public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent
     public CGScannedPackagesProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger logger,
+        ILogger<CGScannedPackagesProvider> logger,
         ISbomConfigProvider sbomConfigs,
         PackageInfoJsonWriter packageInfoJsonWriter,
         ComponentToPackageInfoConverter packageInfoConverter,
@@ -49,7 +48,7 @@ public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent
             if (Configuration.PackagesList?.Value == null)
             {
                 // If no other packages providers are present, use this one.
-                Log.Debug($"Using the {nameof(CGScannedPackagesProvider)} provider for the packages workflow.");
+                Log.LogDebug($"Using the {nameof(CGScannedPackagesProvider)} provider for the packages workflow.");
                 return true;
             }
         }

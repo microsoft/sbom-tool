@@ -4,12 +4,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.PackagesProviders;
 
@@ -21,7 +21,7 @@ public class SBOMPackagesProvider : CommonPackagesProvider<SbomPackage>
     public SBOMPackagesProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger logger,
+        ILogger<SBOMPackagesProvider> logger,
         ISbomConfigProvider sbomConfigs,
         PackageInfoJsonWriter packageInfoJsonWriter,
         ILicenseInformationFetcher licenseInformationFetcher)
@@ -35,7 +35,7 @@ public class SBOMPackagesProvider : CommonPackagesProvider<SbomPackage>
         {
             if (Configuration.PackagesList?.Value != null)
             {
-                Log.Debug($"Using the {nameof(SBOMPackagesProvider)} provider for the packages workflow.");
+                Log.LogDebug($"Using the {nameof(SBOMPackagesProvider)} provider for the packages workflow.");
                 return true;
             }
         }

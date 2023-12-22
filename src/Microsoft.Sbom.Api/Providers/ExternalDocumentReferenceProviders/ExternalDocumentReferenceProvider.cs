@@ -1,16 +1,16 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders;
 
@@ -31,7 +31,7 @@ public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string
     public ExternalDocumentReferenceProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger logger,
+        ILogger<ExternalDocumentReferenceProvider> logger,
         FileListEnumerator listWalker,
         ISBOMReaderForExternalDocumentReference spdxSbomReaderForExternalDocumentReference,
         ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
@@ -48,7 +48,7 @@ public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string
     {
         if (providerType == ProviderType.ExternalDocumentReference && !string.IsNullOrWhiteSpace(Configuration.ExternalDocumentReferenceListFile?.Value))
         {
-            Log.Debug($"Using the {nameof(ExternalDocumentReferenceProvider)} provider for the external documents workflow.");
+            Log.LogDebug($"Using the {nameof(ExternalDocumentReferenceProvider)} provider for the external documents workflow.");
             return true;
         }
 

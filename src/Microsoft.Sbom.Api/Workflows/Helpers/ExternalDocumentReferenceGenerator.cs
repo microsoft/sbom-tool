@@ -1,17 +1,17 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
@@ -20,7 +20,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDocumentReferenceGenerator>
 {
-    private readonly ILogger log;
+    private readonly ILogger<ExternalDocumentReferenceGenerator> log;
 
     private readonly ISbomConfigProvider sbomConfigs;
 
@@ -29,7 +29,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
     private readonly IRecorder recorder;
 
     public ExternalDocumentReferenceGenerator(
-        ILogger log,
+        ILogger<ExternalDocumentReferenceGenerator> log,
         ISbomConfigProvider sbomConfigs,
         IEnumerable<ISourcesProvider> sourcesProviders,
         IRecorder recorder)
@@ -50,7 +50,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
                 .Where(s => s.IsSupported(ProviderType.ExternalDocumentReference));
             if (!sourcesProviders.Any())
             {
-                log.Debug($"No source providers found for {ProviderType.ExternalDocumentReference}");
+                log.LogDebug($"No source providers found for {ProviderType.ExternalDocumentReference}");
                 return totalErrors;
             }
 

@@ -1,13 +1,13 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Filters;
 
@@ -19,7 +19,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
 {
     private readonly IConfiguration configuration;
     private readonly IFileSystemUtils fileSystemUtils;
-    private readonly ILogger logger;
+    private readonly ILogger<DownloadedRootPathFilter> logger;
 
     private bool skipValidation;
     private HashSet<string> validPaths;
@@ -27,7 +27,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
     public DownloadedRootPathFilter(
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
-        ILogger logger)
+        ILogger<DownloadedRootPathFilter> logger)
     {
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
@@ -74,7 +74,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
     /// </summary>
     public void Init()
     {
-        logger.Verbose("Adding root path filter valid paths");
+        logger.LogTrace("Adding root path filter valid paths");
         skipValidation = true;
 
         if (configuration.RootPathFilter != null && !string.IsNullOrWhiteSpace(configuration.RootPathFilter.Value))
@@ -89,7 +89,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
 
             foreach (var validPath in validPaths)
             {
-                logger.Verbose($"Added valid path {validPath}");
+                logger.LogTrace($"Added valid path {validPath}");
             }
         }
     }

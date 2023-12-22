@@ -1,17 +1,17 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
 
@@ -29,7 +29,7 @@ public class SbomFileBasedFileToJsonProvider : EntityToJsonProviderBase<SbomFile
     public SbomFileBasedFileToJsonProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger logger,
+        ILogger<SbomFileBasedFileToJsonProvider> logger,
         FileInfoWriter fileHashWriter,
         SbomFileToFileInfoConverter sbomFileToFileInfoConverter,
         InternalSBOMFileInfoDeduplicator fileInfo)
@@ -51,7 +51,7 @@ public class SbomFileBasedFileToJsonProvider : EntityToJsonProviderBase<SbomFile
         {
             if (Configuration.FilesList?.Value != null && string.IsNullOrWhiteSpace(Configuration.BuildListFile?.Value))
             {
-                Log.Debug($"Using the {nameof(SbomFileBasedFileToJsonProvider)} provider for the files workflow.");
+                Log.LogDebug($"Using the {nameof(SbomFileBasedFileToJsonProvider)} provider for the files workflow.");
                 return true;
             }
         }

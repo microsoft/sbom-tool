@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
@@ -23,7 +23,7 @@ public class FilesValidator
     private readonly DirectoryWalker directoryWalker;
     private readonly IConfiguration configuration;
     private readonly ChannelUtils channelUtils = new();
-    private readonly ILogger log;
+    private readonly ILogger<FilesValidator> log;
     private readonly FileHasher fileHasher;
     private readonly ManifestFolderFilterer fileFilterer;
     private readonly ConcurrentSha256HashValidator hashValidator;
@@ -35,7 +35,7 @@ public class FilesValidator
     public FilesValidator(
         DirectoryWalker directoryWalker,
         IConfiguration configuration,
-        ILogger log,
+        ILogger<FilesValidator> log,
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         ConcurrentSha256HashValidator hashValidator,
@@ -123,10 +123,10 @@ public class FilesValidator
         var (files, dirErrors) = directoryWalker.GetFilesRecursively(configuration.BuildDropPath.Value);
         errors.Add(dirErrors);
 
-        log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
+        log.LogDebug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
         var splitFilesChannels = channelUtils.Split(files, configuration.Parallelism.Value);
 
-        log.Debug("Waiting for the workflow to finish...");
+        log.LogDebug("Waiting for the workflow to finish...");
         foreach (var fileChannel in splitFilesChannels)
         {
             // Filter files
@@ -155,10 +155,10 @@ public class FilesValidator
         var (sbomFiles, sbomFileErrors) = enumeratorChannel.Enumerate(sbomParser.GetFiles);
         errors.Add(sbomFileErrors);
 
-        log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
+        log.LogDebug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
         var splitFilesChannels = channelUtils.Split(sbomFiles, configuration.Parallelism.Value);
 
-        log.Debug("Waiting for the workflow to finish...");
+        log.LogDebug("Waiting for the workflow to finish...");
         foreach (var fileChannel in splitFilesChannels)
         {
             // Convert files to internal SBOM format.

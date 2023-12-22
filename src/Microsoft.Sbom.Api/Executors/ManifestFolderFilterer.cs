@@ -1,12 +1,12 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Filters;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
@@ -16,11 +16,11 @@ namespace Microsoft.Sbom.Api.Executors;
 public class ManifestFolderFilterer
 {
     private readonly IFilter<ManifestFolderFilter> manifestFolderFilter;
-    private readonly ILogger log;
+    private readonly ILogger<ManifestFolderFilterer> log;
 
     public ManifestFolderFilterer(
         IFilter<ManifestFolderFilter> manifestFolderFilter,
-        ILogger log)
+        ILogger<ManifestFolderFilterer> log)
     {
         ArgumentNullException.ThrowIfNull(manifestFolderFilter);
         ArgumentNullException.ThrowIfNull(log);
@@ -66,7 +66,7 @@ public class ManifestFolderFilterer
         }
         catch (Exception e)
         {
-            log.Debug($"Encountered an error while filtering file {file}: {e.Message}");
+            log.LogDebug($"Encountered an error while filtering file {file}: {e.Message}");
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = ErrorType.Other,

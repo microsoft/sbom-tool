@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
@@ -25,7 +26,7 @@ namespace Microsoft.Sbom.Api.Tests.Executors;
 public class SPDXSBOMReaderForExternalDocumentReferenceTests
 {
     private readonly Mock<IHashCodeGenerator> mockHashGenerator = new Mock<IHashCodeGenerator>();
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<SPDXSBOMReaderForExternalDocumentReference>> mockLogger = new Mock<ILogger<SPDXSBOMReaderForExternalDocumentReference>>();
     private readonly ISbomConfigProvider sbomConfigs;
     private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;

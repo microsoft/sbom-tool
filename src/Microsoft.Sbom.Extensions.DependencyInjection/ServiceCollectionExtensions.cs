@@ -118,7 +118,6 @@ public static class ServiceCollectionExtensions
             .AddTransient<FileFilterer>()
             .AddTransient<PackagesWalker>()
             .AddTransient<PackageInfoJsonWriter>()
-            .AddTransient<ComponentToPackageInfoConverter>()
             .AddTransient<IJsonArrayGenerator<FileArrayGenerator>, FileArrayGenerator>()
             .AddTransient<IJsonArrayGenerator<PackageArrayGenerator>, PackageArrayGenerator>()
             .AddTransient<IJsonArrayGenerator<RelationshipsArrayGenerator>, RelationshipsArrayGenerator>()

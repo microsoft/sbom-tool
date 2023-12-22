@@ -1,15 +1,15 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.Threading.Channels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.FilesProviders;
 
@@ -21,7 +21,7 @@ public class FileListBasedFileToJsonProvider : PathBasedFileToJsonProviderBase
 {
     private readonly FileListEnumerator listWalker;
 
-    public FileListBasedFileToJsonProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, FileInfoWriter fileHashWriter, InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator, FileListEnumerator listWalker)
+    public FileListBasedFileToJsonProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger<FileListBasedFileToJsonProvider> log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, FileInfoWriter fileHashWriter, InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator, FileListEnumerator listWalker)
         : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
     {
         this.listWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));
@@ -34,7 +34,7 @@ public class FileListBasedFileToJsonProvider : PathBasedFileToJsonProviderBase
             // Return true only if the BuildListFile parameter is provided.
             if (!string.IsNullOrWhiteSpace(Configuration.BuildListFile?.Value))
             {
-                Log.Debug($"Using the {nameof(FileListBasedFileToJsonProvider)} provider for the files workflow.");
+                Log.LogDebug($"Using the {nameof(FileListBasedFileToJsonProvider)} provider for the files workflow.");
                 return true;
             }
         }

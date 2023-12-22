@@ -7,21 +7,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Newtonsoft.Json.Linq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
 public class LicenseInformationFetcher : ILicenseInformationFetcher
 {
-    private readonly ILogger log;
+    private readonly ILogger<LicenseInformationFetcher> log;
     private readonly IRecorder recorder;
     private readonly ILicenseInformationService licenseInformationService;
     private readonly ConcurrentDictionary<string, string> licenseDictionary = new ConcurrentDictionary<string, string>();
 
-    public LicenseInformationFetcher(ILogger log, IRecorder recorder, ILicenseInformationService licenseInformationService)
+    public LicenseInformationFetcher(ILogger<LicenseInformationFetcher> log, IRecorder recorder, ILicenseInformationService licenseInformationService)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
@@ -73,7 +73,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                         break;
 
                     default:
-                        log.Debug($"License retrieval for component type {componentType} is not supported yet.");
+                        log.LogDebug($"License retrieval for component type {componentType} is not supported yet.");
                         break;
                 }
             }
@@ -130,7 +130,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
         catch
         {
             recorder.RecordAPIException(new ClearlyDefinedResponseParsingException("Encountered error while attempting to parse response. License information may not be fully recorded."));
-            log.Warning("Encountered error while attempting to parse response. License information may not be fully recorded.");
+            log.LogWarning("Encountered error while attempting to parse response. License information may not be fully recorded.");
             return extractedLicenses;
         }
 

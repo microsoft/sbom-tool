@@ -1,6 +1,7 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Metadata;
 using Microsoft.Sbom.Api.Output.Telemetry;
@@ -9,7 +10,6 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Tests.Config;
 
@@ -18,7 +18,7 @@ public class SBOMConfigTests
 {
     private readonly Mock<IManifestConfigHandler> configHandler;
     private readonly Configuration config;
-    private readonly Mock<ILogger> logger;
+    private readonly Mock<ILogger<SbomConfigProvider>> logger;
     private readonly Mock<IRecorder> recorder;
     private readonly LocalMetadataProvider localMetadataProvider;
 
@@ -33,7 +33,7 @@ public class SBOMConfigTests
             NamespaceUriBase = new ConfigurationSetting<string>("http://sbom.microsoft")
         };
 
-        logger = new Mock<ILogger>();
+        logger = new Mock<ILogger<SbomConfigProvider>>();
         recorder = new Mock<IRecorder>();
         localMetadataProvider = new LocalMetadataProvider(config);
     }

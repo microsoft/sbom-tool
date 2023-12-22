@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -8,18 +8,17 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Converters;
-using Microsoft.Sbom.Api.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Tests.Converters;
 
 [TestClass]
 public class ComponentToExternalReferenceInfoConverterTests
 {
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<ComponentToExternalReferenceInfoConverter>> mockLogger = new Mock<ILogger<ComponentToExternalReferenceInfoConverter>>();
 
     [TestMethod]
     public async Task When_ConvertingComponentToExternalDocRefInfo_WithCommonCase_ThenTestPass()

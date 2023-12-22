@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
@@ -12,12 +13,10 @@ using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
 
 namespace Microsoft.Sbom.Api.Executors;
@@ -30,7 +29,7 @@ public class FileHasher
 {
     private readonly IHashCodeGenerator hashCodeGenerator;
     private readonly IManifestPathConverter manifestPathConverter;
-    private readonly ILogger log;
+    private readonly ILogger<FileHasher> log;
     private readonly IConfiguration configuration;
     private readonly ISbomConfigProvider sbomConfigs;
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;
@@ -67,7 +66,7 @@ public class FileHasher
     public FileHasher(
         IHashCodeGenerator hashCodeGenerator,
         IManifestPathConverter manifestPathConverter,
-        ILogger log,
+        ILogger<FileHasher> log,
         IConfiguration configuration,
         ISbomConfigProvider sbomConfigs,
         ManifestGeneratorProvider manifestGeneratorProvider,
@@ -144,7 +143,7 @@ public class FileHasher
                 ManifestData.HashesMap.Remove(relativeFilePath);
             }
 
-            log.Error($"Encountered an error while generating hash for file {file}: {e.Message}");
+            log.LogError($"Encountered an error while generating hash for file {file}: {e.Message}");
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = Entities.ErrorType.Other,

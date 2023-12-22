@@ -4,9 +4,9 @@
 using System;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Converters;
 
@@ -15,9 +15,9 @@ namespace Microsoft.Sbom.Api.Converters;
 /// </summary>
 public class ExternalReferenceInfoToPathConverter
 {
-    private readonly ILogger log;
+    private readonly ILogger<ExternalReferenceInfoToPathConverter> log;
 
-    public ExternalReferenceInfoToPathConverter(ILogger log)
+    public ExternalReferenceInfoToPathConverter(ILogger<ExternalReferenceInfoToPathConverter> log)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
     }
@@ -37,7 +37,7 @@ public class ExternalReferenceInfoToPathConverter
 
                     if (path == null)
                     {
-                        log.Debug($"Encountered an error while converting external reference {externalDocumentRef.ExternalDocumentName} for null path.");
+                        log.LogDebug($"Encountered an error while converting external reference {externalDocumentRef.ExternalDocumentName} for null path.");
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
                             ErrorType = ErrorType.Other,
@@ -53,7 +53,7 @@ public class ExternalReferenceInfoToPathConverter
                 }
                 catch (Exception e)
                 {
-                    log.Debug($"Encountered an error while converting external reference {externalDocumentRef.ExternalDocumentName} to path: {e.Message}");
+                    log.LogDebug($"Encountered an error while converting external reference {externalDocumentRef.ExternalDocumentName} to path: {e.Message}");
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
                         ErrorType = ErrorType.Other,

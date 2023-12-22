@@ -1,12 +1,12 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
@@ -15,9 +15,9 @@ namespace Microsoft.Sbom.Api.Executors;
 /// </summary>
 public class EnumeratorChannel
 {
-    private readonly ILogger log;
+    private readonly ILogger<EnumeratorChannel> log;
 
-    public EnumeratorChannel(ILogger log)
+    public EnumeratorChannel(ILogger<EnumeratorChannel> log)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
     }
@@ -44,7 +44,7 @@ public class EnumeratorChannel
             }
             catch (Exception e)
             {
-                log.Debug($"Encountered an unknown error while enumerating: {e.Message}");
+                log.LogDebug($"Encountered an unknown error while enumerating: {e.Message}");
                 await errors.Writer.WriteAsync(new FileValidationResult
                 {
                     ErrorType = ErrorType.Other

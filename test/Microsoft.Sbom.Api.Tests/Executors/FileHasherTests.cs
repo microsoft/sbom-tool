@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
@@ -20,7 +21,6 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
@@ -28,7 +28,7 @@ namespace Microsoft.Sbom.Api.Executors.Tests;
 [TestClass]
 public class FileHasherTests
 {
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<FileHasher>> mockLogger = new Mock<ILogger<FileHasher>>();
     private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
 
     private readonly ConcurrentDictionary<string, Checksum[]> hashDict = new ConcurrentDictionary<string, Checksum[]>();

@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Output.Telemetry.Entities;
@@ -42,9 +43,9 @@ public class TelemetryRecorder : IRecorder
 
     public IConfiguration Configuration { get; }
 
-    public ILogger Log { get; }
+    public ILogger<TelemetryRecorder> Log { get; }
 
-    public TelemetryRecorder(IFileSystemUtils fileSystemUtils, IConfiguration configuration, ILogger log)
+    public TelemetryRecorder(IFileSystemUtils fileSystemUtils, IConfiguration configuration, ILogger<TelemetryRecorder> log)
     {
         FileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -68,49 +69,28 @@ public class TelemetryRecorder : IRecorder
     }
 
     /// <summary>
-    /// Method to log telemetry in conditions when the tool is not able to start execution of workflow.
+    /// Method to log telemetry to the telemetryOutput path in conditions when the tool is not able to start execution of workflow.
     /// </summary>
-    /// <param name="exception">Exception that we want to log.</param>
+    /// <param name="exception">Exception that we want to write to the telemetry file path.</param>
     public async Task LogException(Exception exception)
     {
-        var logger = Log;
-        if (Log is null)
-        {
-            logger = new LoggerConfiguration()
-                .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = Configuration.Verbosity.Value })
-                .WriteTo.Console(outputTemplate: Constants.LoggerTemplate)
-                .CreateLogger();
-        }
-
         // Convert thrown Exception to list of exceptions for the SBOMTelemetry object.
         var exceptionList = new List<Exception>
         {
             exception
         };
 
-        try
+        // Create the telemetry object.
+        var telemetry = new SBOMTelemetry
         {
-            // Create the telemetry object.
-            var telemetry = new SBOMTelemetry
-            {
-                Result = Result.Failure,
-                Timings = timingRecorders.Select(t => t.ToTiming()).ToList(),
-                Switches = this.switches,
-                Parameters = Configuration,
-                Exceptions = exceptionList.ToDictionary(k => k.GetType().ToString(), v => v.Message),
-            };
+            Result = Result.Failure,
+            Timings = timingRecorders.Select(t => t.ToTiming()).ToList(),
+            Switches = this.switches,
+            Parameters = Configuration,
+            Exceptions = exceptionList.ToDictionary(k => k.GetType().ToString(), v => v.Message),
+        };
 
-            // Log to logger.
-            logger.Information("Could not start execution of workflow. Logging telemetry {@Telemetry}", telemetry);
-
-            await RecordToFile(telemetry, Configuration.TelemetryFilePath?.Value);
-        }
-        catch (Exception e)
-        {
-            // We shouldn't fail the main workflow due to some failure on the telemetry generation.
-            // Just log the result and return silently.
-            logger.Warning($"Failed to log telemetry. Exception: {e.Message}");
-        }
+        await RecordToFile(telemetry, Configuration.TelemetryFilePath?.Value);
     }
 
     public IList<FileValidationResult> Errors => errors;
@@ -296,14 +276,14 @@ public class TelemetryRecorder : IRecorder
             };
 
             // Log to logger.
-            Log.Debug($"Wrote telemetry object to path {Configuration.TelemetryFilePath?.Value}");
+            Log.LogDebug($"Wrote telemetry object to path {Configuration.TelemetryFilePath?.Value}");
 
             if (Configuration.ManifestToolAction == ManifestToolActions.Generate && Configuration.BuildComponentPath?.Value != null && this.totalNumberOfPackages == 0)
             {
-                Log.Warning("0 Packages were detected during the {Action} workflow.", Configuration.ManifestToolAction);
+                Log.LogWarning("0 Packages were detected during the {Action} workflow.", Configuration.ManifestToolAction);
             }
 
-            Log.Information("Finished execution of the {Action} workflow {@Telemetry}", Configuration.ManifestToolAction, telemetry);
+            Log.LogInformation("Finished execution of the {Action} workflow {@Telemetry}", Configuration.ManifestToolAction, telemetry);
 
             await RecordToFile(telemetry, Configuration.TelemetryFilePath?.Value);
         }
@@ -311,7 +291,7 @@ public class TelemetryRecorder : IRecorder
         {
             // We should'nt fail the main workflow due to some failure on the telemetry generation.
             // Just log the result and return silently.
-            Log.Warning($"Failed to log telemetry. Exception: {ex.Message}");
+            Log.LogWarning($"Failed to log telemetry. Exception: {ex.Message}");
         }
     }
 }

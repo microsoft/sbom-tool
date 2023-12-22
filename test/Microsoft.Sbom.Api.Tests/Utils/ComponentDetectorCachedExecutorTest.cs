@@ -1,8 +1,9 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -13,7 +14,7 @@ namespace Microsoft.Sbom.Api.Tests.Utils;
 [TestClass]
 public class ComponentDetectorCachedExecutorTest
 {
-    private readonly Mock<ILogger> logger = new Mock<ILogger>();
+    private readonly Mock<ILogger<ComponentDetectorCachedExecutor>> logger = new Mock<ILogger<ComponentDetectorCachedExecutor>>();
     private readonly Mock<IComponentDetector> detector = new Mock<IComponentDetector>();
 
     [TestInitialize]

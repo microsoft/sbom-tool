@@ -1,15 +1,15 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers;
 
@@ -29,9 +29,9 @@ public abstract class EntityToJsonProviderBase<T> : ISourcesProvider
     /// </summary>
     public ChannelUtils ChannelUtils { get; }
 
-    public ILogger Log { get; }
+    public ILogger<EntityToJsonProviderBase<T>> Log { get; }
 
-    public EntityToJsonProviderBase(IConfiguration configuration, ChannelUtils channelUtils, ILogger logger)
+    public EntityToJsonProviderBase(IConfiguration configuration, ChannelUtils channelUtils, ILogger<EntityToJsonProviderBase<T>> logger)
     {
         Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         ChannelUtils = channelUtils ?? throw new ArgumentNullException(nameof(channelUtils));
@@ -57,10 +57,10 @@ public abstract class EntityToJsonProviderBase<T> : ISourcesProvider
         var (sources, sourceErrors) = GetSourceChannel();
         errors.Add(sourceErrors);
 
-        Log.Debug($"Splitting the workflow into {Configuration.Parallelism.Value} threads.");
+        Log.LogDebug($"Splitting the workflow into {Configuration.Parallelism.Value} threads.");
         var splitSourcesChannels = ChannelUtils.Split(sources, Configuration.Parallelism.Value);
 
-        Log.Debug("Running the generation workflow ...");
+        Log.LogDebug("Running the generation workflow ...");
 
         foreach (var sourceChannel in splitSourcesChannels)
         {

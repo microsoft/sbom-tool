@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Hashing.Algorithms;
@@ -16,7 +17,6 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using PowerArgs;
-using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows;
@@ -31,7 +31,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
 
     private readonly IConfiguration configuration;
 
-    private readonly ILogger log;
+    private readonly ILogger<SbomGenerationWorkflow> log;
 
     private readonly IJsonArrayGenerator<FileArrayGenerator> fileArrayGenerator;
 
@@ -50,7 +50,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
     public SbomGenerationWorkflow(
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
-        ILogger log,
+        ILogger<SbomGenerationWorkflow> log,
         IJsonArrayGenerator<FileArrayGenerator> fileArrayGenerator,
         IJsonArrayGenerator<PackageArrayGenerator> packageArrayGenerator,
         IJsonArrayGenerator<RelationshipsArrayGenerator> relationshipsArrayGenerator,
@@ -80,7 +80,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         {
             try
             {
-                log.Debug("Starting SBOM generation workflow.");
+                log.LogDebug("Starting SBOM generation workflow.");
 
                 sbomDir = configuration.ManifestDirPath.Value;
 
@@ -91,7 +91,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 }
                 else
                 {
-                    log.Warning("Manifest directory path was explicitly defined. Will not attempt to delete any existing _manifest directory.");
+                    log.LogWarning("Manifest directory path was explicitly defined. Will not attempt to delete any existing _manifest directory.");
                 }
 
                 await using (sbomConfigs.StartJsonSerializationAsync())
@@ -127,8 +127,8 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
             catch (Exception e)
             {
                 recorder.RecordException(e);
-                log.Error("Encountered an error while generating the manifest.");
-                log.Error($"Error details: {e.Message}");
+                log.LogError("Encountered an error while generating the manifest.");
+                log.LogError($"Error details: {e.Message}");
 
                 if (e is not ManifestFolderExistsException)
                 {
@@ -161,7 +161,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 }
                 catch (Exception e)
                 {
-                    log.Warning($"Unable to delete the temp directory {fileSystemUtils.GetSbomToolTempPath()}", e);
+                    log.LogWarning($"Unable to delete the temp directory {fileSystemUtils.GetSbomToolTempPath()}", e);
                 }
             }
         }
@@ -179,14 +179,14 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 }
                 else if (!fileSystemUtils.IsDirectoryEmpty(sbomDir))
                 {
-                    log.Warning($"Manifest generation failed, however we were " +
+                    log.LogWarning($"Manifest generation failed, however we were " +
                                 $"unable to delete the partially generated manifest.json file and the {sbomDir} directory because the directory was not empty.");
                 }
             }
         }
         catch (Exception e)
         {
-            this.log.Warning(
+            this.log.LogWarning(
                 $"Manifest generation failed, however we were " +
                 $"unable to delete the partially generated manifest.json file and the {sbomDir} directory.",
                 e);
@@ -197,7 +197,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
     {
         if (!fileSystemUtils.FileExists(manifestJsonFilePath))
         {
-            log.Warning($"Failed to create manifest hash because the manifest json file does not exist.");
+            log.LogWarning($"Failed to create manifest hash because the manifest json file does not exist.");
             return;
         }
 
@@ -237,7 +237,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                         $"overwrite this folder.");
                 }
 
-                log.Warning(
+                log.LogWarning(
                     $"Deleting pre-existing folder {rootManifestFolderPath} as {Constants.DeleteManifestDirBoolVariableName}" +
                     $" is 'true'.");
                 fileSystemUtils.DeleteDir(rootManifestFolderPath, true);

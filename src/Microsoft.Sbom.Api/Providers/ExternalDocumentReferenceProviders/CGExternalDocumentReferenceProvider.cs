@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -6,14 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders;
 
@@ -34,7 +33,7 @@ public class CGExternalDocumentReferenceProvider : EntityToJsonProviderBase<Scan
     public CGExternalDocumentReferenceProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger logger,
+        ILogger<CGExternalDocumentReferenceProvider> logger,
         ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter,
         ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
         SBOMComponentsWalker sbomComponentsWalker,
@@ -51,7 +50,7 @@ public class CGExternalDocumentReferenceProvider : EntityToJsonProviderBase<Scan
     {
         if (providerType == ProviderType.ExternalDocumentReference)
         {
-            Log.Debug($"Using the {nameof(CGExternalDocumentReferenceProvider)} provider for the external documents workflow.");
+            Log.LogDebug($"Using the {nameof(CGExternalDocumentReferenceProvider)} provider for the external documents workflow.");
             return true;
         }
 

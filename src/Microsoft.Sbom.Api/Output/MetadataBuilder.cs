@@ -1,14 +1,14 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Output;
 
@@ -19,12 +19,12 @@ namespace Microsoft.Sbom.Api.Output;
 public class MetadataBuilder : IMetadataBuilder
 {
     private readonly IManifestGenerator manifestGenerator;
-    private readonly ILogger logger;
+    private readonly ILogger<MetadataBuilder> logger;
     private readonly ManifestInfo manifestInfo;
     private readonly IRecorder recorder;
 
     public MetadataBuilder(
-        ILogger logger,
+        ILogger<MetadataBuilder> logger,
         ManifestGeneratorProvider manifestGeneratorProvider,
         ManifestInfo manifestInfo,
         IRecorder recorder)
@@ -44,7 +44,7 @@ public class MetadataBuilder : IMetadataBuilder
     {
         using (recorder.TraceEvent(string.Format(Events.MetadataBuilder, manifestInfo)))
         {
-            logger.Debug("Building the header object.");
+            logger.LogDebug("Building the header object.");
             var headerDictionary = manifestGenerator.GetMetadataDictionary(internalMetadataProvider);
             return JsonSerializer.Serialize(headerDictionary);
         }
@@ -60,7 +60,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Debug("Files array not suppored on this SBOM format.");
+            logger.LogDebug("Files array not suppored on this SBOM format.");
             return false;
         }
     }
@@ -75,7 +75,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Debug("Packages array not suppored on this SBOM format.");
+            logger.LogDebug("Packages array not suppored on this SBOM format.");
             return false;
         }
     }
@@ -90,7 +90,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Debug("External Document Reference array not suppored on this SBOM format.");
+            logger.LogDebug("External Document Reference array not suppored on this SBOM format.");
             return false;
         }
     }
@@ -112,7 +112,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             generationResult = null;
-            logger.Debug("Root package serialization not supported on this SBOM format.");
+            logger.LogDebug("Root package serialization not supported on this SBOM format.");
             return false;
         }
     }
@@ -127,7 +127,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Debug("Relationships array are not supported on this SBOM format.");
+            logger.LogDebug("Relationships array are not supported on this SBOM format.");
             return false;
         }
     }

@@ -1,15 +1,15 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
@@ -20,11 +20,11 @@ namespace Microsoft.Sbom.Api.Executors;
 public class ExternalDocumentReferenceWriter
 {
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;
-    private readonly ILogger log;
+    private readonly ILogger<ExternalDocumentReferenceWriter> log;
 
     public ExternalDocumentReferenceWriter(
         ManifestGeneratorProvider manifestGeneratorProvider,
-        ILogger log)
+        ILogger<ExternalDocumentReferenceWriter> log)
     {
         this.manifestGeneratorProvider = manifestGeneratorProvider ?? throw new ArgumentNullException(nameof(manifestGeneratorProvider));
         this.log = log ?? throw new ArgumentNullException(nameof(log));
@@ -61,7 +61,7 @@ public class ExternalDocumentReferenceWriter
                     }
                     catch (Exception e)
                     {
-                        log.Warning($"Encountered an error while generating json for external document reference {externalDocumentReferenceInfo.ExternalDocumentName}: {e.Message}");
+                        log.LogWarning($"Encountered an error while generating json for external document reference {externalDocumentReferenceInfo.ExternalDocumentName}: {e.Message}");
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
                             ErrorType = ErrorType.JsonSerializationError,
