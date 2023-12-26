@@ -2,32 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Concurrent;
-using Microsoft.ComponentDetection.Common;
-using Microsoft.ComponentDetection.Contracts;
-using Microsoft.ComponentDetection.Detectors.CocoaPods;
-using Microsoft.ComponentDetection.Detectors.Conan;
-using Microsoft.ComponentDetection.Detectors.Dockerfile;
-using Microsoft.ComponentDetection.Detectors.Go;
-using Microsoft.ComponentDetection.Detectors.Gradle;
-using Microsoft.ComponentDetection.Detectors.Ivy;
-using Microsoft.ComponentDetection.Detectors.Linux;
-using Microsoft.ComponentDetection.Detectors.Maven;
-using Microsoft.ComponentDetection.Detectors.Npm;
-using Microsoft.ComponentDetection.Detectors.NuGet;
-using Microsoft.ComponentDetection.Detectors.Pip;
-using Microsoft.ComponentDetection.Detectors.Pnpm;
-using Microsoft.ComponentDetection.Detectors.Poetry;
-using Microsoft.ComponentDetection.Detectors.Ruby;
-using Microsoft.ComponentDetection.Detectors.Rust;
-using Microsoft.ComponentDetection.Detectors.Spdx;
-using Microsoft.ComponentDetection.Detectors.Vcpkg;
-using Microsoft.ComponentDetection.Detectors.Yarn;
-using Microsoft.ComponentDetection.Detectors.Yarn.Parsers;
-using Microsoft.ComponentDetection.Orchestrator;
-using Microsoft.ComponentDetection.Orchestrator.Commands;
-using Microsoft.ComponentDetection.Orchestrator.Experiments;
-using Microsoft.ComponentDetection.Orchestrator.Services;
-using Microsoft.ComponentDetection.Orchestrator.Services.GraphTranslation;
+using Microsoft.ComponentDetection.Orchestrator.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
@@ -58,7 +33,6 @@ using Microsoft.Sbom.Contracts.Interfaces;
 using Microsoft.Sbom.Extensions.Entities;
 using Serilog.Events;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
-using IComponentDetector = Microsoft.ComponentDetection.Contracts.IComponentDetector;
 
 namespace Microsoft.Sbom.Extensions.DependencyInjection;
 
@@ -112,7 +86,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<RelationshipGenerator>()
             .AddTransient<ConfigSanitizer>()
             .AddTransient<IProcessExecutor, ProcessExecutor>()
-            .AddTransient<Api.Utils.IComponentDetector, ComponentDetector>()
+            .AddTransient<IComponentDetector, ComponentDetector>()
             .AddTransient<IMetadataBuilderFactory, MetadataBuilderFactory>()
             .AddTransient<FileInfoWriter>()
             .AddTransient<ComponentToExternalReferenceInfoConverter>()
@@ -182,80 +156,8 @@ public static class ServiceCollectionExtensions
 
                 return manifestData;
             })
-            .ConfigureComponentDetectors()
-            .ConfigureComponentDetectionSharedServices()
-            .ConfigureComponentDetectionCommandLineServices()
+            .AddComponentDetection()
             .AddHttpClient<LicenseInformationService>();
-
-        return services;
-    }
-
-    public static IServiceCollection ConfigureComponentDetectionCommandLineServices(this IServiceCollection services)
-    {
-        services.AddSingleton<IScanExecutionService, ScanExecutionService>();
-        services.AddSingleton<IDetectorProcessingService, DetectorProcessingService>();
-        services.AddSingleton<IDetectorRestrictionService, DetectorRestrictionService>();
-        services.AddSingleton<IArgumentHelper, ArgumentHelper>();
-
-        return services;
-    }
-
-    public static IServiceCollection ConfigureComponentDetectionSharedServices(this IServiceCollection services)
-    {
-        services.AddSingleton<IFileWritingService, FileWritingService>();
-        services.AddSingleton<IArgumentHelper, ArgumentHelper>();
-        services.AddSingleton<ICommandLineInvocationService, CommandLineInvocationService>();
-        services.AddSingleton<IComponentStreamEnumerableFactory, ComponentStreamEnumerableFactory>();
-        services.AddSingleton<IConsoleWritingService, ConsoleWritingService>();
-        services.AddSingleton<IDockerService, DockerService>();
-        services.AddSingleton<IEnvironmentVariableService, EnvironmentVariableService>();
-        services.AddSingleton<IObservableDirectoryWalkerFactory, FastDirectoryWalkerFactory>();
-        services.AddSingleton<IFileUtilityService, FileUtilityService>();
-        services.AddSingleton<IFileWritingService, FileWritingService>();
-        services.AddSingleton<IGraphTranslationService, DefaultGraphTranslationService>();
-        services.AddSingleton<IPathUtilityService, PathUtilityService>();
-        services.AddSingleton<ISafeFileEnumerableFactory, SafeFileEnumerableFactory>();
-        services.AddSingleton<IExperimentService, ExperimentService>();
-
-        return services;
-    }
-
-    public static IServiceCollection ConfigureComponentDetectors(this IServiceCollection services)
-    {
-        services.AddSingleton<IComponentDetector, PodComponentDetector>();
-        services.AddSingleton<IComponentDetector, ConanLockComponentDetector>();
-        services.AddSingleton<IComponentDetector, CondaLockComponentDetector>();
-        services.AddSingleton<IComponentDetector, DockerfileComponentDetector>();
-        services.AddSingleton<IComponentDetector, GoComponentDetector>();
-        services.AddSingleton<IComponentDetector, GradleComponentDetector>();
-        services.AddSingleton<IComponentDetector, IvyDetector>();
-        services.AddSingleton<ILinuxScanner, LinuxScanner>();
-        services.AddSingleton<IComponentDetector, LinuxContainerDetector>();
-        services.AddSingleton<IMavenCommandService, MavenCommandService>();
-        services.AddSingleton<IMavenStyleDependencyGraphParserService, MavenStyleDependencyGraphParserService>();
-        services.AddSingleton<IComponentDetector, MvnCliComponentDetector>();
-        services.AddSingleton<IComponentDetector, NpmComponentDetector>();
-        services.AddSingleton<IComponentDetector, NpmComponentDetectorWithRoots>();
-        services.AddSingleton<IComponentDetector, NpmLockfile3Detector>();
-        services.AddSingleton<IComponentDetector, NuGetComponentDetector>();
-        services.AddSingleton<IComponentDetector, NuGetPackagesConfigDetector>();
-        services.AddSingleton<IComponentDetector, NuGetProjectModelProjectCentricComponentDetector>();
-        services.AddSingleton<IPyPiClient, PyPiClient>();
-        services.AddSingleton<ISimplePyPiClient, SimplePyPiClient>();
-        services.AddSingleton<IPythonCommandService, PythonCommandService>();
-        services.AddSingleton<IPythonResolver, PythonResolver>();
-        services.AddSingleton<ISimplePythonResolver, SimplePythonResolver>();
-        services.AddSingleton<IComponentDetector, PipComponentDetector>();
-        services.AddSingleton<IComponentDetector, SimplePipComponentDetector>();
-        services.AddSingleton<IComponentDetector, PnpmComponentDetector>();
-        services.AddSingleton<IComponentDetector, PoetryComponentDetector>();
-        services.AddSingleton<IComponentDetector, RubyComponentDetector>();
-        services.AddSingleton<IComponentDetector, RustCrateDetector>();
-        services.AddSingleton<IComponentDetector, Spdx22ComponentDetector>();
-        services.AddSingleton<IComponentDetector, VcpkgComponentDetector>();
-        services.AddSingleton<IYarnLockParser, YarnLockParser>();
-        services.AddSingleton<IYarnLockFileFactory, YarnLockFileFactory>();
-        services.AddSingleton<IComponentDetector, YarnLockComponentDetector>();
 
         return services;
     }
