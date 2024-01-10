@@ -17,6 +17,8 @@ namespace Microsoft.Sbom.Api.Config.Extensions;
 /// </summary>
 public static class ConfigurationExtensions
 {
+    public static int Version = 0;
+
     /// <summary>
     /// Get the name and value of each IConfiguration property that is annotated with <see cref=ComponentDetectorArgumentAttribute />.
     /// </summary>
@@ -53,8 +55,11 @@ public static class ConfigurationExtensions
     }
 
     // Map the validated InputConfiguration to a Configuration, which will persist the mapping statically and globally
-    public static Configuration ToConfiguration(this InputConfiguration inputConfig) =>
-        new MapperConfiguration(cfg => cfg.CreateMap<InputConfiguration, Configuration>())
+    public static Configuration ToConfiguration(this InputConfiguration inputConfig)
+    {
+        Version++;
+        return new MapperConfiguration(cfg => cfg.CreateMap<InputConfiguration, Configuration>())
             .CreateMapper()
             .Map<Configuration>(inputConfig);
+    }
 }

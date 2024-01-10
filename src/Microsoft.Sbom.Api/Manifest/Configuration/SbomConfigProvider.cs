@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Metadata;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common.Extensions;
@@ -26,6 +27,13 @@ public class SbomConfigProvider : ISbomConfigProvider
     {
         get
         {
+            // Config has been updated, so we need to update the manifest information
+            if (configVersion != ConfigurationExtensions.Version)
+            {
+                configVersion = ConfigurationExtensions.Version;
+                configsDictionary = null;
+            }
+
             if (configsDictionary is not null)
             {
                 // Exit fast if config map is already initialized.
@@ -72,6 +80,7 @@ public class SbomConfigProvider : ISbomConfigProvider
     private readonly IEnumerable<IMetadataProvider> metadataProviders;
     private readonly ILogger logger;
     private readonly IRecorder recorder;
+    private int configVersion;
 
     public SbomConfigProvider(
         IEnumerable<IManifestConfigHandler> manifestConfigHandlers,
@@ -83,6 +92,7 @@ public class SbomConfigProvider : ISbomConfigProvider
         this.metadataProviders = metadataProviders ?? throw new ArgumentNullException(nameof(metadataProviders));
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+        this.configVersion = ConfigurationExtensions.Version;
     }
 
     /// <inheritdoc/>
