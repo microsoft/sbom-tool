@@ -29,6 +29,8 @@ public class PackagesWalker : ComponentDetectionBaseWalker
         return result
             .ComponentsFound
             .Where(component => !(component.Component is SpdxComponent)) // We exclude detected SBOMs from packages section and reference them as an ExternalReference
+            .GroupBy(component => component.Component.Id)
+            .Select(group => group.FirstOrDefault(component => component.DetectorId == "RustCli") ?? group.First())
             .Distinct(new ScannedComponentEqualityComparer())
             .ToList();
     }

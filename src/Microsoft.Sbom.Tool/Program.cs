@@ -69,7 +69,7 @@ internal class Program
                             inputConfiguration.ToConfiguration();
                             return inputConfiguration;
                         })
-
+                        .ConfigureLoggingProviders()
                         .AddSbomTool();
                 })
                 .RunConsoleAsync(x => x.SuppressStatusMessages = true);

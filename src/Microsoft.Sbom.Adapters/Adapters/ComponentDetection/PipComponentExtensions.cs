@@ -23,10 +23,12 @@ internal static class PipComponentExtensions
         PackageUrl = pipComponent.PackageUrl?.ToString(),
         PackageName = pipComponent.Name,
         PackageVersion = pipComponent.Version,
-        LicenseInfo = string.IsNullOrWhiteSpace(component.LicenseConcluded) ? null : new LicenseInfo
+        LicenseInfo = new LicenseInfo
         {
-            Concluded = component.LicenseConcluded,
+            Concluded = string.IsNullOrEmpty(component.LicenseConcluded) ? null : component.LicenseConcluded,
+            Declared = string.IsNullOrEmpty(pipComponent.License) ? null : pipComponent.License,
         },
+        Supplier = string.IsNullOrEmpty(pipComponent.Author) ? null : $"Organization: {pipComponent.Author}",
         FilesAnalyzed = false,
         Type = "python",
     };
