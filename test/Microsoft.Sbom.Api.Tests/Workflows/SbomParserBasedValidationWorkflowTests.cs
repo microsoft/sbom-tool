@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Executors;
@@ -31,7 +32,6 @@ using Microsoft.Sbom.Parser;
 using Microsoft.Sbom.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ErrorType = Microsoft.Sbom.Api.Entities.ErrorType;
 using SpdxChecksum = Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Checksum;
@@ -43,7 +43,14 @@ namespace Microsoft.Sbom.Workflows;
 [TestClass]
 public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBase
 {
-    private readonly Mock<ILogger> mockLogger = new();
+    private readonly Mock<ILogger<DirectoryWalker>> mockDirectoryWalkerLogger = new Mock<ILogger<DirectoryWalker>>();
+    private readonly Mock<ILogger<ManifestFolderFilterer>> mockManifestFolderFiltererLogger = new Mock<ILogger<ManifestFolderFilterer>>();
+    private readonly Mock<ILogger<FileHasher>> mockFileHasherLogger = new Mock<ILogger<FileHasher>>();
+    private readonly Mock<ILogger<DownloadedRootPathFilter>> mockDownloadedRootPathFilterLogger = new Mock<ILogger<DownloadedRootPathFilter>>();
+    private readonly Mock<ILogger<FilesValidator>> mockFilesValidatorLogger = new Mock<ILogger<FilesValidator>>();
+    private readonly Mock<ILogger<SbomParserBasedValidationWorkflow>> mockSbomParserBasedValidationWorkflowLogger = new Mock<ILogger<SbomParserBasedValidationWorkflow>>();
+    private readonly Mock<ILogger<EnumeratorChannel>> mockEnumeratorChannelLogger = new Mock<ILogger<EnumeratorChannel>>();
+    private readonly Mock<ILogger<FileFilterer>> mockFileFiltererLogger = new Mock<ILogger<FileFilterer>>();
     private readonly Mock<IOSUtils> mockOSUtils = new();
     private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new();
     private readonly Mock<ISignValidator> signValidatorMock = new();
@@ -120,7 +127,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
-        var directoryWalker = new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object);
+        var directoryWalker = new DirectoryWalker(fileSystemMock.Object, mockDirectoryWalkerLogger.Object, configurationMock.Object);
 
         hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
                 It.IsAny<string>(),
@@ -138,7 +145,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var fileHasher = new FileHasher(
             hashCodeGeneratorMock.Object,
             new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
-            mockLogger.Object,
+            mockFileHasherLogger.Object,
             configurationMock.Object,
             new Mock<ISbomConfigProvider>().Object,
             new ManifestGeneratorProvider(null),
@@ -146,20 +153,20 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
         manifestFilterMock.Init();
-        var fileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object);
+        var fileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockManifestFolderFiltererLogger.Object);
 
-        var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
+        var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockDownloadedRootPathFilterLogger.Object);
         rootFileFilterMock.Init();
 
         var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
-        var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
+        var enumeratorChannel = new EnumeratorChannel(mockEnumeratorChannelLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
-        var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
+        var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockFileFiltererLogger.Object, configurationMock.Object, fileSystemMock.Object);
 
         var filesValidator = new FilesValidator(
             directoryWalker,
             configurationMock.Object,
-            mockLogger.Object,
+            mockFilesValidatorLogger.Object,
             fileHasher,
             fileFilterer,
             hashValidator,
@@ -171,7 +178,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var validator = new SbomParserBasedValidationWorkflow(
             recorder.Object,
             signValidationProviderMock.Object,
-            mockLogger.Object,
+            mockSbomParserBasedValidationWorkflowLogger.Object,
             manifestParserProvider.Object,
             configurationMock.Object,
             sbomConfigs.Object,
@@ -255,7 +262,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         var validationResultGenerator = new ValidationResultGenerator(configurationMock.Object);
 
-        var directoryWalker = new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object);
+        var directoryWalker = new DirectoryWalker(fileSystemMock.Object, mockDirectoryWalkerLogger.Object, configurationMock.Object);
 
         hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
                 It.IsAny<string>(),
@@ -278,7 +285,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var fileHasher = new FileHasher(
             hashCodeGeneratorMock.Object,
             new SbomToolManifestPathConverter(configurationMock.Object, mockOSUtils.Object, fileSystemMock.Object, fileSystemUtilsExtensionMock.Object),
-            mockLogger.Object,
+            mockFileHasherLogger.Object,
             configurationMock.Object,
             new Mock<ISbomConfigProvider>().Object,
             new ManifestGeneratorProvider(null),
@@ -286,20 +293,20 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         var manifestFilterMock = new ManifestFolderFilter(configurationMock.Object, mockOSUtils.Object);
         manifestFilterMock.Init();
-        var fileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockLogger.Object);
+        var fileFilterer = new ManifestFolderFilterer(manifestFilterMock, mockManifestFolderFiltererLogger.Object);
 
-        var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
+        var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockDownloadedRootPathFilterLogger.Object);
         rootFileFilterMock.Init();
 
         var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
-        var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
+        var enumeratorChannel = new EnumeratorChannel(mockEnumeratorChannelLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
-        var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
+        var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockFileFiltererLogger.Object, configurationMock.Object, fileSystemMock.Object);
 
         var filesValidator = new FilesValidator(
             directoryWalker,
             configurationMock.Object,
-            mockLogger.Object,
+            mockFilesValidatorLogger.Object,
             fileHasher,
             fileFilterer,
             hashValidator,
@@ -311,7 +318,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var validator = new SbomParserBasedValidationWorkflow(
             recorder.Object,
             signValidationProviderMock.Object,
-            mockLogger.Object,
+            mockSbomParserBasedValidationWorkflowLogger.Object,
             manifestParserProvider.Object,
             configurationMock.Object,
             sbomConfigs.Object,

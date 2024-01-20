@@ -7,41 +7,39 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Output;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Builds a <see cref="MetadataBuilder"/> object for a given SBOM format.
 /// </summary>
 public class MetadataBuilderFactory : IMetadataBuilderFactory
 {
-    private readonly ILogger logger;
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;
     private readonly IRecorder recorder;
+    private readonly IServiceProvider serviceProvider;
 
     public MetadataBuilderFactory(
-        ILogger logger,
         ManifestGeneratorProvider manifestGeneratorProvider,
-        IRecorder recorder)
+        IRecorder recorder,
+        IServiceProvider serviceProvider)
     {
-        if (logger is null)
-        {
-            throw new ArgumentNullException(nameof(logger));
-        }
-
         if (manifestGeneratorProvider is null)
         {
             throw new ArgumentNullException(nameof(manifestGeneratorProvider));
         }
 
-        this.logger = logger;
         this.manifestGeneratorProvider = manifestGeneratorProvider;
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+        this.serviceProvider = serviceProvider;
     }
 
-    public IMetadataBuilder Get(ManifestInfo manifestInfo)
-    {
-        return new MetadataBuilder(logger, manifestGeneratorProvider, manifestInfo, recorder);
-    }
+    public IMetadataBuilder Get(ManifestInfo manifestInfo) => new MetadataBuilder(
+        this.serviceProvider.GetRequiredService<ILogger<MetadataBuilder>>(),
+        this.manifestGeneratorProvider,
+        manifestInfo,
+        this.recorder);
 }

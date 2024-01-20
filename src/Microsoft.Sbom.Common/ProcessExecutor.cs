@@ -5,13 +5,13 @@ namespace Microsoft.Sbom.Common;
 
 using System;
 using System.Diagnostics;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 public class ProcessExecutor : IProcessExecutor
 {
-    private readonly ILogger logger;
+    private readonly ILogger<ProcessExecutor> logger;
 
-    public ProcessExecutor(ILogger logger)
+    public ProcessExecutor(ILogger<ProcessExecutor> logger)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -43,14 +43,14 @@ public class ProcessExecutor : IProcessExecutor
         // Check if process was successful or not.
         if (process.ExitCode != 0)
         {
-            logger.Error($"The process {fileName} with the arguments {arguments} exited with code {process.ExitCode}. StdErr: {process.StandardError.ReadToEnd()}");
+            logger.LogError($"The process {fileName} with the arguments {arguments} exited with code {process.ExitCode}. StdErr: {process.StandardError.ReadToEnd()}");
             return null;
         }
 
         if (!processExited)
         {
             process.Kill(); // If the process exceeds the timeout, kill it
-            logger.Error($"The process {fileName} with the arguments {arguments} timed out.");
+            logger.LogError($"The process {fileName} with the arguments {arguments} timed out.");
             return null;
         }
 

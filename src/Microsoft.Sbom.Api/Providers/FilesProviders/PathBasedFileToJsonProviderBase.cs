@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Utils;
@@ -30,7 +31,7 @@ public abstract class PathBasedFileToJsonProviderBase : EntityToJsonProviderBase
     public PathBasedFileToJsonProviderBase(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        Serilog.ILogger log,
+        ILogger<PathBasedFileToJsonProviderBase> log,
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,

@@ -21,14 +21,17 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog.Events;
 using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
-using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
+
+using Microsoft.Extensions.Logging;
+using Microsoft.Sbom.Adapters.ComponentDetection;
 
 [TestClass]
 public class SBOMComponentsWalkerTests
 {
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<SBOMComponentsWalker>> mockLogger = new Mock<ILogger<SBOMComponentsWalker>>();
+    private readonly Mock<ILogger<ComponentDetectorCachedExecutor>> mockComponentDetectorCachedExecutorLogger = new Mock<ILogger<ComponentDetectorCachedExecutor>>();
     private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
     private readonly Mock<ISbomConfigProvider> mockSbomConfigs = new Mock<ISbomConfigProvider>();
     private readonly Mock<IFileSystemUtils> mockFileSystem = new Mock<IFileSystemUtils>();
@@ -60,7 +63,7 @@ public class SBOMComponentsWalkerTests
             scannedComponents.Add(scannedComponent);
         }
 
-        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
+        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(mockComponentDetectorCachedExecutorLogger.Object, new Mock<IComponentDetector>().Object);
 
         var scanResult = new ScanResult
         {
@@ -105,7 +108,7 @@ public class SBOMComponentsWalkerTests
         };
         scannedComponents.Add(nonSbomComponent);
 
-        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
+        var mockDetector = new Mock<ComponentDetectorCachedExecutor>(mockComponentDetectorCachedExecutorLogger.Object, new Mock<IComponentDetector>().Object);
 
         var scanResult = new ScanResult
         {

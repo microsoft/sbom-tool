@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
@@ -20,7 +21,7 @@ namespace Microsoft.Sbom.Api.PackageDetails;
 public class MavenUtils : IPackageManagerUtils<MavenUtils>
 {
     private readonly IFileSystemUtils fileSystemUtils;
-    private readonly ILogger log;
+    private readonly ILogger<MavenUtils> log;
     private readonly IRecorder recorder;
 
     private static readonly string EnvHomePath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "HOMEPATH" : "HOME";
@@ -30,7 +31,7 @@ public class MavenUtils : IPackageManagerUtils<MavenUtils>
 
     private bool MavenPackagesPathHasReadPermissions => fileSystemUtils.DirectoryHasReadPermissions(MavenPackagesPath);
 
-    public MavenUtils(IFileSystemUtils fileSystemUtils, ILogger log, IRecorder recorder)
+    public MavenUtils(IFileSystemUtils fileSystemUtils, ILogger<MavenUtils> log, IRecorder recorder)
     {
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         this.log = log ?? throw new ArgumentNullException(nameof(log));
@@ -75,7 +76,7 @@ public class MavenUtils : IPackageManagerUtils<MavenUtils>
             }
             else
             {
-                log.Verbose($"Pom location could not be found at: {pomLocation}");
+                log.LogTrace($"Pom location could not be found at: {pomLocation}");
             }
         }
 
@@ -138,7 +139,7 @@ public class MavenUtils : IPackageManagerUtils<MavenUtils>
         }
         catch (PackageMetadataParsingException e)
         {
-            log.Error("Error encountered while extracting supplier info from pom file. Supplier information may be incomplete.", e);
+            log.LogError($"Error encountered while extracting supplier info from pom file. Supplier information may be incomplete. {e}");
             recorder.RecordMetadataException(e);
 
             return null;

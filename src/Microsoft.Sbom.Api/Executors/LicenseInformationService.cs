@@ -9,20 +9,20 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
 public class LicenseInformationService : ILicenseInformationService
 {
-    private readonly ILogger log;
+    private readonly ILogger<LicenseInformationService> log;
     private readonly IRecorder recorder;
     private readonly HttpClient httpClient;
     private const int ClientTimeoutSeconds = 30;
 
-    public LicenseInformationService(ILogger log, IRecorder recorder, HttpClient httpClient)
+    public LicenseInformationService(ILogger<LicenseInformationService> log, IRecorder recorder, HttpClient httpClient)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
@@ -45,7 +45,7 @@ public class LicenseInformationService : ILicenseInformationService
             var batch = listOfComponentsForApi.Skip(i).Take(batchSize).ToList();
             var formattedData = JsonSerializer.Serialize(batch);
 
-            log.Debug($"Retrieving license information for {batch.Count} components...");
+            log.LogDebug($"Retrieving license information for {batch.Count} components...");
 
             var content = new StringContent(formattedData, Encoding.UTF8, "application/json");
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -58,13 +58,13 @@ public class LicenseInformationService : ILicenseInformationService
             }
             catch (Exception e)
             {
-                log.Warning($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {e.Message}");
+                log.LogWarning($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {e.Message}");
                 recorder.RecordAPIException(new ClearlyDefinedResponseNotSuccessfulException(e.Message));
             }
 
             stopwatch.Stop();
 
-            log.Debug($"Retrieving license information for {batch.Count} components took {stopwatch.Elapsed.TotalSeconds} seconds");
+            log.LogDebug($"Retrieving license information for {batch.Count} components took {stopwatch.Elapsed.TotalSeconds} seconds");
         }
 
         foreach (var response in responses)
@@ -75,7 +75,7 @@ public class LicenseInformationService : ILicenseInformationService
             }
             else
             {
-                log.Warning($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information. Request returned status code: {response.StatusCode}");
+                log.LogWarning($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information. Request returned status code: {response.StatusCode}");
                 recorder.RecordAPIException(new ClearlyDefinedResponseNotSuccessfulException($"Request returned status code: {response.StatusCode}"));
             }
         }

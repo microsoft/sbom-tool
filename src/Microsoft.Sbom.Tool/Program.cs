@@ -1,20 +1,28 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+namespace Microsoft.Sbom.Tool;
+
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.ComponentDetection.Orchestrator;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.DependencyInjection;
 using PowerArgs;
-
-namespace Microsoft.Sbom.Tool;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
+using Serilog.Filters;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 internal class Program
 {
@@ -55,10 +63,10 @@ internal class Program
                     services
                         .AddTransient<ConfigFileParser>()
                         .AddSingleton(typeof(IConfigurationBuilder<>), typeof(ConfigurationBuilder<>))
-                        .AddSingleton(x =>
+                        .AddSingleton<IConfiguration>(provider =>
                         {
-                            var validationConfigurationBuilder = x.GetService<IConfigurationBuilder<ValidationArgs>>();
-                            var generationConfigurationBuilder = x.GetService<IConfigurationBuilder<GenerationArgs>>();
+                            var validationConfigurationBuilder = provider.GetService<IConfigurationBuilder<ValidationArgs>>();
+                            var generationConfigurationBuilder = provider.GetService<IConfigurationBuilder<GenerationArgs>>();
                             var inputConfiguration = result.ActionArgs switch
                             {
                                 ValidationArgs v => validationConfigurationBuilder.GetConfiguration(v).GetAwaiter().GetResult(),
@@ -66,11 +74,30 @@ internal class Program
                                 _ => default
                             };
 
-                            inputConfiguration.ToConfiguration();
-                            return inputConfiguration;
+                            inputConfiguration?.ToConfiguration();
+                            return inputConfiguration; // Return the fetched input configuration
                         })
 
-                        .AddSbomTool();
+                        .AddSbomTool()
+                        .AddLogging(l => l.ClearProviders() // Clear logging providers coming from component-detection libraries
+                        .AddSerilog(new LoggerConfiguration()
+                        .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = LogEventLevel.Debug })
+                        .Enrich.With<LoggingEnricher>()
+                        .Enrich.FromLogContext()
+                        .WriteTo.Map(
+                            LoggingEnricher.LogFilePathPropertyName,
+                            (logFilePath, wt) => wt.Async(x => x.File($"{logFilePath}")),
+                            1) // sinkMapCountLimit
+                        .WriteTo.Map<bool>(
+                            LoggingEnricher.PrintStderrPropertyName,
+                            (printLogsToStderr, wt) => wt.Logger(lc => lc
+                                .WriteTo.Console(outputTemplate: Constants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
+
+                                // Don't write the detection times table from DetectorProcessingService to the console, only the log file
+                                .Filter.ByExcluding(Matching.WithProperty<string>("DetectionTimeLine", x => !string.IsNullOrEmpty(x))))
+                                .Filter.ByExcluding(Matching.FromSource("Microsoft.ComponentDetection.Orchestrator.Services.DetectorProcessingService")),
+                            1) // sinkMapCountLimit
+                        .CreateLogger()));
                 })
                 .RunConsoleAsync(x => x.SuppressStatusMessages = true);
         }

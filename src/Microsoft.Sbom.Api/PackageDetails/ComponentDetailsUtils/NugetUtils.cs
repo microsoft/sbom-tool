@@ -6,11 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
 using NuGet.Configuration;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.PackageDetails;
 
@@ -20,12 +20,12 @@ namespace Microsoft.Sbom.Api.PackageDetails;
 public class NugetUtils : IPackageManagerUtils<NugetUtils>
 {
     private readonly IFileSystemUtils fileSystemUtils;
-    private readonly ILogger log;
+    private readonly ILogger<NugetUtils> log;
     private readonly IRecorder recorder;
 
     private static readonly string NugetPackagesPath = SettingsUtility.GetGlobalPackagesFolder(new NullSettings());
 
-    public NugetUtils(IFileSystemUtils fileSystemUtils, ILogger log, IRecorder recorder)
+    public NugetUtils(IFileSystemUtils fileSystemUtils, ILogger<NugetUtils> log, IRecorder recorder)
     {
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         this.log = log ?? throw new ArgumentNullException(nameof(log));
@@ -55,7 +55,7 @@ public class NugetUtils : IPackageManagerUtils<NugetUtils>
             }
             else
             {
-                log.Verbose($"Nuspec file could not be found at: {nuspecLocation}");
+                log.LogTrace($"Nuspec file could not be found at: {nuspecLocation}");
             }
         }
 
@@ -106,7 +106,7 @@ public class NugetUtils : IPackageManagerUtils<NugetUtils>
         }
         catch (PackageMetadataParsingException e)
         {
-            log.Error("Error encountered while extracting supplier info from nuspec file. Supplier information may be incomplete.", e);
+            log.LogError($"Error encountered while extracting supplier info from nuspec file. Supplier information may be incomplete. {e}");
             recorder.RecordMetadataException(e);
 
             return null;

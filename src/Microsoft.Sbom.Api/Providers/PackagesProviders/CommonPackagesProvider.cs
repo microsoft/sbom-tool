@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.PackageDetails;
@@ -12,7 +13,6 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Providers.PackagesProviders;
 
@@ -29,7 +29,7 @@ public abstract class CommonPackagesProvider<T> : EntityToJsonProviderBase<T>
     protected CommonPackagesProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
-        ILogger logger,
+        ILogger<CommonPackagesProvider<T>> logger,
         ISbomConfigProvider sbomConfigs,
         PackageInfoJsonWriter packageInfoJsonWriter,
         IPackageDetailsFactory packageDetailsFactory,
@@ -55,7 +55,7 @@ public abstract class CommonPackagesProvider<T> : EntityToJsonProviderBase<T>
                 if (sbomConfigs.TryGetMetadata(MetadataKey.ImageOS, out object imageOsObj) &&
                     sbomConfigs.TryGetMetadata(MetadataKey.ImageVersion, out object imageVersionObj))
                 {
-                    Log.Debug($"Adding the image OS package to the packages list as a dependency.");
+                    Log.LogDebug($"Adding the image OS package to the packages list as a dependency.");
                     var name = $"Azure Pipelines Hosted Image {imageOsObj}";
                     await packageInfos.Writer.WriteAsync(new SbomPackage()
                     {

@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors;
 
@@ -19,7 +19,7 @@ namespace Microsoft.Sbom.Api.Executors;
 /// </summary>
 public class PackagesWalker : ComponentDetectionBaseWalker
 {
-    public PackagesWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils, IPackageDetailsFactory packageDetailsFactory, ILicenseInformationFetcher licenseInformationFetcher)
+    public PackagesWalker(ILogger<PackagesWalker> log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils, IPackageDetailsFactory packageDetailsFactory, ILicenseInformationFetcher licenseInformationFetcher)
         : base(log, componentDetector, configuration, sbomConfigs, fileSystemUtils, packageDetailsFactory, licenseInformationFetcher)
     {
     }

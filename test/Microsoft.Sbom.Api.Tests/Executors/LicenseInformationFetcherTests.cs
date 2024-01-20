@@ -4,18 +4,18 @@
 using System.Collections.Generic;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
 
 [TestClass]
 public class LicenseInformationFetcherTests
 {
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<LicenseInformationFetcher>> mockLogger = new Mock<ILogger<LicenseInformationFetcher>>();
     private readonly Mock<IRecorder> mockRecorder = new Mock<IRecorder>();
     private readonly Mock<ILicenseInformationService> mockLicenseInformationService = new Mock<ILicenseInformationService>();
 

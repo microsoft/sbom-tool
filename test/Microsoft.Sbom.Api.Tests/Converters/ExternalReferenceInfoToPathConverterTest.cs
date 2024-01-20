@@ -5,19 +5,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api.Converters;
-using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Serilog;
 
 namespace Microsoft.Sbom.Api.Tests.Converters;
 
 [TestClass]
 public class ExternalReferenceInfoToPathConverterTest
 {
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
+    private readonly Mock<ILogger<ExternalReferenceInfoToPathConverter>> mockLogger = new Mock<ILogger<ExternalReferenceInfoToPathConverter>>();
 
     [TestMethod]
     public async Task When_ConvertingExternalDocRefInfoToPath_WithCommonCase_ThenTestPass()
