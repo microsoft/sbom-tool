@@ -1,9 +1,9 @@
 # Building the SBOM tool from source code.
 
-The SBOM tool is a cross-platform, C#-based tool compiled using the  Microsoft .NET 6 cross-platform, open-source developer platform. Follow the instructions provided which will guide the user in building the sbom tool from the source file.
+The SBOM tool is a cross-platform, C#-based tool compiled using the  Microsoft .NET 8 cross-platform, open-source developer platform. Follow the instructions provided which will guide the user in building the sbom tool from the source file.
 
 ## Prerequisites
-* Download and install [Dotnet SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) version 6.0.400 or later.
+* Download and install [Dotnet SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) version 8.0.100 or later.
 * Clone this GitHub repo (see steps to clone repo [here](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)).
 * A text editor or integrated development environment (IDE) such as [Visual Studio Code](https://code.visualstudio.com) or [Visual Studio](https://visualstudio.microsoft.com).
 
@@ -42,7 +42,38 @@ dotnet build
 Users can run the sbom tool using this command which contains the minimum required set of paramaters:
 
 ```
-dotnet run --project src/Microsoft.Sbom.Tool generate -- -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -ps <company name> -nsb <namespace uri base>
+dotnet run --project src/Microsoft.Sbom.Tool generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -ps <company name> -nsb <namespace uri base>
+```
+
+## Building on ARM based devices running OSX
+
+The sbom-tool targets both .NET 6 and .NET 8 therefore it is possible to produce binaries for both. We have seen issues when attempting to run the tool using the .NET 6 binaries ([#223](https://github.com/microsoft/sbom-tool/issues/223)) so for these scenarios we recommend targeting .NET 8. You can do this by following these steps:
+
+The following command will produce a dll that can be executed on ARM based devices running OSX and can be modified to suit your needs:
+
+```
+ dotnet publish src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj --configuration Release --output bin --runtime osx-arm64 -p:TargetFramework=net8.0 -p:SelfContained=true -p:OFFICIAL_BUILD=true -p:MinVerVersionOverride=1.8.0 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false
+```
+
+After running this command you can execute the tool like this:
+
+```
+./bin/Microsoft.Sbom.Tool generate -b ~/tmp/sbom-tool/ -bc ~/tmp/sbom-tool/ -pn TestProject -pv 1.2.3 -ps Microsoft
+```
+
+
+## Using Dotnet Publish
+
+Because of our multi-targeting, a target framework must be specified when using the dotnet publish command:
+
+Either
+
+```
+dotnet publish -f net8.0
+```
+Or
+```
+dotnet publish -f net6.0
 ```
 
 ## Building using Codespaces
