@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.ComponentDetection.Common;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Microsoft.ComponentDetection.Orchestrator.Services;
@@ -20,20 +21,26 @@ public class ComponentDetector : IComponentDetector
     private readonly IDetectorProcessingService detectorProcessingService;
     private readonly IDetectorRestrictionService detectorRestrictionService;
     private readonly IGraphTranslationService graphTranslationService;
-    private readonly ILogger<ScanExecutionService> logger;
+    private readonly IFileWritingService fileWritingService;
+    private readonly ILogger<ScanExecutionService> scanExecutionLogger;
+    private readonly ILogger<ScanCommand> scanCommandLogger;
 
     public ComponentDetector(
         IEnumerable<ComponentDetection.Contracts.IComponentDetector> detectors,
         IDetectorProcessingService detectorProcessingService,
         IDetectorRestrictionService detectorRestrictionService,
         IGraphTranslationService graphTranslationService,
-        ILogger<ScanExecutionService> logger)
+        IFileWritingService fileWritingService,
+        ILogger<ScanExecutionService> scanExecutionLogger,
+        ILogger<ScanCommand> scanCommandLogger)
     {
         this.detectors = detectors;
         this.detectorProcessingService = detectorProcessingService;
         this.detectorRestrictionService = detectorRestrictionService;
         this.graphTranslationService = graphTranslationService;
-        this.logger = logger;
+        this.fileWritingService = fileWritingService;
+        this.scanExecutionLogger = scanExecutionLogger;
+        this.scanCommandLogger = scanCommandLogger;
     }
 
     public virtual async Task<ScanResult> ScanAsync(ScanSettings args)
@@ -43,8 +50,8 @@ public class ComponentDetector : IComponentDetector
             detectorProcessingService,
             detectorRestrictionService,
             graphTranslationService,
-            logger);
-
-        return await executionService.ExecuteScanAsync(args);
+            scanExecutionLogger);
+        var scanCommand = new ScanCommand(fileWritingService, executionService, scanCommandLogger);
+        return await scanCommand.ExecuteScanCommandAsync(args);
     }
 }

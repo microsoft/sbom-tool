@@ -8,6 +8,7 @@ using System.IO;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.Utils;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.PackageDetails;
@@ -21,20 +22,25 @@ public class PackageDetailsFactory : IPackageDetailsFactory
     private readonly IRecorder recorder;
     private readonly IPackageManagerUtils<MavenUtils> mavenUtils;
     private readonly IPackageManagerUtils<NugetUtils> nugetUtils;
+    private readonly IPackageManagerUtils<RubyGemsUtils> rubygemUtils;
 
-    public PackageDetailsFactory(ILogger log, IRecorder recorder, IPackageManagerUtils<MavenUtils> mavenUtils, IPackageManagerUtils<NugetUtils> nugetUtils)
+    public PackageDetailsFactory(ILogger log, IRecorder recorder, IPackageManagerUtils<MavenUtils> mavenUtils, IPackageManagerUtils<NugetUtils> nugetUtils, IPackageManagerUtils<RubyGemsUtils> rubygemUtils)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.mavenUtils = mavenUtils ?? throw new ArgumentNullException(nameof(mavenUtils));
         this.nugetUtils = nugetUtils ?? throw new ArgumentNullException(nameof(nugetUtils));
+        this.rubygemUtils = rubygemUtils ?? throw new ArgumentNullException(nameof(rubygemUtils));
     }
 
     public IDictionary<(string Name, string Version), PackageDetails> GetPackageDetailsDictionary(IEnumerable<ScannedComponent> scannedComponents)
     {
-        var packageDetailsLocations = GetPackageDetailsLocations(scannedComponents);
+        using (recorder.TraceEvent(Events.SBOMParseMetadata))
+        {
+            var packageDetailsLocations = GetPackageDetailsLocations(scannedComponents);
 
-        return ExtractPackageDetailsFromFiles(packageDetailsLocations);
+            return ExtractPackageDetailsFromFiles(packageDetailsLocations);
+        }
     }
 
     private List<string> GetPackageDetailsLocations(IEnumerable<ScannedComponent> scannedComponents)
@@ -52,6 +58,9 @@ public class PackageDetailsFactory : IPackageDetailsFactory
                     break;
                 case ComponentType.Maven:
                     packageDetailsConfirmedLocations.Add(mavenUtils.GetMetadataLocation(scannedComponent));
+                    break;
+                case ComponentType.RubyGems:
+                    packageDetailsConfirmedLocations.Add(rubygemUtils.GetMetadataLocation(scannedComponent));
                     break;
                 default:
                     break;
@@ -73,7 +82,7 @@ public class PackageDetailsFactory : IPackageDetailsFactory
                 {
                     case ".nuspec":
                         var nuspecDetails = nugetUtils.ParseMetadata(path);
-                        if (!string.IsNullOrEmpty(nuspecDetails.PackageDetails.License) || !string.IsNullOrEmpty(nuspecDetails.PackageDetails.Supplier))
+                        if (!string.IsNullOrEmpty(nuspecDetails?.PackageDetails.License) || !string.IsNullOrEmpty(nuspecDetails?.PackageDetails?.Supplier))
                         {
                             packageDetailsDictionary.TryAdd((nuspecDetails.Name, nuspecDetails.Version), nuspecDetails.PackageDetails);
                         }
@@ -81,9 +90,17 @@ public class PackageDetailsFactory : IPackageDetailsFactory
                         break;
                     case ".pom":
                         var pomDetails = mavenUtils.ParseMetadata(path);
-                        if (!string.IsNullOrEmpty(pomDetails.PackageDetails.License) || !string.IsNullOrEmpty(pomDetails.PackageDetails.Supplier))
+                        if (!string.IsNullOrEmpty(pomDetails?.PackageDetails?.License) || !string.IsNullOrEmpty(pomDetails?.PackageDetails?.Supplier))
                         {
                             packageDetailsDictionary.TryAdd((pomDetails.Name, pomDetails.Version), pomDetails.PackageDetails);
+                        }
+
+                        break;
+                    case ".gemspec":
+                        var gemspecDetails = rubygemUtils.ParseMetadata(path);
+                        if (!string.IsNullOrEmpty(gemspecDetails?.PackageDetails?.License) || !string.IsNullOrEmpty(gemspecDetails?.PackageDetails?.Supplier))
+                        {
+                            packageDetailsDictionary.TryAdd((gemspecDetails.Name, gemspecDetails.Version), gemspecDetails.PackageDetails);
                         }
 
                         break;

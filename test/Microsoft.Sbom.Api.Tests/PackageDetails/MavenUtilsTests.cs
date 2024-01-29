@@ -133,6 +133,7 @@ public class MavenUtilsTests
         Assert.AreEqual("Person: Sample Name", parsedInfo.PackageDetails.Supplier);
     }
 
+    [TestMethod]
     public void ParsePom_WithOrganizationAndDevelopers_PopulatesAsOrganization()
     {
         var mavenUtils = new MavenUtils(mockFileSystemUtils.Object, mockLogger.Object, mockRecorder.Object);
@@ -151,6 +152,6 @@ public class MavenUtilsTests
         Assert.AreEqual("test-package", parsedInfo.Name);
         Assert.AreEqual("1.3", parsedInfo.Version);
         Assert.IsTrue(string.IsNullOrEmpty(parsedInfo.PackageDetails.License));
-        Assert.AreEqual("Person: Sample Name", parsedInfo.PackageDetails.Supplier);
+        Assert.AreEqual("Organization: Microsoft", parsedInfo.PackageDetails.Supplier);
     }
 }

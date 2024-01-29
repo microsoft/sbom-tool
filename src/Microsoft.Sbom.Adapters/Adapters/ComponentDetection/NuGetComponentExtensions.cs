@@ -25,10 +25,10 @@ internal static class NuGetComponentExtensions
         PackageName = nuGetComponent.Name,
         PackageVersion = nuGetComponent.Version,
         Supplier = nuGetComponent.Authors?.Any() == true ? $"Organization: {nuGetComponent.Authors.First()}" : component.Supplier,
-        LicenseInfo = string.IsNullOrWhiteSpace(component.LicenseConcluded) && string.IsNullOrEmpty(component.LicenseDeclared) ? null : new LicenseInfo
+        LicenseInfo = new LicenseInfo
         {
-            Concluded = component.LicenseConcluded,
-            Declared = component.LicenseDeclared,
+            Concluded = string.IsNullOrEmpty(component.LicenseConcluded) ? null : component.LicenseConcluded,
+            Declared = string.IsNullOrEmpty(component.LicenseDeclared) ? null : component.LicenseDeclared,
         },
         FilesAnalyzed = false,
         Type = "nuget",

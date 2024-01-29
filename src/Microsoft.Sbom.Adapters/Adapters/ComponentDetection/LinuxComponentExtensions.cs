@@ -23,6 +23,12 @@ internal static class LinuxComponentExtensions
         PackageName = linuxComponent.Name,
         PackageVersion = linuxComponent.Version,
         FilesAnalyzed = false,
+        Supplier = string.IsNullOrEmpty(linuxComponent.Author) ? null : $"Organization: {linuxComponent.Author}",
+        LicenseInfo = string.IsNullOrEmpty(linuxComponent.License) ? null : new LicenseInfo
+        {
+            Concluded = linuxComponent.License
+        },
+
         Type = "linux",
     };
 }
