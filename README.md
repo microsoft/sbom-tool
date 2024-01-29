@@ -102,6 +102,22 @@ Each SBOM has a unique namespace that uniquely identifies the SBOM, we generate 
 
 A more detailed list of available CLI arguments for the tool can be found [here](docs/sbom-tool-arguments.md)
 
+### SBOM Validation
+
+With an SBOM file in hand, use the tool to validate the output file with the command:
+
+```
+sbom-tool validate -b <drop path> -o <output path> -mi SPDX:2.2
+```
+
+This sample command provides the minimum mandatory arguments required to validate an SBOM:
+     `-b` should be the path same path used to generate the SBOM file.
+     In this scenario, the tool will default to searching for an SBOM at the `<drop path>\_manifest\spdx_2.2\manifest.spdx.json` path. 
+     `-o` is the output path where the tool should write the results to.
+     `-mi` is the ManifestInfo, which provides the user's desired name and version of the manifest format.
+
+Currently only SPDX2.2 is supported.
+
 ## Integrating SBOM tool to your CI/CD pipelines.
 
 You can follow these guides to integrate the SBOM tool into your CI/CD pipelines 
