@@ -32,6 +32,7 @@ public class ExtendedScannedComponent : ScannedComponent
         this.DetectorId = other.DetectorId;
         this.IsDevelopmentDependency = other.IsDevelopmentDependency;
         this.TopLevelReferrers = other.TopLevelReferrers;
+        this.AncestralReferrers = other.AncestralReferrers;
     }
 
     /// <summary>

@@ -18,4 +18,9 @@ public class ResultMetadata
     /// Gets or sets the generated id of the current SBOM document.
     /// </summary>
     public string DocumentId { get; set; }
+
+    /// <summary>
+    /// get or set unique identifier (Id) of DependOn package
+    /// </summary>
+    public string DependOn { get; set; }
 }
