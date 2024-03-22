@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Microsoft.Sbom.Targets</AssemblyName>
+    <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+    <IsPublishable>true</IsPublishable>
+    <Description>Tasks and targets for running the SBOM tool.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--<ProjectReference Include="..\Microsoft.Sbom.Api\Microsoft.Sbom.Api.csproj" />-->
+    <ProjectReference Include="..\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" />
+  </ItemGroup>
+
+<!-- TODO temp for testing -->
+  <Import Project="./SbomExecution.props" />
+  <Import Project="./SbomExecution.targets" />
+</Project>

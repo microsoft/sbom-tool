@@ -1,0 +1,9 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <SbomGenerationBuildDropPath>C:\code\tmp\droppath</SbomGenerationBuildDropPath>
+        <SbomGenerationBuildComponentPath>C:\code\tmp\droppath</SbomGenerationBuildComponentPath>
+        <SbomGenerationPackageSupplier>test-supplier</SbomGenerationPackageSupplier>
+        <SbomGenerationPackageName>test-name</SbomGenerationPackageName>
+        <SbomGenerationPackageVersion>test-ver</SbomGenerationPackageVersion>
+    </PropertyGroup>
+</Project>
