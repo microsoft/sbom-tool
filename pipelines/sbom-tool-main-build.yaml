@@ -194,7 +194,7 @@ extends:
               cd $(Build.ArtifactStagingDirectory)/win
               $version = (ls $(BinaryNameWindows) -r | Select-Object -ExpandProperty VersionInfo).ProductVersion
               echo "##vso[task.setvariable variable=Version;isOutput=true]$version"
-              displayName: 'Set variable version'
+            displayName: 'Set variable version'
 
           - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
             displayName: 'Manifest Generator '
@@ -218,7 +218,7 @@ extends:
               $version = (ls $(BinaryNameWindows) -r | Select-Object -ExpandProperty VersionInfo).ProductVersion
               echo "##vso[task.setvariable variable=Version;isOutput=true]$version"
               $version | Out-File $(Build.ArtifactStagingDirectory)/version.txt
-              displayName: 'Write version file'
+            displayName: 'Write version file'
 
           - powershell: |
               del $(Build.ArtifactStagingDirectory)\CodeSignSummary-*.md
@@ -226,7 +226,7 @@ extends:
               Move-Item -Path $(Build.ArtifactStagingDirectory)\win\$(BinaryNameWindows) -Destination $(Build.ArtifactStagingDirectory)\bin\$(BinaryNameWindows)
               Move-Item -Path $(Build.ArtifactStagingDirectory)\win\_manifest\spdx_2.2\manifest.spdx.json -Destination $(Build.ArtifactStagingDirectory)\bin\win-x64-manifest.spdx.json
               Remove-Item $(Build.ArtifactStagingDirectory)\win -Recurse
-              displayName: 'Restructure Artifact'
+            displayName: 'Restructure Artifact'
 
         - job: Job_2
           displayName: 'Build (Linux)'
@@ -291,7 +291,7 @@ extends:
               Move-Item -Path $(Build.ArtifactStagingDirectory)/linux/$(BinaryNameLinux) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameLinux)
               Move-Item -Path $(Build.ArtifactStagingDirectory)/linux/_manifest/spdx_2.2/manifest.spdx.json -Destination $(Build.ArtifactStagingDirectory)/bin/linux-x64-manifest.spdx.json
               Remove-Item $(Build.ArtifactStagingDirectory)/linux -Recurse
-              displayName: 'Restructure Artifact'
+            displayName: 'Restructure Artifact'
 
         - job: Job_3
           displayName: 'Build (macOS)'
@@ -357,4 +357,4 @@ extends:
               Move-Item -Path $(Build.ArtifactStagingDirectory)/osx/$(BinaryNameMacOS) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameMacOS)
               Move-Item -Path $(Build.ArtifactStagingDirectory)/osx/_manifest/spdx_2.2/manifest.spdx.json -Destination $(Build.ArtifactStagingDirectory)/bin/osx-x64-manifest.spdx.json
               Remove-Item $(Build.ArtifactStagingDirectory)/osx -Recurse
-              displayName: 'Restructure Artifact'
+            displayName: 'Restructure Artifact'
