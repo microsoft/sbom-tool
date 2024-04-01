@@ -36,7 +36,8 @@ extends:
     stages:
       - stage: stage1
         jobs:
-        - job: 'Build (Windows + NuGet)'
+        - job: Job_1
+          displayName: Build (Windows + NuGet)
           templateContext:
             outputs:
             - output: pipelineArtifact
@@ -227,7 +228,8 @@ extends:
               Remove-Item $(Build.ArtifactStagingDirectory)\win -Recurse
               displayName: 'Restructure Artifact'
 
-        - job: 'Build (Linux)'
+        - job: Job_2
+          displayName: 'Build (Linux)'
           templateContext:
             outputs:
             - output: pipelineArtifact
@@ -291,7 +293,8 @@ extends:
               Remove-Item $(Build.ArtifactStagingDirectory)/linux -Recurse
               displayName: 'Restructure Artifact'
 
-        - job: 'Build (macOS)'
+        - job: Job_3
+          displayName: 'Build (macOS)'
           templateContext:
             outputs:
             - output: pipelineArtifact
