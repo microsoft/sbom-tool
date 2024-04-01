@@ -75,33 +75,33 @@ extends:
               ConnectedServiceName: 'Sbom tool CodeSigning ESRP  service connection'
               FolderPath: '$(Build.SourcesDirectory)/src'
               Pattern: |
-              **/Release/**/*.exe
-              **/Release/**/*.dll
-              UseMinimatch: true
-              signConfigType: inlineSignParams
-              inlineOperation: |
-              [
-                      {
-                          "KeyCode" : "CP-230012",
-                          "OperationCode" : "SigntoolSign",
-                          "Parameters" : {
-                              "OpusName" : "Microsoft",
-                              "OpusInfo" : "http://www.microsoft.com",
-                              "FileDigest" : "/fd \"SHA256\"",
-                              "PageHash" : "/NPH",
-                              "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
-                          },
-                          "ToolName" : "sign",
-                          "ToolVersion" : "1.0"
-                      },
-                      {
-                          "KeyCode" : "CP-230012",
-                          "OperationCode" : "SigntoolVerify",
-                          "Parameters" : {},
-                          "ToolName" : "sign",
-                          "ToolVersion" : "1.0"
-                      }
-              ]
+                **/Release/**/*.exe
+                **/Release/**/*.dll
+                UseMinimatch: true
+                signConfigType: inlineSignParams
+                inlineOperation: |
+                [
+                        {
+                            "KeyCode" : "CP-230012",
+                            "OperationCode" : "SigntoolSign",
+                            "Parameters" : {
+                                "OpusName" : "Microsoft",
+                                "OpusInfo" : "http://www.microsoft.com",
+                                "FileDigest" : "/fd \"SHA256\"",
+                                "PageHash" : "/NPH",
+                                "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                            },
+                            "ToolName" : "sign",
+                            "ToolVersion" : "1.0"
+                        },
+                        {
+                            "KeyCode" : "CP-230012",
+                            "OperationCode" : "SigntoolVerify",
+                            "Parameters" : {},
+                            "ToolName" : "sign",
+                            "ToolVersion" : "1.0"
+                        }
+                ]
             condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
 
           - task: DotNetCoreCLI@2
@@ -126,22 +126,22 @@ extends:
               Pattern: '*.nupkg'
               signConfigType: inlineSignParams
               inlineOperation: |
-              [ 
-                  {
-                      "keyCode": "CP-401405",
-                      "operationSetCode": "NuGetSign",
-                      "parameters": [ ],
-                      "toolName": "sign",
-                      "toolVersion": "1.0"
-                  },
-                  {
-                      "keyCode": "CP-401405",
-                      "operationSetCode": "NuGetVerify",
-                      "parameters": [ ],
-                      "toolName": "sign",
-                      "toolVersion": "1.0"
-                  }
-              ]
+                [ 
+                    {
+                        "keyCode": "CP-401405",
+                        "operationSetCode": "NuGetSign",
+                        "parameters": [ ],
+                        "toolName": "sign",
+                        "toolVersion": "1.0"
+                    },
+                    {
+                        "keyCode": "CP-401405",
+                        "operationSetCode": "NuGetVerify",
+                        "parameters": [ ],
+                        "toolName": "sign",
+                        "toolVersion": "1.0"
+                    }
+                ]
             condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
 
           - task: DotNetCoreCLI@2
@@ -162,38 +162,38 @@ extends:
               Pattern: 'Microsoft.Sbom.Tool.exe, *.dll'
               signConfigType: inlineSignParams
               inlineOperation: |
-              [
-                      {
-                          "KeyCode" : "CP-230012",
-                          "OperationCode" : "SigntoolSign",
-                          "Parameters" : {
-                              "OpusName" : "Microsoft",
-                              "OpusInfo" : "http://www.microsoft.com",
-                              "FileDigest" : "/fd \"SHA256\"",
-                              "PageHash" : "/NPH",
-                              "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
-                          },
-                          "ToolName" : "sign",
-                          "ToolVersion" : "1.0"
-                      },
-                      {
-                          "KeyCode" : "CP-230012",
-                          "OperationCode" : "SigntoolVerify",
-                          "Parameters" : {},
-                          "ToolName" : "sign",
-                          "ToolVersion" : "1.0"
-                      }
-              ]
+                [
+                        {
+                            "KeyCode" : "CP-230012",
+                            "OperationCode" : "SigntoolSign",
+                            "Parameters" : {
+                                "OpusName" : "Microsoft",
+                                "OpusInfo" : "http://www.microsoft.com",
+                                "FileDigest" : "/fd \"SHA256\"",
+                                "PageHash" : "/NPH",
+                                "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                            },
+                            "ToolName" : "sign",
+                            "ToolVersion" : "1.0"
+                        },
+                        {
+                            "KeyCode" : "CP-230012",
+                            "OperationCode" : "SigntoolVerify",
+                            "Parameters" : {},
+                            "ToolName" : "sign",
+                            "ToolVersion" : "1.0"
+                        }
+                ]
             condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
 
           - powershell: 'Rename-Item -Path $(Build.ArtifactStagingDirectory)\win\Microsoft.Sbom.Tool.exe -NewName $(BinaryNameWindows)'
             displayName: 'Rename binaries'
 
           - powershell: |
-            cd $(Build.ArtifactStagingDirectory)/win
-            $version = (ls $(BinaryNameWindows) -r | Select-Object -ExpandProperty VersionInfo).ProductVersion
-            echo "##vso[task.setvariable variable=Version;isOutput=true]$version"
-            displayName: 'Set variable version'
+              cd $(Build.ArtifactStagingDirectory)/win
+              $version = (ls $(BinaryNameWindows) -r | Select-Object -ExpandProperty VersionInfo).ProductVersion
+              echo "##vso[task.setvariable variable=Version;isOutput=true]$version"
+              displayName: 'Set variable version'
 
           - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
             displayName: 'Manifest Generator '
@@ -213,19 +213,19 @@ extends:
             continueOnError: true
 
           - powershell: |
-            cd $(Build.ArtifactStagingDirectory)/win
-            $version = (ls $(BinaryNameWindows) -r | Select-Object -ExpandProperty VersionInfo).ProductVersion
-            echo "##vso[task.setvariable variable=Version;isOutput=true]$version"
-            $version | Out-File $(Build.ArtifactStagingDirectory)/version.txt
-            displayName: 'Write version file'
+              cd $(Build.ArtifactStagingDirectory)/win
+              $version = (ls $(BinaryNameWindows) -r | Select-Object -ExpandProperty VersionInfo).ProductVersion
+              echo "##vso[task.setvariable variable=Version;isOutput=true]$version"
+              $version | Out-File $(Build.ArtifactStagingDirectory)/version.txt
+              displayName: 'Write version file'
 
           - powershell: |
-            del $(Build.ArtifactStagingDirectory)\CodeSignSummary-*.md
-            mkdir $(Build.ArtifactStagingDirectory)\bin
-            Move-Item -Path $(Build.ArtifactStagingDirectory)\win\$(BinaryNameWindows) -Destination $(Build.ArtifactStagingDirectory)\bin\$(BinaryNameWindows)
-            Move-Item -Path $(Build.ArtifactStagingDirectory)\win\_manifest\spdx_2.2\manifest.spdx.json -Destination $(Build.ArtifactStagingDirectory)\bin\win-x64-manifest.spdx.json
-            Remove-Item $(Build.ArtifactStagingDirectory)\win -Recurse
-            displayName: 'Restructure Artifact'
+              del $(Build.ArtifactStagingDirectory)\CodeSignSummary-*.md
+              mkdir $(Build.ArtifactStagingDirectory)\bin
+              Move-Item -Path $(Build.ArtifactStagingDirectory)\win\$(BinaryNameWindows) -Destination $(Build.ArtifactStagingDirectory)\bin\$(BinaryNameWindows)
+              Move-Item -Path $(Build.ArtifactStagingDirectory)\win\_manifest\spdx_2.2\manifest.spdx.json -Destination $(Build.ArtifactStagingDirectory)\bin\win-x64-manifest.spdx.json
+              Remove-Item $(Build.ArtifactStagingDirectory)\win -Recurse
+              displayName: 'Restructure Artifact'
 
         - job: 'Build (Linux)'
           templateContext:
@@ -284,12 +284,12 @@ extends:
             continueOnError: true
 
           - powershell: |
-            del $(Build.ArtifactStagingDirectory)/CodeSignSummary-*.md
-            mkdir $(Build.ArtifactStagingDirectory)/bin
-            Move-Item -Path $(Build.ArtifactStagingDirectory)/linux/$(BinaryNameLinux) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameLinux)
-            Move-Item -Path $(Build.ArtifactStagingDirectory)/linux/_manifest/spdx_2.2/manifest.spdx.json -Destination $(Build.ArtifactStagingDirectory)/bin/linux-x64-manifest.spdx.json
-            Remove-Item $(Build.ArtifactStagingDirectory)/linux -Recurse
-            displayName: 'Restructure Artifact'
+              del $(Build.ArtifactStagingDirectory)/CodeSignSummary-*.md
+              mkdir $(Build.ArtifactStagingDirectory)/bin
+              Move-Item -Path $(Build.ArtifactStagingDirectory)/linux/$(BinaryNameLinux) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameLinux)
+              Move-Item -Path $(Build.ArtifactStagingDirectory)/linux/_manifest/spdx_2.2/manifest.spdx.json -Destination $(Build.ArtifactStagingDirectory)/bin/linux-x64-manifest.spdx.json
+              Remove-Item $(Build.ArtifactStagingDirectory)/linux -Recurse
+              displayName: 'Restructure Artifact'
 
         - job: 'Build (macOS)'
           templateContext:
@@ -349,9 +349,9 @@ extends:
             continueOnError: true
 
           - powershell: |
-            del $(Build.ArtifactStagingDirectory)/CodeSignSummary-*.md
-            mkdir $(Build.ArtifactStagingDirectory)/bin
-            Move-Item -Path $(Build.ArtifactStagingDirectory)/osx/$(BinaryNameMacOS) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameMacOS)
-            Move-Item -Path $(Build.ArtifactStagingDirectory)/osx/_manifest/spdx_2.2/manifest.spdx.json -Destination $(Build.ArtifactStagingDirectory)/bin/osx-x64-manifest.spdx.json
-            Remove-Item $(Build.ArtifactStagingDirectory)/osx -Recurse
-            displayName: 'Restructure Artifact'
+              del $(Build.ArtifactStagingDirectory)/CodeSignSummary-*.md
+              mkdir $(Build.ArtifactStagingDirectory)/bin
+              Move-Item -Path $(Build.ArtifactStagingDirectory)/osx/$(BinaryNameMacOS) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameMacOS)
+              Move-Item -Path $(Build.ArtifactStagingDirectory)/osx/_manifest/spdx_2.2/manifest.spdx.json -Destination $(Build.ArtifactStagingDirectory)/bin/osx-x64-manifest.spdx.json
+              Remove-Item $(Build.ArtifactStagingDirectory)/osx -Recurse
+              displayName: 'Restructure Artifact'
