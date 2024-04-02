@@ -105,17 +105,6 @@ extends:
                 ]
             condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
 
-          - task: DotNetCoreCLI@2
-            displayName: 'Pack NuGet package'
-            inputs:
-              command: pack
-              packDirectory: '$(Build.ArtifactStagingDirectory)/nuget'
-              nobuild: true
-              includesymbols: true
-              buildProperties: 'SymbolPackageFormat=snupkg'
-              verbosityPack: Normal
-            enabled: false
-
           - powershell: 'dotnet pack Microsoft.Sbom.sln -c $(BuildConfiguration) --no-restore --no-build -o $(Build.ArtifactStagingDirectory)/nuget --include-symbols -p:SymbolPackageFormat=snupkg'
             displayName: 'Pack NuGet package'
 
@@ -196,23 +185,6 @@ extends:
               echo "##vso[task.setvariable variable=Version;isOutput=true]$version"
             displayName: 'Set variable version'
 
-          - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-            displayName: 'Manifest Generator '
-            inputs:
-              BuildDropPath: '$(Build.ArtifactStagingDirectory)/win'
-              BuildComponentPath: '$(Build.SourcesDirectory)'
-              Verbosity: Verbose
-              PackageName: '$(OutputArtifactName)'
-              PackageVersion: '$(Version.Version)'
-              AdditionalComponentDetectorArgs: '--DirectoryExclusionList **/samples/**'
-
-          - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
-            displayName: 'Drop Validator '
-            inputs:
-              BuildDropPath: '$(Build.ArtifactStagingDirectory)/win'
-              OutputPath: '$(Build.ArtifactStagingDirectory)/win/validationOutput.json'
-            continueOnError: true
-
           - powershell: |
               cd $(Build.ArtifactStagingDirectory)/win
               $version = (ls $(BinaryNameWindows) -r | Select-Object -ExpandProperty VersionInfo).ProductVersion
@@ -224,7 +196,6 @@ extends:
               del $(Build.ArtifactStagingDirectory)\CodeSignSummary-*.md
               mkdir $(Build.ArtifactStagingDirectory)\bin
               Move-Item -Path $(Build.ArtifactStagingDirectory)\win\$(BinaryNameWindows) -Destination $(Build.ArtifactStagingDirectory)\bin\$(BinaryNameWindows)
-              Move-Item -Path $(Build.ArtifactStagingDirectory)\win\_manifest\spdx_2.2\manifest.spdx.json -Destination $(Build.ArtifactStagingDirectory)\bin\win-x64-manifest.spdx.json
               Remove-Item $(Build.ArtifactStagingDirectory)\win -Recurse
             displayName: 'Restructure Artifact'
 
@@ -270,26 +241,10 @@ extends:
           - powershell: 'Rename-Item -Path $(Build.ArtifactStagingDirectory)\linux\Microsoft.Sbom.Tool -NewName $(BinaryNameLinux)'
             displayName: 'Rename binaries'
 
-          - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-            displayName: 'Manifest Generator'
-            inputs:
-              BuildDropPath: '$(Build.ArtifactStagingDirectory)/linux'
-              BuildComponentPath: '$(Build.SourcesDirectory)'
-              PackageName: '$(OutputArtifactName)'
-              AdditionalComponentDetectorArgs: '--DirectoryExclusionList **/samples/**'
-
-          - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
-            displayName: 'Drop Validator '
-            inputs:
-              BuildDropPath: '$(Build.ArtifactStagingDirectory)/linux'
-              OutputPath: '$(Build.ArtifactStagingDirectory)/linux/validationOutput.json'
-            continueOnError: true
-
           - powershell: |
               del $(Build.ArtifactStagingDirectory)/CodeSignSummary-*.md
               mkdir $(Build.ArtifactStagingDirectory)/bin
               Move-Item -Path $(Build.ArtifactStagingDirectory)/linux/$(BinaryNameLinux) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameLinux)
-              Move-Item -Path $(Build.ArtifactStagingDirectory)/linux/_manifest/spdx_2.2/manifest.spdx.json -Destination $(Build.ArtifactStagingDirectory)/bin/linux-x64-manifest.spdx.json
               Remove-Item $(Build.ArtifactStagingDirectory)/linux -Recurse
             displayName: 'Restructure Artifact'
 
@@ -336,25 +291,9 @@ extends:
           - powershell: 'Rename-Item -Path $(Build.ArtifactStagingDirectory)\osx\Microsoft.Sbom.Tool -NewName $(BinaryNameMacOS)'
             displayName: 'Rename binaries'
 
-          - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-            displayName: 'Manifest Generator'
-            inputs:
-              BuildDropPath: '$(Build.ArtifactStagingDirectory)/osx'
-              BuildComponentPath: '$(Build.SourcesDirectory)'
-              PackageName: '$(OutputArtifactName)'
-              AdditionalComponentDetectorArgs: '--DirectoryExclusionList **/samples/**'
-
-          - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
-            displayName: 'Drop Validator '
-            inputs:
-              BuildDropPath: '$(Build.ArtifactStagingDirectory)/osx'
-              OutputPath: '$(Build.ArtifactStagingDirectory)/osx/validationOutput.json'
-            continueOnError: true
-
           - powershell: |
               del $(Build.ArtifactStagingDirectory)/CodeSignSummary-*.md
               mkdir $(Build.ArtifactStagingDirectory)/bin
               Move-Item -Path $(Build.ArtifactStagingDirectory)/osx/$(BinaryNameMacOS) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameMacOS)
-              Move-Item -Path $(Build.ArtifactStagingDirectory)/osx/_manifest/spdx_2.2/manifest.spdx.json -Destination $(Build.ArtifactStagingDirectory)/bin/osx-x64-manifest.spdx.json
               Remove-Item $(Build.ArtifactStagingDirectory)/osx -Recurse
             displayName: 'Restructure Artifact'
