@@ -1,7 +1,13 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <!-- TODO remove hardcoded str -->
-    <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbomTask" AssemblyFile="C:\code\sbom-tool\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.dll" />
+    <!-- TODO remove hardcoded str, reference this assembly using MSBuild props instead -->
+    <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbomTask" AssemblyFile="C:\code\sbom-tool\src\Microsoft.Sbom.Targets\bin\Debug\\net8.0\Microsoft.Sbom.Targets.dll" />
 
+    <!-- TODO we will eventaully want to replace or remove `AfterTargets="Build"`.
+        Including this line means that this code will run at the end of `dotnet build`s of any project that this .targets
+        file is imported to (see line 24 of Microsoft.Sbom.Targets.csproj as an example of importing this file). This is
+        good for testing purposes, but not the behavior we ultimately want. 
+        We will need to discuss with the .NET SDK team if they want this target to be automatically included after any
+        target and if so, which one. They likely know of a nuget packaging target that it would make sense to hook this in with. -->
     <Target Name="GenerateSbom" AfterTargets="Build">
         <GenerateSbomTask
             BuildDropPath="$(SbomGenerationBuildDropPath)"
@@ -11,6 +17,7 @@
             PackageVersion="$(SbomGenerationPackageVersion)" >
             <Output TaskParameter="SbomPath" PropertyName="SbomPathResult" />
         </GenerateSbomTask>
+        <!-- TODO temporary logging for testing -->
         <Message Importance="High" Text="Task result: $(SbomPathResult)" />
     </Target>
 

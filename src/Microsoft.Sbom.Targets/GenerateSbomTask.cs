@@ -15,6 +15,8 @@ namespace Microsoft.Sbom.Targets;
 
 public class GenerateSbomTask : Task
 {
+    // TODO it is possible we will want to expose additional arguments, either as required or optional.
+    // Will need to get SDK team/ windows team input on which arguments are necessary.
     [Required]
     public string BuildDropPath { get; set; }
 
@@ -47,15 +49,7 @@ public class GenerateSbomTask : Task
 
         try
         {
-            // TODO setup suggested by docs
-            // await Host.CreateDefaultBuilder(args)
-            //    .ConfigureServices((host, services) =>
-            //    {
-            //        services
-            //        .AddHostedService<GenerationService>()
-            //        .AddSbomTool();
-            //    })
-            //    .RunConsoleAsync(x => x.SuppressStatusMessages = true);
+            // TODO replace this with a call to SBOM API to generate SBOM 
             SbomPath = "path/to/sbom";
             return true;
         }
