@@ -1,0 +1,299 @@
+trigger:
+    - main
+    - refs/tags/*
+pr: none
+
+resources:
+    repositories:
+        - repository: 1esPipelines
+          type: git
+          name: 1ESPipelineTemplates/1ESPipelineTemplates
+          ref: refs/tags/release
+        - repository: self
+
+pool:
+  name: Azure Pipelines
+
+variables:
+  BuildConfiguration: 'Release'
+  OutputArtifactName: 'SBOMTool'
+  Packaging.EnableSBOMSigning: 'true'
+  ForceSigning: 'false'
+  WindowsNetRuntime: 'win-x64'
+  MacOSNetRuntime: 'osx-x64'
+  LinuxNetRuntime: 'linux-x64'
+  BinaryNameWindows: 'sbom-tool-win-x64.exe'
+  BinaryNameMacOS: 'sbom-tool-osx-x64'
+  BinaryNameLinux: 'sbom-tool-linux-x64'
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  parameters:
+    sdl:
+      sourceAnalysisPool:
+        name: sbom-windows-build-pool
+        os: windows
+    stages:
+      - stage: stage1
+        jobs:
+        - job: Job_1
+          displayName: Build (Windows + NuGet)
+          templateContext:
+            outputs:
+            - output: pipelineArtifact
+              targetPath: $(Build.ArtifactStagingDirectory)
+              artifactName: '$(OutputArtifactName)'
+          pool:
+            name: sbom-windows-build-pool
+            os: windows
+          steps:
+          - task: UseDotNet@2
+            displayName: 'Use .NET Core'
+            inputs:
+              useGlobalJson: true
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore solution'
+            inputs:
+              command: restore
+              feedsToUse: config
+              nugetConfigPath: nuget.config
+              verbosityRestore: Normal
+
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              arguments: '-c $(BuildConfiguration)'
+
+          - task: UseDotNet@2
+            displayName: 'Install .NET 6 SDK'
+            inputs:
+              version: 6.0.400
+
+          - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@3
+            displayName: 'Sign dlls'
+            inputs:
+              ConnectedServiceName: 'Sbom tool CodeSigning ESRP  service connection'
+              FolderPath: '$(Build.SourcesDirectory)/src'
+              Pattern: |
+                **/Release/**/*.exe
+                **/Release/**/*.dll
+                UseMinimatch: true
+                signConfigType: inlineSignParams
+                inlineOperation: |
+                [
+                        {
+                            "KeyCode" : "CP-230012",
+                            "OperationCode" : "SigntoolSign",
+                            "Parameters" : {
+                                "OpusName" : "Microsoft",
+                                "OpusInfo" : "http://www.microsoft.com",
+                                "FileDigest" : "/fd \"SHA256\"",
+                                "PageHash" : "/NPH",
+                                "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                            },
+                            "ToolName" : "sign",
+                            "ToolVersion" : "1.0"
+                        },
+                        {
+                            "KeyCode" : "CP-230012",
+                            "OperationCode" : "SigntoolVerify",
+                            "Parameters" : {},
+                            "ToolName" : "sign",
+                            "ToolVersion" : "1.0"
+                        }
+                ]
+            condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
+
+          - powershell: 'dotnet pack Microsoft.Sbom.sln -c $(BuildConfiguration) --no-restore --no-build -o $(Build.ArtifactStagingDirectory)/nuget --include-symbols -p:SymbolPackageFormat=snupkg'
+            displayName: 'Pack NuGet package'
+
+          - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@3
+            displayName: 'Sign packages'
+            inputs:
+              ConnectedServiceName: 'Sbom tool CodeSigning ESRP  service connection'
+              FolderPath: '$(Build.ArtifactStagingDirectory)'
+              Pattern: '*.nupkg'
+              signConfigType: inlineSignParams
+              inlineOperation: |
+                [ 
+                    {
+                        "keyCode": "CP-401405",
+                        "operationSetCode": "NuGetSign",
+                        "parameters": [ ],
+                        "toolName": "sign",
+                        "toolVersion": "1.0"
+                    },
+                    {
+                        "keyCode": "CP-401405",
+                        "operationSetCode": "NuGetVerify",
+                        "parameters": [ ],
+                        "toolName": "sign",
+                        "toolVersion": "1.0"
+                    }
+                ]
+            condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build self-contained binary'
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj
+              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/win --self-contained --runtime $(WindowsNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net6.0'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@3
+            displayName: 'Sign self-contained binaries'
+            inputs:
+              ConnectedServiceName: 'Sbom tool CodeSigning ESRP  service connection'
+              FolderPath: '$(Build.ArtifactStagingDirectory)'
+              Pattern: 'Microsoft.Sbom.Tool.exe, *.dll'
+              signConfigType: inlineSignParams
+              inlineOperation: |
+                [
+                        {
+                            "KeyCode" : "CP-230012",
+                            "OperationCode" : "SigntoolSign",
+                            "Parameters" : {
+                                "OpusName" : "Microsoft",
+                                "OpusInfo" : "http://www.microsoft.com",
+                                "FileDigest" : "/fd \"SHA256\"",
+                                "PageHash" : "/NPH",
+                                "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                            },
+                            "ToolName" : "sign",
+                            "ToolVersion" : "1.0"
+                        },
+                        {
+                            "KeyCode" : "CP-230012",
+                            "OperationCode" : "SigntoolVerify",
+                            "Parameters" : {},
+                            "ToolName" : "sign",
+                            "ToolVersion" : "1.0"
+                        }
+                ]
+            condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
+
+          - powershell: 'Rename-Item -Path $(Build.ArtifactStagingDirectory)\win\Microsoft.Sbom.Tool.exe -NewName $(BinaryNameWindows)'
+            displayName: 'Rename binaries'
+
+          - powershell: |
+              cd $(Build.ArtifactStagingDirectory)/win
+              $version = (ls $(BinaryNameWindows) -r | Select-Object -ExpandProperty VersionInfo).ProductVersion
+              echo "##vso[task.setvariable variable=Version;isOutput=true]$version"
+            displayName: 'Set variable version'
+
+          - powershell: |
+              cd $(Build.ArtifactStagingDirectory)/win
+              $version = (ls $(BinaryNameWindows) -r | Select-Object -ExpandProperty VersionInfo).ProductVersion
+              echo "##vso[task.setvariable variable=Version;isOutput=true]$version"
+              $version | Out-File $(Build.ArtifactStagingDirectory)/version.txt
+            displayName: 'Write version file'
+
+          - powershell: |
+              del $(Build.ArtifactStagingDirectory)\CodeSignSummary-*.md
+              mkdir $(Build.ArtifactStagingDirectory)\bin
+              Move-Item -Path $(Build.ArtifactStagingDirectory)\win\$(BinaryNameWindows) -Destination $(Build.ArtifactStagingDirectory)\bin\$(BinaryNameWindows)
+              Remove-Item $(Build.ArtifactStagingDirectory)\win -Recurse
+            displayName: 'Restructure Artifact'
+
+        - job: Job_2
+          displayName: 'Build (Linux)'
+          templateContext:
+            outputs:
+            - output: pipelineArtifact
+              targetPath: $(Build.ArtifactStagingDirectory)
+              artifactName: '$(OutputArtifactName)-linux'
+          pool:
+            name: sbom-linux-build-pool
+            os: linux
+          steps:
+          - task: UseDotNet@2
+            displayName: 'Use .NET Core'
+            inputs:
+              useGlobalJson: true
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore solution'
+            inputs:
+              command: restore
+              feedsToUse: config
+              nugetConfigPath: nuget.config
+              verbosityRestore: Normal
+
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              arguments: '-c $(BuildConfiguration)'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build self-contained binary'
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj
+              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/linux --self-contained --runtime $(LinuxNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net6.0'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - powershell: 'Rename-Item -Path $(Build.ArtifactStagingDirectory)\linux\Microsoft.Sbom.Tool -NewName $(BinaryNameLinux)'
+            displayName: 'Rename binaries'
+
+          - powershell: |
+              del $(Build.ArtifactStagingDirectory)/CodeSignSummary-*.md
+              mkdir $(Build.ArtifactStagingDirectory)/bin
+              Move-Item -Path $(Build.ArtifactStagingDirectory)/linux/$(BinaryNameLinux) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameLinux)
+              Remove-Item $(Build.ArtifactStagingDirectory)/linux -Recurse
+            displayName: 'Restructure Artifact'
+
+        - job: Job_3
+          displayName: 'Build (macOS)'
+          templateContext:
+            outputs:
+            - output: pipelineArtifact
+              targetPath: $(Build.ArtifactStagingDirectory)
+              artifactName: '$(OutputArtifactName)-macOS'
+          pool:
+            name: Azure Pipelines
+            image: macos-latest
+            os: macOS
+          steps:
+          - task: UseDotNet@2
+            displayName: 'Use .NET Core'
+            inputs:
+              useGlobalJson: true
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore solution'
+            inputs:
+              command: restore
+              feedsToUse: config
+              nugetConfigPath: nuget.config
+              verbosityRestore: Normal
+
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              arguments: '-c $(BuildConfiguration)'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build self-contained binary'
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj
+              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/osx --self-contained --runtime $(MacOSNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net6.0'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - powershell: 'Rename-Item -Path $(Build.ArtifactStagingDirectory)\osx\Microsoft.Sbom.Tool -NewName $(BinaryNameMacOS)'
+            displayName: 'Rename binaries'
+
+          - powershell: |
+              del $(Build.ArtifactStagingDirectory)/CodeSignSummary-*.md
+              mkdir $(Build.ArtifactStagingDirectory)/bin
+              Move-Item -Path $(Build.ArtifactStagingDirectory)/osx/$(BinaryNameMacOS) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameMacOS)
+              Remove-Item $(Build.ArtifactStagingDirectory)/osx -Recurse
+            displayName: 'Restructure Artifact'
