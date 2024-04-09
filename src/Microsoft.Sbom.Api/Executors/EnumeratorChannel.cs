@@ -44,7 +44,7 @@ public class EnumeratorChannel
             }
             catch (Exception e)
             {
-                log.Debug($"Encountered an unknown error while enumerating: {e.Message}");
+                log.Warning($"Encountered an unknown error while enumerating: {e.Message}");
                 await errors.Writer.WriteAsync(new FileValidationResult
                 {
                     ErrorType = ErrorType.Other

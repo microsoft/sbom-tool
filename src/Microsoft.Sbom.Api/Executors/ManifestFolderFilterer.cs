@@ -66,7 +66,7 @@ public class ManifestFolderFilterer
         }
         catch (Exception e)
         {
-            log.Debug($"Encountered an error while filtering file {file}: {e.Message}");
+            log.Warning($"Encountered an error while filtering file {file}: {e.Message}");
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = ErrorType.Other,
