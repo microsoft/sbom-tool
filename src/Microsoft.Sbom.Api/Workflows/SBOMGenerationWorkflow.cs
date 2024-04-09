@@ -91,7 +91,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 }
                 else
                 {
-                    log.Warning("Manifest directory path was explicitly defined. Will not attempt to delete any existing _manifest directory.");
+                    log.Information("Manifest directory path was explicitly defined. Will not attempt to delete any existing _manifest directory.");
                 }
 
                 await using (sbomConfigs.StartJsonSerializationAsync())
