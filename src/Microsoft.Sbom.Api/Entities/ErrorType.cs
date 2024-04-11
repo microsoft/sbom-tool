@@ -44,5 +44,8 @@ public enum ErrorType
     ReferencedSbomFile = 10,
 
     [EnumMember(Value = "No packages found")]
-    NoPackagesFound = 11
+    NoPackagesFound = 11,
+
+    [EnumMember(Value = "Manifest file signing error")]
+    ManifestFileSigningError = 12
 }
