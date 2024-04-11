@@ -8,7 +8,7 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:6.0.8-bullseye-slim-amd64
 WORKDIR /app/src/Microsoft.Sbom.Tool
 COPY --from=build-env /app/src/Microsoft.Sbom.Tool/output .
 
-RUN apt update -y && apt install -y python golang nuget npm cargo ruby maven
+RUN apt update -y && apt install -y python golang nuget npm cargo ruby maven && rm -rf /var/lib/apt/lists/*
 RUN useradd -ms /bin/bash sbom
 USER sbom
 ENTRYPOINT ["./Microsoft.Sbom.Tool"]
