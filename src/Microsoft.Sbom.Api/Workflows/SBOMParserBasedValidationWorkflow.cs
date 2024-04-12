@@ -88,6 +88,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                         if (!signValidator.Validate())
                         {
                             log.Error("Sign validation failed.");
+                            validFailures = new List<FileValidationResult> { new FileValidationResult { ErrorType = ErrorType.ManifestFileSigningError } };
                             return false;
                         }
                     }
@@ -190,7 +191,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
     private void LogIndividualFileResults(IEnumerable<FileValidationResult> validFailures)
     {
-        if (validFailures == null)
+        if (validFailures == null || validFailures.Any(v => v.ErrorType == ErrorType.ManifestFileSigningError))
         {
             // We failed to generate the output due to a workflow error.
             return;
@@ -232,7 +233,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
     private void LogResultsSummary(ValidationResult validationResultOutput, IEnumerable<FileValidationResult> validFailures)
     {
-        if (validationResultOutput == null || validFailures == null)
+        if (validationResultOutput == null || validFailures == null || validFailures.Any(v => v.ErrorType == ErrorType.ManifestFileSigningError))
         {
             // We failed to generate the output due to a workflow error.
             return;
