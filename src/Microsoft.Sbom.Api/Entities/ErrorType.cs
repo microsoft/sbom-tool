@@ -47,5 +47,8 @@ public enum ErrorType
     NoPackagesFound = 11,
 
     [EnumMember(Value = "Manifest file signing error")]
-    ManifestFileSigningError = 12
+    ManifestFileSigningError = 12,
+
+    [EnumMember(Value = "Invalid input file")]
+    InvalidInputFile = 13
 }
