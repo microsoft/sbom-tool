@@ -151,6 +151,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
         rootFileFilterMock.Init();
 
+        var osUtilsMock = new Mock<IOSUtils>(MockBehavior.Strict);
+
         var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
@@ -178,7 +180,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             filesValidator,
             validationResultGenerator,
             outputWriterMock.Object,
-            fileSystemMock.Object);
+            fileSystemMock.Object,
+            osUtilsMock.Object);
 
         var result = await validator.RunAsync();
         Assert.IsTrue(result);
@@ -200,6 +203,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         configurationMock.VerifyAll();
         signValidatorMock.VerifyAll();
         fileSystemMock.VerifyAll();
+        osUtilsMock.VerifyAll();
     }
 
     [TestMethod]
@@ -291,6 +295,9 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
         rootFileFilterMock.Init();
 
+        var osUtilsMock = new Mock<IOSUtils>(MockBehavior.Strict);
+        osUtilsMock.Setup(x => x.IsCaseSensitiveOS()).Returns(false);
+
         var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
@@ -318,7 +325,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             filesValidator,
             validationResultGenerator,
             outputWriterMock.Object,
-            fileSystemMock.Object);
+            fileSystemMock.Object,
+            osUtilsMock.Object);
 
         var result = await validator.RunAsync();
         Assert.IsFalse(result);
@@ -343,5 +351,6 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         configurationMock.VerifyAll();
         signValidatorMock.VerifyAll();
         fileSystemMock.VerifyAll();
+        osUtilsMock.VerifyAll();
     }
 }

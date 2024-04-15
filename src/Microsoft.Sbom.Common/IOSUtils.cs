@@ -15,4 +15,6 @@ public interface IOSUtils
     StringComparer GetFileSystemStringComparer();
 
     StringComparison GetFileSystemStringComparisonType();
+
+    bool IsCaseSensitiveOS();
 }
