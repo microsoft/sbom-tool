@@ -44,8 +44,9 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
     private readonly ValidationResultGenerator validationResultGenerator;
     private readonly IOutputWriter outputWriter;
     private readonly IFileSystemUtils fileSystemUtils;
+    private readonly IOSUtils osUtils;
 
-    public SbomParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ILogger log, IManifestParserProvider manifestParserProvider, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
+    public SbomParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ILogger log, IManifestParserProvider manifestParserProvider, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils, IOSUtils osUtils)
     {
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.signValidationProvider = signValidationProvider ?? throw new ArgumentNullException(nameof(signValidationProvider));
@@ -57,6 +58,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         this.validationResultGenerator = validationResultGenerator ?? throw new ArgumentNullException(nameof(validationResultGenerator));
         this.outputWriter = outputWriter ?? throw new ArgumentNullException(nameof(outputWriter));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+        this.osUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
     }
 
     public async Task<bool> RunAsync()
@@ -204,9 +206,15 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
             return;
         }
 
+        var caseSensitiveComment = validFailures.Any() && this.osUtils.IsCaseSensitiveOS() ?
+            string.Empty :
+            "\r\n  Note: If the manifest file was originally created using a" +
+            "\r\n        case-sensitive OS, you may also need to validate it" +
+            "\r\n        using a case-sensitive OS.";
+
         Console.WriteLine(string.Empty);
         Console.WriteLine("------------------------------------------------------------");
-        Console.WriteLine("Individual file validation results");
+        Console.WriteLine($"Individual file validation results{caseSensitiveComment}");
         Console.WriteLine("------------------------------------------------------------");
         Console.WriteLine(string.Empty);
 
