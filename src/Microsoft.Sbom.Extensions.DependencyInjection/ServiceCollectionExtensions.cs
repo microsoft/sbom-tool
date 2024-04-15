@@ -64,28 +64,11 @@ public static class ServiceCollectionExtensions
     {
         services
             .AddSingleton<IConfiguration, Configuration>()
-            .AddTransient(_ => FileSystemUtilsProvider.CreateInstance())
+            .AddTransient(_ => FileSystemUtilsProvider.CreateInstance(CreateLogger(logLevel)))
             .AddTransient(x =>
             {
                 logLevel = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? logLevel;
-                return Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
-                    .Filter.ByExcluding(Matching.FromSource("System.Net.Http.HttpClient"))
-                    .Enrich.With<LoggingEnricher>()
-                    .Enrich.FromLogContext()
-                    .WriteTo.Map(
-                        LoggingEnricher.LogFilePathPropertyName,
-                        (logFilePath, wt) => wt.Async(x => x.File($"{logFilePath}")),
-                        1) // sinkMapCountLimit
-                    .WriteTo.Map<bool>(
-                        LoggingEnricher.PrintStderrPropertyName,
-                        (printLogsToStderr, wt) => wt.Logger(lc => lc
-                            .WriteTo.Console(outputTemplate: Constants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
-
-                            // Don't write the detection times table from DetectorProcessingService to the console, only the log file
-                            .Filter.ByExcluding(Matching.WithProperty<string>("DetectionTimeLine", x => !string.IsNullOrEmpty(x)))),
-                        1) // sinkMapCountLimit
-                    .CreateLogger();
+                return Log.Logger = CreateLogger(logLevel);
             })
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
@@ -213,5 +196,27 @@ public static class ServiceCollectionExtensions
         });
 
         return services;
+    }
+
+    private static ILogger CreateLogger(LogEventLevel logLevel)
+    {
+        return new LoggerConfiguration()
+            .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
+            .Filter.ByExcluding(Matching.FromSource("System.Net.Http.HttpClient"))
+            .Enrich.With<LoggingEnricher>()
+            .Enrich.FromLogContext()
+            .WriteTo.Map(
+                LoggingEnricher.LogFilePathPropertyName,
+                (logFilePath, wt) => wt.Async(x => x.File($"{logFilePath}")),
+                1) // sinkMapCountLimit
+            .WriteTo.Map<bool>(
+                LoggingEnricher.PrintStderrPropertyName,
+                (printLogsToStderr, wt) => wt.Logger(lc => lc
+                    .WriteTo.Console(outputTemplate: Constants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
+
+                    // Don't write the detection times table from DetectorProcessingService to the console, only the log file
+                    .Filter.ByExcluding(Matching.WithProperty<string>("DetectionTimeLine", x => !string.IsNullOrEmpty(x)))),
+                1) // sinkMapCountLimit
+            .CreateLogger();
     }
 }
