@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.Sbom;
+namespace Microsoft.Sbom.Extensions.DependencyInjection;
 
 using System;
 using Serilog;
@@ -29,7 +29,7 @@ public class RemapComponentDetectionErrorsToWarningsLogger : ILogger
     /// Testable constructor.
     /// </summary>
     /// <exception cref="ArgumentNullException"></exception>
-    public RemapComponentDetectionErrorsToWarningsLogger(ILogger logger, Func<string?> stackTraceProvider)
+    internal RemapComponentDetectionErrorsToWarningsLogger(ILogger logger, Func<string?> stackTraceProvider)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.stackTraceProvider = stackTraceProvider ?? throw new ArgumentNullException(nameof(stackTraceProvider));
