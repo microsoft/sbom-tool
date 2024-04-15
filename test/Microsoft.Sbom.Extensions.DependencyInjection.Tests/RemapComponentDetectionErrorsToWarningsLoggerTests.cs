@@ -129,6 +129,7 @@ public class RemapComponentDetectionErrorsToWarningsLoggerTests
         Assert.AreSame(logEvent.Properties[TestPropertyKey], actualEvent.Properties[TestPropertyKey]);
     }
 
+    // A helper function to return a LogEvent with the specified LogEventLevel
     private LogEvent GetLogEvent(LogEventLevel logEventLevel)
     {
         return new LogEvent(
@@ -139,6 +140,7 @@ public class RemapComponentDetectionErrorsToWarningsLoggerTests
             new LogEventProperty[1] { new LogEventProperty(TestPropertyKey, new TestLogEventPropertyValue()) });
     }
 
+    // A helper function to allow us to easily test the StackTraceProvider functionality
     private string TestGetStackTrace()
     {
         testStackTraceCount++;
