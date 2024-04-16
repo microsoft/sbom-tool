@@ -200,23 +200,24 @@ public static class ServiceCollectionExtensions
 
     private static ILogger CreateLogger(LogEventLevel logLevel)
     {
-        return new LoggerConfiguration()
-            .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
-            .Filter.ByExcluding(Matching.FromSource("System.Net.Http.HttpClient"))
-            .Enrich.With<LoggingEnricher>()
-            .Enrich.FromLogContext()
-            .WriteTo.Map(
-                LoggingEnricher.LogFilePathPropertyName,
-                (logFilePath, wt) => wt.Async(x => x.File($"{logFilePath}")),
-                1) // sinkMapCountLimit
-            .WriteTo.Map<bool>(
-                LoggingEnricher.PrintStderrPropertyName,
-                (printLogsToStderr, wt) => wt.Logger(lc => lc
-                    .WriteTo.Console(outputTemplate: Constants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
+        return new RemapComponentDetectionErrorsToWarningsLogger(
+            new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
+                .Filter.ByExcluding(Matching.FromSource("System.Net.Http.HttpClient"))
+                .Enrich.With<LoggingEnricher>()
+                .Enrich.FromLogContext()
+                .WriteTo.Map(
+                    LoggingEnricher.LogFilePathPropertyName,
+                    (logFilePath, wt) => wt.Async(x => x.File($"{logFilePath}")),
+                    1) // sinkMapCountLimit
+                .WriteTo.Map<bool>(
+                    LoggingEnricher.PrintStderrPropertyName,
+                    (printLogsToStderr, wt) => wt.Logger(lc => lc
+                        .WriteTo.Console(outputTemplate: Constants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
 
-                    // Don't write the detection times table from DetectorProcessingService to the console, only the log file
-                    .Filter.ByExcluding(Matching.WithProperty<string>("DetectionTimeLine", x => !string.IsNullOrEmpty(x)))),
-                1) // sinkMapCountLimit
-            .CreateLogger();
+                        // Don't write the detection times table from DetectorProcessingService to the console, only the log file
+                        .Filter.ByExcluding(Matching.WithProperty<string>("DetectionTimeLine", x => !string.IsNullOrEmpty(x)))),
+                    1) // sinkMapCountLimit
+                .CreateLogger());
     }
 }
