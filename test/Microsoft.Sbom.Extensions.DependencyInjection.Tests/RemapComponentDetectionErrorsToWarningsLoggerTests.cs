@@ -20,6 +20,7 @@ public class RemapComponentDetectionErrorsToWarningsLoggerTests
 
     private Mock<ILogger> loggerMock;
     private Func<string> stackTraceProvider;
+    private ILogger testSubject;
     private int testStackTraceCount;
     private string? testStackTraceReturnValue;
 
@@ -38,12 +39,19 @@ public class RemapComponentDetectionErrorsToWarningsLoggerTests
     }
 
     [TestInitialize]
-    public void InitializeDefaults()
+    public void TestInit()
     {
         loggerMock = new Mock<ILogger>(MockBehavior.Strict);
         stackTraceProvider = TestGetStackTrace;
         testStackTraceCount = 0;
         testStackTraceReturnValue = null;
+        testSubject = new RemapComponentDetectionErrorsToWarningsLogger(loggerMock.Object, stackTraceProvider);
+    }
+
+    [TestCleanup]
+    public void TestCleanup()
+    {
+        loggerMock.VerifyAll();
     }
 
     [TestMethod]
@@ -66,13 +74,14 @@ public class RemapComponentDetectionErrorsToWarningsLoggerTests
         {
             var logEvent = GetLogEvent(level);
             loggerMock.Setup(x => x.Write(logEvent)).Verifiable();
-            var logger = new RemapComponentDetectionErrorsToWarningsLogger(loggerMock.Object, stackTraceProvider);
 
-            logger.Write(logEvent);
+            testSubject.Write(logEvent);
 
+            Assert.AreEqual(0, testStackTraceCount);
+
+            // The VerifyAll and Reset calls are needed here because we need to confirm them for _each iteration_ of the loop.
             loggerMock.VerifyAll();
             loggerMock.Reset();
-            Assert.AreEqual(0, testStackTraceCount);
         }
     }
 
@@ -82,11 +91,8 @@ public class RemapComponentDetectionErrorsToWarningsLoggerTests
         var logEvent = GetLogEvent(LogEventLevel.Error);
         loggerMock.Setup(x => x.Write(logEvent)).Verifiable();
 
-        var logger = new RemapComponentDetectionErrorsToWarningsLogger(loggerMock.Object, stackTraceProvider);
+        testSubject.Write(logEvent);
 
-        logger.Write(logEvent);
-
-        loggerMock.VerifyAll();
         Assert.AreEqual(1, testStackTraceCount);
     }
 
@@ -97,11 +103,8 @@ public class RemapComponentDetectionErrorsToWarningsLoggerTests
         loggerMock.Setup(x => x.Write(logEvent)).Verifiable();
         testStackTraceReturnValue = "at Microsoft.Sbom.Foo.Bar";
 
-        var logger = new RemapComponentDetectionErrorsToWarningsLogger(loggerMock.Object, stackTraceProvider);
+        testSubject.Write(logEvent);
 
-        logger.Write(logEvent);
-
-        loggerMock.VerifyAll();
         Assert.AreEqual(1, testStackTraceCount);
     }
 
@@ -113,13 +116,11 @@ public class RemapComponentDetectionErrorsToWarningsLoggerTests
         loggerMock.Setup(x => x.Write(It.IsAny<LogEvent>())).Callback<LogEvent>((l) => actualEvent = l).Verifiable();
         testStackTraceReturnValue = "at Microsoft.ComponentDetection.Foo.Bar";
 
-        var logger = new RemapComponentDetectionErrorsToWarningsLogger(loggerMock.Object, stackTraceProvider);
+        testSubject.Write(logEvent);
 
-        logger.Write(logEvent);
-
-        loggerMock.VerifyAll();
         Assert.AreEqual(1, testStackTraceCount);
 
+        // Ensure that the LogEvent was correctly copied. Only the Level should be different
         Assert.AreEqual(LogEventLevel.Warning, actualEvent.Level);
         Assert.AreEqual(logEvent.Timestamp, actualEvent.Timestamp);
         Assert.AreSame(logEvent.MessageTemplate, actualEvent.MessageTemplate);
