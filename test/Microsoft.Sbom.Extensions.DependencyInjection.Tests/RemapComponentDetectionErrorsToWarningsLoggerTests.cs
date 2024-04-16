@@ -97,7 +97,7 @@ public class RemapComponentDetectionErrorsToWarningsLoggerTests
     }
 
     [TestMethod]
-    public void Write_LogEventLevelIsError_StackTraceUsesDefault_LogsEventAsSpecified()
+    public void Write_LogEventLevelIsError_UsesDefaultStackTraceProvider_LogsEventAsSpecified()
     {
         var logEvent = GetLogEvent(LogEventLevel.Error);
         loggerMock.Setup(x => x.Write(logEvent)).Verifiable();
