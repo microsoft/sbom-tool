@@ -97,6 +97,18 @@ public class RemapComponentDetectionErrorsToWarningsLoggerTests
     }
 
     [TestMethod]
+    public void Write_LogEventLevelIsError_StackTraceUsesDefault_LogsEventAsSpecified()
+    {
+        var logEvent = GetLogEvent(LogEventLevel.Error);
+        loggerMock.Setup(x => x.Write(logEvent)).Verifiable();
+
+        // Use the production constructor here to force use of the default StackTraceProvider
+        new RemapComponentDetectionErrorsToWarningsLogger(loggerMock.Object).Write(logEvent);
+
+        Assert.AreEqual(0, testStackTraceCount);
+    }
+
+    [TestMethod]
     public void Write_LogEventLevelIsError_StackTraceDoesNotContainComponentDetection_LogsEventAsSpecified()
     {
         var logEvent = GetLogEvent(LogEventLevel.Error);
