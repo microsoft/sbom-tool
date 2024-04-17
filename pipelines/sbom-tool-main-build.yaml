@@ -81,28 +81,28 @@ extends:
               UseMinimatch: true
               signConfigType: inlineSignParams
               inlineOperation: |
-              [
-                      {
-                          "KeyCode" : "CP-230012",
-                          "OperationCode" : "SigntoolSign",
-                          "Parameters" : {
-                              "OpusName" : "Microsoft",
-                              "OpusInfo" : "http://www.microsoft.com",
-                              "FileDigest" : "/fd \"SHA256\"",
-                              "PageHash" : "/NPH",
-                              "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
-                          },
-                          "ToolName" : "sign",
-                          "ToolVersion" : "1.0"
-                      },
-                      {
-                          "KeyCode" : "CP-230012",
-                          "OperationCode" : "SigntoolVerify",
-                          "Parameters" : {},
-                          "ToolName" : "sign",
-                          "ToolVersion" : "1.0"
-                      }
-              ]
+                [
+                        {
+                            "KeyCode" : "CP-230012",
+                            "OperationCode" : "SigntoolSign",
+                            "Parameters" : {
+                                "OpusName" : "Microsoft",
+                                "OpusInfo" : "http://www.microsoft.com",
+                                "FileDigest" : "/fd \"SHA256\"",
+                                "PageHash" : "/NPH",
+                                "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                            },
+                            "ToolName" : "sign",
+                            "ToolVersion" : "1.0"
+                        },
+                        {
+                            "KeyCode" : "CP-230012",
+                            "OperationCode" : "SigntoolVerify",
+                            "Parameters" : {},
+                            "ToolName" : "sign",
+                            "ToolVersion" : "1.0"
+                        }
+                ]
             condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
 
           - powershell: 'dotnet pack Microsoft.Sbom.sln -c $(BuildConfiguration) --no-restore --no-build -o $(Build.ArtifactStagingDirectory)/nuget --include-symbols -p:SymbolPackageFormat=snupkg'
