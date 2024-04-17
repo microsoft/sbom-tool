@@ -206,7 +206,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
             return;
         }
 
-        var caseSensitiveComment = validFailures.Any() && this.osUtils.IsCaseSensitiveOS() ?
+        var caseSensitiveComment = !validFailures.Any() || this.osUtils.IsCaseSensitiveOS() ?
             string.Empty :
             "\r\n  Note: If the manifest file was originally created using a" +
             "\r\n        case-sensitive OS, you may also need to validate it" +
