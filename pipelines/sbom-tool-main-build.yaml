@@ -78,9 +78,9 @@ extends:
               Pattern: |
                 **/Release/**/*.exe
                 **/Release/**/*.dll
-                UseMinimatch: true
-                signConfigType: inlineSignParams
-                inlineOperation: |
+              UseMinimatch: true
+              signConfigType: inlineSignParams
+              inlineOperation: |
                 [
                         {
                             "KeyCode" : "CP-230012",
