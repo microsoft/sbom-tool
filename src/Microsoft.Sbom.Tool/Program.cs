@@ -37,6 +37,7 @@ internal class Program
         var result = await Args.InvokeActionAsync<SbomToolCmdRunner>(args);
         if (result.HandledException != null || (result.ActionArgs is not CommonArgs))
         {
+            Environment.ExitCode = (int)ExitCode.GeneralError;
             return;
         }
 
@@ -73,6 +74,7 @@ internal class Program
                         .AddSbomTool();
                 })
                 .RunConsoleAsync(x => x.SuppressStatusMessages = true);
+            Environment.ExitCode = (int)ExitCode.Success;
         }
         catch (AccessDeniedValidationArgException e)
         {

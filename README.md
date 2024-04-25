@@ -35,9 +35,6 @@ winget install Microsoft.SbomTool
 
 ##### Homebrew
 
-> [!NOTE]
-> This Formulae requires the `x86_64` architecture, ARM is not supported at this time. For details see [#223](https://github.com/microsoft/sbom-tool/issues/223).
-
 ```bash
 brew install sbom-tool
 ```
