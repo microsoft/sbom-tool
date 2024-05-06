@@ -110,7 +110,7 @@ sbom-tool validate -b <drop path> -o <output path> -mi SPDX:2.2
 This sample command provides the minimum mandatory arguments required to validate an SBOM:
      `-b` should be the path same path used to generate the SBOM file.
      In this scenario, the tool will default to searching for an SBOM at the `<drop path>\_manifest\spdx_2.2\manifest.spdx.json` path. 
-     `-o` is the output path where the tool should write the results to.
+     `-o` is the output path, including file name, where the tool should write the results to.
      `-mi` is the ManifestInfo, which provides the user's desired name and version of the manifest format.
 
 Currently only SPDX2.2 is supported.
