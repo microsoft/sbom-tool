@@ -25,7 +25,7 @@ public class ExternalReference
     /// https://spdx.github.io/spdx-spec/appendix-VI-external-repository-identifiers/.
     /// </summary>
     [JsonPropertyName("referenceType")]
-    public ExternalRepositoryType Type { get; set; }
+    public string Type { get; set; }
 
     /// <summary>
     /// Gets or sets a unique string without any spaces that specifies a location where the package specific information
