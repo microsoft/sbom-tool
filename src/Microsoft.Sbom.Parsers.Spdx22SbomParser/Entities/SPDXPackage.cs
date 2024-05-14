@@ -54,7 +54,6 @@ public class SPDXPackage
     /// <summary>
     /// Gets or sets contain the license the SPDX file creator has concluded as the package or alternative values.
     /// </summary>
-    [JsonRequired]
     [JsonPropertyName("licenseConcluded")]
     public string LicenseConcluded { get; set; }
 
@@ -68,14 +67,12 @@ public class SPDXPackage
     /// <summary>
     /// Gets or sets contains a list of licenses the have been declared by the authors of the package.
     /// </summary>
-    [JsonRequired]
     [JsonPropertyName("licenseDeclared")]
     public string LicenseDeclared { get; set; }
 
     /// <summary>
     /// Gets or sets copyright holder of the package, as well as any dates present.
     /// </summary>
-    [JsonRequired]
     [JsonPropertyName("copyrightText")]
     public string CopyrightText { get; set; }
 
