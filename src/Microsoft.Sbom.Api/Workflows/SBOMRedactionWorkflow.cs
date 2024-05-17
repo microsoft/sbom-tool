@@ -27,7 +27,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
 
     public virtual async Task<bool> RunAsync()
     {
-        log.Error($"Running redaction for SBOM path {configuration.SbomPath?.Value} and SBOM dir {configuration.SbomDir?.Value}");
+        log.Information($"Running redaction for SBOM path {configuration.SbomPath?.Value} and SBOM dir {configuration.SbomDir?.Value}. Output dir: {configuration.OutputPath?.Value}");
         return await Task.FromResult(true);
     }
 }

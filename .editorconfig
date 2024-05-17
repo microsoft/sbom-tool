@@ -496,6 +496,12 @@ dotnet_diagnostic.CA1863.severity = none
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers
 ##########################################
 
+# SA1005: Single line comments should begin with single space
+dotnet_diagnostic.SA1005.severity = none
+
+# SA1515: Single-line comment should be preceded by blank line
+dotnet_diagnostic.SA1515.severity = none
+
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1101.md
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.SA1101.severity = suggestion

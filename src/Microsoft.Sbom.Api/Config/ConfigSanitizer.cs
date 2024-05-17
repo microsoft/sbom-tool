@@ -55,7 +55,8 @@ public class ConfigSanitizer
             .CreateLogger();
 
         // If BuildDropPath is null then run the logic to check whether it is required or not based on the current configuration.
-        if (configuration.BuildDropPath?.Value == null || (configuration.DockerImagesToScan?.Value != null && configuration.BuildComponentPath?.Value == null))
+        if ((configuration.ManifestToolAction == ManifestToolActions.Validate || configuration.ManifestToolAction == ManifestToolActions.Generate) &&
+            (configuration.BuildDropPath?.Value == null || (configuration.DockerImagesToScan?.Value != null && configuration.BuildComponentPath?.Value == null)))
         {
                 ValidateBuildDropPathConfiguration(configuration);
                 configuration.BuildDropPath = GetTempBuildDropPath(configuration);
@@ -64,7 +65,7 @@ public class ConfigSanitizer
         configuration.HashAlgorithm = GetHashAlgorithmName(configuration);
 
         // set ManifestDirPath after validation of DirectoryExist and DirectoryPathIsWritable, this wouldn't exist because it needs to be created by the tool.
-        configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath.Value, configuration.ManifestToolAction);
+        configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath?.Value, configuration.ManifestToolAction);
 
         // Set namespace value, this handles default values and user provided values.
         if (configuration.ManifestToolAction == ManifestToolActions.Generate)

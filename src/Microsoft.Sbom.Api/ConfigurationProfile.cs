@@ -62,7 +62,6 @@ public class ConfigurationProfile : Profile
 #pragma warning disable CS0618 // 'Configuration.ManifestPath' is obsolete: 'This field is not provided by the user or configFile, set by system'
             .ForMember(c => c.ManifestPath, o => o.Ignore())
 #pragma warning restore CS0618 // 'Configuration.ManifestPath' is obsolete: 'This field is not provided by the user or configFile, set by system'
-            .ForMember(c => c.OutputPath, o => o.Ignore())
             .ForMember(c => c.HashAlgorithm, o => o.Ignore())
             .ForMember(c => c.RootPathFilter, o => o.Ignore())
             .ForMember(c => c.CatalogFilePath, o => o.Ignore())

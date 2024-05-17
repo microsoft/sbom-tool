@@ -25,9 +25,9 @@ public class RedactArgs : CommonArgs
     public string? SbomDir { get; set; }
 
     /// <summary>
-    /// Gets or sets the root folder of the drop directory for which the redacted SBOM file will be generated.
+    /// Gets or sets the directory where the redacted SBOM file(s) will be generated.
     /// </summary>
-    [ArgShortcut("b")]
-    [ArgDescription("The root folder of the drop directory for which the redacted SBOM file will be generated.")]
-    public string BuildDropPath { get; set; }
+    [ArgShortcut("o")]
+    [ArgDescription("Gets or sets the directory where the redacted SBOM file(s) will be generated.")]
+    public string OutputPath { get; set; }
 }
