@@ -9,7 +9,7 @@ using Serilog;
 namespace Microsoft.Sbom.Api.Workflows;
 
 /// <summary>
-/// The SBOM tool workflow class that is used to redact sensitive file information from a SBOM or set of SBOMs.
+/// The SBOM tool workflow class that is used to redact file information from a SBOM or set of SBOMs.
 /// </summary>
 public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
 {
