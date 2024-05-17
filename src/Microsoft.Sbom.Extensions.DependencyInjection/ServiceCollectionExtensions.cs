@@ -72,6 +72,7 @@ public static class ServiceCollectionExtensions
             })
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
+            .AddTransient<IWorkflow<SbomRedactionWorkflow>, SbomRedactionWorkflow>()
             .AddTransient<DirectoryWalker>()
             .AddTransient<IFilter<DownloadedRootPathFilter>, DownloadedRootPathFilter>()
             .AddTransient<IFilter<ManifestFolderFilter>, ManifestFolderFilter>()

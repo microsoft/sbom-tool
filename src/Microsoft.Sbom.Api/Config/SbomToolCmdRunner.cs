@@ -55,6 +55,16 @@ public class SbomToolCmdRunner
     }
 
     /// <summary>
+    /// Redact sensitive file information from given SBOM(s).
+    /// </summary>
+    [ArgActionMethod]
+    [ArgDescription("Redact sensitive file information from given SBOM(s).")]
+    public RedactArgs Redact(RedactArgs redactArgs)
+    {
+        return redactArgs;
+    }
+
+    /// <summary>
     /// Prints the version of the tool.
     /// </summary>
     [ArgActionMethod]
