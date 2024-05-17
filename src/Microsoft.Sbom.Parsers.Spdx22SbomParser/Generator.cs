@@ -206,7 +206,7 @@ public class Generator : IManifestGenerator
                 new ExternalReference
                 {
                     ReferenceCategory = ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(),
-                    Type = ExternalRepositoryType.purl,
+                    Type = ExternalRepositoryType.purl.ToString(),
                     Locator = internalMetadataProvider.GetSwidTagId()
                 }
             },
@@ -248,7 +248,7 @@ public class Generator : IManifestGenerator
         var spdxRelationship = new SPDXRelationship
         {
             SourceElementId = sourceElement,
-            RelationshipType = GetSPDXRelationshipType(relationship.RelationshipType),
+            RelationshipType = GetSPDXRelationshipType(relationship.RelationshipType).ToString(),
             TargetElementId = targetElement
         };
 

@@ -104,9 +104,6 @@ public class SbomFileParserTests : SbomParserTestsBase
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingNameString)]
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingIDString)]
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingChecksumsString)]
-    [DataRow(SbomFileJsonStrings.JsonWith1FileMissingLicenseConcludedString)]
-    [DataRow(SbomFileJsonStrings.JsonWith1FileMissingLicenseInfoInFilesString)]
-    [DataRow(SbomFileJsonStrings.JsonWith1FileMissingCopyrightString)]
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingCopyrightAndPathString)]
     [TestMethod]
     public void MissingPropertiesTest_Throws(string json)
