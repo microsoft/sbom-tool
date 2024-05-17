@@ -502,6 +502,9 @@ dotnet_diagnostic.SA1005.severity = none
 # SA1515: Single-line comment should be preceded by blank line
 dotnet_diagnostic.SA1515.severity = none
 
+# SA1512: Single-line comments should not be followed by blank line
+dotnet_diagnostic.SA1512.severity = none
+
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1101.md
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.SA1101.severity = suggestion

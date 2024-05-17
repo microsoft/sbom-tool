@@ -113,6 +113,16 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
+    public void NoValueForBuildDropPathForRedaction_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Redact;
+        config.BuildDropPath = null;
+
+        configSanitizer.SanitizeConfig(config);
+    }
+
+    [TestMethod]
     public void NoValueForManifestInfoForValidation_SetsDefaultValue()
     {
         var config = GetConfigurationBaseObject();
