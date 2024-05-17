@@ -39,7 +39,7 @@ public class SbomRedactionWorkflowTests
     }
 
     [TestMethod]
-    public async Task SbomParserBasedValidationWorkflowTests_ReturnsSuccessAndValidationFailures_IgnoreMissingTrue_Succeeds()
+    public async Task SbomRedactionTests_Succeeds()
     {
         mockLogger.Setup(x => x.Information($"Running redaction for SBOM path path and SBOM dir dir. Output dir: out"));
         configurationMock.SetupGet(c => c.SbomPath).Returns(new ConfigurationSetting<string> { Value = "path" });
