@@ -505,6 +505,18 @@ dotnet_diagnostic.SA1515.severity = none
 # SA1512: Single-line comments should not be followed by blank line
 dotnet_diagnostic.SA1512.severity = none
 
+# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1116.md
+# SA1116: The parameters should begin on the line after the declaration, whenever the parameter span across multiple lines 
+dotnet_diagnostic.SA1116.severity = suggestion
+
+# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1010.md
+# SA1010: Opening square brackets should not be preceded by a space
+dotnet_diagnostic.SA1010.severity = suggestion
+
+# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1024.md
+# SA1024: Colon should be followed by a space
+dotnet_diagnostic.SA1024.severity = suggestion
+
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1101.md
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.SA1101.severity = suggestion
