@@ -62,6 +62,8 @@ public class ConfigSanitizer
                 configuration.BuildDropPath = GetTempBuildDropPath(configuration);
         }
 
+        CheckValidateFormatConfig(configuration);
+
         configuration.HashAlgorithm = GetHashAlgorithmName(configuration);
 
         // set ManifestDirPath after validation of DirectoryExist and DirectoryPathIsWritable, this wouldn't exist because it needs to be created by the tool.
@@ -85,6 +87,19 @@ public class ConfigSanitizer
         logger.Dispose();
 
         return configuration;
+    }
+
+    private void CheckValidateFormatConfig(IConfiguration config)
+    {
+        if (config.ManifestToolAction != ManifestToolActions.ValidateFormat)
+        {
+            return;
+        }
+
+        if (config.SbomPath?.Value == null)
+        {
+            throw new ValidationArgException($"Please provide a value for the SbomPath (-sp) parameter to validate the SBOM.");
+        }
     }
 
     private ConfigurationSetting<IList<ManifestInfo>> GetDefaultManifestInfoForValidationAction(IConfiguration configuration)
