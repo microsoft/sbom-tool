@@ -55,6 +55,17 @@ public class SbomToolCmdRunner
     }
 
     /// <summary>
+    /// Redact file information from given SBOM(s).
+    /// </summary>
+    [ArgActionMethod]
+    [ArgDescription("Redact file information from given SBOM(s).")]
+    [OmitFromUsageDocs]
+    public RedactArgs Redact(RedactArgs redactArgs)
+    {
+        return redactArgs;
+    }
+
+    /// <summary>
     /// Prints the version of the tool.
     /// </summary>
     [ArgActionMethod]
