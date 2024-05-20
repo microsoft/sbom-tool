@@ -6,10 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Sbom.Api;
-using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
-using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
 
 namespace Microsoft.Sbom.Tool;
 
@@ -26,9 +24,9 @@ public class RedactService : IHostedService
         IRecorder recorder,
         IHostApplicationLifetime hostApplicationLifetime)
     {
-        this.redactionWorkflow = redactionWorkflow;
-        this.recorder = recorder;
-        this.hostApplicationLifetime = hostApplicationLifetime;
+        this.redactionWorkflow = redactionWorkflow ?? throw new ArgumentNullException(nameof(redactionWorkflow));
+        this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+        this.hostApplicationLifetime = hostApplicationLifetime ?? throw new ArgumentNullException(nameof(hostApplicationLifetime));
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
