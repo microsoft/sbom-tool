@@ -147,17 +147,6 @@ public class ConfigSanitizer
                 throw new ValidationArgException($"Please provide a value for the BuildDropPath (-b) parameter to generate the SBOM.");
             }
         }
-        else if (configuration.ManifestToolAction == ManifestToolActions.ValidateFormat)
-        {
-            if (configuration.SbomPath.Value != null)
-            {
-                return;
-            }
-            else
-            {
-                throw new ValidationArgException($"Please provide a value for the SbomPath (-sp) parameter to validate the SBOM.");
-            }
-        }
         else
         {
             throw new ValidationArgException($"Please provide a value for the BuildDropPath (-b) parameter.");
