@@ -44,10 +44,7 @@ public class FormatValidationService : IHostedService
             using (var sbomStream = new StreamReader(config.SbomPath.Value))
             {
                 var validatedSbom = new ValidatedSBOM(sbomStream.BaseStream);
-                var details = await validatedSbom.GetValidationResults();
-                var sbom = await validatedSbom.GetRawSPDXDocument();
-
-                PrintLines(validatedSbom.MultilineSummary());
+                PrintLines(await validatedSbom.MultilineSummary());
             }
 
             await recorder.FinalizeAndLogTelemetryAsync();

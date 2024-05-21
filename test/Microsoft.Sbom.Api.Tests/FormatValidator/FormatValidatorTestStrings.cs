@@ -16,11 +16,11 @@ internal readonly struct FormatValidatorTestStrings
                 ""dataLicense"": ""CC0-1.0"",
                 ""SPDXID"": ""SPDXRef-DOCUMENT"",
                 ""name"": ""sbom-tool 1.0.0"",
-                ""documentNamespace"": ""https://microsoft.com/sbom-tool/alisontest/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
+                ""documentNamespace"": ""https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
                 ""creationInfo"": {
                 ""created"": ""2024-05-08T15:58:25Z"",
                 ""creators"": [
-                    ""Organization: AlisonTest"",
+                    ""Organization: Test"",
                     ""Tool: Microsoft.SBOMTool-2.2.5""
                     ]},
                 ""documentDescribes"": [
@@ -35,11 +35,11 @@ internal readonly struct FormatValidatorTestStrings
                 ""dataLicense"": ""CC0-1.0"",
                 ""SPDXID"": ""SPDXRef-DOCUMENT"",
                 ""name"": ""sbom-tool 1.0.0"",
-                ""documentNamespace"": ""https://microsoft.com/sbom-tool/alisontest/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
+                ""documentNamespace"": ""https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
                 ""creationInfo"": {
                 ""created"": ""2024-05-08T15:58:25Z"",
                 ""creators"": [
-                    ""Organization: AlisonTest"",
+                    ""Organization: Test"",
                     ""Tool: Microsoft.SBOMTool-2.2.5""
                     ]},
                 ""documentDescribes"": [
@@ -58,7 +58,7 @@ internal readonly struct FormatValidatorTestStrings
                 ""creationInfo"": {
                 ""created"": ""2024-05-08T15:58:25Z"",
                 ""creators"": [
-                    ""Organization: AlisonTest"",
+                    ""Organization: Test"",
                     ""Tool: Microsoft.SBOMTool-2.2.5""
                     ]},
                 ""documentDescribes"": [
@@ -73,11 +73,11 @@ internal readonly struct FormatValidatorTestStrings
                 ""spdxVersion"": ""SPDX-2.2"",
                 ""SPDXID"": ""SPDXRef-DOCUMENT"",
                 ""name"": ""sbom-tool 1.0.0"",
-                ""documentNamespace"": ""https://microsoft.com/sbom-tool/alisontest/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
+                ""documentNamespace"": ""https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
                 ""creationInfo"": {
                 ""created"": ""2024-05-08T15:58:25Z"",
                 ""creators"": [
-                    ""Organization: AlisonTest"",
+                    ""Organization: Test"",
                     ""Tool: Microsoft.SBOMTool-2.2.5""
                     ]},
                 ""documentDescribes"": [
@@ -92,11 +92,11 @@ internal readonly struct FormatValidatorTestStrings
                 ""spdxVersion"": ""SPDX-2.2"",
                 ""SPDXID"": ""SPDXRef-DOCUMENT"",
                 ""dataLicense"": ""CC0-1.0"",
-                ""documentNamespace"": ""https://microsoft.com/sbom-tool/alisontest/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
+                ""documentNamespace"": ""https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
                 ""creationInfo"": {
                 ""created"": ""2024-05-08T15:58:25Z"",
                 ""creators"": [
-                    ""Organization: AlisonTest"",
+                    ""Organization: Test"",
                     ""Tool: Microsoft.SBOMTool-2.2.5""
                     ]},
                 ""documentDescribes"": [
@@ -111,11 +111,11 @@ internal readonly struct FormatValidatorTestStrings
                 ""spdxVersion"": ""SPDX-2.2"",
                 ""SPDXID"": ""SPDXRef-DOCUMENT"",
                 ""dataLicense"": ""CC0-1.0"",
-                ""documentNamespace"": ""https://microsoft.com/sbom-tool/alisontest/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
+                ""documentNamespace"": ""https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
                 ""creationInfo"": {
                 ""created"": ""2024-05-08T15:58:25Z"",
                 ""creators"": [
-                    ""Organization: AlisonTest"",
+                    ""Organization: Test"",
                     ""Tool: Microsoft.SBOMTool-2.2.5""
                     ]},
                 ""documentDescribes"": [
@@ -130,11 +130,11 @@ internal readonly struct FormatValidatorTestStrings
                 ""spdxVersion"": ""SPDX-2.2"",
                 ""SPDXID"": ""SPDXRef-DOCUMENT"",
                 ""dataLicense"": ""CC0-1.0"",
-                ""documentNamespace"": ""https://microsoft.com/sbom-tool/alisontest/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
+                ""documentNamespace"": ""https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
                 ""creationInfo"": {
                 ""created"": ""2024-05-08T15:58:25Z"",
                 ""creators"": [
-                    ""Organization: AlisonTest"",
+                    ""Organization: Test"",
                     ""Tool: Microsoft.SBOMTool-2.2.5""
                     ]},
                 ""documentDescribes"": [
@@ -150,7 +150,7 @@ internal readonly struct FormatValidatorTestStrings
                 ""spdxVersion"": ""SPDX-2.2"",
                 ""SPDXID"": ""SPDXRef-DOCUMENT"",
                 ""dataLicense"": ""CC0-1.0"",
-                ""documentNamespace"": ""https://microsoft.com/sbom-tool/alisontest/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
+                ""documentNamespace"": ""https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
                 ""documentDescribes"": [
                     ""SPDXRef-RootPackage""
                     ]}";
@@ -164,11 +164,11 @@ internal readonly struct FormatValidatorTestStrings
                 ""spdxVersion"": ""SPDX-3.2"",
                 ""SPDXID"": ""SPDXRef-DOCUMENT"",
                 ""dataLicense"": ""CC0-1.0"",
-                ""documentNamespace"": ""https://microsoft.com/sbom-tool/alisontest/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
+                ""documentNamespace"": ""https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
                 ""creationInfo"": {
                 ""created"": ""2024-05-08T15:58:25Z"",
                 ""creators"": [
-                    ""Organization: AlisonTest"",
+                    ""Organization: Test"",
                     ""Tool: Microsoft.SBOMTool-2.2.5""
                     ]},
                 ""documentDescribes"": [
@@ -184,11 +184,11 @@ internal readonly struct FormatValidatorTestStrings
                 ""spdxVersion"": ""SPDX-3.2"",
                 ""SPDXID"": ""SPDXRef-DOCUMENT"",
                 ""dataLicense"": ""CC0-1.0"",
-                ""documentNamespace"": ""https://microsoft.com/sbom-tool/alisontest/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
+                ""documentNamespace"": ""https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g"",
                 ""creationInfo"": {
                 ""created"": ""2024-05-08T15:58:25Z"",
                 ""creators"": [
-                    ""Organization: AlisonTest"",
+                    ""Organization: Test"",
                     ""Tool: Microsoft.SBOMTool-2.2.5""
                     ]},
                 ""documentDescribes"": [

@@ -119,13 +119,10 @@ public class ValidatedSBOM
         return ValidationDetails;
     }
 
-    public List<string> MultilineSummary()
+    public async Task<List<string>> MultilineSummary()
     {
+        await Initialize();
         var description = new List<string>();
-        if (!isInitialized)
-        {
-            return description;
-        }
 
         if (ValidationDetails.Status != FormatValidationStatus.Valid)
         {
