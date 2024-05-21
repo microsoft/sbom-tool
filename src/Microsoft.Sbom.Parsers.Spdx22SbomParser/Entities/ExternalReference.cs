@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Text.Json.Serialization;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 
@@ -34,4 +33,8 @@ public class ExternalReference
     [JsonRequired]
     [JsonPropertyName("referenceLocator")]
     public string Locator { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("comment")]
+    public string Comment { get; set; }
 }
