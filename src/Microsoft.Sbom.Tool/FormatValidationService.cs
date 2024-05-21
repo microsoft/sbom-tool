@@ -2,10 +2,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Sbom.Api;
+using Microsoft.Sbom.Api.FormatValidator;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common.Config;
 
@@ -26,11 +29,26 @@ public class FormatValidationService : IHostedService
         this.hostApplicationLifetime = hostApplicationLifetime;
     }
 
+    private void PrintLines(List<string> lines)
+    {
+        foreach (var line in lines)
+        {
+            Console.WriteLine(line);
+        }
+    }
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         try
         {
-            Console.WriteLine($"Format validation service called for {config.SbomPath.Value}");
+            using (var sbomStream = new StreamReader(config.SbomPath.Value))
+            {
+                var validatedSbom = new ValidatedSBOM(sbomStream.BaseStream);
+                var details = await validatedSbom.GetValidationResults();
+                var sbom = await validatedSbom.GetRawSPDXDocument();
+
+                PrintLines(validatedSbom.MultilineSummary());
+            }
 
             await recorder.FinalizeAndLogTelemetryAsync();
             Environment.ExitCode = true ? (int)ExitCode.Success : (int)ExitCode.ValidationError;

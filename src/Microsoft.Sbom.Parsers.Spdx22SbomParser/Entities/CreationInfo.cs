@@ -11,6 +11,9 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 /// </summary>
 public class CreationInfo
 {
+    [JsonPropertyName("comment")]
+    public string Comment { get; set; }
+
     /// <summary>
     /// Gets or sets a string that specifies the time the SBOM was created on.
     /// </summary>
@@ -23,4 +26,7 @@ public class CreationInfo
     /// </summary>
     [JsonPropertyName("creators")]
     public IEnumerable<string> Creators { get; set; }
+
+    [JsonPropertyName("licenseListVersion")]
+    public string LicenseListVersion { get; set; }
 }
