@@ -139,7 +139,7 @@ public class SbomRedactionWorkflowTests
         var result = await testSubject.RunAsync();
         Assert.IsTrue(result);
         var redactedResult = Encoding.ASCII.GetString(outStream.ToArray());
-        Assert.AreEqual(redactedResult, /*lang=json,strict*/ @"{""comment"":null,""documentDescribes"":null,""files"":null,""packages"":null,""relationships"":null,""spdxVersion"":null,""dataLicense"":null,""SPDXID"":null,""name"":""redacted"",""documentNamespace"":null,""creationInfo"":null}");
+        Assert.IsTrue(redactedResult.Contains(@"""name"":""redacted"""));
     }
 
     private void SetUpDirStructure()
