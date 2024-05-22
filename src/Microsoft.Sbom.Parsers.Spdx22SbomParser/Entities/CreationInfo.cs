@@ -11,8 +11,8 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 /// </summary>
 public class CreationInfo
 {
-    [JsonPropertyName("comment")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("comment")]
     public string Comment { get; set; }
 
     /// <summary>
@@ -28,7 +28,7 @@ public class CreationInfo
     [JsonPropertyName("creators")]
     public IEnumerable<string> Creators { get; set; }
 
-    [JsonPropertyName("licenseListVersion")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("licenseListVersion")]
     public string LicenseListVersion { get; set; }
 }
