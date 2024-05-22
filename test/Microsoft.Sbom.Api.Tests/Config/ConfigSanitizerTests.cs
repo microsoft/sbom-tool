@@ -123,6 +123,31 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
+    public void NoValueForBuildDropPathForValidateFormat_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.ValidateFormat;
+        config.BuildDropPath = null;
+        config.SbomPath = new ConfigurationSetting<string>
+        {
+            Source = SettingSource.Default,
+            Value = "any non empty value"
+        };
+
+        configSanitizer.SanitizeConfig(config);
+    }
+
+    [TestMethod]
+    public void NoValueForSbomPathForValidateFormat_Throws()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.ValidateFormat;
+        config.SbomPath = null;
+
+        Assert.ThrowsException<ValidationArgException>(() => configSanitizer.SanitizeConfig(config));
+    }
+
+    [TestMethod]
     public void NoValueForManifestInfoForValidation_SetsDefaultValue()
     {
         var config = GetConfigurationBaseObject();

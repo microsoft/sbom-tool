@@ -42,6 +42,33 @@ public class ConfigurationProfile : Profile
             .ForMember(c => c.DeleteManifestDirIfPresent, o => o.Ignore())
             .ForMember(c => c.PackageSupplier, o => o.Ignore());
 
+        CreateMap<FormatValidationArgs, InputConfiguration>()
+#pragma warning disable CS0618 // 'Configuration.ManifestPath' is obsolete: 'This field is not provided by the user or configFile, set by system'
+            .ForMember(c => c.ManifestPath, o => o.Ignore())
+#pragma warning restore CS0618 // 'Configuration.ManifestPath' is obsolete: 'This field is not provided by the user or configFile, set by system'
+            .ForMember(c => c.HashAlgorithm, o => o.Ignore())
+            .ForMember(c => c.RootPathFilter, o => o.Ignore())
+            .ForMember(c => c.CatalogFilePath, o => o.Ignore())
+            .ForMember(c => c.ValidateSignature, o => o.Ignore())
+            .ForMember(c => c.PackagesList, o => o.Ignore())
+            .ForMember(c => c.FilesList, o => o.Ignore())
+            .ForMember(c => c.IgnoreMissing, o => o.Ignore())
+            .ForMember(c => c.FailIfNoPackages, o => o.Ignore())
+            .ForMember(c => c.PackageName, o => o.Ignore())
+            .ForMember(c => c.PackageVersion, o => o.Ignore())
+            .ForMember(c => c.BuildListFile, o => o.Ignore())
+            .ForMember(c => c.ExternalDocumentReferenceListFile, o => o.Ignore())
+            .ForMember(c => c.BuildComponentPath, o => o.Ignore())
+            .ForMember(c => c.PackagesList, o => o.Ignore())
+            .ForMember(c => c.FilesList, o => o.Ignore())
+            .ForMember(c => c.DockerImagesToScan, o => o.Ignore())
+            .ForMember(c => c.AdditionalComponentDetectorArgs, o => o.Ignore())
+            .ForMember(c => c.GenerationTimestamp, o => o.Ignore())
+            .ForMember(c => c.NamespaceUriUniquePart, o => o.Ignore())
+            .ForMember(c => c.NamespaceUriBase, o => o.Ignore())
+            .ForMember(c => c.DeleteManifestDirIfPresent, o => o.Ignore())
+            .ForMember(c => c.PackageSupplier, o => o.Ignore());
+
         // Create config for the generation args, ignoring other action members
         CreateMap<GenerationArgs, InputConfiguration>()
 #pragma warning disable CS0618 // 'Configuration.ManifestPath' is obsolete: 'This field is not provided by the user or configFile, set by system'

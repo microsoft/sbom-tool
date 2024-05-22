@@ -51,6 +51,7 @@ internal class Program
                         ValidationArgs v => services.AddHostedService<ValidationService>(),
                         GenerationArgs g => services.AddHostedService<GenerationService>(),
                         RedactArgs r => services.AddHostedService<RedactService>(),
+                        FormatValidationArgs f => services.AddHostedService<FormatValidationService>(),
                         _ => services
                     };
 
@@ -62,11 +63,13 @@ internal class Program
                             var validationConfigurationBuilder = x.GetService<IConfigurationBuilder<ValidationArgs>>();
                             var generationConfigurationBuilder = x.GetService<IConfigurationBuilder<GenerationArgs>>();
                             var redactConfigurationBuilder = x.GetService<IConfigurationBuilder<RedactArgs>>();
+                            var formatValidationConfigurationBuilder = x.GetService<IConfigurationBuilder<FormatValidationArgs>>();
                             var inputConfiguration = result.ActionArgs switch
                             {
                                 ValidationArgs v => validationConfigurationBuilder.GetConfiguration(v).GetAwaiter().GetResult(),
                                 GenerationArgs g => generationConfigurationBuilder.GetConfiguration(g).GetAwaiter().GetResult(),
                                 RedactArgs r => redactConfigurationBuilder.GetConfiguration(r).GetAwaiter().GetResult(),
+                                FormatValidationArgs f => formatValidationConfigurationBuilder.GetConfiguration(f).GetAwaiter().GetResult(),
                                 _ => default
                             };
 
