@@ -10,12 +10,14 @@ public class FormatEnforcedSPDX2 : SPDX2RequiredProperties
 {
     // These attributes are not required by the SPDX spec, but may be present in
     // SBOMs produced by sbom-tool or 3P SBOMs. We want to (de)serialize them if they are present.
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("comment")]
     public string Comment { get; set; }
 
     [JsonPropertyName("documentDescribes")]
     public IEnumerable<string> DocumentDescribes { get; set; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("files")]
     public IEnumerable<SPDXFile> Files { get; set; }
 
