@@ -50,9 +50,11 @@ public class ValidatedSBOM: IValidatedSBOM
         return sbom;
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
         this.sbomStream?.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     private async Task Initialize()

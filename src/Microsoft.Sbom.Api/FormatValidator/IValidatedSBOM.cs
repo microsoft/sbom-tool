@@ -3,14 +3,13 @@
 
 namespace Microsoft.Sbom.Api.FormatValidator;
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 
-public interface IValidatedSBOM
+public interface IValidatedSBOM: IDisposable
 {
     public Task<FormatValidationResults> GetValidationResults();
 
     public Task<FormatEnforcedSPDX2> GetRawSPDXDocument();
-
-    public void Dispose();
 }
