@@ -17,6 +17,7 @@ public class FormatEnforcedSPDX2 : SPDX2RequiredProperties
     [JsonPropertyName("documentDescribes")]
     public IEnumerable<string> DocumentDescribes { get; set; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("files")]
     public IEnumerable<SPDXFile> Files { get; set; }
 

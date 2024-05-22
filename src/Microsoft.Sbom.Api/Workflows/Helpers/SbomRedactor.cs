@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Sbom.Api.FormatValidator;
 using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
@@ -18,12 +19,21 @@ public class SbomRedactor
 {
     private const string SpdxFileRelationshipPrefix = "SPDXRef-File-";
 
+    private readonly ILogger log;
+
+    public SbomRedactor(
+        ILogger log)
+    {
+        this.log = log ?? throw new ArgumentNullException(nameof(log));
+    }
+
     public virtual async Task<FormatEnforcedSPDX2> RedactSBOMAsync(IValidatedSBOM sbom)
     {
         var spdx = await sbom.GetRawSPDXDocument();
 
         if (spdx.Files != null)
         {
+            this.log.Debug("Removing files section from SBOM.");
             spdx.Files = null;
         }
 
@@ -42,11 +52,13 @@ public class SbomRedactor
             {
                 if (package.HasFiles != null)
                 {
+                    this.log.Debug($"Removing has files property from package {package.Name}.");
                     package.HasFiles = null;
                 }
 
                 if (package.SourceInfo != null)
                 {
+                    this.log.Debug($"Removing has sourceInfo property from package {package.Name}.");
                     package.SourceInfo = null;
                 }
             }
@@ -68,6 +80,7 @@ public class SbomRedactor
 
             if (relationshipsToRemove.Any())
             {
+                this.log.Debug($"Removing {relationshipsToRemove.Count()} relationships with file references from SBOM.");
                 spdx.Relationships = spdx.Relationships.Except(relationshipsToRemove);
             }
         }
@@ -75,14 +88,14 @@ public class SbomRedactor
 
     private void UpdateDocumentNamespace(FormatEnforcedSPDX2 spdx)
     {
-        if (string.IsNullOrWhiteSpace(spdx.DocumentNamespace) || !spdx.DocumentNamespace.Contains("microsoft"))
+        if (!string.IsNullOrWhiteSpace(spdx.DocumentNamespace) && spdx.CreationInfo.Creators.Any(c => c.StartsWith("Tool: Microsoft.SBOMTool", StringComparison.OrdinalIgnoreCase)))
         {
-            return;
-        }
+            var existingNamespaceComponents = spdx.DocumentNamespace.Split('/');
+            var uniqueComponent = IdentifierUtils.GetShortGuid(Guid.NewGuid());
+            existingNamespaceComponents[^1] = uniqueComponent;
+            spdx.DocumentNamespace = string.Join("/", existingNamespaceComponents);
 
-        var existingNamespaceComponents = spdx.DocumentNamespace.Split('/');
-        var uniqueComponent = IdentifierUtils.GetShortGuid(Guid.NewGuid());
-        existingNamespaceComponents[^1] = uniqueComponent;
-        spdx.DocumentNamespace = string.Join("/", existingNamespaceComponents);
+            this.log.Debug($"Updated document namespace to {spdx.DocumentNamespace}.");
+        }
     }
 }

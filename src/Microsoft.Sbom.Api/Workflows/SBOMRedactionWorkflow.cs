@@ -34,14 +34,14 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
         ILogger log,
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
-        ValidatedSBOMFactory validatedSBOMFactory = null,
-        SbomRedactor sbomRedactor = null)
+        ValidatedSBOMFactory validatedSBOMFactory,
+        SbomRedactor sbomRedactor)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
-        this.validatedSBOMFactory = validatedSBOMFactory ?? new ValidatedSBOMFactory();
-        this.sbomRedactor = sbomRedactor ?? new SbomRedactor();
+        this.validatedSBOMFactory = validatedSBOMFactory ?? throw new ArgumentNullException(nameof(validatedSBOMFactory));
+        this.sbomRedactor = sbomRedactor ?? throw new ArgumentNullException(nameof(sbomRedactor));
     }
 
     public virtual async Task<bool> RunAsync()

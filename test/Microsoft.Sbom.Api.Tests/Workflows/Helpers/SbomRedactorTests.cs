@@ -9,12 +9,14 @@ using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Serilog;
 
 namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers;
 
 [TestClass]
 public class SbomRedactorTests
 {
+    private Mock<ILogger> mockLogger;
     private Mock<IValidatedSBOM> mockValidatedSbom;
 
     private SbomRedactor testSubject;
@@ -22,8 +24,15 @@ public class SbomRedactorTests
     [TestInitialize]
     public void Init()
     {
+        mockLogger = new Mock<ILogger>();
         mockValidatedSbom = new Mock<IValidatedSBOM>();
-        testSubject = new SbomRedactor();
+        testSubject = new SbomRedactor(mockLogger.Object);
+    }
+
+    [TestCleanup]
+    public void Reset()
+    {
+        mockLogger.VerifyAll();
     }
 
     [TestMethod]
@@ -119,6 +128,10 @@ public class SbomRedactorTests
         var docNamespace = "microsoft/test/namespace/fakeguid";
         var mockSbom = new FormatEnforcedSPDX2
         {
+            CreationInfo = new CreationInfo
+            {
+                Creators = new List<string> { "Tool: Microsoft.SBOMTool" }
+            },
             DocumentNamespace = docNamespace
         };
         mockValidatedSbom.Setup(x => x.GetRawSPDXDocument()).ReturnsAsync(mockSbom);
@@ -133,6 +146,10 @@ public class SbomRedactorTests
         var docNamespace = "test-namespace";
         var mockSbom = new FormatEnforcedSPDX2
         {
+            CreationInfo = new CreationInfo
+            {
+                Creators = new List<string> { "non-msft-tool" }
+            },
             DocumentNamespace = docNamespace
         };
         mockValidatedSbom.Setup(x => x.GetRawSPDXDocument()).ReturnsAsync(mockSbom);
