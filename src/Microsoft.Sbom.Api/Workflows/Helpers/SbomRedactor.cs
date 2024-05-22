@@ -15,7 +15,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// <summary>
 /// SBOM redactor that removes file information from SBOMs
 /// </summary>
-public class SbomRedactor
+public class SbomRedactor: ISbomRedactor
 {
     private const string SpdxFileRelationshipPrefix = "SPDXRef-File-";
 

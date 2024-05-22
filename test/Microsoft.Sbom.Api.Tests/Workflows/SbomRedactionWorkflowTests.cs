@@ -29,7 +29,7 @@ public class SbomRedactionWorkflowTests
     private Mock<IConfiguration> configurationMock;
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
     private Mock<ValidatedSBOMFactory> validatedSBOMFactoryMock;
-    private Mock<SbomRedactor> sbomRedactorMock;
+    private Mock<ISbomRedactor> sbomRedactorMock;
     private SbomRedactionWorkflow testSubject;
 
     private const string SbomPathStub = "sbom-path";
@@ -45,7 +45,7 @@ public class SbomRedactionWorkflowTests
         configurationMock = new Mock<IConfiguration>();
         fileSystemUtilsMock = new Mock<IFileSystemUtils>();
         validatedSBOMFactoryMock = new Mock<ValidatedSBOMFactory>();
-        sbomRedactorMock = new Mock<SbomRedactor>();
+        sbomRedactorMock = new Mock<ISbomRedactor>();
         testSubject = new SbomRedactionWorkflow(
             mockLogger.Object,
             configurationMock.Object,
@@ -116,6 +116,7 @@ public class SbomRedactionWorkflowTests
         var validationRes = new FormatValidationResults();
         validationRes.AggregateValidationStatus(FormatValidationStatus.NotValid);
         validatedSbomMock.Setup(m => m.GetValidationResults()).ReturnsAsync(validationRes).Verifiable();
+        validatedSbomMock.Setup(m => m.Dispose()).Verifiable();
 
         var result = await testSubject.RunAsync();
     }
@@ -135,6 +136,7 @@ public class SbomRedactionWorkflowTests
         sbomRedactorMock.Setup(m => m.RedactSBOMAsync(validatedSbomMock.Object)).ReturnsAsync(redactedContent).Verifiable();
         var outStream = new MemoryStream();
         fileSystemUtilsMock.Setup(m => m.OpenWrite(OutPathStub)).Returns(outStream).Verifiable();
+        validatedSbomMock.Setup(m => m.Dispose()).Verifiable();
 
         var result = await testSubject.RunAsync();
         Assert.IsTrue(result);

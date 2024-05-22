@@ -11,4 +11,6 @@ public interface IValidatedSBOM
     public Task<FormatValidationResults> GetValidationResults();
 
     public Task<FormatEnforcedSPDX2> GetRawSPDXDocument();
+
+    public void Dispose();
 }

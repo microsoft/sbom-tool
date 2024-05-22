@@ -28,14 +28,14 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
 
     private readonly ValidatedSBOMFactory validatedSBOMFactory;
 
-    private readonly SbomRedactor sbomRedactor;
+    private readonly ISbomRedactor sbomRedactor;
 
     public SbomRedactionWorkflow(
         ILogger log,
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
         ValidatedSBOMFactory validatedSBOMFactory,
-        SbomRedactor sbomRedactor)
+        ISbomRedactor sbomRedactor)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -50,44 +50,61 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
         var sboms = await GetValidSbomsAsync();
 
         log.Information($"Running redaction on the following SBOMs: {string.Join(' ', sboms.Select(sbom => sbom.Key))}");
-        foreach (var (sbomPath, validatedSbom) in sboms)
-        {
-            try
-            {
-                var outputPath = GetOutputPath(sbomPath);
-                var redactedSpdx = await this.sbomRedactor.RedactSBOMAsync(validatedSbom);
-                using (var outStream = fileSystemUtils.OpenWrite(outputPath))
-                {
-                    await JsonSerializer.SerializeAsync(outStream, redactedSpdx);
-                }
 
-                log.Information($"Redacted SBOM {sbomPath} saved to {outputPath}");
-            }
-            catch (Exception ex)
+        try
+        {
+            foreach (var (sbomPath, validatedSbom) in sboms)
             {
-                throw new Exception($"Failed to redact {sbomPath}: {ex.Message}", ex);
+                try
+                {
+                    var outputPath = GetOutputPath(sbomPath);
+                    var redactedSpdx = await this.sbomRedactor.RedactSBOMAsync(validatedSbom);
+                    using (var outStream = fileSystemUtils.OpenWrite(outputPath))
+                    {
+                        await JsonSerializer.SerializeAsync(outStream, redactedSpdx);
+                    }
+
+                    log.Information($"Redacted SBOM {sbomPath} saved to {outputPath}");
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Failed to redact {sbomPath}: {ex.Message}", ex);
+                }
+            }
+        }
+        finally
+        {
+            foreach (var (_, validatedSbom) in sboms)
+            {
+                validatedSbom.Dispose();
             }
         }
 
         return true;
     }
 
-    private async Task<IDictionary<string, IValidatedSBOM>> GetValidSbomsAsync()
+    private async Task<IReadOnlyDictionary<string, IValidatedSBOM>> GetValidSbomsAsync()
     {
         var sbomPaths = GetInputSbomPaths();
         var validatedSboms = new Dictionary<string, IValidatedSBOM>();
-        foreach (var sbom in sbomPaths)
+        foreach (var sbomPath in sbomPaths)
         {
-            log.Information($"Validating SBOM {sbom}");
-            var validatedSbom = validatedSBOMFactory.CreateValidatedSBOM(sbom);
+            log.Information($"Validating SBOM {sbomPath}");
+            var validatedSbom = validatedSBOMFactory.CreateValidatedSBOM(sbomPath);
             var validationDetails = await validatedSbom.GetValidationResults();
             if (validationDetails.Status != FormatValidationStatus.Valid)
             {
-                throw new InvalidDataException($"Failed to validate {sbom}:\n{string.Join('\n', validationDetails.Errors)}");
+                validatedSbom.Dispose();
+                foreach (var (_, sbom) in validatedSboms)
+                {
+                    sbom.Dispose();
+                }
+
+                throw new InvalidDataException($"Failed to validate {sbomPath}:\n{string.Join('\n', validationDetails.Errors)}");
             }
             else
             {
-                validatedSboms.Add(sbom, validatedSbom);
+                validatedSboms.Add(sbomPath, validatedSbom);
             }
         }
 
