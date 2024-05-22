@@ -47,16 +47,22 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
     public virtual async Task<bool> RunAsync()
     {
         ValidateDirStrucutre();
-        var sboms = await GetValidSbomsAsync();
-
-        log.Information($"Running redaction on the following SBOMs: {string.Join(' ', sboms.Select(sbom => sbom.Key))}");
-
-        try
+        var sbomPaths = GetInputSbomPaths();
+        foreach (var sbomPath in sbomPaths)
         {
-            foreach (var (sbomPath, validatedSbom) in sboms)
+            IValidatedSBOM validatedSbom = null;
+            try
             {
-                try
+                log.Information($"Validating SBOM {sbomPath}");
+                validatedSbom = validatedSBOMFactory.CreateValidatedSBOM(sbomPath);
+                var validationDetails = await validatedSbom.GetValidationResults();
+                if (validationDetails.Status != FormatValidationStatus.Valid)
                 {
+                    throw new InvalidDataException($"Failed to validate {sbomPath}:\n{string.Join('\n', validationDetails.Errors)}");
+                }
+                else
+                {
+                    log.Information($"Redacting SBOM {sbomPath}");
                     var outputPath = GetOutputPath(sbomPath);
                     var redactedSpdx = await this.sbomRedactor.RedactSBOMAsync(validatedSbom);
                     using (var outStream = fileSystemUtils.OpenWrite(outputPath))
@@ -66,49 +72,14 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
 
                     log.Information($"Redacted SBOM {sbomPath} saved to {outputPath}");
                 }
-                catch (Exception ex)
-                {
-                    throw new Exception($"Failed to redact {sbomPath}: {ex.Message}", ex);
-                }
             }
-        }
-        finally
-        {
-            foreach (var (_, validatedSbom) in sboms)
+            finally
             {
-                validatedSbom.Dispose();
+                validatedSbom?.Dispose();
             }
         }
 
         return true;
-    }
-
-    private async Task<IReadOnlyDictionary<string, IValidatedSBOM>> GetValidSbomsAsync()
-    {
-        var sbomPaths = GetInputSbomPaths();
-        var validatedSboms = new Dictionary<string, IValidatedSBOM>();
-        foreach (var sbomPath in sbomPaths)
-        {
-            log.Information($"Validating SBOM {sbomPath}");
-            var validatedSbom = validatedSBOMFactory.CreateValidatedSBOM(sbomPath);
-            var validationDetails = await validatedSbom.GetValidationResults();
-            if (validationDetails.Status != FormatValidationStatus.Valid)
-            {
-                validatedSbom.Dispose();
-                foreach (var (_, sbom) in validatedSboms)
-                {
-                    sbom.Dispose();
-                }
-
-                throw new InvalidDataException($"Failed to validate {sbomPath}:\n{string.Join('\n', validationDetails.Errors)}");
-            }
-            else
-            {
-                validatedSboms.Add(sbomPath, validatedSbom);
-            }
-        }
-
-        return validatedSboms;
     }
 
     private string GetOutputPath(string sbomPath)

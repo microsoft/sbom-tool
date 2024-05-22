@@ -74,7 +74,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
             .AddTransient<IWorkflow<SbomRedactionWorkflow>, SbomRedactionWorkflow>()
-            .AddTransient<SbomRedactor>()
+            .AddTransient<ISbomRedactor, SbomRedactor>()
             .AddTransient<ValidatedSBOMFactory>()
             .AddTransient<DirectoryWalker>()
             .AddTransient<IFilter<DownloadedRootPathFilter>, DownloadedRootPathFilter>()
