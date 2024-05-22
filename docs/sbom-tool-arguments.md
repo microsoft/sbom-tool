@@ -81,5 +81,19 @@ Actions
     FollowSymlinks (-F)                       If set to false, we will not follow symlinks while traversing the build drop folder. Default is set to 'true'.
     ManifestInfo (-mi)                        A list of the name and version of the manifest format that we are using.
 
+  Redact -options - Redact file information from given SBOM(s).
+
+    Option            Description
+    SbomPath (-sp)    The file path of the SBOM to redact.
+    SbomDir (-sd)     The directory containing the sbom(s) to redact.
+    OutputPath (-o)   Gets or sets the directory where the redacted SBOM file(s) will be generated.
+    Verbosity (-V)    Display this amount of detail in the logging output.
+                      Verbose
+                      Debug
+                      Information
+                      Warning
+                      Error
+                      Fatal
+
   Version  - Displays the version of the tool being used. Can be used as '--version'
 ```

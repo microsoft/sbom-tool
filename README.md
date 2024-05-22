@@ -115,6 +115,20 @@ This sample command provides the minimum mandatory arguments required to validat
 
 Currently only SPDX2.2 is supported.
 
+### SBOM Redact
+
+Use the tool to redact any references to files from a given SBOM or set of SBOMs with either of the following commands:
+
+```
+sbom-tool redact -sd <directory containing SBOMs to redact> -o <output path>
+```
+
+```
+sbom-tool redact -sp <path to the SBOM to redact> -o <output path>
+```
+
+This command will generate a mirrored set of SBOMs in the output directory, but with the file references removed. Note that the SBOM directory and output path arguments can not reference the same directory and the output path should point to an existing, empty directory.
+
 ## Integrating SBOM tool to your CI/CD pipelines.
 
 You can follow these guides to integrate the SBOM tool into your CI/CD pipelines 

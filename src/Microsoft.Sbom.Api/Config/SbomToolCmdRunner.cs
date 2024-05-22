@@ -73,7 +73,6 @@ public class SbomToolCmdRunner
     /// </summary>
     [ArgActionMethod]
     [ArgDescription("Redact file information from given SBOM(s).")]
-    [OmitFromUsageDocs]
     public RedactArgs Redact(RedactArgs redactArgs)
     {
         return redactArgs;
