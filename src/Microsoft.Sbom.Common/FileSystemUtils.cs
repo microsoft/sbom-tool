@@ -68,6 +68,9 @@ public abstract class FileSystemUtils : IFileSystemUtils
     public bool FileExists(string path) => File.Exists(path);
 
     /// <inheritdoc />
+    public string GetFileName(string filePath) => Path.GetFileName(filePath);
+
+    /// <inheritdoc />
     public Stream OpenWrite(string filePath) => new FileStream(
         filePath,
         FileMode.Create,

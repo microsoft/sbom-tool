@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Text.Json.Serialization;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 
@@ -25,7 +24,7 @@ public class ExternalReference
     /// https://spdx.github.io/spdx-spec/appendix-VI-external-repository-identifiers/.
     /// </summary>
     [JsonPropertyName("referenceType")]
-    public ExternalRepositoryType Type { get; set; }
+    public string Type { get; set; }
 
     /// <summary>
     /// Gets or sets a unique string without any spaces that specifies a location where the package specific information
@@ -34,4 +33,8 @@ public class ExternalReference
     [JsonRequired]
     [JsonPropertyName("referenceLocator")]
     public string Locator { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("comment")]
+    public string Comment { get; set; }
 }

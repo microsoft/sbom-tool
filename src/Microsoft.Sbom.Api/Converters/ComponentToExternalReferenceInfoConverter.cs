@@ -43,7 +43,7 @@ public class ComponentToExternalReferenceInfoConverter
                 }
                 catch (Exception e)
                 {
-                    log.Debug($"Encountered an error while converting SBOM component {scannedComponent.Component.Id} to external reference: {e.Message}");
+                    log.Warning($"Encountered an error while converting SBOM component {scannedComponent.Component.Id} to external reference: {e.Message}");
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
                         ErrorType = Entities.ErrorType.PackageError,
