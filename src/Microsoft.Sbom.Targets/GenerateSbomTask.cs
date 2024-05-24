@@ -1,17 +1,17 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+namespace Microsoft.Sbom.Targets;
+
 using System;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Extensions.DependencyInjection;
 using Microsoft.Sbom.Tool;
 using PowerArgs;
-using Task = Microsoft.Build.Utilities.Task;
-
-namespace Microsoft.Sbom.Targets;
 
 public class GenerateSbomTask : Task
 {
@@ -49,7 +49,7 @@ public class GenerateSbomTask : Task
 
         try
         {
-            // TODO replace this with a call to SBOM API to generate SBOM 
+            // TODO replace this with a call to SBOM API to generate SBOM
             SbomPath = "path/to/sbom";
             return true;
         }
