@@ -15,7 +15,9 @@ using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions.DependencyInjection;
 using Microsoft.Sbom.Tool;
+using Microsoft.VisualBasic;
 using PowerArgs;
+using Serilog.Events;
 
 public class GenerateSbomTask : Task
 {
@@ -117,18 +119,11 @@ public class GenerateSbomTask : Task
 
     public override bool Execute()
     {
-        // TODO: Validate all arguments.
-        if (string.IsNullOrEmpty(BuildDropPath) ||
-            string.IsNullOrEmpty(PackageSupplier) ||
-            string.IsNullOrEmpty(PackageName) ||
-            string.IsNullOrEmpty(PackageVersion))
-        {
-            Log.LogError("Required argument not provided.");
-            return false;
-        }
-
         try
         {
+            // Set other configurations. The GenerateSBOMAsync() already sanitizes and checks for
+            // a valid namespace URI and generates a random guid for NamespaceUriUniquePart if
+            // one is not provided.
             var sbomMetadata = new SBOMMetadata
             {
                 PackageSupplier = this.PackageSupplier,
@@ -140,7 +135,7 @@ public class GenerateSbomTask : Task
                 NamespaceUriBase = this.NamespaceBaseUri,
                 NamespaceUriUniquePart = this.NamespaceUriUniquePart,
                 DeleteManifestDirectoryIfPresent = this.DeleteManifestDirIfPresent,
-                Verbosity = Enum.TryParse(this.Verbosity, out EventLevel eventLevel) ? eventLevel : default, // TODO: validate this
+                Verbosity = ValidateAndAssignVerbosity()
             };
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
             var result = System.Threading.Tasks.Task.Run(() => this.Generator.GenerateSbomAsync(
@@ -149,7 +144,7 @@ public class GenerateSbomTask : Task
                 metadata: sbomMetadata,
                 componentPath: this.BuildComponentPath,
                 runtimeConfiguration: runtimeConfiguration,
-                specifications: !string.IsNullOrWhiteSpace(this.ManifestInfo) ? [SbomSpecification.Parse(this.ManifestInfo)] : null,
+                specifications: ValidateAndAssignSpecifications(),
                 externalDocumentReferenceListFile: this.ExternalDocumentListFile)).GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
 
@@ -162,5 +157,39 @@ public class GenerateSbomTask : Task
             Log.LogError($"SBOM generation failed: {e.Message}");
             return false;
         }
+    }
+
+    /// <summary>
+    /// Checks the user's input for Verbosity and assigns the
+    /// associated EventLevel value for logging.
+    /// </summary>
+    private EventLevel ValidateAndAssignVerbosity()
+    {
+        if (string.IsNullOrEmpty(this.Verbosity))
+        {
+            Log.LogMessage($"No verbosity level specified. Setting verbosity level at \"{EventLevel.LogAlways}\"");
+            return EventLevel.LogAlways;
+        }
+
+        if (Enum.TryParse(this.Verbosity, true, out EventLevel eventLevel)) {
+            return eventLevel;
+        }
+
+        Log.LogMessage($"Unrecognized verbosity level specified. Setting verbosity level at \"{EventLevel.LogAlways}\"");
+        return EventLevel.LogAlways;
+    }
+
+    /// <summary>
+    /// Check for ManifestInfo and create an SbomSpecification accordingly
+    /// </summary>
+    /// <returns></returns>
+    private IList<SbomSpecification> ValidateAndAssignSpecifications()
+    {
+        if (!string.IsNullOrWhiteSpace(this.ManifestInfo))
+        {
+           return new List<SbomSpecification> { SbomSpecification.Parse(this.ManifestInfo) };
+        }
+
+        return null;
     }
 }
