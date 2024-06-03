@@ -8,7 +8,7 @@ namespace Microsoft.Sbom.Api.Config.Args;
 /// <summary>
 /// The command line arguments provided for the generate action in ManifestTool.
 /// </summary>
-public class GenerationArgs : CommonArgs
+public class GenerationArgs : GenerationAndValidationCommonArgs
 {
     /// <summary>
     /// Gets or sets the root folder of the drop directory for which the SBOM file will be generated.

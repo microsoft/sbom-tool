@@ -51,6 +51,8 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<bool>> deleteManifestDirIfPresent = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> failIfNoPackages = new();
     private static readonly AsyncLocal<ConfigurationSetting<LogEventLevel>> verbosity = new();
+    private static readonly AsyncLocal<ConfigurationSetting<string>> sbomPath = new();
+    private static readonly AsyncLocal<ConfigurationSetting<string>> sbomDir = new();
 
     /// <inheritdoc cref="IConfiguration.BuildDropPath" />
     [DirectoryExists]
@@ -313,5 +315,19 @@ public class Configuration : IConfiguration
     {
         get => enablePackageMetadataParsing.Value;
         set => enablePackageMetadataParsing.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.SbomPath" />
+    public ConfigurationSetting<string> SbomPath
+    {
+        get => sbomPath.Value;
+        set => sbomPath.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.SbomDir" />
+    public ConfigurationSetting<string> SbomDir
+    {
+        get => sbomDir.Value;
+        set => sbomDir.Value = value;
     }
 }
