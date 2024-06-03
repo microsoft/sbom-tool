@@ -37,6 +37,14 @@ public class ConfigurationBuilder<T> : IConfigurationBuilder<T>
                 generationArgs.ManifestToolAction = ManifestToolActions.Generate;
                 commandLineArgs = mapper.Map<InputConfiguration>(generationArgs);
                 break;
+            case RedactArgs redactArgs:
+                redactArgs.ManifestToolAction = ManifestToolActions.Redact;
+                commandLineArgs = mapper.Map<InputConfiguration>(redactArgs);
+                break;
+            case FormatValidationArgs formatValidationArgs:
+                formatValidationArgs.ManifestToolAction = ManifestToolActions.ValidateFormat;
+                commandLineArgs = mapper.Map<InputConfiguration>(formatValidationArgs);
+                break;
             default:
                 throw new ValidationArgException($"Unsupported configuration type found {typeof(T)}");
         }

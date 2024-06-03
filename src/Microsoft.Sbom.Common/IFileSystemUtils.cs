@@ -105,6 +105,13 @@ public interface IFileSystemUtils
     bool FileExists(string path);
 
     /// <summary>
+    /// Get the file name of a file.
+    /// </summary>
+    /// <param name="filePath">The absolute path of the file.</param>
+    /// <returns>The file name.</returns>
+    string GetFileName(string filePath);
+
+    /// <summary>
     /// Get the directory name of a file.
     /// </summary>
     /// <param name="filePath">The absolute path of the file.</param>

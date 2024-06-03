@@ -44,6 +44,20 @@ public class SbomToolCmdRunner
     }
 
     /// <summary>
+    /// Validate a build artifact using the manifest. Optionally also verify the signing certificate of the manifest.
+    /// </summary>
+    /// <param name="validationArgs"></param>
+    [ArgShortcut("validate-format")]
+    [ArgShortcut("vf")]
+    [ArgActionMethod]
+    [ArgDescription("Validate the version and format of the SBOM")]
+    [OmitFromUsageDocs]
+    public FormatValidationArgs ValidateFormat(FormatValidationArgs validationArgs)
+    {
+        return validationArgs;
+    }
+
+    /// <summary>
     /// Generate a manifest.json and a bsi.json for all the files in the given build drop folder.
     /// </summary>
     [ArgActionMethod]
@@ -52,6 +66,16 @@ public class SbomToolCmdRunner
     public GenerationArgs Generate(GenerationArgs generationArgs)
     {
         return generationArgs;
+    }
+
+    /// <summary>
+    /// Redact file information from given SBOM(s).
+    /// </summary>
+    [ArgActionMethod]
+    [ArgDescription("Redact file information from given SBOM(s).")]
+    public RedactArgs Redact(RedactArgs redactArgs)
+    {
+        return redactArgs;
     }
 
     /// <summary>
