@@ -140,4 +140,16 @@ public class InputConfiguration : IConfiguration
     /// <inheritdoc cref="IConfiguration.FetchLicenseInformation" />
     [DefaultValue(false)]
     public ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
+
+    [DefaultValue(false)]
+    public ConfigurationSetting<bool> EnablePackageMetadataParsing { get; set; }
+
+    /// <inheritdoc cref="IConfiguration.SbomDir" />
+    [DirectoryExists]
+    [Path]
+    public ConfigurationSetting<string> SbomDir { get; set; }
+
+    /// <inheritdoc cref="IConfiguration.SbomPath" />
+    [Path]
+    public ConfigurationSetting<string> SbomPath { get; set; }
 }

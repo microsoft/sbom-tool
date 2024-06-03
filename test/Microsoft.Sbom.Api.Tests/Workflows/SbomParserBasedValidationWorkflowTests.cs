@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -26,18 +26,25 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.JsonAsynchronousNodeKit;
+using Microsoft.Sbom.Parser;
 using Microsoft.Sbom.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ErrorType = Microsoft.Sbom.Api.Entities.ErrorType;
+using SpdxChecksum = Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Checksum;
 
 namespace Microsoft.Sbom.Workflows;
+
+#nullable enable
 
 [TestClass]
 public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBase
 {
+    private const string CaseSensitiveMessageMarker = "case-sensitive";
+
     private readonly Mock<ILogger> mockLogger = new();
     private readonly Mock<IOSUtils> mockOSUtils = new();
     private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new();
@@ -70,21 +77,14 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var recorder = new Mock<IRecorder>();
         var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
 
+        var dictionary = GetSpdxFilesDictionary();
+        dictionary["/child2/grandchild1/file9"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child2/grandchild1/file9hash" } };
+        dictionary["/child2/grandchild1/file7"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child2/grandchild1/file7hash" } };
+        dictionary["/child2/grandchild1/file10"] = new SpdxChecksum[] { new SpdxChecksum { Algorithm = AlgorithmName.SHA256.Name, ChecksumValue = "/root/child2/grandchild1/file10hash" } };
+
         sbomParser.SetupSequence(p => p.Next())
-            .Returns(ParserState.FILES)
-            .Returns(ParserState.FINISHED);
-
-        var parserStateQueue = new Queue<ParserState>();
-        parserStateQueue.Enqueue(ParserState.FILES);
-        parserStateQueue.Enqueue(ParserState.FINISHED);
-        sbomParser.SetupGet(p => p.CurrentState).Returns(parserStateQueue.Dequeue());
-        var dictionary = GetFilesDictionary();
-
-        dictionary["/child2/grandchild1/file9"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/grandchild1/file9hash" } };
-        dictionary["/child2/grandchild1/file7"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/grandchild1/file7hash" } };
-        dictionary["/child2/grandchild1/file10"] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "/root/child2/grandchild1/file10hash" } };
-
-        sbomParser.Setup(p => p.GetFiles()).Returns(GetSBOMFiles(dictionary));
+            .Returns(new FilesResult(new ParserStateResult(SPDXParser.FilesProperty, GetSpdxFiles(dictionary), ExplicitField: true, YieldReturn: true)))
+            .Returns((ParserStateResult?)null);
 
         manifestInterface.Setup(m => m.CreateParser(It.IsAny<Stream>()))
             .Returns(sbomParser.Object);
@@ -153,6 +153,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
         rootFileFilterMock.Init();
 
+        var osUtilsMock = new Mock<IOSUtils>(MockBehavior.Strict);
+
         var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
@@ -180,10 +182,21 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             filesValidator,
             validationResultGenerator,
             outputWriterMock.Object,
-            fileSystemMock.Object);
+            fileSystemMock.Object,
+            osUtilsMock.Object);
 
-        var result = await validator.RunAsync();
-        Assert.IsTrue(result);
+        var cc = new ConsoleCapture();
+
+        try
+        {
+            var result = await validator.RunAsync();
+            Assert.IsTrue(result);
+        }
+        finally
+        {
+            cc.Restore();
+        }
+
         var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
         var additionalFileErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.AdditionalFile).ToList();
@@ -199,9 +212,12 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var otherErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.Other).ToList();
         Assert.AreEqual(0, otherErrors.Count);
 
+        Assert.IsFalse(cc.CapturedStdOut.Contains(CaseSensitiveMessageMarker), "Case-sensitive marker should not have been output");
+
         configurationMock.VerifyAll();
         signValidatorMock.VerifyAll();
         fileSystemMock.VerifyAll();
+        osUtilsMock.VerifyAll();
     }
 
     [TestMethod]
@@ -218,15 +234,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
 
         sbomParser.SetupSequence(p => p.Next())
-            .Returns(ParserState.FILES)
-            .Returns(ParserState.FINISHED);
-
-        var parserStateQueue = new Queue<ParserState>();
-        parserStateQueue.Enqueue(ParserState.FILES);
-        parserStateQueue.Enqueue(ParserState.FINISHED);
-        sbomParser.SetupGet(p => p.CurrentState).Returns(parserStateQueue.Dequeue());
-
-        sbomParser.Setup(p => p.GetFiles()).Returns(GetSBOMFiles(GetFilesDictionary()));
+            .Returns(new FilesResult(new ParserStateResult(SPDXParser.FilesProperty, GetSpdxFiles(GetSpdxFilesDictionary()), ExplicitField: true, YieldReturn: true)))
+            .Returns((ParserStateResult?)null);
 
         manifestInterface.Setup(m => m.CreateParser(It.IsAny<Stream>()))
             .Returns(sbomParser.Object);
@@ -300,6 +309,9 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
         rootFileFilterMock.Init();
 
+        var osUtilsMock = new Mock<IOSUtils>(MockBehavior.Strict);
+        osUtilsMock.Setup(x => x.IsCaseSensitiveOS()).Returns(false);
+
         var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
@@ -327,10 +339,21 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             filesValidator,
             validationResultGenerator,
             outputWriterMock.Object,
-            fileSystemMock.Object);
+            fileSystemMock.Object,
+            osUtilsMock.Object);
 
-        var result = await validator.RunAsync();
-        Assert.IsFalse(result);
+        var cc = new ConsoleCapture();
+
+        try
+        {
+            var result = await validator.RunAsync();
+            Assert.IsFalse(result);
+        }
+        finally
+        {
+            cc.Restore();
+        }
+
         var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
         var additionalFileErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.AdditionalFile).ToList();
@@ -349,8 +372,11 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         Assert.AreEqual(1, otherErrors.Count);
         Assert.AreEqual("./child2/grandchild1/file10", otherErrors.First().Path);
 
+        Assert.IsTrue(cc.CapturedStdOut.Contains(CaseSensitiveMessageMarker), "Case-sensitive marker should have been output");
+
         configurationMock.VerifyAll();
         signValidatorMock.VerifyAll();
         fileSystemMock.VerifyAll();
+        osUtilsMock.VerifyAll();
     }
 }

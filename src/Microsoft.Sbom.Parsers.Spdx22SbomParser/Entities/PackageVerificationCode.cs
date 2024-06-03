@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -15,6 +15,7 @@ public class PackageVerificationCode
     /// <summary>
     /// Gets or sets the actual package verification code as a hex encoded value.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("packageVerificationCodeValue")]
     public string PackageVerificationCodeValue { get; set; }
 

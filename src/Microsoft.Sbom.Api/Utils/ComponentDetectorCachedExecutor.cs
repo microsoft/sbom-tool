@@ -1,11 +1,13 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
+using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Serilog;
+using Spectre.Console.Cli;
 
 namespace Microsoft.Sbom.Api.Utils;
 
@@ -32,22 +34,23 @@ public class ComponentDetectorCachedExecutor
     /// </summary>
     /// <param name="args">CD arguments.</param>
     /// <returns>Result of CD scan.</returns>
-    public virtual async Task<ScanResult> ScanAsync(string[] args)
+    public virtual async Task<ScanResult> ScanAsync(ScanSettings args)
     {
         if (args is null)
         {
             throw new ArgumentNullException(nameof(args));
         }
 
-        var argsHashCode = string.Join(string.Empty, args).GetHashCode();
-        if (results.ContainsKey(argsHashCode))
+        var scanSettingsHash = args.ToString().GetHashCode();
+
+        if (results.ContainsKey(scanSettingsHash))
         {
             log.Debug("Using cached CD scan result for the call with the same arguments");
-            return results[argsHashCode];
+            return results[scanSettingsHash];
         }
 
         var result = await detector.ScanAsync(args);
-        results.TryAdd(argsHashCode, result);
+        results.TryAdd(scanSettingsHash, result);
         return result;
     }
 }

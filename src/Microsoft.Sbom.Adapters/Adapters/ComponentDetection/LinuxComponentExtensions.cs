@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
@@ -23,6 +23,12 @@ internal static class LinuxComponentExtensions
         PackageName = linuxComponent.Name,
         PackageVersion = linuxComponent.Version,
         FilesAnalyzed = false,
+        Supplier = string.IsNullOrEmpty(linuxComponent.Author) ? null : $"Organization: {linuxComponent.Author}",
+        LicenseInfo = string.IsNullOrEmpty(linuxComponent.License) ? null : new LicenseInfo
+        {
+            Concluded = linuxComponent.License
+        },
+
         Type = "linux",
     };
 }

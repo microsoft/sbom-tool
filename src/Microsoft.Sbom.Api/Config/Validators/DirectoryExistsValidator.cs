@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -32,6 +32,11 @@ public class DirectoryExistsValidator : ConfigValidator
                 && paramValue is string value
                 && !string.IsNullOrEmpty(value))
             {
+                if (fileSystemUtils.FileExists(value))
+                {
+                    throw new ValidationArgException($"{paramName} '{value}' must be a directory, not a file");
+                }
+
                 if (!fileSystemUtils.DirectoryExists(value))
                 {
                     throw new ValidationArgException($"{paramName} directory not found for '{value}'");

@@ -118,7 +118,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     public void CargoComponent_ToSbomPackage()
     {
         var cargoComponent = new CargoComponent("name", "version");
-        var scannedComponent = new ScannedComponentWithLicense() { Component = cargoComponent };
+        var scannedComponent = new ExtendedScannedComponent() { Component = cargoComponent };
 
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
@@ -132,7 +132,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     public void CondaComponent_ToSbomPackage()
     {
         var condaComponent = new CondaComponent("name", "version", "build", "channel", "subdir", "namespace", "http://microsoft.com", "md5");
-        var scannedComponent = new ScannedComponentWithLicense() { Component = condaComponent };
+        var scannedComponent = new ExtendedScannedComponent() { Component = condaComponent };
 
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
@@ -148,7 +148,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     public void DockerImageComponent_ToSbomPackage()
     {
         var dockerImageComponent = new DockerImageComponent("name", "version", "tag") { Digest = "digest" };
-        var scannedComponent = new ScannedComponentWithLicense() { Component = dockerImageComponent };
+        var scannedComponent = new ExtendedScannedComponent() { Component = dockerImageComponent };
 
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
@@ -163,7 +163,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     public void NpmComponent_ToSbomPackage()
     {
         var npmComponent = new NpmComponent("name", "verison", author: new NpmAuthor("name", "email@contoso.com"));
-        var scannedComponent = new ScannedComponentWithLicense() { Component = npmComponent };
+        var scannedComponent = new ExtendedScannedComponent() { Component = npmComponent };
 
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
@@ -178,7 +178,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     public void NpmComponent_ToSbomPackage_NoAuthor()
     {
         var npmComponent = new NpmComponent("name", "verison");
-        var scannedComponent = new ScannedComponentWithLicense() { Component = npmComponent };
+        var scannedComponent = new ExtendedScannedComponent() { Component = npmComponent };
 
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
@@ -193,7 +193,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     public void NuGetComponent_ToSbomPackage()
     {
         var nuGetComponent = new NuGetComponent("name", "version", new string[] { "Author Name1, Another Author" });
-        var scannedComponent = new ScannedComponentWithLicense() { Component = nuGetComponent };
+        var scannedComponent = new ExtendedScannedComponent() { Component = nuGetComponent };
 
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
@@ -208,7 +208,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     public void NuGetComponent_ToSbomPackage_NoAuthor()
     {
         var nuGetComponent = new NuGetComponent("name", "version");
-        var scannedComponent = new ScannedComponentWithLicense() { Component = nuGetComponent };
+        var scannedComponent = new ExtendedScannedComponent() { Component = nuGetComponent };
 
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
@@ -223,7 +223,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     public void PipComponent_ToSbomPackage()
     {
         var pipComponent = new PipComponent("name", "version");
-        var scannedComponent = new ScannedComponentWithLicense() { Component = pipComponent };
+        var scannedComponent = new ExtendedScannedComponent() { Component = pipComponent };
 
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
@@ -238,7 +238,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     {
         var uri = new Uri("https://microsoft.com");
         var gitComponent = new GitComponent(uri, "version");
-        var scannedComponent = new ScannedComponentWithLicense() { Component = gitComponent };
+        var scannedComponent = new ExtendedScannedComponent() { Component = gitComponent };
 
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 

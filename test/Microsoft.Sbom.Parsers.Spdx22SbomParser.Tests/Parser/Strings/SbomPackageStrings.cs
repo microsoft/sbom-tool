@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.Sbom.Parser.Strings;
@@ -31,7 +31,7 @@ internal struct SbomPackageStrings
         }
       ],
       ""supplier"": ""Organization: testa""
-    }]}";
+    }], ""files"":[], ""relationships"":[]}";
 
     public const string PackageJsonWith1PackageAdditionalArray = @"{
        ""packages"": [{
@@ -56,7 +56,7 @@ internal struct SbomPackageStrings
         }
       ],
       ""supplier"": ""Organization: testa""
-    }]}";
+    }], ""files"":[], ""relationships"":[]}";
 
     public const string PackageJsonWith1PackageAdditionalArrayNoKey = @"{
        ""packages"": [{
@@ -80,7 +80,7 @@ internal struct SbomPackageStrings
         }
       ],
       ""supplier"": ""Organization: testa""
-    }]}";
+    }], ""files"":[], ""relationships"":[]}";
 
     public const string PackageJsonWith1PackageAdditionalObject = @"{
        ""packages"": [{
@@ -106,7 +106,7 @@ internal struct SbomPackageStrings
         }
       ],
       ""supplier"": ""Organization: testa""
-    }]}";
+    }], ""files"":[], ""relationships"":[]}";
 
     public const string MalformedJsonEmptyObject = @"{
       ""packages"":{}}";
@@ -322,7 +322,7 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]}";
+    }], ""files"": [], ""relationships"":[]}";
 
     public const string PackageJsonWith1PackageMissingFilesAnalyzed = @"{
        ""packages"": [{
@@ -470,7 +470,7 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]}";
+    }], ""files"":[], ""relationships"":[]}";
 
     public const string PackageJsonWith1PackageMissingSupplier = @"{
        ""packages"": [{
@@ -497,7 +497,7 @@ internal struct SbomPackageStrings
       ]
     }]}";
 
-    public const string MalformedJsonEmptyArray = @"{""packages"": []}";
+    public const string MalformedJsonEmptyArray = @"{""files"": [], ""packages"": [], ""relationships"":[]}";
 
     public const string GoodJsonWith3PackagesString = @"{
        ""packages"": [
@@ -563,5 +563,5 @@ internal struct SbomPackageStrings
         ""SPDXRef-File---rels-.rels-2DBE1B6566BFF9F17C259FB7D8B21231D4F11857"",
         ""SPDXRef-File---Content-Types-.xml-EB0036B6C11A1AF694FA8ABACA0A4C43584225DE""
       ]
-    }]}";
+    }], ""files"":[], ""relationships"":[]}";
 }

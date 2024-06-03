@@ -35,9 +35,6 @@ winget install Microsoft.SbomTool
 
 ##### Homebrew
 
-> [!NOTE]
-> This Formulae requires the `x86_64` architecture, ARM is not supported at this time. For details see [#223](https://github.com/microsoft/sbom-tool/issues/223).
-
 ```bash
 brew install sbom-tool
 ```
@@ -101,6 +98,36 @@ The drop path is the folder where all the files to be shipped are located. All t
 Each SBOM has a unique namespace that uniquely identifies the SBOM, we generate a unique identifier for the namespace field inside the SBOM, however we need a base URI that would be common for your entire organization. For example, a sample value for the `-nsb` parameter could be `https://companyName.com/teamName`, then the generator will create the namespace that would look like `https://companyName.com/teamName/<packageName>/<packageVersion>/<new-guid>`. Read more about the document namespace field [here](https://spdx.github.io/spdx-spec/v2.2.2/document-creation-information/#65-spdx-document-namespace-field). 
 
 A more detailed list of available CLI arguments for the tool can be found [here](docs/sbom-tool-arguments.md)
+
+### SBOM Validation
+
+With an SBOM file in hand, use the tool to validate the output file with the command:
+
+```
+sbom-tool validate -b <drop path> -o <output path> -mi SPDX:2.2
+```
+
+This sample command provides the minimum mandatory arguments required to validate an SBOM:
+     `-b` should be the path same path used to generate the SBOM file.
+     In this scenario, the tool will default to searching for an SBOM at the `<drop path>\_manifest\spdx_2.2\manifest.spdx.json` path. 
+     `-o` is the output path, including file name, where the tool should write the results to.
+     `-mi` is the ManifestInfo, which provides the user's desired name and version of the manifest format.
+
+Currently only SPDX2.2 is supported.
+
+### SBOM Redact
+
+Use the tool to redact any references to files from a given SBOM or set of SBOMs with either of the following commands:
+
+```
+sbom-tool redact -sd <directory containing SBOMs to redact> -o <output path>
+```
+
+```
+sbom-tool redact -sp <path to the SBOM to redact> -o <output path>
+```
+
+This command will generate a mirrored set of SBOMs in the output directory, but with the file references removed. Note that the SBOM directory and output path arguments can not reference the same directory and the output path should point to an existing, empty directory.
 
 ## Integrating SBOM tool to your CI/CD pipelines.
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.Sbom.Common;
@@ -105,6 +105,13 @@ public interface IFileSystemUtils
     bool FileExists(string path);
 
     /// <summary>
+    /// Get the file name of a file.
+    /// </summary>
+    /// <param name="filePath">The absolute path of the file.</param>
+    /// <returns>The file name.</returns>
+    string GetFileName(string filePath);
+
+    /// <summary>
     /// Get the directory name of a file.
     /// </summary>
     /// <param name="filePath">The absolute path of the file.</param>
@@ -170,4 +177,11 @@ public interface IFileSystemUtils
     /// <param name="path">The absolute or relative path of the file or directory.</param>
     /// <returns>The parent directory.</returns>
     DirectoryInfo GetParentDirectory(string path);
+
+    /// <summary>
+    /// Read all the content of the specified file as an array of bytes.
+    /// </summary>
+    /// <param name="path">The absolute relative path of a file.</param>
+    /// <returns>Byte array content of the file.</returns>
+    byte[] ReadAllBytes(string path);
 }

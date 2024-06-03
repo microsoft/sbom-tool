@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -60,7 +60,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Debug("Files array not suppored on this SBOM format.");
+            logger.Warning("Files array not suppored on this SBOM format.");
             return false;
         }
     }
@@ -75,7 +75,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Debug("Packages array not suppored on this SBOM format.");
+            logger.Warning("Packages array not suppored on this SBOM format.");
             return false;
         }
     }
@@ -90,7 +90,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Debug("External Document Reference array not suppored on this SBOM format.");
+            logger.Warning("External Document Reference array not suppored on this SBOM format.");
             return false;
         }
     }
@@ -112,7 +112,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             generationResult = null;
-            logger.Debug("Root package serialization not supported on this SBOM format.");
+            logger.Warning("Root package serialization not supported on this SBOM format.");
             return false;
         }
     }
@@ -127,7 +127,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Debug("Relationships array are not supported on this SBOM format.");
+            logger.Warning("Relationships array are not supported on this SBOM format.");
             return false;
         }
     }

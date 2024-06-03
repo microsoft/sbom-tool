@@ -40,7 +40,7 @@ public class ComponentToPackageInfoConverter
         Task.Run(async () =>
         {
             var report = new AdapterReport();
-            await foreach (ScannedComponentWithLicense scannedComponent in componentReader.ReadAllAsync())
+            await foreach (ExtendedScannedComponent scannedComponent in componentReader.ReadAllAsync())
             {
                 await ConvertComponentToPackage(scannedComponent, output, errors);
             }
@@ -48,7 +48,7 @@ public class ComponentToPackageInfoConverter
             output.Writer.Complete();
             errors.Writer.Complete();
 
-            async Task ConvertComponentToPackage(ScannedComponentWithLicense scannedComponent, Channel<SbomPackage> output, Channel<FileValidationResult> errors)
+            async Task ConvertComponentToPackage(ExtendedScannedComponent scannedComponent, Channel<SbomPackage> output, Channel<FileValidationResult> errors)
             {
                 try
                 {
@@ -66,7 +66,7 @@ public class ComponentToPackageInfoConverter
                 }
                 catch (Exception e)
                 {
-                    log.Debug($"Encountered an error while processing package {scannedComponent.Component.Id}: {e.Message}");
+                    log.Warning($"Encountered an error while processing package {scannedComponent.Component.Id}: {e.Message}");
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
                         ErrorType = ErrorType.PackageError,

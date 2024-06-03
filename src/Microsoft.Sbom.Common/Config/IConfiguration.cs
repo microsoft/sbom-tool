@@ -193,4 +193,19 @@ public interface IConfiguration
     /// If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.
     /// </summary>
     ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
+
+    /// <summary>
+    /// If set to true, we will attempt to locate and parse package metadata files for additional information to include in the SBOM such as .nuspec/.pom files in the local package cache.
+    /// </summary>
+    ConfigurationSetting<bool> EnablePackageMetadataParsing { get; set; }
+
+    /// <summary>
+    /// Gets or sets the file path of the SBOM to redact.
+    /// </summary>
+    ConfigurationSetting<string> SbomPath { get; set; }
+
+    /// <summary>
+    /// Gets or sets the directory containing the sbom(s) to redact.
+    /// </summary>
+    ConfigurationSetting<string> SbomDir { get; set; }
 }

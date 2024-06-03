@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -14,6 +14,7 @@ public class SPDXPackage
     /// <summary>
     /// Gets or sets name of the package.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 
@@ -27,6 +28,7 @@ public class SPDXPackage
     /// <summary>
     /// Gets or sets unique Identifier for elements in SPDX document.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("SPDXID")]
     public string SpdxId { get; set; }
 
@@ -101,6 +103,7 @@ public class SPDXPackage
     /// <summary>
     /// Gets or sets the name and optional contact information of the person or organization that built this package.
     /// </summary>
+    [JsonRequired]
     [JsonPropertyName("supplier")]
     public string Supplier { get; set; }
 
@@ -110,4 +113,52 @@ public class SPDXPackage
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("hasFiles")]
     public List<string> HasFiles { get; set; }
+
+    [JsonIgnore(Condition =JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("annotations")]
+    public List<Annotation> Annotations { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("attributionTexts")]
+    public List<string> AttibutionTexts;
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("builtDate")]
+    public string BuiltDate { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("description")]
+    public string Description { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("homepage")]
+    public string Homepage { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("licenseComments")]
+    public string LicenseComments { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("originator")]
+    public string Originator { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("primaryPackagePurpose")]
+    public string PrimaryPackagePurpose { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("releaseDate")]
+    public string ReleaseDate { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("sourceInfo")]
+    public string SourceInfo { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("summary")]
+    public string Summary { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("validUntilDate")]
+    public string ValidUntilDate { get; set; }
 }

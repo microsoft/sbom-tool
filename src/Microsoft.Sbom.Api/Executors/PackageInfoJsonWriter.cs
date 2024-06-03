@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -72,7 +72,7 @@ public class PackageInfoJsonWriter
         }
         catch (Exception e)
         {
-            log.Debug($"Encountered an error while generating json for packageInfo {packageInfo}: {e.Message}");
+            log.Warning($"Encountered an error while generating json for packageInfo {packageInfo}: {e.Message}");
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = ErrorType.JsonSerializationError,

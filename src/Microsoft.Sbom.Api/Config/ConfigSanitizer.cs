@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -55,16 +55,19 @@ public class ConfigSanitizer
             .CreateLogger();
 
         // If BuildDropPath is null then run the logic to check whether it is required or not based on the current configuration.
-        if (configuration.BuildDropPath?.Value == null || (configuration.DockerImagesToScan?.Value != null && configuration.BuildComponentPath?.Value == null))
+        if ((configuration.ManifestToolAction == ManifestToolActions.Validate || configuration.ManifestToolAction == ManifestToolActions.Generate) &&
+            (configuration.BuildDropPath?.Value == null || (configuration.DockerImagesToScan?.Value != null && configuration.BuildComponentPath?.Value == null)))
         {
                 ValidateBuildDropPathConfiguration(configuration);
                 configuration.BuildDropPath = GetTempBuildDropPath(configuration);
         }
 
+        CheckValidateFormatConfig(configuration);
+
         configuration.HashAlgorithm = GetHashAlgorithmName(configuration);
 
         // set ManifestDirPath after validation of DirectoryExist and DirectoryPathIsWritable, this wouldn't exist because it needs to be created by the tool.
-        configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath.Value, configuration.ManifestToolAction);
+        configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath?.Value, configuration.ManifestToolAction);
 
         // Set namespace value, this handles default values and user provided values.
         if (configuration.ManifestToolAction == ManifestToolActions.Generate)
@@ -84,6 +87,19 @@ public class ConfigSanitizer
         logger.Dispose();
 
         return configuration;
+    }
+
+    private void CheckValidateFormatConfig(IConfiguration config)
+    {
+        if (config.ManifestToolAction != ManifestToolActions.ValidateFormat)
+        {
+            return;
+        }
+
+        if (config.SbomPath?.Value == null)
+        {
+            throw new ValidationArgException($"Please provide a value for the SbomPath (-sp) parameter to validate the SBOM.");
+        }
     }
 
     private ConfigurationSetting<IList<ManifestInfo>> GetDefaultManifestInfoForValidationAction(IConfiguration configuration)

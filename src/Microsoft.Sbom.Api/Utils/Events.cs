@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.Sbom.Api.Utils;
@@ -7,6 +7,7 @@ internal static class Events
 {
     #region Generation
     internal const string SBOMGenerationWorkflow = "Total generation time";
+    internal const string SBOMParseMetadata = "Total metadata parsing time";
     internal const string FilesGeneration = "Files generation time";
     internal const string PackagesGeneration = "Packages generation time";
     internal const string RelationshipsGeneration = "Relationships generation time";

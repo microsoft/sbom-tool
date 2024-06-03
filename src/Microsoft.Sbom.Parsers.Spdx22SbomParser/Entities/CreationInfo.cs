@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -11,6 +11,10 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 /// </summary>
 public class CreationInfo
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("comment")]
+    public string Comment { get; set; }
+
     /// <summary>
     /// Gets or sets a string that specifies the time the SBOM was created on.
     /// </summary>
@@ -23,4 +27,8 @@ public class CreationInfo
     /// </summary>
     [JsonPropertyName("creators")]
     public IEnumerable<string> Creators { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("licenseListVersion")]
+    public string LicenseListVersion { get; set; }
 }

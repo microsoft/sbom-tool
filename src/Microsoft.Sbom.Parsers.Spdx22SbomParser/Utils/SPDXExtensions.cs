@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -77,7 +77,7 @@ public static class SPDXExtensions
             var extRef = new ExternalReference
             {
                 ReferenceCategory = ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(),
-                Type = ExternalRepositoryType.purl,
+                Type = ExternalRepositoryType.purl.ToString(),
                 Locator = packageInfo.PackageUrl,
             };
 
@@ -121,7 +121,7 @@ public static class SPDXExtensions
     /// <param name="spdxFile"></param>
     /// <param name="fileName"></param>
     /// <param name="checksums"></param>
-    public static string AddSpdxId(this SPDXFile spdxFile, string fileName, IEnumerable<Sbom.Contracts.Checksum> checksums)
+    public static string AddSpdxId(this SPDXFile spdxFile, string fileName, IEnumerable<Contracts.Checksum> checksums)
     {
         if (spdxFile is null)
         {
@@ -150,7 +150,7 @@ public static class SPDXExtensions
     /// <summary>
     /// Adds externalReferenceId property to the SPDXExternalDocumentReference based on name and checksum information.
     /// </summary>
-    public static string AddExternalReferenceSpdxId(this SpdxExternalDocumentReference reference, string name, IEnumerable<Sbom.Contracts.Checksum> checksums)
+    public static string AddExternalReferenceSpdxId(this SpdxExternalDocumentReference reference, string name, IEnumerable<Contracts.Checksum> checksums)
     {
         if (reference is null)
         {

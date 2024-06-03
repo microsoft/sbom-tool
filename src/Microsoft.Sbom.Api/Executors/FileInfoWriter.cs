@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -81,7 +81,7 @@ public class FileInfoWriter
         }
         catch (Exception e)
         {
-            log.Debug($"Encountered an error while generating json for file {sbomFile.Path}: {e.Message}");
+            log.Warning($"Encountered an error while generating json for file {sbomFile.Path}: {e.Message}");
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = ErrorType.JsonSerializationError,

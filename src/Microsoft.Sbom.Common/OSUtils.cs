@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -25,7 +25,7 @@ public class OSUtils : IOSUtils
 
     private readonly IEnvironmentWrapper environment;
 
-    private Dictionary<string, string> environmentVariables;
+    private readonly Dictionary<string, string> environmentVariables;
 
     public OSUtils(ILogger logger, IEnvironmentWrapper environment)
     {
@@ -77,7 +77,7 @@ public class OSUtils : IOSUtils
         return IsCaseSensitiveOS() ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
     }
 
-    private bool IsCaseSensitiveOS()
+    public bool IsCaseSensitiveOS()
     {
         var currentOS = GetCurrentOSPlatform();
         var isCaseSensitiveOS = currentOS == OSPlatform.Linux || currentOS == OSPlatform.OSX;

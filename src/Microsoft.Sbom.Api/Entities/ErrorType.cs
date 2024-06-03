@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Runtime.Serialization;
@@ -44,5 +44,11 @@ public enum ErrorType
     ReferencedSbomFile = 10,
 
     [EnumMember(Value = "No packages found")]
-    NoPackagesFound = 11
+    NoPackagesFound = 11,
+
+    [EnumMember(Value = "Manifest file signing error")]
+    ManifestFileSigningError = 12,
+
+    [EnumMember(Value = "Invalid input file")]
+    InvalidInputFile = 13
 }

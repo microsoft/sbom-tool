@@ -47,9 +47,12 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<string>> generationTimestamp = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> followSymlinks = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> fetchLicenseInformation = new();
+    private static readonly AsyncLocal<ConfigurationSetting<bool>> enablePackageMetadataParsing = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> deleteManifestDirIfPresent = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> failIfNoPackages = new();
     private static readonly AsyncLocal<ConfigurationSetting<LogEventLevel>> verbosity = new();
+    private static readonly AsyncLocal<ConfigurationSetting<string>> sbomPath = new();
+    private static readonly AsyncLocal<ConfigurationSetting<string>> sbomDir = new();
 
     /// <inheritdoc cref="IConfiguration.BuildDropPath" />
     [DirectoryExists]
@@ -304,5 +307,27 @@ public class Configuration : IConfiguration
     {
         get => fetchLicenseInformation.Value;
         set => fetchLicenseInformation.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.EnablePackageMetadataParsing" />
+    [DefaultValue(false)]
+    public ConfigurationSetting<bool> EnablePackageMetadataParsing
+    {
+        get => enablePackageMetadataParsing.Value;
+        set => enablePackageMetadataParsing.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.SbomPath" />
+    public ConfigurationSetting<string> SbomPath
+    {
+        get => sbomPath.Value;
+        set => sbomPath.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.SbomDir" />
+    public ConfigurationSetting<string> SbomDir
+    {
+        get => sbomDir.Value;
+        set => sbomDir.Value = value;
     }
 }

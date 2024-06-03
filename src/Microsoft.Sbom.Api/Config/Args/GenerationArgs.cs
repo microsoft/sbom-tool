@@ -8,7 +8,7 @@ namespace Microsoft.Sbom.Api.Config.Args;
 /// <summary>
 /// The command line arguments provided for the generate action in ManifestTool.
 /// </summary>
-public class GenerationArgs : CommonArgs
+public class GenerationArgs : GenerationAndValidationCommonArgs
 {
     /// <summary>
     /// Gets or sets the root folder of the drop directory for which the SBOM file will be generated.
@@ -115,4 +115,11 @@ public class GenerationArgs : CommonArgs
     [ArgShortcut("li")]
     [ArgDescription("If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.")]
     public bool? FetchLicenseInformation { get; set; }
+
+    /// <summary>
+    /// If set to true, we will attempt to parse license and supplier info from the packages metadata file.
+    /// </summary>
+    [ArgShortcut("pm")]
+    [ArgDescription("If set to true, we will attempt to parse license and supplier info from the packages metadata file.")]
+    public bool? EnablePackageMetadataParsing { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.Sbom.Common;
@@ -68,6 +68,9 @@ public abstract class FileSystemUtils : IFileSystemUtils
     public bool FileExists(string path) => File.Exists(path);
 
     /// <inheritdoc />
+    public string GetFileName(string filePath) => Path.GetFileName(filePath);
+
+    /// <inheritdoc />
     public Stream OpenWrite(string filePath) => new FileStream(
         filePath,
         FileMode.Create,
@@ -103,4 +106,7 @@ public abstract class FileSystemUtils : IFileSystemUtils
 
     /// <inheritdoc />
     public DirectoryInfo GetParentDirectory(string path) => Directory.GetParent(path);
+
+    /// <inheritdoc />
+    public byte[] ReadAllBytes(string path) => File.ReadAllBytes(path);
 }

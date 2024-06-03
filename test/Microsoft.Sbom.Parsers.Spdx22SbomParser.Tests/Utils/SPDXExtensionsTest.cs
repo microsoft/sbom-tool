@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -44,7 +44,12 @@ public class SPDXExtensionsTest
         spdxPackage.AddPackageUrls(packageInfo);
         var externalRef = spdxPackage.ExternalReferences.First();
         Assert.AreEqual(ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(), externalRef.ReferenceCategory);
-        Assert.AreEqual(ExternalRepositoryType.purl, externalRef.Type);
+
+        // ExternalRepositoryTypes are deserialized as strings for portability when handling 3P SBOMs,
+        // but in the context of this test we expect the value to align with a known enum value. So
+        // convert to enum for comparison.
+        Enum.TryParse<ExternalRepositoryType>(externalRef.Type, out var refType);
+        Assert.AreEqual(ExternalRepositoryType.purl, refType);
         Assert.AreEqual(PackageUrl, externalRef.Locator);
     }
 
@@ -84,7 +89,12 @@ public class SPDXExtensionsTest
         var externalRef = spdxPackage.ExternalReferences.First();
 
         Assert.AreEqual(ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(), externalRef.ReferenceCategory);
-        Assert.AreEqual(ExternalRepositoryType.purl, externalRef.Type);
+
+        // ExternalRepositoryTypes are deserialized as strings for portability when handling 3P SBOMs,
+        // but in the context of this test we expect the value to align with a known enum value. So
+        // convert to enum for comparison.
+        Enum.TryParse<ExternalRepositoryType>(externalRef.Type, out var refType);
+        Assert.AreEqual(ExternalRepositoryType.purl, refType);
         Assert.AreEqual(expectedUrl, externalRef.Locator);
     }
 
@@ -101,7 +111,7 @@ public class SPDXExtensionsTest
     {
         var name = "test";
         var hash = "ea70261b02144d5234ae990fa0ca4e0bcd8dc2a9";
-        var checksum = new Microsoft.Sbom.Contracts.Checksum { Algorithm = AlgorithmName.SHA1, ChecksumValue = hash };
+        var checksum = new Checksum { Algorithm = AlgorithmName.SHA1, ChecksumValue = hash };
 
         var reference = new SpdxExternalDocumentReference();
         var id = reference.AddExternalReferenceSpdxId(name, new Checksum[] { checksum });

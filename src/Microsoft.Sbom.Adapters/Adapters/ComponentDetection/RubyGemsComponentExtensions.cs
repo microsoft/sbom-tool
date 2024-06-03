@@ -15,18 +15,20 @@ internal static class RubyGemsComponentExtensions
     /// Converts a <see cref="RubyGemsComponent" /> to an <see cref="SbomPackage" />.
     /// </summary>
     /// <param name="rubyGemsComponent">The <see cref="RubyGemsComponent" /> to convert.</param>
-    /// <param name="license">The license to use.</param>
+    /// <param name="component">The <see cref="ExtendedScannedComponent"/> version of the RubyGemsComponent</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>
-    public static SbomPackage ToSbomPackage(this RubyGemsComponent rubyGemsComponent, string? license = null) => new()
+    public static SbomPackage ToSbomPackage(this RubyGemsComponent rubyGemsComponent, ExtendedScannedComponent component) => new()
     {
         Id = rubyGemsComponent.Id,
         PackageUrl = rubyGemsComponent.PackageUrl?.ToString(),
         PackageName = rubyGemsComponent.Name,
         PackageVersion = rubyGemsComponent.Version,
         PackageSource = rubyGemsComponent.Source,
-        LicenseInfo = string.IsNullOrWhiteSpace(license) ? null : new LicenseInfo
+        Supplier = string.IsNullOrEmpty(component.Supplier) ? null : $"Person: {component.Supplier}",
+        LicenseInfo = new LicenseInfo
         {
-            Concluded = license,
+            Concluded = string.IsNullOrEmpty(component.LicenseConcluded) ? null : component.LicenseConcluded,
+            Declared = string.IsNullOrEmpty(component.LicenseDeclared) ? null : component.LicenseDeclared,
         },
         FilesAnalyzed = false,
         Type = "ruby",

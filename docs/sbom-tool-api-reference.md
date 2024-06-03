@@ -28,11 +28,9 @@ Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Micro
 ## Getting started 
 
 
-The main entry point for the SBOM generator is in the `SBOMGenerator` class. In order to create an instance of the SBOMGenerator class there are a few arguments that need to be provided. These arguments can be resolved 
-through the dependency injection framework. The following code snippet shows how to create an instance of the SBOMGenerator class using the dependency injection framework using a pattern that is common when using this approach.
+The main entry point for the SBOM generator is in the `SBOMGenerator` class. In order to create an instance of the SBOMGenerator class there are a few arguments that need to be provided. These arguments can be resolved through the dependency injection framework. The following code snippet shows one way to create an instance of the SBOMGenerator class using the dependency injection framework in a pattern that is common when using this approach. Note that this approach is not the only one which will work. For example, if you'd like to avoid implementing the `IHostedService` interface, it should be possible to create a ServiceCollection without using ASP.NET as well.
 
-You can create a Host and add a hosted service that will call the SBOM API along with its dependencies. By calling `.AddSbomTool()` on the service collection, the SBOM API will 
-be added to the dependency injection framework and can be resolved by the hosted service. The hosted service can then be started by calling `RunConsoleAsync` on the host.
+Following our suggested approach, you can create a Host and add a hosted service that will call the SBOM API along with its dependencies. By calling `.AddSbomTool()` on the service collection, the SBOM API will be added to the dependency injection framework and can be resolved by the hosted service. The hosted service can then be started by calling `RunConsoleAsync` on the host. 
 
 ```C#
 using Microsoft.Extensions.DependencyInjection;
@@ -56,12 +54,12 @@ class Program
 }
 ```
 
-Now that the entry point is setup, we can define the hosted service. In this example, we will use the `GenerationService` class (This class is user defined) as the hosted service The `GenerationService` class will be responsible for calling the SBOM API and generating the SBOM.
+Now that the entry point is set up, we can define the hosted service. In this example, we will use the `GenerationService` class (This class is user defined) as the hosted service. The `GenerationService` class will be responsible for calling the SBOM API and generating the SBOM.
 The following snippet shows how to set up the `GenerationService` class so that arguments are resolved through DI.
 
-Your class must implement the `IHostedService` interface and provide an implementation for the `StartAsync` and `StopAsync` methods. Now you can pass an instance of the `ISBOMGenerator` interface to the constructor of your class. This interface is provided by the SBOM API and can be resolved by the DI framework. The `ISBOMGenerator` interface provides the methods to generate the SBOM.
+In this approach, your class must implement the `IHostedService` interface and provide an implementation for the `StartAsync` and `StopAsync` methods. Now you can pass an instance of the `ISBOMGenerator` interface to the constructor of your class. This interface is provided by the SBOM API and can be resolved by the DI framework. The `ISBOMGenerator` interface provides the methods to generate the SBOM.
 
-Descriptions of the arguments to the `GenerateSbomAsync` method can be found [here](#scan-based-sbom-generator-api) and [here](#self-provided-data-based-sbom-generator-api) and can be defined anywhere needed as long as they are passed to the `GenerateSbomAsync` method.
+Descriptions of the arguments to the `GenerateSbomAsync` method can be found [here](#scan-based-sbom-generator-api) and [here](#self-provided-data-based-sbom-generator-api) and can be defined anywhere necessary as long as they are passed to the `GenerateSbomAsync` method.
 
 
 ```C#
@@ -82,16 +80,15 @@ namespace SBOMApiExample
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(async () =>
-            {
-                var result = await generator.GenerateSbomAsync(rootPath: scanPath,
-                                               componentPath: componentPath,
-                                               metadata: metadata,
-                                               runtimeConfiguration: configuration,
-                                               manifestDirPath: sbomOutputPath);
-                hostApplicationLifetime.StopApplication();
-            });
+            var result = await generator.GenerateSbomAsync(rootPath: scanPath,
+                                           componentPath: componentPath,
+                                           metadata: metadata,
+                                           runtimeConfiguration: configuration,
+                                           manifestDirPath: sbomOutputPath);
+
+            hostApplicationLifetime.StopApplication();
         }
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
