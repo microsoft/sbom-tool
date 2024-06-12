@@ -7,18 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.IO;
-using System.Threading;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions.DependencyInjection;
-using Microsoft.Sbom.Tool;
-using Microsoft.VisualBasic;
-using PowerArgs;
-using Serilog.Events;
 
 public class GenerateSbomTask : Task
 {
@@ -123,14 +117,8 @@ public class GenerateSbomTask : Task
         try
         {
             // Validate required args and args that take paths as input.
-            if (!ValidateRequiredParams() || !ValidateRootedPaths())
+            if (!ValidateAndSanitizeRequiredParams() || !ValidateRootedPaths() || !ValidateAndSanitizeNamespaceUriUniquePart())
             {
-                return false;
-            }
-
-            if (!string.IsNullOrWhiteSpace(this.NamespaceUriUniquePart) && !Guid.TryParse(this.NamespaceUriUniquePart, out var guidResult))
-            {
-                Log.LogError($"SBOM generation failed: NamespaceUriUniquePart '{this.NamespaceUriUniquePart}' must be a valid GUID.");
                 return false;
             }
 
@@ -172,12 +160,17 @@ public class GenerateSbomTask : Task
         }
     }
 
+    private string Remove_Spaces_Tabs_Newlines(string value)
+    {
+        return value.Replace("\n", string.Empty).Replace("\t", string.Empty).Replace(" ", string.Empty);
+    }
+
     /// <summary>
     /// Ensure all required arguments are non-null/empty,
     /// and do not contain whitespaces, tabs, or newline characters.
     /// </summary>
     /// <returns></returns>
-    private bool ValidateRequiredParams()
+    private bool ValidateAndSanitizeRequiredParams()
     {
         if (string.IsNullOrWhiteSpace(this.BuildDropPath))
         {
@@ -208,6 +201,12 @@ public class GenerateSbomTask : Task
             Log.LogError($"SBOM generation failed: Empty argument detected for {nameof(this.NamespaceBaseUri)}. Please provide a valid URI.");
             return false;
         }
+
+        this.PackageSupplier = Remove_Spaces_Tabs_Newlines(this.PackageSupplier);
+        this.PackageName = Remove_Spaces_Tabs_Newlines(this.PackageName);
+        this.PackageVersion = Remove_Spaces_Tabs_Newlines(this.PackageVersion);
+        this.NamespaceBaseUri = this.NamespaceBaseUri.Trim();
+        this.BuildDropPath = this.BuildDropPath.Trim();
 
         return true;
     }
@@ -281,5 +280,27 @@ public class GenerateSbomTask : Task
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Ensure a valid NamespaceUriUniquePart is provided
+    /// </summary>
+    /// <returns></returns>
+    private bool ValidateAndSanitizeNamespaceUriUniquePart()
+    {
+        // Ensure the NamespaceUriUniquePart is valid if provided.
+        if (!string.IsNullOrWhiteSpace(this.NamespaceUriUniquePart)
+            && (!Guid.TryParse(this.NamespaceUriUniquePart, out var guidResult)
+            || this.NamespaceUriUniquePart.Equals(Guid.Empty.ToString())))
+        {
+            Log.LogError($"SBOM generation failed: NamespaceUriUniquePart '{this.NamespaceUriUniquePart}' must be a valid unique GUID.");
+            return false;
+        }
+        else if (!string.IsNullOrWhiteSpace(this.NamespaceUriUniquePart))
+        {
+            this.NamespaceUriUniquePart = this.NamespaceUriUniquePart.Trim();
+        }
+
+        return true;
     }
 }

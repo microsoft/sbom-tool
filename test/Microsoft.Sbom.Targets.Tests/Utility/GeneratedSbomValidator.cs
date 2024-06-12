@@ -88,11 +88,11 @@ internal class GeneratedSbomValidator
 
             if (expectedNamespaceUriUniquePart != null)
             {
-                Assert.IsTrue(namespaceValue.Equals($"{expectedNamespaceUriBase}/{expectedPackageName}/{expectedPackageVersion}/{expectedNamespaceUriUniquePart}", StringComparison.InvariantCultureIgnoreCase));
+                Assert.IsTrue(namespaceValue.Equals($"{expectedNamespaceUriBase.Trim()}/{expectedPackageName}/{expectedPackageVersion}/{expectedNamespaceUriUniquePart.Trim()}", StringComparison.InvariantCultureIgnoreCase));
             }
             else
             {
-                Assert.IsTrue(namespaceValue.Contains($"{expectedNamespaceUriBase}/{expectedPackageName}/{expectedPackageVersion}", StringComparison.InvariantCultureIgnoreCase));
+                Assert.IsTrue(namespaceValue.Contains($"{expectedNamespaceUriBase.Trim()}/{expectedPackageName}/{expectedPackageVersion}", StringComparison.InvariantCultureIgnoreCase));
             }
         }
     }

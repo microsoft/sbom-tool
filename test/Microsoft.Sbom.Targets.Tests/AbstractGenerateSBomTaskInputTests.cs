@@ -160,6 +160,8 @@ public abstract class AbstractGenerateSBomTaskInputTests
     [DataRow("12345678-1234-1234-1234-123456789ab!")] // invalid character !
     [DataRow("12345678-1234-1234-1234-123456789ab")] // Too less digits
     [DataRow("12345678-1234-1234-1234-123456789ac-")] // Ends with a hyphen
+    [DataRow("12345678-1234-1234-1234-12345\n6789ac")] // Contains newline
+    [DataRow("00000000-0000-0000-0000-000000000000")] // Empty guid
     public void Sbom_Generation_Fails_For_Invalid_NamespaceUriUniquePart(string namespaceUriUniquePart)
     {
         // Arrange

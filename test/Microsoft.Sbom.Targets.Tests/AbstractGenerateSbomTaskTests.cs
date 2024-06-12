@@ -1,20 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Build.Framework;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Contracts;
-using Microsoft.Sbom.Extensions.DependencyInjection;
-using Microsoft.Sbom.Targets;
 using Microsoft.Sbom.Targets.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Newtonsoft.Json;
 
 namespace Microsoft.Sbom.Targets.Tests;
 
@@ -86,6 +76,86 @@ public abstract class AbstractGenerateSbomTaskTests
         // Assert
         Assert.IsTrue(result);
         this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, CurrentDirectory, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri);
+    }
+
+    [TestMethod]
+    [DataRow("http://example.com/hello/world")] // Regular valid URI
+    [DataRow("http://example.com/hello%20world")] // Valid URI with space encoded
+    [DataRow("http://ExAmplE.com")] // Mix of cases
+    [DataRow("  http://example.com  ")] // Trailing spaces
+    [DataRow("http://www.example.com/path/to/resource?param1=value1&param2=value2&param3=value3&param4=value4&param5=" +
+        "value5&param6=value6&param7=value7&param8=value8&param9=value9&param10=value10&param11=value11&param12=value12" +
+        "&param13=value13&param14=value14&param15=value15&param16=value16&param17=value17&param18=value18&param19=value19&param20=value20#section1")] // Super long URI
+    public void Sbom_Is_Successfully_Generated_Valid_URI(string namespaceBaseUri)
+    {
+        // Arrange
+        var task = new GenerateSbomTask
+        {
+            BuildDropPath = CurrentDirectory,
+            PackageSupplier = PackageSupplier,
+            PackageName = PackageName,
+            PackageVersion = PackageVersion,
+            NamespaceBaseUri = namespaceBaseUri,
+            BuildEngine = this.BuildEngine.Object,
+            ManifestInfo = this.SbomSpecification.ToString(),
+        };
+
+        // Act
+        var result = task.Execute();
+
+        // Assert
+        Assert.IsTrue(result);
+        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, CurrentDirectory, PackageName, PackageVersion, PackageSupplier, namespaceBaseUri);
+    }
+
+    [TestMethod]
+    [DynamicData(nameof(GetPackageSupplierCases), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(GetPackageNameCases), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(GetPackageVersionCases), DynamicDataSourceType.Method)]
+    public void Sbom_Is_Successfully_Generated_Valid_RequiredParams(string packageSupplier, string packageName, string packageVersion)
+    {
+        // Arrange
+        var task = new GenerateSbomTask
+        {
+            BuildDropPath = CurrentDirectory,
+            PackageSupplier = packageSupplier,
+            PackageName = packageName,
+            PackageVersion = packageVersion,
+            NamespaceBaseUri = NamespaceBaseUri,
+            BuildEngine = this.BuildEngine.Object,
+            ManifestInfo = this.SbomSpecification.ToString(),
+        };
+
+        // Act
+        var result = task.Execute();
+
+        // Assert
+        Assert.IsTrue(result);
+        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, CurrentDirectory, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri);
+    }
+
+    private static IEnumerable<object[]> GetPackageSupplierCases()
+    {
+        yield return new object[] { "Test-\nMicrosoft", PackageName, PackageVersion };
+        yield return new object[] { "Test\t-Microsoft", PackageName, PackageVersion };
+        yield return new object[] { "Test  -     Microsoft   ", PackageName, PackageVersion };
+        yield return new object[] { "Test - Mic\tro\nsoft", PackageName, PackageVersion };
+    }
+
+    private static IEnumerable<object[]> GetPackageNameCases()
+    {
+        yield return new object[] { PackageSupplier, "CoseSign\nTool", PackageVersion };
+        yield return new object[] { PackageSupplier, "Cose\tSign\tTool", PackageVersion };
+        yield return new object[] { PackageSupplier, "Cose     Sign   Tool   ", PackageVersion };
+        yield return new object[] { PackageSupplier, "Cose    S\ti\ngn   \n Too\tl", PackageVersion };
+    }
+
+    private static IEnumerable<object[]> GetPackageVersionCases()
+    {
+        yield return new object[] { PackageSupplier, PackageName, "0.0\n.1" };
+        yield return new object[] { PackageSupplier, PackageName, "0.0\t.1" };
+        yield return new object[] { PackageSupplier, PackageName, "0.     0.    1" };
+        yield return new object[] { PackageSupplier, PackageName, "0 .   \t 0 \n .1" };
     }
 
     [TestMethod]
@@ -238,9 +308,12 @@ public abstract class AbstractGenerateSbomTaskTests
     }
 
     [TestMethod]
-    public void Sbom_Is_Successfully_Generated_With_Unique_Namespace_Part_Defined()
+    [DataRow("550e8400-e29b-41d4-a716-446655440000")] // Standard random GUID
+    [DataRow("3F2504E0-4f89-11D3-9A0C-0305E82c3301")] // Mixed cases
+    [DataRow("3F2504E04F8911D39A0C0305E82C3301")] // Guids without hyphens
+    [DataRow("  3F2504E0-4F89-11D3-9A0C-0305E82C3301   ")] // Guids with trailing spaces
+    public void Sbom_Is_Successfully_Generated_With_Unique_Namespace_Part_Defined(string uniqueNamespacePart)
     {
-        var uniqueNamespacePart = Guid.NewGuid().ToString();
         // Arrange
         var task = new GenerateSbomTask
         {
