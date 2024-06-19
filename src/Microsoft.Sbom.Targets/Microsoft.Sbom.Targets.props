@@ -1,0 +1,21 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+        <GenerateSBOM Condition=" '$(GenerateSBOM)' == '' ">false</GenerateSBOM>
+        <!-- TODO in practice these will default to existing nuget props instead of these test values.
+            Need to consult with .NET SDK/ PM team for which existing props will make sense as defaults. -->
+        <SbomGenerationBuildDropPath Condition=" '$(SbomGenerationBuildDropPath)' == '' ">$(OutDir)</SbomGenerationBuildDropPath>
+        <SbomGenerationBuildComponentPath Condition=" '$(SbomGenerationBuildComponentPath)' == '' ">$(MSBuildProjectDirectory)</SbomGenerationBuildComponentPath>
+        <SbomGenerationPackageSupplier Condition=" '$(SbomGenerationPackageSupplier)' == '' And $(Authors) != '' ">$(Authors)</SbomGenerationPackageSupplier>
+        <SbomGenerationPackageSupplier Condition=" '$(SbomGenerationPackageSupplier)' == '' And $(Authors) == '' ">$(AssemblyName)</SbomGenerationPackageSupplier>
+        <SbomGenerationPackageName Condition=" '$(SbomGenerationPackageName)' == '' And $(PackageId) != '' ">$(PackageId)</SbomGenerationPackageName>
+        <SbomGenerationPackageName Condition=" '$(SbomGenerationPackageName)' == '' And $(PackageId) == '' ">$(AssemblyName)</SbomGenerationPackageName>
+        <SbomGenerationPackageVersion Condition=" '$(SbomGenerationPackageVersion)' == '' And $(Version) != '' ">$(Version)</SbomGenerationPackageVersion>
+        <SbomGenerationPackageVersion Condition=" '$(SbomGenerationPackageVersion)' == '' And $(Version) == '' ">1.0.0</SbomGenerationPackageVersion>
+        <SbomGenerationNamespaceBaseUri Condition=" '$(SbomGenerationNamespaceBaseUri)' == '' ">http://spdx.org/spdxdocs/$(SbomGenerationPackageName)"</SbomGenerationNamespaceBaseUri>
+        <SbomGenerationFetchLicenseInformation Condition=" '$(SbomGenerationFetchLicenseInformation)' == '' ">false</SbomGenerationFetchLicenseInformation>
+        <SbomGenerationEnablePackageMetadataParsing Condition=" '$(SbomGenerationEnablePackageMetadataParsing)' == '' ">false</SbomGenerationEnablePackageMetadataParsing>
+        <SbomGenerationVerbosity Condition=" '$(SbomGenerationVerbosity)' == '' ">LogAlways</SbomGenerationVerbosity>
+        <SbomGenerationManifestInfo Condition=" '$(SbomGenerationManifestInfo)' == '' ">SPDX:2.2</SbomGenerationManifestInfo>
+        <SbomGenerationDeleteManifestDirIfPresent Condition=" '$(SbomGenerationDeleteManifestDirIfPresent)' == '' ">true</SbomGenerationDeleteManifestDirIfPresent>
+    </PropertyGroup>
+</Project>

@@ -21,9 +21,15 @@ public class SbomGenerationResult
     /// </summary>
     public IList<EntityError> Errors { get; private set; }
 
-    public SbomGenerationResult(bool isSuccessful, IList<EntityError> errors)
+    /// <summary>
+    /// Gets the path where the SBOM was generated, if the generation was successful.
+    /// </summary>
+    public string? ManifestDirPath { get; private set; }
+
+    public SbomGenerationResult(bool isSuccessful, IList<EntityError> errors, string manifestDirPath = null)
     {
         IsSuccessful = isSuccessful;
         Errors = errors ?? new List<EntityError>();
+        this.ManifestDirPath = manifestDirPath;
     }
 }

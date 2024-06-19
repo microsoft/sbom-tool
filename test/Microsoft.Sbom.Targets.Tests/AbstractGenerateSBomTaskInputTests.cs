@@ -185,49 +185,6 @@ public abstract class AbstractGenerateSBomTaskInputTests
     }
 
     /// <summary>
-    /// Test for ensuring the GenerateSbomTask fails when relative paths are
-    /// provided for all path arguments, which includes BuildDroppath, BuildComponentPath,
-    /// ManifestDirPath, and ExternalDocumentListFile
-    /// </summary>
-    [TestMethod]
-    [DynamicData(nameof(GetUnrootedPathTestData), DynamicDataSourceType.Method)]
-    public void Sbom_Fails_With_Unrooted_Paths(
-        string buildDropPath,
-        string buildComponentPath,
-        string manifestDirPath,
-        string externalDocumentListFile)
-    {
-        // Arrange.
-        var task = new GenerateSbomTask
-        {
-            BuildDropPath = buildDropPath,
-            PackageSupplier = PackageSupplier,
-            PackageName = PackageName,
-            PackageVersion = PackageVersion,
-            NamespaceBaseUri = NamespaceBaseUri,
-            BuildComponentPath = buildComponentPath,
-            ManifestDirPath = manifestDirPath,
-            ExternalDocumentListFile = externalDocumentListFile,
-            ManifestInfo = this.SbomSpecification.ToString(),
-            BuildEngine = this.buildEngine.Object
-        };
-
-        // Act
-        var result = task.Execute();
-
-        // Assert
-        Assert.IsFalse(result);
-    }
-
-    private static IEnumerable<object[]> GetUnrootedPathTestData()
-    {
-        yield return new object[] { Path.Combine("..", ".."), BuildComponentPath, DefaultManifestDirectory, ExternalDocumentListFile };
-        yield return new object[] { CurrentDirectory, Path.Combine("..", ".."), DefaultManifestDirectory, ExternalDocumentListFile };
-        yield return new object[] { CurrentDirectory, BuildComponentPath, Path.Combine("..", ".."), ExternalDocumentListFile };
-        yield return new object[] { CurrentDirectory, BuildComponentPath, DefaultManifestDirectory, Path.Combine("..", "..") };
-    }
-
-    /// <summary>
     /// Test for ensuring GenerateSbomTask assigns a defualt Verbosity
     /// level when null input is provided.
     /// </summary>

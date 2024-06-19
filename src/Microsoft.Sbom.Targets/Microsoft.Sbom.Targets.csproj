@@ -4,40 +4,54 @@
     <AssemblyName>Microsoft.Sbom.Targets</AssemblyName>
     <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
     <IsPublishable>true</IsPublishable>
+    <IsPackable>true</IsPackable>
+    <SelfContained>true</SelfContained>
+    <Version>1.0.0</Version>
+    <Title>GenerateSbomTask</Title>
     <Description>Tasks and targets for running the SBOM tool.</Description>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+    <!-- This target will run when MSBuild is collecting the files to be packaged, and we'll implement it below. This property controls the dependency list for this packaging process, so by adding our custom property we hook ourselves into the process in a supported way. -->
+    <TargetsForTfmSpecificBuildOutput>
+      $(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage
+    </TargetsForTfmSpecificBuildOutput>
+    <!-- This property tells MSBuild where the root folder of the package's build assets should be. Because we are not a library package, we should not pack to 'lib'. Instead, we choose 'tasks' by convention. -->
+    <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
+    <!-- NuGet does validation that libraries in a package are exposed as dependencies, but we _explicitly_ do not want that behavior for MSBuild tasks. They are isolated by design. Therefore we ignore this specific warning. -->
+    <NoWarn>NU5100</NoWarn>
+    <!-- Suppress NuGet warning NU5128. -->
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <GenerateDependencyFile>true</GenerateDependencyFile>
   </PropertyGroup>
 
+  <!-- This is the target we defined above. It's purpose is to add all of our PackageReference and ProjectReference's runtime assets to our package output.  -->
+  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+      <!-- The TargetPath is the path inside the package that the source file will be placed. This is already precomputed in the ReferenceCopyLocalPaths items' DestinationSubPath, so reuse it here. -->
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths)" TargetPath="%(ReferenceCopyLocalPaths.DestinationSubPath)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- This target adds the generated deps.json file to our package output -->
+  <Target Name="AddBuildDependencyFileToBuiltProjectOutputGroupOutput" BeforeTargets="BuiltProjectOutputGroup" Condition=" '$(GenerateDependencyFile)' == 'true'">
+    <ItemGroup>
+      <BuiltProjectOutputGroupOutput Include="$(ProjectDepsFilePath)" TargetPath="$(ProjectDepsFileName)" FinalOutputPath="$(ProjectDepsFilePath)" />
+    </ItemGroup>
+  </Target>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <!-- these lines pack the build props/targets files to the `build` folder in the generated package.
+        by convention, the .NET SDK will look for build\<Package Id>.props and build\<Package Id>.targets
+        for automatic inclusion in the build. -->
+    <Content Include="Microsoft.Sbom.Targets.props" PackagePath="\build" />
+    <Content Include="Microsoft.Sbom.Targets.targets" PackagePath="\build" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="all" ExcludeAssets="Runtime" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" />
-    <ProjectReference Include="..\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" />
   </ItemGroup>
-
-<!-- TODO temp for testing 
-
-    Eventually the .NET SDK team will add logic similar to this when integrating with the nuget package we produce. 
-    For testing purposes, in order to run the `GenerateSbom` target that lives in the `SbomExecution.targets` file,
-    we can include it explicitly in this project so that MSBuild knows about it and can run it as part of any
-    `dotnet` or `msbuild` commands.
-    
-    This is an initial, hacky testing strategy that can be used when first implementing the task/ target. Once we
-    are producing a nuget package that includes the final version of these tasks/ targets, we will want to test 
-    with other, test .NET projects. Roughly, this will be done by:
-      - Creating a new, standalone test dotnet project
-      - Adding a package reference to the package being produced from this repo, which includes the task/ target
-      - Add these import commands, replacing the relative path with the path to the referenced nuget package (this
-        step is mocking what the .NET SDK will eventaully implent on their side)
-      - Run dotnet/ msbuild commands that we expect to trigger SBOM generation and ensure that SBOMs are generated
-        as expected.
-
-    Note: If you see file locked errors when running the build, it is likely because the GenerateSbom target is
-    attempting to access a .dll that was just built and is still locked. This can be worked around by copying
-    the built dll to an alternate directory and updating the target to point to the new dll by updating line 3
-    in `SbomExecution.targets`. -->
-  <Import Project="./SbomExecution.props" />
-  <Import Project="./SbomExecution.targets" />
 </Project>

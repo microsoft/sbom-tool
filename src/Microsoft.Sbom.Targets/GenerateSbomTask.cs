@@ -11,16 +11,26 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers;
+using Microsoft.Sbom.Api.Metadata;
+using Microsoft.Sbom.Api.Providers;
+using Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders;
+using Microsoft.Sbom.Api.Providers.FilesProviders;
+using Microsoft.Sbom.Api.Providers.PackagesProviders;
 using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Contracts.Entities;
+using Microsoft.Sbom.Contracts.Interfaces;
+using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.DependencyInjection;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 
+/// <summary>
+/// MSBuild task for generating SBOMs from build output.
+/// </summary>
 public class GenerateSbomTask : Task
 {
-    // TODO it is possible we will want to expose additional arguments, either as required or optional.
-    // Will need to get SDK team/ windows team input on which arguments are necessary.
-
     /// <summary>
-    /// The path to the drop directory for which the SBOM will be generated
+    /// The path to the drop directory for which the SBOM will be generated.
     /// </summary>
     [Required]
     public string BuildDropPath { get; set; }
@@ -49,7 +59,7 @@ public class GenerateSbomTask : Task
     [Required]
     public string NamespaceBaseUri { get; set; }
 
-        /// <summary>
+    /// <summary>
     /// The path to the directory containing build components and package information.
     /// For example, path to a .csproj or packages.config file.
     /// </summary>
@@ -97,27 +107,52 @@ public class GenerateSbomTask : Task
     /// </summary>
     public string ManifestDirPath { get; set; }
 
+    /// <summary>
+    /// The path to the generated SBOM directory.
+    /// </summary>
     [Output]
     public string SbomPath { get; set; }
 
     private ISBOMGenerator Generator { get; set; }
 
+    /// <summary>
+    /// Constructor for the GenerateSbomTask.
+    /// </summary>
     public GenerateSbomTask()
     {
         var host = Host.CreateDefaultBuilder()
             .ConfigureServices((host, services) =>
                 services
-                .AddSbomTool())
+                .AddSbomTool()
+                /* Manually adding some dependencies since `AddSbomTool()` does not add them when
+                 * running the MSBuild Task from another project.
+                 */
+                .AddSingleton<ISourcesProvider, SBOMPackagesProvider>()
+                .AddSingleton<ISourcesProvider, CGExternalDocumentReferenceProvider>()
+                .AddSingleton<ISourcesProvider, DirectoryTraversingFileToJsonProvider>()
+                .AddSingleton<ISourcesProvider, ExternalDocumentReferenceFileProvider>()
+                .AddSingleton<ISourcesProvider, ExternalDocumentReferenceProvider>()
+                .AddSingleton<ISourcesProvider, FileListBasedFileToJsonProvider>()
+                .AddSingleton<ISourcesProvider, SbomFileBasedFileToJsonProvider>()
+                .AddSingleton<ISourcesProvider, CGScannedExternalDocumentReferenceFileProvider>()
+                .AddSingleton<ISourcesProvider, CGScannedPackagesProvider>()
+                .AddSingleton<IAlgorithmNames, AlgorithmNames>()
+                .AddSingleton<IManifestGenerator, Generator>()
+                .AddSingleton<IMetadataProvider, LocalMetadataProvider>()
+                .AddSingleton<IMetadataProvider, SBOMApiMetadataProvider>()
+                .AddSingleton<IManifestInterface, Validator>()
+                .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>())
             .Build();
         this.Generator = host.Services.GetRequiredService<ISBOMGenerator>();
     }
 
+    /// <inheritdoc/>
     public override bool Execute()
     {
         try
         {
             // Validate required args and args that take paths as input.
-            if (!ValidateAndSanitizeRequiredParams() || !ValidateRootedPaths() || !ValidateAndSanitizeNamespaceUriUniquePart())
+            if (!ValidateAndSanitizeRequiredParams() || !ValidateAndSanitizeNamespaceUriUniquePart())
             {
                 return false;
             }
@@ -136,7 +171,7 @@ public class GenerateSbomTask : Task
                 NamespaceUriBase = this.NamespaceBaseUri,
                 NamespaceUriUniquePart = this.NamespaceUriUniquePart,
                 DeleteManifestDirectoryIfPresent = this.DeleteManifestDirIfPresent,
-                Verbosity = ValidateAndAssignVerbosity()
+                Verbosity = ValidateAndAssignVerbosity(),
             };
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
             var result = System.Threading.Tasks.Task.Run(() => this.Generator.GenerateSbomAsync(
@@ -149,7 +184,7 @@ public class GenerateSbomTask : Task
                 externalDocumentReferenceListFile: this.ExternalDocumentListFile)).GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
 
-            SbomPath = "path/to/sbom";
+            SbomPath = !string.IsNullOrWhiteSpace(result.ManifestDirPath) ? Path.GetFullPath(result.ManifestDirPath) : null;
             return result.IsSuccessful;
         }
         catch (Exception e)
@@ -169,7 +204,7 @@ public class GenerateSbomTask : Task
     /// Ensure all required arguments are non-null/empty,
     /// and do not contain whitespaces, tabs, or newline characters.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>True if the required parameters are valid. False otherwise.</returns>
     private bool ValidateAndSanitizeRequiredParams()
     {
         if (string.IsNullOrWhiteSpace(this.BuildDropPath))
@@ -212,43 +247,6 @@ public class GenerateSbomTask : Task
     }
 
     /// <summary>
-    /// Ensure all arguments that accept paths are rooted.
-    /// </summary>
-    /// <returns></returns>
-    private bool ValidateRootedPaths()
-    {
-        if (!Path.IsPathRooted(this.BuildDropPath))
-        {
-            Log.LogError($"SBOM generation failed: Unrooted path detected. Please specify a full path for {nameof(this.BuildDropPath)}. " +
-                $"Current value is {this.BuildDropPath}");
-            return false;
-        }
-
-        if (!string.IsNullOrWhiteSpace(this.BuildComponentPath) && !Path.IsPathRooted(this.BuildComponentPath))
-        {
-            Log.LogError($"SBOM generation failed: Unrooted path detected. Please specify a full path for {nameof(this.BuildComponentPath)}. " +
-                $"Current value is {this.BuildComponentPath}");
-            return false;
-        }
-
-        if (!string.IsNullOrWhiteSpace(this.ManifestDirPath) && !Path.IsPathRooted(this.ManifestDirPath))
-        {
-            Log.LogError($"SBOM generation failed: Unrooted path detected. Please specify a full path for {nameof(this.ManifestDirPath)}. " +
-                $"Current value is {this.ManifestDirPath}");
-            return false;
-        }
-
-        if (!string.IsNullOrWhiteSpace(this.ExternalDocumentListFile) && !Path.IsPathRooted(this.ExternalDocumentListFile))
-        {
-            Log.LogError($"SBOM generation failed: Unrooted path detected. Please specify a full path for {nameof(this.ExternalDocumentListFile)}. " +
-                $"Current value is {this.ExternalDocumentListFile}");
-            return false;
-        }
-
-        return true;
-    }
-
-    /// <summary>
     /// Checks the user's input for Verbosity and assigns the
     /// associated EventLevel value for logging.
     /// </summary>
@@ -260,7 +258,8 @@ public class GenerateSbomTask : Task
             return EventLevel.LogAlways;
         }
 
-        if (Enum.TryParse(this.Verbosity, true, out EventLevel eventLevel)) {
+        if (Enum.TryParse(this.Verbosity, true, out EventLevel eventLevel))
+        {
             return eventLevel;
         }
 
@@ -269,28 +268,28 @@ public class GenerateSbomTask : Task
     }
 
     /// <summary>
-    /// Check for ManifestInfo and create an SbomSpecification accordingly
+    /// Check for ManifestInfo and create an SbomSpecification accordingly.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A list of the parsed manifest info. Null ig the manifest info is null or empty.</returns>
     private IList<SbomSpecification> ValidateAndAssignSpecifications()
     {
         if (!string.IsNullOrWhiteSpace(this.ManifestInfo))
         {
-           return new List<SbomSpecification> { SbomSpecification.Parse(this.ManifestInfo) };
+           return [SbomSpecification.Parse(this.ManifestInfo)];
         }
 
         return null;
     }
 
     /// <summary>
-    /// Ensure a valid NamespaceUriUniquePart is provided
+    /// Ensure a valid NamespaceUriUniquePart is provided.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>True if the Namespace URI unique part is valid. False otherwise.</returns>
     private bool ValidateAndSanitizeNamespaceUriUniquePart()
     {
         // Ensure the NamespaceUriUniquePart is valid if provided.
         if (!string.IsNullOrWhiteSpace(this.NamespaceUriUniquePart)
-            && (!Guid.TryParse(this.NamespaceUriUniquePart, out var guidResult)
+            && (!Guid.TryParse(this.NamespaceUriUniquePart, out _)
             || this.NamespaceUriUniquePart.Equals(Guid.Empty.ToString())))
         {
             Log.LogError($"SBOM generation failed: NamespaceUriUniquePart '{this.NamespaceUriUniquePart}' must be a valid unique GUID.");

@@ -51,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Extensions.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Targets", "src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj", "{E6C3C851-EEA0-466E-BA36-73ED85F13EEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.Targets.Tests", "test\Microsoft.Sbom.Targets.Tests\Microsoft.Sbom.Targets.Tests.csproj", "{E31B914C-F24B-4DC8-ACC7-CAEA952563B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Targets.Tests", "test\Microsoft.Sbom.Targets.Tests\Microsoft.Sbom.Targets.Tests.csproj", "{E31B914C-F24B-4DC8-ACC7-CAEA952563B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
