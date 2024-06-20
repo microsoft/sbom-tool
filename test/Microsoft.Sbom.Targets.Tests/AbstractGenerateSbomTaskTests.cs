@@ -29,7 +29,7 @@ public abstract class AbstractGenerateSbomTaskTests
     internal string ManifestPath;
     internal GeneratedSbomValidator GeneratedSbomValidator;
 
-    internal string SbomSpecificationDirectoryName => $"{this.SbomSpecification.Name}_{this.SbomSpecification.Version}";
+    internal string SbomSpecificationDirectoryName => $"{this.SbomSpecification.Name}_{this.SbomSpecification.Version}".ToLowerInvariant();
 
     [TestInitialize]
     public void Startup()

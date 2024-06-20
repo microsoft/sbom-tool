@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - main
+      # Remove before merging into main
+      - users/gustavoca/net-sdk-sbom-tool
   pull_request:
     branches:
       - main
+      # Remove before merging into main
+      - users/gustavoca/net-sdk-sbom-tool
 
 permissions:
   contents: read
