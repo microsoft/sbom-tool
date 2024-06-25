@@ -9,11 +9,15 @@
         target and if so, which one. They likely know of a nuget packaging target that it would make sense to hook this in with.-->
 
   <PropertyGroup>
-    <GenerateSbomTask_TFM Condition=" '$(TargetFramework)' == 'net6.0' ">net6.0</GenerateSbomTask_TFM>
-    <GenerateSbomTask_TFM Condition=" '$(TargetFramework)' == 'net8.0' ">net8.0</GenerateSbomTask_TFM>
+    <GenerateSbomTask_TFM Condition=" '$(MSBuildRuntimeType)' == 'Full' ">net472</GenerateSbomTask_TFM>
+    <GenerateSbomTask_TFM Condition=" '$(MSBuildRuntimeType)' == 'Core' ">net8.0</GenerateSbomTask_TFM>
   </PropertyGroup>
+
   <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbomTask" AssemblyFile="$(MSBuildThisFileDirectory)\..\tasks\$(GenerateSbomTask_TFM)\Microsoft.Sbom.Targets.dll" />
+  <UsingTask TaskName="Microsoft.Sbom.Targets.SbomCLIToolTask" AssemblyFile="$(MSBuildThisFileDirectory)\..\tasks\$(GenerateSbomTask_TFM)\Microsoft.Sbom.Targets.dll" />
+
   <Import Project="$(MSBuildThisFileDirectory)\Microsoft.Sbom.Targets.props" />
+  <Import Project="$(MSBuildThisFileDirectory)\Microsoft.Sbom.Tool.targets" />
 
   <Target Name="GenerateSbomTarget" AfterTargets="Build" Condition=" '$(GenerateSBOM)' ==  'true' And '$(MSBuildRuntimeType)' == 'Core'">
     <GenerateSbomTask
@@ -34,6 +38,35 @@
         <Output TaskParameter="SbomPath" PropertyName="SbomPathResult" />
     </GenerateSbomTask> 
     <Message Importance="High" Text="Task result: $(SbomPathResult)" />
+
+    <!-- Include the generated SBOM contents within the consumer's nuget package -->
+    <ItemGroup >
+      <Content Include="$(SbomPathResult)\**">
+        <Pack>true</Pack>
+        <PackagePath>_manifest</PackagePath>
+      </Content>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="SbomCLIToolTarget" AfterTargets="Build" Condition=" '$(GenerateSBOM)' ==  'true' And '$(MSBuildRuntimeType)' == 'Full'">
+    <SbomCLIToolTask
+        BuildDropPath="$(SbomGenerationBuildDropPath)"
+        BuildComponentPath="$(SbomGenerationBuildComponentPath)"
+        PackageSupplier="$(SbomGenerationPackageSupplier)"
+        PackageName="$(SbomGenerationPackageName)"
+        PackageVersion="$(SbomGenerationPackageVersion)"
+        NamespaceBaseUri="$(SbomGenerationNamespaceBaseUri)"
+        NamespaceUriUniquePart="$(SbomGenerationNamespaceUriUniquePart)"
+        ExternalDocumentListFile="$(SbomGenerationExternalDocumentReferenceListFile)"
+        FetchLicenseInformation="$(SbomGenerationFetchLicenseInformation)"
+        EnablePackageMetadataParsing="$(SbomGenerationEnablePackageMetadataParsing)"
+        Verbosity="$(SbomGenerationVerbosity)"
+        ManifestInfo="$(SbomGenerationManifestInfo)"
+        DeleteManifestDirIfPresent="$(SbomGenerationDeleteManifestDirIfPresent)"
+        ManifestDirPath="$(SbomGenerationManifestDirPath)"
+        SbomToolPath="Replace with Path">
+      <Output TaskParameter="SbomPath" PropertyName="SbomPathResult" />
+    </SbomCLIToolTask>
 
     <!-- Include the generated SBOM contents within the consumer's nuget package -->
     <ItemGroup >
