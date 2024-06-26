@@ -17,6 +17,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj"/>
+    <ProjectReference Include="..\..\src\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj"/>
   </ItemGroup>
 
 </Project>

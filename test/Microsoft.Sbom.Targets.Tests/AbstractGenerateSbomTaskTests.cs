@@ -9,7 +9,7 @@ using Moq;
 namespace Microsoft.Sbom.Targets.Tests;
 
 /// <summary>
-/// Base class for testing SBOM generation through the GenerateSbomTask.
+/// Base class for testing SBOM generation through the GenerateSbom.
 /// </summary>
 [TestClass]
 public abstract class AbstractGenerateSbomTaskTests
@@ -59,7 +59,7 @@ public abstract class AbstractGenerateSbomTaskTests
     public void Sbom_Is_Successfully_Generated()
     {
         // Arrange
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             PackageSupplier = PackageSupplier,
@@ -89,7 +89,7 @@ public abstract class AbstractGenerateSbomTaskTests
     public void Sbom_Is_Successfully_Generated_Valid_URI(string namespaceBaseUri)
     {
         // Arrange
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             PackageSupplier = PackageSupplier,
@@ -115,7 +115,7 @@ public abstract class AbstractGenerateSbomTaskTests
     public void Sbom_Is_Successfully_Generated_Valid_RequiredParams(string packageSupplier, string packageName, string packageVersion)
     {
         // Arrange
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             PackageSupplier = packageSupplier,
@@ -164,7 +164,7 @@ public abstract class AbstractGenerateSbomTaskTests
         var manifestDirPath = Path.Combine(TemporaryDirectory, "sub-directory");
         Directory.CreateDirectory(manifestDirPath);
         // Arrange
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             ManifestDirPath = manifestDirPath,
@@ -190,7 +190,7 @@ public abstract class AbstractGenerateSbomTaskTests
     public void Sbom_Generation_Fails_With_NotFound_BuildDropPath()
     {
         // Arrange
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = ".\\non-existent\\path",
             PackageSupplier = PackageSupplier,
@@ -212,7 +212,7 @@ public abstract class AbstractGenerateSbomTaskTests
     public void Sbom_Generation_Fails_With_NotFound_BuildComponentPath()
     {
         // Arrange
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             BuildComponentPath = ".\\non-existent\\path",
@@ -236,7 +236,7 @@ public abstract class AbstractGenerateSbomTaskTests
     public void Sbom_Generation_Fails_With_NotFound_ExternalDocumentListFile()
     {
         // Arrange
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             ExternalDocumentListFile = ".\\non-existent\\path",
@@ -260,7 +260,7 @@ public abstract class AbstractGenerateSbomTaskTests
     public void Sbom_Generation_Fails_With_NotFound_ManifestDirPath()
     {
         // Arrange
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             ManifestDirPath = ".\\non-existent\\path",
@@ -287,7 +287,7 @@ public abstract class AbstractGenerateSbomTaskTests
         var sourceDirectory = Path.Combine(CurrentDirectory, "..", "..", "..");
 
         // Arrange
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             BuildComponentPath = sourceDirectory,
@@ -315,7 +315,7 @@ public abstract class AbstractGenerateSbomTaskTests
     public void Sbom_Is_Successfully_Generated_With_Unique_Namespace_Part_Defined(string uniqueNamespacePart)
     {
         // Arrange
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             PackageSupplier = PackageSupplier,
