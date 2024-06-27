@@ -79,9 +79,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net472'">
-    <Compile Remove="**/*.*" />
-    <Compile Include="GenerateSbom.cs" />
-    <Compile Include="GenerateSbomTask.cs" />
+    <Compile Remove="SbomCLIToolTask.cs" />
   </ItemGroup>
 
 </Project>

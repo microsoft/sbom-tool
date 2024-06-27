@@ -3,11 +3,7 @@
 
 namespace Microsoft.Sbom.Targets;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -16,12 +12,6 @@ using Microsoft.Build.Utilities;
 /// </summary>
 public partial class GenerateSbom : ToolTask
 {
-    /// <summary>
-    /// Path to the SBOM CLI tool
-    /// </summary>
-    [Required]
-    public string SbomToolPath { get; set; }
-
     protected override string ToolName => "Microsoft.Sbom.Tool";
 
     /// <summary>
@@ -30,7 +20,7 @@ public partial class GenerateSbom : ToolTask
     /// <returns></returns>
     protected override string GenerateFullPathToTool()
     {
-        return $"{this.SbomToolPath}\\{this.ToolName}.exe";
+        return Path.Combine(this.SbomToolPath, $"{this.ToolName}.exe");
     }
 
     /// <summary>
