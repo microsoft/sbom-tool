@@ -55,7 +55,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
     }
 
     /// <summary>
-    /// Test for ensuring the GenerateSbomTask fails for null or empty inputs for
+    /// Test for ensuring the GenerateSbom fails for null or empty inputs for
     /// required params, which includes BuildDropPath, PackageSupplier, PackageName,
     /// PackageVersion, and NamespaceBaseUri.
     /// </summary>
@@ -71,7 +71,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
         string namespaceBaseUri)
     {
         // Arrange.
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = buildDropPath,
             PackageSupplier = packageSupplier,
@@ -117,7 +117,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
     }
 
     /// <summary>
-    /// Test for ensuring the GenerateSbomTask fails when user provides an
+    /// Test for ensuring the GenerateSbom fails when user provides an
     /// invalid URI format.
     /// </summary>
     [TestMethod]
@@ -130,7 +130,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
     public void Sbom_Fails_With_Invalid_NamespaceBaseUri(string namespaceBaseUri)
     {
         // Arrange
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             PackageSupplier = PackageSupplier,
@@ -149,7 +149,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
     }
 
     /// <summary>
-    /// Test for ensuring the GenerateSbomTask fails when user provides
+    /// Test for ensuring the GenerateSbom fails when user provides
     /// an invalid GUID for NamespaceUriUniquePart.
     /// </summary>
     [TestMethod]
@@ -165,7 +165,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
     public void Sbom_Generation_Fails_For_Invalid_NamespaceUriUniquePart(string namespaceUriUniquePart)
     {
         // Arrange
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             PackageSupplier = PackageSupplier,
@@ -185,7 +185,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
     }
 
     /// <summary>
-    /// Test for ensuring GenerateSbomTask assigns a defualt Verbosity
+    /// Test for ensuring GenerateSbom assigns a defualt Verbosity
     /// level when null input is provided.
     /// </summary>
     [TestMethod]
@@ -197,7 +197,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
         var pattern = new Regex("Verbosity=.*Value=Verbose");
         var stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             PackageSupplier = PackageSupplier,
@@ -219,7 +219,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
     }
 
     /// <summary>
-    /// Test for ensuring GenerateSbomTask assigns a default Verbosity for
+    /// Test for ensuring GenerateSbom assigns a default Verbosity for
     /// unrecognized input.
     /// </summary>
     [TestMethod]
@@ -231,7 +231,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
         var pattern = new Regex("Verbosity=.*Value=Verbose");
         var stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             PackageSupplier = PackageSupplier,
@@ -253,7 +253,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
     }
 
     /// <summary>
-    /// Test to ensure GenerateSbomTask correctly parses and provides each EventLevel verbosity
+    /// Test to ensure GenerateSbom correctly parses and provides each EventLevel verbosity
     /// values to the SBOM API.
     /// </summary>
     [TestMethod]
@@ -269,7 +269,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
         var pattern = new Regex($"Verbosity=.*Value={mappedVerbosity}");
         var stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
-        var task = new GenerateSbomTask
+        var task = new GenerateSbom
         {
             BuildDropPath = CurrentDirectory,
             PackageSupplier = PackageSupplier,

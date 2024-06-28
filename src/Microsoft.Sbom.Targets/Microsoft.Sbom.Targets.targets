@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <!-- TODO remove hardcoded str, reference this assembly using MSBuild props instead -->
+  <!-- TODO remove hardcoded str, reference this assembly using MSBuild props instead -->
 
-    <!--TODO we will eventaully want to replace or remove `AfterTargets="Build"`.
+  <!--TODO we will eventaully want to replace or remove `AfterTargets="Build"`.
         Including this line means that this code will run at the end of `dotnet build`s of any project that this .targets
         file is imported to (see line 24 of Microsoft.Sbom.Targets.csproj as an example of importing this file). This is
         good for testing purposes, but not the behavior we ultimately want. 
@@ -9,14 +9,21 @@
         target and if so, which one. They likely know of a nuget packaging target that it would make sense to hook this in with.-->
 
   <PropertyGroup>
-    <GenerateSbomTask_TFM Condition=" '$(TargetFramework)' == 'net6.0' ">net6.0</GenerateSbomTask_TFM>
-    <GenerateSbomTask_TFM Condition=" '$(TargetFramework)' == 'net8.0' ">net8.0</GenerateSbomTask_TFM>
+    <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Full' ">net472</GenerateSbom_TFM>
+    <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Core' ">net8.0</GenerateSbom_TFM>
+
+    <!--Set the SBOM CLI Tool path. This variable is only used in SbomCLIToolTask.cs-->
+    <SbomToolPath Condition=" '$(MSBuildRuntimeType)' == 'Full'">$(MSBuildThisFileDirectory)\..\tasks\$(GenerateSbom_TFM)\sbom-tool</SbomToolPath>
   </PropertyGroup>
-  <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbomTask" AssemblyFile="$(MSBuildThisFileDirectory)\..\tasks\$(GenerateSbomTask_TFM)\Microsoft.Sbom.Targets.dll" />
+  
+  <!--Based on the MSBuild runtime, GenerateSbom will either pull the GenerateSbomTask or SbomCLIToolTask logic-->
+  <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbom" AssemblyFile="$(MSBuildThisFileDirectory)\..\tasks\$(GenerateSbom_TFM)\Microsoft.Sbom.Targets.dll" />
+
   <Import Project="$(MSBuildThisFileDirectory)\Microsoft.Sbom.Targets.props" />
 
-  <Target Name="GenerateSbomTarget" AfterTargets="Build" Condition=" '$(GenerateSBOM)' ==  'true' And '$(MSBuildRuntimeType)' == 'Core'">
-    <GenerateSbomTask
+  <Target Name="GenerateSbomTarget" AfterTargets="Build" Condition=" '$(GenerateSBOM)' ==  'true'">
+    <!--TODO: Add arguments for ToolTask-->
+    <GenerateSbom
         BuildDropPath="$(SbomGenerationBuildDropPath)"
         BuildComponentPath="$(SbomGenerationBuildComponentPath)"
         PackageSupplier="$(SbomGenerationPackageSupplier)"
@@ -30,9 +37,10 @@
         Verbosity="$(SbomGenerationVerbosity)"
         ManifestInfo="$(SbomGenerationManifestInfo)"
         DeleteManifestDirIfPresent="$(SbomGenerationDeleteManifestDirIfPresent)"
-        ManifestDirPath="$(SbomGenerationManifestDirPath)">
-        <Output TaskParameter="SbomPath" PropertyName="SbomPathResult" />
-    </GenerateSbomTask> 
+        ManifestDirPath="$(SbomGenerationManifestDirPath)"
+        SbomToolPath="$(SbomToolPath)">
+      <Output TaskParameter="SbomPath" PropertyName="SbomPathResult" />
+    </GenerateSbom>
     <Message Importance="High" Text="Task result: $(SbomPathResult)" />
 
     <!-- Include the generated SBOM contents within the consumer's nuget package -->
