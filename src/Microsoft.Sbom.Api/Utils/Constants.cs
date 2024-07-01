@@ -46,9 +46,5 @@ public static class Constants
     public const string CatalogFileName = "manifest.cat";
     public const string BsiFileName = "bsi.json";
 
-    #region Configuration switches
-
     public const string DeleteManifestDirBoolVariableName = "DeleteManifestDirIfPresent";
-
-    #endregion
 }
