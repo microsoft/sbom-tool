@@ -18,6 +18,7 @@ public class IntegrationTests
 
     private static TestContext testContext;
     private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+    private static readonly object LockObject = new object();
 
     [ClassInitialize]
     public static void SetUp(TestContext testContext)
@@ -34,12 +35,6 @@ public class IntegrationTests
     [TestMethod]
     public void E2E_NoParameters_DisplaysHelpMessage_ReturnsNonZeroExitCode()
     {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(null);
 
         Assert.AreEqual(stderr, string.Empty);
@@ -52,12 +47,6 @@ public class IntegrationTests
     [TestMethod]
     public void E2E_GenerateManifest_GeneratesManifest_ReturnsZeroExitCode()
     {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
     }
@@ -65,12 +54,6 @@ public class IntegrationTests
     [TestMethod]
     public void E2E_GenerateAndValidateManifest_ValidationSucceeds_ReturnsZeroExitCode()
     {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
 
@@ -89,12 +72,6 @@ public class IntegrationTests
     [TestMethod]
     public void E2E_GenerateAndRedactManifest_RedactedFileIsSmaller_ReturnsZeroExitCode()
     {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
 
@@ -115,7 +92,43 @@ public class IntegrationTests
         Assert.IsTrue(redactedManifestSize < originalManifestSize, "Redacted file must be smaller than the original");
     }
 
-    public void GenerateManifestAndValidateSuccess(string testFolderPath)
+    private static void EnsureAppIsExecutable()
+    {
+        if (IsWindows)
+        {
+            return;
+        }
+
+        lock (LockObject)
+        {
+            Process process = null;
+            try
+            {
+                process = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        FileName = "/bin/bash",
+                        Arguments = $"chmod u+x {GetAppName()}"
+                    }
+                };
+
+                process.Start();
+                process.WaitForExit();
+            }
+            finally
+            {
+                process?.Dispose();
+            }
+        }
+    }
+
+    private void GenerateManifestAndValidateSuccess(string testFolderPath)
     {
         var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\"  -b . -bc \"{GetSolutionFolderPath()}\"";
 
@@ -159,19 +172,22 @@ public class IntegrationTests
         int? exitCode = null;
         Process process = null;
 
+        EnsureAppIsExecutable();
+
         try
         {
-            process = new Process();
-            process.StartInfo.FileName = GetAppName();
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-
-            if (!string.IsNullOrEmpty(arguments))
+            process = new Process
             {
-                process.StartInfo.Arguments = arguments;
-            }
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = GetAppName(),
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    Arguments = arguments ?? string.Empty,
+                }
+            };
 
             process.OutputDataReceived += (sender, e) =>
             {
@@ -203,12 +219,13 @@ public class IntegrationTests
         {
             if (process is not null)
             {
-                if (process.HasExited)
+                if (!process.HasExited)
                 {
                     process.Kill();
                 }
 
                 exitCode = process.ExitCode;
+                process.Dispose();
             }
         }
 
