@@ -17,12 +17,18 @@ public class IntegrationTests
     private const string ManifestFileName = "manifest.spdx.json";
 
     private static TestContext testContext;
-    private static readonly string AppName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Microsoft.Sbom.Tool.exe" : "Microsoft.Sbom.Tool";
+    private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
     [ClassInitialize]
     public static void SetUp(TestContext testContext)
     {
         IntegrationTests.testContext = testContext;
+    }
+
+    [TestMethod]
+    public void TargetAppExists()
+    {
+        Assert.IsTrue(File.Exists(GetAppName()));
     }
 
     [TestMethod]
@@ -40,6 +46,12 @@ public class IntegrationTests
     [TestMethod]
     public void E2E_GenerateManifest_GeneratesManifest_ReturnsZeroExitCode()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
     }
@@ -47,6 +59,12 @@ public class IntegrationTests
     [TestMethod]
     public void E2E_GenerateAndValidateManifest_ValidationSucceeds_ReturnsZeroExitCode()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
 
@@ -65,6 +83,12 @@ public class IntegrationTests
     [TestMethod]
     public void E2E_GenerateAndRedactManifest_RedactedFileIsSmaller_ReturnsZeroExitCode()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
 
@@ -117,6 +141,11 @@ public class IntegrationTests
         return Path.GetFullPath(Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", ".."));
     }
 
+    private static string GetAppName()
+    {
+        return IsWindows ? "Microsoft.Sbom.Tool.exe" : "Microsoft.Sbom.Tool";
+    }
+
     private static (string stdout, string stderr, int? exitCode) LaunchAndCaptureOutput(string? arguments)
     {
         var stdout = string.Empty;
@@ -127,7 +156,7 @@ public class IntegrationTests
         try
         {
             process = new Process();
-            process.StartInfo.FileName = AppName;
+            process.StartInfo.FileName = GetAppName();
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.UseShellExecute = false;
