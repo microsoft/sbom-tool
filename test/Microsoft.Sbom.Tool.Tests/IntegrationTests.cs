@@ -18,7 +18,6 @@ public class IntegrationTests
 
     private static TestContext testContext;
     private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-    private static readonly object LockObject = new object();
 
     [ClassInitialize]
     public static void SetUp(TestContext testContext)
@@ -35,6 +34,12 @@ public class IntegrationTests
     [TestMethod]
     public void E2E_NoParameters_DisplaysHelpMessage_ReturnsNonZeroExitCode()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(null);
 
         Assert.AreEqual(stderr, string.Empty);
@@ -47,6 +52,12 @@ public class IntegrationTests
     [TestMethod]
     public void E2E_GenerateManifest_GeneratesManifest_ReturnsZeroExitCode()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
     }
@@ -54,6 +65,12 @@ public class IntegrationTests
     [TestMethod]
     public void E2E_GenerateAndValidateManifest_ValidationSucceeds_ReturnsZeroExitCode()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
 
@@ -72,6 +89,12 @@ public class IntegrationTests
     [TestMethod]
     public void E2E_GenerateAndRedactManifest_RedactedFileIsSmaller_ReturnsZeroExitCode()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
 
@@ -90,42 +113,6 @@ public class IntegrationTests
         var redactedManifestSize = File.ReadAllText(redactedManifestFilePath).Length;
         Assert.IsTrue(redactedManifestSize > 0, "Redacted file must not be empty");
         Assert.IsTrue(redactedManifestSize < originalManifestSize, "Redacted file must be smaller than the original");
-    }
-
-    private static void EnsureAppIsExecutable()
-    {
-        if (IsWindows)
-        {
-            return;
-        }
-
-        lock (LockObject)
-        {
-            Process process = null;
-            try
-            {
-                process = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-                        WindowStyle = ProcessWindowStyle.Hidden,
-                        FileName = "/bin/bash",
-                        Arguments = $"chmod u+x {GetAppName()}"
-                    }
-                };
-
-                process.Start();
-                process.WaitForExit();
-            }
-            finally
-            {
-                process?.Dispose();
-            }
-        }
     }
 
     private void GenerateManifestAndValidateSuccess(string testFolderPath)
@@ -171,8 +158,6 @@ public class IntegrationTests
         var stderr = string.Empty;
         int? exitCode = null;
         Process process = null;
-
-        EnsureAppIsExecutable();
 
         try
         {
