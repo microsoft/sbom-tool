@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NuGet.Frameworks;
 
@@ -19,6 +20,7 @@ public class IntegrationTests
     private const string ManifestFileName = "manifest.spdx.json";
 
     private static TestContext testContext;
+    private static readonly string AppName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Microsoft.Sbom.Tool.exe" : "Microsoft.Sbom.Tool";
 
     [ClassInitialize]
     public static void SetUp(TestContext testContext)
@@ -128,7 +130,7 @@ public class IntegrationTests
         try
         {
             process = new Process();
-            process.StartInfo.FileName = "Microsoft.Sbom.Tool.exe";
+            process.StartInfo.FileName = AppName;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.UseShellExecute = false;
