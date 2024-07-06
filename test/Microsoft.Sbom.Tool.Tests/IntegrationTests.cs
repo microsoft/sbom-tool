@@ -34,6 +34,12 @@ public class IntegrationTests
     [TestMethod]
     public void E2E_NoParameters_DisplaysHelpMessage_ReturnsNonZeroExitCode()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(null);
 
         Assert.AreEqual(stderr, string.Empty);
