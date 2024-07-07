@@ -3,8 +3,8 @@
 
 namespace Microsoft.Sbom.Targets;
 
+using System.Diagnostics.Tracing;
 using System.IO;
-using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 /// <summary>
@@ -29,7 +29,41 @@ public partial class GenerateSbom : ToolTask
     /// <returns>string list of args</returns>
     protected override string GenerateCommandLineCommands()
     {
-        return "Command";
+        var arguments =
+                "generate " +
+                $"-BuildDropPath {this.BuildDropPath} " +
+                $"-BuildComponentPath {this.BuildComponentPath} " +
+                $"-PackageName {this.PackageName} " +
+                $"-PackageVersion {this.PackageVersion} " +
+                $"-PackageSupplier {this.PackageSupplier} " +
+                $"-NamespaceUriBase {this.NamespaceBaseUri} " +
+                $"-DeleteManifestDirIfPresent {this.DeleteManifestDirIfPresent} " +
+                $"-FetchLicenseInformation {this.FetchLicenseInformation} " +
+                $"-EnablePackageMetadataParsing {this.EnablePackageMetadataParsing} " +
+                $"-Verbosity {this.Verbosity} ";
+
+        // For optional arguments, append them only if they are specified by the user
+        if (!string.IsNullOrEmpty(this.ManifestDirPath))
+        {
+            arguments += $"-ManifestDirPath {this.ManifestDirPath} ";
+        }
+
+        if (!string.IsNullOrEmpty(this.ExternalDocumentListFile))
+        {
+            arguments += $"-ExternalDocumentListFile {this.ExternalDocumentListFile} ";
+        }
+
+        if (!string.IsNullOrEmpty(this.NamespaceUriUniquePart))
+        {
+            arguments += $"-NamespaceUriUniquePart {this.NamespaceUriUniquePart} ";
+        }
+
+        if (!string.IsNullOrEmpty(this.ManifestInfo))
+        {
+            arguments += $"-ManifestInfo {this.ManifestInfo} ";
+        }
+
+        return arguments;
     }
 
     /// <summary>
@@ -38,6 +72,30 @@ public partial class GenerateSbom : ToolTask
     /// <returns></returns>
     protected override bool ValidateParameters()
     {
+        // Validate required args and args that take paths as input.
+        if (!ValidateAndSanitizeRequiredParams() || !ValidateAndSanitizeNamespaceUriUniquePart())
+        {
+            return false;
+        }
+
+        var eventLevel = ValidateAndAssignVerbosity();
+        SetOutputImportance(eventLevel);
         return true;
+    }
+
+    /// <summary>
+    /// This method sets the standard output importance. Setting
+    /// it to "High" ensures all output from the SBOM CLI is printed to
+    /// Visual Studio's output console; otherwise, it is hidden.
+    /// </summary>
+    /// <param name="eventLevel"></param>
+    private void SetOutputImportance(EventLevel eventLevel)
+    {
+        this.StandardOutputImportance = "High";
+
+        if (eventLevel == EventLevel.Critical)
+        {
+            this.StandardOutputImportance = "Low";
+        }
     }
 }
