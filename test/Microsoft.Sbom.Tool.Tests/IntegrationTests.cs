@@ -114,7 +114,7 @@ public class IntegrationTests
                         CreateNoWindow = true,
                         WindowStyle = ProcessWindowStyle.Hidden,
                         FileName = "/bin/bash",
-                        Arguments = $"chmod u+x {GetAppName()}"
+                        Arguments = $"-c chmod u+x {GetAppName()}"
                     }
                 };
 
