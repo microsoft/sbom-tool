@@ -99,31 +99,13 @@ public class IntegrationTests
             return;
         }
 
-        lock (LockObject)
-        {
-            Process process = null;
-            try
-            {
-                process = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-                        WindowStyle = ProcessWindowStyle.Hidden,
-                        FileName = "/bin/bash",
-                        Arguments = $"-c chmod u+x {GetAppName()}"
-                    }
-                };
+        var fileMode = File.GetUnixFileMode(GetAppName());
 
-                process.Start();
-                process.WaitForExit();
-            }
-            finally
+        if ((fileMode & UnixFileMode.UserExecute) == 0)
+        {
+            lock (LockObject)
             {
-                process?.Dispose();
+                File.SetUnixFileMode(GetAppName(), fileMode | UnixFileMode.UserExecute);
             }
         }
     }
