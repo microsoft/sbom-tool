@@ -25,6 +25,19 @@ public class IntegrationTests
         IntegrationTests.testContext = testContext;
     }
 
+    [ClassCleanup]
+    public static void TearDown()
+    {
+        // Clean up test directories
+        if (testContext is not null)
+        {
+            if (Directory.Exists(testContext.ResultsDirectory))
+            {
+                Directory.Delete(testContext.ResultsDirectory, true);
+            }
+        }
+    }
+
     [TestMethod]
     public void TargetAppExists()
     {
@@ -195,10 +208,9 @@ public class IntegrationTests
             process.BeginErrorReadLine();
             process.WaitForExit();
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            // Handle any exceptions here
-            Console.WriteLine("Error: " + ex.Message);
+            Assert.Fail($"Caught the following Exception: {e}");
         }
         finally
         {
