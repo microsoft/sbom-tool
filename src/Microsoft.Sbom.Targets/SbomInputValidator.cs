@@ -4,6 +4,7 @@
 namespace Microsoft.Sbom.Targets;
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 
 /// <summary>
@@ -19,34 +20,22 @@ public partial class GenerateSbom
     /// <returns>True if the required parameters are valid. False otherwise.</returns>
     public bool ValidateAndSanitizeRequiredParams()
     {
-        if (string.IsNullOrWhiteSpace(this.BuildDropPath))
+        var requiredProperties = new Dictionary<string, string>
         {
-            Log.LogError($"SBOM generation failed: Empty argument detected for {nameof(this.BuildDropPath)}. Please provide a valid path.");
-            return false;
-        }
+            { nameof(this.BuildDropPath), this.BuildDropPath },
+            { nameof(this.PackageSupplier), this.PackageSupplier },
+            { nameof(this.PackageName), this.PackageName },
+            { nameof(this.PackageVersion), this.PackageVersion },
+            { nameof(this.NamespaceBaseUri), this.NamespaceBaseUri }
+        };
 
-        if (string.IsNullOrWhiteSpace(this.PackageSupplier))
+        foreach (var property in requiredProperties)
         {
-            Log.LogError($"SBOM generation failed: Empty argument detected for {nameof(this.PackageSupplier)}. Please provide a valid supplier name.");
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(this.PackageName))
-        {
-            Log.LogError($"SBOM generation failed: Empty argument detected for {nameof(this.PackageName)}. Please provide a valid name.");
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(this.PackageVersion))
-        {
-            Log.LogError($"SBOM generation failed: Empty argument detected for {nameof(this.PackageVersion)}. Please provide a valid version number.");
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(this.NamespaceBaseUri))
-        {
-            Log.LogError($"SBOM generation failed: Empty argument detected for {nameof(this.NamespaceBaseUri)}. Please provide a valid URI.");
-            return false;
+            if (string.IsNullOrWhiteSpace(property.Value))
+            {
+                Log.LogError($"SBOM generation failed: Empty argument detected for {property.Key}. Please provide a valid value.");
+                return false;
+            }
         }
 
         this.PackageSupplier = Remove_Spaces_Tabs_Newlines(this.PackageSupplier);
