@@ -16,24 +16,27 @@ public class IntegrationTests
     private const string ManifestRootFolderName = "_manifest";
     private const string ManifestFileName = "manifest.spdx.json";
 
-    private static TestContext testContext;
     private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
+    public TestContext TestContext { get; set; }
+
+    private static string testResultsDirectory;
+
     [ClassInitialize]
-    public static void SetUp(TestContext testContext)
+    public static void Setup(TestContext context)
     {
-        IntegrationTests.testContext = testContext;
+        testResultsDirectory = context.ResultsDirectory;
     }
 
     [ClassCleanup]
     public static void TearDown()
     {
         // Clean up test directories
-        if (testContext is not null)
+        if (testResultsDirectory is not null)
         {
-            if (Directory.Exists(testContext.ResultsDirectory))
+            if (Directory.Exists(testResultsDirectory))
             {
-                Directory.Delete(testContext.ResultsDirectory, true);
+                Directory.Delete(testResultsDirectory, true);
             }
         }
     }
@@ -87,7 +90,7 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
 
-        var outputFile = Path.Combine(testContext.ResultsDirectory, testContext.TestName, "validation.json");
+        var outputFile = Path.Combine(TestContext.ResultsDirectory, TestContext.TestName, "validation.json");
         var manifestRootFolderName = Path.Combine(testFolderPath, ManifestRootFolderName);
         var arguments = $"validate -m \"{manifestRootFolderName}\" -b . -o \"{outputFile}\" -mi spdx:2.2";
 
@@ -111,7 +114,7 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
 
-        var outputFolder = Path.Combine(testContext.ResultsDirectory, testContext.TestName, "redacted");
+        var outputFolder = Path.Combine(TestContext.ResultsDirectory, TestContext.TestName, "redacted");
         var originalManifestFolderPath = AppendFullManifestFolderPath(testFolderPath);
         var originalManifestFilePath = Path.Combine(AppendFullManifestFolderPath(testFolderPath), ManifestFileName);
         var arguments = $"redact -sp \"{originalManifestFilePath}\" -o \"{outputFolder}\" -verbosity verbose";
@@ -145,7 +148,7 @@ public class IntegrationTests
 
     private string CreateTestFolder()
     {
-        var testFolderPath = Path.GetFullPath(Path.Combine(testContext.ResultsDirectory, testContext.TestName));
+        var testFolderPath = Path.GetFullPath(Path.Combine(TestContext.ResultsDirectory, TestContext.TestName));
         Directory.CreateDirectory(testFolderPath);
         return testFolderPath;
     }
