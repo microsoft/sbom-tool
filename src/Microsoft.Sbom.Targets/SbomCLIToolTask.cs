@@ -29,41 +29,42 @@ public partial class GenerateSbom : ToolTask
     /// <returns>string list of args</returns>
     protected override string GenerateCommandLineCommands()
     {
-        var arguments =
-                "generate " +
-                $"-BuildDropPath {this.BuildDropPath} " +
-                $"-BuildComponentPath {this.BuildComponentPath} " +
-                $"-PackageName {this.PackageName} " +
-                $"-PackageVersion {this.PackageVersion} " +
-                $"-PackageSupplier {this.PackageSupplier} " +
-                $"-NamespaceUriBase {this.NamespaceBaseUri} " +
-                $"-DeleteManifestDirIfPresent {this.DeleteManifestDirIfPresent} " +
-                $"-FetchLicenseInformation {this.FetchLicenseInformation} " +
-                $"-EnablePackageMetadataParsing {this.EnablePackageMetadataParsing} " +
-                $"-Verbosity {this.Verbosity} ";
+        var builder = new CommandLineBuilder();
+
+        builder.AppendSwitch("generate");
+        builder.AppendSwitchIfNotNull("-BuildDropPath ", this.BuildDropPath);
+        builder.AppendSwitchIfNotNull("-BuildComponentPath ", this.BuildComponentPath);
+        builder.AppendSwitchIfNotNull("-PackageName ", this.PackageName);
+        builder.AppendSwitchIfNotNull("-PackageVersion ", this.PackageVersion);
+        builder.AppendSwitchIfNotNull("-PackageSupplier ", this.PackageSupplier);
+        builder.AppendSwitchIfNotNull("-NamespaceUriBase ", this.NamespaceBaseUri);
+        builder.AppendSwitchIfNotNull("-DeleteManifestDirIfPresent ", $"{this.DeleteManifestDirIfPresent}");
+        builder.AppendSwitchIfNotNull("-FetchLicenseInformation ", $"{this.FetchLicenseInformation}");
+        builder.AppendSwitchIfNotNull("-EnablePackageMetadataParsing ", $"{this.EnablePackageMetadataParsing}");
+        builder.AppendSwitchIfNotNull("-Verbosity ", this.Verbosity);
 
         // For optional arguments, append them only if they are specified by the user
-        if (!string.IsNullOrEmpty(this.ManifestDirPath))
+        if (!string.IsNullOrWhiteSpace(this.ManifestDirPath))
         {
-            arguments += $"-ManifestDirPath {this.ManifestDirPath} ";
+            builder.AppendSwitchIfNotNull("-ManifestDirPath ", this.ManifestDirPath);
         }
 
-        if (!string.IsNullOrEmpty(this.ExternalDocumentListFile))
+        if (!string.IsNullOrWhiteSpace(this.ExternalDocumentListFile))
         {
-            arguments += $"-ExternalDocumentListFile {this.ExternalDocumentListFile} ";
+            builder.AppendSwitchIfNotNull("-ExternalDocumentListFile ", this.ExternalDocumentListFile);
         }
 
-        if (!string.IsNullOrEmpty(this.NamespaceUriUniquePart))
+        if (!string.IsNullOrWhiteSpace(this.NamespaceUriUniquePart))
         {
-            arguments += $"-NamespaceUriUniquePart {this.NamespaceUriUniquePart} ";
+            builder.AppendSwitchIfNotNull("-NamespaceUriUniquePart ", this.NamespaceUriUniquePart);
         }
 
-        if (!string.IsNullOrEmpty(this.ManifestInfo))
+        if (!string.IsNullOrWhiteSpace(this.ManifestInfo))
         {
-            arguments += $"-ManifestInfo {this.ManifestInfo} ";
+            builder.AppendSwitchIfNotNull("-ManifestInfo ", this.ManifestInfo);
         }
 
-        return arguments;
+        return builder.ToString();
     }
 
     /// <summary>
@@ -78,8 +79,8 @@ public partial class GenerateSbom : ToolTask
             return false;
         }
 
-        var eventLevel = ValidateAndAssignVerbosity();
-        SetOutputImportance(eventLevel);
+        ValidateAndAssignVerbosity();
+        SetOutputImportance();
         return true;
     }
 
@@ -88,12 +89,11 @@ public partial class GenerateSbom : ToolTask
     /// it to "High" ensures all output from the SBOM CLI is printed to
     /// Visual Studio's output console; otherwise, it is hidden.
     /// </summary>
-    /// <param name="eventLevel"></param>
-    private void SetOutputImportance(EventLevel eventLevel)
+    private void SetOutputImportance()
     {
         this.StandardOutputImportance = "High";
 
-        if (eventLevel == EventLevel.Critical)
+        if (this.Verbosity.ToLower().Equals("Fatal"))
         {
             this.StandardOutputImportance = "Low";
         }
