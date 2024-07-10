@@ -14,6 +14,7 @@
 
     <!--Set the SBOM CLI Tool path. This variable is only used in SbomCLIToolTask.cs-->
     <SbomToolPath Condition=" '$(MSBuildRuntimeType)' == 'Full'">$(MSBuildThisFileDirectory)\..\tasks\$(GenerateSbom_TFM)\sbom-tool</SbomToolPath>
+    <ManifestFolderName>_manifest</ManifestFolderName>
   </PropertyGroup>
   
   <!--Based on the MSBuild runtime, GenerateSbom will either pull the GenerateSbomTask or SbomCLIToolTask logic-->
@@ -45,7 +46,17 @@
 
     <!-- Include the generated SBOM contents within the consumer's nuget package -->
     <ItemGroup >
-      <Content Include="$(SbomPathResult)\**">
+      <Content Condition=" '$(MSBuildRuntimeType)' == 'Core'" Include="$(SbomPathResult)\**">
+        <Pack>true</Pack>
+        <PackagePath>_manifest</PackagePath>
+      </Content>
+
+      <Content Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' == '' " Include="$(SbomGenerationBuildDropPath)\$(ManifestFolderName)\**">
+        <Pack>true</Pack>
+        <PackagePath>_manifest</PackagePath>
+      </Content>
+      
+      <Content Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' != '' " Include="$(SbomGenerationManifestDirPath)\$(ManifestFolderName)\**">
         <Pack>true</Pack>
         <PackagePath>_manifest</PackagePath>
       </Content>

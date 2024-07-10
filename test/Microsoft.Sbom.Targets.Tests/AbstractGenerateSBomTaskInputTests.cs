@@ -257,12 +257,12 @@ public abstract class AbstractGenerateSBomTaskInputTests
     /// values to the SBOM API.
     /// </summary>
     [TestMethod]
-    [DataRow("CRITICAL", "Fatal")]
-    [DataRow("informational", "Information")]
-    [DataRow("LoGAlwAys", "Verbose")]
+    [DataRow("FATAL", "Fatal")]
+    [DataRow("information", "Information")]
+    [DataRow("vErBose", "Verbose")]
     [DataRow("Warning", "Warning")]
     [DataRow("eRRor", "Error")]
-    [DataRow("verBOSE", "Verbose")]
+    [DataRow("Debug", "Verbose")]
     public void Sbom_Generation_Assigns_Correct_Verbosity_IgnoreCase(string inputVerbosity, string mappedVerbosity)
     {
         // Arrange

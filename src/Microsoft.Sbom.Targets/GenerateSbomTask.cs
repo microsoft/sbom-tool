@@ -111,78 +111,6 @@ public partial class GenerateSbom : Task
         }
     }
 
-    private string Remove_Spaces_Tabs_Newlines(string value)
-    {
-        return value.Replace("\n", string.Empty).Replace("\t", string.Empty).Replace(" ", string.Empty);
-    }
-
-    /// <summary>
-    /// Ensure all required arguments are non-null/empty,
-    /// and do not contain whitespaces, tabs, or newline characters.
-    /// </summary>
-    /// <returns>True if the required parameters are valid. False otherwise.</returns>
-    private bool ValidateAndSanitizeRequiredParams()
-    {
-        if (string.IsNullOrWhiteSpace(this.BuildDropPath))
-        {
-            Log.LogError($"SBOM generation failed: Empty argument detected for {nameof(this.BuildDropPath)}. Please provide a valid path.");
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(this.PackageSupplier))
-        {
-            Log.LogError($"SBOM generation failed: Empty argument detected for {nameof(this.PackageSupplier)}. Please provide a valid supplier name.");
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(this.PackageName))
-        {
-            Log.LogError($"SBOM generation failed: Empty argument detected for {nameof(this.PackageName)}. Please provide a valid name.");
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(this.PackageVersion))
-        {
-            Log.LogError($"SBOM generation failed: Empty argument detected for {nameof(this.PackageVersion)}. Please provide a valid version number.");
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(this.NamespaceBaseUri))
-        {
-            Log.LogError($"SBOM generation failed: Empty argument detected for {nameof(this.NamespaceBaseUri)}. Please provide a valid URI.");
-            return false;
-        }
-
-        this.PackageSupplier = Remove_Spaces_Tabs_Newlines(this.PackageSupplier);
-        this.PackageName = Remove_Spaces_Tabs_Newlines(this.PackageName);
-        this.PackageVersion = Remove_Spaces_Tabs_Newlines(this.PackageVersion);
-        this.NamespaceBaseUri = this.NamespaceBaseUri.Trim();
-        this.BuildDropPath = this.BuildDropPath.Trim();
-
-        return true;
-    }
-
-    /// <summary>
-    /// Checks the user's input for Verbosity and assigns the
-    /// associated EventLevel value for logging.
-    /// </summary>
-    private EventLevel ValidateAndAssignVerbosity()
-    {
-        if (string.IsNullOrWhiteSpace(this.Verbosity))
-        {
-            Log.LogMessage($"No verbosity level specified. Setting verbosity level at \"{EventLevel.LogAlways}\"");
-            return EventLevel.LogAlways;
-        }
-
-        if (Enum.TryParse(this.Verbosity, true, out EventLevel eventLevel))
-        {
-            return eventLevel;
-        }
-
-        Log.LogMessage($"Unrecognized verbosity level specified. Setting verbosity level at \"{EventLevel.LogAlways}\"");
-        return EventLevel.LogAlways;
-    }
-
     /// <summary>
     /// Check for ManifestInfo and create an SbomSpecification accordingly.
     /// </summary>
@@ -195,27 +123,5 @@ public partial class GenerateSbom : Task
         }
 
         return null;
-    }
-
-    /// <summary>
-    /// Ensure a valid NamespaceUriUniquePart is provided.
-    /// </summary>
-    /// <returns>True if the Namespace URI unique part is valid. False otherwise.</returns>
-    private bool ValidateAndSanitizeNamespaceUriUniquePart()
-    {
-        // Ensure the NamespaceUriUniquePart is valid if provided.
-        if (!string.IsNullOrWhiteSpace(this.NamespaceUriUniquePart)
-            && (!Guid.TryParse(this.NamespaceUriUniquePart, out _)
-            || this.NamespaceUriUniquePart.Equals(Guid.Empty.ToString())))
-        {
-            Log.LogError($"SBOM generation failed: NamespaceUriUniquePart '{this.NamespaceUriUniquePart}' must be a valid unique GUID.");
-            return false;
-        }
-        else if (!string.IsNullOrWhiteSpace(this.NamespaceUriUniquePart))
-        {
-            this.NamespaceUriUniquePart = this.NamespaceUriUniquePart.Trim();
-        }
-
-        return true;
     }
 }

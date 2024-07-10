@@ -46,7 +46,7 @@
    <Target Name="AddSbomToolToPackage" AfterTargets="Build">
     <MSBuild Projects="..\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" Properties="TargetFramework=$(SbomCLIToolTargetFramework)" Targets="Publish" />
     <ItemGroup>
-      <Content  Include="..\Microsoft.Sbom.Tool\bin\$(Configuration)\$(SbomCLIToolTargetFramework)\publish\*" Pack="true">
+      <Content Include="..\Microsoft.Sbom.Tool\bin\$(Configuration)\$(SbomCLIToolTargetFramework)\publish\**" Pack="true">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         <PackageCopyToOutput>true</PackageCopyToOutput>
         <PackagePath>\tasks\net472\sbom-tool\</PackagePath>
@@ -73,9 +73,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
-    <Compile Remove="**/*.*" />
-    <Compile Include="GenerateSbom.cs" />
-    <Compile Include="SbomCLIToolTask.cs" />
+    <Compile Remove="GenerateSbomTask.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net472'">
