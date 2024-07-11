@@ -5,7 +5,6 @@ namespace Microsoft.Sbom.Api.Utils;
 
 internal static class Events
 {
-    #region Generation
     internal const string SBOMGenerationWorkflow = "Total generation time";
     internal const string SBOMParseMetadata = "Total metadata parsing time";
     internal const string FilesGeneration = "Files generation time";
@@ -14,6 +13,5 @@ internal static class Events
     internal const string MetadataBuilder = "Metadata build time for {0} format";
     internal const string ExternalDocumentReferenceGeneration = "External document reference generation time";
 
-    #endregion
     internal const string SBOMValidationWorkflow = "Total validation time";
 }
