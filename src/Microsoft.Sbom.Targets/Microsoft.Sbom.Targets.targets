@@ -20,7 +20,23 @@
   <!--Based on the MSBuild runtime, GenerateSbom will either pull the GenerateSbomTask or SbomCLIToolTask logic-->
   <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbom" AssemblyFile="$(MSBuildThisFileDirectory)\..\tasks\$(GenerateSbom_TFM)\Microsoft.Sbom.Targets.dll" />
 
-  <Import Project="$(MSBuildThisFileDirectory)\Microsoft.Sbom.Targets.props" />
+  <PropertyGroup>
+    <GenerateSBOM Condition=" '$(GenerateSBOM)' == '' ">false</GenerateSBOM>
+    <SbomGenerationBuildDropPath Condition=" '$(SbomGenerationBuildDropPath)' == '' ">$(OutDir)</SbomGenerationBuildDropPath>
+    <SbomGenerationBuildComponentPath Condition=" '$(SbomGenerationBuildComponentPath)' == '' ">$(MSBuildProjectDirectory)</SbomGenerationBuildComponentPath>
+    <SbomGenerationPackageSupplier Condition=" '$(SbomGenerationPackageSupplier)' == '' And $(Authors) != '' ">$(Authors)</SbomGenerationPackageSupplier>
+    <SbomGenerationPackageSupplier Condition=" '$(SbomGenerationPackageSupplier)' == '' And $(Authors) == '' ">$(AssemblyName)</SbomGenerationPackageSupplier>
+    <SbomGenerationPackageName Condition=" '$(SbomGenerationPackageName)' == '' And $(PackageId) != '' ">$(PackageId)</SbomGenerationPackageName>
+    <SbomGenerationPackageName Condition=" '$(SbomGenerationPackageName)' == '' And $(PackageId) == '' ">$(AssemblyName)</SbomGenerationPackageName>
+    <SbomGenerationPackageVersion Condition=" '$(SbomGenerationPackageVersion)' == '' And $(Version) != '' ">$(Version)</SbomGenerationPackageVersion>
+    <SbomGenerationPackageVersion Condition=" '$(SbomGenerationPackageVersion)' == '' And $(Version) == '' ">1.0.0</SbomGenerationPackageVersion>
+    <SbomGenerationNamespaceBaseUri Condition=" '$(SbomGenerationNamespaceBaseUri)' == '' ">http://spdx.org/spdxdocs/$(SbomGenerationPackageName)</SbomGenerationNamespaceBaseUri>
+    <SbomGenerationFetchLicenseInformation Condition=" '$(SbomGenerationFetchLicenseInformation)' == '' ">false</SbomGenerationFetchLicenseInformation>
+    <SbomGenerationEnablePackageMetadataParsing Condition=" '$(SbomGenerationEnablePackageMetadataParsing)' == '' ">false</SbomGenerationEnablePackageMetadataParsing>
+    <SbomGenerationVerbosity Condition=" '$(SbomGenerationVerbosity)' == '' ">information</SbomGenerationVerbosity>
+    <SbomGenerationManifestInfo Condition=" '$(SbomGenerationManifestInfo)' == '' ">SPDX:2.2</SbomGenerationManifestInfo>
+    <SbomGenerationDeleteManifestDirIfPresent Condition=" '$(SbomGenerationDeleteManifestDirIfPresent)' == '' ">true</SbomGenerationDeleteManifestDirIfPresent>
+  </PropertyGroup>
 
   <Target Name="GenerateSbomTarget" AfterTargets="Build" Condition=" '$(GenerateSBOM)' ==  'true'">
     <!--TODO: Add arguments for ToolTask-->
