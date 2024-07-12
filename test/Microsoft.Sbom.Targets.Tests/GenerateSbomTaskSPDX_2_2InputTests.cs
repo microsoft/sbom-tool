@@ -3,8 +3,6 @@
 
 namespace Microsoft.Sbom.Targets.Tests;
 
-using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 /// <summary>
@@ -13,5 +11,5 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 [TestClass]
 public class GenerateSbomTaskSPDX_2_2InputTests : AbstractGenerateSBomTaskInputTests
 {
-    internal override SbomSpecification SbomSpecification => Constants.SPDX22Specification;
+    internal override string SbomSpecification => "SPDX:2.2";
 }

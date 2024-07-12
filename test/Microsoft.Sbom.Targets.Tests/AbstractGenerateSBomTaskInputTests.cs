@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
-using Microsoft.Sbom.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -15,7 +14,7 @@ namespace Microsoft.Sbom.Targets.Tests;
 [TestClass]
 public abstract class AbstractGenerateSBomTaskInputTests
 {
-    internal abstract SbomSpecification SbomSpecification { get; }
+    internal abstract string SbomSpecification { get; }
 
     internal static readonly string CurrentDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
     internal static readonly string DefaultManifestDirectory = Path.Combine(CurrentDirectory, "_manifest");
@@ -78,7 +77,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
             PackageName = packageName,
             PackageVersion = packageVersion,
             NamespaceBaseUri = namespaceBaseUri,
-            ManifestInfo = this.SbomSpecification.ToString(),
+            ManifestInfo = this.SbomSpecification,
             BuildEngine = this.buildEngine.Object
         };
 
@@ -137,7 +136,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
             PackageName = PackageName,
             PackageVersion = PackageVersion,
             NamespaceBaseUri = namespaceBaseUri,
-            ManifestInfo = this.SbomSpecification.ToString(),
+            ManifestInfo = this.SbomSpecification,
             BuildEngine = this.buildEngine.Object
         };
 
@@ -173,7 +172,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
             PackageVersion = PackageVersion,
             NamespaceBaseUri = NamespaceBaseUri,
             NamespaceUriUniquePart = namespaceUriUniquePart,
-            ManifestInfo = this.SbomSpecification.ToString(),
+            ManifestInfo = this.SbomSpecification,
             BuildEngine = this.buildEngine.Object
         };
 
@@ -204,7 +203,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
             PackageName = PackageName,
             PackageVersion = PackageVersion,
             NamespaceBaseUri = NamespaceBaseUri,
-            ManifestInfo = this.SbomSpecification.ToString(),
+            ManifestInfo = this.SbomSpecification,
             Verbosity = null,
             BuildEngine = this.buildEngine.Object
         };
@@ -239,7 +238,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
             PackageVersion = PackageVersion,
             NamespaceBaseUri = NamespaceBaseUri,
             Verbosity = "Invalid Verbosity",
-            ManifestInfo = this.SbomSpecification.ToString(),
+            ManifestInfo = this.SbomSpecification,
             BuildEngine = this.buildEngine.Object
         };
 
@@ -277,7 +276,7 @@ public abstract class AbstractGenerateSBomTaskInputTests
             PackageVersion = PackageVersion,
             NamespaceBaseUri = NamespaceBaseUri,
             Verbosity = inputVerbosity,
-            ManifestInfo = this.SbomSpecification.ToString(),
+            ManifestInfo = this.SbomSpecification,
             BuildEngine = this.buildEngine.Object
         };
 

@@ -10,8 +10,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Sbom.Api.Utils;
-using Microsoft.Sbom.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
@@ -21,9 +19,10 @@ using Newtonsoft.Json;
 #pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
 internal class GeneratedSbomValidator
 {
-    private readonly SbomSpecification sbomSpecification;
+    private const string SPDX22Specification = "SPDX:2.2";
+    private readonly string sbomSpecification;
 
-    public GeneratedSbomValidator(SbomSpecification sbomSpecification)
+    public GeneratedSbomValidator(string sbomSpecification)
     {
         this.sbomSpecification = sbomSpecification;
     }
@@ -36,7 +35,7 @@ internal class GeneratedSbomValidator
         var manifestContent = File.ReadAllText(manifestPath);
         var manifest = JsonConvert.DeserializeObject<dynamic>(manifestContent);
 
-        if (this.sbomSpecification.Equals(Constants.SPDX22Specification))
+        if (this.sbomSpecification.Equals(SPDX22Specification))
         {
             // Check the manifest has expected file data
             var filesValue = manifest["files"];
@@ -92,7 +91,7 @@ internal class GeneratedSbomValidator
             }
             else
             {
-                Assert.IsTrue(namespaceValue.Contains($"{expectedNamespaceUriBase.Trim()}/{expectedPackageName}/{expectedPackageVersion}", StringComparison.InvariantCultureIgnoreCase));
+                Assert.IsTrue(namespaceValue.Contains($"{expectedNamespaceUriBase.Trim()}/{expectedPackageName}/{expectedPackageVersion}"));
             }
         }
     }
@@ -128,7 +127,7 @@ internal class GeneratedSbomValidator
 
     private IList<(string, Func<HashAlgorithm>)> GetListOfHashAlgorithmCreators()
     {
-        if (this.sbomSpecification.Equals(Constants.SPDX22Specification))
+        if (this.sbomSpecification.Equals(SPDX22Specification))
         {
             return [("SHA1", SHA1.Create), ("SHA256", SHA256.Create)];
         }
