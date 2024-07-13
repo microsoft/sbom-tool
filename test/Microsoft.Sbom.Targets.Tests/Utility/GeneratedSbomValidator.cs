@@ -42,7 +42,7 @@ internal class GeneratedSbomValidator
             Assert.IsNotNull(filesValue);
 
             var expectedFilesHashes = this.GetBuildDropFileHashes(buildDropPath);
-            Assert.AreEqual(expectedFilesHashes.Count, filesValue.Count);
+            Assert.AreEqual(expectedFilesHashes.Count, filesValue.Count, $"Manifest {manifestPath} has {filesValue.Count} files instead of {expectedFilesHashes.Count}");
             foreach (var file in filesValue)
             {
                 var filePath = Path.GetFullPath(Path.Combine(buildDropPath, (string)file["fileName"]));

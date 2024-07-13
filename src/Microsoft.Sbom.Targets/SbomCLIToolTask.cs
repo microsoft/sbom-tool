@@ -3,6 +3,7 @@
 
 namespace Microsoft.Sbom.Targets;
 
+using System;
 using System.Diagnostics.Tracing;
 using System.IO;
 using Microsoft.Build.Utilities;
@@ -93,7 +94,7 @@ public partial class GenerateSbom : ToolTask
     {
         this.StandardOutputImportance = "High";
 
-        if (this.Verbosity.ToLower().Equals("Fatal"))
+        if (this.Verbosity.ToLower().Equals("fatal"))
         {
             this.StandardOutputImportance = "Low";
         }

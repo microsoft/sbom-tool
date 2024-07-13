@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Sbom.Targets.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,9 +21,14 @@ public abstract class AbstractGenerateSbomTaskTests
 
     internal abstract string SbomSpecificationVersion { get; }
 
-    internal static readonly string CurrentDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+    internal static readonly string CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
     internal static readonly string DefaultManifestDirectory = Path.Combine(CurrentDirectory, "_manifest");
     internal static readonly string TemporaryDirectory = Path.Combine(CurrentDirectory, "_temp");
+    internal static readonly string ExternalDocumentListFile = Path.GetRandomFileName();
+    private static readonly AssemblyConfigurationAttribute AssemblyConfigurationAttribute = typeof(AbstractGenerateSBomTaskInputTests).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>();
+    private static readonly string BuildConfigurationName = AssemblyConfigurationAttribute?.Configuration;
+    internal static string SbomToolPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "src", "Microsoft.Sbom.Tool", "bin", BuildConfigurationName, "net8.0", "publish");
+
     internal const string PackageSupplier = "Test-Microsoft";
     internal const string PackageName = "CoseSignTool";
     internal const string PackageVersion = "0.0.1";
@@ -37,14 +43,8 @@ public abstract class AbstractGenerateSbomTaskTests
 
     internal string SbomSpecificationDirectoryName => $"{this.SbomSpecificationName}_{this.SbomSpecificationVersion}".ToLowerInvariant();
 
-    [TestInitialize]
-    public void Startup()
+    private void CleanupManifestDirectory()
     {
-        // Setup the build engine
-        this.BuildEngine = new Mock<IBuildEngine>();
-        this.Errors = new List<BuildErrorEventArgs>();
-        this.BuildEngine.Setup(x => x.LogErrorEvent(It.IsAny<BuildErrorEventArgs>())).Callback<BuildErrorEventArgs>(e => Errors.Add(e));
-
         // Clean up the manifest directory
         if (Directory.Exists(DefaultManifestDirectory))
         {
@@ -56,9 +56,26 @@ public abstract class AbstractGenerateSbomTaskTests
         {
             Directory.Delete(TemporaryDirectory, true);
         }
+    }
+
+    [TestInitialize]
+    public void Startup()
+    {
+        // Setup the build engine
+        this.BuildEngine = new Mock<IBuildEngine>();
+        this.Errors = new List<BuildErrorEventArgs>();
+        this.BuildEngine.Setup(x => x.LogErrorEvent(It.IsAny<BuildErrorEventArgs>())).Callback<BuildErrorEventArgs>(e => Errors.Add(e));
+
+        this.CleanupManifestDirectory();
 
         this.ManifestPath = Path.Combine(DefaultManifestDirectory, this.SbomSpecificationDirectoryName, "manifest.spdx.json");
         this.GeneratedSbomValidator = new(this.SbomSpecification);
+    }
+
+    [TestCleanup]
+    public void Cleanup()
+    {
+        this.CleanupManifestDirectory();
     }
 
     [TestMethod]
@@ -75,7 +92,7 @@ public abstract class AbstractGenerateSbomTaskTests
             BuildEngine = this.BuildEngine.Object,
             ManifestInfo = this.SbomSpecification,
 #if NET472
-            SbomToolPath = "C:\\Users\\gustavoca\\Repos\\github\\sbom-tool\\src\\Microsoft.Sbom.Tool\\bin\\Debug\\net8.0",
+            SbomToolPath = SbomToolPath,
 #endif
         };
 
@@ -107,6 +124,9 @@ public abstract class AbstractGenerateSbomTaskTests
             NamespaceBaseUri = namespaceBaseUri,
             BuildEngine = this.BuildEngine.Object,
             ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
@@ -133,6 +153,9 @@ public abstract class AbstractGenerateSbomTaskTests
             NamespaceBaseUri = NamespaceBaseUri,
             BuildEngine = this.BuildEngine.Object,
             ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
@@ -183,6 +206,9 @@ public abstract class AbstractGenerateSbomTaskTests
             NamespaceBaseUri = NamespaceBaseUri,
             BuildEngine = this.BuildEngine.Object,
             ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
@@ -208,6 +234,9 @@ public abstract class AbstractGenerateSbomTaskTests
             NamespaceBaseUri = NamespaceBaseUri,
             BuildEngine = this.BuildEngine.Object,
             ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
@@ -231,6 +260,9 @@ public abstract class AbstractGenerateSbomTaskTests
             NamespaceBaseUri = NamespaceBaseUri,
             BuildEngine = this.BuildEngine.Object,
             ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
@@ -255,6 +287,9 @@ public abstract class AbstractGenerateSbomTaskTests
             NamespaceBaseUri = NamespaceBaseUri,
             BuildEngine = this.BuildEngine.Object,
             ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
@@ -279,6 +314,9 @@ public abstract class AbstractGenerateSbomTaskTests
             NamespaceBaseUri = NamespaceBaseUri,
             BuildEngine = this.BuildEngine.Object,
             ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
@@ -306,6 +344,9 @@ public abstract class AbstractGenerateSbomTaskTests
             NamespaceBaseUri = NamespaceBaseUri,
             BuildEngine = this.BuildEngine.Object,
             ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
@@ -334,13 +375,43 @@ public abstract class AbstractGenerateSbomTaskTests
             NamespaceUriUniquePart = uniqueNamespacePart,
             BuildEngine = this.BuildEngine.Object,
             ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
         var result = task.Execute();
 
         // Assert
-        Assert.IsTrue(result);
+        Assert.IsTrue(result, $"{result} is not set to true.");
         this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, CurrentDirectory, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri, expectedNamespaceUriUniquePart: uniqueNamespacePart);
     }
+
+    // TODO: Add test for SBOM Tool not found
+#if NET472
+    [TestMethod]
+    public void Sbom_Generation_Fails_With_Tool_Path_Not_Found()
+    {
+        // Arrange
+        var task = new GenerateSbom
+        {
+            BuildDropPath = CurrentDirectory,
+            PackageSupplier = PackageSupplier,
+            PackageName = PackageName,
+            PackageVersion = PackageVersion,
+            NamespaceBaseUri = NamespaceBaseUri,
+            BuildEngine = this.BuildEngine.Object,
+            ManifestInfo = this.SbomSpecification,
+            SbomToolPath = "C:\\Not-Found\\Path\\",
+        };
+
+        // Act
+        var result = task.Execute();
+
+        // Assert
+        Assert.IsFalse(result);
+        Assert.IsFalse(Directory.Exists(DefaultManifestDirectory));
+    }
+#endif
 }
