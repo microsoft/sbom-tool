@@ -217,9 +217,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
         // Arrange
         // If Verbosity is null, the default value should be Verbose and is printed in the
         // tool's standard output.
-#if !NET472
         var pattern = new Regex("Verbosity=.*Value=Verbose");
-#endif
         var stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
         var task = new GenerateSbom
@@ -243,7 +241,9 @@ public abstract class AbstractGenerateSbomTaskInputTests
 
         // Assert
         Assert.IsTrue(result);
-#if !NET472
+#if NET472
+        Assert.IsTrue(this.messages.Any(msg => pattern.IsMatch(msg.Message)));
+#else
         Assert.IsTrue(pattern.IsMatch(output));
 #endif
     }
@@ -294,7 +294,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
     /// Test to ensure GenerateSbom correctly parses and provides each EventLevel verbosity
     /// values to the SBOM API.
     /// </summary>
-    // Cases where the input Verbosity is more restrictive than `Information` are failing due to this issue: https://github.com/microsoft/sbom-tool/issues/616 
+    // Cases where the input Verbosity is more restrictive than `Information` are failing due to this issue: https://github.com/microsoft/sbom-tool/issues/616
     [TestMethod]
     [DataRow("FATAL", "Fatal", false)]
     [DataRow("information", "Information", true)]
