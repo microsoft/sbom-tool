@@ -15,6 +15,15 @@
     <!--Set the SBOM CLI Tool path. This variable is only used in SbomCLIToolTask.cs-->
     <SbomToolPath Condition=" '$(MSBuildRuntimeType)' == 'Full'">$(MSBuildThisFileDirectory)\..\tasks\$(GenerateSbom_TFM)\sbom-tool</SbomToolPath>
     <ManifestFolderName>_manifest</ManifestFolderName>
+    <SbomSpecification>spdx_2.2</SbomSpecification>
+  </PropertyGroup>
+
+  <!-- Copy the SBOM files to each respective target framework folder within the .nupkg -->
+  <PropertyGroup>
+    <TargetsForTfmSpecificBuildOutput>
+      $(TargetsForTfmSpecificBuildOutput);CopySbomOutput
+    </TargetsForTfmSpecificBuildOutput>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.sha256</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
   
   <!--Based on the MSBuild runtime, GenerateSbom will either pull the GenerateSbomTask or SbomCLIToolTask logic-->
@@ -58,23 +67,34 @@
       <Output TaskParameter="SbomPath" PropertyName="SbomPathResult" />
     </GenerateSbom>
     <Message Importance="High" Text="Task result: $(SbomPathResult)" />
+  </Target>
 
-    <!-- Include the generated SBOM contents within the consumer's nuget package -->
-    <ItemGroup >
-      <Content Condition=" '$(MSBuildRuntimeType)' == 'Core'" Include="$(SbomPathResult)\**">
-        <Pack>true</Pack>
-        <PackagePath>_manifest</PackagePath>
-      </Content>
+  <!-- Specify the SBOM files to copy into the nuget package -->
+  <Target Name="CopySbomOutput" DependsOnTargets="GenerateSbomTarget">
+    <ItemGroup>
+      <!--Add manifest and SHA file from the GenerateSbomTask execution-->
+      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Core'"
+								  Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json"
+								  TargetPath="_manifest/$(SbomSpecification)/manifest.spdx.json"/>
+      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Core'"
+								  Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json.sha256"
+								  TargetPath="_manifest/$(SbomSpecification)/manifest.spdx.json.sha256"/>
 
-      <Content Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' == '' " Include="$(SbomGenerationBuildDropPath)\$(ManifestFolderName)\**">
-        <Pack>true</Pack>
-        <PackagePath>_manifest</PackagePath>
-      </Content>
-      
-      <Content Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' != '' " Include="$(SbomGenerationManifestDirPath)\$(ManifestFolderName)\**">
-        <Pack>true</Pack>
-        <PackagePath>_manifest</PackagePath>
-      </Content>
+      <!--Add manifest and SHA file from the SbomCLIToolTask execution from the default manifest path -->
+      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' == ''"
+								  Include="$(SbomGenerationBuildDropPath)\$(ManifestFolderName)\$(SbomSpecification)\manifest.spdx.json"
+								  TargetPath="_manifest/$(SbomSpecification)/manifest.spdx.json"/>
+      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' == ''"
+								  Include="$(SbomGenerationBuildDropPath)\$(ManifestFolderName)\$(SbomSpecification)\manifest.spdx.json.sha256"
+								  TargetPath="_manifest/$(SbomSpecification)/manifest.spdx.json.sha256"/>
+
+      <!--Add manifest and SHA file from the SbomCLIToolTask execution if a manifest directory was specified -->
+      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' != ''"
+								  Include="$(SbomGenerationManifestDirPath)\$(ManifestFolderName)\$(SbomSpecification)\manifest.spdx.json"
+								  TargetPath="_manifest/$(SbomSpecification)/manifest.spdx.json"/>
+      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' != ''"
+								  Include="$(SbomGenerationManifestDirPath)\$(ManifestFolderName)\$(SbomSpecification)\manifest.spdx.json.sha256"
+								  TargetPath="_manifest/$(SbomSpecification)/manifest.spdx.json.sha256"/>
     </ItemGroup>
   </Target>
 </Project>

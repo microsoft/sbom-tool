@@ -3,7 +3,6 @@
 
 namespace Microsoft.Sbom.Targets;
 
-using System.Diagnostics.Tracing;
 using System.IO;
 using Microsoft.Build.Utilities;
 
@@ -97,5 +96,7 @@ public partial class GenerateSbom : ToolTask
         {
             this.StandardOutputImportance = "Low";
         }
+
+        this.LogStandardErrorAsError = true;
     }
 }
