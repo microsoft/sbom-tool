@@ -412,4 +412,42 @@ public abstract class AbstractGenerateSbomTaskTests
         Assert.IsFalse(Directory.Exists(DefaultManifestDirectory));
     }
 #endif
+
+    // This test is failing due to this issue: https://github.com/microsoft/sbom-tool/issues/615
+    [TestMethod]
+    public void Sbom_Fails_To_Generate_Due_To_File_In_Use()
+    {
+        var manifestDirPath = Path.Combine(TemporaryDirectory, "sub-directory");
+        this.ManifestPath = Path.Combine(manifestDirPath, "_manifest", this.SbomSpecificationDirectoryName, "manifest.spdx.json");
+        Directory.CreateDirectory(manifestDirPath);
+        // Arrange
+        var task = new GenerateSbom
+        {
+            BuildDropPath = CurrentDirectory,
+            ManifestDirPath = manifestDirPath,
+            PackageSupplier = PackageSupplier,
+            PackageName = PackageName,
+            PackageVersion = PackageVersion,
+            NamespaceBaseUri = NamespaceBaseUri,
+            BuildEngine = this.BuildEngine.Object,
+            ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
+        };
+
+        // Write JSON content to the manifest file, and create the directory if it doesn't exist
+        var jsonContent = "{}";
+        Directory.CreateDirectory(Path.GetDirectoryName(ManifestPath));
+        File.WriteAllText(ManifestPath, jsonContent);
+        // Open a handle to the manifest file to simulate it being in use
+        using (var fileStream = File.Open(this.ManifestPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+        {
+            // Act
+            var result = task.Execute();
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+    }
 }
