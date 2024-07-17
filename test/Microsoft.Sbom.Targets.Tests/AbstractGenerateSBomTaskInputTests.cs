@@ -14,7 +14,7 @@ using Moq;
 namespace Microsoft.Sbom.Targets.Tests;
 
 [TestClass]
-public abstract class AbstractGenerateSBomTaskInputTests
+public abstract class AbstractGenerateSbomTaskInputTests
 {
     internal abstract string SbomSpecification { get; }
 

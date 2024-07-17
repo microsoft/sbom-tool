@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 /// Class to test the generation of SBOM using SPDX 2.2 specification.
 /// </summary>
 [TestClass]
-public class GenerateSbomTaskSPDX_2_2InputTests : AbstractGenerateSBomTaskInputTests
+public class GenerateSbomTaskSPDX_2_2InputTests : AbstractGenerateSbomTaskInputTests
 {
     internal override string SbomSpecification => "SPDX:2.2";
 }
