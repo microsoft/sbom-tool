@@ -6,6 +6,7 @@
     <SignAssembly>True</SignAssembly>
     <RootNamespace>Microsoft.Sbom.Targets.Tests</RootNamespace>
     <SbomCLIToolTargetFramework>net8.0</SbomCLIToolTargetFramework>
+    <SBOMCLIToolProjectDir>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Tool\</SBOMCLIToolProjectDir>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -20,7 +21,13 @@
   </ItemGroup>
 
   <Target Name="AddSbomToolToPackage" AfterTargets="Build" Condition="$(TargetFramework) == 'net472'">
-    <MSBuild Projects="..\..\src\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" Properties="TargetFramework=$(SbomCLIToolTargetFramework)" Targets="Publish" />
+    <MSBuild Projects="$(SBOMCLIToolProjectDir)Microsoft.Sbom.Tool.csproj" Properties="TargetFramework=$(SbomCLIToolTargetFramework)" Targets="Publish" />
+    <ItemGroup>
+      <_SbomToolFiles Include="$(SBOMCLIToolProjectDir)bin\$(Configuration)\$(SbomCLIToolTargetFramework)\publish\**\*.*">
+        <InProject>false</InProject>
+      </_SbomToolFiles>
+    </ItemGroup>
+    <Copy SourceFiles="@(_SbomToolFiles)" DestinationFolder="$(OutputPath)\sbom-tool\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
 
   <ItemGroup>

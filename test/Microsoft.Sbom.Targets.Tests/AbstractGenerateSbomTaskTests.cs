@@ -25,9 +25,7 @@ public abstract class AbstractGenerateSbomTaskTests
     internal static readonly string DefaultManifestDirectory = Path.Combine(CurrentDirectory, "_manifest");
     internal static readonly string TemporaryDirectory = Path.Combine(CurrentDirectory, "_temp");
     internal static readonly string ExternalDocumentListFile = Path.GetRandomFileName();
-    private static readonly AssemblyConfigurationAttribute AssemblyConfigurationAttribute = typeof(AbstractGenerateSBomTaskInputTests).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>();
-    private static readonly string BuildConfigurationName = AssemblyConfigurationAttribute?.Configuration;
-    internal static string SbomToolPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "src", "Microsoft.Sbom.Tool", "bin", BuildConfigurationName, "net8.0", "publish");
+    internal static string SbomToolPath = Path.Combine(Directory.GetCurrentDirectory(), "sbom-tool");
 
     internal const string PackageSupplier = "Test-Microsoft";
     internal const string PackageName = "CoseSignTool";

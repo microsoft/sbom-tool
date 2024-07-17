@@ -22,15 +22,11 @@ public abstract class AbstractGenerateSBomTaskInputTests
     internal static readonly string TemporaryDirectory = Path.Combine(CurrentDirectory, "_temporary");
     internal static readonly string BuildComponentPath = Path.Combine(CurrentDirectory, "..", "..", "..");
     internal static readonly string ExternalDocumentListFile = Path.GetRandomFileName();
-    private static readonly AssemblyConfigurationAttribute AssemblyConfigurationAttribute = typeof(AbstractGenerateSBomTaskInputTests).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>();
-    private static readonly string BuildConfigurationName = AssemblyConfigurationAttribute?.Configuration;
+    internal static string SbomToolPath = Path.Combine(Directory.GetCurrentDirectory(), "sbom-tool");
     internal const string PackageSupplier = "Test-Microsoft";
     internal const string PackageName = "CoseSignTool";
     internal const string PackageVersion = "0.0.1";
     internal const string NamespaceBaseUri = "https://base0.uri";
-
-    internal static string SbomToolPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "src", "Microsoft.Sbom.Tool", "bin", BuildConfigurationName, "net8.0", "publish");
-
     private Mock<IBuildEngine> buildEngine;
     private List<BuildErrorEventArgs> errors;
 
