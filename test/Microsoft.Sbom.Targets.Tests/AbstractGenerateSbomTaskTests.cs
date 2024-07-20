@@ -68,7 +68,9 @@ public abstract class AbstractGenerateSbomTaskTests
 
         this.ManifestPath = Path.Combine(DefaultManifestDirectory, this.SbomSpecificationDirectoryName, "manifest.spdx.json");
         this.GeneratedSbomValidator = new(this.SbomSpecification);
+#if NET472
         Assert.IsTrue(Directory.Exists(SbomToolPath));
+#endif
     }
 
     [TestCleanup]
