@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <Target Name="AddSbomToolToPackage" AfterTargets="Build" Condition="$(TargetFramework) == 'net472'">
+    <Message Importance="high" Text="Building $(SBOMCLIToolProjectDir)bin\$(Configuration)\$(SbomCLIToolTargetFramework)" />
     <MSBuild Projects="$(SBOMCLIToolProjectDir)Microsoft.Sbom.Tool.csproj" Properties="TargetFramework=$(SbomCLIToolTargetFramework)" Targets="Publish" />
     <ItemGroup>
       <_SbomToolFiles Include="$(SBOMCLIToolProjectDir)bin\$(Configuration)\$(SbomCLIToolTargetFramework)\publish\**\*.*">
