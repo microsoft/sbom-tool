@@ -39,7 +39,6 @@
   </PropertyGroup>
 
   <Target Name="GenerateSbomTarget" AfterTargets="Build" Condition=" '$(GenerateSBOM)' ==  'true'">
-    <!--TODO: Add arguments for ToolTask-->
     <GenerateSbom
         BuildDropPath="$(SbomGenerationBuildDropPath)"
         BuildComponentPath="$(SbomGenerationBuildComponentPath)"
