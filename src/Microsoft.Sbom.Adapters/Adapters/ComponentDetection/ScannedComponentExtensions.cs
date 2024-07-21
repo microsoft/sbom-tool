@@ -22,6 +22,7 @@ public static class ScannedComponentExtensions
         return component.Component switch
         {
             CargoComponent cargoComponent => cargoComponent.ToSbomPackage(component),
+            ConanComponent conanComponent => conanComponent.ToSbomPackage(),
             CondaComponent condaComponent => condaComponent.ToSbomPackage(),
             DockerImageComponent dockerImageComponent => dockerImageComponent.ToSbomPackage(),
             GitComponent gitComponent => gitComponent.ToSbomPackage(),
