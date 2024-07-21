@@ -150,7 +150,7 @@ public class RelationshipsArrayGeneratorTest
     {
         recorder.RecordDocumentId(DocumentId);
         recorder.RecordRootPackageId(RootPackageId);
-        recorder.RecordPackageId(PackageId1);
+        recorder.RecordPackageId(PackageId1, RootPackageId);
         var results = await relationshipsArrayGenerator.GenerateAsync();
 
         Assert.AreEqual(0, results.Count);

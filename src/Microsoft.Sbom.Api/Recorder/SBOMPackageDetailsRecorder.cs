@@ -21,7 +21,7 @@ public class SbomPackageDetailsRecorder : ISbomPackageDetailsRecorder
     private string documentId;
     private readonly ConcurrentBag<string> fileIds = new ConcurrentBag<string>();
     private readonly ConcurrentBag<string> spdxFileIds = new ConcurrentBag<string>();
-    private readonly ConcurrentBag<string> packageIds = new ConcurrentBag<string>();
+    private readonly ConcurrentBag<KeyValuePair<string, string>> packageDependOnIdPairs = new ConcurrentBag<KeyValuePair<string, string>>();
     private readonly ConcurrentBag<KeyValuePair<string, string>> externalDocumentRefIdRootElementPairs = new ConcurrentBag<KeyValuePair<string, string>>();
     private readonly ConcurrentBag<Checksum[]> checksums = new ConcurrentBag<Checksum[]>();
 
@@ -50,17 +50,18 @@ public class SbomPackageDetailsRecorder : ISbomPackageDetailsRecorder
     }
 
     /// <summary>
-    /// Record a packageId that is included in this SBOM.
+    /// Record a packageId and dependon package that is included in this SBOM.
     /// </summary>
     /// <param name="packageId"></param>
-    public void RecordPackageId(string packageId)
+    /// <param name="dependOn"></param>
+    public void RecordPackageId(string packageId, string dependOn)
     {
         if (string.IsNullOrEmpty(packageId))
         {
             throw new ArgumentException($"'{nameof(packageId)}' cannot be null or empty.", nameof(packageId));
         }
 
-        packageIds.Add(packageId);
+        packageDependOnIdPairs.Add(new KeyValuePair<string, string>(packageId, dependOn));
     }
 
     /// <summary>
@@ -84,7 +85,7 @@ public class SbomPackageDetailsRecorder : ISbomPackageDetailsRecorder
             Checksums = checksums.ToList(),
             FileIds = fileIds.ToList(),
             SPDXFileIds = spdxFileIds.ToList(),
-            PackageIds = packageIds.ToList(),
+            PackageIds = packageDependOnIdPairs.ToList(),
             ExternalDocumentReferenceIDs = externalDocumentRefIdRootElementPairs.ToList(),
             RootPackageId = rootPackageId,
             DocumentId = documentId

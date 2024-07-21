@@ -23,10 +23,11 @@ public interface ISbomPackageDetailsRecorder
     void RecordSPDXFileId(string spdxFileId);
 
     /// <summary>
-    /// Record a packageId that is included in this SBOM.
+    /// Record a packageId and dependon package that is included in this SBOM.
     /// </summary>
     /// <param name="packageId"></param>
-    void RecordPackageId(string packageId);
+    /// <param name="dependOn"></param>
+    void RecordPackageId(string packageId, string dependOn);
 
     /// <summary>
     /// Record a externalDocumentReference Id that is included in this SBOM.
