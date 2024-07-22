@@ -29,25 +29,10 @@
   <!--Based on the MSBuild runtime, GenerateSbom will either pull the GenerateSbomTask or SbomCLIToolTask logic-->
   <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbom" AssemblyFile="$(MSBuildThisFileDirectory)\..\tasks\$(GenerateSbom_TFM)\Microsoft.Sbom.Targets.dll" />
 
-  <PropertyGroup>
-    <GenerateSBOM Condition=" '$(GenerateSBOM)' == '' ">false</GenerateSBOM>
-    <SbomGenerationBuildDropPath Condition=" '$(SbomGenerationBuildDropPath)' == '' ">$(OutDir)</SbomGenerationBuildDropPath>
-    <SbomGenerationBuildComponentPath Condition=" '$(SbomGenerationBuildComponentPath)' == '' ">$(MSBuildProjectDirectory)</SbomGenerationBuildComponentPath>
-    <SbomGenerationPackageSupplier Condition=" '$(SbomGenerationPackageSupplier)' == '' And $(Authors) != '' ">$(Authors)</SbomGenerationPackageSupplier>
-    <SbomGenerationPackageSupplier Condition=" '$(SbomGenerationPackageSupplier)' == '' And $(Authors) == '' ">$(AssemblyName)</SbomGenerationPackageSupplier>
-    <SbomGenerationPackageName Condition=" '$(SbomGenerationPackageName)' == '' And $(PackageId) != '' ">$(PackageId)</SbomGenerationPackageName>
-    <SbomGenerationPackageName Condition=" '$(SbomGenerationPackageName)' == '' And $(PackageId) == '' ">$(AssemblyName)</SbomGenerationPackageName>
-    <SbomGenerationPackageVersion Condition=" '$(SbomGenerationPackageVersion)' == '' And $(Version) != '' ">$(Version)</SbomGenerationPackageVersion>
-    <SbomGenerationPackageVersion Condition=" '$(SbomGenerationPackageVersion)' == '' And $(Version) == '' ">1.0.0</SbomGenerationPackageVersion>
-    <SbomGenerationNamespaceBaseUri Condition=" '$(SbomGenerationNamespaceBaseUri)' == '' ">http://spdx.org/spdxdocs/$(SbomGenerationPackageName)"</SbomGenerationNamespaceBaseUri>
-    <SbomGenerationFetchLicenseInformation Condition=" '$(SbomGenerationFetchLicenseInformation)' == '' ">false</SbomGenerationFetchLicenseInformation>
-    <SbomGenerationEnablePackageMetadataParsing Condition=" '$(SbomGenerationEnablePackageMetadataParsing)' == '' ">false</SbomGenerationEnablePackageMetadataParsing>
-    <SbomGenerationVerbosity Condition=" '$(SbomGenerationVerbosity)' == '' ">LogAlways</SbomGenerationVerbosity>
-    <SbomGenerationManifestInfo Condition=" '$(SbomGenerationManifestInfo)' == '' ">SPDX:2.2</SbomGenerationManifestInfo>
-    <SbomGenerationDeleteManifestDirIfPresent Condition=" '$(SbomGenerationDeleteManifestDirIfPresent)' == '' ">true</SbomGenerationDeleteManifestDirIfPresent>
-  </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)\Microsoft.Sbom.Targets.props" />
 
   <Target Name="GenerateSbomTarget" AfterTargets="Build" Condition=" '$(GenerateSBOM)' ==  'true'">
+    <!--TODO: Add arguments for ToolTask-->
     <GenerateSbom
         BuildDropPath="$(SbomGenerationBuildDropPath)"
         BuildComponentPath="$(SbomGenerationBuildComponentPath)"
@@ -73,28 +58,28 @@
   <Target Name="CopySbomOutput" DependsOnTargets="GenerateSbomTarget">
     <ItemGroup>
       <!--Add manifest and SHA file from the GenerateSbomTask execution-->
-      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Core'"
+      <BuildOutputInPackage 
 								  Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json"
-								  TargetPath="_manifest/$(SbomSpecification)/manifest.spdx.json"/>
-      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Core'"
+								  TargetPath="$(ManifestFolderName)/$(SbomSpecification)/manifest.spdx.json"/>
+      <BuildOutputInPackage
+                  Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json.sha256"
+								  TargetPath="$(ManifestFolderName)/$(SbomSpecification)/manifest.spdx.json.sha256"/>
+
+      <!--Add manifest and SHA file from the SbomCLIToolTask execution from the default manifest path --><!--
+      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' == ''"
+								  Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json"
+								  TargetPath="$(ManifestFolderName)/$(SbomSpecification)/manifest.spdx.json"/>
+      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' == ''"
 								  Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json.sha256"
-								  TargetPath="_manifest/$(SbomSpecification)/manifest.spdx.json.sha256"/>
+								  TargetPath="$(ManifestFolderName)/$(SbomSpecification)/manifest.spdx.json.sha256"/>-->
 
-      <!--Add manifest and SHA file from the SbomCLIToolTask execution from the default manifest path -->
-      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' == ''"
-								  Include="$(SbomGenerationBuildDropPath)\$(ManifestFolderName)\$(SbomSpecification)\manifest.spdx.json"
-								  TargetPath="_manifest/$(SbomSpecification)/manifest.spdx.json"/>
-      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' == ''"
-								  Include="$(SbomGenerationBuildDropPath)\$(ManifestFolderName)\$(SbomSpecification)\manifest.spdx.json.sha256"
-								  TargetPath="_manifest/$(SbomSpecification)/manifest.spdx.json.sha256"/>
-
-      <!--Add manifest and SHA file from the SbomCLIToolTask execution if a manifest directory was specified -->
-      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' != ''"
-								  Include="$(SbomGenerationManifestDirPath)\$(ManifestFolderName)\$(SbomSpecification)\manifest.spdx.json"
-								  TargetPath="_manifest/$(SbomSpecification)/manifest.spdx.json"/>
-      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' != ''"
-								  Include="$(SbomGenerationManifestDirPath)\$(ManifestFolderName)\$(SbomSpecification)\manifest.spdx.json.sha256"
-								  TargetPath="_manifest/$(SbomSpecification)/manifest.spdx.json.sha256"/>
+      <!--Add manifest and SHA file from the SbomCLIToolTask execution if a manifest directory was specified --><!--
+      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full'"
+								  Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json"
+								  TargetPath="$(ManifestFolderName)/$(SbomSpecification)/manifest.spdx.json"/>
+      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full'"
+								  Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json.sha256"
+								  TargetPath="$(ManifestFolderName)/$(SbomSpecification)/manifest.spdx.json.sha256"/>-->
     </ItemGroup>
   </Target>
 </Project>

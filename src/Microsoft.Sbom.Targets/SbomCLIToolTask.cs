@@ -14,6 +14,28 @@ public partial class GenerateSbom : ToolTask
     protected override string ToolName => "Microsoft.Sbom.Tool";
 
     /// <summary>
+    /// Executes the SBOM CLI Tool invocation. Need to add extra logic
+    /// to set SbomPath to the directory containing the SBOM.
+    /// </summary>
+    /// <returns></returns>
+    public override bool Execute()
+    {
+        var taskResult = base.Execute();
+        // Set the SbomPath output variable
+        if (taskResult) {
+            if (!string.IsNullOrWhiteSpace(this.ManifestDirPath))
+            {
+                this.SbomPath = this.ManifestDirPath;
+            } else
+            {
+                this.SbomPath = Path.Combine(this.BuildDropPath, "_manifest");
+            }
+        }
+
+        return taskResult;
+    }
+
+    /// <summary>
     /// Get full path to SBOM CLI tool.
     /// </summary>
     /// <returns></returns>
