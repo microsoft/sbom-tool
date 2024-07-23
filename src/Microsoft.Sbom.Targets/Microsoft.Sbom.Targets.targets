@@ -64,22 +64,6 @@
       <BuildOutputInPackage
                   Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json.sha256"
 								  TargetPath="$(ManifestFolderName)/$(SbomSpecification)/manifest.spdx.json.sha256"/>
-
-      <!--Add manifest and SHA file from the SbomCLIToolTask execution from the default manifest path --><!--
-      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' == ''"
-								  Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json"
-								  TargetPath="$(ManifestFolderName)/$(SbomSpecification)/manifest.spdx.json"/>
-      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' == ''"
-								  Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json.sha256"
-								  TargetPath="$(ManifestFolderName)/$(SbomSpecification)/manifest.spdx.json.sha256"/>-->
-
-      <!--Add manifest and SHA file from the SbomCLIToolTask execution if a manifest directory was specified --><!--
-      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full'"
-								  Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json"
-								  TargetPath="$(ManifestFolderName)/$(SbomSpecification)/manifest.spdx.json"/>
-      <BuildOutputInPackage Condition=" '$(MSBuildRuntimeType)' == 'Full'"
-								  Include="$(SbomPathResult)\$(SbomSpecification)\manifest.spdx.json.sha256"
-								  TargetPath="$(ManifestFolderName)/$(SbomSpecification)/manifest.spdx.json.sha256"/>-->
     </ItemGroup>
   </Target>
 </Project>
