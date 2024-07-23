@@ -389,7 +389,6 @@ public abstract class AbstractGenerateSbomTaskTests
         this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, CurrentDirectory, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri, expectedNamespaceUriUniquePart: uniqueNamespacePart);
     }
 
-    // TODO: Add test for SBOM Tool not found
 #if NET472
     [TestMethod]
     public void Sbom_Generation_Fails_With_Tool_Path_Not_Found()
