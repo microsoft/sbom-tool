@@ -4,31 +4,33 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
-using Microsoft.Sbom.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
 namespace Microsoft.Sbom.Targets.Tests;
 
 [TestClass]
-public abstract class AbstractGenerateSBomTaskInputTests
+public abstract class AbstractGenerateSbomTaskInputTests
 {
-    internal abstract SbomSpecification SbomSpecification { get; }
+    internal abstract string SbomSpecification { get; }
 
-    internal static readonly string CurrentDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+    internal static readonly string CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
     internal static readonly string DefaultManifestDirectory = Path.Combine(CurrentDirectory, "_manifest");
     internal static readonly string TemporaryDirectory = Path.Combine(CurrentDirectory, "_temporary");
     internal static readonly string BuildComponentPath = Path.Combine(CurrentDirectory, "..", "..", "..");
     internal static readonly string ExternalDocumentListFile = Path.GetRandomFileName();
+    internal static string SbomToolPath = Path.Combine(Directory.GetCurrentDirectory(), "sbom-tool");
     internal const string PackageSupplier = "Test-Microsoft";
     internal const string PackageName = "CoseSignTool";
     internal const string PackageVersion = "0.0.1";
     internal const string NamespaceBaseUri = "https://base0.uri";
-
     private Mock<IBuildEngine> buildEngine;
     private List<BuildErrorEventArgs> errors;
+    private List<BuildMessageEventArgs> messages;
 
     [TestInitialize]
     public void Startup()
@@ -36,7 +38,9 @@ public abstract class AbstractGenerateSBomTaskInputTests
         // Setup the build engine
         this.buildEngine = new Mock<IBuildEngine>();
         this.errors = new List<BuildErrorEventArgs>();
+        this.messages = new List<BuildMessageEventArgs>();
         this.buildEngine.Setup(x => x.LogErrorEvent(It.IsAny<BuildErrorEventArgs>())).Callback<BuildErrorEventArgs>(e => errors.Add(e));
+        this.buildEngine.Setup(x => x.LogMessageEvent(It.IsAny<BuildMessageEventArgs>())).Callback<BuildMessageEventArgs>(msg => messages.Add(msg));
     }
 
     [TestCleanup]
@@ -68,7 +72,8 @@ public abstract class AbstractGenerateSBomTaskInputTests
         string packageSupplier,
         string packageName,
         string packageVersion,
-        string namespaceBaseUri)
+        string namespaceBaseUri,
+        string sbomToolPath)
     {
         // Arrange.
         var task = new GenerateSbom
@@ -78,8 +83,11 @@ public abstract class AbstractGenerateSBomTaskInputTests
             PackageName = packageName,
             PackageVersion = packageVersion,
             NamespaceBaseUri = namespaceBaseUri,
-            ManifestInfo = this.SbomSpecification.ToString(),
-            BuildEngine = this.buildEngine.Object
+            ManifestInfo = this.SbomSpecification,
+            BuildEngine = this.buildEngine.Object,
+#if NET472
+            SbomToolPath = sbomToolPath,
+#endif
         };
 
         // Act
@@ -91,29 +99,38 @@ public abstract class AbstractGenerateSBomTaskInputTests
 
     private static IEnumerable<object[]> GetNullRequiredParamsData()
     {
-        yield return new object[] { null, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri };
-        yield return new object[] { CurrentDirectory, null, PackageName, PackageVersion, NamespaceBaseUri };
-        yield return new object[] { CurrentDirectory, PackageSupplier, null, PackageVersion, NamespaceBaseUri };
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, null, NamespaceBaseUri };
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, null };
+        yield return new object[] { null, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { CurrentDirectory, null, PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { CurrentDirectory, PackageSupplier, null, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, null, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, null, SbomToolPath };
+#if NET472
+        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, null };
+#endif
     }
 
     private static IEnumerable<object[]> GetEmptyRequiredParamsData()
     {
-        yield return new object[] { string.Empty, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri };
-        yield return new object[] { CurrentDirectory, string.Empty, PackageName, PackageVersion, NamespaceBaseUri };
-        yield return new object[] { CurrentDirectory, PackageSupplier, string.Empty, PackageVersion, NamespaceBaseUri };
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, string.Empty, NamespaceBaseUri };
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, string.Empty };
+        yield return new object[] { string.Empty, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { CurrentDirectory, string.Empty, PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { CurrentDirectory, PackageSupplier, string.Empty, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, string.Empty, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, string.Empty, SbomToolPath };
+#if NET472
+        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, string.Empty };
+#endif
     }
 
     private static IEnumerable<object[]> GetWhiteSpace_Tabs_NewLineParamsData()
     {
-        yield return new object[] { " ", PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri };
-        yield return new object[] { CurrentDirectory, "\n", PackageName, PackageVersion, NamespaceBaseUri };
-        yield return new object[] { CurrentDirectory, PackageSupplier, "\t", PackageVersion, NamespaceBaseUri };
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, " \n \t \n \t \n    ", NamespaceBaseUri };
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, "\t \t \t   " };
+        yield return new object[] { " ", PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { CurrentDirectory, "\n", PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { CurrentDirectory, PackageSupplier, "\t", PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, " \n \t \n \t \n    ", NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, "\t \t \t   ", SbomToolPath };
+#if NET472
+        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, "\t \t \t   " };
+#endif
     }
 
     /// <summary>
@@ -137,8 +154,11 @@ public abstract class AbstractGenerateSBomTaskInputTests
             PackageName = PackageName,
             PackageVersion = PackageVersion,
             NamespaceBaseUri = namespaceBaseUri,
-            ManifestInfo = this.SbomSpecification.ToString(),
-            BuildEngine = this.buildEngine.Object
+            ManifestInfo = this.SbomSpecification,
+            BuildEngine = this.buildEngine.Object,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
@@ -173,8 +193,11 @@ public abstract class AbstractGenerateSBomTaskInputTests
             PackageVersion = PackageVersion,
             NamespaceBaseUri = NamespaceBaseUri,
             NamespaceUriUniquePart = namespaceUriUniquePart,
-            ManifestInfo = this.SbomSpecification.ToString(),
-            BuildEngine = this.buildEngine.Object
+            ManifestInfo = this.SbomSpecification,
+            BuildEngine = this.buildEngine.Object,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
@@ -192,9 +215,9 @@ public abstract class AbstractGenerateSBomTaskInputTests
     public void Sbom_Generation_Succeeds_For_Null_Verbosity()
     {
         // Arrange
-        // If Verbosity is null, the default value should be Verbose and is printed in the
+        // If Verbosity is null, the default value should be Information and is printed in the
         // tool's standard output.
-        var pattern = new Regex("Verbosity=.*Value=Verbose");
+        var pattern = new Regex("Verbosity=.*Value=Information");
         var stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
         var task = new GenerateSbom
@@ -204,9 +227,12 @@ public abstract class AbstractGenerateSBomTaskInputTests
             PackageName = PackageName,
             PackageVersion = PackageVersion,
             NamespaceBaseUri = NamespaceBaseUri,
-            ManifestInfo = this.SbomSpecification.ToString(),
+            ManifestInfo = this.SbomSpecification,
             Verbosity = null,
-            BuildEngine = this.buildEngine.Object
+            BuildEngine = this.buildEngine.Object,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
@@ -215,7 +241,11 @@ public abstract class AbstractGenerateSBomTaskInputTests
 
         // Assert
         Assert.IsTrue(result);
+#if NET472
+        Assert.IsTrue(this.messages.Any(msg => pattern.IsMatch(msg.Message)));
+#else
         Assert.IsTrue(pattern.IsMatch(output));
+#endif
     }
 
     /// <summary>
@@ -226,9 +256,9 @@ public abstract class AbstractGenerateSBomTaskInputTests
     public void Sbom_Generation_Succeeds_For_Invalid_Verbosity()
     {
         // Arrange
-        // If an invalid Verbosity is specified, the default value should be Verbose and is printed in the
-        // tool's standard output.
-        var pattern = new Regex("Verbosity=.*Value=Verbose");
+        // If an invalid Verbosity is specified, the default value should be Information. It is also printed in the
+        // tool's standard output for the MSBuild Core task.
+        var pattern = new Regex("Verbosity=.*Value=Information");
         var stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
         var task = new GenerateSbom
@@ -239,8 +269,11 @@ public abstract class AbstractGenerateSBomTaskInputTests
             PackageVersion = PackageVersion,
             NamespaceBaseUri = NamespaceBaseUri,
             Verbosity = "Invalid Verbosity",
-            ManifestInfo = this.SbomSpecification.ToString(),
-            BuildEngine = this.buildEngine.Object
+            ManifestInfo = this.SbomSpecification,
+            BuildEngine = this.buildEngine.Object,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
@@ -249,21 +282,69 @@ public abstract class AbstractGenerateSBomTaskInputTests
 
         // Assert
         Assert.IsTrue(result);
+#if NET472
+        Assert.IsTrue(this.messages.Any(msg => pattern.IsMatch(msg.Message)));
+#else
         Assert.IsTrue(pattern.IsMatch(output));
+#endif
     }
 
+#if !NET472
     /// <summary>
     /// Test to ensure GenerateSbom correctly parses and provides each EventLevel verbosity
     /// values to the SBOM API.
     /// </summary>
     [TestMethod]
-    [DataRow("FATAL", "Fatal")]
-    [DataRow("information", "Information")]
-    [DataRow("vErBose", "Verbose")]
-    [DataRow("Warning", "Warning")]
-    [DataRow("eRRor", "Error")]
-    [DataRow("Debug", "Verbose")]
-    public void Sbom_Generation_Assigns_Correct_Verbosity_IgnoreCase(string inputVerbosity, string mappedVerbosity)
+    [DataRow("FATAL", "Fatal", false)]
+    [DataRow("information", "Information", true)]
+    [DataRow("vErBose", "Verbose", true)]
+    [DataRow("Warning", "Warning", false)]
+    [DataRow("eRRor", "Error", false)]
+    [DataRow("DeBug", "Verbose", true)]
+    public void Sbom_Generation_Assigns_Correct_Verbosity_IgnoreCase(string inputVerbosity, string mappedVerbosity, bool messageShouldBeLogged)
+    {
+        if (!messageShouldBeLogged)
+        {
+            Assert.Inconclusive("Cases where the input Verbosity is more restrictive than `Information` are failing due to this issue: https://github.com/microsoft/sbom-tool/issues/616");
+        }
+
+        // Arrange
+        var pattern = new Regex($"Verbosity=.*Value={mappedVerbosity}");
+        var stringWriter = new StringWriter();
+        Console.SetOut(stringWriter);
+        var task = new GenerateSbom
+        {
+            BuildDropPath = CurrentDirectory,
+            PackageSupplier = PackageSupplier,
+            PackageName = PackageName,
+            PackageVersion = PackageVersion,
+            NamespaceBaseUri = NamespaceBaseUri,
+            Verbosity = inputVerbosity,
+            ManifestInfo = this.SbomSpecification,
+            BuildEngine = this.buildEngine.Object,
+        };
+
+        // Act
+        var result = task.Execute();
+        var output = stringWriter.ToString();
+
+        // Assert
+        Assert.IsTrue(result, $"result: {result} is not set to true");
+        Assert.AreEqual(messageShouldBeLogged, pattern.IsMatch(output));
+    }
+#else
+    /// <summary>
+    /// Test to ensure GenerateSbom correctly parses and provides each verbosity option
+    /// to the SBOM CLI.
+    /// </summary>
+    [TestMethod]
+    [DataRow("FATAL", "Fatal", false)]
+    [DataRow("information", "Information", true)]
+    [DataRow("vErBose", "Verbose", true)]
+    [DataRow("Warning", "Warning", false)]
+    [DataRow("eRRor", "Error", false)]
+    [DataRow("DeBug", "Debug", true)]
+    public void Sbom_Generation_Assigns_Correct_Verbosity_IgnoreCase(string inputVerbosity, string mappedVerbosity, bool messageShouldBeLogged)
     {
         // Arrange
         var pattern = new Regex($"Verbosity=.*Value={mappedVerbosity}");
@@ -277,8 +358,9 @@ public abstract class AbstractGenerateSBomTaskInputTests
             PackageVersion = PackageVersion,
             NamespaceBaseUri = NamespaceBaseUri,
             Verbosity = inputVerbosity,
-            ManifestInfo = this.SbomSpecification.ToString(),
-            BuildEngine = this.buildEngine.Object
+            ManifestInfo = this.SbomSpecification,
+            BuildEngine = this.buildEngine.Object,
+            SbomToolPath = SbomToolPath,
         };
 
         // Act
@@ -286,7 +368,8 @@ public abstract class AbstractGenerateSBomTaskInputTests
         var output = stringWriter.ToString();
 
         // Assert
-        Assert.IsTrue(result);
-        Assert.IsTrue(pattern.IsMatch(output));
+        Assert.IsTrue(result, $"result: {result} is not set to true");
+        Assert.AreEqual(messageShouldBeLogged, this.messages.Any(msg => pattern.IsMatch(msg.Message)));
     }
+#endif
 }

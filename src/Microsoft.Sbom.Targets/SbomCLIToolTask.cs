@@ -93,7 +93,7 @@ public partial class GenerateSbom : ToolTask
     {
         this.StandardOutputImportance = "High";
 
-        if (this.Verbosity.ToLower().Equals("Fatal"))
+        if (this.Verbosity.ToLower().Equals("fatal"))
         {
             this.StandardOutputImportance = "Low";
         }
