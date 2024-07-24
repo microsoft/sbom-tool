@@ -77,7 +77,7 @@ public partial class GenerateSbom
         // EventLevel value for the API.
         if (string.IsNullOrWhiteSpace(this.Verbosity))
         {
-            Log.LogWarning($"No verbosity level specified. Setting verbosity level at Verbose");
+            Log.LogWarning($"No verbosity level specified. Setting verbosity level at {DefaultVerbosity}.");
             this.Verbosity = DefaultVerbosity;
             return DefaultEventLevel;
         }
@@ -97,7 +97,7 @@ public partial class GenerateSbom
             case "fatal":
                 return EventLevel.Critical;
             default:
-                Log.LogWarning($"Unrecognized verbosity level specified. Setting verbosity level at Verbose");
+                Log.LogWarning($"Unrecognized verbosity level specified. Setting verbosity level at {DefaultVerbosity}.");
                 this.Verbosity = DefaultVerbosity;
                 return DefaultEventLevel;
         }

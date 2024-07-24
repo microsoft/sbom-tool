@@ -215,7 +215,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
     public void Sbom_Generation_Succeeds_For_Null_Verbosity()
     {
         // Arrange
-        // If Verbosity is null, the default value should be Verbose and is printed in the
+        // If Verbosity is null, the default value should be Information and is printed in the
         // tool's standard output.
         var pattern = new Regex("Verbosity=.*Value=Information");
         var stringWriter = new StringWriter();
@@ -256,7 +256,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
     public void Sbom_Generation_Succeeds_For_Invalid_Verbosity()
     {
         // Arrange
-        // If an invalid Verbosity is specified, the default value should be Verbose. It is also printed in the
+        // If an invalid Verbosity is specified, the default value should be Information. It is also printed in the
         // tool's standard output for the MSBuild Core task.
         var pattern = new Regex("Verbosity=.*Value=Information");
         var stringWriter = new StringWriter();
