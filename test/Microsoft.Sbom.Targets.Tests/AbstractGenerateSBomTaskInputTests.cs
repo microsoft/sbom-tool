@@ -334,8 +334,8 @@ public abstract class AbstractGenerateSbomTaskInputTests
     }
 #else
     /// <summary>
-    /// Test to ensure GenerateSbom correctly parses and provides each EventLevel verbosity
-    /// values to the SBOM API.
+    /// Test to ensure GenerateSbom correctly parses and provides each verbosity option
+    /// to the SBOM CLI.
     /// </summary>
     [TestMethod]
     [DataRow("FATAL", "Fatal", false)]
