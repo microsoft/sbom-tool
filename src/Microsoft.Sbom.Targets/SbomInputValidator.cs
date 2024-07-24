@@ -13,6 +13,9 @@ using System.Diagnostics.Tracing;
 /// </summary>
 public partial class GenerateSbom
 {
+    private const string DefaultVerbosity = "Information";
+    private const EventLevel DefaultEventLevel = EventLevel.Informational;
+
     /// <summary>
     /// Ensure all required arguments are non-null/empty,
     /// and do not contain whitespaces, tabs, or newline characters.
@@ -75,8 +78,8 @@ public partial class GenerateSbom
         if (string.IsNullOrWhiteSpace(this.Verbosity))
         {
             Log.LogWarning($"No verbosity level specified. Setting verbosity level at Verbose");
-            this.Verbosity = "Verbose";
-            return EventLevel.Verbose;
+            this.Verbosity = DefaultVerbosity;
+            return DefaultEventLevel;
         }
 
         switch (this.Verbosity.ToLower().Trim())
@@ -95,8 +98,8 @@ public partial class GenerateSbom
                 return EventLevel.Critical;
             default:
                 Log.LogWarning($"Unrecognized verbosity level specified. Setting verbosity level at Verbose");
-                this.Verbosity = "Verbose";
-                return EventLevel.Verbose;
+                this.Verbosity = DefaultVerbosity;
+                return DefaultEventLevel;
         }
     }
 
