@@ -74,10 +74,15 @@
 
   <!-- Specify the SBOM files to copy into the nuget package -->
   <Target Name="CopySbomOutput" DependsOnTargets="GenerateSbomTarget">
+    <PropertyGroup>
+      <!--When building frameworks such as net8.0-windows, the platform version is appended to the framework in the NuGet package-->
+      <TargetFrameworkWithPlatformVersion Condition="$(TargetPlatformVersion) != ''">$(TargetFramework)$(TargetPlatformVersion)</TargetFrameworkWithPlatformVersion>
+      <TargetFrameworkWithPlatformVersion Condition="$(TargetPlatformVersion) == ''">$(TargetFramework)</TargetFrameworkWithPlatformVersion>
+    </PropertyGroup>
     <ItemGroup>
       <!--Add manifest and SHA file from the GenerateSbom target execution-->
       <TfmSpecificPackageFile Include="$(SbomPathResult)\$(SbomSpecification)\**">
-        <PackagePath>$(BuildOutputTargetFolder)/$(TargetFramework)/$(ManifestFolderName)/$(SbomSpecification)</PackagePath>
+        <PackagePath>$(BuildOutputTargetFolder)/$(TargetFrameworkWithPlatformVersion)/$(ManifestFolderName)/$(SbomSpecification)</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>
   </Target>
