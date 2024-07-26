@@ -41,10 +41,10 @@
     <SbomGenerationPackageName Condition=" '$(SbomGenerationPackageName)' == '' And $(PackageId) == '' ">$(AssemblyName)</SbomGenerationPackageName>
     <SbomGenerationPackageVersion Condition=" '$(SbomGenerationPackageVersion)' == '' And $(Version) != '' ">$(Version)</SbomGenerationPackageVersion>
     <SbomGenerationPackageVersion Condition=" '$(SbomGenerationPackageVersion)' == '' And $(Version) == '' ">1.0.0</SbomGenerationPackageVersion>
-    <SbomGenerationNamespaceBaseUri Condition=" '$(SbomGenerationNamespaceBaseUri)' == '' ">http://spdx.org/spdxdocs/$(SbomGenerationPackageName)"</SbomGenerationNamespaceBaseUri>
+    <SbomGenerationNamespaceBaseUri Condition=" '$(SbomGenerationNamespaceBaseUri)' == '' ">http://spdx.org/spdxdocs/$(SbomGenerationPackageName)</SbomGenerationNamespaceBaseUri>
     <SbomGenerationFetchLicenseInformation Condition=" '$(SbomGenerationFetchLicenseInformation)' == '' ">false</SbomGenerationFetchLicenseInformation>
     <SbomGenerationEnablePackageMetadataParsing Condition=" '$(SbomGenerationEnablePackageMetadataParsing)' == '' ">false</SbomGenerationEnablePackageMetadataParsing>
-    <SbomGenerationVerbosity Condition=" '$(SbomGenerationVerbosity)' == '' ">LogAlways</SbomGenerationVerbosity>
+    <SbomGenerationVerbosity Condition=" '$(SbomGenerationVerbosity)' == '' ">information</SbomGenerationVerbosity>
     <SbomGenerationManifestInfo Condition=" '$(SbomGenerationManifestInfo)' == '' ">SPDX:2.2</SbomGenerationManifestInfo>
     <SbomGenerationDeleteManifestDirIfPresent Condition=" '$(SbomGenerationDeleteManifestDirIfPresent)' == '' ">true</SbomGenerationDeleteManifestDirIfPresent>
   </PropertyGroup>
