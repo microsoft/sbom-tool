@@ -81,8 +81,8 @@
     </PropertyGroup>
     <ItemGroup>
       <!--Add manifest and SHA file from the GenerateSbom target execution-->
-      <TfmSpecificPackageFile Include="$(SbomPathResult)\$(SbomSpecification)\**">
-        <PackagePath>$(BuildOutputTargetFolder)/$(TargetFrameworkWithPlatformVersion)/$(ManifestFolderName)/$(SbomSpecification)</PackagePath>
+      <TfmSpecificPackageFile Include="$([System.IO.Path]::Combine($(SbomPathResult),$(SbomSpecification)))\**">
+        <PackagePath>$([System.IO.Path]::Combine($(BuildOutputTargetFolder),$(TargetFrameworkWithPlatformVersion),$(ManifestFolderName),$(SbomSpecification)))</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>
   </Target>

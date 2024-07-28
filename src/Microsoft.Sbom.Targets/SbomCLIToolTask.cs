@@ -27,10 +27,12 @@ public partial class GenerateSbom : ToolTask
             var manifestFolderName = "_manifest";
             if (!string.IsNullOrWhiteSpace(this.ManifestDirPath))
             {
-                this.SbomPath = Path.Combine(this.ManifestDirPath, manifestFolderName);
+                var fullManifestDirPath = Path.GetFullPath(this.ManifestDirPath);
+                this.SbomPath = Path.Combine(fullManifestDirPath, manifestFolderName);
             } else
             {
-                this.SbomPath = Path.Combine(this.BuildDropPath, manifestFolderName);
+                var fullBuidDropPath = Path.GetFullPath(this.BuildDropPath);
+                this.SbomPath = Path.Combine(fullBuidDropPath, manifestFolderName);
             }
         }
 
