@@ -97,7 +97,7 @@ public partial class GenerateSbom : ToolTask
     protected override bool ValidateParameters()
     {
         // Validate required args and args that take paths as input.
-        if (!ValidateAndSanitizeRequiredParams() || !ValidateAndSanitizeNamespaceUriUniquePart() || !CreateManifestDirPathDirectory())
+        if (!ValidateAndSanitizeRequiredParams() || !ValidateAndSanitizeNamespaceUriUniquePart())
         {
             return false;
         }
@@ -124,30 +124,30 @@ public partial class GenerateSbom : ToolTask
         this.LogStandardErrorAsError = true;
     }
 
-    /// <summary>
-    /// Create the ManifestDirPath if it's specified by the user
-    /// and doesn't exist. This is automatically done by the
-    /// SBOM API, but not the SBOM CLI tool.
-    /// </summary>
-    /// <returns>Whether the directory creation succeeded</returns>
-    private bool CreateManifestDirPathDirectory()
-    {
-        try
-        {
-            if (!string.IsNullOrWhiteSpace(this.ManifestDirPath))
-            {
-                if (!Directory.Exists(this.ManifestDirPath))
-                {
-                    Directory.CreateDirectory(this.ManifestDirPath);
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Log.LogError($"SBOM generation failed: Failed to create the 'ManifestDirPath' directory due to {e.Message}");
-            return false;
-        }
+    ///// <summary>
+    ///// Create the ManifestDirPath if it's specified by the user
+    ///// and doesn't exist. This is automatically done by the
+    ///// SBOM API, but not the SBOM CLI tool.
+    ///// </summary>
+    ///// <returns>Whether the directory creation succeeded</returns>
+    //private bool CreateManifestDirPathDirectory()
+    //{
+    //    try
+    //    {
+    //        if (!string.IsNullOrWhiteSpace(this.ManifestDirPath))
+    //        {
+    //            if (!Directory.Exists(this.ManifestDirPath))
+    //            {
+    //                Directory.CreateDirectory(this.ManifestDirPath);
+    //            }
+    //        }
+    //    }
+    //    catch (Exception e)
+    //    {
+    //        Log.LogError($"SBOM generation failed: Failed to create the 'ManifestDirPath' directory due to {e.Message}");
+    //        return false;
+    //    }
 
-        return true;
-    }
+    //    return true;
+    //}
 }
