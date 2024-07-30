@@ -3,7 +3,7 @@
 
 namespace Microsoft.Sbom.Targets;
 
-using System.Diagnostics.Tracing;
+using System;
 using System.IO;
 using Microsoft.Build.Utilities;
 
@@ -13,6 +13,31 @@ using Microsoft.Build.Utilities;
 public partial class GenerateSbom : ToolTask
 {
     protected override string ToolName => "Microsoft.Sbom.Tool";
+
+    /// <summary>
+    /// Executes the SBOM CLI Tool invocation. Need to add extra logic
+    /// to set SbomPath to the directory containing the SBOM.
+    /// </summary>
+    /// <returns></returns>
+    public override bool Execute()
+    {
+        var taskResult = base.Execute();
+        // Set the SbomPath output variable
+        if (taskResult) {
+            var manifestFolderName = "_manifest";
+            if (!string.IsNullOrWhiteSpace(this.ManifestDirPath))
+            {
+                var fullManifestDirPath = Path.GetFullPath(this.ManifestDirPath);
+                this.SbomPath = Path.Combine(fullManifestDirPath, manifestFolderName);
+            } else
+            {
+                var fullBuidDropPath = Path.GetFullPath(this.BuildDropPath);
+                this.SbomPath = Path.Combine(fullBuidDropPath, manifestFolderName);
+            }
+        }
+
+        return taskResult;
+    }
 
     /// <summary>
     /// Get full path to SBOM CLI tool.
@@ -97,5 +122,7 @@ public partial class GenerateSbom : ToolTask
         {
             this.StandardOutputImportance = "Low";
         }
+
+        this.LogStandardErrorAsError = true;
     }
 }

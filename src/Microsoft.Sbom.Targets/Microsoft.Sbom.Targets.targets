@@ -12,13 +12,24 @@
     <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Full' ">net472</GenerateSbom_TFM>
     <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Core' ">net8.0</GenerateSbom_TFM>
 
+    <SbomToolBinaryOutputPath>$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),sbom-tool))</SbomToolBinaryOutputPath>
+    <AssemblyFilePath>$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),Microsoft.Sbom.Targets.dll))</AssemblyFilePath>
+
     <!--Set the SBOM CLI Tool path. This variable is only used in SbomCLIToolTask.cs-->
-    <SbomToolPath Condition=" '$(MSBuildRuntimeType)' == 'Full'">$(MSBuildThisFileDirectory)\..\tasks\$(GenerateSbom_TFM)\sbom-tool</SbomToolPath>
+    <SbomToolPath Condition=" '$(MSBuildRuntimeType)' == 'Full'">$(SbomToolBinaryOutputPath)</SbomToolPath>
     <ManifestFolderName>_manifest</ManifestFolderName>
+    <SbomSpecification>spdx_2.2</SbomSpecification>
+  </PropertyGroup>
+
+  <!-- Copy the SBOM files to each respective target framework folder within the .nupkg -->
+  <PropertyGroup>
+    <TargetsForTfmSpecificContentInPackage>
+      $(TargetsForTfmSpecificContentInPackage);CopySbomOutput
+    </TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
   
   <!--Based on the MSBuild runtime, GenerateSbom will either pull the GenerateSbomTask or SbomCLIToolTask logic-->
-  <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbom" AssemblyFile="$(MSBuildThisFileDirectory)\..\tasks\$(GenerateSbom_TFM)\Microsoft.Sbom.Targets.dll" />
+  <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbom" AssemblyFile="$(AssemblyFilePath)" />
 
   <PropertyGroup>
     <GenerateSBOM Condition=" '$(GenerateSBOM)' == '' ">false</GenerateSBOM>
@@ -39,6 +50,7 @@
   </PropertyGroup>
 
   <Target Name="GenerateSbomTarget" AfterTargets="Build" Condition=" '$(GenerateSBOM)' ==  'true'">
+    <Error Condition="'$(BuildOutputTargetFolder)' == ''" Text="The GenerationSbomTarget requires the BuildOutputTargetFolder property to be non-null. Please set a folder name."/>
     <GenerateSbom
         BuildDropPath="$(SbomGenerationBuildDropPath)"
         BuildComponentPath="$(SbomGenerationBuildComponentPath)"
@@ -58,23 +70,20 @@
       <Output TaskParameter="SbomPath" PropertyName="SbomPathResult" />
     </GenerateSbom>
     <Message Importance="High" Text="Task result: $(SbomPathResult)" />
+  </Target>
 
-    <!-- Include the generated SBOM contents within the consumer's nuget package -->
-    <ItemGroup >
-      <Content Condition=" '$(MSBuildRuntimeType)' == 'Core'" Include="$(SbomPathResult)\**">
-        <Pack>true</Pack>
-        <PackagePath>_manifest</PackagePath>
-      </Content>
-
-      <Content Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' == '' " Include="$(SbomGenerationBuildDropPath)\$(ManifestFolderName)\**">
-        <Pack>true</Pack>
-        <PackagePath>_manifest</PackagePath>
-      </Content>
-      
-      <Content Condition=" '$(MSBuildRuntimeType)' == 'Full' And '$(SbomGenerationManifestDirPath)' != '' " Include="$(SbomGenerationManifestDirPath)\$(ManifestFolderName)\**">
-        <Pack>true</Pack>
-        <PackagePath>_manifest</PackagePath>
-      </Content>
+  <!-- Specify the SBOM files to copy into the nuget package -->
+  <Target Name="CopySbomOutput" DependsOnTargets="GenerateSbomTarget">
+    <PropertyGroup>
+      <!--When building frameworks such as net8.0-windows, the platform version is appended to the framework in the NuGet package-->
+      <TargetFrameworkWithPlatformVersion Condition="$(TargetPlatformVersion) != ''">$(TargetFramework)$(TargetPlatformVersion)</TargetFrameworkWithPlatformVersion>
+      <TargetFrameworkWithPlatformVersion Condition="$(TargetPlatformVersion) == ''">$(TargetFramework)</TargetFrameworkWithPlatformVersion>
+    </PropertyGroup>
+    <ItemGroup>
+      <!--Add manifest and SHA file from the GenerateSbom target execution-->
+      <TfmSpecificPackageFile Include="$([System.IO.Path]::Combine($(SbomPathResult),$(SbomSpecification)))\**">
+        <PackagePath>$([System.IO.Path]::Combine($(BuildOutputTargetFolder),$(TargetFrameworkWithPlatformVersion),$(ManifestFolderName),$(SbomSpecification)))</PackagePath>
+      </TfmSpecificPackageFile>
     </ItemGroup>
   </Target>
 </Project>
