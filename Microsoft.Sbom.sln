@@ -49,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Extensions.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Extensions.DependencyInjection.Tests", "test\Microsoft.Sbom.Extensions.DependencyInjection.Tests\Microsoft.Sbom.Extensions.DependencyInjection.Tests.csproj", "{EE4E2E03-7B4C-46E5-B9D2-89E84A18D787}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Tool.Tests", "test\Microsoft.Sbom.Tool.Tests\Microsoft.Sbom.Tool.Tests.csproj", "{FC5A9799-7C44-4BFA-BA22-55DCAF1A1B9F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{EE4E2E03-7B4C-46E5-B9D2-89E84A18D787}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE4E2E03-7B4C-46E5-B9D2-89E84A18D787}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE4E2E03-7B4C-46E5-B9D2-89E84A18D787}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC5A9799-7C44-4BFA-BA22-55DCAF1A1B9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC5A9799-7C44-4BFA-BA22-55DCAF1A1B9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC5A9799-7C44-4BFA-BA22-55DCAF1A1B9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC5A9799-7C44-4BFA-BA22-55DCAF1A1B9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

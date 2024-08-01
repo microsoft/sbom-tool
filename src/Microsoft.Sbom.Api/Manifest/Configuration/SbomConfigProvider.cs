@@ -136,8 +136,6 @@ public class SbomConfigProvider : ISbomConfigProvider
         }
     }
 
-    #region IInternalMetadataProvider implementation
-
     public object GetMetadata(MetadataKey key)
     {
         if (MetadataDictionary.TryGetValue(key, out var value))
@@ -207,10 +205,6 @@ public class SbomConfigProvider : ISbomConfigProvider
         throw new Exception($"Unable to find any provider to generate the namespace.");
     }
 
-    #endregion
-
-    #region Disposable implementation
-
     public void Dispose()
     {
         Dispose(disposing: true);
@@ -240,6 +234,4 @@ public class SbomConfigProvider : ISbomConfigProvider
             await config.Value.DisposeAsync().ConfigureAwait(false);
         }
     }
-
-    #endregion
 }

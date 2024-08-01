@@ -23,15 +23,15 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@379614612a29c9e28f31f39a59013eb8012a51f0 # v3.24.3
+      uses: github/codeql-action/init@4fa2a7953630fd2f3fb380f21be14ede0169dd4f # v3.25.12
       with:
         languages: csharp
 
     - name: Autobuild
-      uses: github/codeql-action/autobuild@379614612a29c9e28f31f39a59013eb8012a51f0 # v3.24.3
+      uses: github/codeql-action/autobuild@4fa2a7953630fd2f3fb380f21be14ede0169dd4f # v3.25.12
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@379614612a29c9e28f31f39a59013eb8012a51f0 # v3.24.3
+      uses: github/codeql-action/analyze@4fa2a7953630fd2f3fb380f21be14ede0169dd4f # v3.25.12

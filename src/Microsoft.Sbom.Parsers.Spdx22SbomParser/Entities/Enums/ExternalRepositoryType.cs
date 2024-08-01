@@ -17,31 +17,13 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
     Justification = "These are enum types that are case sensitive and defined by external code.")]
 public enum ExternalRepositoryType
 {
-    #region Security
     cpe22,
     cpe23,
-
-    #endregion
-
-    #region Persistent-Id
-
     swh,
-
-    #endregion
-
-    #region Package-Manager
-
     maven_central,
     npm,
     nuget,
     bower,
     purl,
-
-    #endregion
-
-    #region Other
-
     idstring
-
-    #endregion
 }
