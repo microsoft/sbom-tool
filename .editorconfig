@@ -521,10 +521,6 @@ dotnet_diagnostic.SA1024.severity = suggestion
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.SA1101.severity = suggestion
 
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1124.md
-# SA1124: Do not use regions
-dotnet_diagnostic.SA1124.severity = suggestion
-
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md
 # SA1200: Using directive should appear within a namespace declaration
 dotnet_diagnostic.SA1200.severity = suggestion

@@ -14,7 +14,6 @@ internal static class Constants
     internal const string SPDXDocumentIdValue = "SPDXRef-DOCUMENT";
     internal const string RootPackageIdValue = "SPDXRef-RootPackage";
     internal const string SPDXRefFile = "SPDXRef-File";
-    #region Headers
 
     internal const string SPDXVersionHeaderName = "spdxVersion";
     internal const string DataLicenseHeaderName = "dataLicense";
@@ -29,16 +28,10 @@ internal static class Constants
     internal const string RelationshipsArrayHeaderName = "relationships";
     internal const string ExternalDocumentRefArrayHeaderName = "externalDocumentRefs";
 
-    #endregion
-
     internal const int ReadBufferSize = 4096;
-
-    #region Value format strings
 
     internal const string SPDXDocumentNameFormatString = "{0} {1}";
     internal const string PackageSupplierFormatString = "Organization: {0}";
-
-    #endregion
 
     /// <summary>
     /// Use if there is no available information for a field.
