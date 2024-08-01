@@ -10,7 +10,7 @@ namespace Microsoft.Sbom.Api.Config.Args;
 /// <summary>
 /// The command line arguments provided for the validate action in ManifestTool.
 /// </summary>
-public class ValidationArgs : CommonArgs
+public class ValidationArgs : GenerationAndValidationCommonArgs
 {
     /// <summary>
     /// Gets or sets the root folder of the drop directory to validate.

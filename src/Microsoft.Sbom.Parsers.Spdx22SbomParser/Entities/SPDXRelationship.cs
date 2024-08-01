@@ -15,7 +15,7 @@ public class SPDXRelationship
     /// Gets or sets defines the type of the relationship between the source and the target element.
     /// </summary>
     [JsonPropertyName("relationshipType")]
-    public SPDXRelationshipType RelationshipType { get; set; }
+    public string RelationshipType { get; set; }
 
     /// <summary>
     /// Gets or sets the id of the target element with whom the source element has a relationship.

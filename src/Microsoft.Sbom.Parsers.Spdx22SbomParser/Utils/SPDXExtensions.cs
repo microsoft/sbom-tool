@@ -77,7 +77,7 @@ public static class SPDXExtensions
             var extRef = new ExternalReference
             {
                 ReferenceCategory = ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(),
-                Type = ExternalRepositoryType.purl,
+                Type = ExternalRepositoryType.purl.ToString(),
                 Locator = packageInfo.PackageUrl,
             };
 

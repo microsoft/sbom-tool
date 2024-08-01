@@ -34,21 +34,18 @@ public class SPDXFile
     /// <summary>
     /// Gets or sets contain the license the SPDX file creator has concluded as the package or alternative values.
     /// </summary>
-    [JsonRequired]
     [JsonPropertyName("licenseConcluded")]
     public string LicenseConcluded { get; set; }
 
     /// <summary>
     /// Gets or sets contains the license information actually found in the file, if any.
     /// </summary>
-    [JsonRequired]
     [JsonPropertyName("licenseInfoInFiles")]
     public IEnumerable<string> LicenseInfoInFiles { get; set; }
 
     /// <summary>
     /// Gets or sets copyright holder of the package, as well as any dates present.
     /// </summary>
-    [JsonRequired]
     [JsonPropertyName("copyrightText")]
     public string FileCopyrightText { get; set; }
 

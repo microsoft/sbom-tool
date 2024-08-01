@@ -62,6 +62,6 @@ public class ConfigurationBuilderTestsBase
         mapper = mapperConfiguration.CreateMapper();
     }
 
-    protected const string JSONConfigWithManifestPath = "{ \"ManifestDirPath\": \"manifestDirPath\"}";
-    protected const string JSONConfigGoodWithManifestInfo = "{ \"ManifestInfo\": [{ \"Name\":\"manifest\", \"Version\":\"1\"}]}";
+    protected const string JSONConfigWithManifestPath = $"{{ \"ManifestDirPath\": \"manifestDirPath\"}}";
+    protected const string JSONConfigGoodWithManifestInfo = $"{{ \"ManifestInfo\": [{{ \"Name\":\"manifest\", \"Version\":\"1\"}}]}}";
 }

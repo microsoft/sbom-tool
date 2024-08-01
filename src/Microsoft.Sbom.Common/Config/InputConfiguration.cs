@@ -143,4 +143,13 @@ public class InputConfiguration : IConfiguration
 
     [DefaultValue(false)]
     public ConfigurationSetting<bool> EnablePackageMetadataParsing { get; set; }
+
+    /// <inheritdoc cref="IConfiguration.SbomDir" />
+    [DirectoryExists]
+    [Path]
+    public ConfigurationSetting<string> SbomDir { get; set; }
+
+    /// <inheritdoc cref="IConfiguration.SbomPath" />
+    [Path]
+    public ConfigurationSetting<string> SbomPath { get; set; }
 }

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
@@ -42,9 +44,18 @@ public class EnumeratorChannel
                     await output.Writer.WriteAsync(value);
                 }
             }
+            catch (ParserException e)
+            {
+                // Don't log this here, as it will be logged by upstream error handling.
+                await errors.Writer.WriteAsync(new FileValidationResult
+                {
+                    ErrorType = ErrorType.InvalidInputFile,
+                    Path = e.Message
+                });
+            }
             catch (Exception e)
             {
-                log.Debug($"Encountered an unknown error while enumerating: {e.Message}");
+                log.Warning($"Encountered an unknown error while enumerating: {e.Message}");
                 await errors.Writer.WriteAsync(new FileValidationResult
                 {
                     ErrorType = ErrorType.Other

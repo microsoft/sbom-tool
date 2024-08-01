@@ -66,7 +66,7 @@ public class ComponentToPackageInfoConverter
                 }
                 catch (Exception e)
                 {
-                    log.Debug($"Encountered an error while processing package {scannedComponent.Component.Id}: {e.Message}");
+                    log.Warning($"Encountered an error while processing package {scannedComponent.Component.Id}: {e.Message}");
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
                         ErrorType = ErrorType.PackageError,

@@ -87,8 +87,6 @@ public class SbomConfig : ISbomConfig, IDisposable, IAsyncDisposable
         JsonSerializer = new ManifestToolJsonSerializer(fileStream);
     }
 
-    #region Disposable implementation
-
     public void Dispose()
     {
         Dispose(disposing: true);
@@ -138,6 +136,4 @@ public class SbomConfig : ISbomConfig, IDisposable, IAsyncDisposable
         fileStream = null;
         JsonSerializer = null;
     }
-
-    #endregion
 }

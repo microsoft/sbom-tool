@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using Serilog;
 
 /// <summary>
 /// Wrapper around file system functions. Used for unit testing.
@@ -17,6 +18,18 @@ using System.Security.Principal;
 [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "This is a Windows only implementation")]
 public class WindowsFileSystemUtils : FileSystemUtils
 {
+    private readonly ILogger logger;
+
+    /// <summary>
+    /// Constructor for <see cref="WindowsFileSystemUtils"/>.
+    /// </summary>
+    /// <param name="logger">Logger to capture any exceptions</param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public WindowsFileSystemUtils(ILogger logger)
+    {
+        this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
     /// <inheritdoc />
     public override bool DirectoryHasReadPermissions(string directoryPath) => this.DirectoryHasRights(directoryPath, FileSystemRights.Read);
 
@@ -49,9 +62,9 @@ public class WindowsFileSystemUtils : FileSystemUtils
                 return accessRules;
             }
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            // TODO Add logger with debug
+            logger.Warning("Unable to obtain directory rights. Exception = {Exception}", e);
             return false;
         }
     }

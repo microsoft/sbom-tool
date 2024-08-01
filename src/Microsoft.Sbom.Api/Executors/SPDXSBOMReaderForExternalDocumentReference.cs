@@ -106,7 +106,7 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternal
                     }
                     catch (HashGenerationException e)
                     {
-                        log.Debug($"Encountered an error while generating hash for file {file}: {e.Message}");
+                        log.Warning($"Encountered an error while generating hash for file {file}: {e.Message}");
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
                             ErrorType = ErrorType.Other,
@@ -115,7 +115,7 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternal
                     }
                     catch (Exception e)
                     {
-                        log.Debug($"Encountered an error while generating externalDocumentReferenceInfo from file {file}: {e.Message}");
+                        log.Warning($"Encountered an error while generating externalDocumentReferenceInfo from file {file}: {e.Message}");
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
                             ErrorType = ErrorType.Other,

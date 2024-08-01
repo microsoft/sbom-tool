@@ -25,7 +25,7 @@ public class OSUtils : IOSUtils
 
     private readonly IEnvironmentWrapper environment;
 
-    private Dictionary<string, string> environmentVariables;
+    private readonly Dictionary<string, string> environmentVariables;
 
     public OSUtils(ILogger logger, IEnvironmentWrapper environment)
     {
@@ -77,7 +77,7 @@ public class OSUtils : IOSUtils
         return IsCaseSensitiveOS() ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
     }
 
-    private bool IsCaseSensitiveOS()
+    public bool IsCaseSensitiveOS()
     {
         var currentOS = GetCurrentOSPlatform();
         var isCaseSensitiveOS = currentOS == OSPlatform.Linux || currentOS == OSPlatform.OSX;

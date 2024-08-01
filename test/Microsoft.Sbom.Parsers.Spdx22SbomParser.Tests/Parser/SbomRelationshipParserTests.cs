@@ -73,7 +73,6 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     }
 
     [DataTestMethod]
-    [DataRow(RelationshipStrings.MalformedJsonRelationshipsStringBadRelationshipType)]
     [DataRow(RelationshipStrings.MalformedJsonRelationshipsString)]
     [TestMethod]
     public void MalformedJsonTest_Throws(string json)

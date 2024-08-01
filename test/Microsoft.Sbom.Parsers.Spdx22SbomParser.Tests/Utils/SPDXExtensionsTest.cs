@@ -44,7 +44,12 @@ public class SPDXExtensionsTest
         spdxPackage.AddPackageUrls(packageInfo);
         var externalRef = spdxPackage.ExternalReferences.First();
         Assert.AreEqual(ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(), externalRef.ReferenceCategory);
-        Assert.AreEqual(ExternalRepositoryType.purl, externalRef.Type);
+
+        // ExternalRepositoryTypes are deserialized as strings for portability when handling 3P SBOMs,
+        // but in the context of this test we expect the value to align with a known enum value. So
+        // convert to enum for comparison.
+        Enum.TryParse<ExternalRepositoryType>(externalRef.Type, out var refType);
+        Assert.AreEqual(ExternalRepositoryType.purl, refType);
         Assert.AreEqual(PackageUrl, externalRef.Locator);
     }
 
@@ -84,7 +89,12 @@ public class SPDXExtensionsTest
         var externalRef = spdxPackage.ExternalReferences.First();
 
         Assert.AreEqual(ReferenceCategory.PACKAGE_MANAGER.ToNormalizedString(), externalRef.ReferenceCategory);
-        Assert.AreEqual(ExternalRepositoryType.purl, externalRef.Type);
+
+        // ExternalRepositoryTypes are deserialized as strings for portability when handling 3P SBOMs,
+        // but in the context of this test we expect the value to align with a known enum value. So
+        // convert to enum for comparison.
+        Enum.TryParse<ExternalRepositoryType>(externalRef.Type, out var refType);
+        Assert.AreEqual(ExternalRepositoryType.purl, refType);
         Assert.AreEqual(expectedUrl, externalRef.Locator);
     }
 

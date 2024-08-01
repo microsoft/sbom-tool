@@ -50,8 +50,6 @@ public enum MetadataKey
     /// these variables, go to
     /// https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml#build-variables-devops-services
     /// </summary>
-    #region Azure DevOps Pipelines metadata
-
     Build_BuildId,
     Build_DefinitionName,
     Build_Repository_Uri,
@@ -62,6 +60,4 @@ public enum MetadataKey
     ImageVersion,
     OrganizationId,
     ProjectId
-
-    #endregion
 }

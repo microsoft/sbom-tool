@@ -32,6 +32,11 @@ public class DirectoryExistsValidator : ConfigValidator
                 && paramValue is string value
                 && !string.IsNullOrEmpty(value))
             {
+                if (fileSystemUtils.FileExists(value))
+                {
+                    throw new ValidationArgException($"{paramName} '{value}' must be a directory, not a file");
+                }
+
                 if (!fileSystemUtils.DirectoryExists(value))
                 {
                     throw new ValidationArgException($"{paramName} directory not found for '{value}'");

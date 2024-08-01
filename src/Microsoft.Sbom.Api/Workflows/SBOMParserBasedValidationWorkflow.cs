@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -43,8 +44,9 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
     private readonly ValidationResultGenerator validationResultGenerator;
     private readonly IOutputWriter outputWriter;
     private readonly IFileSystemUtils fileSystemUtils;
+    private readonly IOSUtils osUtils;
 
-    public SbomParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ILogger log, IManifestParserProvider manifestParserProvider, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils)
+    public SbomParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ILogger log, IManifestParserProvider manifestParserProvider, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils, IOSUtils osUtils)
     {
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.signValidationProvider = signValidationProvider ?? throw new ArgumentNullException(nameof(signValidationProvider));
@@ -56,6 +58,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         this.validationResultGenerator = validationResultGenerator ?? throw new ArgumentNullException(nameof(validationResultGenerator));
         this.outputWriter = outputWriter ?? throw new ArgumentNullException(nameof(outputWriter));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+        this.osUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
     }
 
     public async Task<bool> RunAsync()
@@ -88,6 +91,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                         if (!signValidator.Validate())
                         {
                             log.Error("Sign validation failed.");
+                            validFailures = new List<FileValidationResult> { new FileValidationResult { ErrorType = ErrorType.ManifestFileSigningError } };
                             return false;
                         }
                     }
@@ -106,6 +110,12 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                         {
                             case FilesResult filesResult:
                                 (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(filesResult.Files);
+                                var invalidInputFiles = fileValidationFailures.Where(f => f.ErrorType == ErrorType.InvalidInputFile).ToList();
+                                if (invalidInputFiles.Count != 0)
+                                {
+                                    throw new InvalidDataException($"Your manifest file is malformed. {invalidInputFiles.First().Path}");
+                                }
+
                                 break;
                             case PackagesResult packagesResult:
                                 var packages = packagesResult.Packages.ToList();
@@ -190,15 +200,21 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
     private void LogIndividualFileResults(IEnumerable<FileValidationResult> validFailures)
     {
-        if (validFailures == null)
+        if (validFailures == null || validFailures.Any(v => v.ErrorType == ErrorType.ManifestFileSigningError))
         {
             // We failed to generate the output due to a workflow error.
             return;
         }
 
+        var caseSensitiveComment = !validFailures.Any() || this.osUtils.IsCaseSensitiveOS() ?
+            string.Empty :
+            "\r\n  Note: If the manifest file was originally created using a" +
+            "\r\n        case-sensitive OS, you may also need to validate it" +
+            "\r\n        using a case-sensitive OS.";
+
         Console.WriteLine(string.Empty);
         Console.WriteLine("------------------------------------------------------------");
-        Console.WriteLine("Individual file validation results");
+        Console.WriteLine($"Individual file validation results{caseSensitiveComment}");
         Console.WriteLine("------------------------------------------------------------");
         Console.WriteLine(string.Empty);
 
@@ -232,7 +248,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
     private void LogResultsSummary(ValidationResult validationResultOutput, IEnumerable<FileValidationResult> validFailures)
     {
-        if (validationResultOutput == null || validFailures == null)
+        if (validationResultOutput == null || validFailures == null || validFailures.Any(v => v.ErrorType == ErrorType.ManifestFileSigningError))
         {
             // We failed to generate the output due to a workflow error.
             return;

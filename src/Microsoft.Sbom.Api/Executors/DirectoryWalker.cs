@@ -69,7 +69,7 @@ public class DirectoryWalker
             }
             catch (Exception e)
             {
-                log.Debug($"Encountered an unknown error for {path}: {e.Message}");
+                log.Warning($"Encountered an unknown error for {path}: {e.Message}");
                 await errors.Writer.WriteAsync(new FileValidationResult
                 {
                     ErrorType = ErrorType.Other,

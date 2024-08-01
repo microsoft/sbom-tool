@@ -94,6 +94,17 @@ public class FilesValidator
                 continue;
             }
 
+            if (file.Value == null)
+            {
+                // This generally means that we have case variations in the file names.
+                failures.Add(file.Key, new FileValidationResult
+                {
+                    ErrorType = ErrorType.AdditionalFile,
+                    Path = file.Key,
+                });
+                continue;
+            }
+
             switch (file.Value.FileLocation)
             {
                 case FileLocation.OnDisk:

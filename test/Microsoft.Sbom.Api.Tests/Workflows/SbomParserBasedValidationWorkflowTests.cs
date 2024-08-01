@@ -43,6 +43,8 @@ namespace Microsoft.Sbom.Workflows;
 [TestClass]
 public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBase
 {
+    private const string CaseSensitiveMessageMarker = "case-sensitive";
+
     private readonly Mock<ILogger> mockLogger = new();
     private readonly Mock<IOSUtils> mockOSUtils = new();
     private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new();
@@ -151,6 +153,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
         rootFileFilterMock.Init();
 
+        var osUtilsMock = new Mock<IOSUtils>(MockBehavior.Strict);
+
         var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
@@ -178,10 +182,21 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             filesValidator,
             validationResultGenerator,
             outputWriterMock.Object,
-            fileSystemMock.Object);
+            fileSystemMock.Object,
+            osUtilsMock.Object);
 
-        var result = await validator.RunAsync();
-        Assert.IsTrue(result);
+        var cc = new ConsoleCapture();
+
+        try
+        {
+            var result = await validator.RunAsync();
+            Assert.IsTrue(result);
+        }
+        finally
+        {
+            cc.Restore();
+        }
+
         var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
         var additionalFileErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.AdditionalFile).ToList();
@@ -197,9 +212,12 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var otherErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.Other).ToList();
         Assert.AreEqual(0, otherErrors.Count);
 
+        Assert.IsFalse(cc.CapturedStdOut.Contains(CaseSensitiveMessageMarker), "Case-sensitive marker should not have been output");
+
         configurationMock.VerifyAll();
         signValidatorMock.VerifyAll();
         fileSystemMock.VerifyAll();
+        osUtilsMock.VerifyAll();
     }
 
     [TestMethod]
@@ -291,6 +309,9 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
         rootFileFilterMock.Init();
 
+        var osUtilsMock = new Mock<IOSUtils>(MockBehavior.Strict);
+        osUtilsMock.Setup(x => x.IsCaseSensitiveOS()).Returns(false);
+
         var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
@@ -318,10 +339,21 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             filesValidator,
             validationResultGenerator,
             outputWriterMock.Object,
-            fileSystemMock.Object);
+            fileSystemMock.Object,
+            osUtilsMock.Object);
 
-        var result = await validator.RunAsync();
-        Assert.IsFalse(result);
+        var cc = new ConsoleCapture();
+
+        try
+        {
+            var result = await validator.RunAsync();
+            Assert.IsFalse(result);
+        }
+        finally
+        {
+            cc.Restore();
+        }
+
         var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
         var additionalFileErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.AdditionalFile).ToList();
@@ -340,8 +372,11 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         Assert.AreEqual(1, otherErrors.Count);
         Assert.AreEqual("./child2/grandchild1/file10", otherErrors.First().Path);
 
+        Assert.IsTrue(cc.CapturedStdOut.Contains(CaseSensitiveMessageMarker), "Case-sensitive marker should have been output");
+
         configurationMock.VerifyAll();
         signValidatorMock.VerifyAll();
         fileSystemMock.VerifyAll();
+        osUtilsMock.VerifyAll();
     }
 }

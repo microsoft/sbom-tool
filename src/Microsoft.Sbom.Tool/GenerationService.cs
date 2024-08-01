@@ -50,6 +50,7 @@ public class GenerationService : IHostedService
         }
 
         hostApplicationLifetime.StopApplication();
+        Environment.Exit(Environment.ExitCode);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
