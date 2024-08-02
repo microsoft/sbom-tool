@@ -33,8 +33,8 @@ The custom MSBuild task accepts most of the arguments available for the [SBOM CL
 | `<SbomGenerationExternalDocumentReferenceListFile>` | N/A | No | 
 | `<SbomGenerationFetchLicenseInformation>`           | `false` | No | 
 | `<SbomGenerationEnablePackageMetadataParsing>`      | `false` | No | 
-| `<SbomGenerationVerbosity>`                         | Information | No | 
-| `<SbomGenerationManifestInfo>`                      | SPDX:2.2 | No | 
+| `<SbomGenerationVerbosity>`                         | `Information` | No | 
+| `<SbomGenerationManifestInfo>`                      | `SPDX:2.2` | No | 
 | `<SbomGenerationDeleteManifestDirIfPresent>`        | `true` | No | 
 | `<SbomGenerationManifestDirPath>`                   | N/A | No | 
 
