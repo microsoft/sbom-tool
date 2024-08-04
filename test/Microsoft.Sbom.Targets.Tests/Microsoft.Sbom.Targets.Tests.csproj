@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net8.0;net472</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0</TargetFrameworks>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsPackable>false</IsPackable>
     <SignAssembly>True</SignAssembly>
     <RootNamespace>Microsoft.Sbom.Targets.Tests</RootNamespace>
@@ -15,12 +16,38 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Framework" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.Build.Locator"/>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" />
     <PackageReference Include="Microsoft.CSharp" />
     <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
+  <!--<ItemGroup>
+    <PackageReference Include="Microsoft.Build"/>
+    <PackageReference Include="Microsoft.Build.Framework"/>
+    <PackageReference Include="Microsoft.Build.Utilities.Core"/>
+    <PackageReference Include="Microsoft.CSharp" />
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>-->
+
+  <!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Copy SourceFiles="$([System.IO.Directory]::GetParent($(BundledRuntimeIdentifierGraphFile)))\NuGet.Frameworks.dll"
+          DestinationFolder="$(OutputPath)"
+          ContinueOnError="false" />
+  </Target>-->
+
+  <!-- Copy all the sample projects to the output directory -->
+  <Target Name ="CopyTestProjects" BeforeTargets="Build" Condition="$(TargetFramework) == 'net472'">
+    <ItemGroup>
+      <SampleProjects Include="ProjectSamples\**\*.*">
+        <InProject>false</InProject>
+      </SampleProjects>
+    </ItemGroup>
+    <Copy SourceFiles="@(SampleProjects)" DestinationFolder="$(OutputPath)\ProjectSamples\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+  
   <Target Name="AddSbomToolToPackage" AfterTargets="Build" Condition="$(TargetFramework) == 'net472'">
     <Message Importance="high" Text="Building $(SBOMCLIToolProjectDir)bin\$(Configuration)\$(SbomCLIToolTargetFramework)" />
     <MSBuild Projects="$(SBOMCLIToolProjectDir)Microsoft.Sbom.Tool.csproj" Properties="TargetFramework=$(SbomCLIToolTargetFramework)" Targets="Publish" />
@@ -37,6 +64,10 @@
     <ProjectReference Condition="$(TargetFramework) == 'net472'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net472" />
     <ProjectReference Condition="$(TargetFramework) == 'net8.0'" Include="..\..\src\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" />
     <ProjectReference Condition="$(TargetFramework) == 'net8.0'" Include="..\..\src\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ProjectSamples/ProjectSample1/ProjectSample1.csproj" />
   </ItemGroup>
 
 </Project>

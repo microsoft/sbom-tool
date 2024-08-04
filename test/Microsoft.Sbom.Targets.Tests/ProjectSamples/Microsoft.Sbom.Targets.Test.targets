@@ -1,0 +1,89 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- TODO remove hardcoded str, reference this assembly using MSBuild props instead -->
+
+  <!--TODO we will eventaully want to replace or remove `AfterTargets="Build"`.
+        Including this line means that this code will run at the end of `dotnet build`s of any project that this .targets
+        file is imported to (see line 24 of Microsoft.Sbom.Targets.csproj as an example of importing this file). This is
+        good for testing purposes, but not the behavior we ultimately want. 
+        We will need to discuss with the .NET SDK team if they want this target to be automatically included after any
+        target and if so, which one. They likely know of a nuget packaging target that it would make sense to hook this in with.-->
+
+  <PropertyGroup>
+    <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Full' ">net472</GenerateSbom_TFM>
+    <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Core' ">net8.0</GenerateSbom_TFM>
+
+    <SbomToolBinaryOutputPath>$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,sbom-tool))</SbomToolBinaryOutputPath>
+    <AssemblyFilePath>$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,Microsoft.Sbom.Targets.dll))</AssemblyFilePath>
+
+    <!--Set the SBOM CLI Tool path. This variable is only used in SbomCLIToolTask.cs-->
+    <SbomToolPath Condition=" '$(MSBuildRuntimeType)' == 'Full'">$(SbomToolBinaryOutputPath)</SbomToolPath>
+    <ManifestFolderName>_manifest</ManifestFolderName>
+    <SbomSpecification>spdx_2.2</SbomSpecification>
+  </PropertyGroup>
+
+   <!--Copy the SBOM files to each respective target framework folder within the .nupkg--> 
+  <PropertyGroup>
+    <TargetsForTfmSpecificContentInPackage>
+      $(TargetsForTfmSpecificContentInPackage);CopySbomOutput
+    </TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+  
+  <!--Based on the MSBuild runtime, GenerateSbom will either pull the GenerateSbomTask or SbomCLIToolTask logic-->
+  <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbom" AssemblyFile="$(AssemblyFilePath)" />
+
+  <Target Name="GenerateSbomTarget" AfterTargets="Build" Condition=" '$(GenerateSBOM)' ==  'true'">
+    <Error Condition="'$(BuildOutputTargetFolder)' == ''" Text="The GenerationSbomTarget requires the BuildOutputTargetFolder property to be non-null. Please set a folder name."/>
+    <PropertyGroup>
+      <GenerateSBOM Condition=" '$(GenerateSBOM)' == '' ">false</GenerateSBOM>
+      <SbomGenerationBuildDropPath Condition=" '$(SbomGenerationBuildDropPath)' == '' ">$(OutDir)</SbomGenerationBuildDropPath>
+      <SbomGenerationBuildComponentPath Condition=" '$(SbomGenerationBuildComponentPath)' == '' ">$(MSBuildProjectDirectory)</SbomGenerationBuildComponentPath>
+      <SbomGenerationPackageSupplier Condition=" '$(SbomGenerationPackageSupplier)' == '' And $(Authors) != '' ">$(Authors)</SbomGenerationPackageSupplier>
+      <SbomGenerationPackageSupplier Condition=" '$(SbomGenerationPackageSupplier)' == '' And $(Authors) == '' ">$(AssemblyName)</SbomGenerationPackageSupplier>
+      <SbomGenerationPackageName Condition=" '$(SbomGenerationPackageName)' == '' And $(PackageId) != '' ">$(PackageId)</SbomGenerationPackageName>
+      <SbomGenerationPackageName Condition=" '$(SbomGenerationPackageName)' == '' And $(PackageId) == '' ">$(AssemblyName)</SbomGenerationPackageName>
+      <SbomGenerationPackageVersion Condition=" '$(SbomGenerationPackageVersion)' == '' And $(Version) != '' ">$(Version)</SbomGenerationPackageVersion>
+      <SbomGenerationPackageVersion Condition=" '$(SbomGenerationPackageVersion)' == '' And $(Version) == '' ">1.0.0</SbomGenerationPackageVersion>
+      <SbomGenerationNamespaceBaseUri Condition=" '$(SbomGenerationNamespaceBaseUri)' == '' ">http://spdx.org/spdxdocs/$(SbomGenerationPackageName)</SbomGenerationNamespaceBaseUri>
+      <SbomGenerationFetchLicenseInformation Condition=" '$(SbomGenerationFetchLicenseInformation)' == '' ">false</SbomGenerationFetchLicenseInformation>
+      <SbomGenerationEnablePackageMetadataParsing Condition=" '$(SbomGenerationEnablePackageMetadataParsing)' == '' ">false</SbomGenerationEnablePackageMetadataParsing>
+      <SbomGenerationVerbosity Condition=" '$(SbomGenerationVerbosity)' == '' ">information</SbomGenerationVerbosity>
+      <SbomGenerationManifestInfo Condition=" '$(SbomGenerationManifestInfo)' == '' ">SPDX:2.2</SbomGenerationManifestInfo>
+      <SbomGenerationDeleteManifestDirIfPresent Condition=" '$(SbomGenerationDeleteManifestDirIfPresent)' == '' ">true</SbomGenerationDeleteManifestDirIfPresent>
+    </PropertyGroup>
+
+    <GenerateSbom
+        BuildDropPath="$(SbomGenerationBuildDropPath)"
+        BuildComponentPath="$(SbomGenerationBuildComponentPath)"
+        PackageSupplier="$(SbomGenerationPackageSupplier)"
+        PackageName="$(SbomGenerationPackageName)"
+        PackageVersion="$(SbomGenerationPackageVersion)"
+        NamespaceBaseUri="$(SbomGenerationNamespaceBaseUri)"
+        NamespaceUriUniquePart="$(SbomGenerationNamespaceUriUniquePart)"
+        ExternalDocumentListFile="$(SbomGenerationExternalDocumentReferenceListFile)"
+        FetchLicenseInformation="$(SbomGenerationFetchLicenseInformation)"
+        EnablePackageMetadataParsing="$(SbomGenerationEnablePackageMetadataParsing)"
+        Verbosity="$(SbomGenerationVerbosity)"
+        ManifestInfo="$(SbomGenerationManifestInfo)"
+        DeleteManifestDirIfPresent="$(SbomGenerationDeleteManifestDirIfPresent)"
+        ManifestDirPath="$(SbomGenerationManifestDirPath)"
+        SbomToolPath="$(SbomToolPath)">
+      <Output TaskParameter="SbomPath" PropertyName="SbomPathResult" />
+    </GenerateSbom>
+    <Message Importance="High" Text="Task result: $(SbomPathResult)" />
+  </Target>
+
+  <!-- Specify the SBOM files to copy into the nuget package -->
+  <Target Name="CopySbomOutput" DependsOnTargets="GenerateSbomTarget">
+    <PropertyGroup>
+      <!--When building frameworks such as net8.0-windows, the platform version is appended to the framework in the NuGet package-->
+      <TargetFrameworkWithPlatformVersion Condition="$(TargetPlatformVersion) != ''">$(TargetFramework)$(TargetPlatformVersion)</TargetFrameworkWithPlatformVersion>
+      <TargetFrameworkWithPlatformVersion Condition="$(TargetPlatformVersion) == ''">$(TargetFramework)</TargetFrameworkWithPlatformVersion>
+    </PropertyGroup>
+    <ItemGroup>
+      <!--Add manifest and SHA file from the GenerateSbom target execution-->
+      <TfmSpecificPackageFile Include="$([System.IO.Path]::Combine($(SbomPathResult),$(SbomSpecification)))\**">
+        <PackagePath>$([System.IO.Path]::Combine($(BuildOutputTargetFolder),$(TargetFrameworkWithPlatformVersion),$(ManifestFolderName),$(SbomSpecification)))</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+</Project>

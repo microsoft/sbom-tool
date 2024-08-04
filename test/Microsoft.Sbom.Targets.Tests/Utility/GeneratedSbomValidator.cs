@@ -66,7 +66,7 @@ internal class GeneratedSbomValidator
             Assert.IsNotNull(packagesValue);
             if (string.IsNullOrEmpty(buildComponentPath))
             {
-                Assert.IsTrue(packagesValue.Count == 1);
+                Assert.IsTrue(packagesValue.Count == 1, $"Expected 1 package but actual value was {packagesValue.Count}");
             }
             else
             {
