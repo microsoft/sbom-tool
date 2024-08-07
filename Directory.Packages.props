@@ -21,10 +21,10 @@
         <PackageVersion Include="Microsoft.ComponentDetection.Detectors" Version="$(ComponentDetectionPackageVersion)" />
         <PackageVersion Include="Microsoft.ComponentDetection.Orchestrator" Version="$(ComponentDetectionPackageVersion)" />
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
         <PackageVersion Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
         <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.0" />
-        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
         <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
         <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.10.48" />
