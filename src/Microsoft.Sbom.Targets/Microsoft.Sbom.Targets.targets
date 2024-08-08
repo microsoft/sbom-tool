@@ -20,20 +20,12 @@
     <ManifestFolderName>_manifest</ManifestFolderName>
     <SbomSpecification>spdx_2.2</SbomSpecification>
   </PropertyGroup>
-
-  <!-- Copy the SBOM files to each respective target framework folder within the .nupkg -->
-  <PropertyGroup>
-    <TargetsForTfmSpecificContentInPackage>
-      $(TargetsForTfmSpecificContentInPackage);CopySbomOutput
-    </TargetsForTfmSpecificContentInPackage>
-  </PropertyGroup>
   
   <!--Based on the MSBuild runtime, GenerateSbom will either pull the GenerateSbomTask or SbomCLIToolTask logic-->
   <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbom" AssemblyFile="$(AssemblyFilePath)" />
 
   <PropertyGroup>
     <GenerateSBOM Condition=" '$(GenerateSBOM)' == '' ">false</GenerateSBOM>
-    <SbomGenerationBuildDropPath Condition=" '$(SbomGenerationBuildDropPath)' == '' ">$(OutDir)</SbomGenerationBuildDropPath>
     <SbomGenerationBuildComponentPath Condition=" '$(SbomGenerationBuildComponentPath)' == '' ">$(MSBuildProjectDirectory)</SbomGenerationBuildComponentPath>
     <SbomGenerationPackageSupplier Condition=" '$(SbomGenerationPackageSupplier)' == '' And $(Authors) != '' ">$(Authors)</SbomGenerationPackageSupplier>
     <SbomGenerationPackageSupplier Condition=" '$(SbomGenerationPackageSupplier)' == '' And $(Authors) == '' ">$(AssemblyName)</SbomGenerationPackageSupplier>
@@ -49,10 +41,24 @@
     <SbomGenerationDeleteManifestDirIfPresent Condition=" '$(SbomGenerationDeleteManifestDirIfPresent)' == '' ">true</SbomGenerationDeleteManifestDirIfPresent>
   </PropertyGroup>
 
-  <Target Name="GenerateSbomTarget" AfterTargets="Build" Condition=" '$(GenerateSBOM)' ==  'true'">
+  <!-- After the Nuget Package is generated, we will unzip, scan, generate the SBOM and zip again. -->
+  <Target Name="GenerateSbomTarget" AfterTargets="Pack" Condition=" '$(GenerateSBOM)' ==  'true'" >
     <Error Condition="'$(BuildOutputTargetFolder)' == ''" Text="The GenerationSbomTarget requires the BuildOutputTargetFolder property to be non-null. Please set a folder name."/>
+
+    <!-- Unzip Nuget package, so it can be scanned by the SBOM Task. -->
+    <PropertyGroup>
+      <NugetPackage>
+        $(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg
+      </NugetPackage>
+      <NugetPackageUnzip>
+        $(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg.unzip
+      </NugetPackageUnzip>
+    </PropertyGroup>
+    <Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="$(NugetPackage)" OverwriteReadOnlyFiles="true" />
+
+    <!-- Call the SBOM Task to generate a SBOM. -->
     <GenerateSbom
-        BuildDropPath="$(SbomGenerationBuildDropPath)"
+        BuildDropPath="$(NugetPackageUnzip)"
         BuildComponentPath="$(SbomGenerationBuildComponentPath)"
         PackageSupplier="$(SbomGenerationPackageSupplier)"
         PackageName="$(SbomGenerationPackageName)"
@@ -70,20 +76,9 @@
       <Output TaskParameter="SbomPath" PropertyName="SbomPathResult" />
     </GenerateSbom>
     <Message Importance="High" Text="Task result: $(SbomPathResult)" />
-  </Target>
 
-  <!-- Specify the SBOM files to copy into the nuget package -->
-  <Target Name="CopySbomOutput" DependsOnTargets="GenerateSbomTarget">
-    <PropertyGroup>
-      <!--When building frameworks such as net8.0-windows, the platform version is appended to the framework in the NuGet package-->
-      <TargetFrameworkWithPlatformVersion Condition="$(TargetPlatformVersion) != ''">$(TargetFramework)$(TargetPlatformVersion)</TargetFrameworkWithPlatformVersion>
-      <TargetFrameworkWithPlatformVersion Condition="$(TargetPlatformVersion) == ''">$(TargetFramework)</TargetFrameworkWithPlatformVersion>
-    </PropertyGroup>
-    <ItemGroup>
-      <!--Add manifest and SHA file from the GenerateSbom target execution-->
-      <TfmSpecificPackageFile Include="$([System.IO.Path]::Combine($(SbomPathResult),$(SbomSpecification)))\**">
-        <PackagePath>$([System.IO.Path]::Combine($(BuildOutputTargetFolder),$(TargetFrameworkWithPlatformVersion),$(ManifestFolderName),$(SbomSpecification)))</PackagePath>
-      </TfmSpecificPackageFile>
-    </ItemGroup>
+    <!-- Zip the Nuget package back up and delete the temporary unzipped package. -->
+    <ZipDirectory SourceDirectory="$(NugetPackageUnzip)" DestinationFile="$(NugetPackage)" Overwrite="true" />
+    <RemoveDir Directories="$(NugetPackageUnzip)" />
   </Target>
 </Project>
