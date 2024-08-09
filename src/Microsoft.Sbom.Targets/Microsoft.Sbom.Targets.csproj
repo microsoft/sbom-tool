@@ -60,6 +60,7 @@
         by convention, the .NET SDK will look for build\<Package Id>.props and build\<Package Id>.targets
         for automatic inclusion in the build. -->
     <Content Include="Microsoft.Sbom.Targets.targets" PackagePath="\build" />
+    <Content Include="Microsoft.Sbom.Targets.targets" PackagePath="\buildMultiTargeting" />
   </ItemGroup>
 
   <ItemGroup>
