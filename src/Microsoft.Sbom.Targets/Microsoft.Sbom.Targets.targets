@@ -39,6 +39,7 @@
     <SbomGenerationVerbosity Condition=" '$(SbomGenerationVerbosity)' == '' ">information</SbomGenerationVerbosity>
     <SbomGenerationManifestInfo Condition=" '$(SbomGenerationManifestInfo)' == '' ">SPDX:2.2</SbomGenerationManifestInfo>
     <SbomGenerationDeleteManifestDirIfPresent Condition=" '$(SbomGenerationDeleteManifestDirIfPresent)' == '' ">true</SbomGenerationDeleteManifestDirIfPresent>
+    <UnzipGuid>$([System.Guid]::NewGuid())</UnzipGuid>
   </PropertyGroup>
 
   <!-- After the Nuget Package is generated, we will unzip, scan, generate the SBOM and zip again. -->
@@ -51,7 +52,7 @@
         $(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg
       </NugetPackage>
       <NugetPackageUnzip>
-        $(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg.unzip
+        $(PackageOutputPath)\$(PackageId).$(PackageVersion).$(UnzipGuid).temp
       </NugetPackageUnzip>
     </PropertyGroup>
     <Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="$(NugetPackage)" OverwriteReadOnlyFiles="true" />
@@ -79,6 +80,6 @@
 
     <!-- Zip the Nuget package back up and delete the temporary unzipped package. -->
     <ZipDirectory SourceDirectory="$(NugetPackageUnzip)" DestinationFile="$(NugetPackage)" Overwrite="true" />
-    <RemoveDir Directories="$(NugetPackageUnzip)" />
+    <RemoveDir Directories="$(NugetPackageUnzip)" ContinueOnError="true" />
   </Target>
 </Project>
