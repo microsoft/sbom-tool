@@ -24,20 +24,6 @@
     <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
-  <!--<ItemGroup>
-    <PackageReference Include="Microsoft.Build"/>
-    <PackageReference Include="Microsoft.Build.Framework"/>
-    <PackageReference Include="Microsoft.Build.Utilities.Core"/>
-    <PackageReference Include="Microsoft.CSharp" />
-    <PackageReference Include="Newtonsoft.Json" />
-  </ItemGroup>-->
-
-  <!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Copy SourceFiles="$([System.IO.Directory]::GetParent($(BundledRuntimeIdentifierGraphFile)))\NuGet.Frameworks.dll"
-          DestinationFolder="$(OutputPath)"
-          ContinueOnError="false" />
-  </Target>-->
-
   <!-- Copy all the sample projects to the output directory -->
   <Target Name="CopyTestProjects" BeforeTargets="Build">
     <ItemGroup>
