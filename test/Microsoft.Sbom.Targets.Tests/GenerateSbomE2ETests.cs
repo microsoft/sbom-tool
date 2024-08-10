@@ -18,7 +18,7 @@ public class GenerateSbomE2ETests
 {
     /*
      * The following tests validate the end-to-end workflow for importing the Microsoft.Sbom.Targets.targets
-     * into a .NET project, building it, and validating the generated SBOM contents.
+     * into a .NET project, building it, packing it, and validating the generated SBOM contents.
      *
      * NOTE: These tests should be run serially, as there are issues when multiple tests reference the same
      * .csproj file through the Project object at the same time.
@@ -299,6 +299,73 @@ public class GenerateSbomE2ETests
     }
 
     [TestMethod]
+    public void SbomGenerationFailsForInvalidNamespaceUri()
+    {
+        //Arrange
+        // Create a Project object for ProjectSample1
+        var sampleProject = (Project)project;
+
+        // Get all the expected default properties
+        GetDefaultProperties(sampleProject);
+
+        // Set the TargetFrameworks property to empty. By default, it sets this property to net6.0 and net8.0, which fails for net8.0 builds.
+        sampleProject.SetProperty("TargetFrameworks", string.Empty);
+
+        // Set invalid namespace
+        expectedNamespace = "incorrect_uri";
+        sampleProject.SetProperty("SbomGenerationNamespaceBaseUri", expectedNamespace);
+
+        // Restore, build, and pack the project
+        var logger = new ConsoleLogger();
+
+        // Restore the project to create project.assets.json file
+        var restore = sampleProject.Build("Restore", new[] { logger });
+        Assert.IsTrue(restore, "Failed to restore the project");
+
+        // Next, build the project
+        var build = sampleProject.Build(logger);
+        Assert.IsTrue(build, "Failed to build the project");
+
+        // Ensure the packing step fails
+        var pack = sampleProject.Build("Pack", new[] { logger });
+        Assert.IsFalse(pack, "Packing succeeded when it should have failed");
+    }
+
+    [TestMethod]
+    public void SbomGenerationFailsForInvalidSupplierName()
+    {
+        //Arrange
+        // Create a Project object for ProjectSample1
+        var sampleProject = (Project)project;
+
+        // Get all the expected default properties
+        GetDefaultProperties(sampleProject);
+
+        // Set the TargetFrameworks property to empty. By default, it sets this property to net6.0 and net8.0, which fails for net8.0 builds.
+        sampleProject.SetProperty("TargetFrameworks", string.Empty);
+
+        // Set invalid supplier name
+        sampleProject.SetProperty("Authors", string.Empty);
+        sampleProject.SetProperty("AssemblyName", string.Empty);
+        sampleProject.SetProperty("SbomGenerationPackageSupplier", string.Empty);
+
+        // Restore, build, and pack the project
+        var logger = new ConsoleLogger();
+
+        // Restore the project to create project.assets.json file
+        var restore = sampleProject.Build("Restore", new[] { logger });
+        Assert.IsTrue(restore, "Failed to restore the project");
+
+        // Next, build the project
+        var build = sampleProject.Build(logger);
+        Assert.IsTrue(build, "Failed to build the project");
+
+        // Ensure the packing step fails
+        var pack = sampleProject.Build("Pack", new[] { logger });
+        Assert.IsFalse(pack, "Packing succeeded when it should have failed");
+    }
+
+    [TestMethod]
     public void SbomGenerationSkipsForUnsetGenerateSBOMFlag()
     {
         //Arrange
@@ -343,6 +410,43 @@ public class GenerateSbomE2ETests
 
         // Extract the NuGet package
         ExtractPackage();
+
+        // Validate the SBOM contents inside the NuGet package.
+        this.generatedSbomValidator.AssertSbomIsValid(manifestPath,
+            buildDropPath,
+            expectedPackageName,
+            expectedVersion,
+            expectedSupplier,
+            expectedNamespace,
+            null,
+            projectDirectory);
+    }
+
+    [TestMethod]
+    public void SbomGenerationSucceedsForValidManifestDirPathInMultiTargetedProject()
+    {
+        //Arrange
+        // Create a Project object for ProjectSample1
+        var sampleProject = (Project)project;
+
+        // Get all the expected default properties
+        GetDefaultProperties(sampleProject);
+
+        // Set require params
+        sampleProject.SetProperty("TargetFramework", string.Empty);
+        sampleProject.SetProperty("TargetFrameworks", "net472;net6.0");
+        sampleProject.SetProperty("SbomGenerationManifestDirPath", manifestDirPath);
+
+        // Restore, build, and pack the project
+        RestoreBuildPack(sampleProject);
+
+        // Extract the NuGet package
+        ExtractPackage();
+
+        manifestPath = Path.Combine(manifestDirPath, "_manifest", sbomSpecificationDirectoryName, "manifest.spdx.json");
+
+        // Check if the SBOM exists in the ManifestDirPath
+        Assert.IsTrue(File.Exists(manifestPath));
 
         // Validate the SBOM contents inside the NuGet package.
         this.generatedSbomValidator.AssertSbomIsValid(manifestPath,
