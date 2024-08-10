@@ -44,8 +44,6 @@
 
   <!-- After the Nuget Package is generated, we will unzip, scan, generate the SBOM and zip again. -->
   <Target Name="GenerateSbomTarget" AfterTargets="Pack" Condition=" '$(GenerateSBOM)' ==  'true'" >
-    <Error Condition="'$(BuildOutputTargetFolder)' == ''" Text="The GenerationSbomTarget requires the BuildOutputTargetFolder property to be non-null. Please set a folder name."/>
-
     <!-- Unzip Nuget package, so it can be scanned by the SBOM Task. -->
     <PropertyGroup>
       <NugetPackage>

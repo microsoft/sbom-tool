@@ -10,22 +10,15 @@
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
   </PropertyGroup>
 
+  <!--Ignore errors related to selecting a nuget.config and dependency resolution-->
   <PropertyGroup>
     <NoWarn>$(NoWarn);NU1507;NU5128</NoWarn>
   </PropertyGroup>
-
-
-  <Target Name="Print" BeforeTargets="Build">
-    <Message Importance="high" Text="OUT DIRRRR: $(OutDir) OUTPUT PATH: $(OutputPath)"/>
-    <Message Importance="high" Text="MSBUILIDDD RUNTIMEEEE $(MSBuildRuntimeType)"/>
-    <Message Importance="high" Text="CONTAAAINNNSSS: $(OutDir.Contains($(TargetFramework))) TARGET FRAMEWORKKK: $(TargetFramework)"/>
-  </Target>
-
 
   <!--
       For multi-targeted builds, an extra build seems to run even when the TargetFramework is not set. Therefore,
       The GenerateSbomTarget executes an extra time. To avoid this, we check to see if the TargetFramework is set
   -->
-  <Import Condition="'$(TargetFramework)' != ''" Project="../Microsoft.Sbom.Targets.Test.targets"/>
+  <Import Project="../Microsoft.Sbom.Targets.Test.targets"/>
 
 </Project>
