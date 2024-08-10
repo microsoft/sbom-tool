@@ -25,13 +25,13 @@
   </ItemGroup>
 
   <!-- Copy all the sample projects to the output directory -->
-  <Target Name="CopyTestProjects" BeforeTargets="Build">
+  <Target Name="CopyTestProjects" AfterTargets="Build">
     <ItemGroup>
       <SampleProjects Include="ProjectSamples\**\*.*">
         <InProject>false</InProject>
       </SampleProjects>
     </ItemGroup>
-    <Copy SourceFiles="@(SampleProjects)" DestinationFolder="$(OutputPath)\ProjectSamples\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(SampleProjects)" DestinationFolder="$(OutDir)\ProjectSamples\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
   
   <Target Name="AddSbomToolToPackage" AfterTargets="Build" Condition="$(TargetFramework) == 'net472'">
