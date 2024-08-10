@@ -1,34 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
     <GenerateSBOM>true</GenerateSBOM>
-    <!--<SbomGenerationBuildDropPath>D:\real-sbom\sbom-tool\test\Microsoft.Sbom.Targets.Tests\ProjectSamples\ProjectSample1</SbomGenerationBuildDropPath>
-    <SbomGenerationPackageSupplier>SomeSupplier</SbomGenerationPackageSupplier>
-    <SbomGenerationPackageName>SomeName</SbomGenerationPackageName>
-    <SbomGenerationNamespaceBaseUri>http://sbom</SbomGenerationNamespaceBaseUri>
-    <SbomGenerationVerbosity>Information</SbomGenerationVerbosity>-->
+    <TargetFramework>net6.0</TargetFramework>
+    <Authors>ProjectSample</Authors>
+    <Version>1.2.4</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
   </PropertyGroup>
-  
-  <!--<ItemGroup Condition="'$(MSBuildRuntimeType)' == 'Full'">
-    <Compile Include="SampleLibrary.cs"/>
-  </ItemGroup>
 
-  <Target Condition="'$(MSBuildRuntimeType)' == 'Full'" Name="Build">
-    <Message Importance="high" Text="YOYOYOYO HINT PATH: $(HintPath)" />
-    <Csc
-      Sources="@(Compile)"
-      TargetType="Library"
-      OutputAssembly="bin\SampleLibrary.dll"
-      EmitDebugInformation="true"/>
-    --><!--AdditionalLibPaths="C:\Program Files\dotnet\sdk\8.0.400-preview.0.24324.5\ref"--><!--
-  </Target>-->
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1507;NU5128</NoWarn>
+  </PropertyGroup>
+
 
   <Target Name="Print" BeforeTargets="Build">
     <Message Importance="high" Text="OUT DIRRRR: $(OutDir) OUTPUT PATH: $(OutputPath)"/>
+    <Message Importance="high" Text="MSBUILIDDD RUNTIMEEEE $(MSBuildRuntimeType)"/>
+    <Message Importance="high" Text="CONTAAAINNNSSS: $(OutDir.Contains($(TargetFramework))) TARGET FRAMEWORKKK: $(TargetFramework)"/>
   </Target>
 
 
-  <Import Project="../Microsoft.Sbom.Targets.Test.targets"/>
+  <!--
+      For multi-targeted builds, an extra build seems to run even when the TargetFramework is not set. Therefore,
+      The GenerateSbomTarget executes an extra time. To avoid this, we check to see if the TargetFramework is set
+  -->
+  <Import Condition="'$(TargetFramework)' != ''" Project="../Microsoft.Sbom.Targets.Test.targets"/>
 
 </Project>

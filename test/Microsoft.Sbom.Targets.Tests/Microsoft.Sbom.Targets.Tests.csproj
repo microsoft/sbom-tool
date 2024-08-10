@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net8.0;net472</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net6.0;net472</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net6.0</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsPackable>false</IsPackable>
     <SignAssembly>True</SignAssembly>
     <RootNamespace>Microsoft.Sbom.Targets.Tests</RootNamespace>
-    <SbomCLIToolTargetFramework>net8.0</SbomCLIToolTargetFramework>
+    <SbomCLIToolTargetFramework>net6.0</SbomCLIToolTargetFramework>
     <SBOMCLIToolProjectDir>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Tool\</SBOMCLIToolProjectDir>
   </PropertyGroup>
 
@@ -18,7 +18,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="Runtime" />
-    <PackageReference Include="Microsoft.Build.Locator"/>
+    <PackageReference Include="Microsoft.Build.Locator" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" />
     <PackageReference Include="Microsoft.CSharp" />
     <PackageReference Include="Newtonsoft.Json" />
@@ -39,7 +39,7 @@
   </Target>-->
 
   <!-- Copy all the sample projects to the output directory -->
-  <Target Name ="CopyTestProjects" BeforeTargets="Build" Condition="$(TargetFramework) == 'net472'">
+  <Target Name="CopyTestProjects" BeforeTargets="Build">
     <ItemGroup>
       <SampleProjects Include="ProjectSamples\**\*.*">
         <InProject>false</InProject>
@@ -60,10 +60,10 @@
   </Target>
 
   <ItemGroup>
-    <ProjectReference Condition="$(TargetFramework) == 'net8.0'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net8.0" />
+    <ProjectReference Condition="$(TargetFramework) == 'net6.0'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net6.0" />
     <ProjectReference Condition="$(TargetFramework) == 'net472'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net472" />
-    <ProjectReference Condition="$(TargetFramework) == 'net8.0'" Include="..\..\src\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" />
-    <ProjectReference Condition="$(TargetFramework) == 'net8.0'" Include="..\..\src\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" />
+    <ProjectReference Condition="$(TargetFramework) == 'net6.0'" Include="..\..\src\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" />
+    <ProjectReference Condition="$(TargetFramework) == 'net6.0'" Include="..\..\src\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" />
   </ItemGroup>
 
   <ItemGroup>
