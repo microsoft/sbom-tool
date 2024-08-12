@@ -19,12 +19,8 @@ public class GenerateSbomE2ETests
     /*
      * The following tests validate the end-to-end workflow for importing the Microsoft.Sbom.Targets.targets
      * into a .NET project, building it, packing it, and validating the generated SBOM contents.
-     *
-     * NOTE: These tests should be run serially, as there are issues when multiple tests reference the same
-     * .csproj file through the Project object at the same time.
      */
 
-    //#if NET472
     private static string projectDirectory = Path.Combine(Directory.GetCurrentDirectory(), "ProjectSamples", "ProjectSample1");
 
     private GeneratedSbomValidator generatedSbomValidator;
@@ -84,6 +80,7 @@ public class GenerateSbomE2ETests
                 Directory.Delete(manifestFolderPath, true);
             }
 
+            ProjectCollection.GlobalProjectCollection.UnloadAllProjects();
             project = null;
         }
         catch (Exception ex)
