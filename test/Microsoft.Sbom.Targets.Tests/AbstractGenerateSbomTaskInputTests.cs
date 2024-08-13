@@ -38,7 +38,8 @@ public abstract class AbstractGenerateSbomTaskInputTests
     {
         if (MSBuildLocator.CanRegister)
         {
-            MSBuildLocator.RegisterDefaults();
+            MSBuildLocator.RegisterInstance(MSBuildLocator.QueryVisualStudioInstances().OrderByDescending(
+                instance => instance.Version).First());
         }
 
         SetupProperties();
