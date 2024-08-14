@@ -77,6 +77,26 @@ public class GenerateSbomE2ETests
         }
     }
 
+    private Project SetupSampleProject()
+    {
+        // Create a Project object for ProjectSample1
+        var projectFile = Path.Combine(projectDirectory, "ProjectSample1.csproj");
+        //project = new Project(projectFile);
+        var sampleProject = new Project(projectFile);
+
+        // Get all the expected default properties
+        SetDefaultProperties(sampleProject);
+
+        // Set the TargetFrameworks property to empty. By default, it sets this property to net6.0 and net8.0, which fails for net8.0 builds.
+        sampleProject.SetProperty("TargetFrameworks", string.Empty);
+
+        // Set the paths to the sbom-tool CLI tool and Microsoft.Sbom.Targets.dll
+        sampleProject.SetProperty("SbomToolBinaryOutputPath", sbomToolPath);
+        sampleProject.SetProperty("GenerateSbomTaskAssemblyFilePath", generateSbomTaskPath);
+
+        return sampleProject;
+    }
+
     private void SetDefaultProperties(Project sampleProject)
     {
         expectedPackageName = sampleProject.GetPropertyValue("PackageId");
@@ -110,26 +130,6 @@ public class GenerateSbomE2ETests
         // Finally, pack the project
         var pack = sampleProject.Build("Pack", new[] { logger });
         Assert.IsTrue(pack, "Failed to pack the project");
-    }
-
-    private Project SetupSampleProject()
-    {
-        // Create a Project object for ProjectSample1
-        var projectFile = Path.Combine(projectDirectory, "ProjectSample1.csproj");
-        //project = new Project(projectFile);
-        var sampleProject = new Project(projectFile);
-
-        // Get all the expected default properties
-        SetDefaultProperties(sampleProject);
-
-        // Set the TargetFrameworks property to empty. By default, it sets this property to net6.0 and net8.0, which fails for net8.0 builds.
-        sampleProject.SetProperty("TargetFrameworks", string.Empty);
-
-        // Set the paths to the sbom-tool CLI tool and Microsoft.Sbom.Targets.dll
-        sampleProject.SetProperty("SbomToolBinaryOutputPath", sbomToolPath);
-        sampleProject.SetProperty("GenerateSbomTaskAssemblyFilePath", generateSbomTaskPath);
-
-        return sampleProject;
     }
 
     private void ExtractPackage()
