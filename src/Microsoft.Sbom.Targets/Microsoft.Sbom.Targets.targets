@@ -30,7 +30,8 @@
     <SbomGenerationVerbosity Condition=" '$(SbomGenerationVerbosity)' == '' ">information</SbomGenerationVerbosity>
     <SbomGenerationManifestInfo Condition=" '$(SbomGenerationManifestInfo)' == '' ">SPDX:2.2</SbomGenerationManifestInfo>
     <SbomGenerationDeleteManifestDirIfPresent Condition=" '$(SbomGenerationDeleteManifestDirIfPresent)' == '' ">true</SbomGenerationDeleteManifestDirIfPresent>
-    <UnzipGuidFolder>$([System.Guid]::NewGuid())</UnzipGuidFolder>
+    <UnzipGuid>$([System.Guid]::NewGuid())</UnzipGuid>
+    <ShortUnzipGuidFolder>$([System.String]::Copy('$(UnzipGuid)').Substring(0, 8))</ShortUnzipGuidFolder>
   </PropertyGroup>
 
   <!-- After the Nuget Package is generated, we will unzip, scan, generate the SBOM and zip again. -->
@@ -43,10 +44,10 @@
         $([System.IO.Path]::Combine($(PackageOutputFullPath), $(PackageId).$(PackageVersion).nupkg))
       </NugetPackage>
       <NugetPackageUnzip>
-        \\?\$([System.IO.Path]::Combine($(PackageOutputFullPath), $(PackageId).$(PackageVersion).$(UnzipGuidFolder).temp))
+        $([System.IO.Path]::Combine($(PackageOutputFullPath), $(PackageId).$(PackageVersion).$(ShortUnzipGuidFolder).temp))
       </NugetPackageUnzip>
     </PropertyGroup>
-    <Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="@(NugetPackage)" OverwriteReadOnlyFiles="true" />
+    <Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="$(NugetPackage)" OverwriteReadOnlyFiles="true" />
 
     <!--
       Call the SBOM task to generate a SBOM. The SBOM will be generated at the BuildDropPath location, which is the root folder
