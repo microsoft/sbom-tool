@@ -43,10 +43,10 @@
         $([System.IO.Path]::Combine($(PackageOutputFullPath), $(PackageId).$(PackageVersion).nupkg))
       </NugetPackage>
       <NugetPackageUnzip>
-        $([System.IO.Path]::Combine(\\?\, $(PackageOutputFullPath), $(PackageId).$(PackageVersion).$(UnzipGuidFolder).temp))
+        \\?\$([System.IO.Path]::Combine($(PackageOutputFullPath), $(PackageId).$(PackageVersion).$(UnzipGuidFolder).temp))
       </NugetPackageUnzip>
     </PropertyGroup>
-    <Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="$(NugetPackage)" OverwriteReadOnlyFiles="true" />
+    <Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="@(NugetPackage)" OverwriteReadOnlyFiles="true" />
 
     <!--
       Call the SBOM task to generate a SBOM. The SBOM will be generated at the BuildDropPath location, which is the root folder
