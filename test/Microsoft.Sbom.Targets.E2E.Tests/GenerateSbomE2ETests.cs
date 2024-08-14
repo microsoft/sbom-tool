@@ -6,6 +6,7 @@ namespace Microsoft.Sbom.Targets.E2E.Tests;
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Runtime.InteropServices;
 using Castle.Core.Internal;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
@@ -19,6 +20,7 @@ public class GenerateSbomE2ETests
      * The following tests validate the end-to-end workflow for importing the Microsoft.Sbom.Targets.targets
      * into a .NET project, building it, packing it, and validating the generated SBOM contents.
      */
+    private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
     private static string projectDirectory = Path.Combine(Directory.GetCurrentDirectory(), "ProjectSamples", "ProjectSample1");
     private static string sbomToolPath = Path.Combine(Directory.GetCurrentDirectory(), "sbom-tool");
@@ -39,6 +41,12 @@ public class GenerateSbomE2ETests
     [TestInitialize]
     public void SetupLocator()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         if (MSBuildLocator.CanRegister)
         {
             MSBuildLocator.RegisterDefaults();
@@ -151,6 +159,12 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void SbomGenerationSucceedsForDefaultProperties()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         // Create and setup a Project object for ProjectSample1
         var sampleProject = SetupSampleProject();
 
@@ -167,6 +181,12 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void SbomGenerationSucceedsForValidNamespaceBaseUriUniquePart()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         // Create and setup a Project object for ProjectSample1
         var sampleProject = SetupSampleProject();
 
@@ -187,6 +207,12 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void SbomGenerationSucceedsForValidRequiredParams()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         // Create and setup a Project object for ProjectSample1
         var sampleProject = SetupSampleProject();
 
@@ -216,6 +242,12 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void SbomGenerationFailsForInvalidNamespaceUri()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         // Create and setup a Project object for ProjectSample1
         var sampleProject = SetupSampleProject();
 
@@ -242,6 +274,12 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void SbomGenerationFailsForInvalidSupplierName()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         // Create and setup a Project object for ProjectSample1
         var sampleProject = SetupSampleProject();
 
@@ -269,6 +307,12 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void SbomGenerationSkipsForUnsetGenerateSBOMFlag()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         // Create and setup a Project object for ProjectSample1
         var sampleProject = SetupSampleProject();
 
@@ -288,6 +332,12 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void SbomGenerationSucceedsForMultiTargetedProject()
     {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
         // Create and setup a Project object for ProjectSample1
         var sampleProject = SetupSampleProject();
 
