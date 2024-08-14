@@ -30,18 +30,20 @@
     <SbomGenerationVerbosity Condition=" '$(SbomGenerationVerbosity)' == '' ">information</SbomGenerationVerbosity>
     <SbomGenerationManifestInfo Condition=" '$(SbomGenerationManifestInfo)' == '' ">SPDX:2.2</SbomGenerationManifestInfo>
     <SbomGenerationDeleteManifestDirIfPresent Condition=" '$(SbomGenerationDeleteManifestDirIfPresent)' == '' ">true</SbomGenerationDeleteManifestDirIfPresent>
-    <UnzipGuid>$([System.DateTime]::Now.Ticks)</UnzipGuid>
+    <UnzipGuidFolder>$([System.Guid]::NewGuid())</UnzipGuidFolder>
   </PropertyGroup>
 
   <!-- After the Nuget Package is generated, we will unzip, scan, generate the SBOM and zip again. -->
   <Target Name="GenerateSbomTarget" AfterTargets="Pack" Condition=" '$(GenerateSBOM)' ==  'true'" >
     <!-- Unzip Nuget package, so it can be scanned by the SBOM Task. -->
     <PropertyGroup>
+      <PackageOutputFullPath>$([System.IO.Path]::GetFullPath('$(PackageOutputPath)'))</PackageOutputFullPath>
+
       <NugetPackage>
-        $([System.IO.Path]::Combine($(PackageOutputPath), $(PackageId).$(PackageVersion).nupkg))
+        $([System.IO.Path]::Combine($(PackageOutputFullPath), $(PackageId).$(PackageVersion).nupkg))
       </NugetPackage>
       <NugetPackageUnzip>
-        $([System.IO.Path]::Combine($(PackageOutputPath), $(PackageId).$(PackageVersion).$(UnzipGuid).temp))
+        $([System.IO.Path]::Combine(\\?\, $(PackageOutputFullPath), $(PackageId).$(PackageVersion).$(UnzipGuidFolder).temp))
       </NugetPackageUnzip>
     </PropertyGroup>
     <Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="$(NugetPackage)" OverwriteReadOnlyFiles="true" />
