@@ -81,7 +81,6 @@ public class GenerateSbomE2ETests
     {
         expectedPackageName = sampleProject.GetPropertyValue("PackageId");
         expectedVersion = sampleProject.GetPropertyValue("Version");
-        expectedSupplier = sampleProject.GetPropertyValue("Authors");
         assemblyName = sampleProject.GetPropertyValue("AssemblyName");
         configuration = sampleProject.GetPropertyValue("Configuration");
 
@@ -90,17 +89,10 @@ public class GenerateSbomE2ETests
             expectedPackageName = assemblyName;
         }
 
-        if (expectedSupplier.IsNullOrEmpty())
-        {
-            expectedSupplier = assemblyName;
-        }
-
         if (expectedVersion.IsNullOrEmpty())
         {
             expectedVersion = "1.0.0";
         }
-
-        expectedNamespace = $"http://spdx.org/spdxdocs/{expectedPackageName}";
     }
 
     private void RestoreBuildPack(Project sampleProject)

@@ -3,8 +3,8 @@
     <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Full' ">net472</GenerateSbom_TFM>
     <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Core' ">net8.0</GenerateSbom_TFM>
 
-    <SbomToolBinaryOutputPath Condition="$(SbomToolBinaryOutputPath) == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),sbom-tool))</SbomToolBinaryOutputPath>
-    <GenerateSbomTaskAssemblyFilePath Condition="$(GenerateSbomTaskAssemblyFilePath) == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),Microsoft.Sbom.Targets.dll))</GenerateSbomTaskAssemblyFilePath>
+    <SbomToolBinaryOutputPath Condition="'$(SbomToolBinaryOutputPath)' == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),sbom-tool))</SbomToolBinaryOutputPath>
+    <GenerateSbomTaskAssemblyFilePath Condition="'$(GenerateSbomTaskAssemblyFilePath)' == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),Microsoft.Sbom.Targets.dll))</GenerateSbomTaskAssemblyFilePath>
 
     <!--Set the SBOM CLI Tool path. This variable is only used in SbomCLIToolTask.cs-->
     <SbomToolPath Condition=" '$(MSBuildRuntimeType)' == 'Full'">$(SbomToolBinaryOutputPath)</SbomToolPath>
@@ -48,7 +48,7 @@
 
     <!--
       Call the SBOM task to generate a SBOM. The SBOM will be generated at the BuildDropPath location, which is the root folder
-      of the NuGet package. NOTE: Currenlty, the ManifestDirPath is an optional parameter that will not be supported, as the desired location of the SBOM will be
+      of the NuGet package. NOTE: Currently, the ManifestDirPath is an optional parameter that will not be supported, as the desired location of the SBOM will be
       at the BuildDropPath directory. However, this parameter is available for future revision and implementation.
     -->
     <GenerateSbom
