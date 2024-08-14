@@ -29,7 +29,6 @@ public class GenerateSbomE2ETests
     private static string sbomSpecificationName = "SPDX";
     private static string sbomSpecificationVersion = "2.2";
     private static string sbomSpecificationDirectoryName = $"{sbomSpecificationName}_{sbomSpecificationVersion}".ToLowerInvariant();
-    private static string manifestDirPath = projectDirectory;
     private string manifestPath;
     private string expectedPackageName;
     private string expectedVersion;
@@ -63,12 +62,6 @@ public class GenerateSbomE2ETests
             if (Directory.Exists(objDir))
             {
                 Directory.Delete(objDir, true);
-            }
-
-            var manifestFolderPath = Path.Combine(manifestDirPath, "_manifest");
-            if (Directory.Exists(manifestFolderPath))
-            {
-                Directory.Delete(manifestFolderPath, true);
             }
 
             ProjectCollection.GlobalProjectCollection.UnloadAllProjects();

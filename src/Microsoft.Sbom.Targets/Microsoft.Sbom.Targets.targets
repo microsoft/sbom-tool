@@ -30,7 +30,7 @@
     <SbomGenerationVerbosity Condition=" '$(SbomGenerationVerbosity)' == '' ">information</SbomGenerationVerbosity>
     <SbomGenerationManifestInfo Condition=" '$(SbomGenerationManifestInfo)' == '' ">SPDX:2.2</SbomGenerationManifestInfo>
     <SbomGenerationDeleteManifestDirIfPresent Condition=" '$(SbomGenerationDeleteManifestDirIfPresent)' == '' ">true</SbomGenerationDeleteManifestDirIfPresent>
-    <UnzipGuid>$([System.Guid]::NewGuid())</UnzipGuid>
+    <UnzipGuid>$([System.DateTime]::Now.Ticks)</UnzipGuid>
   </PropertyGroup>
 
   <!-- After the Nuget Package is generated, we will unzip, scan, generate the SBOM and zip again. -->
