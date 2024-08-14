@@ -37,6 +37,8 @@
 
   <!-- After the Nuget Package is generated, we will unzip, scan, generate the SBOM and zip again. -->
   <Target Name="GenerateSbomTarget" AfterTargets="Pack" Condition=" '$(GenerateSBOM)' ==  'true'" >
+    <Message Importance="high" Text="DEBUG MESSAGE: '$(TargetFrameworks)'. '$(MSBuildRuntimeType)'. '$(SbomToolBinaryOutputPath)'. '$(AssemblyFilePath)'" />
+    
     <!-- Unzip Nuget package, so it can be scanned by the SBOM Task. -->
     <PropertyGroup>
       <NugetPackage>

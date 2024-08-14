@@ -26,6 +26,8 @@
 
   <!-- Copy all the sample projects to the output directory -->
   <Target Name="CopyTestProjects" AfterTargets="Build" Condition="'$(OutDir)' != ''">
+    <Message Importance="high" Text="DEBUG MESSAGE: '$(TargetFrameworks)'" />
+
     <ItemGroup>
       <SampleProjects Include="ProjectSamples\**\*.*">
         <InProject>false</InProject>

@@ -22,7 +22,7 @@ jobs:
         os:
           - windows-latest
           - ubuntu-latest
-          #- macos-latest
+          - macos-latest
 
     env:
         OFFICIAL_BUILD: 'True'
