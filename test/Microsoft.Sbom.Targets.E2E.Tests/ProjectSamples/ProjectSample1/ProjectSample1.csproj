@@ -8,6 +8,7 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
   </PropertyGroup>
 
   <!--Ignore errors related to selecting a nuget.config and dependency resolution-->
