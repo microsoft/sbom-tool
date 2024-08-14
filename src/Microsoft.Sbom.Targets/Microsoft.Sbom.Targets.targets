@@ -49,10 +49,10 @@
     <!-- Unzip Nuget package, so it can be scanned by the SBOM Task. -->
     <PropertyGroup>
       <NugetPackage>
-        $(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg
+        $([System.IO.Path]::Combine($(PackageOutputPath), $(PackageId).$(PackageVersion).nupkg))
       </NugetPackage>
       <NugetPackageUnzip>
-        $(PackageOutputPath)\$(PackageId).$(PackageVersion).$(UnzipGuid).temp
+        $([System.IO.Path]::Combine($(PackageOutputPath), $(PackageId).$(PackageVersion).$(UnzipGuid).temp))
       </NugetPackageUnzip>
     </PropertyGroup>
     <Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="$(NugetPackage)" OverwriteReadOnlyFiles="true" />
