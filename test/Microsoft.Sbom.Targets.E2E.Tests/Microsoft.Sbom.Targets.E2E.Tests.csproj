@@ -5,6 +5,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsPackable>false</IsPackable>
     <SignAssembly>True</SignAssembly>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
     <RootNamespace>Microsoft.Sbom.Targets.E2E.Tests</RootNamespace>
     <SbomCLIToolTargetFramework>net6.0</SbomCLIToolTargetFramework>
     <SBOMCLIToolProjectDir>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Tool\</SBOMCLIToolProjectDir>
