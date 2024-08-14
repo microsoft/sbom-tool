@@ -81,7 +81,6 @@ public class GenerateSbomE2ETests
     {
         // Create a Project object for ProjectSample1
         var projectFile = Path.Combine(projectDirectory, "ProjectSample1.csproj");
-        //project = new Project(projectFile);
         var sampleProject = new Project(projectFile);
 
         // Get all the expected default properties
