@@ -15,10 +15,6 @@
     <NoWarn>$(NoWarn);NU1507;NU5128</NoWarn>
   </PropertyGroup>
 
-  <!--
-      For multi-targeted builds, an extra build seems to run even when the TargetFramework is not set. Therefore,
-      The GenerateSbomTarget executes an extra time. To avoid this, we check to see if the TargetFramework is set
-  -->
-  <Import Project="../Microsoft.Sbom.Targets.Test.targets"/>
+  <Import Project="../Microsoft.Sbom.Targets.targets"/>
 
 </Project>

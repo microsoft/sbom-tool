@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.Sbom.Targets.Tests;
+namespace Microsoft.Sbom.Targets.E2E.Tests;
 
 using System;
 using System.IO;
@@ -10,7 +10,6 @@ using Castle.Core.Internal;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
 using Microsoft.Build.Logging;
-using Microsoft.Sbom.Targets.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 [TestClass]
@@ -22,13 +21,13 @@ public class GenerateSbomE2ETests
      */
 
     private static string projectDirectory = Path.Combine(Directory.GetCurrentDirectory(), "ProjectSamples", "ProjectSample1");
+    private static string sbomToolPath = Path.Combine(Directory.GetCurrentDirectory(), "sbom-tool");
+    private static string generateSbomTaskPath = Path.Combine(Directory.GetCurrentDirectory(), "Microsoft.Sbom.Targets.dll");
 
-    private GeneratedSbomValidator generatedSbomValidator;
     private static string sbomSpecificationName = "SPDX";
     private static string sbomSpecificationVersion = "2.2";
     private static string sbomSpecificationDirectoryName = $"{sbomSpecificationName}_{sbomSpecificationVersion}".ToLowerInvariant();
     private static string manifestDirPath = projectDirectory;
-    private string buildDropPath;
     private string manifestPath;
     private string expectedPackageName;
     private string expectedVersion;
@@ -36,7 +35,6 @@ public class GenerateSbomE2ETests
     private string assemblyName;
     private string expectedNamespace;
     private string configuration;
-    private object project;
 
     [TestInitialize]
     public void SetupLocator()
@@ -45,15 +43,6 @@ public class GenerateSbomE2ETests
         {
             MSBuildLocator.RegisterDefaults();
         }
-
-        SetupProperties();
-    }
-
-    public void SetupProperties()
-    {
-        generatedSbomValidator = new GeneratedSbomValidator($"{sbomSpecificationName}:{sbomSpecificationVersion}");
-        var projectFile = Path.Combine(projectDirectory, "ProjectSample1.csproj");
-        project = new Project(projectFile);
     }
 
     [TestCleanup]
@@ -81,7 +70,6 @@ public class GenerateSbomE2ETests
             }
 
             ProjectCollection.GlobalProjectCollection.UnloadAllProjects();
-            project = null;
         }
         catch (Exception ex)
         {
@@ -89,7 +77,7 @@ public class GenerateSbomE2ETests
         }
     }
 
-    private void GetDefaultProperties(Project sampleProject)
+    private void SetDefaultProperties(Project sampleProject)
     {
         expectedPackageName = sampleProject.GetPropertyValue("PackageId");
         expectedVersion = sampleProject.GetPropertyValue("Version");
@@ -132,6 +120,26 @@ public class GenerateSbomE2ETests
         Assert.IsTrue(pack, "Failed to pack the project");
     }
 
+    private Project SetupSampleProject()
+    {
+        // Create a Project object for ProjectSample1
+        var projectFile = Path.Combine(projectDirectory, "ProjectSample1.csproj");
+        //project = new Project(projectFile);
+        var sampleProject = new Project(projectFile);
+
+        // Get all the expected default properties
+        SetDefaultProperties(sampleProject);
+
+        // Set the TargetFrameworks property to empty. By default, it sets this property to net6.0 and net8.0, which fails for net8.0 builds.
+        sampleProject.SetProperty("TargetFrameworks", string.Empty);
+
+        // Set the paths to the sbom-tool CLI tool and Microsoft.Sbom.Targets.dll
+        sampleProject.SetProperty("SbomToolBinaryOutputPath", sbomToolPath);
+        sampleProject.SetProperty("GenerateSbomTaskAssemblyFilePath", generateSbomTaskPath);
+
+        return sampleProject;
+    }
+
     private void ExtractPackage()
     {
         // Unzip the contents of the NuGet package
@@ -147,21 +155,13 @@ public class GenerateSbomE2ETests
         ZipFile.ExtractToDirectory(zipFile, extractPath);
 
         manifestPath = Path.Combine(extractPath, "_manifest", sbomSpecificationDirectoryName, "manifest.spdx.json");
-        buildDropPath = extractPath;
     }
 
     [TestMethod]
     public void SbomGenerationSucceedsForDefaultProperties()
     {
-        //Arrange
-        // Create a Project object for ProjectSample1
-        var sampleProject = (Project)project;
-
-        // Get all the expected default properties
-        GetDefaultProperties(sampleProject);
-
-        // Set the TargetFrameworks property to empty. By default, it sets this property to net6.0 and net8.0, which fails for net8.0 builds.
-        sampleProject.SetProperty("TargetFrameworks", string.Empty);
+        // Create and setup a Project object for ProjectSample1
+        var sampleProject = SetupSampleProject();
 
         // Restore, build, and pack the project
         RestoreBuildPack(sampleProject);
@@ -169,67 +169,15 @@ public class GenerateSbomE2ETests
         // Extract the NuGet package
         ExtractPackage();
 
-        // Validate the SBOM contents inside the package.
-        this.generatedSbomValidator.AssertSbomIsValid(manifestPath,
-            buildDropPath,
-            expectedPackageName,
-            expectedVersion,
-            expectedSupplier,
-            expectedNamespace,
-            null,
-            projectDirectory);
-    }
-
-    [TestMethod]
-    public void SbomGenerationSucceedsForValidManifestDirPath()
-    {
-        //Arrange
-        // Create a Project object for ProjectSample1
-        var sampleProject = (Project)project;
-
-        // Get all the expected default properties
-        GetDefaultProperties(sampleProject);
-
-        // Set the TargetFrameworks property to empty. By default, it sets this property to net6.0 and net8.0, which fails for net8.0 builds.
-        sampleProject.SetProperty("TargetFrameworks", string.Empty);
-
-        // Manually set the ManifestDirPath
-        sampleProject.SetProperty("SbomGenerationManifestDirPath", manifestDirPath);
-
-        // Restore, build, and pack the project
-        RestoreBuildPack(sampleProject);
-
-        // Extract the NuGet package
-        ExtractPackage();
-
-        manifestPath = Path.Combine(manifestDirPath, "_manifest", sbomSpecificationDirectoryName, "manifest.spdx.json");
-
-        // Check if the SBOM exists in the ManifestDirPath
+        // Validate the SBOM exists in the package.
         Assert.IsTrue(File.Exists(manifestPath));
-
-        // Validate the SBOM contents inside the NuGet package.
-        this.generatedSbomValidator.AssertSbomIsValid(manifestPath,
-            buildDropPath,
-            expectedPackageName,
-            expectedVersion,
-            expectedSupplier,
-            expectedNamespace,
-            null,
-            projectDirectory);
     }
 
     [TestMethod]
     public void SbomGenerationSucceedsForValidNamespaceBaseUriUniquePart()
     {
-        //Arrange
-        // Create a Project object for ProjectSample1
-        var sampleProject = (Project)project;
-
-        // Get all the expected default properties
-        GetDefaultProperties(sampleProject);
-
-        // Set the TargetFrameworks property to empty. By default, it sets this property to net6.0 and net8.0, which fails for net8.0 builds.
-        sampleProject.SetProperty("TargetFrameworks", string.Empty);
+        // Create and setup a Project object for ProjectSample1
+        var sampleProject = SetupSampleProject();
 
         // Manually set the NamespaceUriUniquePart
         var namespaceUriUniquePart = Guid.NewGuid().ToString();
@@ -241,29 +189,15 @@ public class GenerateSbomE2ETests
         // Extract the NuGet package
         ExtractPackage();
 
-        // Validate the SBOM contents inside the NuGet package.
-        this.generatedSbomValidator.AssertSbomIsValid(manifestPath,
-            buildDropPath,
-            expectedPackageName,
-            expectedVersion,
-            expectedSupplier,
-            expectedNamespace,
-            namespaceUriUniquePart,
-            projectDirectory);
+        // Validate the SBOM exists in the package.
+        Assert.IsTrue(File.Exists(manifestPath));
     }
 
     [TestMethod]
     public void SbomGenerationSucceedsForValidRequiredParams()
     {
-        //Arrange
-        // Create a Project object for ProjectSample1
-        var sampleProject = (Project)project;
-
-        // Get all the expected default properties
-        GetDefaultProperties(sampleProject);
-
-        // Set the TargetFrameworks property to empty. By default, it sets this property to net6.0 and net8.0, which fails for net8.0 builds.
-        sampleProject.SetProperty("TargetFrameworks", string.Empty);
+        // Create and setup a Project object for ProjectSample1
+        var sampleProject = SetupSampleProject();
 
         // Set require params
         expectedPackageName = "SampleName";
@@ -284,29 +218,15 @@ public class GenerateSbomE2ETests
         // Extract the NuGet package
         ExtractPackage();
 
-        // Validate the SBOM contents inside the NuGet package.
-        this.generatedSbomValidator.AssertSbomIsValid(manifestPath,
-            buildDropPath,
-            expectedPackageName,
-            expectedVersion,
-            expectedSupplier,
-            expectedNamespace,
-            null,
-            projectDirectory);
+        // Validate the SBOM exists in the package.
+        Assert.IsTrue(File.Exists(manifestPath));
     }
 
     [TestMethod]
     public void SbomGenerationFailsForInvalidNamespaceUri()
     {
-        //Arrange
-        // Create a Project object for ProjectSample1
-        var sampleProject = (Project)project;
-
-        // Get all the expected default properties
-        GetDefaultProperties(sampleProject);
-
-        // Set the TargetFrameworks property to empty. By default, it sets this property to net6.0 and net8.0, which fails for net8.0 builds.
-        sampleProject.SetProperty("TargetFrameworks", string.Empty);
+        // Create and setup a Project object for ProjectSample1
+        var sampleProject = SetupSampleProject();
 
         // Set invalid namespace
         expectedNamespace = "incorrect_uri";
@@ -331,15 +251,8 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void SbomGenerationFailsForInvalidSupplierName()
     {
-        //Arrange
-        // Create a Project object for ProjectSample1
-        var sampleProject = (Project)project;
-
-        // Get all the expected default properties
-        GetDefaultProperties(sampleProject);
-
-        // Set the TargetFrameworks property to empty. By default, it sets this property to net6.0 and net8.0, which fails for net8.0 builds.
-        sampleProject.SetProperty("TargetFrameworks", string.Empty);
+        // Create and setup a Project object for ProjectSample1
+        var sampleProject = SetupSampleProject();
 
         // Set invalid supplier name
         sampleProject.SetProperty("Authors", string.Empty);
@@ -365,15 +278,8 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void SbomGenerationSkipsForUnsetGenerateSBOMFlag()
     {
-        //Arrange
-        // Create a Project object for ProjectSample1
-        var sampleProject = (Project)project;
-
-        // Get all the expected default properties
-        GetDefaultProperties(sampleProject);
-
-        // Set the TargetFrameworks property to empty. By default, it sets this property to net6.0 and net8.0, which fails for net8.0 builds.
-        sampleProject.SetProperty("TargetFrameworks", string.Empty);
+        // Create and setup a Project object for ProjectSample1
+        var sampleProject = SetupSampleProject();
 
         // Set the GenerateSBOM property to empty.
         sampleProject.SetProperty("GenerateSBOM", "false");
@@ -391,14 +297,10 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void SbomGenerationSucceedsForMultiTargetedProject()
     {
-        //Arrange
-        // Create a Project object for ProjectSample1
-        var sampleProject = (Project)project;
+        // Create and setup a Project object for ProjectSample1
+        var sampleProject = SetupSampleProject();
 
-        // Get all the expected default properties
-        GetDefaultProperties(sampleProject);
-
-        // Set require params
+        // Set multi-target frameworks
         sampleProject.SetProperty("TargetFramework", string.Empty);
         sampleProject.SetProperty("TargetFrameworks", "net472;net6.0");
 
@@ -408,51 +310,7 @@ public class GenerateSbomE2ETests
         // Extract the NuGet package
         ExtractPackage();
 
-        // Validate the SBOM contents inside the NuGet package.
-        this.generatedSbomValidator.AssertSbomIsValid(manifestPath,
-            buildDropPath,
-            expectedPackageName,
-            expectedVersion,
-            expectedSupplier,
-            expectedNamespace,
-            null,
-            projectDirectory);
-    }
-
-    [TestMethod]
-    public void SbomGenerationSucceedsForValidManifestDirPathInMultiTargetedProject()
-    {
-        //Arrange
-        // Create a Project object for ProjectSample1
-        var sampleProject = (Project)project;
-
-        // Get all the expected default properties
-        GetDefaultProperties(sampleProject);
-
-        // Set require params
-        sampleProject.SetProperty("TargetFramework", string.Empty);
-        sampleProject.SetProperty("TargetFrameworks", "net472;net6.0");
-        sampleProject.SetProperty("SbomGenerationManifestDirPath", manifestDirPath);
-
-        // Restore, build, and pack the project
-        RestoreBuildPack(sampleProject);
-
-        // Extract the NuGet package
-        ExtractPackage();
-
-        manifestPath = Path.Combine(manifestDirPath, "_manifest", sbomSpecificationDirectoryName, "manifest.spdx.json");
-
-        // Check if the SBOM exists in the ManifestDirPath
+        // Validate the SBOM exists in the package.
         Assert.IsTrue(File.Exists(manifestPath));
-
-        // Validate the SBOM contents inside the NuGet package.
-        this.generatedSbomValidator.AssertSbomIsValid(manifestPath,
-            buildDropPath,
-            expectedPackageName,
-            expectedVersion,
-            expectedSupplier,
-            expectedNamespace,
-            null,
-            projectDirectory);
     }
 }

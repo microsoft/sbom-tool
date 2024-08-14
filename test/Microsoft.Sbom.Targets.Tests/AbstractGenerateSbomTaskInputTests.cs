@@ -8,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Locator;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -36,16 +35,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
     [TestInitialize]
     public void Startup()
     {
-        if (MSBuildLocator.CanRegister)
-        {
-            MSBuildLocator.RegisterDefaults();
-        }
-
-        SetupProperties();
-    }
-
-    public void SetupProperties()
-    {
+        // Setup the build engine
         this.buildEngine = new Mock<IBuildEngine>();
         this.errors = new List<BuildErrorEventArgs>();
         this.messages = new List<BuildMessageEventArgs>();

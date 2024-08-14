@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Locator;
 using Microsoft.Sbom.Targets.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -59,16 +58,6 @@ public abstract class AbstractGenerateSbomTaskTests
 
     [TestInitialize]
     public void Startup()
-    {
-        if (MSBuildLocator.CanRegister)
-        {
-            MSBuildLocator.RegisterDefaults();
-        }
-
-        SetupProperties();
-    }
-
-    public void SetupProperties()
     {
         // Setup the build engine
         this.BuildEngine = new Mock<IBuildEngine>();

@@ -1,19 +1,10 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- TODO remove hardcoded str, reference this assembly using MSBuild props instead -->
-
-  <!--TODO we will eventaully want to replace or remove `AfterTargets="Build"`.
-        Including this line means that this code will run at the end of `dotnet build`s of any project that this .targets
-        file is imported to (see line 24 of Microsoft.Sbom.Targets.csproj as an example of importing this file). This is
-        good for testing purposes, but not the behavior we ultimately want. 
-        We will need to discuss with the .NET SDK team if they want this target to be automatically included after any
-        target and if so, which one. They likely know of a nuget packaging target that it would make sense to hook this in with.-->
-
   <PropertyGroup>
     <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Full' ">net472</GenerateSbom_TFM>
     <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Core' ">net8.0</GenerateSbom_TFM>
 
-    <SbomToolBinaryOutputPath>$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),sbom-tool))</SbomToolBinaryOutputPath>
-    <AssemblyFilePath>$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),Microsoft.Sbom.Targets.dll))</AssemblyFilePath>
+    <SbomToolBinaryOutputPath Condition="$(SbomToolBinaryOutputPath) == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),sbom-tool))</SbomToolBinaryOutputPath>
+    <GenerateSbomTaskAssemblyFilePath Condition="$(GenerateSbomTaskAssemblyFilePath) == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),Microsoft.Sbom.Targets.dll))</GenerateSbomTaskAssemblyFilePath>
 
     <!--Set the SBOM CLI Tool path. This variable is only used in SbomCLIToolTask.cs-->
     <SbomToolPath Condition=" '$(MSBuildRuntimeType)' == 'Full'">$(SbomToolBinaryOutputPath)</SbomToolPath>
@@ -22,7 +13,7 @@
   </PropertyGroup>
   
   <!--Based on the MSBuild runtime, GenerateSbom will either pull the GenerateSbomTask or SbomCLIToolTask logic-->
-  <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbom" AssemblyFile="$(AssemblyFilePath)" />
+  <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbom" AssemblyFile="$(GenerateSbomTaskAssemblyFilePath)" />
 
   <PropertyGroup>
     <GenerateSBOM Condition=" '$(GenerateSBOM)' == '' ">false</GenerateSBOM>
@@ -55,7 +46,11 @@
     </PropertyGroup>
     <Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="$(NugetPackage)" OverwriteReadOnlyFiles="true" />
 
-    <!-- Call the SBOM Task to generate a SBOM. -->
+    <!--
+      Call the SBOM task to generate a SBOM. The SBOM will be generated at the BuildDropPath location, which is the root folder
+      of the NuGet package. NOTE: Currenlty, the ManifestDirPath is an optional parameter that will not be supported, as the desired location of the SBOM will be
+      at the BuildDropPath directory. However, this parameter is available for future revision and implementation.
+    -->
     <GenerateSbom
         BuildDropPath="$(NugetPackageUnzip)"
         BuildComponentPath="$(SbomGenerationBuildComponentPath)"
@@ -70,7 +65,7 @@
         Verbosity="$(SbomGenerationVerbosity)"
         ManifestInfo="$(SbomGenerationManifestInfo)"
         DeleteManifestDirIfPresent="$(SbomGenerationDeleteManifestDirIfPresent)"
-        ManifestDirPath="$(SbomGenerationManifestDirPath)"
+        ManifestDirPath="" 
         SbomToolPath="$(SbomToolPath)">
       <Output TaskParameter="SbomPath" PropertyName="SbomPathResult" />
     </GenerateSbom>
