@@ -41,12 +41,6 @@ public class GenerateSbomE2ETests
     [TestInitialize]
     public void SetupLocator()
     {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
         if (MSBuildLocator.CanRegister)
         {
             MSBuildLocator.RegisterDefaults();
