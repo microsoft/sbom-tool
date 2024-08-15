@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <AssemblyName>Microsoft.Sbom.Targets</AssemblyName>
-    <TargetFrameworks>net8.0;net472</TargetFrameworks>
+    <TargetFrameworks>net6.0;net8.0;net472</TargetFrameworks>
     <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
     <IsPublishable>true</IsPublishable>
     <IsPackable>true</IsPackable>
@@ -68,8 +68,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Condition="'$(TargetFramework)'=='net8.0'" Include="..\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" PrivateAssets="all" />
-    <ProjectReference Condition="'$(TargetFramework)'=='net8.0'" Include="..\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" PrivateAssets="all" IncludeAssets="output" />
+    <ProjectReference Condition="'$(TargetFramework)'=='net8.0' or '$(TargetFramework)'=='net6.0'" Include="..\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" PrivateAssets="all" />
+    <ProjectReference Condition="'$(TargetFramework)'=='net8.0' or '$(TargetFramework)'=='net6.0'" Include="..\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" PrivateAssets="all" IncludeAssets="output" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
