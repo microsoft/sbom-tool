@@ -23,7 +23,6 @@ The custom MSBuild task accepts most of the arguments available for the [SBOM CL
 | Property | Default Value | Required |
 |-----------------------------------------------------|-------------|---------|
 | `<GenerateSBOM>`                                    | `false`     | No. To enable SBOM generation, set this to true. |
-| `<SbomGenerationBuildDropPath>`                     | `$(OutDir)` | Yes |
 | `<SbomGenerationBuildComponentPath>`                | `$(MSBuildProjectDirectory)` | No | 
 | `<SbomGenerationPackageSupplier>`                   | `$(Authors)`. If `$(Authors)` is null, it will set `$(AssemblyName)`     | Yes | 
 | `<SbomGenerationPackageName>`                       | `$(PackageId)`. If `$(PackageId)` is null, it will set `$(AssemblyName)` | Yes | 
@@ -36,7 +35,6 @@ The custom MSBuild task accepts most of the arguments available for the [SBOM CL
 | `<SbomGenerationVerbosity>`                         | `Information` | No | 
 | `<SbomGenerationManifestInfo>`                      | `SPDX:2.2` | No | 
 | `<SbomGenerationDeleteManifestDirIfPresent>`        | `true` | No | 
-| `<SbomGenerationManifestDirPath>`                   | N/A | No | 
 
 ## Local SBOM Generation Workflow
 After building the Microsoft.Sbom.Targets project, it will generate a NuGet package containing the MSBuild task's binaries and associated .targets file in the `bin\$(Configuration)` folder. The following steps describe how to consume this NuGet package and generate an SBOM:
@@ -51,5 +49,5 @@ After building the Microsoft.Sbom.Targets project, it will generate a NuGet pack
   <GenerateSBOM>true</GenerateSBOM>
 </PropertyGroup>
 ```
-6) Build the sample project. An SBOM should be generated under the `bin\$(Configuration)\$(TargetFramework)` folder. 
-7) Pack the sample project. The generated SBOM will be copied into the `$(BuildOutputTargetFolder)\$(TargetFramework)` folder.
+6) Build the sample project.
+7) Pack the sample project. The SBOM will be generated under the `_manifest` folder at the root of the NuGet package.
