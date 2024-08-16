@@ -68,6 +68,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Condition="'$(TargetFramework)'=='net8.0' or '$(TargetFramework)'=='net6.0'" Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
     <ProjectReference Condition="'$(TargetFramework)'=='net8.0' or '$(TargetFramework)'=='net6.0'" Include="..\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" PrivateAssets="all" />
     <ProjectReference Condition="'$(TargetFramework)'=='net8.0' or '$(TargetFramework)'=='net6.0'" Include="..\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" PrivateAssets="all" IncludeAssets="output" />
   </ItemGroup>
