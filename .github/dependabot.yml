@@ -4,6 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 30  # Default value of 5 is too low as we catch up
 
   - package-ecosystem: "github-actions"
     directory: "/"
