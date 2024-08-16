@@ -98,12 +98,12 @@ public class GenerateSbomE2ETests
         assemblyName = sampleProject.GetPropertyValue("AssemblyName");
         configuration = sampleProject.GetPropertyValue("Configuration");
 
-        if (expectedPackageName.IsNullOrEmpty())
+        if (string.IsNullOrEmpty(expectedPackageName))
         {
             expectedPackageName = assemblyName;
         }
 
-        if (expectedVersion.IsNullOrEmpty())
+        if (string.IsNullOrEmpty(expectedPackageName))
         {
             expectedVersion = "1.0.0";
         }
