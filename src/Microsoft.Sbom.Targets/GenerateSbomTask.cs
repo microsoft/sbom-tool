@@ -105,7 +105,6 @@ public partial class GenerateSbom : Task
         }
         catch (Exception e)
         {
-            // TODO: Add automated tests for the different exceptions.
             Log.LogError($"SBOM generation failed: {e.Message}");
             return false;
         }
