@@ -26,6 +26,7 @@
         <PackageReference Include="Spectre.Console.Cli" />
         <PackageReference Include="System.IO.FileSystem.AccessControl" />
         <PackageReference Include="System.Private.Uri" />
+        <PackageReference Include="System.Text.Json" />
         <PackageReference Include="System.Threading.Channels" />
         <PackageReference Include="System.Threading.Tasks.Extensions" />
     </ItemGroup>

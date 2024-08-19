@@ -25,6 +25,7 @@
     <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="Serilog.Sinks.File" />
     <PackageReference Include="Serilog.Sinks.Map" />
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
 </Project>

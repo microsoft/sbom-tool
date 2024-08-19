@@ -14,6 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.ComponentDetection.Contracts" />
     <PackageReference Include="packageurl-dotnet" />
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.ComponentDetection.Contracts" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="packageurl-dotnet" />
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
   <ItemGroup>

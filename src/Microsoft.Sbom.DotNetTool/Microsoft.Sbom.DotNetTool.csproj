@@ -23,5 +23,6 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Scrutor" />
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 </Project>
