@@ -105,7 +105,6 @@ extends:
                 ]
             condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
 
-          - powershell: 'dotnet pack Microsoft.Sbom.sln -c $(BuildConfiguration) --no-restore --no-build -o $(Build.ArtifactStagingDirectory)/nuget --include-symbols -p:SymbolPackageFormat=snupkg'
           - powershell: 'Get-ChildItem -Recurse -Filter *.csproj -Path src | ForEach-Object { dotnet pack $_.FullName  -c $(BuildConfiguration) --no-restore --no-build -o $(Build.ArtifactStagingDirectory)/nuget --include-symbols -p:SymbolPackageFormat=snupkg }'
             displayName: 'Pack NuGet package'
 
