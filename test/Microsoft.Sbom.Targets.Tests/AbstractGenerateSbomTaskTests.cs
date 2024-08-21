@@ -415,7 +415,6 @@ public abstract class AbstractGenerateSbomTaskTests
     }
 #endif
 
-    // This test is failing due to this issue: https://github.com/microsoft/sbom-tool/issues/615
     [TestMethod]
     public void Sbom_Fails_To_Generate_Due_To_File_In_Use()
     {
