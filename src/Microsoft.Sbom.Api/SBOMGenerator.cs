@@ -80,7 +80,7 @@ public class SbomGenerator : ISBOMGenerator
 
         var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
 
-        return new SbomGenerationResult(isSuccess, entityErrors, isSuccess ? inputConfiguration.ManifestDirPath.ToString() : null);
+        return new SbomGenerationResult(isSuccess, entityErrors);
     }
 
     /// <inheritdoc />
@@ -120,7 +120,7 @@ public class SbomGenerator : ISBOMGenerator
         // This is the generate workflow
         var result = await generationWorkflow.RunAsync();
 
-        return new SbomGenerationResult(result, new List<EntityError>(), result ? inputConfiguration.ManifestDirPath.ToString() : null);
+        return new SbomGenerationResult(result, new List<EntityError>());
     }
 
     /// <inheritdoc />

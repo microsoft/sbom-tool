@@ -100,7 +100,6 @@ public partial class GenerateSbom : Task
                 externalDocumentReferenceListFile: this.ExternalDocumentListFile)).GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
 
-            SbomPath = !string.IsNullOrWhiteSpace(result.ManifestDirPath) ? Path.GetFullPath(result.ManifestDirPath) : null;
             return result.IsSuccessful;
         }
         catch (Exception e)
@@ -113,7 +112,7 @@ public partial class GenerateSbom : Task
     /// <summary>
     /// Check for ManifestInfo and create an SbomSpecification accordingly.
     /// </summary>
-    /// <returns>A list of the parsed manifest info. Null ig the manifest info is null or empty.</returns>
+    /// <returns>A list of the parsed manifest info. Null if the manifest info is null or empty.</returns>
     private IList<SbomSpecification> ValidateAndAssignSpecifications()
     {
         if (!string.IsNullOrWhiteSpace(this.ManifestInfo))

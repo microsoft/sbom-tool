@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
@@ -93,6 +91,9 @@ internal class GeneratedSbomValidator
             {
                 Assert.IsTrue(namespaceValue.Contains($"{expectedNamespaceUriBase.Trim()}/{expectedPackageName}/{expectedPackageVersion}"));
             }
+        } else
+        {
+            Assert.Fail("An unexpected SBOM specification was used. Please specify SPDX 2.2.");
         }
     }
 

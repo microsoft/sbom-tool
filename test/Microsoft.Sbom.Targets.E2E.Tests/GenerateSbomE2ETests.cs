@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
-using Castle.Core.Internal;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
 using Microsoft.Build.Logging;
@@ -19,6 +18,9 @@ public class GenerateSbomE2ETests
     /*
      * The following tests validate the end-to-end workflow for importing the Microsoft.Sbom.Targets.targets
      * into a .NET project, building it, packing it, and validating the generated SBOM contents.
+     *
+     * NOTE: These tests are only compatible with net6.0 and net472, as there are issues when resolving NuGet assemblies when
+     * targeting net8.0.
      */
     private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
