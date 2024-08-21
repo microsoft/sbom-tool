@@ -68,10 +68,8 @@
         Verbosity="$(SbomGenerationVerbosity)"
         ManifestInfo="$(SbomGenerationManifestInfo)"
         DeleteManifestDirIfPresent="$(SbomGenerationDeleteManifestDirIfPresent)"
-        ManifestDirPath="" 
         SbomToolPath="$(SbomToolPath)"
         ContinueOnError="ErrorAndContinue">
-      <Output TaskParameter="SbomPath" PropertyName="SbomPathResult" />
     </GenerateSbom>
     <Message Importance="High" Text="Task result: $(SbomPathResult)" />
 

@@ -89,7 +89,9 @@ public partial class GenerateSbom
     public bool DeleteManifestDirIfPresent { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the path where the SBOM will be generated.
+    /// Gets or sets the path where the SBOM will be generated. For now, this property
+    /// will be unset as the _manifest directory is intended to be at the root of a NuGet package
+    /// specified by BuildDropPath.
     /// </summary>
     public string ManifestDirPath { get; set; }
 
@@ -97,10 +99,4 @@ public partial class GenerateSbom
     /// Gets or sets the path to the SBOM CLI tool
     /// </summary>
     public string SbomToolPath { get; set; }
-
-    /// <summary>
-    /// Gets or sets the path to the generated SBOM directory.
-    /// </summary>
-    [Output]
-    public string SbomPath { get; set; }
 }

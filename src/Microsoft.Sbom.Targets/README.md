@@ -1,6 +1,6 @@
 # SBOM Generation for .NET Projects
 ## Microsoft.Sbom.Targets
-This project implements a custom MSBuild task that generates an SBOM using the SBOM API and CLI tool. The MSBuild task binaries along with the associated targets are packaged as a NuGet package and can be consumed within a .NET project. Once installed, an SBOM will automatically be generated upon building the .NET project.
+This project implements a custom MSBuild task that generates an SBOM using the SBOM API and CLI tool. The MSBuild task binaries along with the associated targets are packaged as a NuGet package and can be consumed within a .NET project. Once installed, an SBOM will automatically be generated upon packing the .NET project.
 
 ## MSBuild Task Implementation
 The custom MSBuild task is implemented across the following partial classes:
