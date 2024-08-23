@@ -6,6 +6,7 @@ namespace Microsoft.Sbom.Targets.E2E.Tests;
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
@@ -31,7 +32,6 @@ public class GenerateSbomE2ETests
     private static string sbomSpecificationName = "SPDX";
     private static string sbomSpecificationVersion = "2.2";
     private static string sbomSpecificationDirectoryName = $"{sbomSpecificationName}_{sbomSpecificationVersion}".ToLowerInvariant();
-    private string manifestPath;
     private string expectedPackageName;
     private string expectedVersion;
     private string expectedSupplier;
@@ -128,21 +128,24 @@ public class GenerateSbomE2ETests
         Assert.IsTrue(pack, "Failed to pack the project");
     }
 
-    private void ExtractPackage()
+    private void InspectPackageIsWellFormed(bool isManifestPathGenerated = true)
     {
+        const string backSlash = "\\";
+        const string forwardSlash = "/";
         // Unzip the contents of the NuGet package
         var nupkgPath = Path.Combine(projectDirectory, "bin", configuration);
         var nupkgFile = Path.Combine(nupkgPath, $"{expectedPackageName}.{expectedVersion}.nupkg");
-        var zipFile = Path.Combine(nupkgPath, $"{expectedPackageName}.{expectedVersion}.zip");
-        var extractPath = Path.Combine(projectDirectory, "bin", configuration, $"{Guid.NewGuid()}.temp");
+        var manifestRelativePath = Path.Combine("_manifest", sbomSpecificationDirectoryName, "manifest.spdx.json")
+            .Replace(backSlash, forwardSlash);
 
-        // Rename the .nupkg file to .zip
-        File.Copy(nupkgFile, zipFile, true);
-
-        // Extract the .zip file
-        ZipFile.ExtractToDirectory(zipFile, extractPath);
-
-        manifestPath = Path.Combine(extractPath, "_manifest", sbomSpecificationDirectoryName, "manifest.spdx.json");
+        // Check the content of the NuGet package
+        using (var archive = ZipFile.Open(nupkgFile, ZipArchiveMode.Read))
+        {
+            Assert.IsTrue(archive.Entries.Count() > 0);
+            // Nuget's zip code expects forward slashes as path separators.
+            Assert.IsTrue(archive.Entries.All(entry => !entry.FullName.Contains(backSlash)));
+            Assert.AreEqual(isManifestPathGenerated, archive.Entries.Any(entry => entry.FullName.Equals(manifestRelativePath)));
+        }
     }
 
     [TestMethod]
@@ -161,10 +164,7 @@ public class GenerateSbomE2ETests
         RestoreBuildPack(sampleProject);
 
         // Extract the NuGet package
-        ExtractPackage();
-
-        // Validate the SBOM exists in the package.
-        Assert.IsTrue(File.Exists(manifestPath));
+        InspectPackageIsWellFormed();
     }
 
     [TestMethod]
@@ -187,10 +187,7 @@ public class GenerateSbomE2ETests
         RestoreBuildPack(sampleProject);
 
         // Extract the NuGet package
-        ExtractPackage();
-
-        // Validate the SBOM exists in the package.
-        Assert.IsTrue(File.Exists(manifestPath));
+        InspectPackageIsWellFormed();
     }
 
     [TestMethod]
@@ -222,10 +219,7 @@ public class GenerateSbomE2ETests
         RestoreBuildPack(sampleProject);
 
         // Extract the NuGet package
-        ExtractPackage();
-
-        // Validate the SBOM exists in the package.
-        Assert.IsTrue(File.Exists(manifestPath));
+        InspectPackageIsWellFormed();
     }
 
     [TestMethod]
@@ -312,10 +306,7 @@ public class GenerateSbomE2ETests
         RestoreBuildPack(sampleProject);
 
         // Extract the NuGet package
-        ExtractPackage();
-
-        // Ensure the manifest file was not created
-        Assert.IsTrue(!File.Exists(manifestPath));
+        InspectPackageIsWellFormed(isManifestPathGenerated: false);
     }
 
     [TestMethod]
@@ -338,9 +329,6 @@ public class GenerateSbomE2ETests
         RestoreBuildPack(sampleProject);
 
         // Extract the NuGet package
-        ExtractPackage();
-
-        // Validate the SBOM exists in the package.
-        Assert.IsTrue(File.Exists(manifestPath));
+        InspectPackageIsWellFormed();
     }
 }
