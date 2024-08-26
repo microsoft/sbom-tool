@@ -11,11 +11,6 @@ on:
 env:
   CODEQL_BUILD: True
 
-permissions:
-  actions: read
-  contents: read
-  security-events: write
-
 jobs:
   analyze:
     name: Analyze
