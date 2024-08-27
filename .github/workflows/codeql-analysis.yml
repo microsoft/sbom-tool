@@ -11,15 +11,19 @@ on:
 env:
   CODEQL_BUILD: True
 
-permissions:
-  actions: read
-  contents: read
-  security-events: write
-
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'csharp' ]
 
     steps:
     - name: Checkout repository
@@ -27,8 +31,6 @@ jobs:
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@eb055d739abdc2e8de2e5f4ba1a8b246daa779aa # v3.26.0
-      with:
-        languages: csharp
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@eb055d739abdc2e8de2e5f4ba1a8b246daa779aa # v3.26.0
