@@ -71,7 +71,6 @@
         SbomToolPath="$(SbomToolPath)"
         ContinueOnError="ErrorAndContinue">
     </GenerateSbom>
-    <Message Importance="High" Text="Task result: $(SbomPathResult)" />
 
     <!-- Zip the Nuget package back up and delete the temporary unzipped package. -->
     <ZipDirectory SourceDirectory="$(NugetPackageUnzip)" DestinationFile="$(NugetPackage)" Overwrite="true" ContinueOnError="ErrorAndContinue" />
