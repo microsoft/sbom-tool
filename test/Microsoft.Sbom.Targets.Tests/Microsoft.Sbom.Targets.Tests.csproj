@@ -17,7 +17,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
-    <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
   <Target Name="AddSbomToolToPackage" AfterTargets="Build" Condition="$(TargetFramework) == 'net472'">
