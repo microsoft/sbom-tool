@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net472</TargetFrameworks>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <IsPackable>false</IsPackable>
+    <SignAssembly>True</SignAssembly>
+    <RootNamespace>Microsoft.Sbom.Targets.E2E.Tests</RootNamespace>
+    <SbomCLIToolTargetFramework>net6.0</SbomCLIToolTargetFramework>
+    <SBOMCLIToolProjectDir>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Tool\</SBOMCLIToolProjectDir>
+    <SBOMGenerationTargetsPath>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.targets</SBOMGenerationTargetsPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.Build.Locator" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" />
+    <PackageReference Include="System.IO.Compression" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Condition="$(TargetFramework) == 'net6.0'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net6.0" />
+    <ProjectReference Condition="$(TargetFramework) == 'net472'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net472" />
+    <ProjectReference Condition="$(TargetFramework) == 'net6.0'" Include="..\..\src\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ProjectSamples\ProjectSample1\ProjectSample1.csproj" />
+  </ItemGroup>
+
+  <!--Build and copy the sbom-tool to the output directory-->
+  <Target Name="AddSbomToolToPackage" AfterTargets="Build" Condition="$(TargetFramework) == 'net472'">
+    <Message Importance="high" Text="Building $(SBOMCLIToolProjectDir)bin\$(Configuration)\$(SbomCLIToolTargetFramework)" />
+    <MSBuild Projects="$(SBOMCLIToolProjectDir)Microsoft.Sbom.Tool.csproj" Properties="TargetFramework=$(SbomCLIToolTargetFramework)" Targets="Publish" />
+    <ItemGroup>
+      <_SbomToolFiles Include="$(SBOMCLIToolProjectDir)bin\$(Configuration)\$(SbomCLIToolTargetFramework)\publish\**\*.*">
+        <InProject>false</InProject>
+      </_SbomToolFiles>
+    </ItemGroup>
+    <Copy SourceFiles="@(_SbomToolFiles)" DestinationFolder="$(OutputPath)\sbom-tool\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+  
+  <!-- Copy all the sample projects to the output directory -->
+  <Target Name="CopyTestProjects" AfterTargets="Build" Condition="'$(OutDir)' != ''">
+    <ItemGroup>
+      <SampleProjects Include="ProjectSamples\**\*.*">
+        <InProject>false</InProject>
+      </SampleProjects>
+    </ItemGroup>
+    <Copy SourceFiles="@(SampleProjects)" DestinationFolder="$(OutDir)\ProjectSamples\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+  <!-- Copy the Microsoft.Sbom.Targets.targets file to the ProjectSamples directory -->
+  <Target Name="CopyTargetsFile" AfterTargets="Build" Condition="'$(OutDir)' != ''">
+    <Copy SourceFiles="$(SBOMGenerationTargetsPath)" DestinationFolder="$(OutDir)\ProjectSamples" SkipUnchangedFiles="true" />
+  </Target>
+</Project>
