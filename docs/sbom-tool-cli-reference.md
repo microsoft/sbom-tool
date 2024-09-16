@@ -101,6 +101,12 @@ the contents of these directories out of the packages section of the SBOM. For e
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -cd "--DirectoryExclusionList **/bin/**"
 ```
 
+You can give multiple exclusion patterns by repeating the `--DirectoryExclusionList` argument. (Note that minimatch combines like `**/bin/**|**/obj/**` won't work):
+
+```
+./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -cd "--DirectoryExclusionList **/bin/** --DirectoryExclusionList **/obj/**"
+```
+
 ### Write telemetry to a file
 
 By default, users commonly log telemetry to the console output. In order to log the telemetry as part of the SBOM file, specify the `-t` parameter: 
