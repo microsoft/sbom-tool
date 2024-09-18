@@ -1,0 +1,79 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Full' ">net472</GenerateSbom_TFM>
+    <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Core' ">net8.0</GenerateSbom_TFM>
+
+    <SbomToolBinaryOutputPath Condition="'$(SbomToolBinaryOutputPath)' == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),sbom-tool))</SbomToolBinaryOutputPath>
+    <GenerateSbomTaskAssemblyFilePath Condition="'$(GenerateSbomTaskAssemblyFilePath)' == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),Microsoft.Sbom.Targets.dll))</GenerateSbomTaskAssemblyFilePath>
+
+    <!--Set the SBOM CLI Tool path. This variable is only used in SbomCLIToolTask.cs-->
+    <SbomToolPath Condition=" '$(MSBuildRuntimeType)' == 'Full'">$(SbomToolBinaryOutputPath)</SbomToolPath>
+    <ManifestFolderName>_manifest</ManifestFolderName>
+    <SbomSpecification>spdx_2.2</SbomSpecification>
+  </PropertyGroup>
+  
+  <!--Based on the MSBuild runtime, GenerateSbom will either pull the GenerateSbomTask or SbomCLIToolTask logic-->
+  <UsingTask TaskName="Microsoft.Sbom.Targets.GenerateSbom" AssemblyFile="$(GenerateSbomTaskAssemblyFilePath)" />
+
+  <PropertyGroup>
+    <GenerateSBOM Condition=" '$(GenerateSBOM)' == '' ">false</GenerateSBOM>
+    <SbomGenerationBuildComponentPath Condition=" '$(SbomGenerationBuildComponentPath)' == '' ">$(MSBuildProjectDirectory)</SbomGenerationBuildComponentPath>
+    <SbomGenerationPackageSupplier Condition=" '$(SbomGenerationPackageSupplier)' == '' And $(Authors) != '' ">$(Authors)</SbomGenerationPackageSupplier>
+    <SbomGenerationPackageSupplier Condition=" '$(SbomGenerationPackageSupplier)' == '' And $(Authors) == '' ">$(AssemblyName)</SbomGenerationPackageSupplier>
+    <SbomGenerationPackageName Condition=" '$(SbomGenerationPackageName)' == '' And $(PackageId) != '' ">$(PackageId)</SbomGenerationPackageName>
+    <SbomGenerationPackageName Condition=" '$(SbomGenerationPackageName)' == '' And $(PackageId) == '' ">$(AssemblyName)</SbomGenerationPackageName>
+    <SbomGenerationPackageVersion Condition=" '$(SbomGenerationPackageVersion)' == '' And $(Version) != '' ">$(Version)</SbomGenerationPackageVersion>
+    <SbomGenerationPackageVersion Condition=" '$(SbomGenerationPackageVersion)' == '' And $(Version) == '' ">1.0.0</SbomGenerationPackageVersion>
+    <SbomGenerationNamespaceBaseUri Condition=" '$(SbomGenerationNamespaceBaseUri)' == '' ">http://spdx.org/spdxdocs/$(SbomGenerationPackageName)</SbomGenerationNamespaceBaseUri>
+    <SbomGenerationFetchLicenseInformation Condition=" '$(SbomGenerationFetchLicenseInformation)' == '' ">false</SbomGenerationFetchLicenseInformation>
+    <SbomGenerationEnablePackageMetadataParsing Condition=" '$(SbomGenerationEnablePackageMetadataParsing)' == '' ">false</SbomGenerationEnablePackageMetadataParsing>
+    <SbomGenerationVerbosity Condition=" '$(SbomGenerationVerbosity)' == '' ">information</SbomGenerationVerbosity>
+    <SbomGenerationManifestInfo Condition=" '$(SbomGenerationManifestInfo)' == '' ">SPDX:2.2</SbomGenerationManifestInfo>
+    <SbomGenerationDeleteManifestDirIfPresent Condition=" '$(SbomGenerationDeleteManifestDirIfPresent)' == '' ">true</SbomGenerationDeleteManifestDirIfPresent>
+    <UnzipGuid>$([System.Guid]::NewGuid())</UnzipGuid>
+    <ShortUnzipGuidFolder>$([System.String]::Copy('$(UnzipGuid)').Substring(0, 8))</ShortUnzipGuidFolder>
+  </PropertyGroup>
+
+  <!-- After the Nuget Package is generated, we will unzip, scan, generate the SBOM and zip again. -->
+  <Target Name="GenerateSbomTarget" AfterTargets="Pack" Condition=" '$(GenerateSBOM)' ==  'true'" >
+    <!-- Unzip Nuget package, so it can be scanned by the SBOM Task. -->
+    <PropertyGroup>
+      <PackageOutputFullPath>$([System.IO.Path]::GetFullPath('$(PackageOutputPath)'))</PackageOutputFullPath>
+
+      <NugetPackage>
+        $([System.IO.Path]::Combine($(PackageOutputFullPath), $(PackageId).$(PackageVersion).nupkg))
+      </NugetPackage>
+      <NugetPackageUnzip>
+        $([System.IO.Path]::Combine($(PackageOutputFullPath), $(PackageId).$(PackageVersion).$(ShortUnzipGuidFolder).temp))
+      </NugetPackageUnzip>
+    </PropertyGroup>
+    <Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="$(NugetPackage)" OverwriteReadOnlyFiles="true" ContinueOnError="ErrorAndContinue" />
+
+    <!--
+      Call the SBOM task to generate a SBOM. The SBOM will be generated at the BuildDropPath location, which is the root folder
+      of the NuGet package. NOTE: Currently, the ManifestDirPath is an optional parameter that will not be supported, as the desired location of the SBOM will be
+      at the BuildDropPath directory. However, this parameter is available for future revision and implementation.
+    -->
+    <GenerateSbom
+        BuildDropPath="$(NugetPackageUnzip)"
+        BuildComponentPath="$(SbomGenerationBuildComponentPath)"
+        PackageSupplier="$(SbomGenerationPackageSupplier)"
+        PackageName="$(SbomGenerationPackageName)"
+        PackageVersion="$(SbomGenerationPackageVersion)"
+        NamespaceBaseUri="$(SbomGenerationNamespaceBaseUri)"
+        NamespaceUriUniquePart="$(SbomGenerationNamespaceUriUniquePart)"
+        ExternalDocumentListFile="$(SbomGenerationExternalDocumentReferenceListFile)"
+        FetchLicenseInformation="$(SbomGenerationFetchLicenseInformation)"
+        EnablePackageMetadataParsing="$(SbomGenerationEnablePackageMetadataParsing)"
+        Verbosity="$(SbomGenerationVerbosity)"
+        ManifestInfo="$(SbomGenerationManifestInfo)"
+        DeleteManifestDirIfPresent="$(SbomGenerationDeleteManifestDirIfPresent)"
+        SbomToolPath="$(SbomToolPath)"
+        ContinueOnError="ErrorAndContinue">
+    </GenerateSbom>
+
+    <!-- Zip the Nuget package back up and delete the temporary unzipped package. -->
+    <ZipDirectory SourceDirectory="$(NugetPackageUnzip)" DestinationFile="$(NugetPackage)" Overwrite="true" ContinueOnError="ErrorAndContinue" />
+    <RemoveDir Directories="$(NugetPackageUnzip)" ContinueOnError="WarnAndContinue" />
+  </Target>
+</Project>
