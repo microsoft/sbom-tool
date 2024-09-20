@@ -43,7 +43,7 @@
         <PackageVersion Include="PowerArgs" Version="3.6.0" />
         <PackageVersion Include="Scrutor" Version="4.2.2" />
         <PackageVersion Include="Serilog.Extensions.Hosting" Version="7.0.0" />
-        <PackageVersion Include="Serilog.Sinks.Async" Version="1.5.0" />
+        <PackageVersion Include="Serilog.Sinks.Async" Version="2.0.0" />
         <PackageVersion Include="Serilog.Sinks.Console" Version="4.1.0" />
         <PackageVersion Include="Serilog.Sinks.File" Version="5.0.0" />
         <PackageVersion Include="Serilog.Sinks.Map" Version="2.0.0" />
