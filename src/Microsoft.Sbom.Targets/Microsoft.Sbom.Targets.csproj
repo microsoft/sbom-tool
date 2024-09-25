@@ -43,7 +43,7 @@
   </Target>
 
   <!-- Include the SBOM CLI Tool to the .NET Framework package folder. -->
-   <Target Name="AddSbomToolToPackage" AfterTargets="Build">
+   <Target Name="AddSbomToolToPackage" BeforeTargets="_GetPackageFiles" >
     <MSBuild Projects="..\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" Properties="TargetFramework=$(SbomCLIToolTargetFramework)" Targets="Publish" />
     <ItemGroup>
       <Content Include="..\Microsoft.Sbom.Tool\bin\$(Configuration)\$(SbomCLIToolTargetFramework)\publish\**" Pack="true">
