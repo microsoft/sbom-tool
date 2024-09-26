@@ -19,8 +19,9 @@ using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.Sbom.Contracts.Interfaces;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.DependencyInjection;
+using Serilog.Events;
 using SPDX22 = Microsoft.Sbom.Parsers.Spdx22SbomParser;
-using SPDX30= Microsoft.Sbom.Parsers.Spdx30SbomParser;
+using SPDX30 = Microsoft.Sbom.Parsers.Spdx30SbomParser;
 
 /// <summary>
 /// MSBuild task for generating SBOMs from build output.
@@ -34,10 +35,11 @@ public partial class GenerateSbom : Task
     /// </summary>
     public GenerateSbom()
     {
+        var taskLoggingHelper = new TaskLoggingHelper(this);
         var host = Host.CreateDefaultBuilder()
             .ConfigureServices((host, services) =>
                 services
-                .AddSbomTool()
+                .AddSbomTool(LogEventLevel.Information, taskLoggingHelper)
                 /* Manually adding some dependencies since `AddSbomTool()` does not add them when
                  * running the MSBuild Task from another project.
                  */
@@ -118,7 +120,7 @@ public partial class GenerateSbom : Task
     {
         if (!string.IsNullOrWhiteSpace(this.ManifestInfo))
         {
-           return [SbomSpecification.Parse(this.ManifestInfo)];
+            return [SbomSpecification.Parse(this.ManifestInfo)];
         }
 
         return null;
