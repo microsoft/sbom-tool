@@ -41,7 +41,7 @@ public partial class GenerateSbom
             }
         }
 
-        this.PackageSupplier = Remove_Spaces_Tabs_Newlines(this.PackageSupplier);
+        this.PackageSupplier =this.PackageSupplier.Trim();
         this.PackageName = Remove_Spaces_Tabs_Newlines(this.PackageName);
         this.PackageVersion = Remove_Spaces_Tabs_Newlines(this.PackageVersion);
         this.NamespaceBaseUri = this.NamespaceBaseUri.Trim();
