@@ -185,7 +185,8 @@ public abstract class AbstractGenerateSbomTaskTests
     {
         yield return new object[] { PackageSupplier, PackageName, "0.0\n.1" };
         yield return new object[] { PackageSupplier, PackageName, "0.0\t.1" };
-        yield return new object[] { PackageSupplier, PackageName, "0.\t0\n.1" };
+        yield return new object[] { PackageSupplier, PackageName, "0.     0.    1" };
+        yield return new object[] { PackageSupplier, PackageName, "0 .   \t 0 \n .1" };
     }
 
     [TestMethod]

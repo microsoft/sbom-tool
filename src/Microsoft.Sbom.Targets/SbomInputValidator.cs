@@ -43,7 +43,7 @@ public partial class GenerateSbom
 
         this.PackageSupplier = Remove_Tabs_Newlines(this.PackageSupplier);
         this.PackageName = Remove_Tabs_Newlines(this.PackageName);
-        this.PackageVersion = Remove_Tabs_Newlines(this.PackageVersion);
+        this.PackageVersion = Remove_Tabs_Newlines(this.PackageVersion).Replace(" ", string.Empty);
         this.NamespaceBaseUri = this.NamespaceBaseUri.Trim();
         this.BuildDropPath = this.BuildDropPath.Trim();
 
