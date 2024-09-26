@@ -41,18 +41,18 @@ public partial class GenerateSbom
             }
         }
 
-        this.PackageSupplier = Remove_Spaces_Tabs_Newlines(this.PackageSupplier);
-        this.PackageName = Remove_Spaces_Tabs_Newlines(this.PackageName);
-        this.PackageVersion = Remove_Spaces_Tabs_Newlines(this.PackageVersion);
+        this.PackageSupplier = Remove_Tabs_Newlines(this.PackageSupplier);
+        this.PackageName = Remove_Tabs_Newlines(this.PackageName);
+        this.PackageVersion = Remove_Tabs_Newlines(this.PackageVersion).Replace(" ", string.Empty);
         this.NamespaceBaseUri = this.NamespaceBaseUri.Trim();
         this.BuildDropPath = this.BuildDropPath.Trim();
 
         return true;
     }
 
-    public string Remove_Spaces_Tabs_Newlines(string value)
+    public string Remove_Tabs_Newlines(string value)
     {
-        return value.Replace("\n", string.Empty).Replace("\t", string.Empty).Replace(" ", string.Empty);
+        return value.Replace("\n", string.Empty).Replace("\t", string.Empty).Trim();
     }
 
     /// <summary>
