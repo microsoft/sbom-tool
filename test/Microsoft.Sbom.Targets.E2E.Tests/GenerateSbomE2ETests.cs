@@ -7,8 +7,10 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Evaluation;
+using Microsoft.Build.Framework;
 using Microsoft.Build.Locator;
 using Microsoft.Build.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -109,22 +111,24 @@ public class GenerateSbomE2ETests
         }
     }
 
-    private void RestoreBuildPack(Project sampleProject)
+    private void RestoreBuildPack(Project sampleProject, [CallerMemberName] string callerName = null)
     {
         var logger = new ConsoleLogger();
-
         // Restore the project to create project.assets.json file
-        var restore = sampleProject.Build("Restore", new[] { logger });
+        var restore = sampleProject.Build("Restore", new ILogger[] { GetBinLog(callerName, "Restore"), logger });
         Assert.IsTrue(restore, "Failed to restore the project");
 
         // Next, build the project
-        var build = sampleProject.Build(logger);
+        var build = sampleProject.Build(new ILogger[] { GetBinLog(callerName, "Build"), logger });
         Assert.IsTrue(build, "Failed to build the project");
 
         // Finally, pack the project
-        var pack = sampleProject.Build("Pack", new[] { logger });
+        var pack = sampleProject.Build("Pack", new ILogger[] { GetBinLog(callerName, "Pack"), logger });
         Assert.IsTrue(pack, "Failed to pack the project");
     }
+
+    // binlogs are unique per name, so this ensures distinct names for the different stages
+    private BinaryLogger GetBinLog(string callerName, string target) => new BinaryLogger { Parameters = $"{callerName}.{target}.binlog" };
 
     private void InspectPackageIsWellFormed(bool isManifestPathGenerated = true)
     {

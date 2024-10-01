@@ -27,7 +27,7 @@ using Serilog.Events;
 /// </summary>
 public partial class GenerateSbom : Task
 {
-    private ISBOMGenerator Generator { get; set; }
+    private readonly IHost taskHost;
 
     /// <summary>
     /// Constructor for the GenerateSbomTask.
@@ -35,7 +35,7 @@ public partial class GenerateSbom : Task
     public GenerateSbom()
     {
         var taskLoggingHelper = new TaskLoggingHelper(this);
-        var host = Host.CreateDefaultBuilder()
+        taskHost = Host.CreateDefaultBuilder()
             .ConfigureServices((host, services) =>
                 services
                 .AddSbomTool(LogEventLevel.Information, taskLoggingHelper)
@@ -58,7 +58,6 @@ public partial class GenerateSbom : Task
                 .AddSingleton<IManifestInterface, Validator>()
                 .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>())
             .Build();
-        this.Generator = host.Services.GetRequiredService<ISBOMGenerator>();
     }
 
     /// <inheritdoc/>
@@ -71,6 +70,8 @@ public partial class GenerateSbom : Task
             {
                 return false;
             }
+
+            var generator = taskHost.Services.GetRequiredService<ISBOMGenerator>();
 
             // Set other configurations. The GenerateSBOMAsync() already sanitizes and checks for
             // a valid namespace URI and generates a random guid for NamespaceUriUniquePart if
@@ -89,7 +90,7 @@ public partial class GenerateSbom : Task
                 Verbosity = ValidateAndAssignVerbosity(),
             };
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
-            var result = System.Threading.Tasks.Task.Run(() => this.Generator.GenerateSbomAsync(
+            var result = System.Threading.Tasks.Task.Run(() => generator.GenerateSbomAsync(
                 rootPath: this.BuildDropPath,
                 manifestDirPath: this.ManifestDirPath,
                 metadata: sbomMetadata,
@@ -116,7 +117,7 @@ public partial class GenerateSbom : Task
     {
         if (!string.IsNullOrWhiteSpace(this.ManifestInfo))
         {
-           return [SbomSpecification.Parse(this.ManifestInfo)];
+            return [SbomSpecification.Parse(this.ManifestInfo)];
         }
 
         return null;
