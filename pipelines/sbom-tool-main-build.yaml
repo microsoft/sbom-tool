@@ -140,7 +140,7 @@ extends:
               command: publish
               publishWebProjects: false
               projects: src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj
-              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/win --self-contained --runtime $(WindowsNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net6.0'
+              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/win --self-contained --runtime $(WindowsNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net8.0'
               zipAfterPublish: false
               modifyOutputPath: false
 
@@ -234,7 +234,7 @@ extends:
               command: publish
               publishWebProjects: false
               projects: src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj
-              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/linux --self-contained --runtime $(LinuxNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net6.0'
+              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/linux --self-contained --runtime $(LinuxNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net8.0'
               zipAfterPublish: false
               modifyOutputPath: false
 
@@ -284,7 +284,7 @@ extends:
               command: publish
               publishWebProjects: false
               projects: src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj
-              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/osx --self-contained --runtime $(MacOSNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net6.0'
+              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/osx --self-contained --runtime $(MacOSNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net8.0'
               zipAfterPublish: false
               modifyOutputPath: false
 

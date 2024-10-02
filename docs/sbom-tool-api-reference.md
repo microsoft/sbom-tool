@@ -15,7 +15,7 @@ Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Micro
 ```
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

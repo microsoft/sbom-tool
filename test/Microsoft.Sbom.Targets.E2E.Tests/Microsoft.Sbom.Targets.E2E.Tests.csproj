@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net472</TargetFrameworks>
+    <TargetFrameworks>net472</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsPackable>false</IsPackable>
     <SignAssembly>True</SignAssembly>
     <RootNamespace>Microsoft.Sbom.Targets.E2E.Tests</RootNamespace>
-    <SbomCLIToolTargetFramework>net6.0</SbomCLIToolTargetFramework>
+    <SbomCLIToolTargetFramework>net8.0</SbomCLIToolTargetFramework>
     <SBOMCLIToolProjectDir>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Tool\</SBOMCLIToolProjectDir>
     <SBOMGenerationTargetsPath>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.targets</SBOMGenerationTargetsPath>
   </PropertyGroup>
