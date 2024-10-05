@@ -19,10 +19,8 @@ public class GenerateSbomE2ETests
     /*
      * The following tests validate the end-to-end workflow for importing the Microsoft.Sbom.Targets.targets
      * into a .NET project, building it, packing it, and validating the generated SBOM contents.
-     *
-     * NOTE: These tests are only compatible with net472, as there are issues when resolving NuGet assemblies when
-     * targeting net8.0.
      */
+
     private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
     private static string projectDirectory = Path.Combine(Directory.GetCurrentDirectory(), "ProjectSamples", "ProjectSample1");
@@ -148,7 +146,7 @@ public class GenerateSbomE2ETests
         }
     }
 
-    //[TestMethod]
+    [TestMethod]
     public void SbomGenerationSucceedsForDefaultProperties()
     {
         if (!IsWindows)
@@ -167,7 +165,7 @@ public class GenerateSbomE2ETests
         InspectPackageIsWellFormed();
     }
 
-    //[TestMethod]
+    [TestMethod]
     public void SbomGenerationSucceedsForValidNamespaceBaseUriUniquePart()
     {
         if (!IsWindows)
@@ -309,7 +307,7 @@ public class GenerateSbomE2ETests
         InspectPackageIsWellFormed(isManifestPathGenerated: false);
     }
 
-    //[TestMethod]
+    [TestMethod]
     public void SbomGenerationSucceedsForMultiTargetedProject()
     {
         if (!IsWindows)
@@ -323,7 +321,7 @@ public class GenerateSbomE2ETests
 
         // Set multi-target frameworks
         sampleProject.SetProperty("TargetFramework", string.Empty);
-        sampleProject.SetProperty("TargetFrameworks", "net472;net6.0");
+        sampleProject.SetProperty("TargetFrameworks", "net472;net8.0");
 
         // Restore, build, and pack the project
         RestoreBuildPack(sampleProject);
