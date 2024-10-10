@@ -19,7 +19,7 @@
         <PackageVersion Include="Microsoft.Build.Locator" Version="1.7.8" />
         <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="17.11.4" />
         <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="8.0.1" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="8.0.2" />
         <PackageVersion Include="MSTest.TestAdapter" Version="3.6.0" />
         <PackageVersion Include="MSTest.TestFramework" Version="3.6.0" />
         <PackageVersion Include="Microsoft.ComponentDetection.Common" Version="$(ComponentDetectionPackageVersion)" />
@@ -42,7 +42,7 @@
         <PackageVersion Include="NuGet.ProjectModel" Version="6.11.1" />
         <PackageVersion Include="packageurl-dotnet" Version="1.1.0" />
         <PackageVersion Include="PowerArgs" Version="3.6.0" />
-        <PackageVersion Include="Scrutor" Version="4.2.2" />
+        <PackageVersion Include="Scrutor" Version="5.0.0" />
         <PackageVersion Include="Serilog.Extensions.Hosting" Version="7.0.0" />
         <PackageVersion Include="Serilog.Sinks.Async" Version="2.0.0" />
         <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
