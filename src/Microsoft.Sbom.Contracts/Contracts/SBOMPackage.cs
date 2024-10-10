@@ -66,4 +66,9 @@ public class SbomPackage
     /// Gets or sets type of the package (e.g npm, git, nuget).
     /// </summary>
     public string Type { get; set; }
+
+    /// <summary>
+    /// Get or set unique identifier (Id) of DependOn package
+    /// </summary>
+    public string DependOn { get; set; }
 }
