@@ -32,7 +32,7 @@ public class GenerationData // TODO: Move to contracts
     /// Gets or sets a list of all the unique ids that were generated for each package that was
     /// traversed for this SBOM.
     /// </summary>
-    public IList<string> PackageIds { get; set; }
+    public IList<KeyValuePair<string, string>> PackageIds { get; set; }
 
     /// <summary>
     /// Gets or sets a list of pairs of ExternalDocumentReference IDs and described element IDs that are referenced in the SBOM.
