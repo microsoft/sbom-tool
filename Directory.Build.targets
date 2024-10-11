@@ -1,10 +1,10 @@
 <Project>
 
-    <Target Name="Versioning" BeforeTargets="MinVer">
-        <PropertyGroup Label="Build">
-            <MinVerDefaultPreReleaseIdentifiers>preview.0</MinVerDefaultPreReleaseIdentifiers>
-            <MinVerTagPrefix>v</MinVerTagPrefix>
-        </PropertyGroup>
-    </Target>
+  <Target Name="Versioning" BeforeTargets="MinVer">
+    <PropertyGroup Label="Build">
+      <MinVerDefaultPreReleaseIdentifiers>preview.0</MinVerDefaultPreReleaseIdentifiers>
+      <MinVerTagPrefix>v</MinVerTagPrefix>
+    </PropertyGroup>
+  </Target>
 
 </Project>
