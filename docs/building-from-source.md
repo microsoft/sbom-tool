@@ -67,16 +67,8 @@ After running this command you can execute the tool like this:
 
 Because of our multi-targeting, a target framework must be specified when using the dotnet publish command:
 
-Either
-
 ```
 dotnet publish -f net8.0
-```
-
-Or
-
-```
-dotnet publish -f net6.0
 ```
 
 ## Building using Codespaces
