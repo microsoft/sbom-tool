@@ -1,11 +1,10 @@
 # Sbom tool arguments
 
-```
+```powershell
 dotnet run -p src/Microsoft.Sbom.Tool generate -- -h
 ```
 
-```
-
+```text
 The Sbom tool generates a SBOM for any build artifact.
 
 Usage - Microsoft.Sbom.Tool <action> -options
