@@ -61,5 +61,6 @@
     <PackageVersion Include="System.Threading.Channels" Version="6.0.0" />
     <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.11.1" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+    <PackageVersion Include="Microsoft.IO.Redist" Version="6.0.1" />
   </ItemGroup>
 </Project>
