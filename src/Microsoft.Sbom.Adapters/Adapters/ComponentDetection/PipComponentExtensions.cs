@@ -3,6 +3,7 @@
 
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
 
+using System.Linq;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
 
@@ -29,5 +30,6 @@ internal static class PipComponentExtensions
         },
         FilesAnalyzed = false,
         Type = "python",
+        DependOn = component.AncestralReferrers?.FirstOrDefault()?.Id,
     };
 }
