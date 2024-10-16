@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AssemblyName>Microsoft.Sbom.Tool</AssemblyName>
-    <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x64;osx-x64;osx-arm64;linux-x64</RuntimeIdentifiers>
     <IsPublishable>true</IsPublishable>
     <GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
     <Description>Highly scalable and enterprise ready tool to create SBOMs for any variety of artifacts.</Description>
