@@ -336,16 +336,16 @@ extends:
               command: publish
               publishWebProjects: false
               projects: src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj
-              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/osx --self-contained --runtime $(MacOSArm64NetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net8.0'
+              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/osx-arm64 --self-contained --runtime $(MacOSArm64NetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net8.0'
               zipAfterPublish: false
               modifyOutputPath: false
 
-          - powershell: 'Rename-Item -Path $(Build.ArtifactStagingDirectory)\osx\Microsoft.Sbom.Tool -NewName $(BinaryNameMacOSArm64)'
+          - powershell: 'Rename-Item -Path $(Build.ArtifactStagingDirectory)\osx-arm64\Microsoft.Sbom.Tool -NewName $(BinaryNameMacOSArm64)'
             displayName: 'Rename binaries'
 
           - powershell: |
               del $(Build.ArtifactStagingDirectory)/CodeSignSummary-*.md
               mkdir $(Build.ArtifactStagingDirectory)/bin
-              Move-Item -Path $(Build.ArtifactStagingDirectory)/osx/$(BinaryNameMacOSArm64) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameMacOSArm64)
-              Remove-Item $(Build.ArtifactStagingDirectory)/osx -Recurse
+              Move-Item -Path $(Build.ArtifactStagingDirectory)/osx-arm64/$(BinaryNameMacOSArm64) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameMacOSArm64)
+              Remove-Item $(Build.ArtifactStagingDirectory)/osx-arm64 -Recurse
             displayName: 'Restructure Artifact'
