@@ -140,6 +140,24 @@ public class LicenseInformationFetcherTests
     }
 
     [TestMethod]
+    public void ConvertComponentToListForApi_Go()
+    {
+        var licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
+
+        var scannedComponents = new List<ScannedComponent>
+        {
+            new ScannedComponent
+            {
+               Component = new GoComponent("example.com/namespace/pkgname", "1.0.0")
+            }
+        };
+
+        var listOfComponentsForApi = licenseInformationFetcher.ConvertComponentsToListForApi(scannedComponents);
+
+        Assert.AreEqual("go/golang/example.com%2fnamespace/pkgname/1.0.0", listOfComponentsForApi[0]);
+    }
+
+    [TestMethod]
     public void ConvertClearlyDefinedApiResponseToList_GoodResponse()
     {
         var expectedKey = "json5@2.2.3";

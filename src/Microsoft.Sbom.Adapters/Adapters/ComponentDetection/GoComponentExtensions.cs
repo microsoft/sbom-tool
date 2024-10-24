@@ -24,6 +24,7 @@ internal static class GoComponentExtensions
         PackageUrl = goComponent.PackageUrl?.ToString(),
         PackageName = goComponent.Name,
         PackageVersion = goComponent.Version,
+        LicenseInfo = string.IsNullOrWhiteSpace(component.LicenseConcluded) ? null : new LicenseInfo,
         Checksum = new List<Checksum>
         {
             new()

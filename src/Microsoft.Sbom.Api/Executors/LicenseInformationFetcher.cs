@@ -71,6 +71,9 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                     case "cocoapods":
                         listOfComponentsForApi.Add($"pod/{componentType}/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
                         break;
+                    case "go":
+                        listOfComponentsForApi.Add($"go/golang/{Uri.EscapeDataString(clearlyDefinedNamespace)}/{componentName}/{componentVersion}");
+                        break;
 
                     default:
                         log.Debug($"License retrieval for component type {componentType} is not supported yet.");
