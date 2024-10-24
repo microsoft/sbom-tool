@@ -70,10 +70,15 @@ extends:
             inputs:
               version: 6.0.400
 
-          - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@3
+          - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@5
             displayName: 'Sign dlls'
             inputs:
-              ConnectedServiceName: 'Sbom tool CodeSigning ESRP  service connection'
+              ConnectedServiceName: 'SBOM Tool CI ESRP service connection'
+              AppRegistrationClientId: '51c11fce-97e9-4671-9176-0fc328a9dd17'
+              AppRegistrationTenantId: '33e01921-4d64-4f8c-a055-5bdaffd5e33d'
+              AuthAKVName: 'Sbom-Esrp-Secrets'
+              AuthCertName: 'SBOM-CI-ESRP-Auth-Cert'
+              AuthSignCertName: 'SBOM-CI-ESRP-Signing-Cert'
               FolderPath: '$(Build.SourcesDirectory)/src'
               Pattern: |
                 **/Release/**/*.exe
@@ -108,15 +113,20 @@ extends:
           - powershell: 'Get-ChildItem -Recurse -Filter *.csproj -Path src | ForEach-Object { dotnet pack $_.FullName  -c $(BuildConfiguration) --no-restore --no-build -o $(Build.ArtifactStagingDirectory)/nuget --include-symbols -p:SymbolPackageFormat=snupkg }'
             displayName: 'Pack NuGet package'
 
-          - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@3
+          - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@5
             displayName: 'Sign packages'
             inputs:
-              ConnectedServiceName: 'Sbom tool CodeSigning ESRP  service connection'
+              ConnectedServiceName: 'SBOM Tool CI ESRP service connection'
+              AppRegistrationClientId: '51c11fce-97e9-4671-9176-0fc328a9dd17'
+              AppRegistrationTenantId: '33e01921-4d64-4f8c-a055-5bdaffd5e33d'
+              AuthAKVName: 'Sbom-Esrp-Secrets'
+              AuthCertName: 'SBOM-CI-ESRP-Auth-Cert'
+              AuthSignCertName: 'SBOM-CI-ESRP-Signing-Cert'
               FolderPath: '$(Build.ArtifactStagingDirectory)'
               Pattern: '*.nupkg'
               signConfigType: inlineSignParams
               inlineOperation: |
-                [ 
+                [
                     {
                         "keyCode": "CP-401405",
                         "operationSetCode": "NuGetSign",
@@ -144,10 +154,15 @@ extends:
               zipAfterPublish: false
               modifyOutputPath: false
 
-          - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@3
+          - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@5
             displayName: 'Sign self-contained binaries'
             inputs:
-              ConnectedServiceName: 'Sbom tool CodeSigning ESRP  service connection'
+              ConnectedServiceName: 'SBOM Tool CI ESRP service connection'
+              AppRegistrationClientId: '51c11fce-97e9-4671-9176-0fc328a9dd17'
+              AppRegistrationTenantId: '33e01921-4d64-4f8c-a055-5bdaffd5e33d'
+              AuthAKVName: 'Sbom-Esrp-Secrets'
+              AuthCertName: 'SBOM-CI-ESRP-Auth-Cert'
+              AuthSignCertName: 'SBOM-CI-ESRP-Signing-Cert'
               FolderPath: '$(Build.ArtifactStagingDirectory)'
               Pattern: 'Microsoft.Sbom.Tool.exe, *.dll'
               signConfigType: inlineSignParams
