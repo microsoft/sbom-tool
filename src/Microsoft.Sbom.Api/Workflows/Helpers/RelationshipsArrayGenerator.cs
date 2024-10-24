@@ -67,8 +67,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                         generator.Run(
                             GetRelationships(
                                 RelationshipType.DEPENDS_ON,
-                                generationData.RootPackageId,
-                                generationData.PackageIds),
+                                generationData),
                             sbomConfig.ManifestInfo),
 
                         // Root package relationship
@@ -113,6 +112,22 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
             }
 
             return totalErrors;
+        }
+    }
+
+    private IEnumerator<Relationship> GetRelationships(RelationshipType relationshipType, GenerationData generationData)
+    {
+        foreach (var targetElementId in generationData.PackageIds)
+        {
+            if (targetElementId.Key != null || generationData.RootPackageId != null)
+            {
+                yield return new Relationship
+                {
+                    RelationshipType = relationshipType,
+                    TargetElementId = targetElementId.Key,
+                    SourceElementId = targetElementId.Value ?? generationData.RootPackageId
+                };
+            }
         }
     }
 

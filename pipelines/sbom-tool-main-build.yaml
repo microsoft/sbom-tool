@@ -21,9 +21,11 @@ variables:
   ForceSigning: 'false'
   WindowsNetRuntime: 'win-x64'
   MacOSNetRuntime: 'osx-x64'
+  MacOSArm64NetRuntime: 'osx-arm64'
   LinuxNetRuntime: 'linux-x64'
   BinaryNameWindows: 'sbom-tool-win-x64.exe'
   BinaryNameMacOS: 'sbom-tool-osx-x64'
+  BinaryNameMacOSArm64: 'sbom-tool-osx-arm64'
   BinaryNameLinux: 'sbom-tool-linux-x64'
 
 extends:
@@ -150,7 +152,7 @@ extends:
               command: publish
               publishWebProjects: false
               projects: src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj
-              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/win --self-contained --runtime $(WindowsNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net6.0'
+              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/win --self-contained --runtime $(WindowsNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net8.0'
               zipAfterPublish: false
               modifyOutputPath: false
 
@@ -249,7 +251,7 @@ extends:
               command: publish
               publishWebProjects: false
               projects: src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj
-              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/linux --self-contained --runtime $(LinuxNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net6.0'
+              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/linux --self-contained --runtime $(LinuxNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net8.0'
               zipAfterPublish: false
               modifyOutputPath: false
 
@@ -299,7 +301,7 @@ extends:
               command: publish
               publishWebProjects: false
               projects: src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj
-              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/osx --self-contained --runtime $(MacOSNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net6.0'
+              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/osx --self-contained --runtime $(MacOSNetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net8.0'
               zipAfterPublish: false
               modifyOutputPath: false
 
@@ -311,4 +313,54 @@ extends:
               mkdir $(Build.ArtifactStagingDirectory)/bin
               Move-Item -Path $(Build.ArtifactStagingDirectory)/osx/$(BinaryNameMacOS) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameMacOS)
               Remove-Item $(Build.ArtifactStagingDirectory)/osx -Recurse
+            displayName: 'Restructure Artifact'
+
+        - job: Job_4
+          displayName: 'Build (macOS-arm64)'
+          templateContext:
+            outputs:
+            - output: pipelineArtifact
+              targetPath: $(Build.ArtifactStagingDirectory)
+              artifactName: '$(OutputArtifactName)-macOS-arm64'
+          pool:
+            name: Azure Pipelines
+            image: macos-latest
+            os: macOS
+          steps:
+          - task: UseDotNet@2
+            displayName: 'Use .NET Core'
+            inputs:
+              useGlobalJson: true
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore solution'
+            inputs:
+              command: restore
+              feedsToUse: config
+              nugetConfigPath: nuget.config
+              verbosityRestore: Normal
+
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              arguments: '-c $(BuildConfiguration)'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build self-contained binary'
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj
+              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/osx-arm64 --self-contained --runtime $(MacOSArm64NetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net8.0'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - powershell: 'Rename-Item -Path $(Build.ArtifactStagingDirectory)\osx-arm64\Microsoft.Sbom.Tool -NewName $(BinaryNameMacOSArm64)'
+            displayName: 'Rename binaries'
+
+          - powershell: |
+              del $(Build.ArtifactStagingDirectory)/CodeSignSummary-*.md
+              mkdir $(Build.ArtifactStagingDirectory)/bin
+              Move-Item -Path $(Build.ArtifactStagingDirectory)/osx-arm64/$(BinaryNameMacOSArm64) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameMacOSArm64)
+              Remove-Item $(Build.ArtifactStagingDirectory)/osx-arm64 -Recurse
             displayName: 'Restructure Artifact'

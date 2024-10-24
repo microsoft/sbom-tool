@@ -1,8 +1,9 @@
-# Building the SBOM tool from source code.
+# Building the SBOM tool from source code
 
 The SBOM tool is a cross-platform, C#-based tool compiled using the  Microsoft .NET 8 cross-platform, open-source developer platform. Follow the instructions provided which will guide the user in building the sbom tool from the source file.
 
 ## Prerequisites
+
 * Download and install [Dotnet SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) version 8.0.100 or later.
 * Clone this GitHub repo (see steps to clone repo [here](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)).
 * A text editor or integrated development environment (IDE) such as [Visual Studio Code](https://code.visualstudio.com) or [Visual Studio](https://visualstudio.microsoft.com).
@@ -10,6 +11,7 @@ The SBOM tool is a cross-platform, C#-based tool compiled using the  Microsoft .
 ## Understanding the source structure
 
 Users can find source files in the following folder locations:
+
 * All the source code for the tool: `src` folder
 * Tests: `test` folder
 * The core engine (generates SBOMs): `Microsoft.Sbom.Api` project
@@ -20,13 +22,13 @@ The `Microsoft.Sbom.Common` project contains the base of common code, constants,
 
 The `Microsoft.Sbom.Contracts` project defines the interfaces that the tool uses to call the SBOM tool using a C# API. The `ISBOMGenerator` class defines two methods that the tool uses to directly call the SBOM tool from C# code. The `Microsoft.Sbom.Tool` project defines a command line interface (CLI) interface to talk to the SBOM tool.
 
-## Building on Visual Studio 
+## Building on Visual Studio
 
 After opening the Visual Studio 2022 application, open the Microsoft.Sbom.sln file in the root of the repository. Users can either press `Ctrl + Shift + B` or select Build from the menu in order to build the application.
 
 1. Set the Microsoft.Sbom.Tool project as the startup project (rightclick-> Set as Startup Project)
 2. Set Run arguments for the Microsoft.Sbom.Tool project (rightclick->properties->Debug)  
-	*Minimum:* `generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -ps <company name> -nsb <namespace uri base>`
+    *Minimum:* `generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -ps <company name> -nsb <namespace uri base>`
 3. Going forward, users can press 'F5' after making changes. This action will build the changes and start the process in debug mode (stopping at breakpoints).
 
 A good new-user tutorial for Visual Studio is available at [this](https://www.youtube.com/watch?v=iC3CJcYxkl0&t=31s).
@@ -47,33 +49,18 @@ dotnet run --project src/Microsoft.Sbom.Tool generate -b <drop path> -bc <build 
 
 ## Building on ARM based devices running OSX
 
-The sbom-tool targets both .NET 6 and .NET 8 therefore it is possible to produce binaries for both. We have seen issues when attempting to run the tool using the .NET 6 binaries ([#223](https://github.com/microsoft/sbom-tool/issues/223)) so for these scenarios we recommend targeting .NET 8. You can do this by following these steps:
+The tool provides an osx-arm64 version of the tool. If you need to build one locally, you can build it as follows:
 
 The following command will produce a dll that can be executed on ARM based devices running OSX and can be modified to suit your needs:
 
 ```
- dotnet publish src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj --configuration Release --output bin --runtime osx-arm64 -p:TargetFramework=net8.0 -p:SelfContained=true -p:OFFICIAL_BUILD=true -p:MinVerVersionOverride=1.8.0 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false
+ dotnet publish src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj --configuration Release --output bin --runtime osx-arm64 -p:TargetFramework=net8.0 -p:SelfContained=true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:DebugType=None
 ```
 
 After running this command you can execute the tool like this:
 
 ```
 ./bin/Microsoft.Sbom.Tool generate -b ~/tmp/sbom-tool/ -bc ~/tmp/sbom-tool/ -pn TestProject -pv 1.2.3 -ps Microsoft
-```
-
-
-## Using Dotnet Publish
-
-Because of our multi-targeting, a target framework must be specified when using the dotnet publish command:
-
-Either
-
-```
-dotnet publish -f net8.0
-```
-Or
-```
-dotnet publish -f net6.0
 ```
 
 ## Building using Codespaces

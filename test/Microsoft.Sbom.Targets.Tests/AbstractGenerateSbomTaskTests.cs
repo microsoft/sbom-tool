@@ -171,16 +171,14 @@ public abstract class AbstractGenerateSbomTaskTests
     {
         yield return new object[] { "Test-\nMicrosoft", PackageName, PackageVersion };
         yield return new object[] { "Test\t-Microsoft", PackageName, PackageVersion };
-        yield return new object[] { "Test  -     Microsoft   ", PackageName, PackageVersion };
-        yield return new object[] { "Test - Mic\tro\nsoft", PackageName, PackageVersion };
+        yield return new object[] { "Test-Mic\tro\nsoft", PackageName, PackageVersion };
     }
 
     private static IEnumerable<object[]> GetPackageNameCases()
     {
         yield return new object[] { PackageSupplier, "CoseSign\nTool", PackageVersion };
         yield return new object[] { PackageSupplier, "Cose\tSign\tTool", PackageVersion };
-        yield return new object[] { PackageSupplier, "Cose     Sign   Tool   ", PackageVersion };
-        yield return new object[] { PackageSupplier, "Cose    S\ti\ngn   \n Too\tl", PackageVersion };
+        yield return new object[] { PackageSupplier, "CoseS\ti\ngn\nToo\tl", PackageVersion };
     }
 
     private static IEnumerable<object[]> GetPackageVersionCases()

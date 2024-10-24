@@ -27,13 +27,13 @@ steps:
     publishLocation: 'Container'
 ```
 
-In this pipeline, the user first builds the dotnet project.  The generated binaries are stored in the artifacts staging directory. In the final step, upload these artifacts to the pipeline artifacts. Any dependent pipeline or release can now consume these binaries using this pipeline artifact.  Check the build pipeline artifacts in the project in order to see the commplete set of binaries generated for the Demo project.
+In this pipeline, the user first builds the dotnet project.  The generated binaries are stored in the artifacts staging directory. In the final step, upload these artifacts to the pipeline artifacts. Any dependent pipeline or release can now consume these binaries using this pipeline artifact.  Check the build pipeline artifacts in the project in order to see the complete set of binaries generated for the Demo project.
 
 ![ado-artifact-without-sbom](./images/ado-artifacts-without-sbom.png)
 
 ## Adding the SBOM generation task
 
-Now the user can generate the SBOM for the pipeline artifacts which the previous step produced. Ths process will store the generated SBOM as part of the pipeline artifacts so that the user can distribute the artifact to the desired downstream dependencies. 
+Now the user can generate the SBOM for the pipeline artifacts which the previous step produced. Ths process will store the generated SBOM as part of the pipeline artifacts so that the user can distribute the artifact to the desired downstream dependencies.
 
 ```yaml
 pool:
