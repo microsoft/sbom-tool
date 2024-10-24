@@ -17,14 +17,18 @@ internal static class GoComponentExtensions
     /// Converts a <see cref="GoComponent" /> to an <see cref="SbomPackage" />.
     /// </summary>
     /// <param name="goComponent">The <see cref="GoComponent" /> to convert.</param>
+    /// <param name="component">The <see cref="ExtendedScannedComponent"/> version of the GoComponent</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>
-    public static SbomPackage ToSbomPackage(this GoComponent goComponent) => new()
+    public static SbomPackage ToSbomPackage(this GoComponent goComponent, ExtendedScannedComponent component) => new()
     {
         Id = goComponent.Id,
         PackageUrl = goComponent.PackageUrl?.ToString(),
         PackageName = goComponent.Name,
         PackageVersion = goComponent.Version,
-        LicenseInfo = string.IsNullOrWhiteSpace(component.LicenseConcluded) ? null : new LicenseInfo,
+        LicenseInfo = string.IsNullOrWhiteSpace(component.LicenseConcluded) ? null : new LicenseInfo
+        {
+            Concluded = component.LicenseConcluded,
+        },
         Checksum = new List<Checksum>
         {
             new()
