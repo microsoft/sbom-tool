@@ -26,7 +26,7 @@ public static class ScannedComponentExtensions
             CondaComponent condaComponent => condaComponent.ToSbomPackage(),
             DockerImageComponent dockerImageComponent => dockerImageComponent.ToSbomPackage(),
             GitComponent gitComponent => gitComponent.ToSbomPackage(),
-            GoComponent goComponent => goComponent.ToSbomPackage(),
+            GoComponent goComponent => goComponent.ToSbomPackage(component),
             LinuxComponent linuxComponent => linuxComponent.ToSbomPackage(),
             MavenComponent mavenComponent => mavenComponent.ToSbomPackage(component),
             NpmComponent npmComponent => npmComponent.ToSbomPackage(component),
