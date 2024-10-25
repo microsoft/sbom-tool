@@ -1,0 +1,85 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Microsoft.Sbom.Targets</AssemblyName>
+    <TargetFrameworks>net8.0;net472</TargetFrameworks>
+    <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+    <IsPublishable>true</IsPublishable>
+    <IsPackable>true</IsPackable>
+    <SelfContained>true</SelfContained>
+    <Version>1.0.0</Version>
+    <Title>GenerateSbomTask</Title>
+    <Description>Tasks and targets for running the SBOM tool.</Description>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <SbomCLIToolTargetFramework>net8.0</SbomCLIToolTargetFramework>
+    <DevelopmentDependency>true</DevelopmentDependency>
+
+    <!-- This target will run when MSBuild is collecting the files to be packaged, and we'll implement it below. This property controls the dependency list for this packaging process, so by adding our custom property we hook ourselves into the process in a supported way. -->
+    <TargetsForTfmSpecificBuildOutput>
+      $(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage
+    </TargetsForTfmSpecificBuildOutput>
+    <!-- This property tells MSBuild where the root folder of the package's build assets should be. Because we are not a library package, we should not pack to 'lib'. Instead, we choose 'tasks' by convention. -->
+    <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
+    <IncludeBuildOutput>true</IncludeBuildOutput>
+    <!-- NuGet does validation that libraries in a package are exposed as dependencies, but we _explicitly_ do not want that behavior for MSBuild tasks. They are isolated by design. Therefore we ignore this specific warning. -->
+    <NoWarn>NU5100</NoWarn>
+    <!-- Suppress NuGet warning NU5128. -->
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <GenerateDependencyFile>true</GenerateDependencyFile>
+  </PropertyGroup>
+
+  <!-- This is the target we defined above. It's purpose is to add all of our PackageReference and ProjectReference's runtime assets to our package output.  -->
+  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+      <!-- The TargetPath is the path inside the package that the source file will be placed. This is already precomputed in the ReferenceCopyLocalPaths items' DestinationSubPath, so reuse it here. -->
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths)" TargetPath="%(ReferenceCopyLocalPaths.DestinationSubPath)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- This target adds the generated deps.json file to our package output -->
+  <Target Name="AddBuildDependencyFileToBuiltProjectOutputGroupOutput" BeforeTargets="BuiltProjectOutputGroup" Condition=" '$(GenerateDependencyFile)' == 'true'">
+    <ItemGroup>
+      <BuiltProjectOutputGroupOutput Include="$(ProjectDepsFilePath)" TargetPath="$(ProjectDepsFileName)" FinalOutputPath="$(ProjectDepsFilePath)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Include the SBOM CLI Tool to the .NET Framework package folder. -->
+   <Target Name="AddSbomToolToPackage" BeforeTargets="_GetPackageFiles" >
+    <MSBuild Projects="..\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" Properties="TargetFramework=$(SbomCLIToolTargetFramework)" Targets="Publish" />
+    <ItemGroup>
+      <Content Include="..\Microsoft.Sbom.Tool\bin\$(Configuration)\$(SbomCLIToolTargetFramework)\publish\**" Pack="true">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackagePath>\tasks\net472\sbom-tool\</PackagePath>
+        <Visible>true</Visible>
+      </Content>
+    </ItemGroup>
+  </Target> 
+
+  <ItemGroup>
+    <!-- these lines pack the build props/targets files to the `build` folder in the generated package.
+        by convention, the .NET SDK will look for build\<Package Id>.props and build\<Package Id>.targets
+        for automatic inclusion in the build. -->
+    <Content Include="Microsoft.Sbom.Targets.targets" PackagePath="\build" />
+    <Content Include="Microsoft.Sbom.Targets.targets" PackagePath="\buildMultiTargeting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="all" ExcludeAssets="Runtime" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Condition="'$(TargetFramework)'=='net8.0'" Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
+    <ProjectReference Condition="'$(TargetFramework)'=='net8.0'" Include="..\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" PrivateAssets="all" />
+    <ProjectReference Condition="'$(TargetFramework)'=='net8.0'" Include="..\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" PrivateAssets="all" IncludeAssets="output" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <Compile Remove="GenerateSbomTask.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net472'">
+    <Compile Remove="SbomCLIToolTask.cs" />
+  </ItemGroup>
+
+</Project>

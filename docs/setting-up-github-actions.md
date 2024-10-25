@@ -40,7 +40,7 @@ Once the sbom tool produces SBOM, the user can see that the Actions run page now
 
 ## Adding the SBOM generation task
 
-The user will now produce the SBOM file for the build artifacts generated during the previous step. The ideal end state is the storage of the final product - the newly-generated SBOM file - as part of the build artifacts for future artifact distribution to the downstream dependencies. 
+The user will now produce the SBOM file for the build artifacts generated during the previous step. The ideal end state is the storage of the final product - the newly-generated SBOM file - as part of the build artifacts for future artifact distribution to the downstream dependencies.
 
 ```yaml
 name: Sample with SBOM generation

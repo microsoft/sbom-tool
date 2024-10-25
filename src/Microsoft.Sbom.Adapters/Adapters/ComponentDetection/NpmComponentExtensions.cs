@@ -4,6 +4,7 @@
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
 
 using System;
+using System.Linq;
 using Microsoft.ComponentDetection.Contracts.Internal;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
@@ -39,6 +40,7 @@ internal static class NpmComponentExtensions
         },
         FilesAnalyzed = false,
         Type = "npm",
+        DependOn = component.AncestralReferrers?.FirstOrDefault()?.Id,
     };
 
     /// <summary>

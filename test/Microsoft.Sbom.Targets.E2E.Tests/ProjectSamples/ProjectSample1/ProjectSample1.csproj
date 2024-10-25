@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <GenerateSBOM>true</GenerateSBOM>
+    <TargetFramework>net8.0</TargetFramework>
+    <Authors>ProjectSample</Authors>
+    <Version>1.2.4</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <!--Ignore errors related to selecting a nuget.config and dependency resolution-->
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1507;NU5128</NoWarn>
+  </PropertyGroup>
+
+  <Import Project="../Microsoft.Sbom.Targets.targets"/>
+
+</Project>
