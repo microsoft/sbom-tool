@@ -72,6 +72,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                         listOfComponentsForApi.Add($"pod/{componentType}/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
                         break;
                     case "golang":
+                        //  Go packages are URLs so we need to convert characters such as '/' into '%2f'.
                         listOfComponentsForApi.Add($"go/golang/{Uri.EscapeDataString(clearlyDefinedNamespace)}/{componentName}/{componentVersion}");
                         break;
 
