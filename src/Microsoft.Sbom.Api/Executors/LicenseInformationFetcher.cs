@@ -71,7 +71,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                     case "cocoapods":
                         listOfComponentsForApi.Add($"pod/{componentType}/{clearlyDefinedNamespace}/{componentName}/{componentVersion}");
                         break;
-                    case "go":
+                    case "golang":
                         listOfComponentsForApi.Add($"go/golang/{Uri.EscapeDataString(clearlyDefinedNamespace)}/{componentName}/{componentVersion}");
                         break;
 
