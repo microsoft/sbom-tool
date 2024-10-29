@@ -28,7 +28,7 @@ public class GenerateSbomE2ETests
     private static string generateSbomTaskPath = Path.Combine(Directory.GetCurrentDirectory(), "Microsoft.Sbom.Targets.dll");
 
     private static string sbomSpecificationName = "SPDX";
-    private static string sbomSpecificationVersion = "2.2";
+    private static string sbomSpecificationVersion = "2.2.2";
     private static string sbomSpecificationDirectoryName = $"{sbomSpecificationName}_{sbomSpecificationVersion}".ToLowerInvariant();
     private string expectedPackageName;
     private string expectedVersion;

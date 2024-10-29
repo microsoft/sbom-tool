@@ -16,7 +16,7 @@ public static class Constants
     public static ManifestInfo SPDX22ManifestInfo = new ManifestInfo
     {
         Name = "SPDX",
-        Version = "2.2"
+        Version = "2.2.2"
     };
 
     public static SbomSpecification SPDX22Specification = SPDX22ManifestInfo.ToSBOMSpecification();

@@ -9,7 +9,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 internal static class Constants
 {
     internal const string SPDXName = "SPDX";
-    internal const string SPDXVersion = "2.2";
+    internal const string SPDXVersion = "2.2.2";
     internal const string DataLicenceValue = "CC0-1.0";
     internal const string SPDXDocumentIdValue = "SPDXRef-DOCUMENT";
     internal const string RootPackageIdValue = "SPDXRef-RootPackage";

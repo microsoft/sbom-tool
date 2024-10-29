@@ -50,12 +50,12 @@ public class ApiConfigurationBuilderTests
     public void GetConfiguration_PopulateAll()
     {
         var specs = new List<SbomSpecification>();
-        specs.Add(new SbomSpecification("spdx", "2.2"));
+        specs.Add(new SbomSpecification("spdx", "2.2.2"));
 
         var expectedManifestInfo = new ManifestInfo()
         {
             Name = "spdx",
-            Version = "2.2"
+            Version = "2.2.2"
         };
 
         var config = ApiConfigurationBuilder.GetConfiguration(RootPath, manifestDirPath, files, packages, metadata, specs, runtime, externalDocumentRefListFile, componentPath);

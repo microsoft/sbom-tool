@@ -32,7 +32,7 @@ namespace SBOMApiExample
 
             IList<SBOMSpecification> specifications = new List<SBOMSpecification>()
             {
-                new SBOMSpecification ("SPDX", "2.2")
+                new SBOMSpecification ("SPDX", "2.2.2")
             };
 
             RuntimeConfiguration configuration = new RuntimeConfiguration()
@@ -84,7 +84,7 @@ namespace SBOMApiExample
                                 sbomFiles,
                                 sbomPackages,
                                 metadata,
-                                new List<SBOMSpecification> { new("SPDX", "2.2") },
+                                new List<SBOMSpecification> { new("SPDX", "2.2.2") },
                                 new RuntimeConfiguration { DeleteManifestDirectoryIfPresent = true });
 
             hostApplicationLifetime.StopApplication();

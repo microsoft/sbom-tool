@@ -18,5 +18,5 @@ public class GenerateSbomTaskSPDX_2_2Tests : AbstractGenerateSbomTaskTests
 {
     internal override string SbomSpecificationName => "SPDX";
 
-    internal override string SbomSpecificationVersion => "2.2";
+    internal override string SbomSpecificationVersion => "2.2.2";
 }

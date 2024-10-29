@@ -106,7 +106,7 @@ The `SBOMSpecificiation` object represents a SBOM format. Each `SBOMSpecificatio
 ```C#
 using Microsoft.Sbom.Contracts;
 
-var spdx22Specification = new SBOMSpecification("SPDX", "2.2");
+var spdx22Specification = new SBOMSpecification("SPDX", "2.2.2");
 ```
 
 While this API supports the creation of a SBOM output file in multiple formats, it currently only supports the SPDX version 2.2 architecture. Users looking to implement other SBOM architectures can use this API call, which provides the full list of all supported formats.
@@ -118,7 +118,7 @@ var specifications = generator.GetSupportedSBOMSpecifications();
 
 Assert.True(specifications.Count() == 1);
 Assert.Equal("SPDX", specifications.First().Name);
-Assert.Equal("2.2", specifications.First().Version);
+Assert.Equal("2.2.2", specifications.First().Version);
 ```
 
 ### GetRequiredAlgorithms
@@ -306,7 +306,7 @@ namespace SBOMApiExample
             string outputPath = "C:/temp/ValidationOutput.json";
             IList<SbomSpecification> spdx22Specification = new List<SbomSpecification>()
             {
-                new SbomSpecification("SPDX","2.2")
+                new SbomSpecification("SPDX", "2.2.2")
             };
 
             RuntimeConfiguration configuration = new RuntimeConfiguration()
