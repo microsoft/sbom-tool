@@ -21,7 +21,7 @@ public class ExternalReference
 
     /// <summary>
     /// Gets or sets type of the external reference. These are defined in an appendix in the SPDX specification.
-    /// https://spdx.github.io/spdx-spec/appendix-VI-external-repository-identifiers/.
+    /// https://spdx.github.io/spdx-spec/v2.2.2/external-repository-identifiers/.
     /// </summary>
     [JsonPropertyName("referenceType")]
     public string Type { get; set; }

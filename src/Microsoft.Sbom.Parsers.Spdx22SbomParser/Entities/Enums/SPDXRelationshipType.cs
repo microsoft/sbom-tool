@@ -9,7 +9,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
 /// Defines the type of <see cref="SPDXRelationship"/> between the source and the
 /// target element.
 ///
-/// Full definition here: https://spdx.github.io/spdx-spec/7-relationships-between-SPDX-elements/#71-relationship.
+/// Full definition here: https://spdx.github.io/spdx-spec/v2.2.2/relationships-between-SPDX-elements/.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum SPDXRelationshipType
