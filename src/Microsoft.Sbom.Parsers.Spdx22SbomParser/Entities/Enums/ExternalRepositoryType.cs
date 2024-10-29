@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Enums;
 
 /// <summary>
-/// Type of the external reference. These are definined in an appendix in the SPDX specification.
+/// Type of the external reference. These are defined in an appendix in the SPDX specification.
 /// https://spdx.github.io/spdx-spec/appendix-VI-external-repository-identifiers/.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
