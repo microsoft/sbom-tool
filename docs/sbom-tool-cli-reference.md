@@ -51,7 +51,7 @@ The above list contains the minimum mandatory parameters that the user needs to 
 
 By default, the tool will generate SBOM file in a newly created subfolder called `_manifest` inside the BuildDropPath (-b).  In case the user wants to place the SBOM in a different path, specify the `ManifestDirPath -m` parameter, e.g.:
 
-```powershell
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -m c:\sboms
 ```
 
