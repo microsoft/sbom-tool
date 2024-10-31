@@ -43,7 +43,7 @@ dotnet build
 
 Users can run the sbom tool using this command which contains the minimum required set of parameters:
 
-```shell
+```
 dotnet run --project src/Microsoft.Sbom.Tool generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -ps <company name> -nsb <namespace uri base>
 ```
 
