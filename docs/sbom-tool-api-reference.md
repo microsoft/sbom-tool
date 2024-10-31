@@ -12,7 +12,7 @@ Users can use the C#-based SBOM API for calling the SBOM tool. This guide is int
 
 Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Microsoft.Sbom.Api) package configuration by utilizing the steps posted to [here](https://www.nuget.org/packages/Microsoft.Sbom.Api).  A sample `.csproj` file" is:
 
-```
+```xml
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -126,7 +126,6 @@ Assert.Equal("2.2", specifications.First().Version);
 Each SBOM specification has a list of the required hash algorithms for generating each package and file. This handy API provides the user with that list of hashing algorithms.
 
 ```C#
-
 var algorithms = generator.GetRequiredAlgorithms(spdx22Specification);
 
 Assert.True(algorithms.Count() == 2);
