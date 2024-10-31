@@ -63,7 +63,7 @@ This command will cause the SBOM tool to generate the SBOM inside the `c:\sboms`
 
 The user can specify verbose logging just by specifying the -V parameter, e.g:
 
-```powershell
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -V Verbose
 ```
 
