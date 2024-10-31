@@ -122,7 +122,7 @@ By default, users commonly log telemetry to the console output. In order to log 
 
 With a SBOM file in hand, use the tool to validate the output file with the command:
 
-```powershell
+```shell
 ./sbom-tool-win-x64.exe validate -b c:\outputDrop -o c:\validationOutputPath\output.json -mi SPDX:2.2
 ```
 
