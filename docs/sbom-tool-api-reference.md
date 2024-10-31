@@ -101,7 +101,7 @@ Below are 2 additional helper methods.
 
 ### GetSupportedSBOMSpecifications
 
-The `SBOMSpecificiation` object represents a SBOM format. Each `SBOMSpecification` contains a `name` and a `version`. This structure defines a single format of SBOM.  Sample SPDX version 2.2 format representations include:
+The `SBOMSpecification` object represents a SBOM format. Each `SBOMSpecification` contains a `name` and a `version`. This structure defines a single format of SBOM.  Sample SPDX version 2.2 format representations include:
 
 ```C#
 using Microsoft.Sbom.Contracts;
