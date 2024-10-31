@@ -30,7 +30,7 @@ Please check the [CLI Reference](docs/sbom-tool-cli-reference.md) document for a
 
 ##### WinGet
 
-```powershell
+```shell
 winget install Microsoft.SbomTool
 ```
 
