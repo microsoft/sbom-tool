@@ -50,14 +50,14 @@ Invoke-WebRequest -Uri "https://github.com/microsoft/sbom-tool/releases/latest/d
 
 ##### Linux (curl)
 
-```shell
+```bash
 curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
 chmod +x sbom-tool
 ```
 
 ##### macOS (curl)
 
-```shell
+```bash
 curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-osx-x64
 chmod +x sbom-tool
 ```
@@ -66,7 +66,7 @@ chmod +x sbom-tool
 
 Clone this repo and build the docker image.
 
-```shell
+```bash
 git clone https://github.com/microsoft/sbom-tool
 cd sbom-tool
 docker build . -t ms_sbom_tool
@@ -94,7 +94,7 @@ Please check the [API Reference](docs/sbom-tool-api-reference.md) document for a
 
 Once you have installed the command line tool for your OS, run the tool using this command:
 
-```shell
+```
 sbom-tool generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -ps <package supplier> -nsb <namespace uri base>
 ```
 
@@ -108,7 +108,7 @@ A more detailed list of available CLI arguments for the tool can be found [here]
 
 With an SBOM file in hand, use the tool to validate the output file with the command:
 
-```shell
+```
 sbom-tool validate -b <drop path> -o <output path> -mi SPDX:2.2
 ```
 
@@ -124,11 +124,11 @@ Currently only SPDX2.2 is supported.
 
 Use the tool to redact any references to files from a given SBOM or set of SBOMs with either of the following commands:
 
-```shell
+```
 sbom-tool redact -sd <directory containing SBOMs to redact> -o <output path>
 ```
 
-```shell
+```
 sbom-tool redact -sp <path to the SBOM to redact> -o <output path>
 ```
 
