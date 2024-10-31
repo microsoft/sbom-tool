@@ -83,7 +83,7 @@ In addition to the test image, the user may also want to gather all dependencies
 
 The arguments for `-b` and `-bc` will specify the path that the tool will scan. For example, the user can generate an SBOM for only the dependency packages of the Docker image with the command:
 
-```powershell
+```shell
 ./sbom-tool-win-x64.exe generate -m c:\outputPath -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1
 ```
 
