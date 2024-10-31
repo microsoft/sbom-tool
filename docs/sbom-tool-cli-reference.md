@@ -77,7 +77,7 @@ Users can scan docker images in order to determine dependency packages.  In this
 
 In addition to the test image, the user may also want to gather all dependencies in a build machine named `ubuntu:1.9`.  The command can specify multiple image arguments for this parameter by separating them with a comma:
 
-```powershell
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1,ubuntu:1.9
 ```
 
