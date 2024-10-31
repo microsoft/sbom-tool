@@ -41,7 +41,7 @@ In the user's shell of choice, ensure that the Dotnet SDK is installed and avail
 dotnet build
 ```
 
-Users can run the sbom tool using this command which contains the minimum required set of paramaters:
+Users can run the sbom tool using this command which contains the minimum required set of parameters:
 
 ```
 dotnet run --project src/Microsoft.Sbom.Tool generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -ps <company name> -nsb <namespace uri base>
