@@ -33,7 +33,7 @@ jobs:
         path: buildOutput
 ```
 
-Once the sbom tool produces SBOM, the user can see that the Actions run page now contains the newly generated binares and other file artifacts.
+Once the sbom tool produces SBOM, the user can see that the Actions run page now contains the newly generated binaries and other file artifacts.
 
 ![actions run](./images/github-workflow-run-details.png)
 ![actions-artifact-without-sbom](./images/github-downloaded-folder-without-sbom.png)
