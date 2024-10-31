@@ -37,7 +37,7 @@ A good new-user tutorial for Visual Studio is available at [this](https://www.yo
 
 In the user's shell of choice, ensure that the Dotnet SDK is installed and available on the `PATH` for the shell. Navigate to the root of the repository, then execute the following command for building the repository:
 
-```
+```shell
 dotnet build
 ```
 
@@ -53,13 +53,13 @@ The tool provides an osx-arm64 version of the tool. If you need to build one loc
 
 The following command will produce a dll that can be executed on ARM based devices running OSX and can be modified to suit your needs:
 
-```
- dotnet publish src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj --configuration Release --output bin --runtime osx-arm64 -p:TargetFramework=net8.0 -p:SelfContained=true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:DebugType=None
+```shell
+dotnet publish src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj --configuration Release --output bin --runtime osx-arm64 -p:TargetFramework=net8.0 -p:SelfContained=true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:DebugType=None
 ```
 
 After running this command you can execute the tool like this:
 
-```
+```shell
 ./bin/Microsoft.Sbom.Tool generate -b ~/tmp/sbom-tool/ -bc ~/tmp/sbom-tool/ -pn TestProject -pv 1.2.3 -ps Microsoft
 ```
 
@@ -75,7 +75,7 @@ Clone this repo.
 
 Build the docker image.
 
-```bash
+```shell
 git clone https://github.com/microsoft/sbom-tool
 cd sbom-tool
 docker build . -t ms_sbom_tool
