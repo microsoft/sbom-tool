@@ -71,7 +71,7 @@ The user can specify verbose logging just by specifying the -V parameter, e.g:
 
 Users can scan docker images in order to determine dependency packages.  In this scenario, the user wants to gather dependencies from the docker image `testImage:0.0.1`.  The user can run the following command:
 
-```powershell
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1
 ```
 
