@@ -22,7 +22,7 @@ dotnet build --output c:\outputDrop
 
 Now the user can generate a SBOM for the above project by running the tool they just downloaded:
 
-```powershell
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com
 ```
 
