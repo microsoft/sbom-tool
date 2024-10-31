@@ -30,13 +30,13 @@ Please check the [CLI Reference](docs/sbom-tool-cli-reference.md) document for a
 
 ##### WinGet
 
-```sh
+```shell
 winget install Microsoft.SbomTool
 ```
 
 ##### Homebrew
 
-```bash
+```shell
 brew install sbom-tool
 ```
 

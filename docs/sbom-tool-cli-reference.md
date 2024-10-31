@@ -22,7 +22,7 @@ dotnet build --output c:\outputDrop
 
 Now the user can generate a SBOM for the above project by running the tool they just downloaded:
 
-```
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com
 ```
 
@@ -51,7 +51,7 @@ The above list contains the minimum mandatory parameters that the user needs to 
 
 By default, the tool will generate SBOM file in a newly created subfolder called `_manifest` inside the BuildDropPath (-b).  In case the user wants to place the SBOM in a different path, specify the `ManifestDirPath -m` parameter, e.g.:
 
-```
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -m c:\sboms
 ```
 
@@ -63,7 +63,7 @@ This command will cause the SBOM tool to generate the SBOM inside the `c:\sboms`
 
 The user can specify verbose logging just by specifying the -V parameter, e.g:
 
-```
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -V Verbose
 ```
 
@@ -71,19 +71,19 @@ The user can specify verbose logging just by specifying the -V parameter, e.g:
 
 Users can scan docker images in order to determine dependency packages.  In this scenario, the user wants to gather dependencies from the docker image `testImage:0.0.1`.  The user can run the following command:
 
-```
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1
 ```
 
 In addition to the test image, the user may also want to gather all dependencies in a build machine named `ubuntu:1.9`.  The command can specify multiple image arguments for this parameter by separating them with a comma:
 
-```
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1,ubuntu:1.9
 ```
 
 The arguments for `-b` and `-bc` will specify the path that the tool will scan. For example, the user can generate an SBOM for only the dependency packages of the Docker image with the command:
 
-```
+```shell
 ./sbom-tool-win-x64.exe generate -m c:\outputPath -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1
 ```
 
@@ -91,7 +91,7 @@ The arguments for `-b` and `-bc` will specify the path that the tool will scan. 
 
 In order to scan a path to populate the files section of the SBOM, the user can run the following command:
 
-```
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -m c:\outputPath -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1
 ```
 
@@ -100,13 +100,13 @@ In order to scan a path to populate the files section of the SBOM, the user can 
 You can exclude directories from the component scan by specifying the `-cd` parameter you can pass arguments directly to Component Detection. One of these arguments is `--DirectoryExclusionList`  Filters out specific directories following a minimatch pattern from the component scan which will leave
 the contents of these directories out of the packages section of the SBOM. For example, if you wanted to exclude the `bin` directory from the component scan you would run the following command
 
-```
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -cd "--DirectoryExclusionList **/bin/**"
 ```
 
 You can give multiple exclusion patterns by repeating the `--DirectoryExclusionList` argument. (Note that minimatch combines like `**/bin/**|**/obj/**` won't work):
 
-```
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -cd "--DirectoryExclusionList **/bin/** --DirectoryExclusionList **/obj/**"
 ```
 
@@ -114,7 +114,7 @@ You can give multiple exclusion patterns by repeating the `--DirectoryExclusionL
 
 By default, users commonly log telemetry to the console output. In order to log the telemetry as part of the SBOM file, specify the `-t` parameter:
 
-```
+```powershell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -t c:\telemetry
 ```
 
@@ -122,7 +122,7 @@ By default, users commonly log telemetry to the console output. In order to log 
 
 With a SBOM file in hand, use the tool to validate the output file with the command:
 
-```
+```shell
 ./sbom-tool-win-x64.exe validate -b c:\outputDrop -o c:\validationOutputPath\output.json -mi SPDX:2.2
 ```
 
@@ -140,13 +140,13 @@ Currently only SPDX2.2 is supported.
 
 If the original command created the SBOM files with the following parameters:
 
-```
+```powershell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -m c:\sboms
 ```
 
 Then the SBOM will not be located at the default location. In order to allow the tool to validate the SBOM at the different location, the user must provide the path to the `_manifest` subfolder that was created in that directory:
 
-```
+```powershell
 ./sbom-tool-win-x64.exe validate -b c:\outputDrop -o c:\validationOutputPath\output.json -mi SPDX:2.2 -m c:\sboms\_manifest
 ```
 
@@ -154,6 +154,6 @@ Then the SBOM will not be located at the default location. In order to allow the
 
 Verbose logging and writing telemetry to a file will function in the same way they do when generating an SBOM. Here is an example of using both parameters when validating and SBOM:
 
-```
+```powershell
 ./sbom-tool-win-x64.exe validate -b c:\outputDrop -o c:\validationOutputPath\output.json -mi SPDX:2.2 -t c:\telemetry -V verbose
 ```
