@@ -91,7 +91,7 @@ The arguments for `-b` and `-bc` will specify the path that the tool will scan. 
 
 In order to scan a path to populate the files section of the SBOM, the user can run the following command:
 
-```powershell
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -m c:\outputPath -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1
 ```
 
