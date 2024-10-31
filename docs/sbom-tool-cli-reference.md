@@ -106,7 +106,7 @@ the contents of these directories out of the packages section of the SBOM. For e
 
 You can give multiple exclusion patterns by repeating the `--DirectoryExclusionList` argument. (Note that minimatch combines like `**/bin/**|**/obj/**` won't work):
 
-```powershell
+```shell
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -cd "--DirectoryExclusionList **/bin/** --DirectoryExclusionList **/obj/**"
 ```
 
