@@ -10,7 +10,7 @@ namespace Microsoft.Sbom.Extensions.Entities;
 /// target element.
 /// </summary>
 /// <remarks>
-/// See https://spdx.github.io/spdx-spec/relationships-between-SPDX-elements/.
+/// See https://spdx.github.io/spdx-spec/v2.2.2/relationships-between-SPDX-elements/.
 /// </remarks>
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum RelationshipType
