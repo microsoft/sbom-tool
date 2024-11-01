@@ -21,6 +21,7 @@ jobs:
           - windows-latest
           - ubuntu-latest
           - macos-latest
+          - macos-latest-large
 
     env:
         OFFICIAL_BUILD: 'True'
