@@ -141,6 +141,10 @@ public class InputConfiguration : IConfiguration
     [DefaultValue(false)]
     public ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
 
+    /// <inheritdoc cref="IConfiguration.LicenseInformationTimeout" />
+    [DefaultValue(30)]
+    public ConfigurationSetting<int> LicenseInformationTimeout { get; set; }
+
     [DefaultValue(false)]
     public ConfigurationSetting<bool> EnablePackageMetadataParsing { get; set; }
 

@@ -17,12 +17,16 @@ public interface ILicenseInformationFetcher
     /// <returns></returns>
     List<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents);
 
+    /// <inheritdoc cref="FetchLicenseInformationAsync(List{string}, int)"/>>
+    Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi);
+
     /// <summary>
     /// Calls the ClearlyDefined API to get the license information for the list of components.
     /// </summary>
     /// <param name="listOfComponentsForApi"> A list of strings formatted into a list of strings that can be used to call the batch ClearlyDefined API.</param>
+    /// <param name="timeout">Timeout in seconds to use when making web requests</param>
     /// <returns></returns>
-    Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi);
+    Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi, int timeout);
 
     /// <summary>
     /// Gets the dictionary of licenses that were fetched from the ClearlyDefined API.

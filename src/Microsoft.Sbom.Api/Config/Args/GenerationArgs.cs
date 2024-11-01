@@ -117,6 +117,15 @@ public class GenerationArgs : GenerationAndValidationCommonArgs
     public bool? FetchLicenseInformation { get; set; }
 
     /// <summary>
+    /// Specifies the timeout in seconds for fetching the license information. Defaults to 30 seconds. Has no effect if
+    /// FetchLicenseInformation (li) argument is false or not provided.
+    /// </summary>
+    [ArgShortcut("lto")]
+    [ArgDescription("Specifies the timeout in seconds for fetching the license information. Defaults to 30 seconds. " +
+        "Has no effect if the FetchLicenseInformation (li) argument is false or not provided. ")]
+    public int? LicenseInformationTimeout { get; set; }
+
+    /// <summary>
     /// If set to true, we will attempt to parse license and supplier info from the packages metadata file.
     /// </summary>
     [ArgShortcut("pm")]

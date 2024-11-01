@@ -20,7 +20,6 @@ public class LicenseInformationService : ILicenseInformationService
     private readonly ILogger log;
     private readonly IRecorder recorder;
     private readonly HttpClient httpClient;
-    private const int ClientTimeoutSeconds = 30;
 
     public LicenseInformationService(ILogger log, IRecorder recorder, HttpClient httpClient)
     {
@@ -31,6 +30,11 @@ public class LicenseInformationService : ILicenseInformationService
 
     public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi)
     {
+        return await FetchLicenseInformationFromAPI(listOfComponentsForApi, 30);
+    }
+
+    public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi, int timeout)
+    {
         var batchSize = 500;
         var responses = new List<HttpResponseMessage>();
         var responseContent = new List<string>();
@@ -38,7 +42,7 @@ public class LicenseInformationService : ILicenseInformationService
         var uri = new Uri("https://api.clearlydefined.io/definitions?expand=-files");
 
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        httpClient.Timeout = TimeSpan.FromSeconds(ClientTimeoutSeconds);
+        httpClient.Timeout = TimeSpan.FromSeconds(timeout);
 
         for (var i = 0; i < listOfComponentsForApi.Count; i += batchSize)
         {

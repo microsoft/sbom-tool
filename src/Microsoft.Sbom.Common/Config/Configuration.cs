@@ -47,6 +47,7 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<string>> generationTimestamp = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> followSymlinks = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> fetchLicenseInformation = new();
+    private static readonly AsyncLocal<ConfigurationSetting<int>> licenseInformationTimeout = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> enablePackageMetadataParsing = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> deleteManifestDirIfPresent = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> failIfNoPackages = new();
@@ -307,6 +308,14 @@ public class Configuration : IConfiguration
     {
         get => fetchLicenseInformation.Value;
         set => fetchLicenseInformation.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.LicenseInformationTimeout" />
+    [DefaultValue(30)]
+    public ConfigurationSetting<int> LicenseInformationTimeout
+    {
+        get => licenseInformationTimeout.Value;
+        set => licenseInformationTimeout.Value = value;
     }
 
     /// <inheritdoc cref="IConfiguration.EnablePackageMetadataParsing" />
