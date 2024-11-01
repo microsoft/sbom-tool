@@ -175,21 +175,21 @@ public class ApiConfigurationBuilderTests
     [DataRow(" ")]
     [DataRow(null)]
     [ExpectedException(typeof(ArgumentException))]
-    public void ThrowArguementExceptionOnRootPathValues(string input)
+    public void ThrowArgumentExceptionOnRootPathValues(string input)
     {
         ApiConfigurationBuilder.GetConfiguration(input, null, null, null, null);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
-    public void ThrowArguementNulExceptionOnNullMetadata()
+    public void ThrowArgumentNulExceptionOnNullMetadata()
     {
         ApiConfigurationBuilder.GetConfiguration("random", null, null, null, null);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
-    public void ThrowArguementExceptionOnSpecificationZero()
+    public void ThrowArgumentExceptionOnSpecificationZero()
     {
         ApiConfigurationBuilder.GetConfiguration("random", null, null, null, metadata, new List<SbomSpecification>(), runtime);
     }

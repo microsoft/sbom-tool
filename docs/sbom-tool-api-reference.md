@@ -5,14 +5,14 @@ Users can use the C#-based SBOM API for calling the SBOM tool. This guide is int
 ## Prerequisites
 
 * A .NET project that can ingest packages from nuget.org.
-* Only projects that target .NET 6 or higher. This API currently provides no support for implementation of .NET Framework for the SBOM API.
+* Only projects that target .NET 8 or higher. This API currently provides no support for implementation of .NET Framework for the SBOM API.
 * Add the **SBOMToolsPublic** repository to the nuget.config.  Verify the project configuration by clicking the **'Connect to Feed'** button on the feed page [here](https://dev.azure.com/mseng/PipelineTools/_artifacts/feed/SBOMToolsPublic)
 
 ## Installation
 
 Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Microsoft.Sbom.Api) package configuration by utilizing the steps posted to [here](https://www.nuget.org/packages/Microsoft.Sbom.Api).  A sample `.csproj` file" is:
 
-```
+```xml
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -101,7 +101,7 @@ Below are 2 additional helper methods.
 
 ### GetSupportedSBOMSpecifications
 
-The `SBOMSpecificiation` object represents a SBOM format. Each `SBOMSpecification` contains a `name` and a `version`. This structure defines a single format of SBOM.  Sample SPDX version 2.2 format representations include:
+The `SBOMSpecification` object represents a SBOM format. Each `SBOMSpecification` contains a `name` and a `version`. This structure defines a single format of SBOM.  Sample SPDX version 2.2 format representations include:
 
 ```C#
 using Microsoft.Sbom.Contracts;
@@ -126,7 +126,6 @@ Assert.Equal("2.2", specifications.First().Version);
 Each SBOM specification has a list of the required hash algorithms for generating each package and file. This handy API provides the user with that list of hashing algorithms.
 
 ```C#
-
 var algorithms = generator.GetRequiredAlgorithms(spdx22Specification);
 
 Assert.True(algorithms.Count() == 2);

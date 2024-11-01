@@ -22,7 +22,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 8.0.x
 
     - name: Build
       run: dotnet build Sample.sln --output buildOutput
@@ -33,7 +33,7 @@ jobs:
         path: buildOutput
 ```
 
-Once the sbom tool produces SBOM, the user can see that the Actions run page now contains the newly generated binares and other file artifacts.
+Once the sbom tool produces SBOM, the user can see that the Actions run page now contains the newly generated binaries and other file artifacts.
 
 ![actions run](./images/github-workflow-run-details.png)
 ![actions-artifact-without-sbom](./images/github-downloaded-folder-without-sbom.png)
@@ -58,7 +58,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 8.0.x
     - name: Build
       run: dotnet build Sample.sln --output buildOutput
       

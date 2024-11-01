@@ -54,7 +54,7 @@ public static class InternalMetadataProviderIdentityExtensions
     /// <summary>
     /// Generates the package verification code for a given package using the SPDX 2.2 specification.
     ///
-    /// Algorithm defined here https://spdx.github.io/spdx-spec/3-package-information/#39-package-verification-code.
+    /// Algorithm defined here https://spdx.github.io/spdx-spec/v2.2.2/package-information/#79-package-verification-code-field.
     /// </summary>
     /// <param name="internalMetadataProvider"></param>
     /// <returns></returns>
