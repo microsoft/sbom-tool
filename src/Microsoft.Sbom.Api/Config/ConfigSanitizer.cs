@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
@@ -80,6 +81,20 @@ public class ConfigSanitizer
 
         // Set default package supplier if not provided in configuration.
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
+
+        // Prevent null value for LicenseInformationTimeoutInSeconds.
+        // Values from int.MinValue to int.MaxValue are allowed. Negative values are simply treated as InfiniteTimespan in LicenseInformationService, and
+        // from what I can tell there are no upper limits higher than int.MaxValue in Timespan.FromSeconds or httpClient.Timeout
+        if (configuration.LicenseInformationTimeoutInSeconds is null)
+        {
+            configuration.LicenseInformationTimeoutInSeconds = new(LicenseInformationFetcher.DefaultTimeoutInSeconds, SettingSource.Default);
+        }
+
+        // Check if arg -lto is specified but -li is not
+        if (configuration.FetchLicenseInformation?.Value != true && !configuration.LicenseInformationTimeoutInSeconds.IsDefaultSource)
+        {
+            logger.Warning("A license fetching timeout is specified (argument -lto), but this has no effect when FetchLicenseInfo is unspecified or false (argument -li)");
+        }
 
         // Replace backslashes in directory paths with the OS-sepcific directory separator character.
         PathUtils.ConvertToOSSpecificPathSeparators(configuration);

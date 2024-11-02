@@ -310,9 +310,9 @@ public class Configuration : IConfiguration
         set => fetchLicenseInformation.Value = value;
     }
 
-    /// <inheritdoc cref="IConfiguration.LicenseInformationTimeout" />
+    /// <inheritdoc cref="IConfiguration.LicenseInformationTimeoutInSeconds" />
     [DefaultValue(30)]
-    public ConfigurationSetting<int> LicenseInformationTimeout
+    public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds
     {
         get => licenseInformationTimeout.Value;
         set => licenseInformationTimeout.Value = value;

@@ -196,9 +196,9 @@ public interface IConfiguration
 
     /// <summary>
     /// Specifies the timeout in seconds for fetching the license information. Defaults to 30 seconds. Has no effect if
-    /// FetchLicenseInformation (li) argument is false or not provided.
+    /// FetchLicenseInformation (li) argument is false or not provided. Negative values correspond to an infinite timeout
     /// </summary>
-    ConfigurationSetting<int> LicenseInformationTimeout { get; set; }
+    ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get; set; }
 
     /// <summary>
     /// If set to true, we will attempt to locate and parse package metadata files for additional information to include in the SBOM such as .nuspec/.pom files in the local package cache.

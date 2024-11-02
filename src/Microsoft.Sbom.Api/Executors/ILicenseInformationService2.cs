@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Sbom.Api.Executors;
 
-public interface ILicenseInformationService
+public interface ILicenseInformationService2 : ILicenseInformationService
 {
-    public Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi);
+    public Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi, int timeoutInSeconds);
 }

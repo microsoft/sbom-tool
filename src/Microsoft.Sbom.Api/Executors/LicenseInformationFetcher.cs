@@ -14,8 +14,9 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
-public class LicenseInformationFetcher : ILicenseInformationFetcher
+public class LicenseInformationFetcher : ILicenseInformationFetcher2
 {
+    public const int DefaultTimeoutInSeconds = 30;
     private readonly ILogger log;
     private readonly IRecorder recorder;
     private readonly ILicenseInformationService licenseInformationService;
@@ -84,12 +85,21 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
 
     public async Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi)
     {
-        return await FetchLicenseInformationAsync(listOfComponentsForApi, 30);
+        return await FetchLicenseInformationAsync(listOfComponentsForApi, DefaultTimeoutInSeconds);
     }
 
-    public async Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi, int timeout)
+    public async Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi, int timeoutInSeconds)
     {
-        return await licenseInformationService.FetchLicenseInformationFromAPI(listOfComponentsForApi, timeout);
+        var licenseInformationService2 = licenseInformationService as ILicenseInformationService2;
+        if (licenseInformationService2 is null)
+        {
+            log.Warning("Timeout is specified in License Fetcher, but licenseInformationService does not implement ILicenseInformationService2");
+            return await licenseInformationService.FetchLicenseInformationFromAPI(listOfComponentsForApi);
+        }
+        else
+        {
+            return await licenseInformationService2.FetchLicenseInformationFromAPI(listOfComponentsForApi, timeoutInSeconds);
+        }
     }
 
     // Will attempt to extract license information from a clearlyDefined batch API response. Will always return a dictionary which may be empty depending on the response.

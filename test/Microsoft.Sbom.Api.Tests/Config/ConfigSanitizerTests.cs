@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
@@ -350,5 +351,31 @@ public class ConfigSanitizerTests
             Assert.IsTrue(config.CatalogFilePath.Value.StartsWith($"/{nameof(config.CatalogFilePath)}/", StringComparison.Ordinal));
             Assert.IsTrue(config.TelemetryFilePath.Value.StartsWith($"/{nameof(config.TelemetryFilePath)}/", StringComparison.Ordinal));
         }
+    }
+
+    [TestMethod]
+    [DataRow(int.MinValue, DisplayName = "Minimum Value")]
+    [DataRow(0, DisplayName = "Zero is allowed")]
+    [DataRow(int.MaxValue, DisplayName = "Maximum Value")]
+    public void LicenseInformationTimeoutInSeconds_SanitizeMakesNoChanges(int value)
+    {
+        var config = GetConfigurationBaseObject();
+        config.LicenseInformationTimeoutInSeconds = new(value, SettingSource.CommandLine);
+
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(value, config.LicenseInformationTimeoutInSeconds.Value, "The value of LicenseInformationTimeoutInSeconds should remain the same through the sanitization process");
+    }
+
+    [TestMethod]
+    public void LicenseInformationTimeoutInSeconds_SanitizeNull()
+    {
+        var config = GetConfigurationBaseObject();
+        config.LicenseInformationTimeoutInSeconds = null;
+
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(LicenseInformationFetcher.DefaultTimeoutInSeconds, config.LicenseInformationTimeoutInSeconds.Value, "The value of LicenseInformationTimeoutInSeconds should be set to 30s when null");
+        Assert.AreEqual(SettingSource.Default, config.LicenseInformationTimeoutInSeconds.Source, "The source of LicenseInformationTimeoutInSeconds should be set to Default when null");
     }
 }

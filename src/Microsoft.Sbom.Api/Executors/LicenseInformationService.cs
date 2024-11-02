@@ -15,8 +15,9 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
-public class LicenseInformationService : ILicenseInformationService
+public class LicenseInformationService : ILicenseInformationService2
 {
+    private const int DefaultTimeoutInSeconds = LicenseInformationFetcher.DefaultTimeoutInSeconds;
     private readonly ILogger log;
     private readonly IRecorder recorder;
     private readonly HttpClient httpClient;
@@ -30,10 +31,10 @@ public class LicenseInformationService : ILicenseInformationService
 
     public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi)
     {
-        return await FetchLicenseInformationFromAPI(listOfComponentsForApi, 30);
+        return await FetchLicenseInformationFromAPI(listOfComponentsForApi, DefaultTimeoutInSeconds);
     }
 
-    public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi, int timeout)
+    public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi, int timeoutInSeconds)
     {
         var batchSize = 500;
         var responses = new List<HttpResponseMessage>();
@@ -42,7 +43,14 @@ public class LicenseInformationService : ILicenseInformationService
         var uri = new Uri("https://api.clearlydefined.io/definitions?expand=-files");
 
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        httpClient.Timeout = TimeSpan.FromSeconds(timeout);
+        if (timeoutInSeconds >= 0)
+        {
+            httpClient.Timeout = TimeSpan.FromSeconds(timeoutInSeconds);
+        }
+        else
+        {
+            httpClient.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
+        }
 
         for (var i = 0; i < listOfComponentsForApi.Count; i += batchSize)
         {

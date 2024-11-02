@@ -66,6 +66,8 @@ Actions
     DeleteManifestDirIfPresent (-D)           If set to true, we will delete any previous manifest directories that are already present in the ManifestDirPath without asking the user for confirmation. The new
                                               manifest directory will then be created at this location and the generated SBOM will be stored there.
     FetchLicenseInformation (-li)             If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.
+    LicenseInformationTimeoutInSeconds (-lto) Specifies the timeout in seconds for fetching the license information. Defaults to 30 seconds. Has no effect if
+                                              FetchLicenseInformation (-li) argument is false or not provided. A negative value specifies an infinite timeout.
     EnablePackageMetadataParsing (-pm)        If set to true, we will attempt to parse license and supplier info from the packages metadata file (RubyGems, NuGet, Maven, Npm).
     Verbosity (-V)                            Display this amount of detail in the logging output.
                                               Verbose
