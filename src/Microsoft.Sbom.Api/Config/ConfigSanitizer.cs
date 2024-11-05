@@ -83,11 +83,21 @@ public class ConfigSanitizer
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
 
         // Prevent null value for LicenseInformationTimeoutInSeconds.
-        // Values from int.MinValue to int.MaxValue are allowed. Negative values are simply treated as InfiniteTimespan in LicenseInformationService, and
-        // from what I can tell there are no upper limits higher than int.MaxValue in Timespan.FromSeconds or httpClient.Timeout
+        // Values of (0, Constants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
+        // the higher values are truncated to the maximum of Common.Constants.MaxLicenseFetchTimeoutInSeconds
         if (configuration.LicenseInformationTimeoutInSeconds is null)
         {
-            configuration.LicenseInformationTimeoutInSeconds = new(LicenseInformationFetcher.DefaultTimeoutInSeconds, SettingSource.Default);
+            configuration.LicenseInformationTimeoutInSeconds = new(Common.Constants.DefaultLicenseFetchTimeoutInSeconds, SettingSource.Default);
+        }
+        else if (configuration.LicenseInformationTimeoutInSeconds.Value <= 0)
+        {
+            logger.Warning($"Negative and Zero Values not allowed for timeout. Using the default {Common.Constants.DefaultLicenseFetchTimeoutInSeconds} seconds instead.");
+            configuration.LicenseInformationTimeoutInSeconds.Value = Common.Constants.DefaultLicenseFetchTimeoutInSeconds;
+        }
+        else if (configuration.LicenseInformationTimeoutInSeconds.Value > Common.Constants.MaxLicenseFetchTimeoutInSeconds)
+        {
+            logger.Warning($"Specified timeout exceeds maximum allowed. Truncating the timeout to {Common.Constants.MaxLicenseFetchTimeoutInSeconds} seconds.");
+            configuration.LicenseInformationTimeoutInSeconds.Value = Common.Constants.MaxLicenseFetchTimeoutInSeconds;
         }
 
         // Check if arg -lto is specified but -li is not

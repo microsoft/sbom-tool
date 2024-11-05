@@ -17,7 +17,6 @@ namespace Microsoft.Sbom.Api.Executors;
 
 public class LicenseInformationService : ILicenseInformationService2
 {
-    private const int DefaultTimeoutInSeconds = LicenseInformationFetcher.DefaultTimeoutInSeconds;
     private readonly ILogger log;
     private readonly IRecorder recorder;
     private readonly HttpClient httpClient;
@@ -31,7 +30,7 @@ public class LicenseInformationService : ILicenseInformationService2
 
     public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi)
     {
-        return await FetchLicenseInformationFromAPI(listOfComponentsForApi, DefaultTimeoutInSeconds);
+        return await FetchLicenseInformationFromAPI(listOfComponentsForApi, Common.Constants.MaxLicenseFetchTimeoutInSeconds);
     }
 
     public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi, int timeoutInSeconds)
@@ -43,14 +42,10 @@ public class LicenseInformationService : ILicenseInformationService2
         var uri = new Uri("https://api.clearlydefined.io/definitions?expand=-files");
 
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        if (timeoutInSeconds >= 0)
+        if (timeoutInSeconds > 0)
         {
             httpClient.Timeout = TimeSpan.FromSeconds(timeoutInSeconds);
-        }
-        else
-        {
-            httpClient.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
-        }
+        } // The else cases should be sanitized in Config Sanitizer, and even if not, it'll just use httpClient's default timeout
 
         for (var i = 0; i < listOfComponentsForApi.Count; i += batchSize)
         {

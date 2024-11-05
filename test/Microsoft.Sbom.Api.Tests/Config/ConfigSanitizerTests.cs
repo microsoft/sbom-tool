@@ -354,9 +354,8 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
-    [DataRow(int.MinValue, DisplayName = "Minimum Value")]
-    [DataRow(0, DisplayName = "Zero is allowed")]
-    [DataRow(int.MaxValue, DisplayName = "Maximum Value")]
+    [DataRow(1, DisplayName = "Minimum value of 1")]
+    [DataRow(Common.Constants.MaxLicenseFetchTimeoutInSeconds, DisplayName = "Maximum Value of 86400")]
     public void LicenseInformationTimeoutInSeconds_SanitizeMakesNoChanges(int value)
     {
         var config = GetConfigurationBaseObject();
@@ -368,6 +367,21 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
+    [DataRow(int.MinValue, Common.Constants.DefaultLicenseFetchTimeoutInSeconds, DisplayName = "Negative Value is changed to Default")]
+    [DataRow(0, Common.Constants.DefaultLicenseFetchTimeoutInSeconds, DisplayName = "Zero is changed to Default")]
+    [DataRow(Common.Constants.MaxLicenseFetchTimeoutInSeconds + 1, Common.Constants.MaxLicenseFetchTimeoutInSeconds, DisplayName = "Max Value + 1 is truncated")]
+    [DataRow(int.MaxValue, Common.Constants.MaxLicenseFetchTimeoutInSeconds, DisplayName = "int.MaxValue is truncated")]
+    public void LicenseInformationTimeoutInSeconds_SanitizeExceedsLimits(int value, int expected)
+    {
+        var config = GetConfigurationBaseObject();
+        config.LicenseInformationTimeoutInSeconds = new(value, SettingSource.CommandLine);
+
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(expected, config.LicenseInformationTimeoutInSeconds.Value, "The value of LicenseInformationTimeoutInSeconds should be sanitized to a valid value");
+    }
+
+    [TestMethod]
     public void LicenseInformationTimeoutInSeconds_SanitizeNull()
     {
         var config = GetConfigurationBaseObject();
@@ -375,7 +389,11 @@ public class ConfigSanitizerTests
 
         configSanitizer.SanitizeConfig(config);
 
-        Assert.AreEqual(LicenseInformationFetcher.DefaultTimeoutInSeconds, config.LicenseInformationTimeoutInSeconds.Value, "The value of LicenseInformationTimeoutInSeconds should be set to 30s when null");
+        Assert.AreEqual(
+            Common.Constants.DefaultLicenseFetchTimeoutInSeconds,
+            config.LicenseInformationTimeoutInSeconds.Value,
+            $"The value of LicenseInformationTimeoutInSeconds should be set to {Common.Constants.DefaultLicenseFetchTimeoutInSeconds}s when null");
+
         Assert.AreEqual(SettingSource.Default, config.LicenseInformationTimeoutInSeconds.Source, "The source of LicenseInformationTimeoutInSeconds should be set to Default when null");
     }
 }

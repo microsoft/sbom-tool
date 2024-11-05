@@ -16,7 +16,6 @@ namespace Microsoft.Sbom.Api.Executors;
 
 public class LicenseInformationFetcher : ILicenseInformationFetcher2
 {
-    public const int DefaultTimeoutInSeconds = 30;
     private readonly ILogger log;
     private readonly IRecorder recorder;
     private readonly ILicenseInformationService licenseInformationService;
@@ -85,7 +84,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher2
 
     public async Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi)
     {
-        return await FetchLicenseInformationAsync(listOfComponentsForApi, DefaultTimeoutInSeconds);
+        return await licenseInformationService.FetchLicenseInformationFromAPI(listOfComponentsForApi);
     }
 
     public async Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi, int timeoutInSeconds)

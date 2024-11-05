@@ -139,7 +139,7 @@ public abstract class ComponentDetectionBaseWalker
 
                     List<string> apiResponses;
                     var licenseInformationFetcher2 = licenseInformationFetcher as ILicenseInformationFetcher2;
-                    if (licenseInformationFetcher2 != null && (bool)!configuration.LicenseInformationTimeoutInSeconds?.IsDefaultSource)
+                    if (licenseInformationFetcher2 is null && (bool)!configuration.LicenseInformationTimeoutInSeconds?.IsDefaultSource)
                     {
                         log.Warning("Timeout value is specified, but ILicenseInformationFetcher2 is not implemented for the licenseInformationFetcher");
                     }

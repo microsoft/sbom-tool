@@ -67,7 +67,8 @@ Actions
                                               manifest directory will then be created at this location and the generated SBOM will be stored there.
     FetchLicenseInformation (-li)             If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.
     LicenseInformationTimeoutInSeconds (-lto) Specifies the timeout in seconds for fetching the license information. Defaults to 30 seconds. Has no effect if
-                                              FetchLicenseInformation (-li) argument is false or not provided. A negative value specifies an infinite timeout.
+                                              FetchLicenseInformation (-li) argument is false or not provided. Valid values are from 1 to 86400. Negative values use the default
+                                              value and Values exceeding the maximum are truncated to the maximum. 
     EnablePackageMetadataParsing (-pm)        If set to true, we will attempt to parse license and supplier info from the packages metadata file (RubyGems, NuGet, Maven, Npm).
     Verbosity (-V)                            Display this amount of detail in the logging output.
                                               Verbose

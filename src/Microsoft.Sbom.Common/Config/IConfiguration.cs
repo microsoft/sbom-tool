@@ -195,8 +195,9 @@ public interface IConfiguration
     ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
 
     /// <summary>
-    /// Specifies the timeout in seconds for fetching the license information. Defaults to 30 seconds. Has no effect if
-    /// FetchLicenseInformation (li) argument is false or not provided. Negative values correspond to an infinite timeout
+    /// Specifies the timeout in seconds for fetching the license information. Defaults to <see cref="Constants.DefaultLicenseFetchTimeoutInSeconds"/>.
+    /// Has no effect if FetchLicenseInformation (li) argument is false or not provided. Negative values are set to the default and values exceeding the
+    /// maximum are truncated to <see cref="Constants.MaxLicenseFetchTimeoutInSeconds"/>
     /// </summary>
     ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get; set; }
 

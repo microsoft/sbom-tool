@@ -311,7 +311,7 @@ public class Configuration : IConfiguration
     }
 
     /// <inheritdoc cref="IConfiguration.LicenseInformationTimeoutInSeconds" />
-    [DefaultValue(30)]
+    [DefaultValue(Constants.DefaultLicenseFetchTimeoutInSeconds)]
     public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds
     {
         get => licenseInformationTimeout.Value;
