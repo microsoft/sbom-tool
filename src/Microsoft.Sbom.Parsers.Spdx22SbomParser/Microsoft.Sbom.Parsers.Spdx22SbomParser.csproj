@@ -6,7 +6,7 @@
     <Description>SPDX2.2 parser for SBOM tool.</Description>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
-    <NoWarn>CA1872</NoWarn>
+    <NoWarn>CA1515;CA1872</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

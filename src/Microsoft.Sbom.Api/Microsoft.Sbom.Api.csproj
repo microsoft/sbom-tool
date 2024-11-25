@@ -6,6 +6,7 @@
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <Description>Highly scalable, extensible and enterprise ready API to create SBOMs for any variety of artifacts.</Description>
         <SignAssembly>True</SignAssembly>
+        <NoWarn>CA1872</NoWarn>
         <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
     </PropertyGroup>
 
