@@ -34,10 +34,19 @@ dotnet_diagnostic.SA1602.severity = none
 # https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1062
 dotnet_diagnostic.CA1062.severity = none
 
+# CA1515: Consider making public types internal
+# Justification: Types can be public for test code
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1515
+dotnet_diagnostic.CA1515.severity = none
+
 # CA1707: Identifiers should not contain underscores
 # Justification: Test method names contain underscores
 # https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1707
 dotnet_diagnostic.CA1707.severity = none
+
+# CS8002: Referenced assembly does not have a strong name
+# Justification: We don't own the upstream files used here
+dotnet_diagnostic.CS8002.severity = none
 
 # VSTHRD200: Use "Async" suffix in names of methods that return an awaitable type
 # Justification: Test method names don't need to end with "Async"

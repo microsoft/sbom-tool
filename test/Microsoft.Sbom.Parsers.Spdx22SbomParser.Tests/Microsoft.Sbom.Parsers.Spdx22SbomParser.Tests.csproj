@@ -6,7 +6,6 @@
     <AssemblyName>Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests</AssemblyName>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
-    <NoWarn>CA1515;CS8002</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
