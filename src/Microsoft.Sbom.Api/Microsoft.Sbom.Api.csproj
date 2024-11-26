@@ -33,6 +33,7 @@
     <ItemGroup>
         <!-- Pinned assemblies for transitive dependencies -->
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" /> <!-- Used by ComponentDetection -->
+        <PackageReference Include="System.Net.Http" />                     <!-- Used by ComponentDetection -->
     </ItemGroup>
 
     <ItemGroup>

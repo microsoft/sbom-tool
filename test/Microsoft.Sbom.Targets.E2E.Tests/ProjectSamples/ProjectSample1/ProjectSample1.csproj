@@ -9,6 +9,7 @@
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <NoWarn>CA1515</NoWarn>
   </PropertyGroup>
 
   <!--Ignore errors related to selecting a nuget.config and dependency resolution-->
