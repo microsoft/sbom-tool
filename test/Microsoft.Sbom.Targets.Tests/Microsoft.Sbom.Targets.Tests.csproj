@@ -8,7 +8,7 @@
     <RootNamespace>Microsoft.Sbom.Targets.Tests</RootNamespace>
     <SbomCLIToolTargetFramework>net8.0</SbomCLIToolTargetFramework>
     <SBOMCLIToolProjectDir>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Tool\</SBOMCLIToolProjectDir>
-    <NoWarn>CA1515;CA1872;NU1701;NU1903</NoWarn>
+    <NoWarn>CA1515;CA1872;NU1903</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
