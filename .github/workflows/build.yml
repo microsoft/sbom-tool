@@ -40,7 +40,7 @@ jobs:
             8.0.x
 
       - name: Run tests
-        run: dotnet test --collect:"XPlat Code Coverage"
+        run: dotnet test -v diag --collect:"XPlat Code Coverage"
 
       - name: Upload code coverage
         uses: codecov/codecov-action@5c47607acb93fed5485fdbf7232e8a31425f672a  # v5.0.2
