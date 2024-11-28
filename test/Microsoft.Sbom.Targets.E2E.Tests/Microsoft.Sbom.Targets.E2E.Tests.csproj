@@ -9,6 +9,7 @@
     <SbomCLIToolTargetFramework>net8.0</SbomCLIToolTargetFramework>
     <SBOMCLIToolProjectDir>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Tool\</SBOMCLIToolProjectDir>
     <SBOMGenerationTargetsPath>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.targets</SBOMGenerationTargetsPath>
+    <NoWarn>CA1515;NU1903</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
