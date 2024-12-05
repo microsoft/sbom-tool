@@ -47,7 +47,7 @@
         $([System.IO.Path]::Combine($(PackageOutputFullPath), $(PackageId).$(PackageVersion).$(ShortUnzipGuidFolder).temp))
       </NugetPackageUnzip>
     </PropertyGroup>
-    <Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="$(NugetPackage)" OverwriteReadOnlyFiles="true" ContinueOnError="ErrorAndContinue" />
+    <Microsoft.Build.Tasks.Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="$(NugetPackage)" OverwriteReadOnlyFiles="true" ContinueOnError="ErrorAndContinue" />
 
     <!--
       Call the SBOM task to generate a SBOM. The SBOM will be generated at the BuildDropPath location, which is the root folder
@@ -73,7 +73,7 @@
     </GenerateSbom>
 
     <!-- Zip the Nuget package back up and delete the temporary unzipped package. -->
-    <ZipDirectory SourceDirectory="$(NugetPackageUnzip)" DestinationFile="$(NugetPackage)" Overwrite="true" ContinueOnError="ErrorAndContinue" />
+    <Microsoft.Build.Tasks.ZipDirectory SourceDirectory="$(NugetPackageUnzip)" DestinationFile="$(NugetPackage)" Overwrite="true" ContinueOnError="ErrorAndContinue" />
     <RemoveDir Directories="$(NugetPackageUnzip)" ContinueOnError="WarnAndContinue" />
   </Target>
 </Project>
