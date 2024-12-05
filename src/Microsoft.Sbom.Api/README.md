@@ -28,7 +28,8 @@ namespace SBOMApiExample
             SBOMMetadata metadata = new SBOMMetadata()
             {
                 PackageName = "MyVpack",
-                PackageVersion = "0.0.1"            };
+                PackageVersion = "0.0.1"
+            };
 
             IList<SBOMSpecification> specifications = new List<SBOMSpecification>()
             {
