@@ -18,7 +18,7 @@ public interface ILicenseInformationFetcher
     List<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents);
 
     /// <summary>
-    /// Calls the ClearlyDefined API to get the license information for the list of components.
+    /// Calls the ClearlyDefined API to get the license information for the list of components. Uses a default timeout specified in implementation
     /// </summary>
     /// <param name="listOfComponentsForApi"> A list of strings formatted into a list of strings that can be used to call the batch ClearlyDefined API.</param>
     /// <returns></returns>

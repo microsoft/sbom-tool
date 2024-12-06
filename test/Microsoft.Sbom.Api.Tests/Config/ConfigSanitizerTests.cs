@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
@@ -350,5 +351,49 @@ public class ConfigSanitizerTests
             Assert.IsTrue(config.CatalogFilePath.Value.StartsWith($"/{nameof(config.CatalogFilePath)}/", StringComparison.Ordinal));
             Assert.IsTrue(config.TelemetryFilePath.Value.StartsWith($"/{nameof(config.TelemetryFilePath)}/", StringComparison.Ordinal));
         }
+    }
+
+    [TestMethod]
+    [DataRow(1, DisplayName = "Minimum value of 1")]
+    [DataRow(Common.Constants.MaxLicenseFetchTimeoutInSeconds, DisplayName = "Maximum Value of 86400")]
+    public void LicenseInformationTimeoutInSeconds_SanitizeMakesNoChanges(int value)
+    {
+        var config = GetConfigurationBaseObject();
+        config.LicenseInformationTimeoutInSeconds = new(value, SettingSource.CommandLine);
+
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(value, config.LicenseInformationTimeoutInSeconds.Value, "The value of LicenseInformationTimeoutInSeconds should remain the same through the sanitization process");
+    }
+
+    [TestMethod]
+    [DataRow(int.MinValue, Common.Constants.DefaultLicenseFetchTimeoutInSeconds, DisplayName = "Negative Value is changed to Default")]
+    [DataRow(0, Common.Constants.DefaultLicenseFetchTimeoutInSeconds, DisplayName = "Zero is changed to Default")]
+    [DataRow(Common.Constants.MaxLicenseFetchTimeoutInSeconds + 1, Common.Constants.MaxLicenseFetchTimeoutInSeconds, DisplayName = "Max Value + 1 is truncated")]
+    [DataRow(int.MaxValue, Common.Constants.MaxLicenseFetchTimeoutInSeconds, DisplayName = "int.MaxValue is truncated")]
+    public void LicenseInformationTimeoutInSeconds_SanitizeExceedsLimits(int value, int expected)
+    {
+        var config = GetConfigurationBaseObject();
+        config.LicenseInformationTimeoutInSeconds = new(value, SettingSource.CommandLine);
+
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(expected, config.LicenseInformationTimeoutInSeconds.Value, "The value of LicenseInformationTimeoutInSeconds should be sanitized to a valid value");
+    }
+
+    [TestMethod]
+    public void LicenseInformationTimeoutInSeconds_SanitizeNull()
+    {
+        var config = GetConfigurationBaseObject();
+        config.LicenseInformationTimeoutInSeconds = null;
+
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(
+            Common.Constants.DefaultLicenseFetchTimeoutInSeconds,
+            config.LicenseInformationTimeoutInSeconds.Value,
+            $"The value of LicenseInformationTimeoutInSeconds should be set to {Common.Constants.DefaultLicenseFetchTimeoutInSeconds}s when null");
+
+        Assert.AreEqual(SettingSource.Default, config.LicenseInformationTimeoutInSeconds.Source, "The source of LicenseInformationTimeoutInSeconds should be set to Default when null");
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
@@ -80,6 +81,30 @@ public class ConfigSanitizer
 
         // Set default package supplier if not provided in configuration.
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
+
+        // Prevent null value for LicenseInformationTimeoutInSeconds.
+        // Values of (0, Constants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
+        // the higher values are truncated to the maximum of Common.Constants.MaxLicenseFetchTimeoutInSeconds
+        if (configuration.LicenseInformationTimeoutInSeconds is null)
+        {
+            configuration.LicenseInformationTimeoutInSeconds = new(Common.Constants.DefaultLicenseFetchTimeoutInSeconds, SettingSource.Default);
+        }
+        else if (configuration.LicenseInformationTimeoutInSeconds.Value <= 0)
+        {
+            logger.Warning($"Negative and Zero Values not allowed for timeout. Using the default {Common.Constants.DefaultLicenseFetchTimeoutInSeconds} seconds instead.");
+            configuration.LicenseInformationTimeoutInSeconds.Value = Common.Constants.DefaultLicenseFetchTimeoutInSeconds;
+        }
+        else if (configuration.LicenseInformationTimeoutInSeconds.Value > Common.Constants.MaxLicenseFetchTimeoutInSeconds)
+        {
+            logger.Warning($"Specified timeout exceeds maximum allowed. Truncating the timeout to {Common.Constants.MaxLicenseFetchTimeoutInSeconds} seconds.");
+            configuration.LicenseInformationTimeoutInSeconds.Value = Common.Constants.MaxLicenseFetchTimeoutInSeconds;
+        }
+
+        // Check if arg -lto is specified but -li is not
+        if (configuration.FetchLicenseInformation?.Value != true && !configuration.LicenseInformationTimeoutInSeconds.IsDefaultSource)
+        {
+            logger.Warning("A license fetching timeout is specified (argument -lto), but this has no effect when FetchLicenseInfo is unspecified or false (argument -li)");
+        }
 
         // Replace backslashes in directory paths with the OS-sepcific directory separator character.
         PathUtils.ConvertToOSSpecificPathSeparators(configuration);

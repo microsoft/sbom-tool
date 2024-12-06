@@ -36,6 +36,7 @@ The custom MSBuild task accepts most of the arguments available for the [SBOM CL
 | `<SbomGenerationNamespaceUriUniquePart>`            | N/A | No |
 | `<SbomGenerationExternalDocumentReferenceListFile>` | N/A | No |
 | `<SbomGenerationFetchLicenseInformation>`           | `false` | No |
+| `<SbomGenerationLicenseInformationTimeoutInSeconds>`| `30` | No |
 | `<SbomGenerationEnablePackageMetadataParsing>`      | `false` | No |
 | `<SbomGenerationVerbosity>`                         | `Information` | No |
 | `<SbomGenerationManifestInfo>`                      | `SPDX:2.2` | No |
