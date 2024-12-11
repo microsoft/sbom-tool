@@ -13,5 +13,8 @@ public static class Constants
     public const int DefaultParallelism = 8;
     public const int MaxParallelism = 48;
 
+    public const int DefaultLicenseFetchTimeoutInSeconds = 30;
+    public const int MaxLicenseFetchTimeoutInSeconds = 86400;
+
     public const LogEventLevel DefaultLogLevel = LogEventLevel.Warning;
 }
