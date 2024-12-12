@@ -26,18 +26,15 @@ namespace Microsoft.Sbom.Parser;
 public class GeneratorTests
 {
     private readonly Generator generator = new Generator();
-    private readonly Mock<IRecorder> recorderMock = new Mock<IRecorder>();
-    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
-    private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
-    private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>();
-    //private readonly Mock<IMetadataProvider> mockMetadataProvider = new Mock<IMetadataProvider>();
-    //private readonly Mock<ISbomConfigProvider> sbomConfigsMock = new Mock<ISbomConfigProvider>();
+    private readonly Mock<IRecorder> recorderMock = new Mock<IRecorder>(MockBehavior.Strict);
+    private readonly Mock<ILogger> mockLogger = new Mock<ILogger>(MockBehavior.Strict);
+    private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
+    private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>(MockBehavior.Strict);
 
     [TestMethod]
     public void GenerateJsonDocumentTest_DocumentCreation()
     {
         var sbomConfigs = CreateInternalMetadataProvider();
-
         var generatorResult = generator.GenerateJsonDocument(sbomConfigs);
         var generatedJsonString = generatorResult.Document.RootElement.GetRawText();
         generatedJsonString = NormalizeString(generatedJsonString);
@@ -153,6 +150,15 @@ public class GeneratorTests
         Assert.AreEqual(generatedJsonString, expectedJsonContentAsString);
     }
 
+    [TestCleanup]
+    public void Cleanup()
+    {
+        recorderMock.VerifyAll();
+        mockLogger.VerifyAll();
+        fileSystemMock.VerifyAll();
+        mockConfigHandler.VerifyAll();
+    }
+
     private string NormalizeString(string input)
     {
         return input.Replace("\r", string.Empty)
@@ -166,24 +172,27 @@ public class GeneratorTests
 
         // Replace placeholders with appropriate regex patterns
         pattern = pattern.Replace(@"\.\*", ".*");
+        pattern = pattern.Replace(@"\[", "\\[");
+        pattern = pattern.Replace(@"\{", "\\{");
+        pattern = pattern.Replace(@"\.", "\\.");
 
         return pattern;
     }
 
     private List<Checksum> GetSampleChecksums()
     {
-        var checksumSha1 = new Checksum
+        return new List<Checksum>
         {
+          new Checksum
+          {
             Algorithm = AlgorithmName.SHA1,
             ChecksumValue = "sha1Value"
-        };
-        var checksumSha256 = new Checksum
-        {
+          },  new Checksum
+          {
             Algorithm = AlgorithmName.SHA256,
             ChecksumValue = "sha256Value"
+          },
         };
-
-        return new List<Checksum> { checksumSha1, checksumSha256 };
     }
 
     private IInternalMetadataProvider CreateInternalMetadataProvider()
@@ -195,6 +204,8 @@ public class GeneratorTests
         };
 
         mockConfigHandler.Setup(c => c.TryGetManifestConfig(out sbomConfig)).Returns(true);
+        recorderMock.Setup(r => r.RecordSBOMFormat(Constants.Spdx30ManifestInfo, It.IsAny<string>()));
+        mockLogger.Setup(l => l.Debug(It.IsAny<string>()));
 
         var config = new Configuration
         {
@@ -204,9 +215,6 @@ public class GeneratorTests
             NamespaceUriBase = new ConfigurationSetting<string>("http://sbom.microsoft"),
             PackageSupplier = new ConfigurationSetting<string>("the-package-supplier"),
         };
-
-        var logger = new Mock<ILogger>();
-        var recorder = new Mock<IRecorder>();
 
         var sbomMetadata = new SBOMMetadata
         {

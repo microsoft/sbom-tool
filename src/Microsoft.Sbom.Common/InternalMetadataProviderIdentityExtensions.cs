@@ -8,10 +8,9 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using HashAlgorithmName = Microsoft.Sbom.Contracts.Enums.AlgorithmName;
 
-namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Utils;
+namespace Microsoft.Sbom.Common;
 
 /// <summary>
 /// Provides helper functions to generate identity strings for SPDX.
@@ -52,42 +51,18 @@ public static class InternalMetadataProviderIdentityExtensions
     }
 
     /// <summary>
-    /// Generates the package verification code for a given package using the SPDX 3.0 specification.
-    ///
-    /// Algorithm defined here https://spdx.github.io/spdx-spec/v2.2.2/package-information/#79-package-verification-code-field.
+    /// Gets a list of file ids that are included in this package.
     /// </summary>
     /// <param name="internalMetadataProvider"></param>
     /// <returns></returns>
-    public static PackageVerificationCode GetPackageVerificationCode(this IInternalMetadataProvider internalMetadataProvider)
+    public static List<string> GetPackageFilesList(this IInternalMetadataProvider internalMetadataProvider, ManifestInfo manifestInfo)
     {
         if (internalMetadataProvider is null)
         {
             throw new ArgumentNullException(nameof(internalMetadataProvider));
         }
 
-        // Get a list of SHA1 checksums
-        IList<string> sha1Checksums = new List<string>();
-        foreach (var checksumArray in internalMetadataProvider.GetGenerationData(Constants.Spdx30ManifestInfo).Checksums)
-        {
-            sha1Checksums.Add(checksumArray
-                .Where(c => c.Algorithm == HashAlgorithmName.SHA1)
-                .Select(c => c.ChecksumValue)
-                .FirstOrDefault());
-        }
-
-        var packageChecksumString = string.Join(string.Empty, sha1Checksums.OrderBy(s => s));
-#pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
-        var sha1Hasher = SHA1.Create();
-#pragma warning restore CA5350
-        var hashByteArray = sha1Hasher.ComputeHash(Encoding.Default.GetBytes(packageChecksumString));
-
-        var packageVerificationCode = new PackageVerificationCode
-        {
-            Algorithm = Entities.Enums.HashAlgorithm.sha1,
-            HashValue = Convert.ToHexString(hashByteArray).Replace("-", string.Empty).ToLowerInvariant(),
-        };
-        packageVerificationCode.AddSpdxId();
-        return packageVerificationCode;
+        return internalMetadataProvider.GetGenerationData(manifestInfo).FileIds.ToList();
     }
 
     /// <summary>

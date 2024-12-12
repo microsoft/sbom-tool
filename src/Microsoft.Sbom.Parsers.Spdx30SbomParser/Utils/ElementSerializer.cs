@@ -24,40 +24,40 @@ public class ElementSerializer : JsonConverter<List<Element>>
             switch (element.Type)
             {
                 case "AnyLicenseInfo":
-                    JsonSerializer.Serialize(writer, (AnyLicenseInfo)element, options);
+                    JsonSerializer.Serialize(writer, element as AnyLicenseInfo, options);
                     break;
                 case "ContentIdentifier":
-                    JsonSerializer.Serialize(writer, (ContentIdentifier)element, options);
+                    JsonSerializer.Serialize(writer, element as ContentIdentifier, options);
                     break;
                 case "CreationInfo":
-                    JsonSerializer.Serialize(writer, (CreationInfo)element, options);
+                    JsonSerializer.Serialize(writer, element as CreationInfo, options);
                     break;
                 case "ExternalIdentifier":
-                    JsonSerializer.Serialize(writer, (ExternalIdentifier)element, options);
+                    JsonSerializer.Serialize(writer, element as ExternalIdentifier, options);
                     break;
                 case "software_File":
-                    JsonSerializer.Serialize(writer, (File)element, options);
+                    JsonSerializer.Serialize(writer, element as File, options);
                     break;
                 case "software_Package":
-                    JsonSerializer.Serialize(writer, (Package)element, options);
+                    JsonSerializer.Serialize(writer, element as Package, options);
                     break;
                 case "PackageVerificationCode":
-                    JsonSerializer.Serialize(writer, (PackageVerificationCode)element, options);
+                    JsonSerializer.Serialize(writer, element as PackageVerificationCode, options);
                     break;
                 case "Relationship":
-                    JsonSerializer.Serialize(writer, (Spdx30Relationship)element, options);
+                    JsonSerializer.Serialize(writer, element as Spdx30Relationship, options);
                     break;
                 case "Tool":
-                    JsonSerializer.Serialize(writer, (Tool)element, options);
+                    JsonSerializer.Serialize(writer, element as Tool, options);
                     break;
                 case "Organization":
-                    JsonSerializer.Serialize(writer, (Organization)element, options);
+                    JsonSerializer.Serialize(writer, element as Organization, options);
                     break;
                 case "NamespaceMap":
-                    JsonSerializer.Serialize(writer, (NamespaceMap)element, options);
+                    JsonSerializer.Serialize(writer, element as NamespaceMap, options);
                     break;
                 case "NoAssertionElement":
-                    JsonSerializer.Serialize(writer, (NoAssertionElement)element, options);
+                    JsonSerializer.Serialize(writer, element as NoAssertionElement, options);
                     break;
                 default:
                     JsonSerializer.Serialize(writer, element, options);

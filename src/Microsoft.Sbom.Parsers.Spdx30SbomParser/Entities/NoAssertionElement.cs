@@ -13,6 +13,6 @@ public class NoAssertionElement : Element
     {
         Name = "NoAssertion";
         SpdxId = "SPDXRef-NoAssertion";
-        Type = "Element";
+        Type = nameof(Element);
     }
 }

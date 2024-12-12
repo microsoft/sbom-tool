@@ -72,7 +72,7 @@ public static class SPDXExtensions
     /// </summary>
     /// <param name="fileName"></param>
     /// <param name="checksums"></param>
-    public static string GetSpdxIdHash(string fileName, IEnumerable<Checksum> checksums)
+    public static string GetSpdxFileId(string fileName, IEnumerable<Checksum> checksums)
     {
         if (string.IsNullOrEmpty(fileName))
         {
@@ -107,15 +107,14 @@ public static class SPDXExtensions
             throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
         }
 
-        if (checksums is null || !checksums.Any(c => c.Algorithm == AlgorithmName.SHA1))
+        var sha1checksums = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1);
+        if (checksums is null || !sha1checksums.Any())
         {
             throw new MissingHashValueException($"The external reference {name} is missing the {HashAlgorithmName.SHA1} hash value.");
         }
 
         // Get the SHA1 for this file.
-        var sha1Value = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1)
-            .Select(s => s.ChecksumValue)
-            .FirstOrDefault();
+        var sha1Value = sha1checksums.FirstOrDefault().ChecksumValue;
 
         reference.ExternalSpdxId = GenerateSpdxExternalDocumentId(name, sha1Value);
     }

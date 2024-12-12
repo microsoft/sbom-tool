@@ -53,7 +53,8 @@ public enum RelationshipType
     COPIED_TO,
 
     /// <summary>
-    /// The from Agent is delegating an action to the Agent of the to Relationship (which must be of type invokedBy), during a LifecycleScopeType (e.g. the to invokedBy Relationship is being done on behalf of from).
+    /// The from Agent is delegating an action to the Agent of the to Relationship (which must be of type invokedBy),
+    /// during a LifecycleScopeType (e.g. the to invokedBy Relationship is being done on behalf of from).
     /// </summary>
     DELEGATED_TO,
 
@@ -128,7 +129,12 @@ public enum RelationshipType
     HAS_CONCLUDED_LICENSE,
 
     /// <summary>
-    /// The from Element treats each to Element as a data file. A data file is an artifact that stores data required or optional for the from Element's functionality. A data file can be a database file, an index file, a log file, an AI model file, a calibration data file, a temporary file, a backup file, and more. For AI training dataset, test dataset, test artifact, configuration data, build input data, and build output data, please consider using the more specific relationship types: trainedOn, testedOn, hasTest, configures, hasInput, and hasOutput, respectively. This relationship does not imply dependency.
+    /// The from Element treats each to Element as a data file.
+    /// A data file is an artifact that stores data required or optional for the from Element's functionality.
+    /// A data file can be a database file, an index file, a log file, an AI model file, a calibration data file, a temporary file, a backup file, and more.
+    /// For AI training dataset, test dataset, test artifact, configuration data, build input data, and build output data,
+    /// please consider using the more specific relationship types: trainedOn, testedOn, hasTest, configures, hasInput, and hasOutput, respectively.
+    /// This relationship does not imply dependency.
     /// </summary>
     HAS_DATA_FILE,
 
@@ -298,7 +304,8 @@ public enum RelationshipType
     TRAINED_ON,
 
     /// <summary>
-    /// The from Vulnerability impact is being investigated for each to Element. The use of the underInvestigationFor type is constrained to VexUnderInvestigationVulnAssessmentRelationship classed relationships.
+    /// The from Vulnerability impact is being investigated for each to Element.
+    /// The use of the underInvestigationFor type is constrained to VexUnderInvestigationVulnAssessmentRelationship classed relationships.
     /// </summary>
     UNDER_INVESTIGATION_FOR,
 

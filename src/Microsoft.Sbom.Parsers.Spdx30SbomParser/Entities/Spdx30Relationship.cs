@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Microsoft.Sbom.Extensions.Entities;
 using RelationshipType = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.RelationshipType;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
@@ -19,16 +20,16 @@ public class Spdx30Relationship : Element
     /// </summary>
     public Spdx30Relationship()
     {
-        Type = "Relationship";
+        Type = nameof(Relationship);
     }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("completeness")]
     public object Completeness { get; set; }
 
-    /*[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     [JsonPropertyName("endTime")]
-    public DateTime EndTime { get; set; }*/
+    public DateTime EndTime { get; set; }
 
     /// <summary>
     /// Gets or sets the id of the source element with whom the target element has a relationship.
@@ -41,9 +42,9 @@ public class Spdx30Relationship : Element
     [JsonPropertyName("relationshipType")]
     public RelationshipType RelationshipType { get; set; }
 
-    /*[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     [JsonPropertyName("startTime")]
-    public DateTime StartTime { get; set; }*/
+    public DateTime StartTime { get; set; }
 
     /// <summary>
     /// Gets or sets the id of the target element with whom the source element has a relationship.

@@ -13,6 +13,6 @@ public class NoneElement : Element
     {
         Name = "NoneElement";
         SpdxId = "SPDXRef-None";
-        Type = "Element";
+        Type = nameof(Element);
     }
 }

@@ -17,7 +17,7 @@ public class ExternalIdentifier : Element
 {
     public ExternalIdentifier()
     {
-        Type = "ExternalIdentifier";
+        Type = nameof(ExternalIdentifier);
     }
 
     /// <summary>

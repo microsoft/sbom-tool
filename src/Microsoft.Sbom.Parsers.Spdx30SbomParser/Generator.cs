@@ -8,10 +8,12 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks.Sources;
 using System.Xml.Linq;
+using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
@@ -22,6 +24,7 @@ using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Utils;
 using RelationshipType = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.RelationshipType;
+using SHA1 = System.Security.Cryptography.SHA1;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
 
@@ -42,18 +45,17 @@ public class Generator : IManifestGenerator
 
     public string Version { get; set; } = string.Join("-", Constants.SPDXName, Constants.SPDXVersion);
 
-    string IManifestGenerator.FilesArrayHeaderName => throw new NotImplementedException();
+    string IManifestGenerator.FilesArrayHeaderName => throw new NotSupportedException();
 
-    string IManifestGenerator.PackagesArrayHeaderName => throw new NotImplementedException();
+    string IManifestGenerator.PackagesArrayHeaderName => throw new NotSupportedException();
 
-    string IManifestGenerator.RelationshipsArrayHeaderName => throw new NotImplementedException();
+    string IManifestGenerator.RelationshipsArrayHeaderName => throw new NotSupportedException();
 
-    string IManifestGenerator.ExternalDocumentRefArrayHeaderName => throw new NotImplementedException();
+    string IManifestGenerator.ExternalDocumentRefArrayHeaderName => throw new NotSupportedException();
 
     private JsonSerializerOptions serializerOptions = new JsonSerializerOptions
     {
         Converters = { new ElementSerializer() },
-        WriteIndented = true, // TODO: remove this, keep for now for readability during debugging
     };
 
     /// <summary>
@@ -191,7 +193,7 @@ public class Generator : IManifestGenerator
             ExternalIdentifier = new List<string> { spdxExternalIdentifier.SpdxId },
             DownloadLocation = Constants.NoAssertionValue,
             CopyrightText = Constants.NoAssertionValue,
-            VerifiedUsing = new List<PackageVerificationCode> { internalMetadataProvider.GetPackageVerificationCode() },
+            VerifiedUsing = new List<PackageVerificationCode> { GetPackageVerificationCode(internalMetadataProvider) },
             SuppliedBy = spdxSupplier.SpdxId,
         };
 
@@ -441,7 +443,7 @@ public class Generator : IManifestGenerator
             throw new ArgumentException(nameof(fileInfo.Path));
         }
 
-        EnsureRequiredHashesPresent(fileInfo.Checksum.ToArray());
+        GeneratorUtils.EnsureRequiredHashesPresent(fileInfo.Checksum.ToArray(), RequiredHashAlgorithms);
 
         var packageVerificationCodes = new List<PackageVerificationCode>();
         foreach (var checksum in fileInfo.Checksum)
@@ -459,10 +461,10 @@ public class Generator : IManifestGenerator
         var spdxFileElement = new Entities.File
         {
             VerifiedUsing = packageVerificationCodes,
-            Name = EnsureRelativePathStartsWithDot(fileInfo.Path),
+            Name = GeneratorUtils.EnsureRelativePathStartsWithDot(fileInfo.Path),
             CopyrightText = fileInfo.FileCopyrightText ?? Constants.NoAssertionValue,
         };
-        var fileId = SPDXExtensions.GetSpdxIdHash(fileInfo.Path, fileInfo.Checksum);
+        var fileId = SPDXExtensions.GetSpdxFileId(fileInfo.Path, fileInfo.Checksum);
         spdxFileElement.AddSpdxId(fileId);
 
         // Generate SPDX spdxRelationship elements
@@ -587,29 +589,41 @@ public class Generator : IManifestGenerator
         }
     }
 
-    // Throws a <see cref="MissingHashValueException"/> if the filehashes are missing
-    // any of the required hashes
-    private void EnsureRequiredHashesPresent(Checksum[] fileHashes)
+    /// <summary>
+    /// Generates the package verification code for a given package using the SPDX 3.0 specification.
+    ///
+    /// Algorithm defined here https://spdx.github.io/spdx-spec/v2.2.2/package-information/#79-package-verification-code-field.
+    /// </summary>
+    /// <param name="internalMetadataProvider"></param>
+    /// <returns></returns>
+    private PackageVerificationCode GetPackageVerificationCode(IInternalMetadataProvider internalMetadataProvider)
     {
-        foreach (var hashAlgorithmName in from hashAlgorithmName in RequiredHashAlgorithms
-                                          where !fileHashes.Select(fh => fh.Algorithm).Contains(hashAlgorithmName)
-                                          select hashAlgorithmName)
+        // Get a list of SHA1 checksums
+        IList<string> sha1Checksums = new List<string>();
+        foreach (var checksumArray in internalMetadataProvider.GetGenerationData(Constants.Spdx30ManifestInfo).Checksums)
         {
-            throw new MissingHashValueException($"The hash value for algorithm {hashAlgorithmName} is missing from {nameof(fileHashes)}");
-        }
-    }
-
-    private static string EnsureRelativePathStartsWithDot(string path)
-    {
-        if (!path.StartsWith(".", StringComparison.Ordinal))
-        {
-            return "." + path;
+            sha1Checksums.Add(checksumArray
+                .Where(c => c.Algorithm == AlgorithmName.SHA1)
+                .Select(c => c.ChecksumValue)
+                .FirstOrDefault());
         }
 
-        return path;
+        var packageChecksumString = string.Join(string.Empty, sha1Checksums.OrderBy(s => s));
+#pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
+        var sha1Hasher = SHA1.Create();
+#pragma warning restore CA5350
+        var hashByteArray = sha1Hasher.ComputeHash(Encoding.Default.GetBytes(packageChecksumString));
+
+        var packageVerificationCode = new PackageVerificationCode
+        {
+            Algorithm = HashAlgorithm.sha1,
+            HashValue = Convert.ToHexString(hashByteArray).Replace("-", string.Empty).ToLowerInvariant(),
+        };
+        packageVerificationCode.AddSpdxId();
+        return packageVerificationCode;
     }
 
     public ManifestInfo RegisterManifest() => Constants.Spdx30ManifestInfo;
 
-    IDictionary<string, object> IManifestGenerator.GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider) => throw new NotImplementedException();
+    IDictionary<string, object> IManifestGenerator.GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider) => throw new NotSupportedException();
 }

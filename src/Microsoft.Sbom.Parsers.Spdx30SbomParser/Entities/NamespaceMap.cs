@@ -12,7 +12,7 @@ public class NamespaceMap : Element
 {
    public NamespaceMap()
    {
-        Type = "NamespaceMap";
+        Type = nameof(NamespaceMap);
    }
 
    [JsonRequired]

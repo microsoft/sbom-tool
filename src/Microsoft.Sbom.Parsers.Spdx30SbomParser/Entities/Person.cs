@@ -12,6 +12,6 @@ public class Person : Element
 {
    public Person()
     {
-        Type = "Person";
+        Type = nameof(Person);
     }
 }

@@ -13,7 +13,7 @@ public class ExternalMap : Element
 {
     public ExternalMap()
     {
-        Type = "ExternalMap";
+        Type = nameof(ExternalMap);
     }
 
     /// <summary>

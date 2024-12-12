@@ -4,6 +4,7 @@
 using System;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

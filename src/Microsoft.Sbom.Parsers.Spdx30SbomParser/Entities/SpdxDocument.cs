@@ -15,7 +15,7 @@ public class SpdxDocument : Element
 {
     public SpdxDocument()
     {
-        Type = "SpdxDocument";
+        Type = nameof(SpdxDocument);
     }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
