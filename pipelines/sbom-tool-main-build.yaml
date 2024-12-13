@@ -67,6 +67,11 @@ extends:
             inputs:
               arguments: '-c $(BuildConfiguration)'
 
+          - task: DotNetCoreCLI@2
+            displayName: Run tests
+            inputs:
+              command: 'test'
+
           - task: UseDotNet@2
             displayName: 'Install .NET 6 SDK'
             inputs:
