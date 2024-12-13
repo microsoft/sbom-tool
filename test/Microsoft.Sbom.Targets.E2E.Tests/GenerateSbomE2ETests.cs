@@ -320,8 +320,8 @@ public class GenerateSbomE2ETests
         var sampleProject = SetupSampleProject();
 
         // Set multi-target frameworks
-        sampleProject.SetProperty("TargetFramework", "net472");
-        //sampleProject.SetProperty("TargetFrameworks", "net472;net8.0");
+        sampleProject.SetProperty("TargetFramework", string.Empty);
+        sampleProject.SetProperty("TargetFrameworks", "net472;net8.0");
 
         // Restore, build, and pack the project
         RestoreBuildPack(sampleProject);
