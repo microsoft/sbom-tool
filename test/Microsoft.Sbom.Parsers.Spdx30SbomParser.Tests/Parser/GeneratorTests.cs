@@ -43,9 +43,8 @@ public class GeneratorTests
         expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
         var regexPattern = ConvertJsonToRegex(expectedJsonContentAsString);
 
-        Assert.AreEqual("abc", generatedJsonString);
         Assert.IsFalse(generatedJsonString.Contains("null"));
-        Assert.IsTrue(Regex.IsMatch(generatedJsonString, regexPattern));
+        Assert.IsTrue(Regex.IsMatch(generatedJsonString, regexPattern), generatedJsonString);
     }
 
     [TestMethod]
@@ -173,10 +172,6 @@ public class GeneratorTests
 
         // Replace placeholders with appropriate regex patterns
         pattern = pattern.Replace(@"\.\*", ".*");
-        pattern = pattern.Replace(@"\[", "\\[");
-        pattern = pattern.Replace(@"\{", "\\{");
-        pattern = pattern.Replace(@"\.", "\\.");
-
         return pattern;
     }
 
