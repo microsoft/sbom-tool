@@ -57,6 +57,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Tool.Tests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.Targets.E2E.Tests", "test\Microsoft.Sbom.Targets.E2E.Tests\Microsoft.Sbom.Targets.E2E.Tests.csproj", "{3FDE7800-F61F-4C45-93AB-648A4C7979C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.Parsers.Spdx30SbomParser", "src\Microsoft.Sbom.Parsers.Spdx30SbomParser\Microsoft.Sbom.Parsers.Spdx30SbomParser.csproj", "{476B9C87-293F-4BF7-B39A-EB732083409F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests", "test\Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests\Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests.csproj", "{E3FE33BB-FAB2-4F60-B930-BEB736AACE25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +135,14 @@ Global
 		{3FDE7800-F61F-4C45-93AB-648A4C7979C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FDE7800-F61F-4C45-93AB-648A4C7979C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FDE7800-F61F-4C45-93AB-648A4C7979C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{476B9C87-293F-4BF7-B39A-EB732083409F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{476B9C87-293F-4BF7-B39A-EB732083409F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{476B9C87-293F-4BF7-B39A-EB732083409F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{476B9C87-293F-4BF7-B39A-EB732083409F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3FE33BB-FAB2-4F60-B930-BEB736AACE25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3FE33BB-FAB2-4F60-B930-BEB736AACE25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3FE33BB-FAB2-4F60-B930-BEB736AACE25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3FE33BB-FAB2-4F60-B930-BEB736AACE25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
