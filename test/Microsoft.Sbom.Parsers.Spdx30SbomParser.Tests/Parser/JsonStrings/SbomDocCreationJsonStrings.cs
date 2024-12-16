@@ -16,7 +16,7 @@ public static class SbomDocCreationJsonStrings
         },
         {
             ""creationInfo"": ""_:creationinfo"",
-            ""name"": ""Microsoft.SBOMTool-3.0.2-preview.0.42"",
+            ""name"": ""Microsoft.SBOMTool-.*"",
             ""spdxId"": ""SPDXRef-Tool-1B22F89585B6EBBBC634E29621D531A555FAC621C99076D91BB6CAC2D3B494BC"",
             ""type"": ""Tool""
         },
