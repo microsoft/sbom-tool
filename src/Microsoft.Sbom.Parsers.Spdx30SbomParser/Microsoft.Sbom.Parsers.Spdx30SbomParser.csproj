@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>Microsoft.Sbom.Parsers.Spdx22SbomParser</AssemblyName>
+    <AssemblyName>Microsoft.Sbom.Parsers.Spdx30SbomParser</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Description>SPDX2.2 parser for SBOM tool.</Description>
+    <Description>SPDX3.0 parser for SBOM tool.</Description>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -18,5 +18,9 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>$(AssemblyName).Tests, PublicKey=$(StrongNameSigningPublicKey)</_Parameter1>
     </AssemblyAttribute>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 </Project>
