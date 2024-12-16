@@ -16,8 +16,8 @@ public static class SbomDocCreationJsonStrings
         },
         {
             ""creationInfo"": ""_:creationinfo"",
-            ""name"": ""Microsoft.SBOMTool-3.0.2-preview.0.42"",
-            ""spdxId"": ""SPDXRef-Tool-1B22F89585B6EBBBC634E29621D531A555FAC621C99076D91BB6CAC2D3B494BC"",
+            ""name"": ""Microsoft.SBOMTool-.*"",
+            ""spdxId"": ""SPDXRef-Tool-.*"",
             ""type"": ""Tool""
         },
         {
@@ -27,7 +27,7 @@ public static class SbomDocCreationJsonStrings
                 ""SPDXRef-Organization-4B8D792FFFFCD3AF92D53A739B6DF98DF2B1F367C2745DDC0085B30F51EBBC81""
             ],
             ""createdUsing"": [
-                ""SPDXRef-Tool-1B22F89585B6EBBBC634E29621D531A555FAC621C99076D91BB6CAC2D3B494BC""
+                ""SPDXRef-Tool-.*""
             ],
             ""specVersion"": ""3.0"",
             ""creationInfo"": ""_:creationinfo"",
