@@ -12,7 +12,4 @@ using System.Text.Json.Serialization;
 /// </summary>
 public class Snippet : Software
 {
-    public Snippet()
-    {
-    }
 }

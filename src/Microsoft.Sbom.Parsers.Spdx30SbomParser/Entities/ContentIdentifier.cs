@@ -15,10 +15,6 @@ public class ContentIdentifier : Software
 {
     private string contentIdentifierType;
 
-    public ContentIdentifier()
-    {
-    }
-
     /// <summary>
     /// Gets or sets the content identifier type.
     /// Allowed types are Git Object ID and Software Hash Identifier (swhid).

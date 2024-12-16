@@ -11,7 +11,4 @@ using System.Text.Json.Serialization;
 /// </summary>
 public class Tool : Element
 {
-    public Tool()
-    {
-    }
 }

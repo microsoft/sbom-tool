@@ -13,10 +13,6 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 /// </summary>
 public class SpdxDocument : Element
 {
-    public SpdxDocument()
-    {
-    }
-
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("dataLicense")]
     public string DataLicense { get; set; }

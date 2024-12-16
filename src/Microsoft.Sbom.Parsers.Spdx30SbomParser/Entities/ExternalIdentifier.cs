@@ -15,10 +15,6 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 /// </summary>
 public class ExternalIdentifier : Element
 {
-    public ExternalIdentifier()
-    {
-    }
-
     /// <summary>
     /// Gets or sets type of the external identifier.
     /// </summary>

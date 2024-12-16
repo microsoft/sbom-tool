@@ -10,7 +10,4 @@ using System.Text.Json.Serialization;
 /// </summary>
 public class Person : Element
 {
-   public Person()
-   {
-   }
 }

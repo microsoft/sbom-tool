@@ -13,10 +13,6 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 /// </summary>
 public class PackageVerificationCode : Element
 {
-    public PackageVerificationCode()
-    {
-    }
-
     /// <summary>
     /// Gets or sets the algorithm being used to calculate the type of verification.
     /// </summary>

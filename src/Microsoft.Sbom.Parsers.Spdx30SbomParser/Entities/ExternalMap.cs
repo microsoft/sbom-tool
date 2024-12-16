@@ -11,10 +11,6 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 /// </summary>
 public class ExternalMap : Element
 {
-    public ExternalMap()
-    {
-    }
-
     /// <summary>
     /// This will not be used in the actual SBOM generation, therefore deserialization/serialization to a specific type is not required.
     /// </summary>

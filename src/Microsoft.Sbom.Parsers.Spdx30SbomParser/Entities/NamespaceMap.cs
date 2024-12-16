@@ -10,10 +10,6 @@ using System.Text.Json.Serialization;
 /// </summary>
 public class NamespaceMap : Element
 {
-   public NamespaceMap()
-   {
-   }
-
    [JsonRequired]
    [JsonPropertyName("namespace")]
    public string Namespace { get; set; }

@@ -10,7 +10,4 @@ using System.Text.Json.Serialization;
 /// </summary>
 public class Organization : Element
 {
-    public Organization()
-    {
-    }
 }

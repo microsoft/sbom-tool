@@ -12,10 +12,6 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 /// </summary>
 public class CreationInfo : Element
 {
-    public CreationInfo()
-    {
-    }
-
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("@id")]
     public string Id { get; set; }
