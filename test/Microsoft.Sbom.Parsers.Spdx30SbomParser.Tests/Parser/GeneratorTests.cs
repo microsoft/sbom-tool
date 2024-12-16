@@ -44,7 +44,7 @@ public class GeneratorTests
         var regexPattern = ConvertJsonToRegex(expectedJsonContentAsString);
 
         Assert.IsFalse(generatedJsonString.Contains("null"));
-        Assert.IsTrue(Regex.IsMatch(generatedJsonString, regexPattern), generatedJsonString);
+        Assert.IsTrue(Regex.IsMatch(generatedJsonString, regexPattern));
     }
 
     [TestMethod]
