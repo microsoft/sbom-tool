@@ -16,8 +16,8 @@ public static class SbomDocCreationJsonStrings
         },
         {
             ""creationInfo"": ""_:creationinfo"",
-            ""name"": ""Microsoft.SBOMTool-3.0.2-preview.0.41"",
-            ""spdxId"": ""SPDXRef-Tool-F3816A2B734CA08686741B17A8BC9020B8513FCE6A7BD33B1006102E2A1B55AA"",
+            ""name"": ""Microsoft.SBOMTool-3.0.2-preview.0.42"",
+            ""spdxId"": ""SPDXRef-Tool-1B22F89585B6EBBBC634E29621D531A555FAC621C99076D91BB6CAC2D3B494BC"",
             ""type"": ""Tool""
         },
         {
@@ -27,7 +27,7 @@ public static class SbomDocCreationJsonStrings
                 ""SPDXRef-Organization-4B8D792FFFFCD3AF92D53A739B6DF98DF2B1F367C2745DDC0085B30F51EBBC81""
             ],
             ""createdUsing"": [
-                ""SPDXRef-Tool-F3816A2B734CA08686741B17A8BC9020B8513FCE6A7BD33B1006102E2A1B55AA""
+                ""SPDXRef-Tool-1B22F89585B6EBBBC634E29621D531A555FAC621C99076D91BB6CAC2D3B494BC""
             ],
             ""specVersion"": ""3.0"",
             ""creationInfo"": ""_:creationinfo"",
@@ -41,6 +41,20 @@ public static class SbomDocCreationJsonStrings
             ""type"": ""AnyLicenseInfo""
         },
         {
+            ""dataLicense"": ""SPDXRef-AnyLicenseInfo-6E237C55B0583CB7BBA05562316C54B0A105ABA04775017E2253237B9A64613C"",
+            ""namespaceMap"": [
+                {
+                    ""namespace"": ""http://sbom.microsoft/sbom-package-name/sbom-package-version/some-custom-value-here"",
+                    ""creationInfo"": ""_:creationinfo"",
+                    ""spdxId"": ""SPDXRef-NamespaceMap-0C5D68EB49795A98E060EB263AC73F87322217857EB3057EBAC84A70F75E69BE"",
+                    ""type"": ""NamespaceMap""
+                }
+            ],
+            ""profileConformance"": [
+                ""software"",
+                ""core"",
+                ""simpleLicensing""
+            ],
             ""creationInfo"": ""_:creationinfo"",
             ""name"": ""the-package-namethe-package-version"",
             ""spdxId"": ""SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1"",

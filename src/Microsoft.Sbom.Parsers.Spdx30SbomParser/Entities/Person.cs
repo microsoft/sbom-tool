@@ -11,7 +11,6 @@ using System.Text.Json.Serialization;
 public class Person : Element
 {
    public Person()
-    {
-        Type = nameof(Person);
-    }
+   {
+   }
 }

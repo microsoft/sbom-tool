@@ -15,7 +15,6 @@ public class PackageVerificationCode : Element
 {
     public PackageVerificationCode()
     {
-        Type = nameof(PackageVerificationCode);
     }
 
     /// <summary>

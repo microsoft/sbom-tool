@@ -14,6 +14,5 @@ public class Snippet : Software
 {
     public Snippet()
     {
-        Type = nameof(Snippet);
     }
 }

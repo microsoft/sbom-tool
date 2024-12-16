@@ -21,48 +21,7 @@ public class ElementSerializer : JsonConverter<List<Element>>
 
         foreach (var element in elements)
         {
-            switch (element.Type)
-            {
-                case "AnyLicenseInfo":
-                    JsonSerializer.Serialize(writer, element as AnyLicenseInfo, options);
-                    break;
-                case "ContentIdentifier":
-                    JsonSerializer.Serialize(writer, element as ContentIdentifier, options);
-                    break;
-                case "CreationInfo":
-                    JsonSerializer.Serialize(writer, element as CreationInfo, options);
-                    break;
-                case "ExternalIdentifier":
-                    JsonSerializer.Serialize(writer, element as ExternalIdentifier, options);
-                    break;
-                case "software_File":
-                    JsonSerializer.Serialize(writer, element as File, options);
-                    break;
-                case "software_Package":
-                    JsonSerializer.Serialize(writer, element as Package, options);
-                    break;
-                case "PackageVerificationCode":
-                    JsonSerializer.Serialize(writer, element as PackageVerificationCode, options);
-                    break;
-                case "Relationship":
-                    JsonSerializer.Serialize(writer, element as Spdx30Relationship, options);
-                    break;
-                case "Tool":
-                    JsonSerializer.Serialize(writer, element as Tool, options);
-                    break;
-                case "Organization":
-                    JsonSerializer.Serialize(writer, element as Organization, options);
-                    break;
-                case "NamespaceMap":
-                    JsonSerializer.Serialize(writer, element as NamespaceMap, options);
-                    break;
-                case "NoAssertionElement":
-                    JsonSerializer.Serialize(writer, element as NoAssertionElement, options);
-                    break;
-                default:
-                    JsonSerializer.Serialize(writer, element, options);
-                    break;
-            }
+            JsonSerializer.Serialize(writer, element, element.GetType(), options);
         }
 
         writer.WriteEndArray();

@@ -10,7 +10,7 @@ using JsonIgnoreAttribute = System.Text.Json.Serialization.JsonIgnoreAttribute;
 /// <summary>
 /// Class defined as specified in: https://spdx.github.io/spdx-spec/v3.0.1/model/Software/Software/
 /// </summary>
-public class Software : Element
+public abstract class Software : Element
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("software_additionalPurpose")]

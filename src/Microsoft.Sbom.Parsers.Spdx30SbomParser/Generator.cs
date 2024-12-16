@@ -389,7 +389,7 @@ public class Generator : IManifestGenerator
 
         var spdxDocument = new SpdxDocument
         {
-            DataLicense = spdxDataLicense,
+            DataLicense = spdxDataLicense.SpdxId,
             NamespaceMap = new List<NamespaceMap> { spdxNamespaceMap },
             SpdxId = Constants.SPDXDocumentIdValue,
             Name = documentName,

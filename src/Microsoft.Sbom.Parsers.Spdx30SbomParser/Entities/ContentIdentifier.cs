@@ -17,7 +17,6 @@ public class ContentIdentifier : Software
 
     public ContentIdentifier()
     {
-        Type = nameof(ContentIdentifier);
     }
 
     /// <summary>

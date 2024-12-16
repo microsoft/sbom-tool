@@ -14,7 +14,6 @@ public class CreationInfo : Element
 {
     public CreationInfo()
     {
-        Type = nameof(CreationInfo);
     }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

@@ -13,7 +13,6 @@ public class AnyLicenseInfo : Element
 {
     public AnyLicenseInfo()
     {
-        Type = nameof(AnyLicenseInfo);
         SpdxId = "SPDXRef-AnyLicenseInfo";
     }
 }

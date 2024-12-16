@@ -12,7 +12,6 @@ public class NamespaceMap : Element
 {
    public NamespaceMap()
    {
-        Type = nameof(NamespaceMap);
    }
 
    [JsonRequired]

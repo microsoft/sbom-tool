@@ -12,6 +12,5 @@ public class Organization : Element
 {
     public Organization()
     {
-        Type = nameof(Organization);
     }
 }

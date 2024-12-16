@@ -13,6 +13,5 @@ public class Tool : Element
 {
     public Tool()
     {
-        Type = nameof(Tool);
     }
 }

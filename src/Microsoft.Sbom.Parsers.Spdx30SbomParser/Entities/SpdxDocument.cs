@@ -15,12 +15,11 @@ public class SpdxDocument : Element
 {
     public SpdxDocument()
     {
-        Type = nameof(SpdxDocument);
     }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("dataLicense")]
-    public AnyLicenseInfo DataLicense { get; set; }
+    public string DataLicense { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("import")]
@@ -30,7 +29,7 @@ public class SpdxDocument : Element
     [JsonPropertyName("namespaceMap")]
     public List<NamespaceMap> NamespaceMap { get; set; }
 
-    [JsonRequired]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("element")]
     public List<Element> Element { get; set; }
 
@@ -38,7 +37,7 @@ public class SpdxDocument : Element
     [JsonPropertyName("profileConformance")]
     public List<ProfileIdentifierType> ProfileConformance { get; set; }
 
-    [JsonRequired]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("rootElement")]
     public List<Element> RootElement { get; set; }
 }
