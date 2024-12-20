@@ -17,5 +17,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Sbom.Extensions\Microsoft.Sbom.Extensions.csproj" />
   </ItemGroup>
-
 </Project>
