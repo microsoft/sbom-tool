@@ -6,6 +6,7 @@ using Microsoft.Sbom.Api.Metadata;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Tests.Metadata;
 
@@ -59,16 +60,14 @@ public class SbomApiMetadataProviderTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void SbomApiMetadataProvider_WithNullConfiguration_ThrowArgumentNullException()
     {
-        new SBOMApiMetadataProvider(metadata, null);
+        Assert.ThrowsException<ArgumentNullException>(() => new SBOMApiMetadataProvider(metadata, null));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void SbomApiMetadataProvider_WithNullMetadata_ThrowArgumentNullException()
     {
-        new SBOMApiMetadataProvider(null, config);
+        Assert.ThrowsException<ArgumentNullException>(() => new SBOMApiMetadataProvider(null, config));
     }
 }

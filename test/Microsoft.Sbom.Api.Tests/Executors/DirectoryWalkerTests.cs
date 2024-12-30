@@ -64,12 +64,12 @@ public class DirectoryWalkerTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(InvalidPathException))]
     public void DirectoryWalkerTests_DirectoryDoesntExist_Fails()
     {
         var mockFSUtils = new Mock<IFileSystemUtils>();
         mockFSUtils.Setup(m => m.DirectoryExists(It.IsAny<string>())).Returns(false).Verifiable();
-        new DirectoryWalker(mockFSUtils.Object, mockLogger.Object, mockConfiguration.Object).GetFilesRecursively(@"BadDir");
+        Assert.ThrowsException<InvalidPathException>(() =>
+            new DirectoryWalker(mockFSUtils.Object, mockLogger.Object, mockConfiguration.Object).GetFilesRecursively(@"BadDir"));
         mockFSUtils.VerifyAll();
     }
 

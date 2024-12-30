@@ -57,22 +57,20 @@ public class FileListEnumeratorTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public void ListWalkerTests_ListFile_Null_Fails()
     {
         var mockFSUtils = new Mock<IFileSystemUtils>();
-        mockFSUtils.Setup(m => m.DirectoryExists(It.IsAny<string>())).Returns(false).Verifiable();
-        new FileListEnumerator(mockFSUtils.Object, mockLogger.Object).GetFilesFromList(null);
+        Assert.ThrowsException<ArgumentException>(() =>
+            new FileListEnumerator(mockFSUtils.Object, mockLogger.Object).GetFilesFromList(null));
         mockFSUtils.VerifyAll();
     }
 
     [TestMethod]
-    [ExpectedException(typeof(InvalidPathException))]
     public void ListWalkerTests_DirectoryDoesntExist_Fails()
     {
         var mockFSUtils = new Mock<IFileSystemUtils>();
-        mockFSUtils.Setup(m => m.DirectoryExists(It.IsAny<string>())).Returns(false).Verifiable();
-        new FileListEnumerator(mockFSUtils.Object, mockLogger.Object).GetFilesFromList(@"BadDir");
+        Assert.ThrowsException<InvalidPathException>(() =>
+            new FileListEnumerator(mockFSUtils.Object, mockLogger.Object).GetFilesFromList(@"BadDir"));
         mockFSUtils.VerifyAll();
     }
 

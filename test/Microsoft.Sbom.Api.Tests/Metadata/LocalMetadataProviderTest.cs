@@ -6,6 +6,7 @@ using Microsoft.Sbom.Api.Metadata;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Tests.Metadata;
 
@@ -35,10 +36,9 @@ public class LocalMetadataProviderTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void LocalMetadataProvider_WithNullConfiguration_ThrowArgumentNullException()
     {
-        new LocalMetadataProvider(null);
+        Assert.ThrowsException<ArgumentNullException>(() => new LocalMetadataProvider(null));
     }
 
     [TestMethod]

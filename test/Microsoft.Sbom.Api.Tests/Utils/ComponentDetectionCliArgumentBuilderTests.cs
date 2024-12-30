@@ -146,27 +146,21 @@ public class ComponentDetectionCliArgumentBuilderTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Build_WithNullValue()
     {
-        var builder = new ComponentDetectionCliArgumentBuilder()
+        Assert.ThrowsException<ArgumentNullException>(() => new ComponentDetectionCliArgumentBuilder()
             .SourceDirectory("X:/")
             .AddArg("ManifestFile", null)
-            .AddArg("--DirectoryExclusionList", "X:/hello");
-
-        builder.Build();
+            .AddArg("--DirectoryExclusionList", "X:/hello"));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Build_WithInvalidArg()
     {
-        var builder = new ComponentDetectionCliArgumentBuilder()
+        Assert.ThrowsException<ArgumentNullException>(() => new ComponentDetectionCliArgumentBuilder()
             .SourceDirectory("X:/")
             .AddArg("ManifestFile", "value")
-            .AddArg("--", "X:/hello");
-
-        builder.Build();
+            .AddArg("--", "X:/hello"));
     }
 
     [TestMethod]

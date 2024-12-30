@@ -91,8 +91,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
     }
 
     [TestMethod]
-    [ExpectedException(typeof(AutoMapperMappingException))]
-    public async Task ConfigurationBuilderTest_CombinesConfigs_DuplicateConfig_Throws()
+    public void ConfigurationBuilderTest_CombinesConfigs_DuplicateConfig_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
@@ -107,12 +106,11 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
             ManifestDirPath = "ManifestPath"
         };
 
-        var configuration = await cb.GetConfiguration(args);
+        Assert.ThrowsExceptionAsync<AutoMapperMappingException>(() => cb.GetConfiguration(args));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ValidationArgException))]
-    public async Task ConfigurationBuilderTest_CombinesConfigs_NegativeParallism_Throws()
+    public void ConfigurationBuilderTest_CombinesConfigs_NegativeParallism_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
@@ -127,7 +125,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
             Parallelism = -1
         };
 
-        var configuration = await cb.GetConfiguration(args);
+        Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
     }
 
     [TestMethod]

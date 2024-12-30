@@ -163,13 +163,11 @@ public class SbomFileParserTests : SbomParserTestsBase
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public void NullOrEmptyBuffer_Throws()
     {
         var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new SPDXParser(stream, bufferSize: 0);
-        Assert.ThrowsException<ArgumentException>(() => this.Parse(parser));
+        Assert.ThrowsException<ArgumentException>(() => new SPDXParser(stream, bufferSize: 0));
     }
 }

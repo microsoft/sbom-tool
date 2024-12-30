@@ -103,14 +103,13 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ValidationArgException))]
     public void NoValueForManifestInfoForValidation_Throws()
     {
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
         config.ManifestInfo.Value.Clear();
 
-        configSanitizer.SanitizeConfig(config);
+        Assert.ThrowsException<ValidationArgException>(() => configSanitizer.SanitizeConfig(config));
     }
 
     [TestMethod]
@@ -190,13 +189,12 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(UnsupportedHashAlgorithmException))]
     public void ForValidateBadAlgorithmNameGetsRealAlgorithmName_Throws()
     {
         var config = GetConfigurationBaseObject();
         config.HashAlgorithm.Value = new AlgorithmName("a", null);
         config.ManifestToolAction = ManifestToolActions.Validate;
-        configSanitizer.SanitizeConfig(config);
+        Assert.ThrowsException<UnsupportedHashAlgorithmException>(() => configSanitizer.SanitizeConfig(config));
     }
 
     [TestMethod]
