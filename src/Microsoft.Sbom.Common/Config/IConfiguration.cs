@@ -195,6 +195,13 @@ public interface IConfiguration
     ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
 
     /// <summary>
+    /// Specifies the timeout in seconds for fetching the license information. Defaults to <see cref="Constants.DefaultLicenseFetchTimeoutInSeconds"/>.
+    /// Has no effect if FetchLicenseInformation (li) argument is false or not provided. Negative values are set to the default and values exceeding the
+    /// maximum are truncated to <see cref="Constants.MaxLicenseFetchTimeoutInSeconds"/>
+    /// </summary>
+    ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get; set; }
+
+    /// <summary>
     /// If set to true, we will attempt to locate and parse package metadata files for additional information to include in the SBOM such as .nuspec/.pom files in the local package cache.
     /// </summary>
     ConfigurationSetting<bool> EnablePackageMetadataParsing { get; set; }
