@@ -19,13 +19,7 @@ using Microsoft.Sbom.Adapters.ComponentDetection;
 [TestClass]
 public class ComponentDetectionToSBOMPackageAdapterTests
 {
-    private static TestContext testContext;
-
-    [ClassInitialize]
-    public static void SetUp(TestContext testContext)
-    {
-        ComponentDetectionToSBOMPackageAdapterTests.testContext = testContext;
-    }
+    public TestContext TestContext { get; set; }
 
     [TestMethod]
     public void BasicAdapterTest_Succeeds()
@@ -268,7 +262,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
 
     private (AdapterReport report, List<SbomPackage> packages) GenerateJsonFileForTestAndRun(string json)
     {
-        var baseDirectory = Path.Combine(testContext.TestRunDirectory, Guid.NewGuid().ToString());
+        var baseDirectory = Path.Combine(TestContext.TestRunDirectory, Guid.NewGuid().ToString());
         var bcdeOutputPath = Path.Combine(baseDirectory, "bcde-output.json");
 
         Directory.CreateDirectory(baseDirectory);
