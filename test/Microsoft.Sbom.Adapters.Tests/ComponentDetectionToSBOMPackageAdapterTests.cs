@@ -60,8 +60,8 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         // Converted packaged is present and valid
         Assert.IsTrue(packages?.Count == 1);
         Assert.IsNotNull(packages[0]);
-        Assert.AreEqual(packages[0].PackageName, "@microsoft/yarn-graph-builder");
-        Assert.AreEqual(packages[0].PackageVersion, "1.0.0");
+        Assert.AreEqual("@microsoft/yarn-graph-builder", packages[0].PackageName);
+        Assert.AreEqual("1.0.0", packages[0].PackageVersion);
 
         // This one contains no checksums, so verify that it is null
         Assert.IsNotNull(packages[0].Checksum);

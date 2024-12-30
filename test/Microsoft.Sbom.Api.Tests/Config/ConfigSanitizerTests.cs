@@ -317,7 +317,7 @@ public class ConfigSanitizerTests
         config.ManifestToolAction = ManifestToolActions.Validate;
         configSanitizer.SanitizeConfig(config);
 
-        Assert.AreEqual(actualOrg, config.PackageSupplier.Value);
+        Assert.AreEqual(config.PackageSupplier.Value, actualOrg);
     }
 
     [TestMethod]

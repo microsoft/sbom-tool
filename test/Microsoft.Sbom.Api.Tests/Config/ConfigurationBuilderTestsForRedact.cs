@@ -39,8 +39,8 @@ public class ConfigurationBuilderTestsForRedact : ConfigurationBuilderTestsBase
 
         var configuration = await cb.GetConfiguration(args);
 
-        Assert.AreEqual(configuration.SbomDir.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.OutputPath.Source, SettingSource.CommandLine);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.SbomDir.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.OutputPath.Source);
 
         fileSystemUtilsMock.VerifyAll();
     }

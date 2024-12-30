@@ -31,7 +31,7 @@ public class FormatValidatorTests
             Assert.AreEqual("CC0-1.0", rawspdx.DataLicense);
             Assert.AreEqual("sbom-tool 1.0.0", rawspdx.Name);
             Assert.AreEqual("https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g", rawspdx.DocumentNamespace);
-            Assert.AreEqual(rawspdx.CreationInfo.Created, "2024-05-08T15:58:25Z");
+            Assert.AreEqual("2024-05-08T15:58:25Z", rawspdx.CreationInfo.Created);
             Assert.IsNotNull(rawspdx.CreationInfo.Creators);
             Assert.IsNotNull(rawspdx.DocumentDescribes);
         }
