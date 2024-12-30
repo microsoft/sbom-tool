@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup Label="Build">
-    <NoWarn>$(NoWarn);MSTEST0005;MSTEST0006;MSTEST0017;MSTEST0024;MSTEST0026;MSTEST0032;MSTEST0034;MSTEST0037</NoWarn>
+    <NoWarn>$(NoWarn);JSON002;MSTEST0005;MSTEST0006;MSTEST0017;MSTEST0024;MSTEST0026;MSTEST0032;MSTEST0034;MSTEST0037</NoWarn>
   </PropertyGroup>
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
