@@ -6,7 +6,6 @@ using Microsoft.Sbom.Api.Metadata;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Tests.Metadata;
 
