@@ -53,7 +53,6 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var (errors, packages) = GenerateJsonFileForTestAndRun(json);
 
         // Successful conversion
-        Assert.IsNotNull(errors.Report);
         Assert.AreEqual(1, errors.Report.Count);
         Assert.AreEqual(AdapterReportItemType.Success, errors.Report.First().Type);
 
@@ -85,7 +84,6 @@ public class ComponentDetectionToSBOMPackageAdapterTests
 
         Assert.IsNotNull(packages);
         Assert.AreEqual(0, packages.Count);
-        Assert.IsNotNull(errors.Report);
         Assert.AreEqual(1, errors.Report.Count); // Should still be successful even with no components
         Assert.AreEqual(AdapterReportItemType.Success, errors.Report.First().Type);
     }
@@ -96,7 +94,6 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var json = "{";
         var (errors, packages) = GenerateJsonFileForTestAndRun(json);
 
-        Assert.IsNotNull(errors.Report);
         Assert.AreEqual(1, errors.Report.Count);
         Assert.AreEqual(AdapterReportItemType.Failure, errors.Report.First().Type);
         Assert.IsTrue(errors.Report.First().Details.Contains("Unable to parse bcde-output.json", StringComparison.Ordinal));
