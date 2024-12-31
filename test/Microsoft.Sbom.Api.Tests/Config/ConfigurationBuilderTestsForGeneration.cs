@@ -293,6 +293,6 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
             PackageSupplier = "Contoso"
         };
 
-        Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
+        Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args), "The value of NamespaceUriBase must be a valid URI.");
     }
 }
