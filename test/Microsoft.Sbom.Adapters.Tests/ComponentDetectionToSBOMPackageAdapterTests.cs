@@ -54,11 +54,12 @@ public class ComponentDetectionToSBOMPackageAdapterTests
 
         // Successful conversion
         Assert.IsNotNull(errors.Report);
-        Assert.AreEqual(1, errors.Report?.Count);
+        Assert.AreEqual(1, errors.Report.Count);
         Assert.AreEqual(AdapterReportItemType.Success, errors.Report.First().Type);
 
         // Converted packaged is present and valid
-        Assert.AreEqual(1, packages?.Count);
+        Assert.IsNotNull(packages);
+        Assert.AreEqual(1, packages.Count);
         Assert.IsNotNull(packages[0]);
         Assert.AreEqual("@microsoft/yarn-graph-builder", packages[0].PackageName);
         Assert.AreEqual("1.0.0", packages[0].PackageVersion);
@@ -66,7 +67,8 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         // This one contains no checksums, so verify that it is null
         Assert.IsNotNull(packages[0].Checksum);
         var checksums = packages[0].Checksum?.ToList();
-        Assert.AreEqual(1, checksums?.Count);
+        Assert.IsNotNull(checksums);
+        Assert.AreEqual(1, checksums.Count);
         Assert.IsNull(checksums[0].ChecksumValue);
     }
 
@@ -81,8 +83,10 @@ public class ComponentDetectionToSBOMPackageAdapterTests
                           }";
         var (errors, packages) = GenerateJsonFileForTestAndRun(json);
 
-        Assert.AreEqual(0, packages?.Count);
-        Assert.AreEqual(1, errors.Report?.Count); // Should still be successful even with no components
+        Assert.IsNotNull(packages);
+        Assert.AreEqual(0, packages.Count);
+        Assert.IsNotNull(errors.Report);
+        Assert.AreEqual(1, errors.Report.Count); // Should still be successful even with no components
         Assert.AreEqual(AdapterReportItemType.Success, errors.Report.First().Type);
     }
 
@@ -92,7 +96,8 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var json = "{";
         var (errors, packages) = GenerateJsonFileForTestAndRun(json);
 
-        Assert.AreEqual(1, errors.Report?.Count);
+        Assert.IsNotNull(errors.Report);
+        Assert.AreEqual(1, errors.Report.Count);
         Assert.AreEqual(AdapterReportItemType.Failure, errors.Report.First().Type);
         Assert.IsTrue(errors.Report.First().Details.Contains("Unable to parse bcde-output.json", StringComparison.Ordinal));
         Assert.AreEqual(0, packages.Count);
@@ -151,7 +156,8 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
         Assert.AreEqual(condaComponent.Id, sbomPackage.Id);
-        Assert.AreEqual(condaComponent.PackageUrl?.ToString(), sbomPackage.PackageUrl);
+        Assert.IsNotNull(condaComponent.PackageUrl);
+        Assert.AreEqual(condaComponent.PackageUrl.ToString(), sbomPackage.PackageUrl);
         Assert.AreEqual(condaComponent.Name, sbomPackage.PackageName);
         Assert.AreEqual(condaComponent.Version, sbomPackage.PackageVersion);
         Assert.AreEqual(condaComponent.Url, sbomPackage.PackageSource);
@@ -167,7 +173,8 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
         Assert.AreEqual(dockerImageComponent.Id, sbomPackage.Id);
-        Assert.AreEqual(dockerImageComponent.PackageUrl?.ToString(), sbomPackage.PackageUrl);
+        Assert.IsNotNull(dockerImageComponent.PackageUrl);
+        Assert.AreEqual(dockerImageComponent.PackageUrl.ToString(), sbomPackage.PackageUrl);
         Assert.AreEqual(dockerImageComponent.Name, sbomPackage.PackageName);
         Assert.AreEqual(AlgorithmName.SHA256, sbomPackage.Checksum.First().Algorithm);
         Assert.AreEqual(dockerImageComponent.Digest, sbomPackage.Checksum.First().ChecksumValue);
@@ -182,7 +189,8 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
         Assert.AreEqual(npmComponent.Id, sbomPackage.Id);
-        Assert.AreEqual(npmComponent.PackageUrl?.ToString(), sbomPackage.PackageUrl);
+        Assert.IsNotNull(npmComponent.PackageUrl);
+        Assert.AreEqual(npmComponent.PackageUrl.ToString(), sbomPackage.PackageUrl);
         Assert.AreEqual(npmComponent.Name, sbomPackage.PackageName);
         Assert.AreEqual(npmComponent.Version, sbomPackage.PackageVersion);
         Assert.AreEqual($"Organization: {npmComponent.Author.Name} ({npmComponent.Author.Email})", sbomPackage.Supplier);
@@ -197,7 +205,8 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
         Assert.AreEqual(npmComponent.Id, sbomPackage.Id);
-        Assert.AreEqual(npmComponent.PackageUrl?.ToString(), sbomPackage.PackageUrl);
+        Assert.IsNotNull(npmComponent.PackageUrl);
+        Assert.AreEqual(npmComponent.PackageUrl.ToString(), sbomPackage.PackageUrl);
         Assert.AreEqual(npmComponent.Name, sbomPackage.PackageName);
         Assert.AreEqual(npmComponent.Version, sbomPackage.PackageVersion);
         Assert.IsNull(sbomPackage.Supplier);
@@ -212,7 +221,8 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
         Assert.AreEqual(nuGetComponent.Id, sbomPackage.Id);
-        Assert.AreEqual(nuGetComponent.PackageUrl?.ToString(), sbomPackage.PackageUrl);
+        Assert.IsNotNull(nuGetComponent.PackageUrl);
+        Assert.AreEqual(nuGetComponent.PackageUrl.ToString(), sbomPackage.PackageUrl);
         Assert.AreEqual(nuGetComponent.Name, sbomPackage.PackageName);
         Assert.AreEqual(nuGetComponent.Version, sbomPackage.PackageVersion);
         Assert.AreEqual($"Organization: {nuGetComponent.Authors.First()}", sbomPackage.Supplier);
@@ -227,7 +237,8 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
         Assert.AreEqual(nuGetComponent.Id, sbomPackage.Id);
-        Assert.AreEqual(nuGetComponent.PackageUrl?.ToString(), sbomPackage.PackageUrl);
+        Assert.IsNotNull(nuGetComponent.PackageUrl);
+        Assert.AreEqual(nuGetComponent.PackageUrl.ToString(), sbomPackage.PackageUrl);
         Assert.AreEqual(nuGetComponent.Name, sbomPackage.PackageName);
         Assert.AreEqual(nuGetComponent.Version, sbomPackage.PackageVersion);
         Assert.IsNull(sbomPackage.Supplier);
@@ -242,7 +253,8 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
         Assert.AreEqual(pipComponent.Id, sbomPackage.Id);
-        Assert.AreEqual(pipComponent.PackageUrl?.ToString(), sbomPackage.PackageUrl);
+        Assert.IsNotNull(pipComponent.PackageUrl);
+        Assert.AreEqual(pipComponent.PackageUrl.ToString(), sbomPackage.PackageUrl);
         Assert.AreEqual(pipComponent.Name, sbomPackage.PackageName);
         Assert.AreEqual(pipComponent.Version, sbomPackage.PackageVersion);
     }
@@ -257,7 +269,8 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
         Assert.AreEqual(gitComponent.Id, sbomPackage.Id);
-        Assert.AreEqual(gitComponent.PackageUrl?.ToString(), sbomPackage.PackageUrl);
+        Assert.IsNotNull(gitComponent.PackageUrl);
+        Assert.AreEqual(gitComponent.PackageUrl.ToString(), sbomPackage.PackageUrl);
     }
 
     private (AdapterReport report, List<SbomPackage> packages) GenerateJsonFileForTestAndRun(string json)
