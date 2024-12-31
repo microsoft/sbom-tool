@@ -24,6 +24,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     [TestMethod]
     public void BasicAdapterTest_Succeeds()
     {
+#pragma warning disable JSON002 // Probable JSON string detected
         var json = @"{
                            ""componentsFound"": [
                              {
@@ -50,6 +51,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
                            ""ContainerDetailsMap"": {},
                            ""resultCode"": ""Success""
                          }";
+#pragma warning restore JSON002 // Probable JSON string detected
         var (errors, packages) = GenerateJsonFileForTestAndRun(json);
 
         // Successful conversion
@@ -74,12 +76,14 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     [TestMethod]
     public void NoComponents_Succeeds()
     {
+#pragma warning disable JSON002 // Probable JSON string detected
         var json = @"{
                             ""componentsFound"": [],
                             ""detectorsInScan"": [],
                             ""ContainerDetailsMap"": {},
                             ""resultCode"": ""Success""
                           }";
+#pragma warning restore JSON002 // Probable JSON string detected
         var (errors, packages) = GenerateJsonFileForTestAndRun(json);
 
         Assert.IsNotNull(packages);
@@ -153,8 +157,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
         Assert.AreEqual(condaComponent.Id, sbomPackage.Id);
-        Assert.IsNotNull(condaComponent.PackageUrl);
-        Assert.AreEqual(condaComponent.PackageUrl.ToString(), sbomPackage.PackageUrl);
+        AssertPackageUrlIsCorrect(condaComponent.PackageUrl, sbomPackage.PackageUrl);
         Assert.AreEqual(condaComponent.Name, sbomPackage.PackageName);
         Assert.AreEqual(condaComponent.Version, sbomPackage.PackageVersion);
         Assert.AreEqual(condaComponent.Url, sbomPackage.PackageSource);
@@ -170,8 +173,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
         Assert.AreEqual(dockerImageComponent.Id, sbomPackage.Id);
-        Assert.IsNotNull(dockerImageComponent.PackageUrl);
-        Assert.AreEqual(dockerImageComponent.PackageUrl.ToString(), sbomPackage.PackageUrl);
+        AssertPackageUrlIsCorrect(dockerImageComponent.PackageUrl, sbomPackage.PackageUrl);
         Assert.AreEqual(dockerImageComponent.Name, sbomPackage.PackageName);
         Assert.AreEqual(AlgorithmName.SHA256, sbomPackage.Checksum.First().Algorithm);
         Assert.AreEqual(dockerImageComponent.Digest, sbomPackage.Checksum.First().ChecksumValue);
@@ -218,7 +220,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
         Assert.AreEqual(nuGetComponent.Id, sbomPackage.Id);
-        Assert.IsNotNull(nuGetComponent.PackageUrl);
+        AssertPackageUrlIsCorrect(nuGetComponent.PackageUrl, sbomPackage.PackageUrl);
         Assert.AreEqual(nuGetComponent.PackageUrl.ToString(), sbomPackage.PackageUrl);
         Assert.AreEqual(nuGetComponent.Name, sbomPackage.PackageName);
         Assert.AreEqual(nuGetComponent.Version, sbomPackage.PackageVersion);
@@ -266,8 +268,18 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
 
         Assert.AreEqual(gitComponent.Id, sbomPackage.Id);
-        Assert.IsNotNull(gitComponent.PackageUrl);
-        Assert.AreEqual(gitComponent.PackageUrl.ToString(), sbomPackage.PackageUrl);
+        AssertPackageUrlIsCorrect(gitComponent.PackageUrl, sbomPackage.PackageUrl);
+    }
+
+    private void AssertPackageUrlIsCorrect(PackageUrl.PackageURL expectedPackageUrl, string actualPackageUrl)
+    {
+        if (expectedPackageUrl is null)
+        {
+            Assert.IsNull(actualPackageUrl);
+            return;
+        }
+
+        Assert.AreEqual(expectedPackageUrl.ToString(), actualPackageUrl);
     }
 
     private (AdapterReport report, List<SbomPackage> packages) GenerateJsonFileForTestAndRun(string json)
