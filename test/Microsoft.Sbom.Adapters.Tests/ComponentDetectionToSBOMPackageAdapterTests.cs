@@ -54,11 +54,11 @@ public class ComponentDetectionToSBOMPackageAdapterTests
 
         // Successful conversion
         Assert.IsNotNull(errors.Report);
-        Assert.IsTrue(errors.Report?.Count == 1);
-        Assert.IsTrue(errors.Report.First().Type == AdapterReportItemType.Success);
+        Assert.AreEqual(1, errors.Report?.Count);
+        Assert.AreEqual(AdapterReportItemType.Success, errors.Report.First().Type);
 
         // Converted packaged is present and valid
-        Assert.IsTrue(packages?.Count == 1);
+        Assert.AreEqual(1, packages?.Count);
         Assert.IsNotNull(packages[0]);
         Assert.AreEqual("@microsoft/yarn-graph-builder", packages[0].PackageName);
         Assert.AreEqual("1.0.0", packages[0].PackageVersion);
@@ -66,7 +66,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         // This one contains no checksums, so verify that it is null
         Assert.IsNotNull(packages[0].Checksum);
         var checksums = packages[0].Checksum?.ToList();
-        Assert.IsTrue(checksums?.Count == 1);
+        Assert.AreEqual(1, checksums?.Count);
         Assert.IsNull(checksums[0].ChecksumValue);
     }
 
@@ -81,9 +81,9 @@ public class ComponentDetectionToSBOMPackageAdapterTests
                           }";
         var (errors, packages) = GenerateJsonFileForTestAndRun(json);
 
-        Assert.IsTrue(packages?.Count == 0);
-        Assert.IsTrue(errors.Report?.Count == 1); // Should still be successful even with no components
-        Assert.IsTrue(errors.Report.First().Type == AdapterReportItemType.Success);
+        Assert.AreEqual(0, packages?.Count);
+        Assert.AreEqual(1, errors.Report?.Count); // Should still be successful even with no components
+        Assert.AreEqual(AdapterReportItemType.Success, errors.Report.First().Type);
     }
 
     [TestMethod]
@@ -92,10 +92,10 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var json = "{";
         var (errors, packages) = GenerateJsonFileForTestAndRun(json);
 
-        Assert.IsTrue(errors.Report?.Count == 1);
-        Assert.IsTrue(errors.Report.First().Type == AdapterReportItemType.Failure);
+        Assert.AreEqual(1, errors.Report?.Count);
+        Assert.AreEqual(AdapterReportItemType.Failure, errors.Report.First().Type);
         Assert.IsTrue(errors.Report.First().Details.Contains("Unable to parse bcde-output.json", StringComparison.Ordinal));
-        Assert.IsTrue(packages.Count == 0);
+        Assert.AreEqual(0, packages.Count);
     }
 
     [TestMethod]

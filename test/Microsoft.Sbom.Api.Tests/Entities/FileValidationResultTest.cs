@@ -28,7 +28,7 @@ public class FileValidationResultTest
         var entityError = fileValidationResult.ToEntityError();
 
         Assert.AreEqual(output, entityError.ErrorType);
-        Assert.AreEqual(null, entityError.Details);
+        Assert.IsNull(entityError.Details);
 
         if (input == ErrorType.PackageError)
         {

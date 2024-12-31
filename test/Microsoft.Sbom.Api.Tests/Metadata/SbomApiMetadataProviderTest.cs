@@ -49,7 +49,7 @@ public class SbomApiMetadataProviderTest
     public void SbomApiMetadataProvider_BuildEnvironmentName_WithoutMetadata()
     {
         var sbomApiMetadataProvider = new SBOMApiMetadataProvider(metadata, config);
-        Assert.AreEqual(null, sbomApiMetadataProvider.BuildEnvironmentName);
+        Assert.IsNull(sbomApiMetadataProvider.BuildEnvironmentName);
     }
 
     [TestMethod]

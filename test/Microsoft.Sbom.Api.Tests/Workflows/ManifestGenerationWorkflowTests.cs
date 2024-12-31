@@ -339,7 +339,7 @@ public class ManifestGenerationWorkflowTests
         var expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
 
         var packages = resultJson["Packages"];
-        Assert.IsTrue(packages.Count() == 4);
+        Assert.AreEqual(4, packages.Count());
 
         Assert.IsTrue(JToken.DeepEquals(sortedOutputs, expectedSortedOutputs));
 

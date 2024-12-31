@@ -51,8 +51,8 @@ public class FileListEnumeratorTests
             Assert.IsTrue(files.Remove(file));
         }
 
-        Assert.IsTrue(errorCount == 0);
-        Assert.IsTrue(files.Count == 0);
+        Assert.AreEqual(0, errorCount);
+        Assert.AreEqual(0, files.Count);
         mockFSUtils.VerifyAll();
     }
 
@@ -108,8 +108,8 @@ public class FileListEnumeratorTests
             Assert.IsTrue(files.Remove(file));
         }
 
-        Assert.IsTrue(errorCount == 1);
-        Assert.IsTrue(files.Count == 1);
+        Assert.AreEqual(1, errorCount);
+        Assert.AreEqual(1, files.Count);
         mockFSUtils.VerifyAll();
     }
 }

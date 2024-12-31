@@ -97,7 +97,7 @@ public class FileHasherTests
             Assert.IsNull(fileHash.FileTypes);
         }
 
-        Assert.IsTrue(fileHashes.error.Count == 0);
+        Assert.AreEqual(0, fileHashes.error.Count);
         hashCodeGeneratorMock.VerifyAll();
         manifestPathConverter.VerifyAll();
         mockConfiguration.VerifyAll();
@@ -306,7 +306,7 @@ public class FileHasherTests
             Assert.IsNull(fileHash.FileTypes);
         }
 
-        Assert.IsTrue(fileHashes.error.Count == 0);
+        Assert.AreEqual(0, fileHashes.error.Count);
         hashCodeGeneratorMock.VerifyAll();
         manifestPathConverter.VerifyAll();
         mockConfiguration.VerifyAll();

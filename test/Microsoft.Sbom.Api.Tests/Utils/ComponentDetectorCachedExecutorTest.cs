@@ -35,7 +35,7 @@ public class ComponentDetectorCachedExecutorTest
         detector.Setup(x => x.ScanAsync(arguments)).Returns(Task.FromResult(expectedResult));
         var result = await executor.ScanAsync(arguments);
         Assert.AreEqual(expectedResult, result);
-        Assert.IsTrue(detector.Invocations.Count == 1);
+        Assert.AreEqual(1, detector.Invocations.Count);
     }
 
     [TestMethod]
@@ -49,6 +49,6 @@ public class ComponentDetectorCachedExecutorTest
         await executor.ScanAsync(arguments);
         var result = await executor.ScanAsync(arguments);
         Assert.AreEqual(expectedResult, result);
-        Assert.IsTrue(detector.Invocations.Count == 1);
+        Assert.AreEqual(1, detector.Invocations.Count);
     }
 }

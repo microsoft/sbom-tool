@@ -59,7 +59,7 @@ public class DirectoryWalkerTests
             Assert.Fail($"Error thrown for {error.Path}: {error.ErrorType}");
         }
 
-        Assert.IsTrue(files.Count == 0);
+        Assert.AreEqual(0, files.Count);
         mockFSUtils.VerifyAll();
     }
 
@@ -102,8 +102,8 @@ public class DirectoryWalkerTests
             Assert.IsTrue(files.Remove(file));
         }
 
-        Assert.IsTrue(errorCount == 1);
-        Assert.IsTrue(files.Count == 0);
+        Assert.AreEqual(1, errorCount);
+        Assert.AreEqual(0, files.Count);
         mockFSUtils.VerifyAll();
     }
 }

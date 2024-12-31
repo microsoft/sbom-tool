@@ -25,7 +25,7 @@ public class FormatValidatorTests
             var details = await sbom.GetValidationResults();
 
             Assert.AreEqual(FormatValidationStatus.Valid, details.Status);
-            Assert.IsTrue(details.Errors.Count == 0);
+            Assert.AreEqual(0, details.Errors.Count);
             Assert.IsNotNull(rawspdx);
             Assert.AreEqual("SPDX-2.2", rawspdx.Version);
             Assert.AreEqual("CC0-1.0", rawspdx.DataLicense);

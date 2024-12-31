@@ -68,7 +68,7 @@ public class RubyGemsUtilsTests
 
         var parsedGemspecInfo = rubyGemsUtils.ParseMetadata(gemspecContent);
 
-        Assert.AreEqual(null, parsedGemspecInfo.PackageDetails.License);
+        Assert.IsNull(parsedGemspecInfo.PackageDetails.License);
         Assert.AreEqual("John Doe", parsedGemspecInfo.PackageDetails.Supplier);
         Assert.AreEqual("sampleGem", parsedGemspecInfo.Name);
         Assert.AreEqual("1.0.0", parsedGemspecInfo.Version);
@@ -87,7 +87,7 @@ public class RubyGemsUtilsTests
         var parsedGemspecInfo = rubyGemsUtils.ParseMetadata(gemspecContent);
 
         Assert.AreEqual("MIT", parsedGemspecInfo.PackageDetails.License);
-        Assert.AreEqual(null, parsedGemspecInfo.PackageDetails.Supplier);
+        Assert.IsNull(parsedGemspecInfo.PackageDetails.Supplier);
         Assert.AreEqual("sampleGem", parsedGemspecInfo.Name);
         Assert.AreEqual("1.0.0", parsedGemspecInfo.Version);
     }
