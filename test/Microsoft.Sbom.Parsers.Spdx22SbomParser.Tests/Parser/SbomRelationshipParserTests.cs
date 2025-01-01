@@ -40,7 +40,6 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         var result = this.Parse(parser);
     }
 
-    [TestMethod]
     [DataRow(RelationshipStrings.JsonRelationshipsStringMissingElementId)]
     [DataRow(RelationshipStrings.JsonRelationshipsStringMissingRelatedElement)]
     [TestMethod]
@@ -54,7 +53,6 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 
-    [TestMethod]
     [DataRow(RelationshipStrings.GoodJsonWithRelationshipsStringAdditionalString)]
     [DataRow(RelationshipStrings.GoodJsonWithRelationshipsStringAdditionalObject)]
     [DataRow(RelationshipStrings.GoodJsonWithRelationshipsStringAdditionalArray)]
@@ -72,7 +70,6 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         Assert.IsTrue(result.RelationshipsCount > 0);
     }
 
-    [TestMethod]
     [DataRow(RelationshipStrings.MalformedJsonRelationshipsString)]
     [TestMethod]
     public void MalformedJsonTest_Throws(string json)

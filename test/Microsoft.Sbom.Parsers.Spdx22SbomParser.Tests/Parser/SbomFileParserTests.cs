@@ -100,7 +100,6 @@ public class SbomFileParserTests : SbomParserTestsBase
         Assert.ThrowsException<ParserException>(() => result.Files.Select(f => f.ToSbomFile()).ToList());
     }
 
-    [TestMethod]
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingNameString)]
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingIDString)]
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingChecksumsString)]
@@ -116,7 +115,6 @@ public class SbomFileParserTests : SbomParserTestsBase
         _ = Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 
-    [TestMethod]
     [DataRow(SbomFileJsonStrings.GoodJsonWith1FileAdditionalObjectPropertyString)]
     [DataRow(SbomFileJsonStrings.GoodJsonWith1FileAdditionalArrayPropertyString)]
     [DataRow(SbomFileJsonStrings.GoodJsonWith1FileAdditionalStringPropertyString)]
@@ -134,7 +132,6 @@ public class SbomFileParserTests : SbomParserTestsBase
         Assert.AreEqual(1, result.FilesCount);
     }
 
-    [TestMethod]
     [DataRow(SbomFileJsonStrings.MalformedJson)]
     [DataRow(SbomFileJsonStrings.MalformedJsonEmptyObject)]
     [DataRow(SbomFileJsonStrings.MalformedJsonEmptyObjectNoArrayEnd)]

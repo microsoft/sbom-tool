@@ -102,7 +102,6 @@ public class SbomPackageParserTests : SbomParserTestsBase
         var result = this.Parse(parser);
     }
 
-    [TestMethod]
     [DataRow(SbomPackageStrings.MalformedJson)]
     [DataRow(SbomPackageStrings.MalformedJsonEmptyObject)]
     [DataRow(SbomPackageStrings.MalformedJsonEmptyObjectNoArrayEnd)]
