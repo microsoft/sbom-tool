@@ -1,6 +1,8 @@
 <!-- All csproj package references should not include version numbers. The version numbers are set using this props file. -->
 <Project>
+
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Packages.props, $(MSBuildThisFileDirectory)..))" />
+
   <ItemDefinitionGroup>
     <PackageVersion>
       <!-- Do not share compile-time dependencies transitively.  This requires that all projects reference all packages -->
