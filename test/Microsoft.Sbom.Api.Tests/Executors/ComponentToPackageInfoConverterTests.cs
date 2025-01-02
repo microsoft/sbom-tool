@@ -83,7 +83,8 @@ public class ComponentToPackageInfoConverterTests
 
         CollectionAssert.AreEquivalent(expectedPackageNames, output.Select(c => c.PackageName).ToList());
 
-        Assert.IsFalse(errors?.Any());
+        Assert.IsNotNull(errors);
+        Assert.IsFalse(errors.Any());
     }
 
     [TestMethod]
@@ -257,7 +258,8 @@ public class ComponentToPackageInfoConverterTests
 
         CollectionAssert.AreEquivalent(expectedPackageNames, output.Select(c => c.PackageName).ToList());
 
-        Assert.IsFalse(errors?.Any());
+        Assert.IsNotNull(errors);
+        Assert.IsFalse(errors.Any());
     }
 
     private async Task<PackageInfo> ConvertScannedComponent(ExtendedScannedComponent scannedComponent)

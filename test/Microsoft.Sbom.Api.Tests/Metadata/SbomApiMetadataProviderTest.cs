@@ -48,7 +48,7 @@ public class SbomApiMetadataProviderTest
     public void SbomApiMetadataProvider_BuildEnvironmentName_WithoutMetadata()
     {
         var sbomApiMetadataProvider = new SBOMApiMetadataProvider(metadata, config);
-        Assert.AreEqual(null, sbomApiMetadataProvider.BuildEnvironmentName);
+        Assert.IsNull(sbomApiMetadataProvider.BuildEnvironmentName);
     }
 
     [TestMethod]
@@ -59,16 +59,14 @@ public class SbomApiMetadataProviderTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void SbomApiMetadataProvider_WithNullConfiguration_ThrowArgumentNullException()
     {
-        new SBOMApiMetadataProvider(metadata, null);
+        Assert.ThrowsException<ArgumentNullException>(() => new SBOMApiMetadataProvider(metadata, null));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void SbomApiMetadataProvider_WithNullMetadata_ThrowArgumentNullException()
     {
-        new SBOMApiMetadataProvider(null, config);
+        Assert.ThrowsException<ArgumentNullException>(() => new SBOMApiMetadataProvider(null, config));
     }
 }

@@ -51,28 +51,26 @@ public class FileListEnumeratorTests
             Assert.IsTrue(files.Remove(file));
         }
 
-        Assert.IsTrue(errorCount == 0);
-        Assert.IsTrue(files.Count == 0);
+        Assert.AreEqual(0, errorCount);
+        Assert.AreEqual(0, files.Count);
         mockFSUtils.VerifyAll();
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public void ListWalkerTests_ListFile_Null_Fails()
     {
         var mockFSUtils = new Mock<IFileSystemUtils>();
-        mockFSUtils.Setup(m => m.DirectoryExists(It.IsAny<string>())).Returns(false).Verifiable();
-        new FileListEnumerator(mockFSUtils.Object, mockLogger.Object).GetFilesFromList(null);
+        Assert.ThrowsException<ArgumentException>(() =>
+            new FileListEnumerator(mockFSUtils.Object, mockLogger.Object).GetFilesFromList(null));
         mockFSUtils.VerifyAll();
     }
 
     [TestMethod]
-    [ExpectedException(typeof(InvalidPathException))]
     public void ListWalkerTests_DirectoryDoesntExist_Fails()
     {
         var mockFSUtils = new Mock<IFileSystemUtils>();
-        mockFSUtils.Setup(m => m.DirectoryExists(It.IsAny<string>())).Returns(false).Verifiable();
-        new FileListEnumerator(mockFSUtils.Object, mockLogger.Object).GetFilesFromList(@"BadDir");
+        Assert.ThrowsException<InvalidPathException>(() =>
+            new FileListEnumerator(mockFSUtils.Object, mockLogger.Object).GetFilesFromList(@"BadDir"));
         mockFSUtils.VerifyAll();
     }
 
@@ -110,8 +108,8 @@ public class FileListEnumeratorTests
             Assert.IsTrue(files.Remove(file));
         }
 
-        Assert.IsTrue(errorCount == 1);
-        Assert.IsTrue(files.Count == 1);
+        Assert.AreEqual(1, errorCount);
+        Assert.AreEqual(1, files.Count);
         mockFSUtils.VerifyAll();
     }
 }

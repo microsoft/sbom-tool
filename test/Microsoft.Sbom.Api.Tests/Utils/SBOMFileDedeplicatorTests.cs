@@ -135,6 +135,6 @@ public class SBOMFileDedeplicatorTests
         var deduplicator = new InternalSBOMFileInfoDeduplicator();
 
         Assert.AreEqual("./file1.txt", deduplicator.GetKey(new InternalSbomFileInfo() { Path = "./file1.txt" }));
-        Assert.AreEqual(null, deduplicator.GetKey(null));
+        Assert.IsNull(deduplicator.GetKey(null));
     }
 }

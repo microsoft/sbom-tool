@@ -69,7 +69,7 @@ public class ExternalReferenceInfoToPathConverterTest
             count++;
         }
 
-        Assert.IsTrue(paths.Count == externalDocRefs.Count);
+        Assert.AreEqual(externalDocRefs.Count, paths.Count);
     }
 
     [TestMethod]
@@ -113,7 +113,7 @@ public class ExternalReferenceInfoToPathConverterTest
             Assert.Fail($"Caught exception: {error.ErrorType}");
         }
 
-        Assert.IsTrue(paths.Count == 3);
-        Assert.IsTrue(errorList.Count == 1);
+        Assert.AreEqual(3, paths.Count);
+        Assert.AreEqual(1, errorList.Count);
     }
 }

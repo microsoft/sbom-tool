@@ -174,23 +174,20 @@ public class ApiConfigurationBuilderTests
     [TestMethod]
     [DataRow(" ")]
     [DataRow(null)]
-    [ExpectedException(typeof(ArgumentException))]
     public void ThrowArgumentExceptionOnRootPathValues(string input)
     {
-        ApiConfigurationBuilder.GetConfiguration(input, null, null, null, null);
+        Assert.ThrowsException<ArgumentException>(() => ApiConfigurationBuilder.GetConfiguration(input, null, null, null, null));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void ThrowArgumentNulExceptionOnNullMetadata()
     {
-        ApiConfigurationBuilder.GetConfiguration("random", null, null, null, null);
+        Assert.ThrowsException<ArgumentNullException>(() => ApiConfigurationBuilder.GetConfiguration("random", null, null, null, null));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public void ThrowArgumentExceptionOnSpecificationZero()
     {
-        ApiConfigurationBuilder.GetConfiguration("random", null, null, null, metadata, new List<SbomSpecification>(), runtime);
+        Assert.ThrowsException<ArgumentException>(() => ApiConfigurationBuilder.GetConfiguration("random", null, null, null, metadata, new List<SbomSpecification>(), runtime));
     }
 }

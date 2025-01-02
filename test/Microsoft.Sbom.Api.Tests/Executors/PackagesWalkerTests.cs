@@ -92,8 +92,8 @@ public class PackagesWalkerTests
             Assert.Fail($"Caught exception: {error.Message}");
         }
 
-        Assert.IsTrue(scannedComponents.Count == 1);
-        Assert.IsTrue(countDistinctComponents == 3);
+        Assert.AreEqual(1, scannedComponents.Count);
+        Assert.AreEqual(3, countDistinctComponents);
         mockDetector.VerifyAll();
     }
 
@@ -145,8 +145,8 @@ public class PackagesWalkerTests
             Assert.Fail($"Caught exception: {error.Message}");
         }
 
-        Assert.IsTrue(scannedComponents.Count == 1);
-        Assert.IsTrue(countDistinctComponents == 3);
+        Assert.AreEqual(1, scannedComponents.Count);
+        Assert.AreEqual(3, countDistinctComponents);
         mockDetector.VerifyAll();
     }
 
@@ -232,7 +232,7 @@ public class PackagesWalkerTests
             Assert.Fail($"Caught exception: {error.Message}");
         }
 
-        Assert.IsTrue(scannedComponents.Where(c => !(c.Component is SpdxComponent)).ToList().Count == discoveredComponents.Count);
+        Assert.AreEqual(discoveredComponents.Count, scannedComponents.Where(c => !(c.Component is SpdxComponent)).ToList().Count);
         mockDetector.VerifyAll();
     }
 }

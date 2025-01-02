@@ -46,12 +46,12 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
 
         var configuration = await cb.GetConfiguration(args);
 
-        Assert.AreEqual(configuration.BuildDropPath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.ConfigFilePath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.OutputPath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.Parallelism.Source, SettingSource.Default);
-        Assert.AreEqual(configuration.Parallelism.Value, Common.Constants.DefaultParallelism);
-        Assert.AreEqual(configuration.HashAlgorithm.Source, SettingSource.CommandLine);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.BuildDropPath.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.ConfigFilePath.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.OutputPath.Source);
+        Assert.AreEqual(SettingSource.Default, configuration.Parallelism.Source);
+        Assert.AreEqual(Common.Constants.DefaultParallelism, configuration.Parallelism.Value);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.HashAlgorithm.Source);
         Assert.AreEqual(configuration.HashAlgorithm.Value, AlgorithmName.SHA512);
 
         fileSystemUtilsMock.VerifyAll();
@@ -80,18 +80,17 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
 
         var configuration = await cb.GetConfiguration(args);
 
-        Assert.AreEqual(configuration.BuildDropPath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.ConfigFilePath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.OutputPath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.Parallelism.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.Verbosity.Value, Serilog.Events.LogEventLevel.Fatal);
-        Assert.AreEqual(configuration.Verbosity.Source, SettingSource.CommandLine);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.BuildDropPath.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.ConfigFilePath.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.OutputPath.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.Parallelism.Source);
+        Assert.AreEqual(Serilog.Events.LogEventLevel.Fatal, configuration.Verbosity.Value);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.Verbosity.Source);
 
         fileSystemUtilsMock.VerifyAll();
     }
 
     [TestMethod]
-    [ExpectedException(typeof(AutoMapperMappingException))]
     public async Task ConfigurationBuilderTest_CombinesConfigs_DuplicateConfig_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
@@ -107,11 +106,10 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
             ManifestDirPath = "ManifestPath"
         };
 
-        var configuration = await cb.GetConfiguration(args);
+        await Assert.ThrowsExceptionAsync<AutoMapperMappingException>(() => cb.GetConfiguration(args));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ValidationArgException))]
     public async Task ConfigurationBuilderTest_CombinesConfigs_NegativeParallism_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
@@ -127,7 +125,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
             Parallelism = -1
         };
 
-        var configuration = await cb.GetConfiguration(args);
+        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
     }
 
     [TestMethod]

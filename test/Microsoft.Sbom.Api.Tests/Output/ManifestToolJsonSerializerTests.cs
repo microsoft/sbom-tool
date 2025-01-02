@@ -91,7 +91,6 @@ public class ManifestToolJsonSerializerTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ObjectDisposedException))]
     public void ManifestToolJsonSerializerTest_WriteDisposedJsonDocument_Fails()
     {
         var jsonDoc = JsonDocument.Parse("{\"hello\":\"world\"}");
@@ -103,7 +102,6 @@ public class ManifestToolJsonSerializerTests
 
         serializer.StartJsonObject();
         serializer.WriteJsonString(metadataString);
-        serializer.Write(jsonDoc);
-        serializer.FinalizeJsonObject();
+        Assert.ThrowsException<ObjectDisposedException>(() => serializer.Write(jsonDoc));
     }
 }
