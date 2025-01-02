@@ -82,7 +82,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     }
 
     [TestMethod]
-    public void ConfigurationBuilderTest_Generation_BuildDropPathDoNotExist_Throws()
+    public async Task ConfigurationBuilderTest_Generation_BuildDropPathDoNotExist_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
@@ -96,11 +96,11 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
             PackageSupplier = "Contoso"
         };
 
-        Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
+        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
     }
 
     [TestMethod]
-    public void ConfigurationBuilderTest_Generation_BuildDropPathNotWriteAccess_Throws()
+    public async Task ConfigurationBuilderTest_Generation_BuildDropPathNotWriteAccess_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
@@ -116,7 +116,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
             PackageSupplier = "Contoso"
         };
 
-        Assert.ThrowsExceptionAsync<AccessDeniedValidationArgException>(() => cb.GetConfiguration(args));
+        await Assert.ThrowsExceptionAsync<AccessDeniedValidationArgException>(() => cb.GetConfiguration(args));
     }
 
     [TestMethod]
@@ -275,7 +275,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     [DataRow("https://")]
     [DataRow("ww.com")]
     [DataRow("https//test.com")]
-    public void ConfigurationBuilderTest_Generation_BadNSBaseUri_Fails(string badNsUri)
+    public async Task ConfigurationBuilderTest_Generation_BadNSBaseUri_Fails(string badNsUri)
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
@@ -293,6 +293,6 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
             PackageSupplier = "Contoso"
         };
 
-        Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args), "The value of NamespaceUriBase must be a valid URI.");
+        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args), "The value of NamespaceUriBase must be a valid URI.");
     }
 }

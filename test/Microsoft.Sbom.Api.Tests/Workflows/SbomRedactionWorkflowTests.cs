@@ -65,23 +65,23 @@ public class SbomRedactionWorkflowTests
     }
 
     [TestMethod]
-    public void SbomRedactionWorkflow_FailsOnNoSbomsProvided()
+    public async Task SbomRedactionWorkflow_FailsOnNoSbomsProvided()
     {
-        Assert.ThrowsExceptionAsync<ArgumentException>(testSubject.RunAsync);
+        await Assert.ThrowsExceptionAsync<ArgumentException>(testSubject.RunAsync);
     }
 
     [TestMethod]
-    public void SbomRedactionWorkflow_FailsOnMatchingInputOutputDirs()
+    public async Task SbomRedactionWorkflow_FailsOnMatchingInputOutputDirs()
     {
         configurationMock.SetupGet(c => c.SbomDir).Returns(new ConfigurationSetting<string> { Value = SbomDirStub });
         configurationMock.SetupGet(c => c.OutputPath).Returns(new ConfigurationSetting<string> { Value = SbomDirStub });
         fileSystemUtilsMock.Setup(m => m.DirectoryExists(SbomDirStub)).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(m => m.GetFullPath(SbomDirStub)).Returns(SbomDirStub).Verifiable();
-        Assert.ThrowsExceptionAsync<ArgumentException>(testSubject.RunAsync);
+        await Assert.ThrowsExceptionAsync<ArgumentException>(testSubject.RunAsync);
     }
 
     [TestMethod]
-    public void SbomRedactionWorkflow_FailsOnExistingOutputSbom()
+    public async Task SbomRedactionWorkflow_FailsOnExistingOutputSbom()
     {
         configurationMock.SetupGet(c => c.SbomPath).Returns(new ConfigurationSetting<string> { Value = SbomPathStub });
         configurationMock.SetupGet(c => c.OutputPath).Returns(new ConfigurationSetting<string> { Value = OutDirStub });
@@ -98,11 +98,11 @@ public class SbomRedactionWorkflowTests
         // Output already file exists
         fileSystemUtilsMock.Setup(m => m.FileExists(OutPathStub)).Returns(true).Verifiable();
 
-        Assert.ThrowsExceptionAsync<ArgumentException>(testSubject.RunAsync);
+        await Assert.ThrowsExceptionAsync<ArgumentException>(testSubject.RunAsync);
     }
 
     [TestMethod]
-    public void SbomRedactionWorkflow_FailsOnInvalidSboms()
+    public async Task SbomRedactionWorkflow_FailsOnInvalidSboms()
     {
         SetUpDirStructure();
 
@@ -114,7 +114,7 @@ public class SbomRedactionWorkflowTests
         validatedSbomMock.Setup(m => m.GetValidationResults()).ReturnsAsync(validationRes).Verifiable();
         validatedSbomMock.Setup(m => m.Dispose()).Verifiable();
 
-        Assert.ThrowsExceptionAsync<InvalidDataException>(testSubject.RunAsync);
+        await Assert.ThrowsExceptionAsync<InvalidDataException>(testSubject.RunAsync);
     }
 
     [TestMethod]

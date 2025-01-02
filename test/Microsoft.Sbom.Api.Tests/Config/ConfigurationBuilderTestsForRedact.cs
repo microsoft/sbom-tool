@@ -46,7 +46,7 @@ public class ConfigurationBuilderTestsForRedact : ConfigurationBuilderTestsBase
     }
 
     [TestMethod]
-    public void ConfigurationBuilderTest_Redact_OuputPathNotWriteAccess_Throws()
+    public async Task ConfigurationBuilderTest_Redact_OuputPathNotWriteAccess_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<RedactArgs>(mapper, configFileParser);
@@ -61,6 +61,6 @@ public class ConfigurationBuilderTestsForRedact : ConfigurationBuilderTestsBase
             OutputPath = "OutputPath"
         };
 
-        Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
+        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
     }
 }
