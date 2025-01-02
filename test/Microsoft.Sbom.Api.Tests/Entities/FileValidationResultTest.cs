@@ -22,12 +22,12 @@ public class FileValidationResultTest
     [DataRow(ErrorType.None, EntityErrorType.None)]
     [DataRow(ErrorType.PackageError, EntityErrorType.PackageError)]
     [DataRow(ErrorType.Other, EntityErrorType.Other)]
-    public void FileValidationResultErrorTypeMapping(ErrorType input, EntityErrorType output)
+    public void FileValidationResultErrorTypeMapping(ErrorType input, EntityErrorType expectedOutput)
     {
         var fileValidationResult = new FileValidationResult() { ErrorType = input, Path = "random" };
         var entityError = fileValidationResult.ToEntityError();
 
-        Assert.AreEqual(output, entityError.ErrorType);
+        Assert.AreEqual(expectedOutput, entityError.ErrorType);
         Assert.IsNull(entityError.Details);
 
         if (input == ErrorType.PackageError)
