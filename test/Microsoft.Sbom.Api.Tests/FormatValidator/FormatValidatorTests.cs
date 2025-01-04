@@ -37,7 +37,7 @@ public class FormatValidatorTests
         }
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(FormatValidatorTestStrings.JsonMissingSpdxVersion, "spdxVersion")]
     [DataRow(FormatValidatorTestStrings.JsonMissingSpdxDataLicense, "dataLicense")]
     [DataRow(FormatValidatorTestStrings.JsonMissingDocumentNamespace, "documentNamespace")]
