@@ -1,0 +1,29 @@
+name: Submit published release to WinGet community repository
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-winget:
+    name: Submit to WinGet repository
+    runs-on: windows-latest
+    # Only submit stable releases
+    if: ${{ !github.event.release.prerelease }}
+    steps:
+      # Sometimes wingetcreate may fail to sync fork automatically, so we do it manually here.
+      # Ref: https://github.com/microsoft/winget-create/issues/502
+      - name: Sync winget-pkgs fork
+        run: gh repo sync DaveTryon/winget-pkgs -b master
+        env:
+          GH_TOKEN: ${{ secrets.WINGET_GITHUB_TOKEN }}
+      - name: Submit package using wingetcreate
+        run: |
+          # Get installer info from release event
+          $assets = '${{ toJSON(github.event.release.assets) }}' | ConvertFrom-Json
+          $installerUrl = $assets | Where-Object -Property name -eq 'sbom-tool-win-x64.exe' | Select-Object -ExpandProperty browser_download_url
+          $packageVersion = (${{ toJSON(github.event.release.tag_name) }}).Trim('v')
+
+          # Update package using wingetcreate
+          Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
+          .\wingetcreate.exe update Microsoft.SBOMTool --version $packageVersion --urls $installerUrl --submit --token "${{ secrets.WINGET_GITHUB_TOKEN }}"
