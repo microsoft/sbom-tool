@@ -25,13 +25,13 @@ public class FormatValidatorTests
             var details = await sbom.GetValidationResults();
 
             Assert.AreEqual(FormatValidationStatus.Valid, details.Status);
-            Assert.AreEqual(0, details.Errors.Count);
+            Assert.IsTrue(details.Errors.Count == 0);
             Assert.IsNotNull(rawspdx);
             Assert.AreEqual("SPDX-2.2", rawspdx.Version);
             Assert.AreEqual("CC0-1.0", rawspdx.DataLicense);
             Assert.AreEqual("sbom-tool 1.0.0", rawspdx.Name);
             Assert.AreEqual("https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g", rawspdx.DocumentNamespace);
-            Assert.AreEqual("2024-05-08T15:58:25Z", rawspdx.CreationInfo.Created);
+            Assert.AreEqual(rawspdx.CreationInfo.Created, "2024-05-08T15:58:25Z");
             Assert.IsNotNull(rawspdx.CreationInfo.Creators);
             Assert.IsNotNull(rawspdx.DocumentDescribes);
         }

@@ -79,7 +79,7 @@ public class SBOMComponentsWalkerTests
             Assert.Fail($"Caught exception: {error.Message}");
         }
 
-        Assert.AreEqual(discoveredComponents.Count, scannedComponents.Count);
+        Assert.IsTrue(scannedComponents.Count == discoveredComponents.Count);
         mockDetector.VerifyAll();
     }
 
@@ -124,7 +124,7 @@ public class SBOMComponentsWalkerTests
             Assert.Fail($"Caught exception: {error.Message}");
         }
 
-        Assert.AreEqual(discoveredComponents.Count, scannedComponents.Where(c => c.Component is SpdxComponent).ToList().Count);
+        Assert.IsTrue(scannedComponents.Where(c => c.Component is SpdxComponent).ToList().Count == discoveredComponents.Count);
         mockDetector.VerifyAll();
     }
 }

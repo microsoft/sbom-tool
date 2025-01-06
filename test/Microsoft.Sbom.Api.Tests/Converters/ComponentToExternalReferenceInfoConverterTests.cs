@@ -109,7 +109,7 @@ public class ComponentToExternalReferenceInfoConverterTests
         var refs = await results.ReadAllAsync().ToListAsync();
         var errorList = await errors.ReadAllAsync().ToListAsync();
 
-        Assert.AreEqual(scannedComponents.Where(c => !(c.Component is SpdxComponent)).ToList().Count, errorList.Count);
-        Assert.AreEqual(scannedComponents.Where(c => c.Component is SpdxComponent).ToList().Count, refs.Count);
+        Assert.IsTrue(errorList.Count == scannedComponents.Where(c => !(c.Component is SpdxComponent)).ToList().Count);
+        Assert.IsTrue(refs.Count == scannedComponents.Where(c => c.Component is SpdxComponent).ToList().Count);
     }
 }

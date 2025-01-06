@@ -75,7 +75,7 @@ public class OSUtilsTest
         environment.Setup(o => o.GetEnvironmentVariables()).Returns(d);
         osUtils = new OSUtils(logger.Object, environment.Object);
 
-        Assert.IsNull(osUtils.GetEnvironmentVariable(Variable));
+        Assert.AreEqual(null, osUtils.GetEnvironmentVariable(Variable));
         environment.VerifyAll();
         logger.VerifyAll();
     }
@@ -88,7 +88,7 @@ public class OSUtilsTest
         environment.Setup(o => o.GetEnvironmentVariables()).Returns(d);
         osUtils = new OSUtils(logger.Object, environment.Object);
 
-        Assert.IsNull(osUtils.GetEnvironmentVariable(Variable));
+        Assert.AreEqual(null, osUtils.GetEnvironmentVariable(Variable));
         environment.VerifyAll();
         logger.VerifyAll();
     }

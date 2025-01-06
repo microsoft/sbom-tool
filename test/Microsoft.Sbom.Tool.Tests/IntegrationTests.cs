@@ -28,7 +28,7 @@ public class IntegrationTests
         testRunDirectory = context.TestRunDirectory;
     }
 
-    [ClassCleanup(ClassCleanupBehavior.EndOfClass)]
+    [ClassCleanup]
     public static void TearDown()
     {
         // Clean up test directories

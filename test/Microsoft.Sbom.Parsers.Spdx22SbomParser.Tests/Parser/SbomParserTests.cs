@@ -55,11 +55,12 @@ public class SbomParserTests : SbomParserTestsBase
     [DataRow(SbomParserStrings.JsonWithMissingFiles)]
     [DataRow(SbomParserStrings.JsonWithMissingPackages)]
     [DataRow(SbomParserStrings.JsonWithMissingRelationships)]
+    [ExpectedException(typeof(ParserException))]
     public void MissingPropertyThrows(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
-        Assert.ThrowsException<ParserException>(() => this.IterateAllPropertiesAsync(stream));
+        this.IterateAllPropertiesAsync(stream);
     }
 
     [DataTestMethod]

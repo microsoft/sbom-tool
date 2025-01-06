@@ -56,7 +56,7 @@ public class HashValidatorTests
         }
 
         Assert.AreEqual(0, fileList.Count);
-        Assert.AreEqual(0, validationResults.errors.Count);
+        Assert.IsTrue(validationResults.errors.Count == 0);
     }
 
     [TestMethod]

@@ -59,17 +59,17 @@ public class DirectoryWalkerTests
             Assert.Fail($"Error thrown for {error.Path}: {error.ErrorType}");
         }
 
-        Assert.AreEqual(0, files.Count);
+        Assert.IsTrue(files.Count == 0);
         mockFSUtils.VerifyAll();
     }
 
     [TestMethod]
+    [ExpectedException(typeof(InvalidPathException))]
     public void DirectoryWalkerTests_DirectoryDoesntExist_Fails()
     {
         var mockFSUtils = new Mock<IFileSystemUtils>();
         mockFSUtils.Setup(m => m.DirectoryExists(It.IsAny<string>())).Returns(false).Verifiable();
-        Assert.ThrowsException<InvalidPathException>(() =>
-            new DirectoryWalker(mockFSUtils.Object, mockLogger.Object, mockConfiguration.Object).GetFilesRecursively(@"BadDir"));
+        new DirectoryWalker(mockFSUtils.Object, mockLogger.Object, mockConfiguration.Object).GetFilesRecursively(@"BadDir");
         mockFSUtils.VerifyAll();
     }
 
@@ -102,8 +102,8 @@ public class DirectoryWalkerTests
             Assert.IsTrue(files.Remove(file));
         }
 
-        Assert.AreEqual(1, errorCount);
-        Assert.AreEqual(0, files.Count);
+        Assert.IsTrue(errorCount == 1);
+        Assert.IsTrue(files.Count == 0);
         mockFSUtils.VerifyAll();
     }
 }

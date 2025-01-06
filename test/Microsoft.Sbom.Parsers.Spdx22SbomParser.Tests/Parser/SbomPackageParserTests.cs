@@ -39,13 +39,16 @@ public class SbomPackageParserTests : SbomParserTestsBase
     }
 
     [TestMethod]
-    public void StreamEmptyTestThrowsException()
+    [ExpectedException(typeof(EndOfStreamException))]
+    public void StreamEmptyTestReturnsNull()
     {
         using var stream = new MemoryStream();
         stream.Read(new byte[Constants.ReadBufferSize]);
         var buffer = new byte[Constants.ReadBufferSize];
 
-        Assert.ThrowsException<EndOfStreamException>(() => new SPDXParser(stream));
+        var parser = new SPDXParser(stream);
+
+        var result = this.Parse(parser);
     }
 
     [DataTestMethod]
@@ -73,6 +76,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingReferenceLocator)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingPackageVerificationCode)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageFilesAnalyzedTrueAndMissingLicenseInfoFromFiles)]
+    [ExpectedException(typeof(ParserException))]
     public void MissingPropertiesTest_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
@@ -80,7 +84,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
 
         var parser = new SPDXParser(stream);
 
-        Assert.ThrowsException<ParserException>(() => this.Parse(parser));
+        var result = this.Parse(parser);
     }
 
     [DataTestMethod]
@@ -103,6 +107,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [DataRow(SbomPackageStrings.MalformedJsonEmptyObject)]
     [DataRow(SbomPackageStrings.MalformedJsonEmptyObjectNoArrayEnd)]
     [TestMethod]
+    [ExpectedException(typeof(ParserException))]
     public void MalformedJsonTest_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
@@ -110,7 +115,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
 
         var parser = new SPDXParser(stream);
 
-        Assert.ThrowsException<ParserException>(() => this.Parse(parser));
+        var result = this.Parse(parser);
     }
 
     [TestMethod]
@@ -125,11 +130,14 @@ public class SbomPackageParserTests : SbomParserTestsBase
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
     public void NullOrEmptyBuffer_Throws()
     {
         var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        Assert.ThrowsException<ArgumentException>(() => new SPDXParser(stream, bufferSize: 0));
+        var parser = new SPDXParser(stream, bufferSize: 0);
+
+        var result = this.Parse(parser);
     }
 }

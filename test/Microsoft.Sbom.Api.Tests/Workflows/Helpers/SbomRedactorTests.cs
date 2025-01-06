@@ -79,7 +79,7 @@ public class SbomRedactorTests
         };
         mockValidatedSbom.Setup(x => x.GetRawSPDXDocument()).ReturnsAsync(mockSbom);
         await testSubject.RedactSBOMAsync(mockValidatedSbom.Object);
-        Assert.AreEqual(3, mockSbom.Packages.Count());
+        Assert.AreEqual(mockSbom.Packages.Count(), 3);
         foreach (var package in mockSbom.Packages)
         {
             Assert.IsNull(package.HasFiles);
@@ -118,7 +118,7 @@ public class SbomRedactorTests
         };
         mockValidatedSbom.Setup(x => x.GetRawSPDXDocument()).ReturnsAsync(mockSbom);
         await testSubject.RedactSBOMAsync(mockValidatedSbom.Object);
-        Assert.AreEqual(1, mockSbom.Relationships.Count());
+        Assert.AreEqual(mockSbom.Relationships.Count(), 1);
         Assert.AreEqual(mockSbom.Relationships.First(), unredactedRelationship);
     }
 

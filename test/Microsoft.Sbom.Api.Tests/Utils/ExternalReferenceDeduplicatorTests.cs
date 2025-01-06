@@ -135,6 +135,6 @@ public class ExternalReferenceDeduplicatorTests
         var deduplicator = new ExternalReferenceDeduplicator();
 
         Assert.AreEqual("http://sbom.test/1", deduplicator.GetKey(new ExternalDocumentReferenceInfo() { DocumentNamespace = "http://sbom.test/1" }));
-        Assert.IsNull(deduplicator.GetKey(null));
+        Assert.AreEqual(null, deduplicator.GetKey(null));
     }
 }

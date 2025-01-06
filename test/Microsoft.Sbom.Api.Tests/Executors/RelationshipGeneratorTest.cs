@@ -94,7 +94,7 @@ public class RelationshipGeneratorTest
 
         Assert.IsTrue(docs.Contains(j1));
         Assert.IsTrue(docs.Contains(j2));
-        Assert.AreEqual(2, docs.Count);
+        Assert.IsTrue(docs.Count == 2);
     }
 
     [TestMethod]
@@ -124,6 +124,6 @@ public class RelationshipGeneratorTest
             docs.Add(jsonDoc);
         }
 
-        Assert.AreEqual(0, docs.Count);
+        Assert.IsTrue(docs.Count == 0);
     }
 }

@@ -82,7 +82,7 @@ public class GeneratorTests
         expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
 
         Assert.IsFalse(generatedJsonString.Contains("null"));
-        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+        Assert.AreEqual(generatedJsonString, expectedJsonContentAsString);
     }
 
     [TestMethod]
@@ -105,7 +105,7 @@ public class GeneratorTests
         expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
 
         Assert.IsFalse(generatedJsonString.Contains("null"));
-        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+        Assert.AreEqual(generatedJsonString, expectedJsonContentAsString);
     }
 
     [TestMethod]
@@ -126,7 +126,7 @@ public class GeneratorTests
         expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
 
         Assert.IsFalse(generatedJsonString.Contains("null"));
-        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+        Assert.AreEqual(generatedJsonString, expectedJsonContentAsString);
     }
 
     [TestMethod]
@@ -147,7 +147,7 @@ public class GeneratorTests
         expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
 
         Assert.IsFalse(generatedJsonString.Contains("null"));
-        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+        Assert.AreEqual(generatedJsonString, expectedJsonContentAsString);
     }
 
     [TestCleanup]

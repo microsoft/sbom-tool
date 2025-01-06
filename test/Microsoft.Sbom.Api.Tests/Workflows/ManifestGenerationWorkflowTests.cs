@@ -330,16 +330,16 @@ public class ManifestGenerationWorkflowTests
         var result = Encoding.UTF8.GetString(manifestStream.ToArray());
         var resultJson = JObject.Parse(result);
 
-        Assert.AreEqual("1.0.0", resultJson["Version"]);
-        Assert.AreEqual(12, resultJson["Build"]);
-        Assert.AreEqual("test", resultJson["Definition"]);
+        Assert.AreEqual(resultJson["Version"], "1.0.0");
+        Assert.AreEqual(resultJson["Build"], 12);
+        Assert.AreEqual(resultJson["Definition"], "test");
 
         var outputs = resultJson["Outputs"];
         var sortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
         var expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
 
         var packages = resultJson["Packages"];
-        Assert.AreEqual(4, packages.Count());
+        Assert.IsTrue(packages.Count() == 4);
 
         Assert.IsTrue(JToken.DeepEquals(sortedOutputs, expectedSortedOutputs));
 

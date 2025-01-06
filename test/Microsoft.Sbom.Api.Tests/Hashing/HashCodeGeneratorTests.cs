@@ -9,7 +9,6 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Hashing.Tests;
 
@@ -39,6 +38,7 @@ public class HashCodeGeneratorTests
     }
 
     [TestMethod]
+    [ExpectedException(typeof(IOException))]
     public void GenerateHashTest_FileReadFails_Throws()
     {
         var hashAlgorithmNames = new AlgorithmName[] { AlgorithmName.SHA256, AlgorithmName.SHA512 };
@@ -52,12 +52,13 @@ public class HashCodeGeneratorTests
         mockFileSystemUtils.Setup(f => f.OpenRead(It.IsAny<string>())).Throws(new IOException());
 
         var hashCodeGenerator = new HashCodeGenerator(mockFileSystemUtils.Object);
-        Assert.ThrowsException<IOException>(() => hashCodeGenerator.GenerateHashes("/tmp/file", hashAlgorithmNames));
+        hashCodeGenerator.GenerateHashes("/tmp/file", hashAlgorithmNames);
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
     public void GenerateHashTest_NullFileSystemUtils_Throws()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new HashCodeGenerator(null));
+        _ = new HashCodeGenerator(null);
     }
 }

@@ -39,13 +39,14 @@ public class ConfigurationBuilderTestsForRedact : ConfigurationBuilderTestsBase
 
         var configuration = await cb.GetConfiguration(args);
 
-        Assert.AreEqual(SettingSource.CommandLine, configuration.SbomDir.Source);
-        Assert.AreEqual(SettingSource.CommandLine, configuration.OutputPath.Source);
+        Assert.AreEqual(configuration.SbomDir.Source, SettingSource.CommandLine);
+        Assert.AreEqual(configuration.OutputPath.Source, SettingSource.CommandLine);
 
         fileSystemUtilsMock.VerifyAll();
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ValidationArgException))]
     public async Task ConfigurationBuilderTest_Redact_OuputPathNotWriteAccess_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
@@ -61,6 +62,6 @@ public class ConfigurationBuilderTestsForRedact : ConfigurationBuilderTestsBase
             OutputPath = "OutputPath"
         };
 
-        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
+        var configuration = await cb.GetConfiguration(args);
     }
 }
