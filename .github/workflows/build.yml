@@ -19,7 +19,7 @@ jobs:
       matrix:
         os:
           - windows-latest
-          - ubuntu-latest
+          - ubuntu-22.04
           - macos-latest
           - macos-latest-large
 
