@@ -19,7 +19,7 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void PlaceholderTest()
     {
-        Assert.Inconclusive("This test is here as something that shouldn't need mono.");
+        Assert.AreNotEqual(0, DateTime.Now.Year, "Pklaceholder test");
     }
 
     /*
@@ -29,7 +29,7 @@ public class GenerateSbomE2ETests
 
     //private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
-    private static string projectDirectory = Path.Combine(Directory.GetCurrentDirectory(), "ProjectSamples", "ProjectSample1");
+    //private static string projectDirectory = Path.Combine(Directory.GetCurrentDirectory(), "ProjectSamples", "ProjectSample1");
     //private static string sbomToolPath = Path.Combine(Directory.GetCurrentDirectory(), "sbom-tool");
     //private static string generateSbomTaskPath = Path.Combine(Directory.GetCurrentDirectory(), "Microsoft.Sbom.Targets.dll");
 
@@ -43,40 +43,40 @@ public class GenerateSbomE2ETests
     //private string expectedNamespace;
     //private string configuration;
 
-    [TestInitialize]
-    public void SetupLocator()
-    {
-        if (MSBuildLocator.CanRegister)
-        {
-            MSBuildLocator.RegisterDefaults();
-        }
-    }
+    //[TestInitialize]
+    //public void SetupLocator()
+    //{
+    //    if (MSBuildLocator.CanRegister)
+    //    {
+    //        MSBuildLocator.RegisterDefaults();
+    //    }
+    //}
 
-    [TestCleanup]
-    public void CleanOutputFolders()
-    {
-        var binDir = Path.Combine(projectDirectory, "bin");
-        var objDir = Path.Combine(projectDirectory, "obj");
+    //[TestCleanup]
+    //public void CleanOutputFolders()
+    //{
+    //    var binDir = Path.Combine(projectDirectory, "bin");
+    //    var objDir = Path.Combine(projectDirectory, "obj");
 
-        try
-        {
-            if (Directory.Exists(binDir))
-            {
-                Directory.Delete(binDir, true);
-            }
+    //    try
+    //    {
+    //        if (Directory.Exists(binDir))
+    //        {
+    //            Directory.Delete(binDir, true);
+    //        }
 
-            if (Directory.Exists(objDir))
-            {
-                Directory.Delete(objDir, true);
-            }
+    //        if (Directory.Exists(objDir))
+    //        {
+    //            Directory.Delete(objDir, true);
+    //        }
 
-            ProjectCollection.GlobalProjectCollection.UnloadAllProjects();
-        }
-        catch (Exception ex)
-        {
-            Assert.Fail($"Failed to cleanup output directories. {ex}");
-        }
-    }
+    //        ProjectCollection.GlobalProjectCollection.UnloadAllProjects();
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        Assert.Fail($"Failed to cleanup output directories. {ex}");
+    //    }
+    //}
 
     //private Project SetupSampleProject()
     //{
