@@ -38,7 +38,7 @@
     <PackageVersion Include="NuGet.ProjectModel" Version="6.11.1" />
     <PackageVersion Include="packageurl-dotnet" Version="1.1.0" />
     <PackageVersion Include="PowerArgs" Version="3.6.0" />
-    <PackageVersion Include="Scrutor" Version="5.1.0" />
+    <PackageVersion Include="Scrutor" Version="5.1.1" />
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0" />
     <PackageVersion Include="Serilog.Sinks.Async" Version="2.1.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
