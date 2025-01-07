@@ -22,7 +22,6 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" />
     <PackageReference Include="NuGet.Frameworks" />
-    <PackageReference Include="NuGet.ProjectModel" />
   </ItemGroup>
 
   <ItemGroup>
