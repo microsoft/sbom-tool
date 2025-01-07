@@ -40,9 +40,4 @@ jobs:
             8.0.x
 
       - name: Run tests
-        run: dotnet test --collect:"XPlat Code Coverage"
-
-      - name: Upload code coverage
-        uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303  # v5.1.2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+        run: dotnet test
