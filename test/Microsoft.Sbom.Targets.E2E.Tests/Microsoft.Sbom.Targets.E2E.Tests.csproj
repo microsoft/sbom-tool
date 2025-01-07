@@ -35,9 +35,4 @@
     </ItemGroup>
     <Copy SourceFiles="@(_SbomToolFiles)" DestinationFolder="$(OutputPath)\sbom-tool\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
-  
-  <!-- Copy the Microsoft.Sbom.Targets.targets file to the ProjectSamples directory -->
-  <Target Name="CopyTargetsFile" AfterTargets="Build" Condition="'$(OutDir)' != ''">
-    <Copy SourceFiles="$(SBOMGenerationTargetsPath)" DestinationFolder="$(OutDir)\ProjectSamples" SkipUnchangedFiles="true" />
-  </Target>
 </Project>
