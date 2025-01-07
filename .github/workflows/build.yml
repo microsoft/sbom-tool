@@ -39,5 +39,8 @@ jobs:
           dotnet-version: |
             8.0.x
 
+      - name: Build
+        run: dotnet build -v:diag
+
       - name: Run tests
-        run: dotnet test
+        run: dotnet test -v:diag
