@@ -15,8 +15,4 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Condition="$(TargetFramework) == 'net472'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net472" />
-  </ItemGroup>
 </Project>
