@@ -2,11 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net472</TargetFrameworks>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <IsPackable>false</IsPackable>
-    <SignAssembly>True</SignAssembly>
     <RootNamespace>Microsoft.Sbom.Targets.E2E.Tests</RootNamespace>
-    <NoWarn>CA1515;NU1903</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
