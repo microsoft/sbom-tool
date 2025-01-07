@@ -8,9 +8,9 @@ using System.IO;
 //using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Microsoft.Build.Evaluation;
+//using Microsoft.Build.Evaluation;
 //using Microsoft.Build.Locator;
-using Microsoft.Build.Logging;
+//using Microsoft.Build.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 [TestClass]
@@ -19,7 +19,7 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void PlaceholderTest()
     {
-        Assert.AreNotEqual(0, DateTime.Now.Year, "Pklaceholder test");
+        Assert.AreNotEqual(0, DateTime.Now.Year, "Placeholder test");
     }
 
     /*

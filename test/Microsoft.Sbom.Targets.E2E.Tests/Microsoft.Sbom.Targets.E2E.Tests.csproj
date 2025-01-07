@@ -17,10 +17,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Condition="$(TargetFramework) == 'net8.0'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net8.0" />
     <ProjectReference Condition="$(TargetFramework) == 'net472'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net472" />
     <ProjectReference Condition="$(TargetFramework) == 'net8.0'" Include="..\..\src\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" />
