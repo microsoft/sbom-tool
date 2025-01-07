@@ -5,7 +5,7 @@ namespace Microsoft.Sbom.Targets.E2E.Tests;
 
 using System;
 using System.IO;
-using System.IO.Compression;
+//using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Evaluation;
