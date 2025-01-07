@@ -9,7 +9,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Evaluation;
-using Microsoft.Build.Locator;
+//using Microsoft.Build.Locator;
 using Microsoft.Build.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
