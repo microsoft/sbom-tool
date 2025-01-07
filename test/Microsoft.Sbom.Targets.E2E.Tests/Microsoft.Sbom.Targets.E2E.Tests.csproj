@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
-    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="Runtime" />
   </ItemGroup>
 
   <ItemGroup>
