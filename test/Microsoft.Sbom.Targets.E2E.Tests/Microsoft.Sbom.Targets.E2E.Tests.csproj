@@ -20,10 +20,6 @@
     <ProjectReference Condition="$(TargetFramework) == 'net472'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net472" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="ProjectSamples\ProjectSample1\ProjectSample1.csproj" />
-  </ItemGroup>
-
   <!--Build and copy the sbom-tool to the output directory-->
   <Target Name="AddSbomToolToPackage" AfterTargets="Build" Condition="$(TargetFramework) == 'net472'">
     <Message Importance="high" Text="Building $(SBOMCLIToolProjectDir)bin\$(Configuration)\$(SbomCLIToolTargetFramework)" />
