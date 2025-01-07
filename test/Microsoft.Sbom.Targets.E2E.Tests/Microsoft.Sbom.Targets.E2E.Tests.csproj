@@ -36,16 +36,6 @@
     <Copy SourceFiles="@(_SbomToolFiles)" DestinationFolder="$(OutputPath)\sbom-tool\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
   
-  <!-- Copy all the sample projects to the output directory -->
-  <Target Name="CopyTestProjects" AfterTargets="Build" Condition="'$(OutDir)' != ''">
-    <ItemGroup>
-      <SampleProjects Include="ProjectSamples\**\*.*">
-        <InProject>false</InProject>
-      </SampleProjects>
-    </ItemGroup>
-    <Copy SourceFiles="@(SampleProjects)" DestinationFolder="$(OutDir)\ProjectSamples\%(RecursiveDir)" SkipUnchangedFiles="true" />
-  </Target>
-
   <!-- Copy the Microsoft.Sbom.Targets.targets file to the ProjectSamples directory -->
   <Target Name="CopyTargetsFile" AfterTargets="Build" Condition="'$(OutDir)' != ''">
     <Copy SourceFiles="$(SBOMGenerationTargetsPath)" DestinationFolder="$(OutDir)\ProjectSamples" SkipUnchangedFiles="true" />
