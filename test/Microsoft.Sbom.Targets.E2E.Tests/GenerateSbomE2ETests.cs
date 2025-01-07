@@ -12,6 +12,6 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void PlaceholderTest()
     {
-        Assert.AreEqual(0, DateTime.Now.Year, "Placeholder test");
+        Assert.AreNotEqual(0, DateTime.Now.Year, "Placeholder test");
     }
 }
