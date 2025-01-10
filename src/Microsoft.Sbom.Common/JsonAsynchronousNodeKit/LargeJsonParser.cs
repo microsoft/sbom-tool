@@ -9,7 +9,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Sbom.JsonAsynchronousNodeKit;
 

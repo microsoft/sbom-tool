@@ -1,17 +1,11 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.JsonStrings;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
-using Microsoft.Sbom.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using File = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.File;
 
 namespace Microsoft.Sbom.Parser;
 

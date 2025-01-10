@@ -162,8 +162,7 @@ public class SPDXParser : ISbomParser
             {
                 if (!this.observedFieldNames.Contains(requiredField))
                 {
-                    // TODO: remove this commented out part
-                    // throw new ParserException($"Required field {requiredField} was not found in the SPDX file");
+                    throw new ParserException($"Required field {requiredField} was not found in the SPDX file");
                 }
             }
         }

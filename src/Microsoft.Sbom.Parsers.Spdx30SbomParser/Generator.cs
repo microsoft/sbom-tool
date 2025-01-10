@@ -3,22 +3,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Dynamic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks.Sources;
-using System.Xml.Linq;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Exceptions;

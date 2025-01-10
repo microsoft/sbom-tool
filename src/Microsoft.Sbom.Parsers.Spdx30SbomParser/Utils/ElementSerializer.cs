@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Xml.Linq;
-using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 public class ElementSerializer : JsonConverter<List<Element>>

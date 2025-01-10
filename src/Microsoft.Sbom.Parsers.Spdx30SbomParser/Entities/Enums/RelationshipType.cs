@@ -43,7 +43,7 @@ public enum RelationshipType
     CONTAINS,
 
     /// <summary>
-    /// The from Vulnerability is coordinatedBy the to Agent(ContextsResult) (vendor, researcher, or consumer agent).
+    /// The from Vulnerability is coordinatedBy the to Agent(s) (vendor, researcher, or consumer agent).
     /// </summary>
     COORDINATED_BY,
 
@@ -69,7 +69,7 @@ public enum RelationshipType
     DESCENDANT_OF,
 
     /// <summary>
-    /// The from Element describes each to Element. To denote the root(ContextsResult) of a tree of elements in a collection, the rootElement property should be used.
+    /// The from Element describes each to Element. To denote the root(s) of a tree of elements in a collection, the rootElement property should be used.
     /// </summary>
     DESCRIBES,
 
@@ -89,7 +89,7 @@ public enum RelationshipType
     EXPLOIT_CREATED_BY,
 
     /// <summary>
-    /// Designates a from Vulnerability has been fixed by the to Agent(ContextsResult).
+    /// Designates a from Vulnerability has been fixed by the to Agent(s).
     /// </summary>
     FIXED_BY,
 
@@ -99,7 +99,7 @@ public enum RelationshipType
     FIXED_IN,
 
     /// <summary>
-    /// Designates a from Vulnerability was originally discovered by the to Agent(ContextsResult).
+    /// Designates a from Vulnerability was originally discovered by the to Agent(s).
     /// </summary>
     FOUND_BY,
 
@@ -294,12 +294,12 @@ public enum RelationshipType
     SERIALIZED_IN_ARTIFACT,
 
     /// <summary>
-    /// The from Element has been tested on the to Element(ContextsResult).
+    /// The from Element has been tested on the to Element(s).
     /// </summary>
     TESTED_ON,
 
     /// <summary>
-    /// The from Element has been trained on the to Element(ContextsResult).
+    /// The from Element has been trained on the to Element(s).
     /// </summary>
     TRAINED_ON,
 
