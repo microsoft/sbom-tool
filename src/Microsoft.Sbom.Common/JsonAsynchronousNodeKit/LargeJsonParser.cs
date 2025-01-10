@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Sbom.JsonAsynchronousNodeKit;
 
@@ -33,18 +34,20 @@ public class LargeJsonParser
     private bool isParsingStarted = false;
     private bool enumeratorActive = false;
     private ParserStateResult? previousResultState = null;
+    private bool isSpdx30 = false;
 
     public LargeJsonParser(
         Stream stream,
         IReadOnlyDictionary<string, PropertyHandler> handlers,
         JsonSerializerOptions? jsonSerializerOptions = default,
-        int bufferSize = DefaultReadBufferSize)
+        int bufferSize = DefaultReadBufferSize,
+        bool isSpdx30 = false)
     {
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
         this.handlers = handlers ?? throw new ArgumentNullException(nameof(handlers));
         this.jsonSerializerOptions = jsonSerializerOptions ?? new JsonSerializerOptions();
-
         this.buffer = new byte[bufferSize];
+        this.isSpdx30 = isSpdx30;
 
         // Validate buffer is not of 0 length.
         if (this.buffer.Length == 0)
@@ -153,6 +156,7 @@ public class LargeJsonParser
         var handler = this.handlers![propertyName];
 
         object? result;
+
         switch (handler.Type)
         {
             case ParameterType.String:
@@ -268,11 +272,23 @@ public class LargeJsonParser
 
     private object GetObject(Type type, ref Utf8JsonReader reader)
     {
-        var jsonObject = ParserUtils.ParseObject(this.stream, ref this.buffer, ref reader);
-        object? result = jsonObject;
-        if (type != typeof(JsonNode))
+        object? result = null;
+
+        if (type == typeof(string))
         {
-            result = jsonObject.Deserialize(type, this.jsonSerializerOptions);
+            result = reader.GetString();
+        }
+        else
+        {
+            var jsonObject = ParserUtils.ParseObject(this.stream, ref this.buffer, ref reader);
+            if (type != typeof(JsonNode))
+            {
+                result = jsonObject.Deserialize(type, this.jsonSerializerOptions);
+            }
+            else
+            {
+                result = jsonObject;
+            }
         }
 
         if (result is null)

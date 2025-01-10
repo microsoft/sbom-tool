@@ -7,13 +7,13 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -89,7 +89,7 @@ public abstract class SbomParserTestsBase
             return elementsList;
         }
 
-        foreach (JObject jsonObject in jsonList)
+        foreach (JsonObject jsonObject in jsonList)
         {
             var entityType = GetEntityType(jsonObject, requiredComplianceStandard, entitiesWithDifferentNTIARequirements);
 
@@ -144,7 +144,7 @@ public abstract class SbomParserTestsBase
         return elementsList;
     }
 
-    public Type GetEntityType(JObject jsonObject, string? requiredComplianceStandard, IReadOnlyCollection<string>? entitiesWithDifferentNTIARequirements)
+    public Type GetEntityType(JsonObject jsonObject, string? requiredComplianceStandard, IReadOnlyCollection<string>? entitiesWithDifferentNTIARequirements)
     {
         var assembly = typeof(Element).Assembly;
         var entityType = jsonObject["type"]?.ToString();

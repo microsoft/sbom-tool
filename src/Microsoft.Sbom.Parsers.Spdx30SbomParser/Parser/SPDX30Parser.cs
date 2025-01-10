@@ -38,7 +38,7 @@ public class SPDX30Parser : ISbomParser
     public string? RequiredComplianceStandard;
     public IReadOnlyCollection<string>? EntitiesToEnforceComplianceStandardsFor;
     public SpdxMetadata Metadata = new SpdxMetadata();
-    private readonly LargeJsonParser30 parser;
+    private readonly LargeJsonParser parser;
     private readonly IList<string> observedFieldNames = new List<string>();
     private readonly bool requiredFieldsCheck = true;
     private readonly JsonSerializerOptions jsonSerializerOptions;
@@ -70,23 +70,24 @@ public class SPDX30Parser : ISbomParser
         var handlers = new Dictionary<string, PropertyHandler>
         {
             { ContextProperty, new PropertyHandler<string>(ParameterType.Array) },
-            { GraphProperty, new PropertyHandler<Element>(ParameterType.Array) },
+            { GraphProperty, new PropertyHandler<JsonNode>(ParameterType.Array) },
         };
 
         switch (requiredComplianceStandard)
         {
             case "NTIA":
                 this.EntitiesToEnforceComplianceStandardsFor = this.entitiesWithDifferentNTIARequirements;
+                this.RequiredComplianceStandard = requiredComplianceStandard;
                 break;
         }
 
         if (bufferSize is null)
         {
-            this.parser = new LargeJsonParser30(stream, handlers, this.jsonSerializerOptions);
+            this.parser = new LargeJsonParser(stream, handlers, this.jsonSerializerOptions, isSpdx30: true);
         }
         else
         {
-            this.parser = new LargeJsonParser30(stream, handlers, this.jsonSerializerOptions, bufferSize.Value);
+            this.parser = new LargeJsonParser(stream, handlers, this.jsonSerializerOptions, bufferSize.Value, isSpdx30: true);
         }
     }
 

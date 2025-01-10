@@ -26,18 +26,18 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         var parser = new SPDX30Parser(stream);
 
         var results = this.Parse(parser);
-        Assert.IsTrue(results.FormatEnforcedSPDX3Result.Graph.Count() == 5);
+        Assert.AreEqual(5, results.FormatEnforcedSPDX3Result.Graph.Count());
 
         var metadata = parser.GetMetadata();
         Assert.IsNotNull(metadata);
-        Assert.IsTrue(metadata.DocumentNamespace != null);
-        Assert.IsTrue(metadata.Name == "spdx-doc-name");
-        Assert.IsTrue(metadata.SpdxId == "SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
-        Assert.IsTrue(metadata.DocumentDescribes.First() == "root-element-example");
-        Assert.IsTrue(metadata.DataLicense == "CC0-1.0");
-        Assert.IsTrue(metadata.CreationInfo.Creators.Count() == 2);
-        Assert.IsTrue(metadata.CreationInfo.Created != DateTime.MinValue);
-        Assert.IsTrue(metadata.SpdxVersion == "3.0");
+        Assert.IsNotNull(metadata.DocumentNamespace);
+        Assert.AreEqual("spdx-doc-name", metadata.Name);
+        Assert.AreEqual("SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1", metadata.SpdxId);
+        Assert.AreEqual("root-element-example", metadata.DocumentDescribes.First());
+        Assert.AreEqual("CC0-1.0", metadata.DataLicense);
+        Assert.AreEqual(2, metadata.CreationInfo.Creators.Count());
+        Assert.AreNotEqual(DateTime.MinValue, metadata.CreationInfo.Created);
+        Assert.AreEqual("3.0", metadata.SpdxVersion);
     }
 
     [TestMethod]
@@ -52,13 +52,13 @@ public class SbomMetadataParserTests : SbomParserTestsBase
 
         var metadata = parser.GetMetadata();
         Assert.IsNotNull(metadata);
-        Assert.IsTrue(metadata.DocumentNamespace == null);
-        Assert.IsTrue(metadata.Name == null);
-        Assert.IsTrue(metadata.SpdxId == null);
-        Assert.IsTrue(metadata.DocumentDescribes == null);
-        Assert.IsTrue(metadata.DataLicense == null);
-        Assert.IsTrue(metadata.CreationInfo == null);
-        Assert.IsTrue(metadata.SpdxVersion == null);
+        Assert.IsNull(metadata.DocumentNamespace);
+        Assert.IsNull(metadata.Name);
+        Assert.IsNull(metadata.SpdxId);
+        Assert.IsNull(metadata.DocumentDescribes);
+        Assert.IsNull(metadata.DataLicense);
+        Assert.IsNull(metadata.CreationInfo);
+        Assert.IsNull(metadata.SpdxVersion);
     }
 
     [TestMethod]
@@ -79,7 +79,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
 
         var parser = new SPDX30Parser(stream);
         var results = this.Parse(parser);
-        Assert.IsTrue(results.FormatEnforcedSPDX3Result.Graph.Count() == 5);
+        Assert.AreEqual(5, results.FormatEnforcedSPDX3Result.Graph.Count());
 
         var metadata = parser.GetMetadata();
         Assert.IsNotNull(metadata);
@@ -149,14 +149,11 @@ public class SbomMetadataParserTests : SbomParserTestsBase
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public void NullOrEmptyBuffer_Throws()
     {
         var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithMetadataJsonStrings.MalformedJsonEmptyObject);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new SPDX30Parser(stream, bufferSize: 0);
-        this.Parse(parser);
-        Assert.ThrowsException<ArgumentException>(() => this.Parse(parser));
+        Assert.ThrowsException<ArgumentException>(() => new SPDX30Parser(stream, bufferSize: 0));
     }
 }
