@@ -45,7 +45,7 @@ public abstract class Element
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public virtual string Name { get; set; }
 
     /// <summary>
     /// Gets or sets unique Identifier for elements in SPDX document.
@@ -63,7 +63,7 @@ public abstract class Element
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     [JsonPropertyName("verifiedUsing")]
-    public List<PackageVerificationCode> VerifiedUsing { get; set; }
+    public virtual List<PackageVerificationCode> VerifiedUsing { get; set; }
 
     [JsonRequired]
     [JsonPropertyName("type")]

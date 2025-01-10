@@ -43,7 +43,7 @@ public enum RelationshipType
     CONTAINS,
 
     /// <summary>
-    /// The from Vulnerability is coordinatedBy the to Agent(s) (vendor, researcher, or consumer agent).
+    /// The from Vulnerability is coordinatedBy the to Agent(ContextsResult) (vendor, researcher, or consumer agent).
     /// </summary>
     COORDINATED_BY,
 
@@ -69,7 +69,7 @@ public enum RelationshipType
     DESCENDANT_OF,
 
     /// <summary>
-    /// The from Element describes each to Element. To denote the root(s) of a tree of elements in a collection, the rootElement property should be used.
+    /// The from Element describes each to Element. To denote the root(ContextsResult) of a tree of elements in a collection, the rootElement property should be used.
     /// </summary>
     DESCRIBES,
 
@@ -89,7 +89,7 @@ public enum RelationshipType
     EXPLOIT_CREATED_BY,
 
     /// <summary>
-    /// Designates a from Vulnerability has been fixed by the to Agent(s).
+    /// Designates a from Vulnerability has been fixed by the to Agent(ContextsResult).
     /// </summary>
     FIXED_BY,
 
@@ -99,7 +99,7 @@ public enum RelationshipType
     FIXED_IN,
 
     /// <summary>
-    /// Designates a from Vulnerability was originally discovered by the to Agent(s).
+    /// Designates a from Vulnerability was originally discovered by the to Agent(ContextsResult).
     /// </summary>
     FOUND_BY,
 
@@ -130,7 +130,7 @@ public enum RelationshipType
 
     /// <summary>
     /// The from Element treats each to Element as a data file.
-    /// A data file is an artifact that stores data required or optional for the from Element's functionality.
+    /// A data file is an artifact that stores data required or optional for the from Element'ContextsResult functionality.
     /// A data file can be a database file, an index file, a log file, an AI model file, a calibration data file, a temporary file, a backup file, and more.
     /// For AI training dataset, test dataset, test artifact, configuration data, build input data, and build output data,
     /// please consider using the more specific relationship types: trainedOn, testedOn, hasTest, configures, hasInput, and hasOutput, respectively.
@@ -284,7 +284,7 @@ public enum RelationshipType
     REPORTED_BY,
 
     /// <summary>
-    /// Designates a from Vulnerability's details were tracked, aggregated, and/or enriched to improve context (i.e. NVD) by each to Agent.
+    /// Designates a from Vulnerability'ContextsResult details were tracked, aggregated, and/or enriched to improve context (i.e. NVD) by each to Agent.
     /// </summary>
     REPUBLISHED_BY,
 
@@ -294,12 +294,12 @@ public enum RelationshipType
     SERIALIZED_IN_ARTIFACT,
 
     /// <summary>
-    /// The from Element has been tested on the to Element(s).
+    /// The from Element has been tested on the to Element(ContextsResult).
     /// </summary>
     TESTED_ON,
 
     /// <summary>
-    /// The from Element has been trained on the to Element(s).
+    /// The from Element has been trained on the to Element(ContextsResult).
     /// </summary>
     TRAINED_ON,
 

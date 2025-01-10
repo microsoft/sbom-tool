@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" />
     <PackageReference Include="System.Private.Uri" />

@@ -124,17 +124,12 @@ public static class SPDXExtensions
         element.SpdxId = GenerateSpdxId(element, element.Name);
     }
 
-    public static void AddSpdxId(this NamespaceMap namespaceMap)
-    {
-        namespaceMap.SpdxId = GenerateSpdxId(namespaceMap, namespaceMap.Namespace);
-    }
-
     public static void AddSpdxId(this CreationInfo creationInfo)
     {
         creationInfo.SpdxId = GenerateSpdxId(creationInfo, creationInfo.Id);
     }
 
-    public static void AddSpdxId(this Spdx30Relationship relationship)
+    public static void AddSpdxId(this Entities.Relationship relationship)
     {
         relationship.SpdxId = GenerateSpdxId(relationship, relationship.To + relationship.RelationshipType.ToString());
     }

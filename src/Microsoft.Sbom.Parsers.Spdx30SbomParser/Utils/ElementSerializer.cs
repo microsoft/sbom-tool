@@ -6,14 +6,13 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml.Linq;
+using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 public class ElementSerializer : JsonConverter<List<Element>>
 {
-    public override List<Element> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
+    public override List<Element> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
         throw new NotImplementedException("Deserialization of Elements into specific subtypes is not implemented yet.");
-    }
 
     public override void Write(Utf8JsonWriter writer, List<Element> elements, JsonSerializerOptions options)
     {

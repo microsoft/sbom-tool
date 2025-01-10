@@ -16,6 +16,10 @@ internal static class Constants
     internal const string SPDXDocumentNameFormatString = "{0} {1}";
     internal const string PackageSupplierFormatString = "Organization: {0}";
 
+    internal const string SPDXVersionHeaderName = "specVersion";
+    internal const string SPDXContextHeaderName = "@context";
+    internal const string SPDXGraphHeaderName = "@graph";
+
     /// <summary>
     /// Use if SPDX creator
     /// - made an attempt to retrieve the info but cannot determine correct values.
@@ -23,6 +27,8 @@ internal static class Constants
     /// - has intentionally provided no information.
     /// </summary>
     internal const string NoAssertionValue = "NOASSERTION";
+
+    internal const int ReadBufferSize = 4096;
 
     /// <summary>
     /// The <see cref="NoAssertionValue"/> value as a list with a single item.

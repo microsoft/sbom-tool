@@ -200,14 +200,14 @@ public class Generator : IManifestGenerator
         // Generate SPDX relationship elements to indicate no assertions are made about licenses for this root package.
         var noAssertionLicense = GenerateLicenseElement(null);
 
-        var spdxRelationshipLicenseDeclaredElement = new Spdx30Relationship
+        var spdxRelationshipLicenseDeclaredElement = new Entities.Relationship
         {
             From = spdxPackage.SpdxId,
             RelationshipType = RelationshipType.HAS_DECLARED_LICENSE,
             To = new List<string> { noAssertionLicense.SpdxId },
         };
 
-        var spdxRelationshipLicenseConcludedElement = new Spdx30Relationship
+        var spdxRelationshipLicenseConcludedElement = new Entities.Relationship
         {
             From = spdxPackage.SpdxId,
             RelationshipType = RelationshipType.HAS_CONCLUDED_LICENSE,
@@ -300,7 +300,7 @@ public class Generator : IManifestGenerator
     /// <param name="relationship">Relationship info</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public GenerationResult GenerateJsonDocument(Relationship relationship)
+    public GenerationResult GenerateJsonDocument(Extensions.Entities.Relationship relationship)
     {
         if (relationship is null)
         {
@@ -314,7 +314,7 @@ public class Generator : IManifestGenerator
             : relationship.TargetElementId;
         var sourceElement = relationship.SourceElementId;
 
-        var spdxRelationship = new Spdx30Relationship
+        var spdxRelationship = new Entities.Relationship
         {
             From = sourceElement,
             RelationshipType = this.GetSPDXRelationshipType(relationship.RelationshipType),
@@ -374,12 +374,8 @@ public class Generator : IManifestGenerator
             CreatedUsing = new List<string> { spdxTool.SpdxId },
         };
 
-        var spdxNamespaceMap = new NamespaceMap
-        {
-            Namespace = internalMetadataProvider.GetDocumentNamespace(),
-        };
-
-        spdxNamespaceMap.AddSpdxId();
+        var spdxNamespaceMap = new Dictionary<string, string>();
+        spdxNamespaceMap["sbom"] = internalMetadataProvider.GetDocumentNamespace();
 
         var spdxDataLicense = new AnyLicenseInfo
         {
@@ -390,7 +386,7 @@ public class Generator : IManifestGenerator
         var spdxDocument = new SpdxDocument
         {
             DataLicense = spdxDataLicense.SpdxId,
-            NamespaceMap = new List<NamespaceMap> { spdxNamespaceMap },
+            NamespaceMap = spdxNamespaceMap,
             SpdxId = Constants.SPDXDocumentIdValue,
             Name = documentName,
             ProfileConformance = new List<ProfileIdentifierType> { ProfileIdentifierType.software, ProfileIdentifierType.core, ProfileIdentifierType.simpleLicensing },
@@ -398,7 +394,7 @@ public class Generator : IManifestGenerator
 
         spdxDocument.AddSpdxId();
 
-        var spdxRelationship = new Spdx30Relationship
+        var spdxRelationship = new Entities.Relationship
         {
             From = spdxDataLicense.SpdxId,
             RelationshipType = RelationshipType.HAS_DECLARED_LICENSE,
@@ -485,7 +481,7 @@ public class Generator : IManifestGenerator
         var licenseConcludedElement = GenerateLicenseElement(fileInfo.LicenseConcluded);
         spdxRelationshipAndLicenseElementsToAddToSBOM.Add(licenseConcludedElement);
 
-        var spdxRelationshipLicenseConcludedElement = new Spdx30Relationship
+        var spdxRelationshipLicenseConcludedElement = new Entities.Relationship
         {
             From = spdxFileElement.SpdxId,
             RelationshipType = RelationshipType.HAS_CONCLUDED_LICENSE,
@@ -503,7 +499,7 @@ public class Generator : IManifestGenerator
             toRelationships.Add(licenseDeclaredElement.SpdxId);
         }
 
-        var spdxRelationshipLicenseDeclaredElement = new Spdx30Relationship
+        var spdxRelationshipLicenseDeclaredElement = new Entities.Relationship
         {
             From = spdxFileElement.SpdxId,
             RelationshipType = RelationshipType.HAS_DECLARED_LICENSE,
@@ -524,7 +520,7 @@ public class Generator : IManifestGenerator
         var licenseConcludedElement = GenerateLicenseElement(packageInfo.LicenseInfo?.Concluded);
         spdxRelationshipAndLicenseElementsToAddToSBOM.Add(licenseConcludedElement);
 
-        var spdxRelationshipLicenseConcludedElement = new Spdx30Relationship
+        var spdxRelationshipLicenseConcludedElement = new Entities.Relationship
         {
             From = spdxPackage.SpdxId,
             RelationshipType = RelationshipType.HAS_CONCLUDED_LICENSE,
@@ -538,7 +534,7 @@ public class Generator : IManifestGenerator
         var licenseDeclaredElement = GenerateLicenseElement(packageInfo.LicenseInfo?.Declared);
         spdxRelationshipAndLicenseElementsToAddToSBOM.Add(licenseDeclaredElement);
 
-        var spdxRelationshipLicenseDeclaredElement = new Spdx30Relationship
+        var spdxRelationshipLicenseDeclaredElement = new Entities.Relationship
         {
             From = spdxPackage.SpdxId,
             RelationshipType = RelationshipType.HAS_DECLARED_LICENSE,

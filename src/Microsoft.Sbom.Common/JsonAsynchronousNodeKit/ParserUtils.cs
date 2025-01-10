@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
@@ -207,6 +208,26 @@ internal static class ParserUtils
         }
 
         return node;
+    }
+
+    internal static JsonNode ParseObjectAsString(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader)
+    {
+        AssertTokenType(stream, ref reader, JsonTokenType.StartObject);
+
+        JsonNode? value = null;
+        while (reader.TokenType != JsonTokenType.EndObject || value is JsonObject)
+        {
+            Read(stream, ref buffer, ref reader);
+            if (reader.TokenType == JsonTokenType.EndObject)
+            {
+                break;
+            }
+
+            Read(stream, ref buffer, ref reader);
+            value = ParseValue(stream, ref buffer, ref reader);
+        }
+
+        return value ?? throw new InvalidOperationException("Parsed value as string cannot be null.");
     }
 
     internal static JsonNode? ParseValue(Stream stream, ref byte[] buffer, ref Utf8JsonReader reader) => reader.TokenType switch

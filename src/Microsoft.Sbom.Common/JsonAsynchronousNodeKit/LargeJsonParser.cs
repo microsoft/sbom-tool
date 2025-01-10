@@ -21,7 +21,7 @@ namespace Microsoft.Sbom.JsonAsynchronousNodeKit;
 /// This class is not Thread-safe since the stream and JsonReaders assume a single forward-only reader.
 /// Because of the use of recursion in the GetObject method, this class is also not suitable for parsing very deep json objects.
 /// </remarks>
-internal class LargeJsonParser
+public class LargeJsonParser
 {
     private const int DefaultReadBufferSize = 4096;
     private readonly Stream stream;
