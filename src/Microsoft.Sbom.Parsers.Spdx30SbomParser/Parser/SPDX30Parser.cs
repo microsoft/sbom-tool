@@ -83,11 +83,11 @@ public class SPDX30Parser : ISbomParser
 
         if (bufferSize is null)
         {
-            this.parser = new LargeJsonParser(stream, handlers, this.jsonSerializerOptions, isSpdx30: true);
+            this.parser = new LargeJsonParser(stream, handlers, this.jsonSerializerOptions);
         }
         else
         {
-            this.parser = new LargeJsonParser(stream, handlers, this.jsonSerializerOptions, bufferSize.Value, isSpdx30: true);
+            this.parser = new LargeJsonParser(stream, handlers, this.jsonSerializerOptions, bufferSize.Value);
         }
     }
 
