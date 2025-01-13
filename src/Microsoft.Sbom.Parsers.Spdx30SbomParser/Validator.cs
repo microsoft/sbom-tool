@@ -10,7 +10,7 @@ using Microsoft.Sbom.Parser;
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
 
 /// <summary>
-/// Validates files in a folder against their checksums stored in an SPDX 2.2 SBOM.
+/// Validates files in a folder against their checksums stored in an SPDX 3.0 SBOM.
 /// </summary>
 public class Validator : IManifestInterface
 {
@@ -23,7 +23,7 @@ public class Validator : IManifestInterface
     };
 
     public ManifestData ParseManifest(string manifest)
-        => throw new NotImplementedException($"Currently we don't support parsing complete SPDX 2.2 SBOMs");
+        => throw new NotImplementedException($"Currently we don't support parsing complete SPDX 3.0 SBOMs");
 
     public ManifestInfo[] RegisterManifest() => new[] { spdxManifestInfo };
 

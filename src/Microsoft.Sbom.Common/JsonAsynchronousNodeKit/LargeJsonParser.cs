@@ -33,20 +33,17 @@ public class LargeJsonParser
     private bool isParsingStarted = false;
     private bool enumeratorActive = false;
     private ParserStateResult? previousResultState = null;
-    private bool isSpdx30 = false;
 
     public LargeJsonParser(
         Stream stream,
         IReadOnlyDictionary<string, PropertyHandler> handlers,
         JsonSerializerOptions? jsonSerializerOptions = default,
-        int bufferSize = DefaultReadBufferSize,
-        bool isSpdx30 = false)
+        int bufferSize = DefaultReadBufferSize)
     {
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
         this.handlers = handlers ?? throw new ArgumentNullException(nameof(handlers));
         this.jsonSerializerOptions = jsonSerializerOptions ?? new JsonSerializerOptions();
         this.buffer = new byte[bufferSize];
-        this.isSpdx30 = isSpdx30;
 
         // Validate buffer is not of 0 length.
         if (this.buffer.Length == 0)

@@ -16,7 +16,6 @@ internal static class Constants
     internal const string SPDXDocumentNameFormatString = "{0} {1}";
     internal const string PackageSupplierFormatString = "Organization: {0}";
 
-    internal const string SPDXVersionHeaderName = "specVersion";
     internal const string SPDXContextHeaderName = "@context";
     internal const string SPDXGraphHeaderName = "@graph";
 

@@ -130,7 +130,7 @@ public enum RelationshipType
 
     /// <summary>
     /// The from Element treats each to Element as a data file.
-    /// A data file is an artifact that stores data required or optional for the from Element'ContextsResult functionality.
+    /// A data file is an artifact that stores data required or optional for the from Element's functionality.
     /// A data file can be a database file, an index file, a log file, an AI model file, a calibration data file, a temporary file, a backup file, and more.
     /// For AI training dataset, test dataset, test artifact, configuration data, build input data, and build output data,
     /// please consider using the more specific relationship types: trainedOn, testedOn, hasTest, configures, hasInput, and hasOutput, respectively.
@@ -284,7 +284,7 @@ public enum RelationshipType
     REPORTED_BY,
 
     /// <summary>
-    /// Designates a from Vulnerability'ContextsResult details were tracked, aggregated, and/or enriched to improve context (i.e. NVD) by each to Agent.
+    /// Designates a from Vulnerability's details were tracked, aggregated, and/or enriched to improve context (i.e. NVD) by each to Agent.
     /// </summary>
     REPUBLISHED_BY,
 
