@@ -13,6 +13,7 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
 using SPDXConstants = Microsoft.Sbom.Parsers.Spdx30SbomParser.Constants;
 
 namespace Microsoft.Sbom.Parser;
@@ -35,7 +36,7 @@ public class SPDX30Parser : ISbomParser
         GraphProperty,
     };
 
-    public string? RequiredComplianceStandard;
+    public ComplianceStandard? RequiredComplianceStandard;
     public IReadOnlyCollection<string>? EntitiesToEnforceComplianceStandardsFor;
     public SpdxMetadata Metadata = new SpdxMetadata();
     private readonly LargeJsonParser parser;
@@ -73,12 +74,28 @@ public class SPDX30Parser : ISbomParser
             { GraphProperty, new PropertyHandler<JsonNode>(ParameterType.Array) },
         };
 
-        switch (requiredComplianceStandard)
+        if (!string.IsNullOrEmpty(requiredComplianceStandard))
         {
-            case "NTIA":
-                this.EntitiesToEnforceComplianceStandardsFor = this.entitiesWithDifferentNTIARequirements;
-                this.RequiredComplianceStandard = requiredComplianceStandard;
-                break;
+            if (!Enum.TryParse<ComplianceStandard>(requiredComplianceStandard, true, out var complianceStandardAsEnum))
+            {
+                throw new ParserException($"{requiredComplianceStandard} compliance standard is not supported.");
+            }
+            else
+            {
+                switch (complianceStandardAsEnum)
+                {
+                    case ComplianceStandard.NTIA:
+                        this.EntitiesToEnforceComplianceStandardsFor = this.entitiesWithDifferentNTIARequirements;
+                        this.RequiredComplianceStandard = complianceStandardAsEnum;
+                        break;
+                    default:
+                        throw new ParserException($"{requiredComplianceStandard} compliance standard is not supported.");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("No required compliance standard.");
         }
 
         if (bufferSize is null)

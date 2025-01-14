@@ -11,6 +11,7 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -77,7 +78,7 @@ public abstract class SbomParserTestsBase
     /// </summary>
     /// <param name="jsonList"></param>
     /// <returns></returns>
-    public List<Element> ConvertToElements(List<object>? jsonList, ref ParserResults results, string? requiredComplianceStandard, IReadOnlyCollection<string>? entitiesWithDifferentNTIARequirements)
+    public List<Element> ConvertToElements(List<object>? jsonList, ref ParserResults results, ComplianceStandard? requiredComplianceStandard, IReadOnlyCollection<string>? entitiesWithDifferentNTIARequirements)
     {
         var elementsList = new List<Element>();
 
@@ -128,20 +129,15 @@ public abstract class SbomParserTestsBase
         // Validate if elements meet required compliance standards
         switch (requiredComplianceStandard)
         {
-            case "NTIA":
+            case ComplianceStandard.NTIA:
                 ValidateNTIARequirements(elementsList);
                 break;
-            case null:
-                Console.WriteLine("Invalid or no compliance standard specified.");
-                break;
-            default:
-                throw new ParserException("Invalid compliance standards");
         }
 
         return elementsList;
     }
 
-    public Type GetEntityType(JsonObject jsonObject, string? requiredComplianceStandard, IReadOnlyCollection<string>? entitiesWithDifferentNTIARequirements)
+    public Type GetEntityType(JsonObject jsonObject, ComplianceStandard? requiredComplianceStandard, IReadOnlyCollection<string>? entitiesWithDifferentNTIARequirements)
     {
         var assembly = typeof(Element).Assembly;
         var entityType = jsonObject["type"]?.ToString();
@@ -157,15 +153,11 @@ public abstract class SbomParserTestsBase
                 break;
         }
 
-        // Validate properties based on required compliance standard.
-        if (requiredComplianceStandard != null && entitiesWithDifferentNTIARequirements != null && entitiesWithDifferentNTIARequirements.Contains(entityType))
+        switch (requiredComplianceStandard)
         {
-            switch (requiredComplianceStandard)
-            {
-                case "NTIA":
-                    entityType = "NTIA" + entityType;
-                    break;
-            }
+            case ComplianceStandard.NTIA:
+                entityType = "NTIA" + entityType;
+                break;
         }
 
         var type = assembly.GetType($"Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.{entityType}") ?? throw new ParserException($"{entityType} on {jsonObject} is invalid.");
