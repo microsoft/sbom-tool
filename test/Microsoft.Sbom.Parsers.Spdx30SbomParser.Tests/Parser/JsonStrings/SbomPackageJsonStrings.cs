@@ -16,13 +16,13 @@ public static class SbomPackageJsonStrings
         },
         {
         ""suppliedBy"": ""SPDXRef-Organization-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969"",
-        ""CopyrightText"": ""NOASSERTION"",
+        ""name"": ""test"",
+        ""software_copyrightText"": ""NOASSERTION"",
         ""software_downloadLocation"": ""NOASSERTION"",
         ""creationInfo"": ""_:creationinfo"",
         ""externalIdentifier"": [
             ""SPDXRef-ExternalIdentifier-CE6B7E4A59503594D0AF89492494E05071399F36D9085F1E722497D78A9404E1""
         ],
-        ""name"": ""test"",
         ""spdxId"": ""SPDXRef-software_Package-4739C82D88855A138C811B8CE05CC97113BEC7F7C7F66EC7E4C6C176EEA0FECE"",
         ""type"": ""software_Package""
         },
@@ -84,14 +84,14 @@ public static class SbomPackageJsonStrings
         ""type"": ""Organization""
       },
       {
-        ""CopyrightText"": ""NOASSERTION"",
+        ""name"": ""the-package-name"",
+        ""software_copyrightText"": ""NOASSERTION"",
         ""software_downloadLocation"": ""NOASSERTION"",
         ""software_packageVersion"": ""the-package-version"",
         ""creationInfo"": ""_:creationinfo"",
         ""externalIdentifier"": [
           ""SPDXRef-ExternalIdentifier-.*""
         ],
-        ""name"": ""the-package-name"",
         ""spdxId"": ""SPDXRef-software_Package-A8C9BE15D102D0AF9D34A9EAA6FE282AB0CE35FF48A83058703A964E512B68B7"",
         ""verifiedUsing"": [
           {

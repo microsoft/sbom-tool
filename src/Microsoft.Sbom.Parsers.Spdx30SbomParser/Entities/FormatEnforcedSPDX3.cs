@@ -25,7 +25,7 @@ public class FormatEnforcedSPDX3
     /// </summary>
     [JsonRequired]
     [JsonPropertyName("@graph")]
-    public List<Element> Graph { get; set; }
+    public IEnumerable<Element> Graph { get; set; }
 
     /// <summary>
     /// Required as part of the Core profile.

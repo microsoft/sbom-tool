@@ -21,7 +21,7 @@ namespace Microsoft.Sbom.JsonAsynchronousNodeKit;
 /// This class is not Thread-safe since the stream and JsonReaders assume a single forward-only reader.
 /// Because of the use of recursion in the GetObject method, this class is also not suitable for parsing very deep json objects.
 /// </remarks>
-internal class LargeJsonParser
+public class LargeJsonParser
 {
     private const int DefaultReadBufferSize = 4096;
     private readonly Stream stream;
@@ -43,7 +43,6 @@ internal class LargeJsonParser
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
         this.handlers = handlers ?? throw new ArgumentNullException(nameof(handlers));
         this.jsonSerializerOptions = jsonSerializerOptions ?? new JsonSerializerOptions();
-
         this.buffer = new byte[bufferSize];
 
         // Validate buffer is not of 0 length.
@@ -153,6 +152,7 @@ internal class LargeJsonParser
         var handler = this.handlers![propertyName];
 
         object? result;
+
         switch (handler.Type)
         {
             case ParameterType.String:
@@ -268,11 +268,23 @@ internal class LargeJsonParser
 
     private object GetObject(Type type, ref Utf8JsonReader reader)
     {
-        var jsonObject = ParserUtils.ParseObject(this.stream, ref this.buffer, ref reader);
-        object? result = jsonObject;
-        if (type != typeof(JsonNode))
+        object? result = null;
+
+        if (type == typeof(string))
         {
-            result = jsonObject.Deserialize(type, this.jsonSerializerOptions);
+            result = reader.GetString();
+        }
+        else
+        {
+            var jsonObject = ParserUtils.ParseObject(this.stream, ref this.buffer, ref reader);
+            if (type != typeof(JsonNode))
+            {
+                result = jsonObject.Deserialize(type, this.jsonSerializerOptions);
+            }
+            else
+            {
+                result = jsonObject;
+            }
         }
 
         if (result is null)

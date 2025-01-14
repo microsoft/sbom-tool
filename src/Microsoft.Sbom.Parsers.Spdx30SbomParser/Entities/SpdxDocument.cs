@@ -23,7 +23,7 @@ public class SpdxDocument : Element
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("namespaceMap")]
-    public List<NamespaceMap> NamespaceMap { get; set; }
+    public Dictionary<string, string> NamespaceMap { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("element")]
@@ -35,5 +35,5 @@ public class SpdxDocument : Element
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("rootElement")]
-    public List<Element> RootElement { get; set; }
+    public List<string> RootElement { get; set; }
 }
