@@ -28,28 +28,7 @@ extends:
             name: sbom-windows-build-pool
             os: windows
           steps:
-          - task: UseDotNet@2
-            displayName: 'Use .NET Core'
-            inputs:
-              useGlobalJson: true
-
-          - task: DotNetCoreCLI@2
-            displayName: 'Restore solution'
-            inputs:
-              command: restore
-              feedsToUse: config
-              nugetConfigPath: nuget.config
-              verbosityRestore: Normal
-
-          - task: DotNetCoreCLI@2
-            displayName: Build
-            inputs:
-              arguments: '-c $(BuildConfiguration)'
-
-          - task: DotNetCoreCLI@2
-            displayName: Run tests
-            inputs:
-              command: 'test'
+          - template: build-test-tool-template.yaml@self
 
         - job: Job_2
           displayName: 'Build (Linux)'
@@ -57,28 +36,7 @@ extends:
             name: sbom-linux-build-pool
             os: linux
           steps:
-          - task: UseDotNet@2
-            displayName: 'Use .NET Core'
-            inputs:
-              useGlobalJson: true
-
-          - task: DotNetCoreCLI@2
-            displayName: 'Restore solution'
-            inputs:
-              command: restore
-              feedsToUse: config
-              nugetConfigPath: nuget.config
-              verbosityRestore: Normal
-
-          - task: DotNetCoreCLI@2
-            displayName: Build
-            inputs:
-              arguments: '-c $(BuildConfiguration)'
-
-          - task: DotNetCoreCLI@2
-            displayName: Run tests
-            inputs:
-              command: 'test'
+          - template: build-test-tool-template.yaml@self
 
         - job: Job_3
           displayName: 'Build (macOS)'
@@ -87,28 +45,7 @@ extends:
             image: macos-latest
             os: macOS
           steps:
-          - task: UseDotNet@2
-            displayName: 'Use .NET Core'
-            inputs:
-              useGlobalJson: true
-
-          - task: DotNetCoreCLI@2
-            displayName: 'Restore solution'
-            inputs:
-              command: restore
-              feedsToUse: config
-              nugetConfigPath: nuget.config
-              verbosityRestore: Normal
-
-          - task: DotNetCoreCLI@2
-            displayName: Build
-            inputs:
-              arguments: '-c $(BuildConfiguration)'
-            
-          - task: DotNetCoreCLI@2
-            displayName: Run tests
-            inputs:
-              command: 'test'
+          - template: build-test-tool-template.yaml@self
 
         - job: Job_4
           displayName: 'Build (macOS-arm64)'
@@ -117,25 +54,4 @@ extends:
             image: macos-latest
             os: macOS
           steps:
-          - task: UseDotNet@2
-            displayName: 'Use .NET Core'
-            inputs:
-              useGlobalJson: true
-
-          - task: DotNetCoreCLI@2
-            displayName: 'Restore solution'
-            inputs:
-              command: restore
-              feedsToUse: config
-              nugetConfigPath: nuget.config
-              verbosityRestore: Normal
-
-          - task: DotNetCoreCLI@2
-            displayName: Build
-            inputs:
-              arguments: '-c $(BuildConfiguration)'
-
-          - task: DotNetCoreCLI@2
-            displayName: Run tests
-            inputs:
-              command: 'test'
+          - template: build-test-tool-template.yaml@self
