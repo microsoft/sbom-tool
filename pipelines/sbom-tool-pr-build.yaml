@@ -1,0 +1,141 @@
+pr:
+  - main
+
+resources:
+    repositories:
+        - repository: 1esPipelines
+          type: git
+          name: 1ESPipelineTemplates/1ESPipelineTemplates
+          ref: refs/tags/release
+        - repository: self
+
+variables:
+  BuildConfiguration: 'Release'
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
+  parameters:
+    sdl:
+      sourceAnalysisPool:
+        name: sbom-windows-build-pool
+        os: windows
+    stages:
+      - stage: stage1
+        jobs:
+        - job: Job_1
+          displayName: Build (Windows)
+          pool:
+            name: sbom-windows-build-pool
+            os: windows
+          steps:
+          - task: UseDotNet@2
+            displayName: 'Use .NET Core'
+            inputs:
+              useGlobalJson: true
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore solution'
+            inputs:
+              command: restore
+              feedsToUse: config
+              nugetConfigPath: nuget.config
+              verbosityRestore: Normal
+
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              arguments: '-c $(BuildConfiguration)'
+
+          - task: DotNetCoreCLI@2
+            displayName: Run tests
+            inputs:
+              command: 'test'
+
+        - job: Job_2
+          displayName: 'Build (Linux)'
+          pool:
+            name: sbom-linux-build-pool
+            os: linux
+          steps:
+          - task: UseDotNet@2
+            displayName: 'Use .NET Core'
+            inputs:
+              useGlobalJson: true
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore solution'
+            inputs:
+              command: restore
+              feedsToUse: config
+              nugetConfigPath: nuget.config
+              verbosityRestore: Normal
+
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              arguments: '-c $(BuildConfiguration)'
+
+          - task: DotNetCoreCLI@2
+            displayName: Run tests
+            inputs:
+              command: 'test'
+
+        - job: Job_3
+          displayName: 'Build (macOS)'
+          pool:
+            name: Azure Pipelines
+            image: macos-latest
+            os: macOS
+          steps:
+          - task: UseDotNet@2
+            displayName: 'Use .NET Core'
+            inputs:
+              useGlobalJson: true
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore solution'
+            inputs:
+              command: restore
+              feedsToUse: config
+              nugetConfigPath: nuget.config
+              verbosityRestore: Normal
+
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              arguments: '-c $(BuildConfiguration)'
+            
+          - task: DotNetCoreCLI@2
+            displayName: Run tests
+            inputs:
+              command: 'test'
+
+        - job: Job_4
+          displayName: 'Build (macOS-arm64)'
+          pool:
+            name: Azure Pipelines
+            image: macos-latest
+            os: macOS
+          steps:
+          - task: UseDotNet@2
+            displayName: 'Use .NET Core'
+            inputs:
+              useGlobalJson: true
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore solution'
+            inputs:
+              command: restore
+              feedsToUse: config
+              nugetConfigPath: nuget.config
+              verbosityRestore: Normal
+
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              arguments: '-c $(BuildConfiguration)'
+
+          - task: DotNetCoreCLI@2
+            displayName: Run tests
+            inputs:
+              command: 'test'
