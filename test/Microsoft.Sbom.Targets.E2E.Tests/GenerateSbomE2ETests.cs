@@ -310,12 +310,6 @@ public class GenerateSbomE2ETests
     [TestMethod]
     public void SbomGenerationSucceedsForMultiTargetedProject()
     {
-        if (!RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework", StringComparison.Ordinal))
-        {
-            Assert.Inconclusive("This test needs to be updated to work with Visual Studio 17.12 and .NET 8. This is tracked at https://github.com/microsoft/sbom-tool/issues/815.");
-            return;
-        }
-
         if (!IsWindows)
         {
             Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
