@@ -49,7 +49,7 @@ extends:
             name: sbom-windows-build-pool
             os: windows
           steps:
-          - template: build-test-tool-template.yaml@self
+          - template: pipelines/build-test-tool-template.yaml@self
 
           - task: UseDotNet@2
             displayName: 'Install .NET 6 SDK'
@@ -211,7 +211,7 @@ extends:
             name: sbom-linux-build-pool
             os: linux
           steps:
-          - template: build-test-tool-template.yaml@self
+          - template: pipelines/build-test-tool-template.yaml@self
 
           - task: DotNetCoreCLI@2
             displayName: 'Build self-contained binary'
@@ -245,7 +245,7 @@ extends:
             image: macos-latest
             os: macOS
           steps:
-          - template: build-test-tool-template.yaml@self
+          - template: pipelines/build-test-tool-template.yaml@self
 
           - task: DotNetCoreCLI@2
             displayName: 'Build self-contained binary'
@@ -279,7 +279,7 @@ extends:
             image: macos-latest
             os: macOS
           steps:
-          - template: build-test-tool-template.yaml@self
+          - template: pipelines/build-test-tool-template.yaml@self
 
           - task: DotNetCoreCLI@2
             displayName: 'Build self-contained binary'

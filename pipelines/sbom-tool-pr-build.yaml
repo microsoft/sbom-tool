@@ -28,7 +28,7 @@ extends:
             name: sbom-windows-build-pool
             os: windows
           steps:
-          - template: build-test-tool-template.yaml@self
+          - template: pipelines/build-test-tool-template.yaml@self
 
         - job: Job_2
           displayName: 'Build (Linux)'
@@ -36,7 +36,7 @@ extends:
             name: sbom-linux-build-pool
             os: linux
           steps:
-          - template: build-test-tool-template.yaml@self
+          - template: pipelines/build-test-tool-template.yaml@self
 
         - job: Job_3
           displayName: 'Build (macOS)'
@@ -45,7 +45,7 @@ extends:
             image: macos-latest
             os: macOS
           steps:
-          - template: build-test-tool-template.yaml@self
+          - template: pipelines/build-test-tool-template.yaml@self
 
         - job: Job_4
           displayName: 'Build (macOS-arm64)'
@@ -54,4 +54,4 @@ extends:
             image: macos-latest
             os: macOS
           steps:
-          - template: build-test-tool-template.yaml@self
+          - template: pipelines/build-test-tool-template.yaml@self
