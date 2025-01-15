@@ -1,0 +1,23 @@
+steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core'
+    inputs:
+      useGlobalJson: true
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Restore solution'
+    inputs:
+      command: restore
+      feedsToUse: config
+      nugetConfigPath: nuget.config
+      verbosityRestore: Normal
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      arguments: '-c $(BuildConfiguration)'
+
+  - task: DotNetCoreCLI@2
+    displayName: Run tests
+    inputs:
+      command: 'test'
