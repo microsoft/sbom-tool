@@ -98,10 +98,10 @@ public class SbomPackageParserTests : SbomParserTestsBase
         var result = this.Parse(parser);
     }
 
+    [TestMethod]
     [DataRow(SbomPackageStrings.MalformedJson)]
     [DataRow(SbomPackageStrings.MalformedJsonEmptyObject)]
     [DataRow(SbomPackageStrings.MalformedJsonEmptyObjectNoArrayEnd)]
-    [TestMethod]
     public void MalformedJsonTest_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
