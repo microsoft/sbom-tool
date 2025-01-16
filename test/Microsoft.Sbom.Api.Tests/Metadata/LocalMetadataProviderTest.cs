@@ -35,10 +35,9 @@ public class LocalMetadataProviderTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void LocalMetadataProvider_WithNullConfiguration_ThrowArgumentNullException()
     {
-        new LocalMetadataProvider(null);
+        Assert.ThrowsException<ArgumentNullException>(() => new LocalMetadataProvider(null));
     }
 
     [TestMethod]

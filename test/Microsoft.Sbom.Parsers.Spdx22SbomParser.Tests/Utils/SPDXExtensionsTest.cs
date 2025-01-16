@@ -99,11 +99,10 @@ public class SPDXExtensionsTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void AddPackageUrlsTest_WithNullSPDXPackage_Failure()
     {
         spdxPackage = null;
-        spdxPackage.AddPackageUrls(packageInfo);
+        Assert.ThrowsException<ArgumentNullException>(() => spdxPackage.AddPackageUrls(packageInfo));
     }
 
     [TestMethod]

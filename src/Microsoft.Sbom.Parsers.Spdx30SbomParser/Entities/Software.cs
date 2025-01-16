@@ -4,8 +4,6 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
-using Newtonsoft.Json;
-using JsonIgnoreAttribute = System.Text.Json.Serialization.JsonIgnoreAttribute;
 
 /// <summary>
 /// Class defined as specified in: https://spdx.github.io/spdx-spec/v3.0.1/model/Software/Software/
@@ -37,8 +35,8 @@ public abstract class Software : Element
     public string ContentIdentifierValue { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [JsonProperty(PropertyName = "software_copyrightText")]
-    public string CopyrightText { get; set; }
+    [JsonPropertyName("software_copyrightText")]
+    public virtual string CopyrightText { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("software_downloadLocation")]
@@ -62,7 +60,7 @@ public abstract class Software : Element
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("software_packageVersion")]
-    public string PackageVersion { get; set; }
+    public virtual string PackageVersion { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("software_primaryPurpose")]
@@ -77,6 +75,6 @@ public abstract class Software : Element
     public File SnippetFromFile { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [JsonPropertyName("software_copyrightText")]
+    [JsonPropertyName("software_sourceInfo")]
     public string SourceInfo { get; set; }
 }

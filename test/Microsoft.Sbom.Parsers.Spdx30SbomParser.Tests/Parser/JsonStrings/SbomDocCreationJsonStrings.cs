@@ -42,14 +42,10 @@ public static class SbomDocCreationJsonStrings
         },
         {
             ""dataLicense"": ""SPDXRef-AnyLicenseInfo-6E237C55B0583CB7BBA05562316C54B0A105ABA04775017E2253237B9A64613C"",
-            ""namespaceMap"": [
-                {
-                    ""namespace"": ""http://sbom.microsoft/sbom-package-name/sbom-package-version/some-custom-value-here"",
-                    ""creationInfo"": ""_:creationinfo"",
-                    ""spdxId"": ""SPDXRef-NamespaceMap-0C5D68EB49795A98E060EB263AC73F87322217857EB3057EBAC84A70F75E69BE"",
-                    ""type"": ""NamespaceMap""
-                }
-            ],
+            ""namespaceMap"":
+            {
+            ""sbom"":""http://sbom.microsoft/sbom-package-name/sbom-package-version/some-custom-value-here""
+            },
             ""profileConformance"": [
                 ""software"",
                 ""core"",

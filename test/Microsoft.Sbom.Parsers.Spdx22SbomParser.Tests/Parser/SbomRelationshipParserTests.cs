@@ -28,16 +28,13 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     }
 
     [TestMethod]
-    [ExpectedException(typeof(EndOfStreamException))]
     public void StreamEmptyTestReturnsNull()
     {
         using var stream = new MemoryStream();
         stream.Read(new byte[SbomConstants.ReadBufferSize]);
         var buffer = new byte[SbomConstants.ReadBufferSize];
 
-        var parser = new SPDXParser(stream);
-
-        var result = this.Parse(parser);
+        Assert.ThrowsException<EndOfStreamException>(() => new SPDXParser(stream));
     }
 
     [DataRow(RelationshipStrings.JsonRelationshipsStringMissingElementId)]
@@ -96,14 +93,11 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public void NullOrEmptyBuffer_Throws()
     {
         var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.MalformedJson);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new SPDXParser(stream, bufferSize: 0);
-
-        var result = this.Parse(parser);
+        Assert.ThrowsException<ArgumentException>(() => new SPDXParser(stream, bufferSize: 0));
     }
 }

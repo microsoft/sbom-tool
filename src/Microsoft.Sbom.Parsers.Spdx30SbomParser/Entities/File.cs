@@ -22,4 +22,8 @@ public class File : Software
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("mediaType")]
     public object MediaType { get; set; }
+
+    [JsonRequired]
+    [JsonPropertyName("name")]
+    public override string Name { get; set; }
 }

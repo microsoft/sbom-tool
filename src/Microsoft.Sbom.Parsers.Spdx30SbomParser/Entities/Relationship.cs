@@ -13,12 +13,12 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 /// Defines relationships between elements in the current SBOM.
 /// https://spdx.github.io/spdx-spec/v3.0.1/model/Core/Classes/Relationship/
 /// </summary>
-public class Spdx30Relationship : Element
+public class Relationship : Element
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="Spdx30Relationship"/> class.
+    /// Initializes a new instance of the <see cref="Relationship"/> class.
     /// </summary>
-    public Spdx30Relationship()
+    public Relationship()
     {
         Type = nameof(Relationship);
     }

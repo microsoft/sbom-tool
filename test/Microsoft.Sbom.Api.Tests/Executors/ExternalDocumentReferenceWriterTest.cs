@@ -78,8 +78,6 @@ public class ExternalDocumentReferenceWriterTest
         {
             var root = result.Document.RootElement;
 
-            Assert.IsNotNull(root);
-
             if (root.TryGetProperty("Document", out var documentNamespace))
             {
                 Assert.AreEqual("namespace", documentNamespace.GetString());

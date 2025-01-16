@@ -22,23 +22,23 @@ public class FileValidationResultTest
     [DataRow(ErrorType.None, EntityErrorType.None)]
     [DataRow(ErrorType.PackageError, EntityErrorType.PackageError)]
     [DataRow(ErrorType.Other, EntityErrorType.Other)]
-    public void FileValidationResultErrorTypeMapping(ErrorType input, EntityErrorType output)
+    public void FileValidationResultErrorTypeMapping(ErrorType input, EntityErrorType expectedOutput)
     {
         var fileValidationResult = new FileValidationResult() { ErrorType = input, Path = "random" };
         var entityError = fileValidationResult.ToEntityError();
 
-        Assert.AreEqual(entityError.ErrorType, output);
-        Assert.AreEqual(entityError.Details, null);
+        Assert.AreEqual(expectedOutput, entityError.ErrorType);
+        Assert.IsNull(entityError.Details);
 
         if (input == ErrorType.PackageError)
         {
-            Assert.AreEqual(((PackageEntity)entityError.Entity).Path, "random");
-            Assert.AreEqual(((PackageEntity)entityError.Entity).Name, "random");
+            Assert.AreEqual("random", ((PackageEntity)entityError.Entity).Path);
+            Assert.AreEqual("random", ((PackageEntity)entityError.Entity).Name);
             Assert.AreEqual(entityError.Entity.GetType(), typeof(PackageEntity));
         }
         else
         {
-            Assert.AreEqual(((FileEntity)entityError.Entity).Path, "random");
+            Assert.AreEqual("random", ((FileEntity)entityError.Entity).Path);
             Assert.AreEqual(entityError.Entity.GetType(), typeof(FileEntity));
         }
     }

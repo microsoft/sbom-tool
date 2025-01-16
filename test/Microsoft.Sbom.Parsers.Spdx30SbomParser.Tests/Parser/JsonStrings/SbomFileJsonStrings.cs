@@ -9,9 +9,9 @@ public static class SbomFileJsonStrings
     public const string FileWithLicensesAndHashes =
     @"[
           {
-            ""CopyrightText"": ""sampleCopyright"",
-            ""creationInfo"": ""_:creationinfo"",
             ""name"": ""./sample/path"",
+            ""software_copyrightText"": ""sampleCopyright"",
+            ""creationInfo"": ""_:creationinfo"",
             ""spdxId"": ""SPDXRef-software_File-B4A9F99A3A03B9273AE34753D96564CB4F2B0FAD885BBD36B0DD619E9E8AC967"",
             ""verifiedUsing"": [
               {

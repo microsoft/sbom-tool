@@ -9,7 +9,7 @@ namespace Microsoft.Sbom.Contracts;
 /// <summary>
 /// The object representation of all the metadata in an SPDX document.
 /// </summary>
-public class Spdx22Metadata
+public class SpdxMetadata
 {
     /// <summary>
     /// The version of the SPDX specification used in this document.

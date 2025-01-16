@@ -22,5 +22,9 @@ public class Package : Software
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("suppliedBy")]
-    public string SuppliedBy { get; set; }
+    public virtual string SuppliedBy { get; set; }
+
+    [JsonRequired]
+    [JsonPropertyName("name")]
+    public override string Name { get; set; }
 }
