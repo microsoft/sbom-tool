@@ -120,10 +120,9 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         Assert.ThrowsException<EndOfStreamException>(() => new SPDXParser(stream));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SbomFullDocWithMetadataJsonStrings.MalformedJsonEmptyObject)]
     [DataRow(SbomFullDocWithMetadataJsonStrings.MalformedJsonEmptyArray)]
-    [TestMethod]
     public void MalformedJsonTest_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
