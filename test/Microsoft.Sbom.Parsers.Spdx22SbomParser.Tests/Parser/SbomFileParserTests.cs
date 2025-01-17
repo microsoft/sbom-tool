@@ -100,12 +100,11 @@ public class SbomFileParserTests : SbomParserTestsBase
         Assert.ThrowsException<ParserException>(() => result.Files.Select(f => f.ToSbomFile()).ToList());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingNameString)]
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingIDString)]
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingChecksumsString)]
     [DataRow(SbomFileJsonStrings.JsonWith1FileMissingCopyrightAndPathString)]
-    [TestMethod]
     public void MissingPropertiesTest_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
@@ -116,12 +115,11 @@ public class SbomFileParserTests : SbomParserTestsBase
         _ = Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SbomFileJsonStrings.GoodJsonWith1FileAdditionalObjectPropertyString)]
     [DataRow(SbomFileJsonStrings.GoodJsonWith1FileAdditionalArrayPropertyString)]
     [DataRow(SbomFileJsonStrings.GoodJsonWith1FileAdditionalStringPropertyString)]
     [DataRow(SbomFileJsonStrings.GoodJsonWith1FileAdditionalValueArrayPropertyString)]
-    [TestMethod]
     public void IgnoresAdditionalPropertiesTest(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
@@ -134,11 +132,10 @@ public class SbomFileParserTests : SbomParserTestsBase
         Assert.AreEqual(1, result.FilesCount);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SbomFileJsonStrings.MalformedJson)]
     [DataRow(SbomFileJsonStrings.MalformedJsonEmptyObject)]
     [DataRow(SbomFileJsonStrings.MalformedJsonEmptyObjectNoArrayEnd)]
-    [TestMethod]
     public void MalformedJsonTest_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);

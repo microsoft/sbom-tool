@@ -48,7 +48,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         Assert.ThrowsException<EndOfStreamException>(() => new SPDXParser(stream));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingDownloadLocation)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingVersionInfo)]
     public void MissingPropertiesTest_DoesNotThrow(string json)
@@ -61,7 +61,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         var result = this.Parse(parser);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingCopyrightText)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingLicenseInfoFromFiles)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageMissingSupplier)]
@@ -83,7 +83,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalString)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalArray)]
     [DataRow(SbomPackageStrings.PackageJsonWith1PackageAdditionalObject)]
@@ -98,11 +98,10 @@ public class SbomPackageParserTests : SbomParserTestsBase
         var result = this.Parse(parser);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SbomPackageStrings.MalformedJson)]
     [DataRow(SbomPackageStrings.MalformedJsonEmptyObject)]
     [DataRow(SbomPackageStrings.MalformedJsonEmptyObjectNoArrayEnd)]
-    [TestMethod]
     public void MalformedJsonTest_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
