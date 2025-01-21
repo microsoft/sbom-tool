@@ -16,6 +16,8 @@ using PowerArgs;
 
 namespace Microsoft.Sbom.Tool;
 
+// A comment-only change to test the trigger mechanism
+
 internal class Program
 {
     internal static string Name => NameValue.Value;
