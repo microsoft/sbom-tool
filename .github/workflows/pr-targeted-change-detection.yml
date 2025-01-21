@@ -3,7 +3,7 @@ name: Test comments if targeted files are touched
 on:
   pull_request:
     types:
-      - opened
+      - [opened, edited]
     paths:
       - 'src/**'
       
