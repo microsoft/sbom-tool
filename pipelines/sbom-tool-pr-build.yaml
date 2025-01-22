@@ -19,6 +19,8 @@ extends:
       sourceAnalysisPool:
         name: sbom-windows-build-pool
         os: windows
+    settings:
+      skipBuildTagsForGitHubPullRequests: true
     stages:
       - stage: stage1
         jobs:

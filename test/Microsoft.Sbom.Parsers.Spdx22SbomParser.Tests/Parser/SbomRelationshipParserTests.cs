@@ -37,10 +37,9 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         Assert.ThrowsException<EndOfStreamException>(() => new SPDXParser(stream));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(RelationshipStrings.JsonRelationshipsStringMissingElementId)]
     [DataRow(RelationshipStrings.JsonRelationshipsStringMissingRelatedElement)]
-    [TestMethod]
     public void MissingPropertiesTest_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
@@ -51,12 +50,11 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(RelationshipStrings.GoodJsonWithRelationshipsStringAdditionalString)]
     [DataRow(RelationshipStrings.GoodJsonWithRelationshipsStringAdditionalObject)]
     [DataRow(RelationshipStrings.GoodJsonWithRelationshipsStringAdditionalArray)]
     [DataRow(RelationshipStrings.GoodJsonWithRelationshipsStringAdditionalArrayNoKey)]
-    [TestMethod]
     public void IgnoresAdditionalPropertiesTest(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
@@ -69,9 +67,8 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
         Assert.IsTrue(result.RelationshipsCount > 0);
     }
 
-    [DataTestMethod]
-    [DataRow(RelationshipStrings.MalformedJsonRelationshipsString)]
     [TestMethod]
+    [DataRow(RelationshipStrings.MalformedJsonRelationshipsString)]
     public void MalformedJsonTest_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
