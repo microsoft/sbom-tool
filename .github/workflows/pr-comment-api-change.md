@@ -6,8 +6,9 @@ This PR changes files in the API project. Does it change _any_ of the API interf
 Because any of these changes can potentially break a downstream consumer with customized interface implementations, these changes need to be treated as breaking changes. Please do one of the following:
 
 ## Option 1 - Publish this as a breaking change
-1. Update the documentation to show the new functionality and/or explain the change
+1. Update the documentation to show the new functionality
 2. Bump the major version in the next release
+3. Be sure to highlight of the breaking changes in the release notes
 
 ## Option 2 - Refactor the changes to be non-breaking
 1. Review [this commit](https://github.com/microsoft/sbom-tool/commit/4d0ce83e194ed6feace53666aeb6280f5b8b8769), which adds a new interface in a backward-compatible way
