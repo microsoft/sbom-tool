@@ -17,6 +17,7 @@ using PowerArgs;
 namespace Microsoft.Sbom.Tool;
 
 // A comment-only change to test the trigger mechanism
+// Another one.
 
 internal class Program
 {
