@@ -9,6 +9,8 @@ jobs:
 
   auto-comment:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
