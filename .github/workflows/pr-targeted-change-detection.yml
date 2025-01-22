@@ -2,10 +2,8 @@ name: Test comments if targeted files are touched
 
 on:
   pull_request:
-    types:
-      - edited
     paths:
-      - 'src/**'
+      - 'src/**/*'
       
 jobs:
   auto-comment:
