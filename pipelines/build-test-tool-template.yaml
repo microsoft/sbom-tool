@@ -20,4 +20,10 @@ steps:
   - task: DotNetCoreCLI@2
     displayName: Run tests
     inputs:
-      command: 'test'
+      command: 'test --collect:"XPlat Code Coverage"'
+
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codecoverageTool: 'Cobertura'
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/**/site/cobertura'
