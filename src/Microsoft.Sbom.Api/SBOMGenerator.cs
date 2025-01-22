@@ -22,6 +22,7 @@ namespace Microsoft.Sbom.Api;
 
 /// <summary>
 /// Responsible for an API to generate SBOMs.
+/// This is a dummy comment to test the PR workflow
 /// </summary>
 public class SbomGenerator : ISBOMGenerator
 {
