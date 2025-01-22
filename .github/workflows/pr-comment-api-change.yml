@@ -1,4 +1,4 @@
-name: CHekc for API changes
+name: Check for API changes
 
 on:
   pull_request:
