@@ -18,7 +18,7 @@ steps:
       arguments: '-c $(BuildConfiguration)'
 
   - pwsh: |
-      dotnet test -c $(BuildConfiguration) --no-build -- --report-trx --results-directory $(Build.SourcesDirectory)/artifacts/TestResults
+      dotnet test -c $(BuildConfiguration) --no-build -- --report-trx --results-directory $(Build.SourcesDirectory)/artifacts/TestResults --coverage --coverage-output $(Build.SourcesDirectory)/artifacts/Coverage/coverage.cobertura.xml --coverage-output-format cobertura
     displayName: Run unit tests
 
   - task: PublishTestResults@2
@@ -31,3 +31,9 @@ steps:
       mergeTestResults: true
     continueOnError: true
     condition: always()
+
+  - task: PublishCodeCoverageResults@2
+    displayName: "Publish code coverage (Windows only)"
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
+    inputs:
+      summaryFileLocation: '$(Build.SourcesDirectory)/artifacts/Coverage/coverage.cobertura.xml'
