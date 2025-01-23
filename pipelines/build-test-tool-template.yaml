@@ -17,7 +17,17 @@ steps:
     inputs:
       arguments: '-c $(BuildConfiguration)'
 
-  - task: DotNetCoreCLI@2
-    displayName: Run tests
+  - pwsh: |
+      dotnet test -c $(BuildConfiguration) --no-build -- --report-trx --results-directory $(Build.SourcesDirectory)/artifacts/TestResults
+    displayName: Run unit tests
+
+  - task: PublishTestResults@2
+    displayName: Publish TRX Test Results
     inputs:
-      command: 'test'
+      testResultsFormat: 'VSTest'
+      testResultsFiles: '*.trx'
+      searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults'
+      testRunTitle: 'Unit Tests for $(BuildConfiguration)'
+      mergeTestResults: true
+    continueOnError: true
+    condition: always()

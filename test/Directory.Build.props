@@ -4,6 +4,8 @@
   <PropertyGroup>
     <EnableMSTestRunner>true</EnableMSTestRunner>
     <TestingPlatformDotNetTestSupport>true</TestingPlatformDotNetTestSupport>
+    <TestingPlatformCaptureOutput>false</TestingPlatformCaptureOutput>
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
   </PropertyGroup>
   <ItemGroup Label="Package References">
     <PackageReference Include="coverlet.collector">
