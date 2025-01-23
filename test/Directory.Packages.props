@@ -10,7 +10,7 @@
     </PackageVersion>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <PackageVersion Include="coverlet.collector" Version="6.0.3" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.13.1" />
     <PackageVersion Include="FluentAssertions" Version="7.0.0" />
     <PackageVersion Include="MSTest" Version="3.7.1" />
     <PackageVersion Include="Moq" Version="4.20.72" />
