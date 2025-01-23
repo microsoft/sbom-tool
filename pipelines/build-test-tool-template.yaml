@@ -24,6 +24,7 @@ steps:
       arguments: '--collect:"XPlat Code Coverage;Format=Cobertura"'
 
   - task: PublishCodeCoverageResults@2
-    displayName: "Publish code coverage"
+    displayName: "Publish code coverage (Windows only)"
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
     inputs:
       summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
