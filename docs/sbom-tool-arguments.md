@@ -17,7 +17,8 @@ Actions
   Validate -options - Validate a build artifact using the manifest. Optionally also verify the signing certificate of the manifest.
 
     Option                   Description
-    BuildDropPath (-b)       The root folder of the drop directory to validate.
+    BuildDropPath (-b)       Specifies the root folder of the drop directory containing the final build artifacts (binaries and executables) for which the SBOM file will be validated. This is the directory
+                             where the completed build output is stored.
     ManifestDirPath (-m)     The path of the directory where the manifest will be validated. If this parameter is not specified, the manifest will be validated in {BuildDropPath}/_manifest directory.
     OutputPath (-o)          The path where the output json should be written. ex: Path/output.json
     CatalogFilePath (-C)     This parameter is deprecated and will not be used, we will automatically detect the catalog file using our standard directory structure. The path of signed catalog file that is
@@ -44,8 +45,10 @@ Actions
   Generate -options - Generate a SBOM for all the files in the given build drop folder, and the packages in the components path.
 
     Option                                    Description
-    BuildDropPath (-b)                        The root folder of the drop directory for which the SBOM file will be generated.
-    BuildComponentPath (-bc)                  The folder containing the build components and packages.
+    BuildDropPath (-b)                        Specifies the root folder of the drop directory containing the final build artifacts (binaries and executables) for which the SBOM file will be generated.
+                                              This is the directory where the completed build output is stored.
+    BuildComponentPath (-bc)                  Specifies the folder containing the source code and components used to build the binary. This is where the tool will look for the individual components and
+                                              packages that are part of the build process.
     BuildListFile (-bl)                       The file path to a file containing a list of files one file per line for which the SBOM file will be generated. Only files listed in the file will be included in
                                               the generated SBOM.
     ManifestDirPath (-m)                      The path of the directory where the generated SBOM files will be placed. A folder named '_manifest' will be created at this location, where all generated SBOMs
