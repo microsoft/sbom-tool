@@ -19,6 +19,14 @@ internal static class Constants
     internal const string SPDXContextHeaderName = "@context";
     internal const string SPDXGraphHeaderName = "@graph";
 
+    internal const string SPDXVersionHeaderName = "spdxVersion";
+    internal const string DataLicenseHeaderName = "dataLicense";
+    internal const string SPDXIDHeaderName = "SPDXID";
+    internal const string DocumentNameHeaderName = "name";
+    internal const string DocumentNamespaceHeaderName = "documentNamespace";
+    internal const string CreationInfoHeaderName = "creationInfo";
+    internal const string DocumentDescribesHeaderName = "documentDescribes";
+
     /// <summary>
     /// Use if SPDX creator
     /// - made an attempt to retrieve the info but cannot determine correct values.

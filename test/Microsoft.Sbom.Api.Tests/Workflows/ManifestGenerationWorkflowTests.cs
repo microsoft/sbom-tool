@@ -19,6 +19,7 @@ using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Manifest.Configuration;
+using Microsoft.Sbom.Api.Metadata;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.PackageDetails;
@@ -36,12 +37,16 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json.Linq;
 using Serilog.Events;
+using Spectre.Console;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
+using Generator = Microsoft.Sbom.Parsers.Spdx30SbomParser.Generator;
 using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
 using ILogger = Serilog.ILogger;
 
@@ -82,19 +87,19 @@ public class ManifestGenerationWorkflowTests
     [DataRow(false, true)]
     public async Task ManifestGenerationWorkflowTests_Succeeds(bool deleteExistingManifestDir, bool isDefaultSourceManifestDirPath)
     {
-        var manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
+        var manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new Generator() });
         manifestGeneratorProvider.Init();
 
         var metadataBuilder = new MetadataBuilder(
             mockLogger.Object,
             manifestGeneratorProvider,
-            Constants.TestManifestInfo,
+            Constants.SPDX30ManifestInfo,
             recorderMock.Object);
         var jsonFilePath = "/root/_manifest/manifest.json";
 
         ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            ManifestInfo = Constants.TestManifestInfo,
+            ManifestInfo = Constants.SPDX30ManifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
             ManifestJsonFilePath = jsonFilePath,
             MetadataBuilder = metadataBuilder,
@@ -106,13 +111,18 @@ public class ManifestGenerationWorkflowTests
         {
             { MetadataKey.Build_BuildId, 12 },
             { MetadataKey.Build_DefinitionName, "test" },
+            { MetadataKey.SBOMToolName, "testMicrosoft" },
+            { MetadataKey.SBOMToolVersion, "Tool.Version" },
+            { MetadataKey.PackageVersion, "Package.Version" },
+            { MetadataKey.PackageSupplier, "testPackageSupplier" }
         });
 
+        var localMetadataProvider = new LocalMetadataProvider(configurationMock.Object);
         var sbomConfigs = new SbomConfigProvider(
-            new IManifestConfigHandler[] { mockConfigHandler.Object },
-            new IMetadataProvider[] { mockMetadataProvider.Object },
-            mockLogger.Object,
-            recorderMock.Object);
+            manifestConfigHandlers: new IManifestConfigHandler[] { mockConfigHandler.Object },
+            metadataProviders: new IMetadataProvider[] { localMetadataProvider, mockMetadataProvider.Object },
+            logger: mockLogger.Object,
+            recorder: recorderMock.Object);
 
         using var manifestStream = new MemoryStream();
         using var manifestWriter = new StreamWriter(manifestStream);
@@ -143,6 +153,12 @@ public class ManifestGenerationWorkflowTests
         configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Generate);
         configurationMock.SetupGet(c => c.BuildComponentPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
         configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
+
+        // Added config settings
+        configurationMock.SetupGet(c => c.PackageName).Returns(new ConfigurationSetting<string>("the-package-name"));
+        configurationMock.SetupGet(c => c.PackageVersion).Returns(new ConfigurationSetting<string>("the-package-version"));
+        configurationMock.SetupGet(c => c.NamespaceUriUniquePart).Returns(new ConfigurationSetting<string>("some-custom-value-here"));
+        configurationMock.SetupGet(c => c.NamespaceUriBase).Returns(new ConfigurationSetting<string>("http://sbom.microsoft"));
 
         fileSystemMock
             .Setup(f => f.CreateDirectory(

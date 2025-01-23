@@ -615,5 +615,44 @@ public class Generator : IManifestGenerator
 
     public ManifestInfo RegisterManifest() => Constants.Spdx30ManifestInfo;
 
-    IDictionary<string, object> IManifestGenerator.GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider) => throw new NotSupportedException();
+    public IDictionary<string, object> GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider)
+    {
+        if (internalMetadataProvider is null)
+        {
+            throw new ArgumentNullException(nameof(internalMetadataProvider));
+        }
+
+        var generationData = internalMetadataProvider.GetGenerationData(Constants.Spdx30ManifestInfo);
+
+        var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolName);
+        var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
+        var packageName = internalMetadataProvider.GetPackageName();
+        var packageVersion = internalMetadataProvider.GetPackageVersion();
+
+        var documentName = string.Format(Constants.SPDXDocumentNameFormatString, packageName, packageVersion);
+
+        var creationInfo = new CreationInfo
+        {
+            Created = internalMetadataProvider.GetGenerationTimestamp(),
+            CreatedBy = new List<string>
+            {
+                $"{internalMetadataProvider.GetPackageSupplier()}",
+            },
+            CreatedUsing = new List<string>
+            {
+                $"{sbomToolName}-{sbomToolVersion}"
+            }
+        };
+
+        return new Dictionary<string, object>
+        {
+            { Constants.SPDXVersionHeaderName, Version },
+            { Constants.DataLicenseHeaderName, Constants.DataLicenceValue },
+            { Constants.SPDXIDHeaderName, Constants.SPDXDocumentIdValue },
+            { Constants.DocumentNameHeaderName, documentName },
+            { Constants.DocumentNamespaceHeaderName,  internalMetadataProvider.GetDocumentNamespace() },
+            { Constants.CreationInfoHeaderName, creationInfo },
+            { Constants.DocumentDescribesHeaderName, new string[] { generationData.RootPackageId } }
+        };
+    }
 }

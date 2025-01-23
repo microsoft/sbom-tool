@@ -19,6 +19,12 @@ public static class Constants
         Version = "2.2"
     };
 
+    public static ManifestInfo SPDX30ManifestInfo = new ManifestInfo
+    {
+        Name = "SPDX",
+        Version = "3.0"
+    };
+
     public static SbomSpecification SPDX22Specification = SPDX22ManifestInfo.ToSBOMSpecification();
 
     // TODO: move to test csproj
