@@ -12,7 +12,6 @@ using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
 using Serilog;
-using File = System.IO.File;
 
 namespace Microsoft.Sbom.Api.PackageDetails;
 

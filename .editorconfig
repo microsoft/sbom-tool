@@ -952,7 +952,7 @@ dotnet_diagnostic.CS8632.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0005
 # IDE0005: Using directive is unnecessary
-dotnet_diagnostic.IDE0005.severity = suggestion
+dotnet_diagnostic.IDE0005.severity = error
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0009
 # IDE0009: Add 'this' or 'Me' qualification

@@ -3,9 +3,6 @@
 
 namespace Microsoft.Sbom.Targets;
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using Microsoft.Build.Framework;
 
 /// <summary>

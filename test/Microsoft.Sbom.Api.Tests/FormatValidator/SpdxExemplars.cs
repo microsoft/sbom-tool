@@ -3,12 +3,6 @@
 
 namespace Microsoft.Sbom.Api.Tests.FormatValidator;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 internal readonly struct SpdxExemplars
 {
     public const string JsonSpdx23Exemplar = /*lang=json,strict*/ @"{

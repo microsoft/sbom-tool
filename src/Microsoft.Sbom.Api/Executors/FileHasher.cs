@@ -12,7 +12,6 @@ using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Extensions;

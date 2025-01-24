@@ -2,10 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
-using Serilog.Events;
 
 namespace Microsoft.Sbom.Api.Config.Args;
 
