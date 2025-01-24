@@ -461,7 +461,7 @@ stylecop.documentation.xmlHeader = false
 
 # SA1623: Property summary documentation must match accessors
 # Justification: It's noise to start a summary with "Gets" or "Sets"
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md
+# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1623.md
 dotnet_diagnostic.SA1623.severity = none
 
 # CA1859: Use concrete types when possible
