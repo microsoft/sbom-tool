@@ -115,14 +115,14 @@ public class ValidatedSBOM: IValidatedSBOM
             return ValidationDetails;
         }
 
-        if (SPDXVersionParser.VersionMatchesRequiredVersion(sbom?.Version, requiredSpdxMajorVersion))
+        if (SPDXVersionParser.VersionMatchesRequiredVersion(sbom.Version, requiredSpdxMajorVersion))
         {
             ValidationDetails.AggregateValidationStatus(FormatValidationStatus.Valid);
             return ValidationDetails;
         }
 
         ValidationDetails.AggregateValidationStatus(FormatValidationStatus.NotValid);
-        ValidationDetails.Errors.Add($"SBOM version {sbom?.Version} is not recognized as SPDX major version 2.");
+        ValidationDetails.Errors.Add($"SBOM version {sbom.Version} is not recognized as SPDX major version 2.");
         return ValidationDetails;
     }
 

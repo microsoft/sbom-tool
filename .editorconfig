@@ -752,7 +752,7 @@ dotnet_diagnostic.CA1311.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1508
 # CA1508: Avoid dead conditional code
-dotnet_diagnostic.CA1508.severity = suggestion
+dotnet_diagnostic.CA1508.severity = error
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1510
 # CA1510: Use '...' instead of explicitly throwing a new exception instance

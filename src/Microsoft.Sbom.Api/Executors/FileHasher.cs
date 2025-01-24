@@ -72,16 +72,6 @@ public class FileHasher
         ManifestGeneratorProvider manifestGeneratorProvider,
         IFileTypeUtils fileTypeUtils)
     {
-        if (configuration is null)
-        {
-            throw new ArgumentNullException(nameof(configuration));
-        }
-
-        if (manifestGeneratorProvider is null)
-        {
-            throw new ArgumentNullException(nameof(manifestGeneratorProvider));
-        }
-
         this.hashCodeGenerator = hashCodeGenerator ?? throw new ArgumentNullException(nameof(hashCodeGenerator));
         this.manifestPathConverter = manifestPathConverter ?? throw new ArgumentNullException(nameof(manifestPathConverter));
         this.log = log ?? throw new ArgumentNullException(nameof(log));
