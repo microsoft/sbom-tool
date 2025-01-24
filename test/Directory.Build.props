@@ -9,6 +9,7 @@
   </PropertyGroup>
   <ItemGroup Label="Package References">
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport"/>
     <PackageReference Include="MSTest"/>
     <PackageReference Include="Moq"/>
   </ItemGroup>
