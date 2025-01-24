@@ -676,7 +676,7 @@ dotnet_diagnostic.CA1032.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1040
 # CA1040: Avoid empty interfaces
-dotnet_diagnostic.CA1040.severity = suggestion
+dotnet_diagnostic.CA1040.severity = error
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1041
 # CA1041: Provide ObsoleteAttribute message
