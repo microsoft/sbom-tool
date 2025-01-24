@@ -17,7 +17,7 @@ public class ValidationArgs : GenerationAndValidationCommonArgs
     /// </summary>
     [ArgShortcut("b")]
     [ArgRequired(IfNot = "ConfigFilePath")]
-    [ArgDescription("The root folder of the drop directory to validate.")]
+    [ArgDescription("Specifies the root folder of the drop directory containing the final build artifacts (binaries and executables) for which the SBOM file will be validated. This is the directory where the completed build output is stored.")]
     public string BuildDropPath { get; set; }
 
     /// <summary>
