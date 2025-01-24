@@ -151,6 +151,7 @@ public static class SPDXExtensions
         element.SpdxId = GenerateSpdxId(element, id);
     }
 
+    /// <summary>
     /// Compute the SHA256 string representation (omitting dashes) of a given string
     /// </summary>
     /// <remarks>

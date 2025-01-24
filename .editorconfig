@@ -619,7 +619,7 @@ dotnet_diagnostic.SA1625.severity = suggestion
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1626.md
 # SA1626: Single-line comments should not use documentation style slashes
-dotnet_diagnostic.SA1626.severity = suggestion
+dotnet_diagnostic.SA1626.severity = error
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1627.md
 # SA1627: Documentation text should not be empty
