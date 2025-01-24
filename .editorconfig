@@ -543,7 +543,7 @@ dotnet_diagnostic.SA1204.severity = suggestion
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1207.md
 # SA1207: Member attributes should follow the order
-dotnet_diagnostic.SA1207.severity = suggestion
+dotnet_diagnostic.SA1207.severity = error
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1214.md
 # SA1214: Readonly fields must appear before non-readonly fields
