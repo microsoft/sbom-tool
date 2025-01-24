@@ -103,7 +103,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<RelationshipGenerator>()
             .AddTransient<ConfigSanitizer>()
             .AddTransient<IProcessExecutor, ProcessExecutor>()
-            .AddTransient<Api.Utils.IComponentDetector, ComponentDetector>()
+            .AddTransient<IComponentDetector, ComponentDetector>()
             .AddTransient<IMetadataBuilderFactory, MetadataBuilderFactory>()
             .AddTransient<FileInfoWriter>()
             .AddTransient<ComponentToExternalReferenceInfoConverter>()
