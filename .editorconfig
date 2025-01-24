@@ -631,7 +631,7 @@ dotnet_diagnostic.SA1629.severity = suggestion
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md
 # SA1633: File should have header
-dotnet_diagnostic.SA1633.severity = suggestion
+dotnet_diagnostic.SA1633.severity = error
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1642.md
 # SA1642: Constructor summary documentation should begin with standard text
