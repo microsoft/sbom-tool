@@ -615,7 +615,7 @@ dotnet_diagnostic.SA1622.severity = suggestion
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1625.md
 # SA1625: Element documentation should not be copied and pasted
-dotnet_diagnostic.SA1625.severity = suggestion
+dotnet_diagnostic.SA1625.severity = error
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1626.md
 # SA1626: Single-line comments should not use documentation style slashes
