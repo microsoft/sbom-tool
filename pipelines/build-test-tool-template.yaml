@@ -18,7 +18,7 @@ steps:
       arguments: '-c $(BuildConfiguration)'
 
   - pwsh: |
-      dotnet test -c $(BuildConfiguration) --no-build -- --report-trx --results-directory $(Build.SourcesDirectory)/artifacts/TestResults --coverage --coverage-output $(Build.SourcesDirectory)/artifacts/Coverage/coverage.cobertura.xml --coverage-output-format cobertura
+      dotnet test -c $(BuildConfiguration) --no-build -- --report-trx --results-directory $(Build.SourcesDirectory)/artifacts/TestResults --coverage --coverage-output $(Build.SourcesDirectory)/artifacts/Coverage/coverage.cobertura.xml --coverage-output-format cobertura --hangdump --hangdump-filename hangdump.dmp
     displayName: Run unit tests
 
   - task: PublishTestResults@2
@@ -31,6 +31,14 @@ steps:
       mergeTestResults: true
     continueOnError: true
     condition: always()
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish TestResults directory
+    condition: always()
+    inputs:
+      PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults'
+      ArtifactName: test-results
+      ArtifactType: Container
 
   - task: PublishCodeCoverageResults@2
     displayName: "Publish code coverage (Windows only)"
