@@ -4,11 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using HashAlgorithmName = Microsoft.Sbom.Contracts.Enums.AlgorithmName;
 
 namespace Microsoft.Sbom.Common;
 

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Microsoft.Sbom.Extensions.Entities;
 using RelationshipType = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.RelationshipType;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;

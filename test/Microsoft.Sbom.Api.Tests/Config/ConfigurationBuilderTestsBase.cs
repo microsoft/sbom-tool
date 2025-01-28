@@ -18,7 +18,7 @@ namespace Microsoft.Sbom.Api.Config.Tests;
 public class ConfigurationBuilderTestsBase
 {
     protected Mock<IFileSystemUtils> fileSystemUtilsMock;
-    protected private IMapper mapper;
+    private protected IMapper mapper;
     protected ConfigValidator[] configValidators;
     protected Mock<IAssemblyConfig> mockAssemblyConfig;
 

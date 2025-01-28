@@ -4,8 +4,6 @@
 namespace Microsoft.Sbom.Common;
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;

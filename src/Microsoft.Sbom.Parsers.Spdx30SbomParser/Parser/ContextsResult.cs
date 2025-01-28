@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 namespace Microsoft.Sbom.Parser;
 

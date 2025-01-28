@@ -8,7 +8,6 @@ using System.Threading.Channels;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;

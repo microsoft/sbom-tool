@@ -39,7 +39,6 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json.Linq;
-using Serilog.Events;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
