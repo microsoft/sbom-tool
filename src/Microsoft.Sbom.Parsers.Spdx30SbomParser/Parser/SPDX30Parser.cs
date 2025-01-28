@@ -4,15 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
 using SPDXConstants = Microsoft.Sbom.Parsers.Spdx30SbomParser.Constants;
 

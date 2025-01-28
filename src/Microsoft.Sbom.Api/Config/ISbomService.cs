@@ -9,7 +9,9 @@ namespace Microsoft.Sbom.Api.Config;
 /// Marker interface for an SBOM service.
 /// </summary>
 /// <typeparam name="T">The type of arguments against which this service is run.</typeparam>
+#pragma warning disable CA1040 // Avoid empty interfaces
 public interface ISbomService<T>
+#pragma warning restore CA1040 // Avoid empty interfaces
     where T : CommonArgs
 {
 }

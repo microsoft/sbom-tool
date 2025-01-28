@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;

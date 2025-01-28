@@ -3,7 +3,6 @@
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 
-using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 

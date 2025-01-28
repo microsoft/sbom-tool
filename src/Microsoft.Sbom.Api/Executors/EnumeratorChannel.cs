@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Serilog;
 

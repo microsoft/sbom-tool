@@ -3,8 +3,6 @@
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
-using System.Text.Json.Serialization;
-
 /// <summary>
 /// A tool is an element of hardware and/or software utilized to carry out a particular function.
 /// https://spdx.github.io/spdx-spec/v3.0.1/model/Core/Classes/Tool/

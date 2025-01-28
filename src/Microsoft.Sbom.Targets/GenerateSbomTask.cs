@@ -5,9 +5,6 @@ namespace Microsoft.Sbom.Targets;
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.IO;
-using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

@@ -4,13 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using AutoMapper;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Common.Utils;
 using PowerArgs;

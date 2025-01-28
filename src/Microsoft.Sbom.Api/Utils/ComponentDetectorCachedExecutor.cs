@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Serilog;
-using Spectre.Console.Cli;
 
 namespace Microsoft.Sbom.Api.Utils;
 
