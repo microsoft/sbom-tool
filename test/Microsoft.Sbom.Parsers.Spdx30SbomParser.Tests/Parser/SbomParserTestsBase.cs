@@ -207,7 +207,7 @@ public abstract class SbomParserTestsBase
 
             var fileHasSha256Hash = fileElement.VerifiedUsing.
                 Any(packageVerificationCode => packageVerificationCode.Algorithm ==
-                Parsers.Spdx30SbomParser.Entities.Enums.HashAlgorithm.sha256);
+                HashAlgorithm.sha256);
 
             if (!fileHasSha256Hash)
             {
@@ -230,7 +230,7 @@ public abstract class SbomParserTestsBase
 
             var packageHasSha256Hash = packageElement.VerifiedUsing.
                 Any(packageVerificationCode => packageVerificationCode.Algorithm ==
-                Parsers.Spdx30SbomParser.Entities.Enums.HashAlgorithm.sha256);
+                HashAlgorithm.sha256);
 
             if (!packageHasSha256Hash)
             {

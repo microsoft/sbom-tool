@@ -5,7 +5,6 @@ using System.Collections.Concurrent;
 using Microsoft.ComponentDetection.Orchestrator;
 using Microsoft.ComponentDetection.Orchestrator.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
@@ -41,7 +40,6 @@ using Serilog.Events;
 using Serilog.Extensions.Logging;
 using Serilog.Filters;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
-using IComponentDetector = Microsoft.ComponentDetection.Contracts.IComponentDetector;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Extensions.DependencyInjection;
@@ -105,7 +103,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<RelationshipGenerator>()
             .AddTransient<ConfigSanitizer>()
             .AddTransient<IProcessExecutor, ProcessExecutor>()
-            .AddTransient<Api.Utils.IComponentDetector, ComponentDetector>()
+            .AddTransient<IComponentDetector, ComponentDetector>()
             .AddTransient<IMetadataBuilderFactory, MetadataBuilderFactory>()
             .AddTransient<FileInfoWriter>()
             .AddTransient<ComponentToExternalReferenceInfoConverter>()

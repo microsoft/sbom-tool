@@ -186,6 +186,7 @@ public static class SPDXExtensions
         return referenceCategory.ToString().Replace('_', '-');
     }
 
+    /// <summary>
     /// Compute the SHA256 string representation (omitting dashes) of a given string
     /// </summary>
     /// <remarks>

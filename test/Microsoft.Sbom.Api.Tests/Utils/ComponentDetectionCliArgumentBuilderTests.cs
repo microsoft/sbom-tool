@@ -4,11 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PowerArgs;
 using static Microsoft.Sbom.Api.Tests.Utils.ComponentDetectionCliArgumentBuilderTestsExtensions;
 
 namespace Microsoft.Sbom.Api.Tests.Utils;

@@ -8,7 +8,6 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Convertors.Tests;
 

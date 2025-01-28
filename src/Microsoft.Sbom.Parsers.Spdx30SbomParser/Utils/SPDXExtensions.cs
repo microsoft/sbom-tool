@@ -8,12 +8,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Sbom.Contracts;
-using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Extensions.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Utils;
 
@@ -154,6 +151,7 @@ public static class SPDXExtensions
         element.SpdxId = GenerateSpdxId(element, id);
     }
 
+    /// <summary>
     /// Compute the SHA256 string representation (omitting dashes) of a given string
     /// </summary>
     /// <remarks>

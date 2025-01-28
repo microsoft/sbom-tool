@@ -6,6 +6,11 @@
     <TestingPlatformDotNetTestSupport>true</TestingPlatformDotNetTestSupport>
     <TestingPlatformCaptureOutput>false</TestingPlatformCaptureOutput>
   </PropertyGroup>
+
+  <PropertyGroup Label="Build">
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>  <!-- Required for IDE0005 rule -->
+  </PropertyGroup>
+  
   <ItemGroup Label="Package References">
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport"/>
