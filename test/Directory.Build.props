@@ -13,10 +13,9 @@
   
   <ItemGroup Label="Package References">
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
-    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport"/>
-    <PackageReference Include="Microsoft.Testing.Extensions.HangDump"/>
-    <PackageReference Include="MSTest"/>
-    <PackageReference Include="Moq"/>
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+    <PackageReference Include="MSTest" />
+    <PackageReference Include="Moq" />
   </ItemGroup>
 
 </Project>

@@ -11,7 +11,6 @@ resources:
 
 variables:
   BuildConfiguration: 'Release'
-  OutputArtifactName: 'SBOMTool'
 
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
@@ -27,11 +26,6 @@ extends:
         jobs:
         - job: Job_1
           displayName: Build (Windows)
-          templateContext:
-            outputs:
-            - output: pipelineArtifact
-              targetPath: $(Build.ArtifactStagingDirectory)
-              artifactName: '$(OutputArtifactName)'
           pool:
             name: sbom-windows-build-pool
             os: windows
@@ -40,11 +34,6 @@ extends:
 
         - job: Job_2
           displayName: 'Build (Linux)'
-          templateContext:
-            outputs:
-            - output: pipelineArtifact
-              targetPath: $(Build.ArtifactStagingDirectory)
-              artifactName: '$(OutputArtifactName)'
           pool:
             name: sbom-linux-build-pool
             os: linux
@@ -53,11 +42,6 @@ extends:
 
         - job: Job_3
           displayName: 'Build (macOS)'
-          templateContext:
-            outputs:
-            - output: pipelineArtifact
-              targetPath: $(Build.ArtifactStagingDirectory)
-              artifactName: '$(OutputArtifactName)'
           pool:
             name: Azure Pipelines
             image: macos-latest
@@ -67,11 +51,6 @@ extends:
 
         - job: Job_4
           displayName: 'Build (macOS-arm64)'
-          templateContext:
-            outputs:
-            - output: pipelineArtifact
-              targetPath: $(Build.ArtifactStagingDirectory)
-              artifactName: '$(OutputArtifactName)'
           pool:
             name: Azure Pipelines
             image: macos-latest

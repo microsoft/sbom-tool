@@ -18,7 +18,7 @@ steps:
       arguments: '-c $(BuildConfiguration)'
 
   - pwsh: |
-      dotnet test -c $(BuildConfiguration) --no-build -- --report-trx --results-directory $(Build.ArtifactStagingDirectory)/artifacts/TestResults --coverage --coverage-output $(Build.ArtifactStagingDirectory)/artifacts/Coverage/coverage.cobertura.xml --coverage-output-format cobertura --hangdump --hangdump-filename hangdump.dmp
+      dotnet test -c $(BuildConfiguration) --no-build -- --report-trx --results-directory $(Build.ArtifactStagingDirectory)/artifacts/TestResults --coverage --coverage-output $(Build.ArtifactStagingDirectory)/artifacts/Coverage/coverage.cobertura.xml --coverage-output-format cobertura
     displayName: Run unit tests
 
   - task: PublishTestResults@2
