@@ -23,6 +23,7 @@ steps:
 
   - task: PublishTestResults@2
     displayName: Publish TRX Test Results
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
     inputs:
       testResultsFormat: 'VSTest'
       testResultsFiles: '*.trx'
