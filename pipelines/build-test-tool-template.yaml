@@ -31,7 +31,6 @@ steps:
       testRunTitle: 'Unit Tests for $(BuildConfiguration)'
       mergeTestResults: true
     continueOnError: true
-    condition: always()
 
   - task: PublishCodeCoverageResults@2
     displayName: "Publish code coverage (Windows only)"
