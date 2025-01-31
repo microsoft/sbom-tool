@@ -18,6 +18,28 @@ steps:
       arguments: '-c $(BuildConfiguration)'
 
   - task: DotNetCoreCLI@2
-    displayName: Run tests
+    displayName: Run unit tests (with coverage on Windows)
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
     inputs:
       command: 'test'
+      nobuild: true
+      configuration: '$(BuildConfiguration)'
+      arguments: '-- --report-trx --results-directory $(Agent.TempDirectory) --coverage --coverage-output $(Agent.TempDirectory)/coverage.cobertura.xml --coverage-output-format cobertura'
+
+  - task: DotNetCoreCLI@2
+    displayName: Run unit tests (without coverage on non-Windows)
+    condition: ne(variables['Agent.OS'], 'Windows_NT')
+    inputs:
+      command: 'test'
+      nobuild: true
+      configuration: '$(BuildConfiguration)'
+      arguments: '-- --report-trx --results-directory $(Agent.TempDirectory)'
+
+  # While DotNetCoreCLI docs say that it publishes both TRX and coverage, it doesn't actually publish coverage.
+  # https://github.com/microsoft/azure-pipelines-tasks/issues/18254
+  # https://github.com/microsoft/azure-pipelines-tasks/blob/32b9a3224f25403218dd995eec248f64025f3e2e/Tasks/DotNetCoreCLIV2/dotnetcore.ts#L196-L208
+  - task: PublishCodeCoverageResults@2
+    displayName: "Publish code coverage (Windows only)"
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
+    inputs:
+      summaryFileLocation: '$(Agent.TempDirectory)/coverage.cobertura.xml'
