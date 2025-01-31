@@ -17,23 +17,20 @@ steps:
     inputs:
       arguments: '-c $(BuildConfiguration)'
 
-  - pwsh: |
-      dotnet test -c $(BuildConfiguration) --no-build -- --report-trx --results-directory $(Build.ArtifactStagingDirectory)/artifacts/TestResults --coverage --coverage-output $(Build.ArtifactStagingDirectory)/artifacts/Coverage/coverage.cobertura.xml --coverage-output-format cobertura
-    displayName: Run unit tests
-
-  - task: PublishTestResults@2
-    displayName: Publish TRX Test Results
+  - task: DotNetCoreCLI@2
+    displayName: Run unit tests (with coverage on Windows)
     condition: eq(variables['Agent.OS'], 'Windows_NT')
     inputs:
-      testResultsFormat: 'VSTest'
-      testResultsFiles: '*.trx'
-      searchFolder: '$(Build.ArtifactStagingDirectory)/artifacts/TestResults'
-      testRunTitle: 'Unit Tests for $(BuildConfiguration)'
-      mergeTestResults: true
-    continueOnError: true
+      command: 'test'
+      nobuild: true
+      configuration: '$(BuildConfiguration)'
+      arguments: '-- --report-trx --results-directory $(Agent.TempDirectory) --coverage --coverage-output $(Agent.TempDirectory)/coverage.cobertura.xml --coverage-output-format cobertura'
 
-  - task: PublishCodeCoverageResults@2
-    displayName: "Publish code coverage (Windows only)"
-    condition: eq(variables['Agent.OS'], 'Windows_NT')
+  - task: DotNetCoreCLI@2
+    displayName: Run unit tests (without coverage on non-Windows)
+    condition: ne(variables['Agent.OS'], 'Windows_NT')
     inputs:
-      summaryFileLocation: '$(Build.ArtifactStagingDirectory)/artifacts/Coverage/coverage.cobertura.xml'
+      command: 'test'
+      nobuild: true
+      configuration: '$(BuildConfiguration)'
+      arguments: '-- --report-trx --results-directory $(Agent.TempDirectory)'
