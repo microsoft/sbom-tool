@@ -5,10 +5,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Microsoft.Identity.Services.Crypto;
+using Microsoft.Identity.Services.DataProtection;
+using Microsoft.Identity.Services.DataProtection.Jwt.Signing;
+using Microsoft.Identity.Services.DataProtection.Secrets;
+using Microsoft.Identity.Services.DataProtection.Serialization.Json;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Hashing.Algorithms;
+using Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows.Helpers;
@@ -122,6 +130,23 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 // Generate SHA256 for manifest json
                 sbomConfigs.ApplyToEachConfig(config => GenerateHashForManifestJson(config.ManifestJsonFilePath));
 
+                // Maria: for this demo assume that only one spdx file was created.
+                // Compute its path and sign it using my personal MSFT certificate // later change it to AME and run on the saw and debug the exe
+                Console.ForegroundColor = ConsoleColor.Cyan;
+
+                var sbomRelativeFilePath = Path.Combine(sbomDir, "spdx_2.2", "manifest.spdx.json");
+                if (File.Exists(sbomRelativeFilePath))
+                {
+                    Console.WriteLine($"DPP Signing the SPDX file at {sbomRelativeFilePath}");
+                    SignWithDPP(sbomRelativeFilePath);
+                }
+                else
+                {
+                    Console.WriteLine($"SPDX file path does not exist = {sbomRelativeFilePath}");
+                }
+
+                Console.ForegroundColor = ConsoleColor.White;
+
                 return !validErrors.Any();
             }
             catch (Exception e)
@@ -164,6 +189,104 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     log.Warning($"Unable to delete the temp directory {fileSystemUtils.GetSbomToolTempPath()}", e);
                 }
             }
+        }
+    }
+
+    private void SignWithDPP(string spdxFilePath)
+    {
+        var logHeader = $"{nameof(SignWithDPP)}";
+        Console.WriteLine($"{logHeader} - retrieving current user's corp certificate");
+        var signingCert = GetUserCertificate();
+
+        if (signingCert == null)
+        {
+            Console.WriteLine($"{logHeader} - no corp certificate found. Cannot sign spdx file.");
+            return;
+        }
+
+        // make the additional context
+        var context = new Dictionary<string, string>
+        {
+            { "PlaceholderKey", "test" },
+        }.ToDataContext();
+
+        // create the cert source and cert validator
+        var signingCertificate = CachedCertificate.Create(signingCert);
+        var validator = new MyCertValidator();
+        ISecretSerializer<ICachedCertificate> secretSerializer = new PublicCertificateSerializer();
+        var certSource = CachedCertificateSource.CreateSelfManagedSource(secretSerializer, validator, signingCertificate);
+
+        // create the content serializer
+        var jsonSerializer = new JsonContentSerializer(preserveOrder: true);
+        var signatureConfiguration = new JsonSignatureConfiguration(
+            version: 1,
+            keySource: certSource.AsReadOnlyAsymmetricKeySource(),
+            serializer: jsonSerializer);
+
+        // create the signature boundary container
+        ISignatureBoundaryContainer signatureBoundaryContainer = new SignatureBoundaryContainer(signatureConfiguration);
+
+        // sign the file
+        var fileContentBytes = File.ReadAllBytes(spdxFilePath);
+        Console.WriteLine($"{logHeader} - signing sbom file {spdxFilePath}");
+        var signature = signatureBoundaryContainer.SignDataAsString(
+            fileContentBytes,
+            context);
+
+        // write signature in separate file
+        var signatureFile = Path.Combine(Path.GetDirectoryName(spdxFilePath), $"manifest.spdx.json.signature.txt");
+        File.WriteAllText(signatureFile, signature);
+        Console.WriteLine($"Wrote signature to file {signatureFile}");
+    }
+
+    /// <summary>
+    /// custom certificate validator for DPP
+    /// </summary>
+    private class MyCertValidator : ISecretValidator<ICachedCertificate>
+    {
+        public bool Validate(ICachedCertificate secret)
+        {
+            // TODO: Public cert validation logic goes here when it will be available.
+            return true;
+        }
+    }
+
+    private X509Certificate2 GetUserCertificate()
+    {
+        var logHeader = $"{nameof(GetUserCertificate)}";
+        using (var store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+        {
+            store.Open(OpenFlags.ReadOnly);
+            var certs = store.Certificates;
+            X509Certificate2 signingCert = null;
+            foreach (var cert in certs)
+            {
+                if (cert.Subject.Contains("DC=corp"))
+                {
+                    signingCert = cert;
+                    break;
+                }
+            }
+
+            if (signingCert == null)
+            {
+                Console.WriteLine($"{logHeader} - no corp certificate found. Cannot sign spdx file.");
+                return null;
+            }
+
+            Console.WriteLine($"{logHeader} - found corp certificate");
+            Console.WriteLine("Subject: " + signingCert.Subject);
+            Console.WriteLine("Issuer" + signingCert.Issuer);
+
+            if (!signingCert.HasPrivateKey)
+            {
+                Console.WriteLine($"{logHeader} - certificate does not have private key. Cannot sign spdx file.");
+                return null;
+            }
+
+            Console.WriteLine($"{logHeader} - certificate has private key.");
+
+            return signingCert;
         }
     }
 

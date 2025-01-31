@@ -17,6 +17,12 @@
         <PackageReference Include="Microsoft.ComponentDetection.Orchestrator" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <PackageReference Include="Microsoft.Identity.Services.Crypto.Contracts" />
+        <PackageReference Include="Microsoft.Identity.Services.Crypto.Core" />
+        <PackageReference Include="Microsoft.Identity.Services.DataProtection.Contracts" />
+        <PackageReference Include="Microsoft.Identity.Services.DataProtection.Core" />
+        <PackageReference Include="Microsoft.Identity.Services.DataProtection.Jwt" />
+        <PackageReference Include="Microsoft.Identity.Services.DataProtection.Serialization.Json" />
         <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="NuGet.Configuration" />
         <PackageReference Include="packageurl-dotnet" />
