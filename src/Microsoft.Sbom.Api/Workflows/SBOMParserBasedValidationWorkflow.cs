@@ -6,9 +6,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.Identity.Services.Crypto;
+using Microsoft.Identity.Services.DataProtection;
+using Microsoft.Identity.Services.DataProtection.Jwt.Signing;
+using Microsoft.Identity.Services.DataProtection.Secrets;
+using Microsoft.Identity.Services.DataProtection.Serialization.Json;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Manifest;
@@ -63,6 +70,34 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
     public async Task<bool> RunAsync()
     {
+        // Compute the DPP signature file path and verify the signature and validate the public cert in it.
+        Console.ForegroundColor = ConsoleColor.Cyan;
+
+        var sbomConfigDetails = sbomConfigs.Get(configuration.ManifestInfo.Value.FirstOrDefault());
+        if (File.Exists(sbomConfigDetails.ManifestJsonFilePath))
+        {
+            var folderName = Path.GetDirectoryName(sbomConfigDetails.ManifestJsonFilePath);
+            var dppSignatureFilePath = Path.Combine(folderName, "manifest.spdx.json.signature.txt");
+            if (File.Exists(dppSignatureFilePath))
+            {
+                // DPP doesn't support streams yet for signature creation and signature verification. We will add support for this.
+                var sbomBytes = File.ReadAllBytes(sbomConfigDetails.ManifestJsonFilePath);
+                var dppSignatureBytes = File.ReadAllBytes(dppSignatureFilePath);
+                Console.WriteLine($"Verifing the signature file created by DPP at {dppSignatureFilePath} with SBOM file at {sbomConfigDetails.ManifestJsonFilePath}.");
+                VerifySignatureWithDPP(sbomBytes, dppSignatureBytes);
+            }
+            else
+            {
+                Console.WriteLine($"Cannot verify signature because DPP signature file doesn't exist at path {dppSignatureFilePath}");
+            }
+        }
+        else
+        {
+            Console.WriteLine($"Cannot verify signature because SBOM file doesn't exist at path {sbomConfigDetails}");
+        }
+
+        Console.ForegroundColor = ConsoleColor.White;
+
         ValidationResult validationResultOutput = null;
         IEnumerable<FileValidationResult> validFailures = null;
         var totalNumberOfPackages = 0;
@@ -195,6 +230,64 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 LogResultsSummary(validationResultOutput, validFailures);
                 LogIndividualFileResults(validFailures);
             }
+        }
+    }
+
+    private void VerifySignatureWithDPP(byte[] sbomBytes, byte[] dppSignatureBytes)
+    {
+        var logHeader = $"{nameof(VerifySignatureWithDPP)}";
+
+        // make a placeholder cert which is never used.
+        // This is only because our interfaces need a cert even when validation takes the cert from the signature
+        // This is a TODO on our side
+        var request = new CertificateRequest($"DC=placeholderCert", RSA.Create(2048), HashAlgorithmName.SHA384, RSASignaturePadding.Pss);
+        var placeholderCert = request.CreateSelfSigned(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(30));
+
+        // make the additional context
+        var context = new Dictionary<string, string>
+        {
+            { "PlaceholderKey", "test" },
+        }.ToDataContext();
+
+        // create the cert source and cert validator
+        var signingCertificate = CachedCertificate.Create(placeholderCert);
+        var validator = new MyCertValidator();
+        ISecretSerializer<ICachedCertificate> secretSerializer = new PublicCertificateSerializer();
+        var certSource = CachedCertificateSource.CreateSelfManagedSource(secretSerializer, validator, signingCertificate);
+
+        // create the content serializer
+        var jsonSerializer = new JsonContentSerializer(preserveOrder: true);
+        var signatureConfiguration = new JsonSignatureConfiguration(
+            version: 1,
+            keySource: certSource.AsReadOnlyAsymmetricKeySource(),
+            serializer: jsonSerializer);
+
+        // create the signature boundary container
+        ISignatureBoundaryContainer signatureBoundaryContainer = new SignatureBoundaryContainer(signatureConfiguration);
+
+        try
+        {
+            signatureBoundaryContainer.ValidateData(
+                dppSignatureBytes,
+                sbomBytes,
+                context);
+            Console.WriteLine($"{logHeader} - DPP Signature is valid.");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"{logHeader} - Failed to validate DPP signature. Exception: {e.Message}");
+        }
+    }
+
+    /// <summary>
+    /// custom certificate validator for DPP
+    /// </summary>
+    private class MyCertValidator : ISecretValidator<ICachedCertificate>
+    {
+        public bool Validate(ICachedCertificate secret)
+        {
+            // TODO: Public cert validation logic goes here when it will be available.
+            return true;
         }
     }
 

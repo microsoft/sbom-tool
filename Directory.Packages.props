@@ -27,6 +27,12 @@
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+    <PackageVersion Include="Microsoft.Identity.Services.Crypto.Contracts" Version="1.0.11740" />
+    <PackageVersion Include="Microsoft.Identity.Services.Crypto.Core" Version="1.0.11740" />
+    <PackageVersion Include="Microsoft.Identity.Services.DataProtection.Contracts" Version="1.0.11740" />
+    <PackageVersion Include="Microsoft.Identity.Services.DataProtection.Core" Version="1.0.11740" />
+    <PackageVersion Include="Microsoft.Identity.Services.DataProtection.Jwt" Version="1.0.11740" />
+    <PackageVersion Include="Microsoft.Identity.Services.DataProtection.Serialization.Json" Version="1.0.11740" />
     <PackageVersion Include="Microsoft.IO.Redist" Version="6.1.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.12.19" />
