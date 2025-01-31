@@ -245,7 +245,7 @@ public abstract class SbomParserTestsBase
     /// <param name="result"></param>
     public SpdxMetadata SetMetadata(ParserResults result)
     {
-        var metadata = new SpdxMetadata();
+        var metadata = new Spdx30Metadata();
         var spdxDocumentElement = (SpdxDocument?)result.FormatEnforcedSPDX3Result.Graph.FirstOrDefault(element => element.Type == "SpdxDocument");
 
         if (spdxDocumentElement == null)

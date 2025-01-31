@@ -35,7 +35,7 @@ public class SPDX30Parser : ISbomParser
 
     public ComplianceStandard? RequiredComplianceStandard;
     public IReadOnlyCollection<string>? EntitiesToEnforceComplianceStandardsFor;
-    public SpdxMetadata Metadata = new SpdxMetadata();
+    public SpdxMetadata Metadata = new Spdx30Metadata();
     private readonly LargeJsonParser parser;
     private readonly IList<string> observedFieldNames = new List<string>();
     private readonly bool requiredFieldsCheck = true;
