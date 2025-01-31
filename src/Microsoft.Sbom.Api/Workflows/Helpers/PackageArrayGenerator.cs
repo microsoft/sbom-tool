@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Output.Telemetry;
@@ -22,53 +23,56 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
 {
     private readonly ILogger log;
 
-    private readonly ISbomConfigProvider sbomConfigs;
-
     private readonly IEnumerable<ISourcesProvider> sourcesProviders;
 
     private readonly IRecorder recorder;
 
+    private readonly ISbomConfigProvider sbomConfigs;
+
+    public ISbomConfig SbomConfig { get; set; }
+
+    public string SpdxManifestVersion { get; set; }
+
     public PackageArrayGenerator(
         ILogger log,
-        ISbomConfigProvider sbomConfigs,
         IEnumerable<ISourcesProvider> sourcesProviders,
-        IRecorder recorder)
+        IRecorder recorder,
+        ISbomConfigProvider sbomConfigs)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
-        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
         this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
     }
 
-    public async Task<IList<FileValidationResult>> GenerateAsync()
+    public async Task<GenerateResult> GenerateAsync()
     {
         using (recorder.TraceEvent(Events.PackagesGeneration))
         {
-            IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
+            var totalErrors = new List<FileValidationResult>();
 
             var sourcesProvider = this.sourcesProviders
                 .FirstOrDefault(s => s.IsSupported(ProviderType.Packages));
 
             // Write the start of the array, if supported.
             IList<ISbomConfig> packagesArraySupportingConfigs = new List<ISbomConfig>();
-            foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
-            {
-                var config = sbomConfigs.Get(manifestInfo);
-                if (config.MetadataBuilder.TryGetPackageArrayHeaderName(out var packagesArrayHeaderName))
-                {
-                    packagesArraySupportingConfigs.Add(config);
-                    config.JsonSerializer.StartJsonArray(packagesArrayHeaderName);
-                }
-            }
+            var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
+            serializationStrategy.AddToPackagesSupportingConfig(ref packagesArraySupportingConfigs, this.SbomConfig);
 
             var (jsonDocResults, errors) = sourcesProvider.Get(packagesArraySupportingConfigs);
 
-            // 6. Collect all the json elements and write to the serializer.
+            // 6. Collect all the json elements to be written to the serializer.
             var totalJsonDocumentsWritten = 0;
+            var serializersToJsonDocs = new Dictionary<IManifestToolJsonSerializer, List<JsonDocument>>();
 
             await foreach (var jsonDocResult in jsonDocResults.ReadAllAsync())
             {
-                jsonDocResult.Serializer.Write(jsonDocResult.Document);
+                if (!serializersToJsonDocs.ContainsKey(jsonDocResult.Serializer))
+                {
+                    serializersToJsonDocs[jsonDocResult.Serializer] = new List<JsonDocument>();
+                }
+
+                serializersToJsonDocs[jsonDocResult.Serializer].Add(jsonDocResult.Document);
                 totalJsonDocumentsWritten++;
             }
 
@@ -91,16 +95,18 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
                 // Write the root package information to the packages array.
                 if (sbomConfig.MetadataBuilder.TryGetRootPackageJson(sbomConfigs, out var generationResult))
                 {
-                    sbomConfig.JsonSerializer.Write(generationResult?.Document);
+                    if (!serializersToJsonDocs.ContainsKey(sbomConfig.JsonSerializer))
+                    {
+                        serializersToJsonDocs[sbomConfig.JsonSerializer] = new List<JsonDocument>();
+                    }
+
+                    serializersToJsonDocs[sbomConfig.JsonSerializer].Add(generationResult?.Document);
                     sbomConfig.Recorder.RecordRootPackageId(generationResult?.ResultMetadata?.EntityId);
                     sbomConfig.Recorder.RecordDocumentId(generationResult?.ResultMetadata?.DocumentId);
                 }
-
-                // Write the end of the array.
-                sbomConfig.JsonSerializer.EndJsonArray();
             }
 
-            return totalErrors;
+            return new GenerateResult(totalErrors, serializersToJsonDocs);
         }
     }
 }

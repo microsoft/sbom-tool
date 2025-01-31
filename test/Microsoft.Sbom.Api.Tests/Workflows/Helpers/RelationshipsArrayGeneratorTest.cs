@@ -64,7 +64,7 @@ public class RelationshipsArrayGeneratorTest
                 }
             });
         relationshipGeneratorMock.CallBase = true;
-        relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), loggerMock.Object, sbomConfigsMock.Object, recorderMock.Object);
+        relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), loggerMock.Object, recorderMock.Object);
         manifestGeneratorProvider.Init();
         metadataBuilder = new MetadataBuilder(
             mockLogger.Object,
@@ -96,7 +96,7 @@ public class RelationshipsArrayGeneratorTest
         recorder.RecordRootPackageId(RootPackageId);
         var results = await relationshipsArrayGenerator.GenerateAsync();
 
-        Assert.AreEqual(0, results.Count);
+        Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(1, relationships.Count);
 
         var describesRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.DESCRIBES);
@@ -116,7 +116,7 @@ public class RelationshipsArrayGeneratorTest
         recorder.RecordSPDXFileId(FileId1);
         var results = await relationshipsArrayGenerator.GenerateAsync();
 
-        Assert.AreEqual(0, results.Count);
+        Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(2, relationships.Count);
 
         var describedByRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.DESCRIBED_BY);
@@ -134,7 +134,7 @@ public class RelationshipsArrayGeneratorTest
         recorder.RecordExternalDocumentReferenceIdAndRootElement(ExternalDocRefId1, RootPackageId);
         var results = await relationshipsArrayGenerator.GenerateAsync();
 
-        Assert.AreEqual(0, results.Count);
+        Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(2, relationships.Count);
 
         var preReqForRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.PREREQUISITE_FOR);
@@ -153,7 +153,7 @@ public class RelationshipsArrayGeneratorTest
         recorder.RecordPackageId(PackageId1, RootPackageId);
         var results = await relationshipsArrayGenerator.GenerateAsync();
 
-        Assert.AreEqual(0, results.Count);
+        Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(2, relationships.Count);
 
         var dependsOnRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.DEPENDS_ON);
@@ -168,7 +168,7 @@ public class RelationshipsArrayGeneratorTest
     {
         var results = await relationshipsArrayGenerator.GenerateAsync();
 
-        Assert.AreEqual(0, results.Count);
+        Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(0, relationships.Count);
     }
 }
