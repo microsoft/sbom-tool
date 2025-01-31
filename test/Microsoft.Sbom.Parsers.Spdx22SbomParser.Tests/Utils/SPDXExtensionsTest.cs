@@ -77,10 +77,9 @@ public class SPDXExtensionsTest
         Assert.AreEqual(0, spdxPackage.ExternalReferences.Count());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("pkg:npm/glob@7.1.6", "pkg:npm/glob@7.1.6")]
     [DataRow("https://github.com/actions/virtual-environments", "https://github.com/actions/virtual-environments")]
-
     public void AddPackageUrlsTest_WithSpecialCharacter_Success(string inputUrl, string expectedUrl)
     {
         spdxPackage = new SPDXPackage();

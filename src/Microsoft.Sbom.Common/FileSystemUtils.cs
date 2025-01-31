@@ -49,7 +49,6 @@ public abstract class FileSystemUtils : IFileSystemUtils
         Path.Join(root, relativePath, secondRelativePath);
 
     /// <inheritdoc />
-    /// <inheritdoc />
     public string GetRelativePath(string relativeTo, string path) => Path.GetRelativePath(relativeTo, path);
 
     /// <inheritdoc />

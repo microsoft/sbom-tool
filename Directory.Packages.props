@@ -7,7 +7,7 @@
     </PackageVersion>
   </ItemDefinitionGroup>
   <PropertyGroup>
-    <ComponentDetectionPackageVersion>5.1.6</ComponentDetectionPackageVersion>
+    <ComponentDetectionPackageVersion>5.2.1</ComponentDetectionPackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="AutoMapper" Version="10.1.1" />
@@ -17,7 +17,6 @@
     <PackageVersion Include="Microsoft.Build.Locator" Version="1.7.8" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="17.11.4" />
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="8.0.2" />
     <PackageVersion Include="Microsoft.ComponentDetection.Common" Version="$(ComponentDetectionPackageVersion)" />
     <PackageVersion Include="Microsoft.ComponentDetection.Contracts" Version="$(ComponentDetectionPackageVersion)" />
@@ -38,7 +37,7 @@
     <PackageVersion Include="NuGet.ProjectModel" Version="6.11.1" />
     <PackageVersion Include="packageurl-dotnet" Version="1.1.0" />
     <PackageVersion Include="PowerArgs" Version="3.6.0" />
-    <PackageVersion Include="Scrutor" Version="5.1.0" />
+    <PackageVersion Include="Scrutor" Version="6.0.1" />
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0" />
     <PackageVersion Include="Serilog.Sinks.Async" Version="2.1.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
@@ -55,7 +54,7 @@
     <PackageVersion Include="System.Reactive" Version="6.0.1" />
     <PackageVersion Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageVersion Include="System.Text.Json" Version="9.0.0" />
-    <PackageVersion Include="System.Threading.Channels" Version="9.0.0" />
+    <PackageVersion Include="System.Threading.Channels" Version="9.0.1" />
     <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="8.0.1" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.0" />
   </ItemGroup>

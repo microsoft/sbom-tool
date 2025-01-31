@@ -9,7 +9,6 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Hashing.Tests;
 

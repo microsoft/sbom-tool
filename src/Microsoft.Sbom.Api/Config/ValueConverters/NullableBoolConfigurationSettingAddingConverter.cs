@@ -28,7 +28,7 @@ internal class NullableBoolConfigurationSettingAddingConverter : IValueConverter
         return new ConfigurationSetting<bool>
         {
             Source = settingSource,
-            Value = sourceMember ?? false
+            Value = sourceMember.Value
         };
     }
 }

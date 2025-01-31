@@ -25,8 +25,8 @@ public static class ApiConfigurationBuilder
     /// </summary>
     /// <param name="rootPath">Path where package exists. If scanning start here.</param>
     /// <param name="manifestDirPath">Output path to where manifest is generated.</param>
-    /// <param name="files">Use null to scan.</param>
-    /// <param name="packages">Use null to scan.</param>
+    /// <param name="files">Use null to scan all files.</param>
+    /// <param name="packages">Use null to scan all packages.</param>
     /// <param name="metadata"></param>
     /// <param name="specifications"></param>
     /// <param name="runtimeConfiguration"></param>

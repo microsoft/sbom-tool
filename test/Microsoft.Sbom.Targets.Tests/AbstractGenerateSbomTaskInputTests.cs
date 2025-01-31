@@ -4,7 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+#if NET472
 using System.Linq;
+#endif
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;

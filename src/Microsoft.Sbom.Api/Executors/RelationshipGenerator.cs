@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Manifest;
-using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Api.Executors;

@@ -12,10 +12,9 @@ namespace Microsoft.Sbom.Parser;
 [TestClass]
 public class SbomFileParserTests : SbomParserTestsBase
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SbomFullDocWithFilesStrings.SbomFileWithMissingNameJsonString)]
     [DataRow(SbomFullDocWithFilesStrings.SbomFileWithMissingSpdxIdJsonString)]
-    [TestMethod]
     public void MissingPropertiesTest_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);

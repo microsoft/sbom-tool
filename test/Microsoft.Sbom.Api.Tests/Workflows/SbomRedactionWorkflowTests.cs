@@ -15,7 +15,6 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using PowerArgs;
 using Serilog;
 
 namespace Microsoft.Sbom.Workflows;

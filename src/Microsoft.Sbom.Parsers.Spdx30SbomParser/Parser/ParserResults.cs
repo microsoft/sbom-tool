@@ -3,7 +3,6 @@
 
 namespace Microsoft.Sbom.Parser;
 
-using System.Collections.Generic;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 public class ParserResults
