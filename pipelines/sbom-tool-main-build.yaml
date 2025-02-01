@@ -35,6 +35,10 @@ extends:
       sourceAnalysisPool:
         name: sbom-windows-build-pool
         os: windows
+      codeql:
+        compiled:
+          enabled: false
+          justificationForDisabling: 'Temporarily disable CodeQL until .NET 8/osx-arm64 problem is addressed'        
     stages:
       - stage: stage1
         jobs:
