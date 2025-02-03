@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.JsonStrings;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser;
@@ -27,6 +28,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         Assert.AreEqual(5, results.FormatEnforcedSPDX3Result.Graph.Count());
 
         var metadata = parser.GetMetadata();
+        Assert.IsInstanceOfType(metadata, typeof(Spdx30Metadata));
         Assert.IsNotNull(metadata);
         Assert.IsNotNull(metadata.DocumentNamespace);
         Assert.AreEqual("spdx-doc-name", metadata.Name);
@@ -49,6 +51,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         var results = this.Parse(parser);
 
         var metadata = parser.GetMetadata();
+        Assert.IsInstanceOfType(metadata, typeof(Spdx30Metadata));
         Assert.IsNotNull(metadata);
         Assert.IsNull(metadata.DocumentNamespace);
         Assert.IsNull(metadata.Name);
