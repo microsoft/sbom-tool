@@ -7,12 +7,10 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;

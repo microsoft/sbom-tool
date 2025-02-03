@@ -16,7 +16,6 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using PowerArgs;
-using PowerArgs.Cli;
 using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 

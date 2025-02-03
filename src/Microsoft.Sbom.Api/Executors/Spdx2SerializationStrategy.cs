@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -18,6 +17,7 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
     {
         if (config.MetadataBuilder.TryGetFilesArrayHeaderName(out var headerName))
         {
+            config.JsonSerializer.StartJsonArray(headerName);
             elementsSupportingConfigs.Add(config);
         }
     }
@@ -26,14 +26,16 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
     {
         if (config.MetadataBuilder.TryGetPackageArrayHeaderName(out var headerName))
         {
+            config.JsonSerializer.StartJsonArray(headerName);
             elementsSupportingConfigs.Add(config);
         }
     }
 
     public bool AddToRelationshipsSupportingConfig(ref IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
-        if (config.MetadataBuilder.TryGetRelationshipsHeaderName(out var relationshipArrayHeaderName))
+        if (config.MetadataBuilder.TryGetRelationshipsHeaderName(out var headerName))
         {
+            config.JsonSerializer.StartJsonArray(headerName);
             return true;
         }
 
@@ -44,6 +46,7 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
     {
         if (config.MetadataBuilder.TryGetExternalRefArrayHeaderName(out var headerName))
         {
+            config.JsonSerializer.StartJsonArray(headerName);
             elementsSupportingConfigs.Add(config);
         }
     }
@@ -81,7 +84,6 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
 
         foreach (var serializer in filesGenerateResult.SerializerToJsonDocuments.Keys)
         {
-            serializer.StartJsonArray("files");
             foreach (var jsonDocument in filesGenerateResult.SerializerToJsonDocuments[serializer])
             {
                 serializer.Write(jsonDocument);
@@ -96,7 +98,6 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
 
         foreach (var serializer in packagesGenerateResult.SerializerToJsonDocuments.Keys)
         {
-            serializer.StartJsonArray("packages");
             foreach (var jsonDocument in packagesGenerateResult.SerializerToJsonDocuments[serializer])
             {
                 serializer.Write(jsonDocument);
@@ -111,7 +112,6 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
 
         foreach (var serializer in externalDocumentReferenceGenerateResult.SerializerToJsonDocuments.Keys)
         {
-            serializer.StartJsonArray("externalDocumentRefs");
             foreach (var jsonDocument in externalDocumentReferenceGenerateResult.SerializerToJsonDocuments[serializer])
             {
                 serializer.Write(jsonDocument);
@@ -126,7 +126,6 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
 
         foreach (var serializer in relationshipGenerateResult.SerializerToJsonDocuments.Keys)
         {
-            serializer.StartJsonArray("relationships");
             foreach (var jsonDocument in relationshipGenerateResult.SerializerToJsonDocuments[serializer])
             {
                 serializer.Write(jsonDocument);

@@ -37,12 +37,9 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json.Linq;
-using Serilog.Events;
 using Spectre.Console;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
@@ -81,10 +78,10 @@ public class ManifestGenerationWorkflowTests
     }
 
     [TestMethod]
-    //[DataRow("test", true, true)]
-    //[DataRow("test", false, false)]
-    //[DataRow("test", true, false)]
-    //[DataRow("test", false, true)]
+    [DataRow("test", true, true)]
+    [DataRow("test", false, false)]
+    [DataRow("test", true, false)]
+    [DataRow("test", false, true)]
     [DataRow("3.0", true, true)]
     [DataRow("3.0", false, false)]
     [DataRow("3.0", true, false)]
@@ -347,7 +344,7 @@ public class ManifestGenerationWorkflowTests
 
         var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sourcesProvider, recorderMock.Object);
 
-        var generateResult = new GenerateResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<JsonDocument>>());
+        var generateResult = new GenerateResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
         relationshipArrayGenerator
             .Setup(r => r.GenerateAsync())
             .ReturnsAsync(generateResult);
@@ -375,7 +372,6 @@ public class ManifestGenerationWorkflowTests
             Assert.AreEqual(12, resultJson["Build"]);
             Assert.AreEqual("test", resultJson["Definition"]);
 
-            // TODO: check why outputs is not present by comparing with master
             var outputs = resultJson["Outputs"];
             var sortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
             var expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
@@ -385,13 +381,16 @@ public class ManifestGenerationWorkflowTests
 
             Assert.IsTrue(JToken.DeepEquals(sortedOutputs, expectedSortedOutputs));
         }
+        else
+        {
+            var elements = resultJson["@graph"].ToArray();
+            var packages = elements.Where(element => element["type"].ToString() == "software_Package").ToList();
+            Assert.AreEqual(4, packages.Count);
 
-        //else
-        //{
+            var creationInfo = elements.Where(element => element["type"].ToString() == "CreationInfo").ToList();
+            Assert.AreEqual(1, creationInfo.Count);
+        }
 
-        //}
-
-        // TODO: need to make sure these pass
         configurationMock.VerifyAll();
         fileSystemMock.VerifyAll();
         hashCodeGeneratorMock.VerifyAll();
@@ -442,7 +441,7 @@ public class ManifestGenerationWorkflowTests
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
         var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
-        var generateResult = new GenerateResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<JsonDocument>>());
+        var generateResult = new GenerateResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
         fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generateResult);
 
         var workflow = new SbomGenerationWorkflow(

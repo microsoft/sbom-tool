@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Extensions;
@@ -53,20 +51,30 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
         relationshipsArrayGenerator.SpdxManifestVersion = spdxManifestVersion;
         externalDocumentReferenceGenerator.SpdxManifestVersion = spdxManifestVersion;
 
+        // Files section
         var generateResult = await fileArrayGenerator.GenerateAsync();
+        WriteElementsToSbom(generateResult);
 
         // Packages section
         var packagesGenerateResult = await packageArrayGenerator.GenerateAsync();
         generateResult.Errors.AddRange(packagesGenerateResult.Errors);
+        WriteElementsToSbom(packagesGenerateResult);
 
         // External Document Reference section
         var externalDocumentReferenceGenerateResult = await externalDocumentReferenceGenerator.GenerateAsync();
         generateResult.Errors.AddRange(externalDocumentReferenceGenerateResult.Errors);
+        WriteElementsToSbom(externalDocumentReferenceGenerateResult);
 
         // Relationships section
         var relationshipGenerateResult = await relationshipsArrayGenerator.GenerateAsync();
         generateResult.Errors.AddRange(relationshipGenerateResult.Errors);
+        WriteElementsToSbom(relationshipGenerateResult);
 
+        return generateResult.Errors;
+    }
+
+    private void WriteElementsToSbom(GenerateResult generateResult)
+    {
         // Write the JSON objects to the SBOM
         // TODO: avoid this for loop
         // TODO: can add deduplication here
@@ -85,7 +93,5 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
 
             serializer.EndJsonArray();
         }
-
-        return generateResult.Errors;
     }
 }

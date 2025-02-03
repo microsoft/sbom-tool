@@ -91,7 +91,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
 
             foreach (var sbomConfig in packagesArraySupportingConfigs)
             {
-                // Write the root package information to the packages array.
+                // Write the root package information to SBOM.
                 if (sbomConfig.MetadataBuilder.TryGetRootPackageJson(sbomConfigs, out var generationResult))
                 {
                     if (!serializersToJsonDocs.ContainsKey(sbomConfig.JsonSerializer))
@@ -100,8 +100,20 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
                     }
 
                     serializersToJsonDocs[sbomConfig.JsonSerializer].Add(generationResult?.Document);
+
                     sbomConfig.Recorder.RecordRootPackageId(generationResult?.ResultMetadata?.EntityId);
                     sbomConfig.Recorder.RecordDocumentId(generationResult?.ResultMetadata?.DocumentId);
+                }
+
+                // Write creation info to SBOM. Creation info element is only applicable for SPDX 3.0 and above.
+                if (sbomConfig.MetadataBuilder.TryGetCreationInfoJson(sbomConfigs, out generationResult))
+                {
+                    if (!serializersToJsonDocs.ContainsKey(sbomConfig.JsonSerializer))
+                    {
+                        serializersToJsonDocs[sbomConfig.JsonSerializer] = new List<JsonDocument>();
+                    }
+
+                    serializersToJsonDocs[sbomConfig.JsonSerializer].Add(generationResult?.Document);
                 }
             }
 

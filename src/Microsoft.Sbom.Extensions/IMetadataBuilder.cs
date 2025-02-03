@@ -41,4 +41,9 @@ public interface IMetadataBuilder
     /// Gets root package in JSON if supported.
     /// </summary>
     bool TryGetRootPackageJson(IInternalMetadataProvider internalMetadataProvider, out GenerationResult generationResult);
+
+    /// <summary>
+    /// Gets creation info in JSON if supported. Applies to only SPDX 3.0 and above.
+    /// </summary>
+    bool TryGetCreationInfoJson(IInternalMetadataProvider internalMetadataProvider, out GenerationResult generationResult);
 }

@@ -7,12 +7,10 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -60,7 +58,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
             // Write the start of the array, if supported.
             IList<ISbomConfig> externalRefArraySupportingConfigs = new List<ISbomConfig>();
             var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
-            serializationStrategy.AddToFilesSupportingConfig(ref externalRefArraySupportingConfigs, this.SbomConfig);
+            serializationStrategy.AddToExternalDocRefsSupportingConfig(ref externalRefArraySupportingConfigs, this.SbomConfig);
 
             foreach (var sourcesProvider in sourcesProviders)
             {
