@@ -35,6 +35,10 @@ extends:
       sourceAnalysisPool:
         name: sbom-windows-build-pool
         os: windows
+      codeql:
+        compiled:
+          enabled: false
+          justificationForDisabling: 'Temporarily disable CodeQL until .NET 8/osx-arm64 problem is addressed'        
     stages:
       - stage: stage1
         jobs:
@@ -276,7 +280,7 @@ extends:
               artifactName: '$(OutputArtifactName)-macOS-arm64'
           pool:
             name: Azure Pipelines
-            image: macos-latest
+            image: macos-14-arm64
             os: macOS
           steps:
           - template: pipelines/build-test-tool-template.yaml@self
