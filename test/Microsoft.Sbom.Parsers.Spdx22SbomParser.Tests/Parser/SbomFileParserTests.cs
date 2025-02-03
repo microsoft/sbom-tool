@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
@@ -41,6 +42,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         var metadata = parser.GetMetadata();
 
         Assert.IsNotNull(metadata);
+        Assert.IsInstanceOfType(metadata, typeof(Spdx22Metadata));
         Assert.IsNotNull(metadata.CreationInfo);
         var expectedTime = DateTime.Parse("2023-05-11T00:24:54Z").ToUniversalTime();
         Assert.AreEqual(expectedTime, metadata.CreationInfo.Created);
