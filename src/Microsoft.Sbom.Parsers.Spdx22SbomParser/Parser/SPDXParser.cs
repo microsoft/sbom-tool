@@ -172,7 +172,7 @@ public class SPDXParser : ISbomParser
         return null;
     }
 
-    public SpdxMetadata GetMetadata()
+    public Spdx22Metadata GetMetadata()
     {
         if (!this.parsingComplete)
         {

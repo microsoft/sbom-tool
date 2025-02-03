@@ -35,7 +35,7 @@ public class SPDX30Parser : ISbomParser
 
     public ComplianceStandard? RequiredComplianceStandard;
     public IReadOnlyCollection<string>? EntitiesToEnforceComplianceStandardsFor;
-    public SpdxMetadata Metadata = new Spdx30Metadata();
+    public Spdx22Metadata Metadata = new Spdx22Metadata();
     private readonly LargeJsonParser parser;
     private readonly IList<string> observedFieldNames = new List<string>();
     private readonly bool requiredFieldsCheck = true;
@@ -157,13 +157,14 @@ public class SPDX30Parser : ISbomParser
         return null;
     }
 
-    public SpdxMetadata GetMetadata()
+    public Spdx22Metadata GetMetadata()
     {
         if (!this.parsingComplete)
         {
             throw new ParserException($"{nameof(this.GetMetadata)} can only be called after Parsing is complete to ensure that a whole object is returned.");
         }
 
+        // TODO: Eventually this return type should be changed to SpdxMetadata to be consistent with naming.
         return this.Metadata;
     }
 
