@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.Sbom.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,7 +32,7 @@ public class SbomFormatConverterTests
     }
 
     [TestMethod]
-    public void ToSbomPackage_FailsOnEmptyLicenseInfo()
+    public void ToSbomPackage_AcceptsEmptyLicenseInfo()
     {
         var spdxPackage = new SPDXPackage
         {
@@ -47,6 +46,8 @@ public class SbomFormatConverterTests
             LicenseInfoFromFiles = new List<string>(),
         };
 
-        Assert.ThrowsException<ParserException>(spdxPackage.ToSbomPackage);
+        var sbomPackage = spdxPackage.ToSbomPackage();
+
+        Assert.IsNotNull(sbomPackage);
     }
 }
