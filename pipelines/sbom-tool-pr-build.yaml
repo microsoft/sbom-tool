@@ -53,7 +53,7 @@ extends:
           displayName: 'Build (macOS-arm64)'
           pool:
             name: Azure Pipelines
-            image: macos-latest
+            image: macos-14-arm64
             os: macOS
           steps:
           - template: pipelines/build-test-tool-template.yaml@self
