@@ -245,11 +245,11 @@ public class SPDX30Parser : ISbomParser
                 if (!elementsSpdxIdList.TryGetValue(spdxId, out _))
                 {
                     elementsList.Add(deserializedElement);
+                    elementsSpdxIdList.Add(spdxId);
                 }
                 else
                 {
                     Console.WriteLine($"Duplicate element with SPDX ID {spdxId} found. Skipping.");
-                    elementsSpdxIdList.Add(spdxId);
                 }
 
                 switch (entityType?.Name)

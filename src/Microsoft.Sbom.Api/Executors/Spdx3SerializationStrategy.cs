@@ -1,9 +1,12 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -76,10 +79,17 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
     private void WriteElementsToSbom(GenerateResult generateResult)
     {
         // Write the JSON objects to the SBOM
-        // TODO: avoid this for loop
-        // TODO: can add deduplication here
         foreach (var serializer in generateResult.SerializerToJsonDocuments.Keys)
         {
+            // Write context
+            serializer.StartJsonArray("@context");
+            var document = JsonDocument.Parse(Constants.Spdx3Context);
+            serializer.Write(document);
+            serializer.EndJsonArray();
+
+            // Deduplication of elements by checking SPDX ID
+            var elementsSpdxIdList = new HashSet<string>();
+
             serializer.StartJsonArray("@graph");
 
             var jsonDocuments = generateResult.SerializerToJsonDocuments[serializer];
@@ -87,7 +97,20 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
             {
                 foreach (var element in jsonDocument.RootElement.EnumerateArray())
                 {
-                    serializer.Write(element);
+                    if (element.TryGetProperty("spdxId", out var spdxIdField))
+                    {
+                        var spdxId = spdxIdField.GetString();
+
+                        if (!elementsSpdxIdList.TryGetValue(spdxId, out _))
+                        {
+                            serializer.Write(element);
+                            elementsSpdxIdList.Add(spdxId);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Duplicate element with SPDX ID {spdxId} found. Skipping.");
+                        }
+                    }
                 }
             }
 

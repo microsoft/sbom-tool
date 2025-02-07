@@ -66,4 +66,6 @@ public static class Constants
     public const string BsiFileName = "bsi.json";
 
     public const string DeleteManifestDirBoolVariableName = "DeleteManifestDirIfPresent";
+
+    public const string Spdx3Context = "\"https://spdx.org/rdf/3.0.1/spdx-context.json\"";
 }
