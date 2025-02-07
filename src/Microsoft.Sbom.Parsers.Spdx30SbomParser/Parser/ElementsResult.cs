@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
@@ -15,5 +14,15 @@ public record ElementsResult : ParserStateResult
     {
     }
 
-    public IEnumerable<Element> Elements => ((IEnumerable<object>)this.Result!).Select(r => (Element)r);
+    public IEnumerable<Element> Elements { get; set; }
+
+    public IEnumerable<File> Files { get; set; }
+
+    public int FilesCount { get; set; }
+
+    public int PackagesCount { get; set; }
+
+    public int ReferencesCount { get; set; }
+
+    public int RelationshipsCount { get; set; }
 }

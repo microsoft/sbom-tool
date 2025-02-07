@@ -97,9 +97,25 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                 }
 
+                // Validate compliance standard for SPDX 3.0 parsers and above
+                if (!string.IsNullOrEmpty(configuration.ComplianceStandard?.Value) && Convert.ToDouble(sbomConfig.ManifestInfo.Version) >= 3.0)
+                {
+                    var complianceStandard = configuration.ComplianceStandard.Value;
+                    try
+                    {
+                        ((SPDX30Parser)sbomParser).RequiredComplianceStandard = complianceStandard;
+                    }
+                    catch (Exception e)
+                    {
+                        recorder.RecordException(e);
+                        log.Error($"Unable to use the given compliance standard {complianceStandard} to parse the SBOM.");
+                    }
+                }
+
                 var successfullyValidatedFiles = 0;
                 List<FileValidationResult> fileValidationFailures = null;
 
+                // This logic is the same as SbomParserTestsBase, however since that logic is part of the test suite we replicate it here
                 ParserStateResult? result = null;
                 do
                 {
@@ -110,12 +126,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                         {
                             case FilesResult filesResult:
                                 (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(filesResult.Files);
-                                var invalidInputFiles = fileValidationFailures.Where(f => f.ErrorType == ErrorType.InvalidInputFile).ToList();
-                                if (invalidInputFiles.Count != 0)
-                                {
-                                    throw new InvalidDataException($"Your manifest file is malformed. {invalidInputFiles.First().Path}");
-                                }
-
+                                ValidateInvalidInputFiles(fileValidationFailures);
                                 break;
                             case PackagesResult packagesResult:
                                 var packages = packagesResult.Packages.ToList();
@@ -126,6 +137,16 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                                 break;
                             case ExternalDocumentReferencesResult externalRefResult:
                                 externalRefResult.References.ToList();
+                                break;
+                            case ContextsResult contextsResult:
+                                contextsResult.Contexts.ToList();
+                                break;
+                            case ElementsResult elementsResult:
+                                elementsResult.Elements.ToList();
+                                totalNumberOfPackages = elementsResult.PackagesCount;
+
+                                (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(elementsResult.Files);
+                                ValidateInvalidInputFiles(fileValidationFailures);
                                 break;
                             default:
                                 break;
@@ -277,5 +298,14 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         }
 
         Console.WriteLine($"Unknown file failures . . . . . . . . . . . . .  {validFailures.Count(v => v.ErrorType == ErrorType.Other)}");
+    }
+
+    private void ValidateInvalidInputFiles(List<FileValidationResult> fileValidationFailures)
+    {
+        var invalidInputFiles = fileValidationFailures.Where(f => f.ErrorType == ErrorType.InvalidInputFile).ToList();
+        if (invalidInputFiles.Count != 0)
+        {
+            throw new InvalidDataException($"Your manifest file is malformed. {invalidInputFiles.First().Path}");
+        }
     }
 }

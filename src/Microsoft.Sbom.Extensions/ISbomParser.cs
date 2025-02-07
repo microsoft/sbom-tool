@@ -27,7 +27,7 @@ public interface ISbomParser
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    Spdx22Metadata GetMetadata();
+    SpdxMetadata GetMetadata();
 
     /// <summary>
     /// This function is called by the sbom tool upon initialization to get all the

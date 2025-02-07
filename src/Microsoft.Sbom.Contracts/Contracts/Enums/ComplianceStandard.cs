@@ -3,7 +3,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
+namespace Microsoft.Sbom.Contracts.Enums;
 
 /// <summary>
 /// Defines the different supported compliance standards.
@@ -12,5 +12,5 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
 public enum ComplianceStandard
 {
     NTIA,
-    None,
+    None
 }

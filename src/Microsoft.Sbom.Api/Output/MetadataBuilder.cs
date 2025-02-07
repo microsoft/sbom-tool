@@ -117,6 +117,28 @@ public class MetadataBuilder : IMetadataBuilder
         }
     }
 
+    public bool TryGetCreationInfoJson(IInternalMetadataProvider internalMetadataProvider, out GenerationResult generationResult)
+    {
+        try
+        {
+            generationResult = manifestGenerator
+                .GenerateJsonDocument(internalMetadataProvider);
+
+            if (generationResult == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        catch (NotSupportedException)
+        {
+            generationResult = null;
+            logger.Warning("Root package serialization not supported on this SBOM format.");
+            return false;
+        }
+    }
+
     public bool TryGetRelationshipsHeaderName(out string headerName)
     {
         try

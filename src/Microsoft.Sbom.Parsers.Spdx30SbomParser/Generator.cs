@@ -15,6 +15,7 @@ using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Utils;
+using HashAlgorithm = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.HashAlgorithm;
 using RelationshipType = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.RelationshipType;
 using SbomEntities = Microsoft.Sbom.Extensions.Entities;
 using SHA1 = System.Security.Cryptography.SHA1;
@@ -27,14 +28,6 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
 /// </summary>
 public class Generator : IManifestGenerator
 {
-    private static readonly Dictionary<AlgorithmName, HashAlgorithm> AlgorithmMap = new()
-    {
-        { AlgorithmName.SHA1, HashAlgorithm.sha1 },
-        { AlgorithmName.SHA256, HashAlgorithm.sha256 },
-        { AlgorithmName.SHA512, HashAlgorithm.sha512 },
-        { AlgorithmName.MD5, HashAlgorithm.md5 }
-    };
-
     public AlgorithmName[] RequiredHashAlgorithms => new[] { AlgorithmName.SHA256, AlgorithmName.SHA1 };
 
     public string Version { get; set; } = string.Join("-", Constants.SPDXName, Constants.SPDXVersion);
@@ -123,17 +116,22 @@ public class Generator : IManifestGenerator
                 ExternalIdentifierType = "purl",
                 Identifier = packageInfo.PackageUrl
             };
-        }
 
-        spdxExternalIdentifier.AddSpdxId();
-        spdxPackage.ExternalIdentifier = new List<string> { spdxExternalIdentifier.SpdxId };
+            spdxExternalIdentifier.AddSpdxId();
+            spdxPackage.ExternalIdentifier = new List<string> { spdxExternalIdentifier.SpdxId };
+        }
 
         var spdxElementsRelatedToPackageInfo = new List<Element>
         {
             spdxSupplier,
             spdxPackage,
-            spdxExternalIdentifier,
         };
+
+        if (spdxExternalIdentifier != null)
+        {
+            spdxElementsRelatedToPackageInfo.Add(spdxExternalIdentifier);
+        }
+
         spdxElementsRelatedToPackageInfo.AddRange(spdxRelationshipAndLicensesFromSbomPackage);
 
         var dependOnId = packageInfo.DependOn;
@@ -440,7 +438,7 @@ public class Generator : IManifestGenerator
         {
             var packageVerificationCode = new PackageVerificationCode
             {
-                Algorithm = AlgorithmMap.GetValueOrDefault(checksum.Algorithm),
+                Algorithm = Constants.AlgorithmMap.GetValueOrDefault(checksum.Algorithm),
                 HashValue = checksum.ChecksumValue.ToLowerInvariant(),
             };
             packageVerificationCode.AddSpdxId();
@@ -485,7 +483,12 @@ public class Generator : IManifestGenerator
         spdxRelationshipLicenseConcludedElement.AddSpdxId();
         spdxRelationshipAndLicenseElementsToAddToSBOM.Add(spdxRelationshipLicenseConcludedElement);
 
-        // Convert licenseDeclared to SPDX license elements and add Relationship elements for them
+        // If they exist, convert licenseDeclared to SPDX license elements and add Relationship elements for them
+        if (fileInfo.LicenseInfoInFiles == null || !fileInfo.LicenseInfoInFiles.Any())
+        {
+            return spdxRelationshipAndLicenseElementsToAddToSBOM;
+        }
+
         var toRelationships = new List<string>();
         foreach (var licenseInfoInOneFile in fileInfo.LicenseInfoInFiles)
         {
@@ -615,5 +618,44 @@ public class Generator : IManifestGenerator
 
     public ManifestInfo RegisterManifest() => Constants.Spdx30ManifestInfo;
 
-    IDictionary<string, object> IManifestGenerator.GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider) => throw new NotSupportedException();
+    public IDictionary<string, object> GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider)
+    {
+        if (internalMetadataProvider is null)
+        {
+            throw new ArgumentNullException(nameof(internalMetadataProvider));
+        }
+
+        var generationData = internalMetadataProvider.GetGenerationData(Constants.Spdx30ManifestInfo);
+
+        var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolName);
+        var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
+        var packageName = internalMetadataProvider.GetPackageName();
+        var packageVersion = internalMetadataProvider.GetPackageVersion();
+
+        var documentName = string.Format(Constants.SPDXDocumentNameFormatString, packageName, packageVersion);
+
+        var creationInfo = new CreationInfo
+        {
+            Created = internalMetadataProvider.GetGenerationTimestamp(),
+            CreatedBy = new List<string>
+            {
+                $"{internalMetadataProvider.GetPackageSupplier()}",
+            },
+            CreatedUsing = new List<string>
+            {
+                $"{sbomToolName}-{sbomToolVersion}"
+            }
+        };
+
+        return new Dictionary<string, object>
+        {
+            { Constants.SPDXVersionHeaderName, Version },
+            { Constants.DataLicenseHeaderName, Constants.DataLicenceValue },
+            { Constants.SPDXIDHeaderName, Constants.SPDXDocumentIdValue },
+            { Constants.DocumentNameHeaderName, documentName },
+            { Constants.DocumentNamespaceHeaderName,  internalMetadataProvider.GetDocumentNamespace() },
+            { Constants.CreationInfoHeaderName, creationInfo },
+            { Constants.DocumentDescribesHeaderName, new string[] { generationData.RootPackageId } }
+        };
+    }
 }

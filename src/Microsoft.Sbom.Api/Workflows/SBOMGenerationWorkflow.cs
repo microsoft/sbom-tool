@@ -98,22 +98,25 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 {
                     sbomConfigs.ApplyToEachConfig(config => config.JsonSerializer.StartJsonObject());
 
-                    // Files section
-                    validErrors = await fileArrayGenerator.GenerateAsync();
+                    // Use the WriteJsonObjectsToSbomAsync method based on the SPDX version in manifest info
+                    foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
+                    {
+                        var config = sbomConfigs.Get(manifestInfo);
 
-                    // Packages section
-                    validErrors.Concat(await packageArrayGenerator.GenerateAsync());
+                        // Get the appropriate strategy
+                        var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(manifestInfo.Version);
+                        validErrors = await serializationStrategy.WriteJsonObjectsToSbomAsync(
+                            config,
+                            manifestInfo.Version,
+                            fileArrayGenerator,
+                            packageArrayGenerator,
+                            relationshipsArrayGenerator,
+                            externalDocumentReferenceGenerator).
+                            ConfigureAwait(false);
 
-                    // External Document Reference section
-                    validErrors.Concat(await externalDocumentReferenceGenerator.GenerateAsync());
-
-                    // Relationships section
-                    validErrors.Concat(await relationshipsArrayGenerator.GenerateAsync());
-
-                    // Write headers
-                    sbomConfigs.ApplyToEachConfig(config =>
-                        config.JsonSerializer.WriteJsonString(
-                            config.MetadataBuilder.GetHeaderJsonString(sbomConfigs)));
+                        // Write headers
+                        serializationStrategy.AddHeadersToSbom(sbomConfigs);
+                    }
 
                     // Finalize JSON
                     sbomConfigs.ApplyToEachConfig(config => config.JsonSerializer.FinalizeJsonObject());

@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
+using HashAlgorithm = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.HashAlgorithm;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
 
@@ -18,6 +20,14 @@ internal static class Constants
 
     internal const string SPDXContextHeaderName = "@context";
     internal const string SPDXGraphHeaderName = "@graph";
+
+    internal const string SPDXVersionHeaderName = "spdxVersion";
+    internal const string DataLicenseHeaderName = "dataLicense";
+    internal const string SPDXIDHeaderName = "SPDXID";
+    internal const string DocumentNameHeaderName = "name";
+    internal const string DocumentNamespaceHeaderName = "documentNamespace";
+    internal const string CreationInfoHeaderName = "creationInfo";
+    internal const string DocumentDescribesHeaderName = "documentDescribes";
 
     /// <summary>
     /// Use if SPDX creator
@@ -38,5 +48,13 @@ internal static class Constants
     {
         Name = SPDXName,
         Version = SPDXVersion
+    };
+
+    public static readonly Dictionary<AlgorithmName, HashAlgorithm> AlgorithmMap = new()
+    {
+        { AlgorithmName.SHA1, HashAlgorithm.sha1 },
+        { AlgorithmName.SHA256, HashAlgorithm.sha256 },
+        { AlgorithmName.SHA512, HashAlgorithm.sha512 },
+        { AlgorithmName.MD5, HashAlgorithm.md5 }
     };
 }

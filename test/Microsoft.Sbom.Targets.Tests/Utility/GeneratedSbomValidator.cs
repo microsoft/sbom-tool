@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 internal class GeneratedSbomValidator
 {
     private const string SPDX22Specification = "SPDX:2.2";
+    private const string SPDX30Specification = "SPDX:3.0";
     private readonly string sbomSpecification;
 
     public GeneratedSbomValidator(string sbomSpecification)
@@ -91,9 +92,14 @@ internal class GeneratedSbomValidator
             {
                 Assert.IsTrue(namespaceValue.Contains($"{expectedNamespaceUriBase.Trim()}/{expectedPackageName}/{expectedPackageVersion}"));
             }
-        } else
+        }
+        else if (this.sbomSpecification.Equals(SPDX30Specification))
         {
-            Assert.Fail("An unexpected SBOM specification was used. Please specify SPDX 2.2.");
+            Console.Write("SPDX 3.0 specified, validation is handled through parser and validation already.");
+        }
+        else
+        {
+            Assert.Fail("An unexpected SBOM specification was used. Please specify a valid SPDX version. Current supported versions are 2.2 or 3.0.");
         }
     }
 
