@@ -12,6 +12,7 @@ using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using Microsoft.Sbom.Utils;
 using Serilog;
 
@@ -127,6 +128,81 @@ public class FilesValidator
         return (successCount, failures.Values.ToList());
     }
 
+    public async Task<(int, List<FileValidationResult>)> Validate(IEnumerable<File> files)
+    {
+        var errors = new List<ChannelReader<FileValidationResult>>();
+        var results = new List<ChannelReader<FileValidationResult>>();
+        var failures = new Dictionary<string, FileValidationResult>();
+
+        var (onDiskFileResults, onDiskFileErrors) = GetOnDiskFiles();
+        results.AddRange(onDiskFileResults);
+        errors.AddRange(onDiskFileErrors);
+
+        var workflowErrors = channelUtils.Merge(errors.ToArray());
+        await foreach (var error in workflowErrors.ReadAllAsync())
+        {
+            failures.Add(error.Path, error);
+        }
+
+        var (inSbomFileResults, inSbomFileErrors) = GetInsideSbomFiles(files);
+        results.AddRange(inSbomFileResults);
+        errors.AddRange(inSbomFileErrors);
+
+        var successCount = 0;
+        var resultChannel = channelUtils.Merge(results.ToArray());
+        await foreach (var validationResult in resultChannel.ReadAllAsync())
+        {
+            successCount++;
+        }
+
+        workflowErrors = channelUtils.Merge(errors.ToArray());
+
+        await foreach (var error in workflowErrors.ReadAllAsync())
+        {
+            failures.Add(error.Path, error);
+        }
+
+        foreach (var file in fileHashesDictionary.FileHashes)
+        {
+            if (failures.ContainsKey(file.Key))
+            {
+                // If we have added a validation error for this file, we don't need to add another one.
+                continue;
+            }
+
+            if (file.Value == null)
+            {
+                // This generally means that we have case variations in the file names.
+                failures.Add(file.Key, new FileValidationResult
+                {
+                    ErrorType = ErrorType.AdditionalFile,
+                    Path = file.Key,
+                });
+                continue;
+            }
+
+            switch (file.Value.FileLocation)
+            {
+                case FileLocation.OnDisk:
+                    failures.Add(file.Key, new FileValidationResult
+                    {
+                        ErrorType = ErrorType.AdditionalFile,
+                        Path = file.Key,
+                    });
+                    break;
+                case FileLocation.InSbomFile:
+                    failures.Add(file.Key, new FileValidationResult
+                    {
+                        ErrorType = ErrorType.MissingFile,
+                        Path = file.Key,
+                    });
+                    break;
+            }
+        }
+
+        return (successCount, failures.Values.ToList());
+    }
+
     private (List<ChannelReader<FileValidationResult>>, List<ChannelReader<FileValidationResult>>) GetOnDiskFiles()
     {
         var errors = new List<ChannelReader<FileValidationResult>>();
@@ -184,6 +260,42 @@ public class FilesValidator
 
             var (validationResults, validationErrors) = hashValidator.Validate(filteredSbomFiles);
             errors.Add(validationErrors);
+
+            filesWithHashes.Add(validationResults);
+        }
+
+        return (filesWithHashes, errors);
+    }
+
+    private (List<ChannelReader<FileValidationResult>>, List<ChannelReader<FileValidationResult>>) GetInsideSbomFiles(IEnumerable<File> files)
+    {
+        var errors = new List<ChannelReader<FileValidationResult>>();
+        var filesWithHashes = new List<ChannelReader<FileValidationResult>>();
+
+        // Enumerate files from SBOM
+
+        var file = files.FirstOrDefault().ToSbomFile();
+        Console.WriteLine(file.Path);
+
+        var (sbomFiles, sbomFileErrors) = enumeratorChannel.Enumerate(() => files.Select(f => f.ToSbomFile()));
+        errors.Add(sbomFileErrors);
+
+        log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
+        var splitFilesChannels = channelUtils.Split(sbomFiles, configuration.Parallelism.Value);
+
+        log.Debug("Waiting for the workflow to finish...");
+        foreach (var fileChannel in splitFilesChannels)
+        {
+            // Convert files to internal SBOM format.
+            var (internalSbomFiles, converterErrors) = fileConverter.Convert(fileChannel, FileLocation.InSbomFile);
+            errors.Add(converterErrors);
+
+            // Filter files.
+            var (filteredSbomFiles, filterErrors) = spdxFileFilterer.Filter(internalSbomFiles);
+            //errors.Add(filterErrors);
+
+            var (validationResults, validationErrors) = hashValidator.Validate(filteredSbomFiles);
+            //errors.Add(validationErrors);
 
             filesWithHashes.Add(validationResults);
         }

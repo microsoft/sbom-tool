@@ -67,7 +67,8 @@ public class ConfigurationProfile : Profile
             .ForMember(c => c.NamespaceUriUniquePart, o => o.Ignore())
             .ForMember(c => c.NamespaceUriBase, o => o.Ignore())
             .ForMember(c => c.DeleteManifestDirIfPresent, o => o.Ignore())
-            .ForMember(c => c.PackageSupplier, o => o.Ignore());
+            .ForMember(c => c.PackageSupplier, o => o.Ignore())
+            .ForMember(c => c.ComplianceStandard, o => o.Ignore());
 
         // Create config for the generation args, ignoring other action members
         CreateMap<GenerationArgs, InputConfiguration>()

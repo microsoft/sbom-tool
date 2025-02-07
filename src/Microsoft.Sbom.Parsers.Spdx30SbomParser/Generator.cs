@@ -15,6 +15,7 @@ using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Utils;
+using HashAlgorithm = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.HashAlgorithm;
 using RelationshipType = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.RelationshipType;
 using SbomEntities = Microsoft.Sbom.Extensions.Entities;
 using SHA1 = System.Security.Cryptography.SHA1;
@@ -27,14 +28,6 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
 /// </summary>
 public class Generator : IManifestGenerator
 {
-    private static readonly Dictionary<AlgorithmName, HashAlgorithm> AlgorithmMap = new()
-    {
-        { AlgorithmName.SHA1, HashAlgorithm.sha1 },
-        { AlgorithmName.SHA256, HashAlgorithm.sha256 },
-        { AlgorithmName.SHA512, HashAlgorithm.sha512 },
-        { AlgorithmName.MD5, HashAlgorithm.md5 }
-    };
-
     public AlgorithmName[] RequiredHashAlgorithms => new[] { AlgorithmName.SHA256, AlgorithmName.SHA1 };
 
     public string Version { get; set; } = string.Join("-", Constants.SPDXName, Constants.SPDXVersion);
@@ -445,7 +438,7 @@ public class Generator : IManifestGenerator
         {
             var packageVerificationCode = new PackageVerificationCode
             {
-                Algorithm = AlgorithmMap.GetValueOrDefault(checksum.Algorithm),
+                Algorithm = Constants.AlgorithmMap.GetValueOrDefault(checksum.Algorithm),
                 HashValue = checksum.ChecksumValue.ToLowerInvariant(),
             };
             packageVerificationCode.AddSpdxId();

@@ -40,6 +40,7 @@ public class SbomFileToFileInfoConverter
         {
             await foreach (var component in componentReader.ReadAllAsync())
             {
+                Console.WriteLine($"Processing {component.Path}");
                 await Convert(component, output, errors, fileLocation);
             }
 

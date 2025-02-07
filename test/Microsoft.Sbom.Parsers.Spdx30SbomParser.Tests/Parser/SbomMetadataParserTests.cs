@@ -65,7 +65,11 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithMetadataJsonStrings.SbomWithSpdxDocumentMissingNameJsonString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new SPDX30Parser(stream, requiredComplianceStandard: "NTIA");
+        var parser = new SPDX30Parser(stream, requiredComplianceStandard: "NTIA")
+        {
+            // Setting RequiredComplianceStandard to NTIA is done normally in the SBOMParserBasedValidationWorkflow but doing it manually here for testing purposes
+            RequiredComplianceStandard = "NTIA"
+        };
         Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 

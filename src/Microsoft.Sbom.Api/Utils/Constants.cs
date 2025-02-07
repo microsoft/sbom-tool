@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
@@ -25,7 +26,19 @@ public static class Constants
         Version = "3.0"
     };
 
-    public static SbomSpecification SPDX22Specification = SPDX22ManifestInfo.ToSBOMSpecification();
+    public static Collection<ManifestInfo> SupportedSpdxManifests = new()
+    {
+        SPDX22ManifestInfo,
+        SPDX30ManifestInfo,
+    };
+
+    //public static SbomSpecification SPDX22Specification = SPDX22ManifestInfo.ToSBOMSpecification();
+
+    public static Collection<SbomSpecification> SupportedSbomSpecifications = new()
+    {
+        SPDX22ManifestInfo.ToSBOMSpecification(),
+        SPDX30ManifestInfo.ToSBOMSpecification(),
+    };
 
     // TODO: move to test csproj
     public static ManifestInfo TestManifestInfo = new ManifestInfo
