@@ -41,7 +41,6 @@ Actions
     TelemetryFilePath (-t)   Specify a file where we should write detailed telemetry for the workflow.
     FollowSymlinks (-F)      If set to false, we will not follow symlinks while traversing the build drop folder. Default is set to 'true'.
     ManifestInfo (-mi)       A list of the name and version of the manifest format that we are using.
-    ComplianceStandard (-cs) The compliance standard to validate against.
 
   Generate -options - Generate a SBOM for all the files in the given build drop folder, and the packages in the components path.
 
