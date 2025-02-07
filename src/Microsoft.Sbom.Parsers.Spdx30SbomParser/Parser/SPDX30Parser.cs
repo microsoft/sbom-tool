@@ -39,7 +39,7 @@ public class SPDX30Parser : ISbomParser
 
     public string? RequiredComplianceStandard;
     public IReadOnlyCollection<string>? EntitiesToEnforceComplianceStandardsFor;
-    public Spdx22Metadata Metadata = new Spdx22Metadata();
+    public SpdxMetadata Metadata = new SpdxMetadata();
     private readonly LargeJsonParser parser;
     private readonly IList<string> observedFieldNames = new List<string>();
     private readonly bool requiredFieldsCheck = true;
@@ -400,9 +400,9 @@ public class SPDX30Parser : ISbomParser
     /// Sets metadata based on parsed SBOM elements.
     /// </summary>
     /// <param name="result"></param>
-    public Spdx22Metadata SetMetadata(ElementsResult result)
+    public SpdxMetadata SetMetadata(ElementsResult result)
     {
-        var metadata = new Spdx22Metadata();
+        var metadata = new SpdxMetadata();
         var spdxDocumentElement = (SpdxDocument?)result.Elements.FirstOrDefault(element => element.Type == "SpdxDocument");
 
         if (spdxDocumentElement == null)
@@ -455,7 +455,7 @@ public class SPDX30Parser : ISbomParser
         return metadata;
     }
 
-    public Spdx22Metadata GetMetadata()
+    public SpdxMetadata GetMetadata()
     {
         if (!this.parsingComplete)
         {

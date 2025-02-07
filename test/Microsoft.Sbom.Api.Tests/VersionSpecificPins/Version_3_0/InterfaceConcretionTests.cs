@@ -286,7 +286,7 @@ public class InterfaceConcretionTests
 
     private class PinnedISbomParser : ISbomParser
     {
-        public Spdx22Metadata GetMetadata() => throw new NotImplementedException();
+        public SpdxMetadata GetMetadata() => throw new NotImplementedException();
         public ParserStateResult Next() => throw new NotImplementedException();
         public ManifestInfo[] RegisterManifest() => throw new NotImplementedException();
     }
@@ -376,7 +376,7 @@ public class InterfaceConcretionTests
     // ScanSettings (CD)
     // SettingSource
     // Snippet
-    // Spdx22Metadata
+    // SpdxMetadata
     // SPDXFile
     // SPDXPackage
     // SPDXRelationship
