@@ -22,6 +22,4 @@ public class GenerateResult
           Errors = errors;
           SerializerToJsonDocuments = serializerToJsonDocuments;
       }
-
-    // TODO: add an optional header name? so that you don't have to hardcode it in the Spdx2SerializationStrategy
 }

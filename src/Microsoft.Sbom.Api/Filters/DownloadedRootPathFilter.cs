@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-//using System.Linq;
+using System.Linq;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Serilog;
@@ -69,33 +69,9 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
         return isValid;
     }
 
-    ///// <summary>
-    ///// Initializes the root path filters list.
-    ///// </summary>
-    //public void Init()
-    //{
-    //    logger.Verbose("Adding root path filter valid paths");
-    //    skipValidation = true;
-
-    //    if (configuration.RootPathFilter != null && !string.IsNullOrWhiteSpace(configuration.RootPathFilter.Value))
-    //    {
-    //        skipValidation = false;
-    //        validPaths = new HashSet<string>();
-    //        var relativeRootPaths = configuration.RootPathFilter.Value.Split(';');
-
-    //        var r = relativeRootPaths.Select(r =>
-    //            new FileInfo(fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, r))
-    //                .FullName);
-
-    //        validPaths.UnionWith(r);
-
-    //        foreach (var validPath in validPaths)
-    //        {
-    //            logger.Verbose($"Added valid path {validPath}");
-    //        }
-    //    }
-    //}
-
+    /// <summary>
+    /// Initializes the root path filters list.
+    /// </summary>
     public void Init()
     {
         logger.Verbose("Adding root path filter valid paths");
@@ -107,12 +83,11 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
             validPaths = new HashSet<string>();
             var relativeRootPaths = configuration.RootPathFilter.Value.Split(';');
 
-            foreach (var relativePath in relativeRootPaths)
-            {
-                var path = fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, relativePath);
-                var fullPath = new FileInfo(path).FullName;
-                validPaths.Add(fullPath);
-            }
+            var r = relativeRootPaths.Select(r =>
+                new FileInfo(fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, r))
+                    .FullName);
+
+            validPaths.UnionWith(r);
 
             foreach (var validPath in validPaths)
             {

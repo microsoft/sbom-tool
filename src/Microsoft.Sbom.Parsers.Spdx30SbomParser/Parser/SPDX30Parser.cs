@@ -400,9 +400,9 @@ public class SPDX30Parser : ISbomParser
     /// Sets metadata based on parsed SBOM elements.
     /// </summary>
     /// <param name="result"></param>
-    public SpdxMetadata SetMetadata(ElementsResult result)
+    public Spdx22Metadata SetMetadata(ElementsResult result)
     {
-        var metadata = new SpdxMetadata();
+        var metadata = new Spdx22Metadata();
         var spdxDocumentElement = (SpdxDocument?)result.Elements.FirstOrDefault(element => element.Type == "SpdxDocument");
 
         if (spdxDocumentElement == null)

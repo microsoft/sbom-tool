@@ -187,7 +187,11 @@ public class InterfaceConcretionTests
 
     private class PinnedIJsonArrayGenerator : IJsonArrayGenerator<PinnedIJsonArrayGenerator>
     {
+        public ISbomConfig SbomConfig { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string SpdxManifestVersion { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public Task<IList<FileValidationResult>> GenerateAsync() => throw new NotImplementedException();
+        Task<GenerateResult> IJsonArrayGenerator<PinnedIJsonArrayGenerator>.GenerateAsync() => throw new NotImplementedException();
     }
 
     private class PinnedISbomRedactor : ISbomRedactor
@@ -231,6 +235,7 @@ public class InterfaceConcretionTests
     private class PinnedIMetadataBuilder : IMetadataBuilder
     {
         public string GetHeaderJsonString(IInternalMetadataProvider internalMetadataProvider) => throw new NotImplementedException();
+        public bool TryGetCreationInfoJson(IInternalMetadataProvider internalMetadataProvider, out GenerationResult generationResult) => throw new NotImplementedException();
         public bool TryGetExternalRefArrayHeaderName(out string headerName) => throw new NotImplementedException();
         public bool TryGetFilesArrayHeaderName(out string headerName) => throw new NotImplementedException();
         public bool TryGetPackageArrayHeaderName(out string headerName) => throw new NotImplementedException();
@@ -247,6 +252,7 @@ public class InterfaceConcretionTests
         public void StartJsonArray(string arrayHeader) => throw new NotImplementedException();
         public void StartJsonObject() => throw new NotImplementedException();
         public void Write(JsonDocument jsonDocument) => throw new NotImplementedException();
+        public void Write(JsonElement jsonElement) => throw new NotImplementedException();
         public void WriteJsonString(string jsonString) => throw new NotImplementedException();
     }
 
@@ -322,6 +328,7 @@ public class InterfaceConcretionTests
         public ConfigurationSetting<bool> EnablePackageMetadataParsing { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<string> SbomPath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<string> SbomDir { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ConfigurationSetting<string> ComplianceStandard { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
     private class PinnedISettingSourceable : ISettingSourceable
