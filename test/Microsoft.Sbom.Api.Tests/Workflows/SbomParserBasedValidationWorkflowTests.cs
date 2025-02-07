@@ -468,7 +468,6 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
     [TestMethod]
     public async Task SbomParserBasedValidationWorkflowTests_SetsComplianceStandard_Succeeds()
     {
-        // Arrange
         var bytes = Encoding.UTF8.GetBytes(sbomMetadataJsonString);
         using var stream = new MemoryStream(bytes);
 
