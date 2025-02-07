@@ -43,6 +43,11 @@
     <None Include="ProjectSamples\ProjectSample1\ProjectSample1.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Pinned assemblies for transitive dependencies -->
+    <PackageReference Condition="'$(TargetFramework)'=='net472'" Include="Microsoft.IO.Redist" /> <!-- Used by Microsoft.Build -->
+  </ItemGroup>
+
   <!--Build and copy the sbom-tool to the output directory-->
   <Target Name="AddSbomToolToPackage" AfterTargets="Build" Condition="$(TargetFramework) == 'net472'">
     <Message Importance="high" Text="Building $(SBOMCLIToolProjectDir)bin\$(Configuration)\$(SbomCLIToolTargetFramework)" />

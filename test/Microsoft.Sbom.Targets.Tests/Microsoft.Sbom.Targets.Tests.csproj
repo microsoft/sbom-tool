@@ -22,6 +22,11 @@
     <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Pinned assemblies for transitive dependencies -->
+    <PackageReference Condition="'$(TargetFramework)'=='net472'" Include="Microsoft.IO.Redist" /> <!-- Used by Microsoft.Build -->
+  </ItemGroup>
+
   <Target Name="AddSbomToolToPackage" AfterTargets="Build" Condition="$(TargetFramework) == 'net472'">
     <Message Importance="high" Text="Building $(SBOMCLIToolProjectDir)bin\$(Configuration)\$(SbomCLIToolTargetFramework)" />
     <MSBuild Projects="$(SBOMCLIToolProjectDir)Microsoft.Sbom.Tool.csproj" Properties="TargetFramework=$(SbomCLIToolTargetFramework)" Targets="Publish" />

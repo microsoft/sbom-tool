@@ -26,10 +26,6 @@ public static class SPDXToSbomFormatConverterExtensions
     public static SbomFile ToSbomFile(this SPDXFile spdxFile)
     {
         var checksums = spdxFile.FileChecksums?.Select(c => c.ToSbomChecksum());
-        if (!checksums.Any() || checksums.All(c => c.Algorithm != AlgorithmName.SHA256))
-        {
-            throw new ParserException("File hash is missing a SHA256 value");
-        }
 
         return new SbomFile
         {
@@ -49,12 +45,6 @@ public static class SPDXToSbomFormatConverterExtensions
     /// <returns></returns>
     public static SbomPackage ToSbomPackage(this SPDXPackage spdxPackage)
     {
-        if (spdxPackage.FilesAnalyzed &&
-            (spdxPackage.LicenseInfoFromFiles == null || !spdxPackage.LicenseInfoFromFiles.Any()))
-        {
-            throw new ParserException("Package license list was empty.");
-        }
-
         if (spdxPackage.PackageVerificationCode is not null
             && string.IsNullOrEmpty(spdxPackage.PackageVerificationCode.PackageVerificationCodeValue))
         {

@@ -16,7 +16,7 @@ namespace Microsoft.Sbom.Common.Config;
 
 [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1311:Static readonly fields should begin with upper-case letter", Justification = "Private fields with the same name as public properties.")]
 [SuppressMessage("Naming", "CA1724:Type names should not match namespaces", Justification = "This is the configuration class")]
-public class Configuration : IConfiguration
+public class Configuration : IConfiguration2
 {
     private static readonly AsyncLocal<ConfigurationSetting<string>> buildDropPath = new();
     private static readonly AsyncLocal<ConfigurationSetting<string>> buildComponentPath = new();
@@ -47,7 +47,7 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<string>> generationTimestamp = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> followSymlinks = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> fetchLicenseInformation = new();
-    private static readonly AsyncLocal<ConfigurationSetting<int>> licenseInformationTimeout = new();
+    private static readonly AsyncLocal<ConfigurationSetting<int>> licenseInformationTimeout = new();  // IConfiguration2
     private static readonly AsyncLocal<ConfigurationSetting<bool>> enablePackageMetadataParsing = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> deleteManifestDirIfPresent = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> failIfNoPackages = new();
@@ -311,7 +311,7 @@ public class Configuration : IConfiguration
         set => fetchLicenseInformation.Value = value;
     }
 
-    /// <inheritdoc cref="IConfiguration.LicenseInformationTimeoutInSeconds" />
+    /// <inheritdoc cref="IConfiguration2.LicenseInformationTimeoutInSeconds" />
     [DefaultValue(Constants.DefaultLicenseFetchTimeoutInSeconds)]
     public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds
     {

@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.Strings;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser;
@@ -41,6 +42,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         var metadata = parser.GetMetadata();
 
         Assert.IsNotNull(metadata);
+        Assert.IsInstanceOfType(metadata, typeof(Spdx22Metadata));
         Assert.IsNotNull(metadata.CreationInfo);
         var expectedTime = DateTime.Parse("2023-05-11T00:24:54Z").ToUniversalTime();
         Assert.AreEqual(expectedTime, metadata.CreationInfo.Created);
@@ -87,7 +89,7 @@ public class SbomFileParserTests : SbomParserTestsBase
     }
 
     [TestMethod]
-    public void MissingPropertiesTest_ThrowsSHA256()
+    public void MissingPropertiesTest_AcceptsWithoutSHA256()
     {
         var bytes = Encoding.UTF8.GetBytes(SbomFileJsonStrings.JsonWith1FileMissingSHA256ChecksumsString);
         using var stream = new MemoryStream(bytes);
@@ -97,7 +99,10 @@ public class SbomFileParserTests : SbomParserTestsBase
         var result = this.Parse(parser);
         Assert.IsNotNull(result);
 
-        Assert.ThrowsException<ParserException>(() => result.Files.Select(f => f.ToSbomFile()).ToList());
+        var files = result.Files.Select(f => f.ToSbomFile()).ToList();
+        Assert.AreEqual(1, files.Count);
+        Assert.AreEqual(1, files[0].Checksum.Count());
+        Assert.AreEqual(Contracts.Enums.AlgorithmName.SHA1, files[0].Checksum.Single().Algorithm);
     }
 
     [TestMethod]
