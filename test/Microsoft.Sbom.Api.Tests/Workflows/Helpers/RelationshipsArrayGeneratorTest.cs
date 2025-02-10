@@ -79,6 +79,11 @@ public class RelationshipsArrayGeneratorTest
             MetadataBuilder = metadataBuilder,
             Recorder = recorder,
         };
+
+        // Set up the relationshipsArrayGenerator sbomConfig, this is normally done in SBOM generation workflow.
+        // Since we are testing the RelationshipsArrayGenerator, we need to set it up manually.
+        relationshipsArrayGenerator.SbomConfig = sbomConfig;
+
         fileSystemUtilsMock.Setup(f => f.CreateDirectory(ManifestJsonDirPath));
         fileSystemUtilsMock.Setup(f => f.OpenWrite(JsonFilePath)).Returns(new MemoryStream());
 

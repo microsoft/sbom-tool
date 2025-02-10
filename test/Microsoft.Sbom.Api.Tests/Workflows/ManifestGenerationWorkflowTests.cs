@@ -84,7 +84,7 @@ public class ManifestGenerationWorkflowTests
     [DataRow("test", false, true)]
     [DataRow("3.0", true, true)]
     [DataRow("3.0", false, false)]
-    //[DataRow("3.0", true, false)]
+    [DataRow("3.0", true, false)]
     [DataRow("3.0", false, true)]
     public async Task ManifestGenerationWorkflowTests_Succeeds(string spdxVersionForGenerator, bool deleteExistingManifestDir, bool isDefaultSourceManifestDirPath)
     {

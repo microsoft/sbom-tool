@@ -15,6 +15,7 @@ using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
 using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
@@ -98,8 +99,16 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 {
                     sbomConfigs.ApplyToEachConfig(config => config.JsonSerializer.StartJsonObject());
 
+                    var manifestInfos = sbomConfigs.GetManifestInfos();
+
+                    // If manifestInfos is empty (for example, this is the case for unit tests where GetManifestInfos() is not implemented), use the default SPDX 2.2 manifest info
+                    if (!manifestInfos.Any())
+                    {
+                        manifestInfos = new List<ManifestInfo> { Constants.SPDX22ManifestInfo };
+                    }
+
                     // Use the WriteJsonObjectsToSbomAsync method based on the SPDX version in manifest info
-                    foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
+                    foreach (var manifestInfo in manifestInfos)
                     {
                         var config = sbomConfigs.Get(manifestInfo);
 
