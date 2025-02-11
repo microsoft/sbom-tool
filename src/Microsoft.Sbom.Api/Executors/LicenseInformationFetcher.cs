@@ -14,7 +14,7 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
-public class LicenseInformationFetcher : ILicenseInformationFetcher2
+public class LicenseInformationFetcher : ILicenseInformationFetcher
 {
     private readonly ILogger log;
     private readonly IRecorder recorder;

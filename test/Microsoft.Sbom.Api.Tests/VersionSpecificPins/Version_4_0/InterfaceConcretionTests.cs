@@ -76,6 +76,7 @@ public class InterfaceConcretionTests
         public Dictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent) => throw new NotImplementedException();
         public List<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents) => throw new NotImplementedException();
         public Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi) => throw new NotImplementedException();
+        public Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi, int timeoutInSeconds) => throw new NotImplementedException();
         public string GetFromLicenseDictionary(string key) => throw new NotImplementedException();
         public ConcurrentDictionary<string, string> GetLicenseDictionary() => throw new NotImplementedException();
     }
@@ -330,6 +331,7 @@ public class InterfaceConcretionTests
         public ConfigurationSetting<string> SbomPath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<string> SbomDir { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<string> ComplianceStandard { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
     private class PinnedISettingSourceable : ISettingSourceable
