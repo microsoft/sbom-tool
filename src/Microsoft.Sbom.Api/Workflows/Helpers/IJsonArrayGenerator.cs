@@ -21,5 +21,5 @@ public interface IJsonArrayGenerator<T>
     /// specific type into the array.
     /// </summary>
     /// <returns>The list of failures.</returns>
-    Task<GenerateResult> GenerateAsync();
+    Task<GenerationResult> GenerateAsync();
 }

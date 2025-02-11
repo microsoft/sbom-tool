@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Extensions.Entities;
 using HashAlgorithm = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.HashAlgorithm;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
@@ -17,9 +16,6 @@ internal static class Constants
     internal const string RootPackageIdValue = "SPDXRef-RootPackage";
     internal const string SPDXDocumentNameFormatString = "{0} {1}";
     internal const string PackageSupplierFormatString = "Organization: {0}";
-
-    internal const string SPDXContextHeaderName = "@context";
-    internal const string SPDXGraphHeaderName = "@graph";
 
     internal const string SPDXVersionHeaderName = "spdxVersion";
     internal const string DataLicenseHeaderName = "dataLicense";
@@ -43,12 +39,6 @@ internal static class Constants
     /// The <see cref="NoAssertionValue"/> value as a list with a single item.
     /// </summary>
     internal static IEnumerable<string> NoAssertionListValue = new List<string> { NoAssertionValue };
-
-    internal static ManifestInfo Spdx30ManifestInfo = new ManifestInfo
-    {
-        Name = SPDXName,
-        Version = SPDXVersion
-    };
 
     public static readonly Dictionary<AlgorithmName, HashAlgorithm> AlgorithmMap = new()
     {

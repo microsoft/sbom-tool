@@ -10,6 +10,7 @@ using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
 using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Tool;
 
@@ -40,7 +41,7 @@ public class ValidationService : IHostedService
         bool result;
         try
         {
-            if (configuration.ManifestInfo.Value.Contains(Api.Utils.Constants.SPDX22ManifestInfo))
+            if (configuration.ManifestInfo.Value.Contains(SpdxConstants.SPDX22ManifestInfo))
             {
                 result = await parserValidationWorkflow.RunAsync();
             }

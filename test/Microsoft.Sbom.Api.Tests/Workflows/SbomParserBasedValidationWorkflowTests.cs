@@ -33,9 +33,9 @@ using Microsoft.Sbom.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ErrorType = Microsoft.Sbom.Api.Entities.ErrorType;
 using SpdxChecksum = Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Checksum;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Workflows;
 
@@ -178,7 +178,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
         configurationMock.SetupGet(c => c.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest") });
         configurationMock.SetupGet(c => c.Parallelism).Returns(new ConfigurationSetting<int> { Value = 3 });
-        configurationMock.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
+        configurationMock.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = SpdxConstants.DefaultHashAlgorithmName });
         configurationMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "child1;child2;child3" });
         configurationMock.SetupGet(c => c.IgnoreMissing).Returns(new ConfigurationSetting<bool> { Value = true });
         configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
@@ -186,18 +186,18 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
         configurationMock.SetupGet(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
         {
-            Value = new List<ManifestInfo>() { Constants.SPDX22ManifestInfo }
+            Value = new List<ManifestInfo>() { SpdxConstants.SPDX22ManifestInfo }
         });
 
         ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            ManifestInfo = Constants.SPDX22ManifestInfo,
+            ManifestInfo = SpdxConstants.SPDX22ManifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
             ManifestJsonFilePath = "/root/_manifest/spdx_2.2/manifest.spdx.json",
             MetadataBuilder = null,
             Recorder = new SbomPackageDetailsRecorder()
         };
-        sbomConfigs.Setup(c => c.Get(Constants.SPDX22ManifestInfo)).Returns(sbomConfig);
+        sbomConfigs.Setup(c => c.Get(SpdxConstants.SPDX22ManifestInfo)).Returns(sbomConfig);
 
         fileSystemMock.Setup(f => f.OpenRead("/root/_manifest/spdx_2.2/manifest.spdx.json")).Returns(Stream.Null);
         fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
@@ -211,14 +211,14 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
                 It.IsAny<string>(),
-                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+                new AlgorithmName[] { SpdxConstants.DefaultHashAlgorithmName }))
             .Returns((string fileName, AlgorithmName[] algos) =>
                 new Checksum[]
                 {
                     new Checksum
                     {
                         ChecksumValue = $"{fileName}hash",
-                        Algorithm = Constants.DefaultHashAlgorithmName
+                        Algorithm = SpdxConstants.DefaultHashAlgorithmName
                     }
                 });
 
@@ -329,7 +329,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
         configurationMock.SetupGet(c => c.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest") });
         configurationMock.SetupGet(c => c.Parallelism).Returns(new ConfigurationSetting<int> { Value = 3 });
-        configurationMock.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
+        configurationMock.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = SpdxConstants.DefaultHashAlgorithmName });
         configurationMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "child1;child2;child3" });
         configurationMock.SetupGet(c => c.IgnoreMissing).Returns(new ConfigurationSetting<bool> { Value = false });
         configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
@@ -337,18 +337,18 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
         configurationMock.SetupGet(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
         {
-            Value = new List<ManifestInfo>() { Constants.SPDX22ManifestInfo }
+            Value = new List<ManifestInfo>() { SpdxConstants.SPDX22ManifestInfo }
         });
 
         ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            ManifestInfo = Constants.SPDX22ManifestInfo,
+            ManifestInfo = SpdxConstants.SPDX22ManifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
             ManifestJsonFilePath = "/root/_manifest/spdx_2.2/manifest.spdx.json",
             MetadataBuilder = null,
             Recorder = new SbomPackageDetailsRecorder()
         };
-        sbomConfigs.Setup(c => c.Get(Constants.SPDX22ManifestInfo)).Returns(sbomConfig);
+        sbomConfigs.Setup(c => c.Get(SpdxConstants.SPDX22ManifestInfo)).Returns(sbomConfig);
 
         fileSystemMock.Setup(f => f.OpenRead("/root/_manifest/spdx_2.2/manifest.spdx.json")).Returns(Stream.Null);
         fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
@@ -362,20 +362,20 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
                 It.IsAny<string>(),
-                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+                new AlgorithmName[] { SpdxConstants.DefaultHashAlgorithmName }))
             .Returns((string fileName, AlgorithmName[] algos) =>
                 new Checksum[]
                 {
                     new Checksum
                     {
                         ChecksumValue = $"{fileName}hash",
-                        Algorithm = Constants.DefaultHashAlgorithmName
+                        Algorithm = SpdxConstants.DefaultHashAlgorithmName
                     }
                 });
 
         hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
                 It.Is<string>(a => a == "/root/child2/grandchild1/file10"),
-                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+                new AlgorithmName[] { SpdxConstants.DefaultHashAlgorithmName }))
             .Throws(new FileNotFoundException());
 
         var fileHasher = new FileHasher(
@@ -489,7 +489,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         configurationMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
         configurationMock.SetupGet(c => c.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest") });
         configurationMock.SetupGet(c => c.Parallelism).Returns(new ConfigurationSetting<int> { Value = 3 });
-        configurationMock.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
+        configurationMock.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = SpdxConstants.DefaultHashAlgorithmName });
         configurationMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "child1;child2;child3" });
         configurationMock.SetupGet(c => c.IgnoreMissing).Returns(new ConfigurationSetting<bool> { Value = true });
         configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
@@ -497,20 +497,20 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
         configurationMock.SetupGet(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
         {
-            Value = new List<ManifestInfo>() { Constants.SPDX30ManifestInfo }
+            Value = new List<ManifestInfo>() { SpdxConstants.SPDX30ManifestInfo }
         });
         configurationMock.SetupGet(c => c.ComplianceStandard).Returns(new ConfigurationSetting<string> { Value = "NTIA" });
 
         ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            ManifestInfo = Constants.SPDX30ManifestInfo,
+            ManifestInfo = SpdxConstants.SPDX30ManifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
             ManifestJsonFilePath = "/root/_manifest/spdx_3.0/manifest.spdx.json",
             MetadataBuilder = null,
             Recorder = new SbomPackageDetailsRecorder()
         };
 
-        sbomConfigs.Setup(c => c.Get(Constants.SPDX30ManifestInfo)).Returns(sbomConfig);
+        sbomConfigs.Setup(c => c.Get(SpdxConstants.SPDX30ManifestInfo)).Returns(sbomConfig);
 
         fileSystemMock.Setup(f => f.OpenRead("/root/_manifest/spdx_3.0/manifest.spdx.json")).Returns(Stream.Null);
         //fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
@@ -526,14 +526,14 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         hashCodeGeneratorMock.Setup(h => h.GenerateHashes(
                 It.IsAny<string>(),
-                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
+                new AlgorithmName[] { SpdxConstants.DefaultHashAlgorithmName }))
             .Returns((string fileName, AlgorithmName[] algos) =>
                 new Checksum[]
                 {
                     new Checksum
                     {
                         ChecksumValue = $"{fileName}hash",
-                        Algorithm = Constants.DefaultHashAlgorithmName
+                        Algorithm = SpdxConstants.DefaultHashAlgorithmName
                     }
                 });
 

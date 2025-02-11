@@ -7,7 +7,7 @@ using Microsoft.Sbom.Api.Recorder;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers;
 
@@ -24,21 +24,21 @@ public class SPDX22ManifestConfigHandler : IManifestConfigHandler
 
     // directory path for SPDX 2.2 is
     // root/_manifest/spdx_2.2/
-    private string SbomDirPath => fileSystemUtils.JoinPaths(ManifestDirPath, $"{Constants.SPDX22ManifestInfo.Name.ToLower()}_{Constants.SPDX22ManifestInfo.Version.ToLower()}");
+    private string SbomDirPath => fileSystemUtils.JoinPaths(ManifestDirPath, $"{SpdxConstants.SPDX22ManifestInfo.Name.ToLower()}_{SpdxConstants.SPDX22ManifestInfo.Version.ToLower()}");
 
     // sbom file path is manifest.spdx.json in the sbom directory.
-    private string SbomFilePath => fileSystemUtils.JoinPaths(SbomDirPath, $"manifest.{Constants.SPDX22ManifestInfo.Name.ToLower()}.json");
+    private string SbomFilePath => fileSystemUtils.JoinPaths(SbomDirPath, $"manifest.{SpdxConstants.SPDX22ManifestInfo.Name.ToLower()}.json");
 
     // sha file is sbom file + .sha256
     private string ManifestJsonSha256FilePath => $"{SbomFilePath}.sha256";
 
     // catalog file is always manifest.cat
-    private string CatalogFilePath => fileSystemUtils.JoinPaths(SbomDirPath, Constants.CatalogFileName);
+    private string CatalogFilePath => fileSystemUtils.JoinPaths(SbomDirPath, SpdxConstants.CatalogFileName);
 
     // bsi.json file contains build session metadata and is always bsi.json
-    private string BsiJsonFilePath => fileSystemUtils.JoinPaths(SbomDirPath, Constants.BsiFileName);
+    private string BsiJsonFilePath => fileSystemUtils.JoinPaths(SbomDirPath, SpdxConstants.BsiFileName);
 
-    private IMetadataBuilder MetadataBuilder => metadataBuilderFactory.Get(Constants.SPDX22ManifestInfo);
+    private IMetadataBuilder MetadataBuilder => metadataBuilderFactory.Get(SpdxConstants.SPDX22ManifestInfo);
 
     public SPDX22ManifestConfigHandler(
         IConfiguration configuration,
@@ -54,7 +54,7 @@ public class SPDX22ManifestConfigHandler : IManifestConfigHandler
     {
         sbomConfig = new SbomConfig(fileSystemUtils)
         {
-            ManifestInfo = Constants.SPDX22ManifestInfo,
+            ManifestInfo = SpdxConstants.SPDX22ManifestInfo,
             ManifestJsonDirPath = SbomDirPath,
             ManifestJsonFilePath = SbomFilePath,
             CatalogFilePath = CatalogFilePath,
@@ -70,7 +70,7 @@ public class SPDX22ManifestConfigHandler : IManifestConfigHandler
         if (configuration.ManifestToolAction == ManifestToolActions.Generate)
         {
             if (configuration.ManifestInfo?.Value != null
-                && !configuration.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
+                && !configuration.ManifestInfo.Value.Contains(SpdxConstants.SPDX22ManifestInfo))
             {
                 return false;
             }
@@ -83,7 +83,7 @@ public class SPDX22ManifestConfigHandler : IManifestConfigHandler
             // We can only validate one format at a time, so check if its this one and return true/false.
             if (configuration.ManifestInfo?.Value != null
                && configuration.ManifestInfo.Value.Count == 1
-               && configuration.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
+               && configuration.ManifestInfo.Value.Contains(SpdxConstants.SPDX22ManifestInfo))
             {
                 return true;
             }

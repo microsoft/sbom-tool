@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
@@ -15,6 +14,7 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ErrorType = Microsoft.Sbom.Api.Entities.ErrorType;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
 
@@ -37,12 +37,12 @@ public class HashValidatorTests
         }
 
         var configuration = new Mock<IConfiguration>();
-        configuration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
+        configuration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = SpdxConstants.DefaultHashAlgorithmName });
 
         var files = Channel.CreateUnbounded<InternalSbomFileInfo>();
         foreach (var file in fileList)
         {
-            await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = file.ToUpper(), Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"{file}_hash" } } });
+            await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = file.ToUpper(), Checksum = new Checksum[] { new Checksum { Algorithm = SpdxConstants.DefaultHashAlgorithmName, ChecksumValue = $"{file}_hash" } } });
         }
 
         files.Writer.Complete();
@@ -76,12 +76,12 @@ public class HashValidatorTests
         }
 
         var configuration = new Mock<IConfiguration>();
-        configuration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
+        configuration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = SpdxConstants.DefaultHashAlgorithmName });
 
         var files = Channel.CreateUnbounded<InternalSbomFileInfo>();
         foreach (var file in fileList)
         {
-            await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = file.ToUpper(), Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"{file}_hash" } } });
+            await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = file.ToUpper(), Checksum = new Checksum[] { new Checksum { Algorithm = SpdxConstants.DefaultHashAlgorithmName, ChecksumValue = $"{file}_hash" } } });
         }
 
         files.Writer.Complete();
@@ -120,18 +120,18 @@ public class HashValidatorTests
         }
 
         var configuration = new Mock<IConfiguration>();
-        configuration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
+        configuration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = SpdxConstants.DefaultHashAlgorithmName });
 
         var files = Channel.CreateUnbounded<InternalSbomFileInfo>();
         var errors = Channel.CreateUnbounded<FileValidationResult>();
 
         foreach (var file in fileList)
         {
-            await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = file.ToUpper(), Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"{file}_hash" } } });
+            await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = file.ToUpper(), Checksum = new Checksum[] { new Checksum { Algorithm = SpdxConstants.DefaultHashAlgorithmName, ChecksumValue = $"{file}_hash" } } });
         }
 
         // Additional file.
-        await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = "TEST4", Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"TEST4_hash" } } });
+        await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = "TEST4", Checksum = new Checksum[] { new Checksum { Algorithm = SpdxConstants.DefaultHashAlgorithmName, ChecksumValue = $"TEST4_hash" } } });
 
         files.Writer.Complete();
         errors.Writer.Complete();

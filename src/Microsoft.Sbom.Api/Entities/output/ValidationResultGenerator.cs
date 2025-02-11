@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
+using ApiConstants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Entities.Output;
 
@@ -72,8 +72,8 @@ public class ValidationResultGenerator
         List<FileValidationResult> validationErrors;
         List<FileValidationResult> skippedErrors;
 
-        validationErrors = NodeValidationResults.Where(r => !Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
-        skippedErrors = NodeValidationResults.Where(r => Constants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
+        validationErrors = NodeValidationResults.Where(r => !ApiConstants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
+        skippedErrors = NodeValidationResults.Where(r => ApiConstants.SkipFailureReportingForErrors.Contains(r.ErrorType)).ToList();
 
         if (configuration.IgnoreMissing.Value)
         {

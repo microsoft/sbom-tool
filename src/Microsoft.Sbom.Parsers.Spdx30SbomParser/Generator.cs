@@ -19,6 +19,7 @@ using HashAlgorithm = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.Has
 using RelationshipType = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.RelationshipType;
 using SbomEntities = Microsoft.Sbom.Extensions.Entities;
 using SHA1 = System.Security.Cryptography.SHA1;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 using SpdxEntities = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
@@ -333,7 +334,7 @@ public class Generator : IManifestGenerator
             throw new ArgumentNullException(nameof(internalMetadataProvider));
         }
 
-        var generationData = internalMetadataProvider.GetGenerationData(Constants.Spdx30ManifestInfo);
+        var generationData = internalMetadataProvider.GetGenerationData(SpdxConstants.SPDX30ManifestInfo);
 
         var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolName);
         var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
@@ -446,7 +447,7 @@ public class Generator : IManifestGenerator
         }
 
         // Generate SPDX file element
-        var spdxFileElement = new SpdxEntities.File
+        var spdxFileElement = new File
         {
             VerifiedUsing = packageVerificationCodes,
             Name = GeneratorUtils.EnsureRelativePathStartsWithDot(fileInfo.Path),
@@ -531,7 +532,7 @@ public class Generator : IManifestGenerator
         var licenseDeclaredElement = GenerateLicenseElement(packageInfo.LicenseInfo?.Declared);
         spdxRelationshipAndLicenseElementsToAddToSBOM.Add(licenseDeclaredElement);
 
-        var spdxRelationshipLicenseDeclaredElement = new Entities.Relationship
+        var spdxRelationshipLicenseDeclaredElement = new SpdxEntities.Relationship
         {
             From = spdxPackage.SpdxId,
             RelationshipType = RelationshipType.HAS_DECLARED_LICENSE,
@@ -593,7 +594,7 @@ public class Generator : IManifestGenerator
     {
         // Get a list of SHA1 checksums
         IList<string> sha1Checksums = new List<string>();
-        foreach (var checksumArray in internalMetadataProvider.GetGenerationData(Constants.Spdx30ManifestInfo).Checksums)
+        foreach (var checksumArray in internalMetadataProvider.GetGenerationData(SpdxConstants.SPDX30ManifestInfo).Checksums)
         {
             sha1Checksums.Add(checksumArray
                 .Where(c => c.Algorithm == AlgorithmName.SHA1)
@@ -616,7 +617,7 @@ public class Generator : IManifestGenerator
         return packageVerificationCode;
     }
 
-    public ManifestInfo RegisterManifest() => Constants.Spdx30ManifestInfo;
+    public ManifestInfo RegisterManifest() => SpdxConstants.SPDX30ManifestInfo;
 
     public IDictionary<string, object> GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider)
     {
@@ -625,7 +626,7 @@ public class Generator : IManifestGenerator
             throw new ArgumentNullException(nameof(internalMetadataProvider));
         }
 
-        var generationData = internalMetadataProvider.GetGenerationData(Constants.Spdx30ManifestInfo);
+        var generationData = internalMetadataProvider.GetGenerationData(SpdxConstants.SPDX30ManifestInfo);
 
         var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolName);
         var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);

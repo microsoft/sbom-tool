@@ -44,7 +44,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
         this.recorder = recorder;
     }
 
-    public async Task<GenerateResult> GenerateAsync()
+    public async Task<GenerationResult> GenerateAsync()
     {
         using (recorder.TraceEvent(Events.RelationshipsGeneration))
         {
@@ -111,7 +111,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                 log.Debug($"Wrote {count} relationship elements in the SBOM.");
             }
 
-            return new GenerateResult(totalErrors, serializersToJsonDocs);
+            return new GenerationResult(totalErrors, serializersToJsonDocs);
         }
     }
 
@@ -180,5 +180,5 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
         }
     }
 
-    Task<GenerateResult> IJsonArrayGenerator<RelationshipsArrayGenerator>.GenerateAsync() => throw new System.NotImplementedException();
+    Task<GenerationResult> IJsonArrayGenerator<RelationshipsArrayGenerator>.GenerateAsync() => throw new System.NotImplementedException();
 }

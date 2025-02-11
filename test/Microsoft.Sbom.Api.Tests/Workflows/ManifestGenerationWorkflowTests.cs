@@ -42,10 +42,10 @@ using Moq;
 using Newtonsoft.Json.Linq;
 using Spectre.Console;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using Generator30 = Microsoft.Sbom.Parsers.Spdx30SbomParser.Generator;
 using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
 using ILogger = Serilog.ILogger;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Workflows.Tests;
 
@@ -90,8 +90,8 @@ public class ManifestGenerationWorkflowTests
     {
         var manifestInfoPerSpdxVersion = new Dictionary<string, ManifestInfo>
         {
-            { "test", Constants.TestManifestInfo },
-            { "3.0", Constants.SPDX30ManifestInfo }
+            { "test", SpdxConstants.TestManifestInfo },
+            { "3.0", SpdxConstants.SPDX30ManifestInfo }
         };
 
         ManifestGeneratorProvider manifestGeneratorProvider = null;
@@ -344,7 +344,7 @@ public class ManifestGenerationWorkflowTests
 
         var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sourcesProvider, recorderMock.Object);
 
-        var generateResult = new GenerateResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
+        var generateResult = new Helpers.GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
         relationshipArrayGenerator
             .Setup(r => r.GenerateAsync())
             .ReturnsAsync(generateResult);
@@ -422,7 +422,7 @@ public class ManifestGenerationWorkflowTests
         mockOSUtils.Setup(o => o.GetEnvironmentVariable(It.IsAny<string>())).Returns("false");
         var sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            ManifestInfo = Constants.TestManifestInfo,
+            ManifestInfo = SpdxConstants.TestManifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
             ManifestJsonFilePath = "/root/_manifest/manifest.json"
         };
@@ -448,7 +448,7 @@ public class ManifestGenerationWorkflowTests
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         var sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            ManifestInfo = Constants.TestManifestInfo,
+            ManifestInfo = SpdxConstants.TestManifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
             ManifestJsonFilePath = "/root/_manifest/manifest.json"
         };
@@ -456,7 +456,7 @@ public class ManifestGenerationWorkflowTests
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
         var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
-        var generateResult = new GenerateResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
+        var generateResult = new Helpers.GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
         fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generateResult);
 
         var workflow = new SbomGenerationWorkflow(

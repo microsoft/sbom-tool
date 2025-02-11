@@ -14,7 +14,8 @@ using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
 using Serilog;
 using Serilog.Core;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
+using SbomConstants = Microsoft.Sbom.Common.Constants;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Config;
 
@@ -48,7 +49,7 @@ public class ConfigSanitizer
         // Create temporary logger to show logs during config sanitizing
         var logger = new LoggerConfiguration()
             .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = configuration.Verbosity.Value })
-            .WriteTo.Console(outputTemplate: Constants.LoggerTemplate)
+            .WriteTo.Console(outputTemplate: SpdxConstants.LoggerTemplate)
             .CreateLogger();
 
         // If BuildDropPath is null then run the logic to check whether it is required or not based on the current configuration.
@@ -82,21 +83,21 @@ public class ConfigSanitizer
         if (configuration2 is not null)
         {
             // Prevent null value for LicenseInformationTimeoutInSeconds.
-            // Values of (0, Constants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
-            // the higher values are truncated to the maximum of Common.Constants.MaxLicenseFetchTimeoutInSeconds
+            // Values of (0, SpdxConstants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
+            // the higher values are truncated to the maximum of Common.SpdxConstants.MaxLicenseFetchTimeoutInSeconds
             if (configuration2.LicenseInformationTimeoutInSeconds is null)
             {
-                configuration2.LicenseInformationTimeoutInSeconds = new(Common.Constants.DefaultLicenseFetchTimeoutInSeconds, SettingSource.Default);
+                configuration2.LicenseInformationTimeoutInSeconds = new(SbomConstants.DefaultLicenseFetchTimeoutInSeconds, SettingSource.Default);
             }
             else if (configuration2.LicenseInformationTimeoutInSeconds.Value <= 0)
             {
-                logger.Warning($"Negative and Zero Values not allowed for timeout. Using the default {Common.Constants.DefaultLicenseFetchTimeoutInSeconds} seconds instead.");
-                configuration2.LicenseInformationTimeoutInSeconds.Value = Common.Constants.DefaultLicenseFetchTimeoutInSeconds;
+                logger.Warning($"Negative and Zero Values not allowed for timeout. Using the default {SbomConstants.DefaultLicenseFetchTimeoutInSeconds} seconds instead.");
+                configuration2.LicenseInformationTimeoutInSeconds.Value = SbomConstants.DefaultLicenseFetchTimeoutInSeconds;
             }
-            else if (configuration2.LicenseInformationTimeoutInSeconds.Value > Common.Constants.MaxLicenseFetchTimeoutInSeconds)
+            else if (configuration2.LicenseInformationTimeoutInSeconds.Value > SbomConstants.MaxLicenseFetchTimeoutInSeconds)
             {
-                logger.Warning($"Specified timeout exceeds maximum allowed. Truncating the timeout to {Common.Constants.MaxLicenseFetchTimeoutInSeconds} seconds.");
-                configuration2.LicenseInformationTimeoutInSeconds.Value = Common.Constants.MaxLicenseFetchTimeoutInSeconds;
+                logger.Warning($"Specified timeout exceeds maximum allowed. Truncating the timeout to {SbomConstants.MaxLicenseFetchTimeoutInSeconds} seconds.");
+                configuration2.LicenseInformationTimeoutInSeconds.Value = SbomConstants.MaxLicenseFetchTimeoutInSeconds;
             }
 
             // Check if arg -lto is specified but -li is not
@@ -280,7 +281,7 @@ public class ConfigSanitizer
         {
             return new ConfigurationSetting<string>
             {
-                Value = fileSystemUtils.JoinPaths(buildDropPath, Constants.ManifestFolder),
+                Value = fileSystemUtils.JoinPaths(buildDropPath, SpdxConstants.ManifestFolder),
                 Source = SettingSource.Default
             };
         }
@@ -297,7 +298,7 @@ public class ConfigSanitizer
         if (manifestToolAction == ManifestToolActions.Generate)
         {
             // For generate action, add the _manifest folder at the end of the path
-            return fileSystemUtils.JoinPaths(value, Constants.ManifestFolder);
+            return fileSystemUtils.JoinPaths(value, SpdxConstants.ManifestFolder);
         }
 
         return value;

@@ -18,7 +18,7 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers;
 
@@ -69,11 +69,11 @@ public class RelationshipsArrayGeneratorTest
         metadataBuilder = new MetadataBuilder(
             mockLogger.Object,
             manifestGeneratorProvider,
-            Constants.TestManifestInfo,
+            SpdxConstants.TestManifestInfo,
             recorderMock.Object);
         sbomConfig = new SbomConfig(fileSystemUtilsMock.Object)
         {
-            ManifestInfo = Constants.TestManifestInfo,
+            ManifestInfo = SpdxConstants.TestManifestInfo,
             ManifestJsonDirPath = ManifestJsonDirPath,
             ManifestJsonFilePath = JsonFilePath,
             MetadataBuilder = metadataBuilder,

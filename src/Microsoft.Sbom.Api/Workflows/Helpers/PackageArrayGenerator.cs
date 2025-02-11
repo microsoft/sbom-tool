@@ -44,7 +44,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
         this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
     }
 
-    public async Task<GenerateResult> GenerateAsync()
+    public async Task<GenerationResult> GenerateAsync()
     {
         using (recorder.TraceEvent(Events.PackagesGeneration))
         {
@@ -117,7 +117,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
                 }
             }
 
-            return new GenerateResult(totalErrors, serializersToJsonDocs);
+            return new GenerationResult(totalErrors, serializersToJsonDocs);
         }
     }
 }

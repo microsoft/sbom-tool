@@ -81,59 +81,36 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
         // Files section
         var filesGenerateResult = await fileArrayGenerator.GenerateAsync();
         filesGenerateResult.Errors.AddRange(filesGenerateResult.Errors);
-
-        foreach (var serializer in filesGenerateResult.SerializerToJsonDocuments.Keys)
-        {
-            foreach (var jsonDocument in filesGenerateResult.SerializerToJsonDocuments[serializer])
-            {
-                serializer.Write(jsonDocument);
-            }
-
-            serializer.EndJsonArray();
-        }
+        WriteJsonObjectsFromGenerationResult(filesGenerateResult);
 
         // Packages section
         var packagesGenerateResult = await packageArrayGenerator.GenerateAsync();
         packagesGenerateResult.Errors.AddRange(packagesGenerateResult.Errors);
-
-        foreach (var serializer in packagesGenerateResult.SerializerToJsonDocuments.Keys)
-        {
-            foreach (var jsonDocument in packagesGenerateResult.SerializerToJsonDocuments[serializer])
-            {
-                serializer.Write(jsonDocument);
-            }
-
-            serializer.EndJsonArray();
-        }
+        WriteJsonObjectsFromGenerationResult(packagesGenerateResult);
 
         // External Document Reference section
         var externalDocumentReferenceGenerateResult = await externalDocumentReferenceGenerator.GenerateAsync();
         externalDocumentReferenceGenerateResult.Errors.AddRange(externalDocumentReferenceGenerateResult.Errors);
-
-        foreach (var serializer in externalDocumentReferenceGenerateResult.SerializerToJsonDocuments.Keys)
-        {
-            foreach (var jsonDocument in externalDocumentReferenceGenerateResult.SerializerToJsonDocuments[serializer])
-            {
-                serializer.Write(jsonDocument);
-            }
-
-            serializer.EndJsonArray();
-        }
+        WriteJsonObjectsFromGenerationResult(externalDocumentReferenceGenerateResult);
 
         // Relationships section
         var relationshipGenerateResult = await relationshipsArrayGenerator.GenerateAsync();
         relationshipGenerateResult.Errors.AddRange(relationshipGenerateResult.Errors);
+        WriteJsonObjectsFromGenerationResult(relationshipGenerateResult);
 
-        foreach (var serializer in relationshipGenerateResult.SerializerToJsonDocuments.Keys)
+        return errors;
+    }
+
+    private void WriteJsonObjectsFromGenerationResult(GenerationResult generationResult)
+    {
+        foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
         {
-            foreach (var jsonDocument in relationshipGenerateResult.SerializerToJsonDocuments[serializer])
+            foreach (var jsonDocument in generationResult.SerializerToJsonDocuments[serializer])
             {
                 serializer.Write(jsonDocument);
             }
 
             serializer.EndJsonArray();
         }
-
-        return errors;
     }
 }

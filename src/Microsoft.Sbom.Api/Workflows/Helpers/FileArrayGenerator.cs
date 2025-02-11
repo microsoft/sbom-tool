@@ -48,7 +48,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
     /// <param name="jsonSerializer">The serializer used to write the SBOM.</param>
     /// <param name="headerName">The header key for the file array object.</param>
     /// <returns></returns>
-    public async Task<GenerateResult> GenerateAsync()
+    public async Task<GenerationResult> GenerateAsync()
     {
         using (recorder.TraceEvent(Events.FilesGeneration))
         {
@@ -89,7 +89,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
                 }
             }
 
-            return new GenerateResult(totalErrors, serializersToJsonDocs);
+            return new GenerationResult(totalErrors, serializersToJsonDocs);
         }
     }
 }

@@ -15,7 +15,7 @@ using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
-using SPDXConstants = Microsoft.Sbom.Parsers.Spdx30SbomParser.Constants;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -29,8 +29,8 @@ namespace Microsoft.Sbom.Parser;
 /// </remarks>
 public class SPDX30Parser : ISbomParser
 {
-    public const string ContextProperty = SPDXConstants.SPDXContextHeaderName;
-    public const string GraphProperty = SPDXConstants.SPDXGraphHeaderName;
+    public const string ContextProperty = SpdxConstants.SPDXContextHeaderName;
+    public const string GraphProperty = SpdxConstants.SPDXGraphHeaderName;
     public static readonly IReadOnlyCollection<string> RequiredFields = new List<string>
     {
         ContextProperty,
@@ -45,11 +45,6 @@ public class SPDX30Parser : ISbomParser
     private readonly bool requiredFieldsCheck = true;
     private readonly JsonSerializerOptions jsonSerializerOptions;
     private bool parsingComplete = false;
-    private readonly ManifestInfo spdxManifestInfo = new()
-    {
-        Name = SPDXConstants.SPDXName,
-        Version = SPDXConstants.SPDXVersion,
-    };
 
     private readonly IReadOnlyCollection<string> entitiesWithDifferentNTIARequirements = new List<string>
     {
@@ -466,5 +461,5 @@ public class SPDX30Parser : ISbomParser
         return this.Metadata;
     }
 
-    public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { this.spdxManifestInfo };
+    public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { SpdxConstants.SPDX30ManifestInfo };
 }

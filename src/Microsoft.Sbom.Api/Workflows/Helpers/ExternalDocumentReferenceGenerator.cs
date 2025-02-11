@@ -40,7 +40,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
     }
 
-    public async Task<GenerateResult> GenerateAsync()
+    public async Task<GenerationResult> GenerateAsync()
     {
         using (recorder.TraceEvent(Events.ExternalDocumentReferenceGeneration))
         {
@@ -52,7 +52,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
             if (!sourcesProviders.Any())
             {
                 log.Debug($"No source providers found for {ProviderType.ExternalDocumentReference}");
-                return new GenerateResult(totalErrors, serializersToJsonDocs);
+                return new GenerationResult(totalErrors, serializersToJsonDocs);
             }
 
             // Write the start of the array, if supported.
@@ -86,7 +86,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
                 }
             }
 
-            return new GenerateResult(totalErrors, serializersToJsonDocs);
+            return new GenerationResult(totalErrors, serializersToJsonDocs);
         }
     }
 }

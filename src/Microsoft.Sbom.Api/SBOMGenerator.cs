@@ -16,6 +16,7 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
 
 namespace Microsoft.Sbom.Api;
@@ -138,7 +139,7 @@ public class SbomGenerator : ISBOMGenerator
 
     public IEnumerable<SbomSpecification> GetSupportedSBOMSpecifications() => generatorProvider
         .GetSupportedManifestInfos()
-        .Select(g => g.ToSBOMSpecification())
+        .Select(ManifestInfo.ToSBOMSpecification)
         .ToList();
 
     private InputConfiguration ValidateConfig(InputConfiguration config)

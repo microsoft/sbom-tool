@@ -18,7 +18,7 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Tests.Executors;
 
@@ -37,12 +37,12 @@ public class ExternalDocumentReferenceWriterTest
         var metadataBuilder = new MetadataBuilder(
             mockLogger.Object,
             manifestGeneratorProvider,
-            Constants.TestManifestInfo,
+            SpdxConstants.TestManifestInfo,
             recorderMock.Object);
         var jsonFilePath = "/root/_manifest/manifest.json";
         var sbomConfig = new SbomConfig(fileSystemUtilsMock.Object)
         {
-            ManifestInfo = Constants.TestManifestInfo,
+            ManifestInfo = SpdxConstants.TestManifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
             ManifestJsonFilePath = jsonFilePath,
             MetadataBuilder = metadataBuilder,

@@ -11,7 +11,7 @@ using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.Sbom.Contracts.Interfaces;
 using Moq;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Config.Tests;
 
@@ -26,7 +26,7 @@ public class ConfigurationBuilderTestsBase
     {
         fileSystemUtilsMock = new Mock<IFileSystemUtils>();
         mockAssemblyConfig = new Mock<IAssemblyConfig>();
-        mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForValidationAction).Returns(Constants.TestManifestInfo);
+        mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForValidationAction).Returns(SpdxConstants.TestManifestInfo);
 
         configValidators = new ConfigValidator[]
         {

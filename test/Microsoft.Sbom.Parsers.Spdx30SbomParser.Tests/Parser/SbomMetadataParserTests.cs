@@ -8,8 +8,8 @@ using System.Text;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.JsonStrings;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Spdx30 = Microsoft.Sbom.Parsers.Spdx30SbomParser;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -121,8 +121,8 @@ public class SbomMetadataParserTests : SbomParserTestsBase
     public void StreamEmptyTestReturnsNull()
     {
         using var stream = new MemoryStream();
-        stream.Read(new byte[Constants.ReadBufferSize]);
-        var buffer = new byte[Constants.ReadBufferSize];
+        stream.Read(new byte[Spdx30.Constants.ReadBufferSize]);
+        var buffer = new byte[Spdx30.Constants.ReadBufferSize];
 
         Assert.ThrowsException<EndOfStreamException>(() => new SPDXParser(stream));
     }

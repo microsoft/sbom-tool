@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
@@ -76,21 +76,21 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
         return generateResult.Errors;
     }
 
-    private void WriteElementsToSbom(GenerateResult generateResult)
+    private void WriteElementsToSbom(GenerationResult generateResult)
     {
         // Write the JSON objects to the SBOM
         foreach (var serializer in generateResult.SerializerToJsonDocuments.Keys)
         {
             // Write context
-            serializer.StartJsonArray("@context");
-            var document = JsonDocument.Parse(Constants.Spdx3Context);
+            serializer.StartJsonArray(SpdxConstants.SPDXContextHeaderName);
+            var document = JsonDocument.Parse(SpdxConstants.SPDX3ContextValue);
             serializer.Write(document);
             serializer.EndJsonArray();
 
             // Deduplication of elements by checking SPDX ID
             var elementsSpdxIdList = new HashSet<string>();
 
-            serializer.StartJsonArray("@graph");
+            serializer.StartJsonArray(SpdxConstants.SPDXGraphHeaderName);
 
             var jsonDocuments = generateResult.SerializerToJsonDocuments[serializer];
             foreach (var jsonDocument in jsonDocuments)

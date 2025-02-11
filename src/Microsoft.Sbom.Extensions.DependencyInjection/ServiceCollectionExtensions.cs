@@ -39,8 +39,8 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
 using Serilog.Filters;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ILogger = Serilog.ILogger;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Extensions.DependencyInjection;
 
@@ -162,7 +162,7 @@ public static class ServiceCollectionExtensions
 
                 var manifestData = new ManifestData();
 
-                if (!configuration.ManifestInfo.Value.Any(manifestInfo => Constants.SupportedSpdxManifests.Contains(manifestInfo)))
+                if (!configuration.ManifestInfo.Value.Any(manifestInfo => SpdxConstants.SupportedSpdxManifests.Contains(manifestInfo)))
                 {
                     var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo?.Value?.FirstOrDefault());
                     var parserProvider = x.GetRequiredService<IManifestParserProvider>();
@@ -215,7 +215,7 @@ public static class ServiceCollectionExtensions
                 .WriteTo.Map<bool>(
                     LoggingEnricher.PrintStderrPropertyName,
                     (printLogsToStderr, wt) => wt.Logger(lc => lc
-                        .WriteTo.Console(outputTemplate: Constants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
+                        .WriteTo.Console(outputTemplate: SpdxConstants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
 
                         // Don't write the detection times table from DetectorProcessingService to the console, only the log file
                         .Filter.ByExcluding(Matching.WithProperty<string>("DetectionTimeLine", x => !string.IsNullOrEmpty(x)))),
