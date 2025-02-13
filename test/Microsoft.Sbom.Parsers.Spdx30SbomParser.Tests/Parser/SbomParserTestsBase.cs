@@ -40,7 +40,7 @@ public abstract class SbomParserTestsBase
                 switch (result.FieldName)
                 {
                     case SPDX30Parser.ContextProperty:
-                        results.FormatEnforcedSPDX3Result.Context = (string?)((ContextsResult)result).Contexts.FirstOrDefault();
+                        results.FormatEnforcedSPDX3Result.Context = (result as ContextsResult)?.Contexts.FirstOrDefault();
                         break;
                     case SPDX30Parser.GraphProperty:
                         var elementsResult = (ElementsResult)result;

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Output.Telemetry;
@@ -56,22 +55,17 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
             // Write the start of the array, if supported.
             IList<ISbomConfig> packagesArraySupportingConfigs = new List<ISbomConfig>();
             var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
-            serializationStrategy.AddToPackagesSupportingConfig(ref packagesArraySupportingConfigs, this.SbomConfig);
+            serializationStrategy.AddToPackagesSupportingConfig(packagesArraySupportingConfigs, this.SbomConfig);
 
             var (jsonDocResults, errors) = sourcesProvider.Get(packagesArraySupportingConfigs);
 
-            // 6. Collect all the json elements to be written to the serializer.
+            // Collect all the json elements to be written to the serializer.
             var totalJsonDocumentsWritten = 0;
-            var serializersToJsonDocs = new Dictionary<IManifestToolJsonSerializer, List<JsonDocument>>();
+            var jsonDocumentCollection = new JsonDocumentCollection<IManifestToolJsonSerializer>();
 
             await foreach (var jsonDocResult in jsonDocResults.ReadAllAsync())
             {
-                if (!serializersToJsonDocs.ContainsKey(jsonDocResult.Serializer))
-                {
-                    serializersToJsonDocs[jsonDocResult.Serializer] = new List<JsonDocument>();
-                }
-
-                serializersToJsonDocs[jsonDocResult.Serializer].Add(jsonDocResult.Document);
+                jsonDocumentCollection.AddJsonDocument(jsonDocResult.Serializer, jsonDocResult.Document);
                 totalJsonDocumentsWritten++;
             }
 
@@ -94,13 +88,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
                 // Write the root package information to SBOM.
                 if (sbomConfig.MetadataBuilder.TryGetRootPackageJson(sbomConfigs, out var generationResult))
                 {
-                    if (!serializersToJsonDocs.ContainsKey(sbomConfig.JsonSerializer))
-                    {
-                        serializersToJsonDocs[sbomConfig.JsonSerializer] = new List<JsonDocument>();
-                    }
-
-                    serializersToJsonDocs[sbomConfig.JsonSerializer].Add(generationResult?.Document);
-
+                    jsonDocumentCollection.AddJsonDocument(sbomConfig.JsonSerializer, generationResult?.Document);
                     sbomConfig.Recorder.RecordRootPackageId(generationResult?.ResultMetadata?.EntityId);
                     sbomConfig.Recorder.RecordDocumentId(generationResult?.ResultMetadata?.DocumentId);
                 }
@@ -108,16 +96,11 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
                 // Write creation info to SBOM. Creation info element is only applicable for SPDX 3.0 and above.
                 if (sbomConfig.MetadataBuilder.TryGetCreationInfoJson(sbomConfigs, out generationResult))
                 {
-                    if (!serializersToJsonDocs.ContainsKey(sbomConfig.JsonSerializer))
-                    {
-                        serializersToJsonDocs[sbomConfig.JsonSerializer] = new List<JsonDocument>();
-                    }
-
-                    serializersToJsonDocs[sbomConfig.JsonSerializer].Add(generationResult?.Document);
+                    jsonDocumentCollection.AddJsonDocument(sbomConfig.JsonSerializer, generationResult?.Document);
                 }
             }
 
-            return new GenerationResult(totalErrors, serializersToJsonDocs);
+            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson);
         }
     }
 }

@@ -60,7 +60,11 @@ public class SPDX30Parser : ISbomParser
     {
         this.jsonSerializerOptions = jsonSerializerOptions ?? new JsonSerializerOptions
         {
-            Converters = { new ElementSerializer(), new JsonStringEnumConverter() },
+            Converters =
+            {
+                new ElementSerializer(),
+                new JsonStringEnumConverter()
+            },
         };
 
         var handlers = new Dictionary<string, PropertyHandler>
@@ -69,28 +73,7 @@ public class SPDX30Parser : ISbomParser
             { GraphProperty, new PropertyHandler<JsonNode>(ParameterType.Array) },
         };
 
-        if (!string.IsNullOrEmpty(this.RequiredComplianceStandard))
-        {
-            if (!Enum.TryParse<ComplianceStandard>(this.RequiredComplianceStandard, true, out var complianceStandardAsEnum))
-            {
-                throw new ParserException($"{this.RequiredComplianceStandard} compliance standard is not supported.");
-            }
-            else
-            {
-                switch (complianceStandardAsEnum)
-                {
-                    case ComplianceStandard.NTIA:
-                        this.EntitiesToEnforceComplianceStandardsFor = this.entitiesWithDifferentNTIARequirements;
-                        break;
-                    default:
-                        throw new ParserException($"{this.RequiredComplianceStandard} compliance standard is not supported.");
-                }
-            }
-        }
-        else
-        {
-            Console.WriteLine("No required compliance standard.");
-        }
+        (_, this.EntitiesToEnforceComplianceStandardsFor) = GetEntitiesToEnforceComplianceStandard(this.RequiredComplianceStandard);
 
         if (bufferSize is null)
         {
@@ -116,7 +99,7 @@ public class SPDX30Parser : ISbomParser
         {
             result = parser.Next();
 
-            if (result is not null && result.Result is not null)
+            if (result?.Result is not null)
             {
                 var fieldName = result.FieldName;
                 this.observedFieldNames.Add(fieldName);
@@ -125,12 +108,10 @@ public class SPDX30Parser : ISbomParser
                 switch (fieldName)
                 {
                     case ContextProperty:
-                        var contextResult = new ContextsResult(result, jsonList);
-                        ValidateContext(contextResult);
-                        result = contextResult;
+                        result = ConvertToContexts(jsonList, result);
                         break;
                     case GraphProperty:
-                        var elementsResult = ConvertToElements(jsonList, ref result, this.RequiredComplianceStandard, this.EntitiesToEnforceComplianceStandardsFor);
+                        var elementsResult = ConvertToElements(jsonList, result);
                         this.Metadata = this.SetMetadata(elementsResult);
                         result = elementsResult;
                         break;
@@ -158,11 +139,38 @@ public class SPDX30Parser : ISbomParser
         return null;
     }
 
+    public SpdxMetadata GetMetadata()
+    {
+        if (!this.parsingComplete)
+        {
+            throw new ParserException($"{nameof(this.GetMetadata)} can only be called after Parsing is complete to ensure that a whole object is returned.");
+        }
+
+        // TODO: Eventually this return type should be changed to SpdxMetadata to be consistent with naming.
+        return this.Metadata;
+    }
+
+    public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { SpdxConstants.SPDX30ManifestInfo };
+
+    private ContextsResult ConvertToContexts(List<object>? jsonList, ParserStateResult? result)
+    {
+        if (jsonList != null && jsonList.All(e => e is string))
+        {
+            var contextsResult = new ContextsResult(result, jsonList.Cast<string>().ToList());
+            ValidateContext(contextsResult);
+            return contextsResult;
+        }
+        else
+        {
+            throw new InvalidDataException("The context property must be a list of strings.");
+        }
+    }
+
     private void ValidateContext(ContextsResult result)
     {
         if (result.Contexts == null || !result.Contexts.Any() || result.Contexts.Count() > 1)
         {
-            throw new ParserException($"The context property is either empty or has more than one string.");
+            throw new ParserException($"The context property is invalid. It should only have one string.");
         }
     }
 
@@ -171,7 +179,7 @@ public class SPDX30Parser : ISbomParser
     /// </summary>
     /// <param name="jsonList"></param>
     /// <returns></returns>
-    public ElementsResult ConvertToElements(List<object>? jsonList, ref ParserStateResult? result, string? requiredComplianceStandard, IReadOnlyCollection<string>? entitiesWithDifferentNTIARequirements)
+    private ElementsResult ConvertToElements(List<object>? jsonList, ParserStateResult? result)
     {
         var elementsResult = new ElementsResult(result);
         var elementsList = new List<Element>();
@@ -188,63 +196,22 @@ public class SPDX30Parser : ISbomParser
             return elementsResult;
         }
 
-        var complianceStandardAsEnum = ComplianceStandard.None;
-        if (!string.IsNullOrEmpty(this.RequiredComplianceStandard))
-        {
-            if (!Enum.TryParse(this.RequiredComplianceStandard, true, out complianceStandardAsEnum))
-            {
-                throw new ParserException($"{this.RequiredComplianceStandard} compliance standard is not supported.");
-            }
-            else
-            {
-                switch (complianceStandardAsEnum)
-                {
-                    case ComplianceStandard.NTIA:
-                        this.EntitiesToEnforceComplianceStandardsFor = this.entitiesWithDifferentNTIARequirements;
-                        break;
-                    default:
-                        throw new ParserException($"{this.RequiredComplianceStandard} compliance standard is not supported.");
-                }
-            }
-        }
-        else
-        {
-            Console.WriteLine("No required compliance standard.");
-        }
+        // Default to no compliance standard.
+        (var complianceStandardAsEnum, this.EntitiesToEnforceComplianceStandardsFor) = GetEntitiesToEnforceComplianceStandard(this.RequiredComplianceStandard);
 
         foreach (JsonObject jsonObject in jsonList)
         {
-            if (jsonObject == null || !jsonObject.Any())
-            {
-                continue;
-            }
+            var parsedJsonObject = ParseJsonObject(jsonObject, complianceStandardAsEnum);
+            var entityType = parsedJsonObject?.GetType();
 
-            var entityType = GetEntityType(jsonObject, complianceStandardAsEnum);
-
-            object? deserializedObject = null;
-            try
+            if (parsedJsonObject is not null)
             {
-                deserializedObject = JsonSerializer.Deserialize(jsonObject.ToString(), entityType, jsonSerializerOptions);
-            }
-            catch (Exception e)
-            {
-                throw new ParserException(e.Message);
-            }
-
-            if (deserializedObject != null)
-            {
-                var deserializedElement = (Element)deserializedObject;
-
-                // Deduplication of elements by checking SPDX ID
+                var deserializedElement = (Element)parsedJsonObject;
                 var spdxId = deserializedElement.SpdxId;
-                if (!elementsSpdxIdList.TryGetValue(spdxId, out _))
+
+                if (IsUniqueElement(spdxId, elementsSpdxIdList))
                 {
                     elementsList.Add(deserializedElement);
-                    elementsSpdxIdList.Add(spdxId);
-                }
-                else
-                {
-                    Console.WriteLine($"Duplicate element with SPDX ID {spdxId} found. Skipping.");
                 }
 
                 switch (entityType?.Name)
@@ -269,13 +236,7 @@ public class SPDX30Parser : ISbomParser
             }
         }
 
-        // Validate if elements meet required compliance standards
-        switch (complianceStandardAsEnum)
-        {
-            case ComplianceStandard.NTIA:
-                ValidateNTIARequirements(elementsList);
-                break;
-        }
+        ValidateElementsBasedOnComplianceStandard(complianceStandardAsEnum, elementsList);
 
         elementsResult.Elements = elementsList;
         elementsResult.Files = filesList;
@@ -283,7 +244,7 @@ public class SPDX30Parser : ISbomParser
         return elementsResult;
     }
 
-    public Type GetEntityType(JsonObject jsonObject, ComplianceStandard? requiredComplianceStandard)
+    private Type GetEntityType(JsonObject jsonObject, ComplianceStandard? requiredComplianceStandard)
     {
         var assembly = typeof(Element).Assembly;
         var typeFromSbom = jsonObject["type"]?.ToString();
@@ -317,7 +278,7 @@ public class SPDX30Parser : ISbomParser
         return type;
     }
 
-    public void ValidateNTIARequirements(List<Element> elementsList)
+    private void ValidateNTIARequirements(List<Element> elementsList)
     {
         ValidateSbomDocCreationForNTIA(elementsList);
         ValidateSbomFilesForNTIA(elementsList);
@@ -329,10 +290,10 @@ public class SPDX30Parser : ISbomParser
     /// </summary>
     /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
-    public void ValidateSbomDocCreationForNTIA(List<Element> elementsList)
+    private void ValidateSbomDocCreationForNTIA(List<Element> elementsList)
     {
-        var spdxDocumentElements = elementsList.Where(element => element is SpdxDocument);
-        if (spdxDocumentElements.Count() != 1)
+        var spdxDocumentElements = elementsList.Where(element => element is SpdxDocument).ToList();
+        if (spdxDocumentElements.Count != 1)
         {
             throw new ParserException("SBOM document is not NTIA compliant because it must only contain one SpdxDocument element.");
         }
@@ -350,7 +311,7 @@ public class SPDX30Parser : ISbomParser
     /// </summary>
     /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
-    public void ValidateSbomFilesForNTIA(List<Element> elementsList)
+    private void ValidateSbomFilesForNTIA(List<Element> elementsList)
     {
         var fileElements = elementsList.Where(element => element is NTIAFile);
         foreach (var fileElement in fileElements)
@@ -358,8 +319,7 @@ public class SPDX30Parser : ISbomParser
             var fileSpdxId = fileElement.SpdxId;
 
             var fileHasSha256Hash = fileElement.VerifiedUsing.
-                Any(packageVerificationCode => packageVerificationCode.Algorithm ==
-                HashAlgorithm.sha256);
+                Any(packageVerificationCode => packageVerificationCode.Algorithm == HashAlgorithm.sha256);
 
             if (!fileHasSha256Hash)
             {
@@ -373,7 +333,7 @@ public class SPDX30Parser : ISbomParser
     /// </summary>
     /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
-    public void ValidateSbomPackagesForNTIA(List<Element> elementsList)
+    private void ValidateSbomPackagesForNTIA(List<Element> elementsList)
     {
         var packageElements = elementsList.Where(element => element is Package);
         foreach (var packageElement in packageElements)
@@ -381,8 +341,7 @@ public class SPDX30Parser : ISbomParser
             var packageSpdxId = packageElement.SpdxId;
 
             var packageHasSha256Hash = packageElement.VerifiedUsing.
-                Any(packageVerificationCode => packageVerificationCode.Algorithm ==
-                HashAlgorithm.sha256);
+                Any(packageVerificationCode => packageVerificationCode.Algorithm == HashAlgorithm.sha256);
 
             if (!packageHasSha256Hash)
             {
@@ -395,7 +354,7 @@ public class SPDX30Parser : ISbomParser
     /// Sets metadata based on parsed SBOM elements.
     /// </summary>
     /// <param name="result"></param>
-    public SpdxMetadata SetMetadata(ElementsResult result)
+    private SpdxMetadata SetMetadata(ElementsResult result)
     {
         var metadata = new SpdxMetadata();
         var spdxDocumentElement = (SpdxDocument?)result.Elements.FirstOrDefault(element => element.Type == "SpdxDocument");
@@ -450,16 +409,95 @@ public class SPDX30Parser : ISbomParser
         return metadata;
     }
 
-    public SpdxMetadata GetMetadata()
+    private (ComplianceStandard, IReadOnlyCollection<string>) GetEntitiesToEnforceComplianceStandard(string? requiredComplianceStandard)
     {
-        if (!this.parsingComplete)
+        if (!string.IsNullOrEmpty(requiredComplianceStandard))
         {
-            throw new ParserException($"{nameof(this.GetMetadata)} can only be called after Parsing is complete to ensure that a whole object is returned.");
+            if (!Enum.TryParse<ComplianceStandard>(requiredComplianceStandard, true, out var complianceStandardAsEnum))
+            {
+                throw new ParserException($"{requiredComplianceStandard} compliance standard is not supported.");
+            }
+            else
+            {
+                switch (complianceStandardAsEnum)
+                {
+                    case ComplianceStandard.NTIA:
+                        return (complianceStandardAsEnum, this.entitiesWithDifferentNTIARequirements);
+                    default:
+                        throw new ParserException($"{requiredComplianceStandard} compliance standard is not supported.");
+                }
+            }
         }
-
-        // TODO: Eventually this return type should be changed to SpdxMetadata to be consistent with naming.
-        return this.Metadata;
+        else
+        {
+            Console.WriteLine("No required compliance standard.");
+            return (ComplianceStandard.None, Array.Empty<string>());
+        }
     }
 
-    public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { SpdxConstants.SPDX30ManifestInfo };
+    /// <summary>
+    /// Validate if elements meet required compliance standards
+    /// </summary>
+    /// <param name="complianceStandardAsEnum"></param>
+    /// <param name="elementsList"></param>
+    private void ValidateElementsBasedOnComplianceStandard(ComplianceStandard complianceStandardAsEnum, List<Element> elementsList)
+    {
+        switch (complianceStandardAsEnum)
+        {
+            case ComplianceStandard.NTIA:
+                ValidateNTIARequirements(elementsList);
+                break;
+            case ComplianceStandard.None:
+                Console.WriteLine("No compliance standard to enforce.");
+                break;
+            default:
+                Console.WriteLine($"Unexpected compliance standard {complianceStandardAsEnum}.");
+                break;
+        }
+    }
+
+    private object? ParseJsonObject(JsonObject jsonObject, ComplianceStandard complianceStandardAsEnum)
+    {
+        if (jsonObject is null || !jsonObject.Any())
+        {
+            return null;
+        }
+        else
+        {
+            var entityType = GetEntityType(jsonObject, complianceStandardAsEnum);
+
+            object? deserializedObject = null;
+            try
+            {
+                deserializedObject = JsonSerializer.Deserialize(jsonObject.ToString(), entityType, jsonSerializerOptions);
+            }
+            catch (Exception e)
+            {
+                throw new ParserException(e.Message);
+            }
+
+            return deserializedObject;
+        }
+    }
+
+    /// <summary>
+    /// Handle deduplication of elements by checking SPDX ID
+    /// </summary>
+    /// <param name="spdxId"></param>
+    /// <param name="elementsList"></param>
+    /// <param name="elementsSpdxIdList"></param>
+    /// <returns></returns>
+    private bool IsUniqueElement(string spdxId, HashSet<string> elementsSpdxIdList)
+    {
+        if (!elementsSpdxIdList.TryGetValue(spdxId, out _))
+        {
+            elementsSpdxIdList.Add(spdxId);
+            return true;
+        }
+        else
+        {
+            Console.WriteLine($"Duplicate element with SPDX ID {spdxId} found. Skipping.");
+            return false;
+        }
+    }
 }

@@ -13,7 +13,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 public class Spdx2SerializationStrategy : IJsonSerializationStrategy
 {
-    public void AddToFilesSupportingConfig(ref IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public void AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetFilesArrayHeaderName(out var headerName))
         {
@@ -22,7 +22,7 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
         }
     }
 
-    public void AddToPackagesSupportingConfig(ref IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public void AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetPackageArrayHeaderName(out var headerName))
         {
@@ -31,7 +31,7 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
         }
     }
 
-    public bool AddToRelationshipsSupportingConfig(ref IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetRelationshipsHeaderName(out var headerName))
         {
@@ -42,7 +42,7 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
         return false;
     }
 
-    public void AddToExternalDocRefsSupportingConfig(ref IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public void AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetExternalRefArrayHeaderName(out var headerName))
         {

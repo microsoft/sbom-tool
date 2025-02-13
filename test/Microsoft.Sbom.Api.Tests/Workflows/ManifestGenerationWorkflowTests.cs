@@ -40,7 +40,6 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json.Linq;
-using Spectre.Console;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
 using Generator30 = Microsoft.Sbom.Parsers.Spdx30SbomParser.Generator;
 using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;

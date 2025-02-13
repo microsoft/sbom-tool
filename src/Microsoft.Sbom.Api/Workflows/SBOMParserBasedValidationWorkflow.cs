@@ -97,20 +97,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                 }
 
-                // Validate compliance standard for SPDX 3.0 parsers and above
-                if (!string.IsNullOrEmpty(configuration.ComplianceStandard?.Value) && Convert.ToDouble(sbomConfig.ManifestInfo.Version) >= 3.0)
-                {
-                    var complianceStandard = configuration.ComplianceStandard.Value;
-                    try
-                    {
-                        ((SPDX30Parser)sbomParser).RequiredComplianceStandard = complianceStandard;
-                    }
-                    catch (Exception e)
-                    {
-                        recorder.RecordException(e);
-                        log.Error($"Unable to use the given compliance standard {complianceStandard} to parse the SBOM.");
-                    }
-                }
+                SetComplianceStandard(sbomConfig.ManifestInfo.Version, sbomParser);
 
                 var successfullyValidatedFiles = 0;
                 List<FileValidationResult> fileValidationFailures = null;
@@ -126,7 +113,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                         {
                             case FilesResult filesResult:
                                 (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(filesResult.Files);
-                                ValidateInvalidInputFiles(fileValidationFailures);
+                                ThrowOnInvalidInputFiles(fileValidationFailures);
                                 break;
                             case PackagesResult packagesResult:
                                 var packages = packagesResult.Packages.ToList();
@@ -146,7 +133,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                                 totalNumberOfPackages = elementsResult.PackagesCount;
 
                                 (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(elementsResult.Files);
-                                ValidateInvalidInputFiles(fileValidationFailures);
+                                ThrowOnInvalidInputFiles(fileValidationFailures);
                                 break;
                             default:
                                 break;
@@ -300,12 +287,36 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         Console.WriteLine($"Unknown file failures . . . . . . . . . . . . .  {validFailures.Count(v => v.ErrorType == ErrorType.Other)}");
     }
 
-    private void ValidateInvalidInputFiles(List<FileValidationResult> fileValidationFailures)
+    private void ThrowOnInvalidInputFiles(List<FileValidationResult> fileValidationFailures)
     {
         var invalidInputFiles = fileValidationFailures.Where(f => f.ErrorType == ErrorType.InvalidInputFile).ToList();
         if (invalidInputFiles.Count != 0)
         {
             throw new InvalidDataException($"Your manifest file is malformed. {invalidInputFiles.First().Path}");
+        }
+    }
+
+    /// <summary>
+    /// Set compliance standard for SPDX 3.0 parsers and above.
+    /// </summary>
+    /// <param name="spdxVersion"></param>
+    private void SetComplianceStandard(string spdxVersion, ISbomParser sbomParser)
+    {
+        // Note that spdxVersion is already validated to be a valid double in ConfigValidator.
+        var spdxVersionAsDouble = Convert.ToDouble(spdxVersion);
+
+        if (!string.IsNullOrEmpty(configuration.ComplianceStandard?.Value) && spdxVersionAsDouble >= 3.0)
+        {
+            var complianceStandard = configuration.ComplianceStandard.Value;
+            try
+            {
+                (sbomParser as SPDX30Parser).RequiredComplianceStandard = complianceStandard;
+            }
+            catch (Exception e)
+            {
+                recorder.RecordException(e);
+                log.Error($"Unable to use the given compliance standard {complianceStandard} to parse the SBOM.");
+            }
         }
     }
 }

@@ -33,14 +33,6 @@ public class Generator : IManifestGenerator
 
     public string Version { get; set; } = string.Join("-", Constants.SPDXName, Constants.SPDXVersion);
 
-    string IManifestGenerator.FilesArrayHeaderName => throw new NotSupportedException();
-
-    string IManifestGenerator.PackagesArrayHeaderName => throw new NotSupportedException();
-
-    string IManifestGenerator.RelationshipsArrayHeaderName => throw new NotSupportedException();
-
-    string IManifestGenerator.ExternalDocumentRefArrayHeaderName => throw new NotSupportedException();
-
     private JsonSerializerOptions serializerOptions = new JsonSerializerOptions
     {
         Converters = { new ElementSerializer() },
@@ -321,6 +313,29 @@ public class Generator : IManifestGenerator
         };
     }
 
+    public IDictionary<string, object> GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider)
+    {
+        if (internalMetadataProvider is null)
+        {
+            throw new ArgumentNullException(nameof(internalMetadataProvider));
+        }
+
+        var generationData = internalMetadataProvider.GetGenerationData(SpdxConstants.SPDX30ManifestInfo);
+
+        var (sbomToolName, sbomToolVersion, packageName, packageVersion, documentName, creationInfo) = GetCommonMetadata(internalMetadataProvider);
+
+        return new Dictionary<string, object>
+        {
+            { Constants.SPDXVersionHeaderName, Version },
+            { Constants.DataLicenseHeaderName, Constants.DataLicenceValue },
+            { Constants.SPDXIDHeaderName, Constants.SPDXDocumentIdValue },
+            { Constants.DocumentNameHeaderName, documentName },
+            { Constants.DocumentNamespaceHeaderName,  internalMetadataProvider.GetDocumentNamespace() },
+            { Constants.CreationInfoHeaderName, creationInfo },
+            { Constants.DocumentDescribesHeaderName, new string[] { generationData.RootPackageId } }
+        };
+    }
+
     /// <summary>
     /// Generate all SPDX elements related to document creation.
     /// </summary>
@@ -336,14 +351,10 @@ public class Generator : IManifestGenerator
 
         var generationData = internalMetadataProvider.GetGenerationData(SpdxConstants.SPDX30ManifestInfo);
 
-        var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolName);
-        var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
-        var packageName = internalMetadataProvider.GetPackageName();
-        var packageVersion = internalMetadataProvider.GetPackageVersion();
+        var (sbomToolName, sbomToolVersion, packageName, packageVersion, documentName, creationInfo) = GetCommonMetadata(internalMetadataProvider);
 
         var orgName = internalMetadataProvider.GetPackageSupplier();
         var toolName = sbomToolName + "-" + sbomToolVersion;
-        var documentName = string.Format(Constants.SPDXDocumentNameFormatString, packageName, packageVersion);
 
         var spdxOrganization = new Organization
         {
@@ -407,6 +418,8 @@ public class Generator : IManifestGenerator
             },
         };
     }
+
+    public ManifestInfo RegisterManifest() => SpdxConstants.SPDX30ManifestInfo;
 
     /// <summary>
     /// Use file info to generate file and relationship spdx elements.
@@ -617,19 +630,10 @@ public class Generator : IManifestGenerator
         return packageVerificationCode;
     }
 
-    public ManifestInfo RegisterManifest() => SpdxConstants.SPDX30ManifestInfo;
-
-    public IDictionary<string, object> GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider)
+    private (string sbomToolName, string sbomToolVersion, string packageName, string packageVersion, string documentName, CreationInfo creationInfo) GetCommonMetadata(IInternalMetadataProvider internalMetadataProvider)
     {
-        if (internalMetadataProvider is null)
-        {
-            throw new ArgumentNullException(nameof(internalMetadataProvider));
-        }
-
-        var generationData = internalMetadataProvider.GetGenerationData(SpdxConstants.SPDX30ManifestInfo);
-
-        var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolName);
-        var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
+        var sbomToolName = (string)internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolName);
+        var sbomToolVersion = (string)internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
         var packageName = internalMetadataProvider.GetPackageName();
         var packageVersion = internalMetadataProvider.GetPackageVersion();
 
@@ -640,7 +644,7 @@ public class Generator : IManifestGenerator
             Created = internalMetadataProvider.GetGenerationTimestamp(),
             CreatedBy = new List<string>
             {
-                $"{internalMetadataProvider.GetPackageSupplier()}",
+                internalMetadataProvider.GetPackageSupplier(),
             },
             CreatedUsing = new List<string>
             {
@@ -648,15 +652,6 @@ public class Generator : IManifestGenerator
             }
         };
 
-        return new Dictionary<string, object>
-        {
-            { Constants.SPDXVersionHeaderName, Version },
-            { Constants.DataLicenseHeaderName, Constants.DataLicenceValue },
-            { Constants.SPDXIDHeaderName, Constants.SPDXDocumentIdValue },
-            { Constants.DocumentNameHeaderName, documentName },
-            { Constants.DocumentNamespaceHeaderName,  internalMetadataProvider.GetDocumentNamespace() },
-            { Constants.CreationInfoHeaderName, creationInfo },
-            { Constants.DocumentDescribesHeaderName, new string[] { generationData.RootPackageId } }
-        };
+        return (sbomToolName, sbomToolVersion, packageName, packageVersion, documentName, creationInfo);
     }
 }

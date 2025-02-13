@@ -25,7 +25,7 @@ public static class SPDXToSbomFormatConverterExtensions
     {
         var checksums = spdxFile.VerifiedUsing?.Select(c => c.ToSbomChecksum());
 
-        if (checksums == null || !checksums.Any() || checksums.All(c => c.Algorithm != AlgorithmName.SHA256))
+        if (checksums is null || !checksums.Any() || checksums.All(c => c.Algorithm != AlgorithmName.SHA256))
         {
             throw new ParserException("File hash is missing a SHA256 value");
         }

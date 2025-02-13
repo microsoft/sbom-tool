@@ -8,11 +8,11 @@ namespace Microsoft.Sbom.Parser;
 
 public record ContextsResult : ParserStateResult
 {
-    public ContextsResult(ParserStateResult result, List<object> jsonList)
+    public ContextsResult(ParserStateResult result, List<string> contexts)
         : base(result.FieldName, result.Result, result.ExplicitField, result.YieldReturn)
     {
-        Contexts = jsonList;
+        Contexts = contexts;
     }
 
-    public IEnumerable<object> Contexts { get; set; }
+    public IEnumerable<string> Contexts { get; set; }
 }

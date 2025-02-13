@@ -16,22 +16,22 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 public class Spdx3SerializationStrategy : IJsonSerializationStrategy
 {
-    public void AddToFilesSupportingConfig(ref IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public void AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         elementsSupportingConfigs.Add(config);
     }
 
-    public void AddToPackagesSupportingConfig(ref IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public void AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         elementsSupportingConfigs.Add(config);
     }
 
-    public bool AddToRelationshipsSupportingConfig(ref IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         return true;
     }
 
-    public void AddToExternalDocRefsSupportingConfig(ref IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public void AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         elementsSupportingConfigs.Add(config);
     }
@@ -101,14 +101,14 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
                     {
                         var spdxId = spdxIdField.GetString();
 
-                        if (!elementsSpdxIdList.TryGetValue(spdxId, out _))
+                        if (elementsSpdxIdList.TryGetValue(spdxId, out _))
                         {
-                            serializer.Write(element);
-                            elementsSpdxIdList.Add(spdxId);
+                            Console.WriteLine($"Duplicate element with SPDX ID {spdxId} found. Skipping.");
                         }
                         else
                         {
-                            Console.WriteLine($"Duplicate element with SPDX ID {spdxId} found. Skipping.");
+                            serializer.Write(element);
+                            elementsSpdxIdList.Add(spdxId);
                         }
                     }
                 }

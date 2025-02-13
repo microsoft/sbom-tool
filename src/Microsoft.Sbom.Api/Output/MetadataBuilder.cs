@@ -8,6 +8,7 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
+using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Output;
@@ -54,7 +55,7 @@ public class MetadataBuilder : IMetadataBuilder
     {
         try
         {
-            headerName = manifestGenerator.FilesArrayHeaderName;
+            headerName = ((Generator)manifestGenerator).FilesArrayHeaderName;
             return true;
         }
         catch (NotSupportedException)
@@ -69,7 +70,7 @@ public class MetadataBuilder : IMetadataBuilder
     {
         try
         {
-            headerName = manifestGenerator.PackagesArrayHeaderName;
+            headerName = ((Generator)manifestGenerator).PackagesArrayHeaderName;
             return true;
         }
         catch (NotSupportedException)
@@ -84,7 +85,7 @@ public class MetadataBuilder : IMetadataBuilder
     {
         try
         {
-            headerName = manifestGenerator.ExternalDocumentRefArrayHeaderName;
+            headerName = ((Generator)manifestGenerator).ExternalDocumentRefArrayHeaderName;
             return true;
         }
         catch (NotSupportedException)
@@ -134,7 +135,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             generationResult = null;
-            logger.Warning("Root package serialization not supported on this SBOM format.");
+            logger.Warning("Root package serialization is not supported on this SBOM format.");
             return false;
         }
     }
@@ -143,7 +144,7 @@ public class MetadataBuilder : IMetadataBuilder
     {
         try
         {
-            headerName = manifestGenerator.RelationshipsArrayHeaderName;
+            headerName = ((Generator)manifestGenerator).RelationshipsArrayHeaderName;
             return headerName != null;
         }
         catch (NotSupportedException)

@@ -513,8 +513,6 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         sbomConfigs.Setup(c => c.Get(SpdxConstants.SPDX30ManifestInfo)).Returns(sbomConfig);
 
         fileSystemMock.Setup(f => f.OpenRead("/root/_manifest/spdx_3.0/manifest.spdx.json")).Returns(Stream.Null);
-        //fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
-        //    .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
         fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>()))
             .Returns((string root, string relativePath) => $"{root}/{relativePath}");
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>()))

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Output.Telemetry;
@@ -60,23 +59,18 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
             // Write the start of the array, if supported.
             IList<ISbomConfig> filesArraySupportingSBOMs = new List<ISbomConfig>();
             var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
-            serializationStrategy.AddToFilesSupportingConfig(ref filesArraySupportingSBOMs, this.SbomConfig);
+            serializationStrategy.AddToFilesSupportingConfig(filesArraySupportingSBOMs, this.SbomConfig);
 
             this.logger.Verbose("Started writing files array for {configFile}.", this.SbomConfig.ManifestJsonFilePath);
 
-            var serializersToJsonDocs = new Dictionary<IManifestToolJsonSerializer, List<JsonDocument>>();
+            var jsonDocumentCollection = new JsonDocumentCollection<IManifestToolJsonSerializer>();
             foreach (var sourcesProvider in sourcesProviders)
             {
                 var (jsondDocResults, errors) = sourcesProvider.Get(filesArraySupportingSBOMs);
 
                 await foreach (var jsonResults in jsondDocResults.ReadAllAsync())
                 {
-                    if (!serializersToJsonDocs.ContainsKey(jsonResults.Serializer))
-                    {
-                        serializersToJsonDocs[jsonResults.Serializer] = new List<JsonDocument>();
-                    }
-
-                    serializersToJsonDocs[jsonResults.Serializer].Add(jsonResults.Document);
+                    jsonDocumentCollection.AddJsonDocument(jsonResults.Serializer, jsonResults.Document);
                 }
 
                 await foreach (var error in errors.ReadAllAsync())
@@ -89,7 +83,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
                 }
             }
 
-            return new GenerationResult(totalErrors, serializersToJsonDocs);
+            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson);
         }
     }
 }
