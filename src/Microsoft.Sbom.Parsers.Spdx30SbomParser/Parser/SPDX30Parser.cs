@@ -230,7 +230,6 @@ public class SPDX30Parser : ISbomParser
                         elementsResult.RelationshipsCount += 1;
                         break;
                     default:
-                        Console.WriteLine($"Unrecognized entity type: {entityType?.Name}");
                         break;
                 }
             }
@@ -313,7 +312,7 @@ public class SPDX30Parser : ISbomParser
     /// <exception cref="ParserException"></exception>
     private void ValidateSbomFilesForNTIA(List<Element> elementsList)
     {
-        var fileElements = elementsList.Where(element => element is NTIAFile);
+        var fileElements = elementsList.Where(element => element is Parsers.Spdx30SbomParser.Entities.File);
         foreach (var fileElement in fileElements)
         {
             var fileSpdxId = fileElement.SpdxId;
@@ -430,7 +429,6 @@ public class SPDX30Parser : ISbomParser
         }
         else
         {
-            Console.WriteLine("No required compliance standard.");
             return (ComplianceStandard.None, Array.Empty<string>());
         }
     }
@@ -448,7 +446,6 @@ public class SPDX30Parser : ISbomParser
                 ValidateNTIARequirements(elementsList);
                 break;
             case ComplianceStandard.None:
-                Console.WriteLine("No compliance standard to enforce.");
                 break;
             default:
                 Console.WriteLine($"Unexpected compliance standard {complianceStandardAsEnum}.");
@@ -496,7 +493,6 @@ public class SPDX30Parser : ISbomParser
         }
         else
         {
-            Console.WriteLine($"Duplicate element with SPDX ID {spdxId} found. Skipping.");
             return false;
         }
     }

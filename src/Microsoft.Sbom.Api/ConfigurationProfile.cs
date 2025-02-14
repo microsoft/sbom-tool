@@ -40,8 +40,7 @@ public class ConfigurationProfile : Profile
             .ForMember(c => c.NamespaceUriUniquePart, o => o.Ignore())
             .ForMember(c => c.NamespaceUriBase, o => o.Ignore())
             .ForMember(c => c.DeleteManifestDirIfPresent, o => o.Ignore())
-            .ForMember(c => c.PackageSupplier, o => o.Ignore())
-            .ForMember(c => c.ComplianceStandard, o => o.Ignore());
+            .ForMember(c => c.PackageSupplier, o => o.Ignore());
 
         CreateMap<FormatValidationArgs, InputConfiguration>()
 #pragma warning disable CS0618 // 'Configuration.ManifestPath' is obsolete: 'This field is not provided by the user or configFile, set by system'

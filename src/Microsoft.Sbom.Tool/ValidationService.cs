@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -41,13 +42,13 @@ public class ValidationService : IHostedService
         bool result;
         try
         {
-            if (configuration.ManifestInfo.Value.Contains(SpdxConstants.SPDX22ManifestInfo))
+            if (configuration.ManifestInfo.Value.Any(SpdxConstants.SupportedSpdxManifests.Contains))
             {
                 result = await parserValidationWorkflow.RunAsync();
             }
             else
             {
-                throw new ConfigurationException($"Validation only supports the SPDX2.2 format.");
+                throw new ConfigurationException($"Validation only supports the SPDX2.2 and SPDX3.0 format.");
             }
 
             await recorder.FinalizeAndLogTelemetryAsync();

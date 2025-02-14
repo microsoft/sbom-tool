@@ -78,7 +78,10 @@ public class RelationshipsArrayGeneratorTest
                 }
             });
         relationshipGeneratorMock.CallBase = true;
-        relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), loggerMock.Object, recorderMock.Object);
+        relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), loggerMock.Object, recorderMock.Object)
+        {
+            SbomConfig = sbomConfig
+        };
         manifestGeneratorProvider.Init();
 
         fileSystemUtilsMock.Setup(f => f.CreateDirectory(ManifestJsonDirPath));

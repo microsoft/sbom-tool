@@ -4,7 +4,6 @@
 using System.Linq;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using SbomChecksum = Microsoft.Sbom.Contracts.Checksum;
 
@@ -24,11 +23,6 @@ public static class SPDXToSbomFormatConverterExtensions
     public static SbomFile ToSbomFile(this File spdxFile)
     {
         var checksums = spdxFile.VerifiedUsing?.Select(c => c.ToSbomChecksum());
-
-        if (checksums is null || !checksums.Any() || checksums.All(c => c.Algorithm != AlgorithmName.SHA256))
-        {
-            throw new ParserException("File hash is missing a SHA256 value");
-        }
 
         // Not setting LicenseConcluded and LicenseInfoInFiles since the whole SBOM is required to set these values.
         return new SbomFile

@@ -209,7 +209,7 @@ public interface IConfiguration
     ConfigurationSetting<string> SbomDir { get; set; }
 
     /// <summary>
-    /// Gets or sets the directory containing the sbom(s) to redact.
+    /// The compliance standard to validate against.
     /// </summary>
     ConfigurationSetting<string> ComplianceStandard { get; set; }
 }

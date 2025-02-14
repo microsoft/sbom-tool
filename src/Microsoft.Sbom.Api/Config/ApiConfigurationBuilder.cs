@@ -143,7 +143,6 @@ public static class ApiConfigurationBuilder
             IgnoreMissing = GetConfigurationSetting(ignoreMissing),
             Parallelism = GetConfigurationSetting(sanitizedRuntimeConfiguration.WorkflowParallelism),
             ManifestInfo = ConvertSbomSpecificationToManifestInfo(specifications),
-            ComplianceStandard = GetConfigurationSetting(string.Empty),
         };
 
         SetVerbosity(sanitizedRuntimeConfiguration, configuration);

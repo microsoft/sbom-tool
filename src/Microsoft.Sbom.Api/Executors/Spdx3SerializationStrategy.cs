@@ -53,42 +53,42 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
         relationshipsArrayGenerator.SpdxManifestVersion = spdxManifestVersion;
         externalDocumentReferenceGenerator.SpdxManifestVersion = spdxManifestVersion;
 
+        // Holds the SPDX IDs of all the elements that have been written to the SBOM. Used for deduplication.
+        var elementsSpdxIdList = new HashSet<string>();
+
         WriteContext(sbomConfig);
 
         sbomConfig.JsonSerializer.StartJsonArray(SpdxConstants.SPDXGraphHeaderName);
 
         // Files section
         var generateResult = await fileArrayGenerator.GenerateAsync();
-        WriteElementsToSbom(generateResult);
+        WriteElementsToSbom(generateResult, elementsSpdxIdList);
 
         // Packages section
         var packagesGenerateResult = await packageArrayGenerator.GenerateAsync();
         generateResult.Errors.AddRange(packagesGenerateResult.Errors);
-        WriteElementsToSbom(packagesGenerateResult);
+        WriteElementsToSbom(packagesGenerateResult, elementsSpdxIdList);
 
         // External Document Reference section
         var externalDocumentReferenceGenerateResult = await externalDocumentReferenceGenerator.GenerateAsync();
         generateResult.Errors.AddRange(externalDocumentReferenceGenerateResult.Errors);
-        WriteElementsToSbom(externalDocumentReferenceGenerateResult);
+        WriteElementsToSbom(externalDocumentReferenceGenerateResult, elementsSpdxIdList);
 
         // Relationships section
         var relationshipGenerateResult = await relationshipsArrayGenerator.GenerateAsync();
         generateResult.Errors.AddRange(relationshipGenerateResult.Errors);
-        WriteElementsToSbom(relationshipGenerateResult);
+        WriteElementsToSbom(relationshipGenerateResult, elementsSpdxIdList);
 
         sbomConfig.JsonSerializer.EndJsonArray();
 
         return generateResult.Errors;
     }
 
-    private void WriteElementsToSbom(GenerationResult generateResult)
+    private void WriteElementsToSbom(GenerationResult generateResult, HashSet<string> elementsSpdxIdList)
     {
         // Write the JSON objects to the SBOM
         foreach (var serializer in generateResult.SerializerToJsonDocuments.Keys)
         {
-            // Deduplication of elements by checking SPDX ID
-            var elementsSpdxIdList = new HashSet<string>();
-
             var jsonDocuments = generateResult.SerializerToJsonDocuments[serializer];
             foreach (var jsonDocument in jsonDocuments)
             {
