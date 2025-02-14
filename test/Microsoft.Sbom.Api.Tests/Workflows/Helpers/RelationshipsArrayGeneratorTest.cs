@@ -53,7 +53,21 @@ public class RelationshipsArrayGeneratorTest
     [TestInitialize]
     public void Setup()
     {
+        metadataBuilder = new MetadataBuilder(
+            mockLogger.Object,
+            manifestGeneratorProvider,
+            SpdxConstants.TestManifestInfo,
+            recorderMock.Object);
         recorder = new SbomPackageDetailsRecorder();
+        sbomConfig = new SbomConfig(fileSystemUtilsMock.Object)
+        {
+            ManifestInfo = SpdxConstants.TestManifestInfo,
+            ManifestJsonDirPath = ManifestJsonDirPath,
+            ManifestJsonFilePath = JsonFilePath,
+            MetadataBuilder = metadataBuilder,
+            Recorder = recorder,
+        };
+
         relationships = new List<Relationship>();
         relationshipGeneratorMock.Setup(r => r.Run(It.IsAny<IEnumerator<Relationship>>(), It.IsAny<ManifestInfo>()))
             .Callback<IEnumerator<Relationship>, ManifestInfo>((relationship, manifestInfo) =>
@@ -66,23 +80,6 @@ public class RelationshipsArrayGeneratorTest
         relationshipGeneratorMock.CallBase = true;
         relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), loggerMock.Object, recorderMock.Object);
         manifestGeneratorProvider.Init();
-        metadataBuilder = new MetadataBuilder(
-            mockLogger.Object,
-            manifestGeneratorProvider,
-            SpdxConstants.TestManifestInfo,
-            recorderMock.Object);
-        sbomConfig = new SbomConfig(fileSystemUtilsMock.Object)
-        {
-            ManifestInfo = SpdxConstants.TestManifestInfo,
-            ManifestJsonDirPath = ManifestJsonDirPath,
-            ManifestJsonFilePath = JsonFilePath,
-            MetadataBuilder = metadataBuilder,
-            Recorder = recorder,
-        };
-
-        // Set up the relationshipsArrayGenerator sbomConfig, this is normally done in SBOM generation workflow.
-        // Since we are testing the RelationshipsArrayGenerator, we need to set it up manually.
-        relationshipsArrayGenerator.SbomConfig = sbomConfig;
 
         fileSystemUtilsMock.Setup(f => f.CreateDirectory(ManifestJsonDirPath));
         fileSystemUtilsMock.Setup(f => f.OpenWrite(JsonFilePath)).Returns(new MemoryStream());

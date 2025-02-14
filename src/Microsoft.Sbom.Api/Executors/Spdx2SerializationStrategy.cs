@@ -81,27 +81,27 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
         // Files section
         var filesGenerateResult = await fileArrayGenerator.GenerateAsync();
         filesGenerateResult.Errors.AddRange(filesGenerateResult.Errors);
-        WriteJsonObjectsFromGenerationResult(filesGenerateResult);
+        WriteJsonObjectsFromGenerationResult(filesGenerateResult, fileArrayGenerator.SbomConfig);
 
         // Packages section
         var packagesGenerateResult = await packageArrayGenerator.GenerateAsync();
         packagesGenerateResult.Errors.AddRange(packagesGenerateResult.Errors);
-        WriteJsonObjectsFromGenerationResult(packagesGenerateResult);
+        WriteJsonObjectsFromGenerationResult(packagesGenerateResult, packageArrayGenerator.SbomConfig);
 
         // External Document Reference section
         var externalDocumentReferenceGenerateResult = await externalDocumentReferenceGenerator.GenerateAsync();
         externalDocumentReferenceGenerateResult.Errors.AddRange(externalDocumentReferenceGenerateResult.Errors);
-        WriteJsonObjectsFromGenerationResult(externalDocumentReferenceGenerateResult);
+        WriteJsonObjectsFromGenerationResult(externalDocumentReferenceGenerateResult, externalDocumentReferenceGenerator.SbomConfig);
 
         // Relationships section
         var relationshipGenerateResult = await relationshipsArrayGenerator.GenerateAsync();
         relationshipGenerateResult.Errors.AddRange(relationshipGenerateResult.Errors);
-        WriteJsonObjectsFromGenerationResult(relationshipGenerateResult);
+        WriteJsonObjectsFromGenerationResult(relationshipGenerateResult, relationshipsArrayGenerator.SbomConfig);
 
         return errors;
     }
 
-    private void WriteJsonObjectsFromGenerationResult(GenerationResult generationResult)
+    private void WriteJsonObjectsFromGenerationResult(GenerationResult generationResult, ISbomConfig sbomConfig)
     {
         foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
         {
@@ -109,8 +109,8 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
             {
                 serializer.Write(jsonDocument);
             }
-
-            serializer.EndJsonArray();
         }
+
+        sbomConfig.JsonSerializer.EndJsonArray();
     }
 }

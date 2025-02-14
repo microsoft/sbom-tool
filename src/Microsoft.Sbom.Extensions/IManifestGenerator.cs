@@ -104,6 +104,14 @@ public interface IManifestGenerator
     /// </summary>
     string Version { get; }
 
+    string FilesArrayHeaderName { get; }
+
+    string PackagesArrayHeaderName { get; }
+
+    string RelationshipsArrayHeaderName { get; }
+
+    string ExternalDocumentRefArrayHeaderName { get; }
+
     /// <summary>
     /// Return a dictionary of items that need to be added to the header of
     /// the generated SBOM.

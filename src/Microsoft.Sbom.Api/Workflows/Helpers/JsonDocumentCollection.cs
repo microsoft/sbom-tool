@@ -10,6 +10,11 @@ public class JsonDocumentCollection<T>
 {
     public Dictionary<T, List<JsonDocument>> SerializersToJson { get; }
 
+    public JsonDocumentCollection()
+    {
+        SerializersToJson = new Dictionary<T, List<JsonDocument>>();
+    }
+
     public void AddJsonDocument(T key, JsonDocument document)
     {
         if (SerializersToJson.TryGetValue(key, out var jsonDocuments))

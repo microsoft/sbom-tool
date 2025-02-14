@@ -38,6 +38,38 @@ public class Generator : IManifestGenerator
         Converters = { new ElementSerializer() },
     };
 
+    public string FilesArrayHeaderName
+    {
+        get
+        {
+            throw new NotSupportedException("Files array not supported for SBOMs generated with SPDX 3.0.");
+        }
+    }
+
+    public string PackagesArrayHeaderName
+    {
+        get
+        {
+            throw new NotSupportedException("Packages array not supported for SBOMs generated with SPDX 3.0.");
+        }
+    }
+
+    public string RelationshipsArrayHeaderName
+    {
+        get
+        {
+            throw new NotSupportedException("Relationships array not supported for SBOMs generated with SPDX 3.0.");
+        }
+    }
+
+    public string ExternalDocumentRefArrayHeaderName
+    {
+        get
+        {
+            throw new NotSupportedException("External document ref array not supported for SBOMs generated with SPDX 3.0.");
+        }
+    }
+
     /// <summary>
     /// Generates all SPDX elements related to a single file.
     /// </summary>

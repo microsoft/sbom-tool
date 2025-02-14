@@ -28,7 +28,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
 
     private readonly IRecorder recorder;
 
-    private GenerationData generationData;
+    // private GenerationData generationData;
 
     public ISbomConfig SbomConfig { get; set; }
 
@@ -44,7 +44,6 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
         this.channelUtils = channelUtils;
         this.log = log;
         this.recorder = recorder;
-        this.generationData = this.SbomConfig.Recorder.GetGenerationData();
     }
 
     public async Task<GenerationResult> GenerateAsync()
@@ -60,6 +59,8 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
             // Write the relationship array only if supported
             if (serializationStrategy.AddToRelationshipsSupportingConfig(relationshipsArraySupportingConfigs, this.SbomConfig))
             {
+                var generationData = this.SbomConfig?.Recorder.GetGenerationData();
+
                 var jsonChannelsArray = new ChannelReader<JsonDocument>[]
                 {
                     // Packages relationships

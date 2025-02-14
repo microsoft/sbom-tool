@@ -8,7 +8,6 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Output;
@@ -55,13 +54,13 @@ public class MetadataBuilder : IMetadataBuilder
     {
         try
         {
-            headerName = ((Generator)manifestGenerator).FilesArrayHeaderName;
+            headerName = manifestGenerator.FilesArrayHeaderName;
             return true;
         }
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Warning("Files array not suppored on this SBOM format.");
+            logger.Warning("Files array not supported on this SBOM format.");
             return false;
         }
     }
@@ -70,13 +69,13 @@ public class MetadataBuilder : IMetadataBuilder
     {
         try
         {
-            headerName = ((Generator)manifestGenerator).PackagesArrayHeaderName;
+            headerName = manifestGenerator.PackagesArrayHeaderName;
             return true;
         }
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Warning("Packages array not suppored on this SBOM format.");
+            logger.Warning("Packages array not supported on this SBOM format.");
             return false;
         }
     }
@@ -85,13 +84,13 @@ public class MetadataBuilder : IMetadataBuilder
     {
         try
         {
-            headerName = ((Generator)manifestGenerator).ExternalDocumentRefArrayHeaderName;
+            headerName = manifestGenerator.ExternalDocumentRefArrayHeaderName;
             return true;
         }
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Warning("External Document Reference array not suppored on this SBOM format.");
+            logger.Warning("External Document Reference array not supported on this SBOM format.");
             return false;
         }
     }
@@ -100,8 +99,7 @@ public class MetadataBuilder : IMetadataBuilder
     {
         try
         {
-            generationResult = manifestGenerator
-                .GenerateRootPackage(internalMetadataProvider);
+            generationResult = manifestGenerator.GenerateRootPackage(internalMetadataProvider);
 
             if (generationResult == null)
             {
@@ -122,8 +120,7 @@ public class MetadataBuilder : IMetadataBuilder
     {
         try
         {
-            generationResult = manifestGenerator
-                .GenerateJsonDocument(internalMetadataProvider);
+            generationResult = manifestGenerator.GenerateJsonDocument(internalMetadataProvider);
 
             if (generationResult == null)
             {
@@ -144,7 +141,7 @@ public class MetadataBuilder : IMetadataBuilder
     {
         try
         {
-            headerName = ((Generator)manifestGenerator).RelationshipsArrayHeaderName;
+            headerName = manifestGenerator.RelationshipsArrayHeaderName;
             return headerName != null;
         }
         catch (NotSupportedException)

@@ -10,11 +10,11 @@ using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers;
 
 /// <summary>
-/// Provides the ManifestConfig for the SPDX 2.2 format.
+/// Provides the ManifestConfig for the SPDX 3.0 format.
 /// </summary>
-public class SPDX22ManifestConfigHandler : BaseManifestConfigHandler
+public class SPDX30ManifestConfigHandler : BaseManifestConfigHandler
 {
-    public SPDX22ManifestConfigHandler(
+    public SPDX30ManifestConfigHandler(
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
         IMetadataBuilderFactory metadataBuilderFactory)
@@ -23,7 +23,7 @@ public class SPDX22ManifestConfigHandler : BaseManifestConfigHandler
     }
 
     /// <inheritdoc/>
-    protected override ManifestInfo ManifestInfo => SpdxConstants.SPDX22ManifestInfo;
+    protected override ManifestInfo ManifestInfo => SpdxConstants.SPDX30ManifestInfo;
 
     public override bool TryGetManifestConfig(out ISbomConfig sbomConfig)
     {
@@ -35,7 +35,7 @@ public class SPDX22ManifestConfigHandler : BaseManifestConfigHandler
         if (configuration.ManifestToolAction == ManifestToolActions.Generate)
         {
             if (configuration.ManifestInfo?.Value != null
-                && !configuration.ManifestInfo.Value.Contains(SpdxConstants.SPDX22ManifestInfo))
+                && !configuration.ManifestInfo.Value.Contains(SpdxConstants.SPDX30ManifestInfo))
             {
                 return false;
             }
@@ -48,7 +48,7 @@ public class SPDX22ManifestConfigHandler : BaseManifestConfigHandler
             // We can only validate one format at a time, so check if its this one and return true/false.
             if (configuration.ManifestInfo?.Value != null
                && configuration.ManifestInfo.Value.Count == 1
-               && configuration.ManifestInfo.Value.Contains(SpdxConstants.SPDX22ManifestInfo))
+               && configuration.ManifestInfo.Value.Contains(SpdxConstants.SPDX30ManifestInfo))
             {
                 return true;
             }

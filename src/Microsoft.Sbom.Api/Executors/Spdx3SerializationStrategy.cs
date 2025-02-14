@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -54,6 +53,10 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
         relationshipsArrayGenerator.SpdxManifestVersion = spdxManifestVersion;
         externalDocumentReferenceGenerator.SpdxManifestVersion = spdxManifestVersion;
 
+        WriteContext(sbomConfig);
+
+        sbomConfig.JsonSerializer.StartJsonArray(SpdxConstants.SPDXGraphHeaderName);
+
         // Files section
         var generateResult = await fileArrayGenerator.GenerateAsync();
         WriteElementsToSbom(generateResult);
@@ -73,6 +76,8 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
         generateResult.Errors.AddRange(relationshipGenerateResult.Errors);
         WriteElementsToSbom(relationshipGenerateResult);
 
+        sbomConfig.JsonSerializer.EndJsonArray();
+
         return generateResult.Errors;
     }
 
@@ -81,40 +86,50 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
         // Write the JSON objects to the SBOM
         foreach (var serializer in generateResult.SerializerToJsonDocuments.Keys)
         {
-            // Write context
-            serializer.StartJsonArray(SpdxConstants.SPDXContextHeaderName);
-            var document = JsonDocument.Parse(SpdxConstants.SPDX3ContextValue);
-            serializer.Write(document);
-            serializer.EndJsonArray();
-
             // Deduplication of elements by checking SPDX ID
             var elementsSpdxIdList = new HashSet<string>();
-
-            serializer.StartJsonArray(SpdxConstants.SPDXGraphHeaderName);
 
             var jsonDocuments = generateResult.SerializerToJsonDocuments[serializer];
             foreach (var jsonDocument in jsonDocuments)
             {
-                foreach (var element in jsonDocument.RootElement.EnumerateArray())
+                if (jsonDocument.RootElement.ValueKind == JsonValueKind.Object)
                 {
-                    if (element.TryGetProperty("spdxId", out var spdxIdField))
+                    WriteElement(serializer, jsonDocument.RootElement, elementsSpdxIdList);
+                }
+                else
+                {
+                    foreach (var element in jsonDocument.RootElement.EnumerateArray())
                     {
-                        var spdxId = spdxIdField.GetString();
-
-                        if (elementsSpdxIdList.TryGetValue(spdxId, out _))
-                        {
-                            Console.WriteLine($"Duplicate element with SPDX ID {spdxId} found. Skipping.");
-                        }
-                        else
-                        {
-                            serializer.Write(element);
-                            elementsSpdxIdList.Add(spdxId);
-                        }
+                        WriteElement(serializer, element, elementsSpdxIdList);
                     }
                 }
             }
+        }
+    }
 
-            serializer.EndJsonArray();
+    private void WriteContext(ISbomConfig sbomConfig)
+    {
+        sbomConfig.JsonSerializer.StartJsonArray(SpdxConstants.SPDXContextHeaderName);
+        var document = JsonDocument.Parse(SpdxConstants.SPDX3ContextValue);
+        sbomConfig.JsonSerializer.Write(document);
+        sbomConfig.JsonSerializer.EndJsonArray();
+    }
+
+    private void WriteElement(IManifestToolJsonSerializer serializer, JsonElement element, HashSet<string> elementsSpdxIdList)
+    {
+        if (element.TryGetProperty("spdxId", out var spdxIdField))
+        {
+            var spdxId = spdxIdField.GetString();
+
+            if (elementsSpdxIdList.TryGetValue(spdxId, out _))
+            {
+                return;
+            }
+            else
+            {
+                serializer.Write(element);
+                elementsSpdxIdList.Add(spdxId);
+            }
         }
     }
 }
