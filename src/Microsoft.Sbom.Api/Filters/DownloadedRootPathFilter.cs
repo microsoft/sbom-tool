@@ -83,11 +83,9 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
             validPaths = new HashSet<string>();
             var relativeRootPaths = configuration.RootPathFilter.Value.Split(';');
 
-            var r = relativeRootPaths.Select(r =>
+            validPaths.UnionWith(relativeRootPaths.Select(r =>
                 new FileInfo(fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, r))
-                    .FullName);
-
-            validPaths.UnionWith(r);
+                    .FullName));
 
             foreach (var validPath in validPaths)
             {

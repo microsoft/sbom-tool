@@ -28,7 +28,7 @@ public class ManifestInfoValidator : ConfigValidator
 
     public override void ValidateInternal(string paramName, object paramValue, Attribute attribute)
     {
-        if (paramValue is not null && !SpdxConstants.SupportedSpdxManifests.Contains(paramValue as ManifestInfo))
+        if (paramValue is not null && paramValue is ManifestInfo manifestInfo && !SpdxConstants.SupportedSpdxManifests.Contains(paramValue as ManifestInfo))
         {
             throw new ValidationArgException($"The value of {paramName} must be a valid ManifestInfo. Supported SPDX versions include 2.2 and 3.0.");
         }

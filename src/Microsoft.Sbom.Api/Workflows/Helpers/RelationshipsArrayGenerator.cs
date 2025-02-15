@@ -28,8 +28,6 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
 
     private readonly IRecorder recorder;
 
-    // private GenerationData generationData;
-
     public ISbomConfig SbomConfig { get; set; }
 
     public string SpdxManifestVersion { get; set; }

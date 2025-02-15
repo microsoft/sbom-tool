@@ -99,7 +99,7 @@ internal class GeneratedSbomValidator
         }
         else
         {
-            Assert.Fail("An unexpected SBOM specification was used. Please specify a valid SPDX version. Current supported versions are 2.2 or 3.0.");
+            Assert.Fail("An unexpected SBOM specification was used. Please specify a valid SPDX version. Current supported versions are 2.2 and 3.0.");
         }
     }
 

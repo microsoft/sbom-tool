@@ -104,12 +104,28 @@ public interface IManifestGenerator
     /// </summary>
     string Version { get; }
 
+    /// <summary>
+    /// Gets the value of the header to use where the files section of the SBOM will be placed.
+    /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
+    /// </summary>
     string FilesArrayHeaderName { get; }
 
+    /// <summary>
+    /// Gets the value of the header to use where the packages section of the SBOM will be placed.
+    /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
+    /// </summary>
     string PackagesArrayHeaderName { get; }
 
+    /// <summary>
+    /// Gets the value of the header where the relationship data about this SBOM will be placed.
+    /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
+    /// </summary>
     string RelationshipsArrayHeaderName { get; }
 
+    /// <summary>
+    /// Gets the value of the header where the external document reference data about this SBOM will be placed.
+    /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
+    /// </summary>
     string ExternalDocumentRefArrayHeaderName { get; }
 
     /// <summary>

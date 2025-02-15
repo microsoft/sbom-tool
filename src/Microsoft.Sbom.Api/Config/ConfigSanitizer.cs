@@ -83,8 +83,8 @@ public class ConfigSanitizer
         if (configuration2 is not null)
         {
             // Prevent null value for LicenseInformationTimeoutInSeconds.
-            // Values of (0, SpdxConstants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
-            // the higher values are truncated to the maximum of Common.SpdxConstants.MaxLicenseFetchTimeoutInSeconds
+            // Values of (0, MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
+            // the higher values are truncated to the maximum of MaxLicenseFetchTimeoutInSeconds
             if (configuration2.LicenseInformationTimeoutInSeconds is null)
             {
                 configuration2.LicenseInformationTimeoutInSeconds = new(SbomConstants.DefaultLicenseFetchTimeoutInSeconds, SettingSource.Default);

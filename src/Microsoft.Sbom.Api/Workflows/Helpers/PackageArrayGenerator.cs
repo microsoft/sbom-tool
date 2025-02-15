@@ -38,9 +38,9 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
         ISbomConfigProvider sbomConfigs)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
+        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
         this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
-        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
     }
 
     public async Task<GenerationResult> GenerateAsync()
