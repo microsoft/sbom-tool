@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -239,21 +237,6 @@ public abstract class AbstractGenerateSbomTaskInputTests
         Assert.IsFalse(result);
     }
 
-    internal class MSBuildMessageDebugView(BuildMessageEventArgs message)
-    {
-        public override string ToString()
-        {
-            if (message.Subcategory is not null && message.Code is not null)
-            {
-                return $"[{message.Timestamp}] [{message.Subcategory}/{message.Code}] {message.Message}";
-            }
-            else
-            {
-                return $"[{message.Timestamp}] {message.Message}";
-            }
-        }
-    }
-
     /// <summary>
     /// Test for ensuring GenerateSbom assigns a default Verbosity
     /// level when null input is provided.
@@ -323,19 +306,14 @@ public abstract class AbstractGenerateSbomTaskInputTests
     /// values to the SBOM API.
     /// </summary>
     [TestMethod]
-    [DataRow("FATAL", "Fatal", false)]
-    [DataRow("information", "Information", true)]
-    [DataRow("vErBose", "Verbose", true)]
-    [DataRow("Warning", "Warning", false)]
-    [DataRow("eRRor", "Error", false)]
-    [DataRow("DeBug", "Verbose", true)]
-    public void Sbom_Generation_Assigns_Correct_Verbosity_IgnoreCase(string inputVerbosity, string mappedVerbosity, bool messageShouldBeLogged)
+    [DataRow("FATAL", "Fatal")]
+    [DataRow("information", "Information")]
+    [DataRow("vErBose", "Verbose")]
+    [DataRow("Warning", "Warning")]
+    [DataRow("eRRor", "Error")]
+    [DataRow("DeBug", "Verbose")]
+    public void Sbom_Generation_Assigns_Correct_Verbosity_IgnoreCase(string inputVerbosity, string mappedVerbosity)
     {
-        if (!messageShouldBeLogged)
-        {
-            Assert.Inconclusive("Cases where the input Verbosity is more restrictive than `Information` are failing due to this issue: https://github.com/microsoft/sbom-tool/issues/616");
-        }
-
         // Arrange
         var task = new GenerateSbom
         {
