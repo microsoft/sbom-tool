@@ -5,6 +5,7 @@ namespace Microsoft.Sbom.Targets;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,37 +28,11 @@ using Serilog.Events;
 /// </summary>
 public partial class GenerateSbom : Task
 {
-    private readonly IHost taskHost;
-
     /// <summary>
     /// Constructor for the GenerateSbomTask.
     /// </summary>
     public GenerateSbom()
     {
-        var taskLoggingHelper = new TaskLoggingHelper(this);
-        taskHost = Host.CreateDefaultBuilder()
-            .ConfigureServices((host, services) =>
-                services
-                .AddSbomTool(LogEventLevel.Information, taskLoggingHelper)
-                /* Manually adding some dependencies since `AddSbomTool()` does not add them when
-                 * running the MSBuild Task from another project.
-                 */
-                .AddSingleton<ISourcesProvider, SBOMPackagesProvider>()
-                .AddSingleton<ISourcesProvider, CGExternalDocumentReferenceProvider>()
-                .AddSingleton<ISourcesProvider, DirectoryTraversingFileToJsonProvider>()
-                .AddSingleton<ISourcesProvider, ExternalDocumentReferenceFileProvider>()
-                .AddSingleton<ISourcesProvider, ExternalDocumentReferenceProvider>()
-                .AddSingleton<ISourcesProvider, FileListBasedFileToJsonProvider>()
-                .AddSingleton<ISourcesProvider, SbomFileBasedFileToJsonProvider>()
-                .AddSingleton<ISourcesProvider, CGScannedExternalDocumentReferenceFileProvider>()
-                .AddSingleton<ISourcesProvider, CGScannedPackagesProvider>()
-                .AddSingleton<IAlgorithmNames, AlgorithmNames>()
-                .AddSingleton<IManifestGenerator, Generator>()
-                .AddSingleton<IMetadataProvider, LocalMetadataProvider>()
-                .AddSingleton<IMetadataProvider, SBOMApiMetadataProvider>()
-                .AddSingleton<IManifestInterface, Validator>()
-                .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>())
-            .Build();
     }
 
     /// <inheritdoc/>
@@ -65,11 +40,40 @@ public partial class GenerateSbom : Task
     {
         try
         {
+            var taskLoggingHelper = new TaskLoggingHelper(this);
+
             // Validate required args and args that take paths as input.
             if (!ValidateAndSanitizeRequiredParams() || !ValidateAndSanitizeNamespaceUriUniquePart())
             {
                 return false;
             }
+
+            var logVerbosity = ValidateAndAssignVerbosity();
+            var serilogLogVerbosity = MapSerilogLevel(logVerbosity);
+
+            var taskHost = Host.CreateDefaultBuilder()
+               .ConfigureServices((host, services) =>
+               services
+               .AddSbomTool(serilogLogVerbosity, taskLoggingHelper)
+               /* Manually adding some dependencies since `AddSbomTool()` does not add them when
+                * running the MSBuild Task from another project.
+                */
+               .AddSingleton<ISourcesProvider, SBOMPackagesProvider>()
+               .AddSingleton<ISourcesProvider, CGExternalDocumentReferenceProvider>()
+               .AddSingleton<ISourcesProvider, DirectoryTraversingFileToJsonProvider>()
+               .AddSingleton<ISourcesProvider, ExternalDocumentReferenceFileProvider>()
+               .AddSingleton<ISourcesProvider, ExternalDocumentReferenceProvider>()
+               .AddSingleton<ISourcesProvider, FileListBasedFileToJsonProvider>()
+               .AddSingleton<ISourcesProvider, SbomFileBasedFileToJsonProvider>()
+               .AddSingleton<ISourcesProvider, CGScannedExternalDocumentReferenceFileProvider>()
+               .AddSingleton<ISourcesProvider, CGScannedPackagesProvider>()
+               .AddSingleton<IAlgorithmNames, AlgorithmNames>()
+               .AddSingleton<IManifestGenerator, Generator>()
+               .AddSingleton<IMetadataProvider, LocalMetadataProvider>()
+               .AddSingleton<IMetadataProvider, SBOMApiMetadataProvider>()
+               .AddSingleton<IManifestInterface, Validator>()
+               .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>())
+               .Build();
 
             var generator = taskHost.Services.GetRequiredService<ISBOMGenerator>();
 
@@ -87,7 +91,7 @@ public partial class GenerateSbom : Task
                 NamespaceUriBase = this.NamespaceBaseUri,
                 NamespaceUriUniquePart = this.NamespaceUriUniquePart,
                 DeleteManifestDirectoryIfPresent = this.DeleteManifestDirIfPresent,
-                Verbosity = ValidateAndAssignVerbosity(),
+                Verbosity = logVerbosity,
             };
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
             var result = System.Threading.Tasks.Task.Run(() => generator.GenerateSbomAsync(
@@ -108,6 +112,17 @@ public partial class GenerateSbom : Task
             return false;
         }
     }
+
+    private LogEventLevel MapSerilogLevel(EventLevel logVerbosity) =>
+        logVerbosity switch
+        {
+            EventLevel.Critical => LogEventLevel.Fatal,
+            EventLevel.Error => LogEventLevel.Error,
+            EventLevel.Warning => LogEventLevel.Warning,
+            EventLevel.Informational => LogEventLevel.Information,
+            EventLevel.Verbose => LogEventLevel.Verbose,
+            _ => LogEventLevel.Information,
+        };
 
     /// <summary>
     /// Check for ManifestInfo and create an SbomSpecification accordingly.

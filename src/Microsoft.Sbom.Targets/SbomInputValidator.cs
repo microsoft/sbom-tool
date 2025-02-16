@@ -85,16 +85,22 @@ public partial class GenerateSbom
         switch (this.Verbosity.ToLower().Trim())
         {
             case "verbose":
+                this.Verbosity = "Verbose";
                 return EventLevel.Verbose;
             case "debug":
+                this.Verbosity = "Verbose";
                 return EventLevel.Verbose;
             case "information":
+                this.Verbosity = "Information";
                 return EventLevel.Informational;
             case "warning":
+                this.Verbosity = "Warning";
                 return EventLevel.Warning;
             case "error":
+                this.Verbosity = "Error";
                 return EventLevel.Error;
             case "fatal":
+                this.Verbosity = "Fatal";
                 return EventLevel.Critical;
             default:
                 Log.LogWarning($"Unrecognized verbosity level specified. Setting verbosity level at {DefaultVerbosity}.");
