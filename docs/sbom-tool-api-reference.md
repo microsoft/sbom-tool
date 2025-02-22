@@ -219,12 +219,12 @@ var file = new SbomFile
 
 The API looks for a relative path starting with a period `.`.  All path separators should include forward slashes `/` in compliance with the SPDX version 2.2 specification.
 
-### SBOMPackage
+### SbomPackage
 
-'SBOMPackage' represents a dependency component for the product. The `PackageName` is the only required property. The API will serialize all other properties unchanged "as-is" in the final output SBOM file.
+'SbomPackage' represents a dependency component for the product. The `PackageName` is the only required property. The API will serialize all other properties unchanged "as-is" in the final output SBOM file.
 
 ```C#
-var package = new SBOMPackage
+var package = new SbomPackage
 {
     PackageName = "com.test.Foo",
     
@@ -246,7 +246,7 @@ var result = await generator.GenerateSBOMAsync(rootPath: scanPath,
 
 * The `rootPath` specifies the path for placing the output SBOM file. User specifying the destination path with the `manifestDirPath` parameter can  utilize the `null` value for `rootPath`.
 * The `files` parameter contains a list of `SbomFile` objects.
-* The `packages` parameter contains a list of `SBOMPackage` objects.
+* The `packages` parameter contains a list of `SbomPackage` objects.
 * The `metadata` and `runtimeConfiguration` parameters accept the [`SbomMetadata`](#sbommetadata) and [`RuntimeConfiguration`](#runtimeconfiguration) objects (respectively).
 * If users want the API to generate the output SBOM in a different folder other the default location, they need to provide the path in the `manifestDirPath` parameter. Users will find the SBOM file under the `_manifest` directory at the user-specified path.
 
