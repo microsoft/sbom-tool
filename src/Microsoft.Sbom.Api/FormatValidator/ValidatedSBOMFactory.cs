@@ -10,7 +10,7 @@ public class ValidatedSBOMFactory
     public virtual IValidatedSbom CreateValidatedSBOM(string sbomFilePath)
     {
         var sbomStream = new StreamReader(sbomFilePath);
-        var validatedSbom = new ValidatedSBOM_(sbomStream.BaseStream);
+        var validatedSbom = new ValidatedSbom(sbomStream.BaseStream);
         return validatedSbom;
     }
 }
