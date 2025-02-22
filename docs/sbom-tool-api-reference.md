@@ -139,7 +139,7 @@ This API is a useful tool when utilizing the self-provided data-based API. The A
 
 In order to call the API, the user must first include a minimum of one required object and one optional data object.
 
-### SBOM Metadata
+### SbomMetadata
 
 The `SbomMetadata` object provides the API with additional metadata for use in configuring output metadata values in the SBOM file, e.g., product name or version:
 
