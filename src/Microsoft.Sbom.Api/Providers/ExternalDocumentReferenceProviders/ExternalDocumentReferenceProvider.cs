@@ -22,7 +22,7 @@ public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string
 {
     private readonly FileListEnumerator listWalker;
 
-    private readonly ISBOMReaderForExternalDocumentReference spdxSbomReaderForExternalDocumentReference;
+    private readonly ISBOMReaderForExternalDocumentReference_ spdxSbomReaderForExternalDocumentReference;
 
     private readonly ExternalDocumentReferenceWriter externalDocumentReferenceWriter;
 
@@ -33,7 +33,7 @@ public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string
         ChannelUtils channelUtils,
         ILogger logger,
         FileListEnumerator listWalker,
-        ISBOMReaderForExternalDocumentReference spdxSbomReaderForExternalDocumentReference,
+        ISBOMReaderForExternalDocumentReference_ spdxSbomReaderForExternalDocumentReference,
         ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
         ExternalReferenceDeduplicator externalReferenceDeduplicator)
         : base(configuration, channelUtils, logger)
