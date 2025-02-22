@@ -49,7 +49,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
         var sbomPaths = GetInputSbomPaths();
         foreach (var sbomPath in sbomPaths)
         {
-            IValidatedSBOM validatedSbom = null;
+            IValidatedSBOM_ validatedSbom = null;
             try
             {
                 log.Information($"Validating SBOM {sbomPath}");

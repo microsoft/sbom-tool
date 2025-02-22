@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.Sbom.Utils;
 
-public class ValidatedSBOM: IValidatedSBOM
+public class ValidatedSBOM: IValidatedSBOM_
 {
     private readonly Stream sbomStream;
     private readonly int requiredSpdxMajorVersion = 2;
