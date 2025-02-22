@@ -193,7 +193,7 @@ Assert.False(result.Errors.Any());
 * The `metadata` and `configuration` parameters accept the [`SbomMetadata`](#sbommetadata) and [`RuntimeConfiguration`](#runtimeconfiguration) objects respectively.
 * As desired, the `manifestDirPath` parameter allows users to specify a full folder path if they want the API to save the SBOM to a directory other than the default `_manifest` location.  The API will store the SBOM file in the `_manifest` subfolder under the user-specified path.
 
-The API asynchronously returns a `SBOMGenerationResult` object. A successful SBOM file generation will set the `IsSuccessful` flag value to `true`.  A failed generation run will add the errors to the `Errors` list.
+The API asynchronously returns a `SbomGenerationResult` object. A successful SBOM file generation will set the `IsSuccessful` flag value to `true`.  A failed generation run will add the errors to the `Errors` list.
 
 ## Self-provided data-based SBOM generator API
 
