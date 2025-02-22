@@ -27,7 +27,7 @@ public class SbomRedactionWorkflowTests
     private Mock<ILogger> mockLogger;
     private Mock<IConfiguration> configurationMock;
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
-    private Mock<ValidatedSBOMFactory_> validatedSBOMFactoryMock;
+    private Mock<ValidatedSbomFactory> validatedSBOMFactoryMock;
     private Mock<ISbomRedactor> sbomRedactorMock;
     private SbomRedactionWorkflow testSubject;
 
@@ -43,7 +43,7 @@ public class SbomRedactionWorkflowTests
         mockLogger = new Mock<ILogger>();
         configurationMock = new Mock<IConfiguration>();
         fileSystemUtilsMock = new Mock<IFileSystemUtils>();
-        validatedSBOMFactoryMock = new Mock<ValidatedSBOMFactory_>();
+        validatedSBOMFactoryMock = new Mock<ValidatedSbomFactory>();
         sbomRedactorMock = new Mock<ISbomRedactor>();
         testSubject = new SbomRedactionWorkflow(
             mockLogger.Object,

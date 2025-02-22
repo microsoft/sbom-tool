@@ -25,7 +25,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
 
     private readonly IFileSystemUtils fileSystemUtils;
 
-    private readonly ValidatedSBOMFactory_ validatedSBOMFactory;
+    private readonly ValidatedSbomFactory validatedSbomFactory;
 
     private readonly ISbomRedactor sbomRedactor;
 
@@ -33,13 +33,13 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
         ILogger log,
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
-        ValidatedSBOMFactory_ validatedSBOMFactory,
+        ValidatedSbomFactory validatedSbomFactory,
         ISbomRedactor sbomRedactor)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
-        this.validatedSBOMFactory = validatedSBOMFactory ?? throw new ArgumentNullException(nameof(validatedSBOMFactory));
+        this.validatedSbomFactory = validatedSbomFactory ?? throw new ArgumentNullException(nameof(validatedSbomFactory));
         this.sbomRedactor = sbomRedactor ?? throw new ArgumentNullException(nameof(sbomRedactor));
     }
 
@@ -53,7 +53,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
             try
             {
                 log.Information($"Validating SBOM {sbomPath}");
-                validatedSbom = validatedSBOMFactory.CreateValidatedSBOM(sbomPath);
+                validatedSbom = validatedSbomFactory.CreateValidatedSBOM(sbomPath);
                 var validationDetails = await validatedSbom.GetValidationResults();
                 if (validationDetails.Status != FormatValidationStatus.Valid)
                 {
