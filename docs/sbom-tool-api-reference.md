@@ -27,7 +27,7 @@ Add a reference to the [Microsoft.Sbom.Api](https://www.nuget.org/packages/Micro
 
 ## Getting started
 
-The main entry point for the SBOM generator is in the `SBOMGenerator` class. In order to create an instance of the SBOMGenerator class there are a few arguments that need to be provided. These arguments can be resolved through the dependency injection framework. The following code snippet shows one way to create an instance of the SBOMGenerator class using the dependency injection framework in a pattern that is common when using this approach. Note that this approach is not the only one which will work. For example, if you'd like to avoid implementing the `IHostedService` interface, it should be possible to create a ServiceCollection without using ASP.NET as well.
+The main entry point for the SBOM generator is in the `SbomGenerator` class. In order to create an instance of the SbomGenerator class there are a few arguments that need to be provided. These arguments can be resolved through the dependency injection framework. The following code snippet shows one way to create an instance of the SBOMGenerator class using the dependency injection framework in a pattern that is common when using this approach. Note that this approach is not the only one which will work. For example, if you'd like to avoid implementing the `IHostedService` interface, it should be possible to create a ServiceCollection without using ASP.NET as well.
 
 Following our suggested approach, you can create a Host and add a hosted service that will call the SBOM API along with its dependencies. By calling `.AddSbomTool()` on the service collection, the SBOM API will be added to the dependency injection framework and can be resolved by the hosted service. The hosted service can then be started by calling `RunConsoleAsync` on the host.
 
@@ -252,7 +252,7 @@ var result = await generator.GenerateSBOMAsync(rootPath: scanPath,
 
 ## SBOM Validation
 
-Now that you have generated the SBOM file, you can validate it using the `SBOMValidator` class. Setup for this will be very similar to the `SBOMGenerator` class. Here is an example:
+Now that you have generated the SBOM file, you can validate it using the `SBOMValidator` class. Setup for this will be very similar to the `SbomGenerator` class. Here is an example:
 
 ```C#
 using Microsoft.Extensions.DependencyInjection;
