@@ -101,12 +101,12 @@ Below are 2 additional helper methods.
 
 ### GetSupportedSBOMSpecifications
 
-The `SBOMSpecification` object represents a SBOM format. Each `SBOMSpecification` contains a `name` and a `version`. This structure defines a single format of SBOM.  Sample SPDX version 2.2 format representations include:
+The `SbomSpecification` object represents a SBOM format. Each `SbomSpecification` contains a `name` and a `version`. This structure defines a single format of SBOM.  Sample SPDX version 2.2 format representations include:
 
 ```C#
 using Microsoft.Sbom.Contracts;
 
-var spdx22Specification = new SBOMSpecification("SPDX", "2.2");
+var spdx22Specification = new SbomSpecification("SPDX", "2.2");
 ```
 
 While this API supports the creation of a SBOM output file in multiple formats, it currently only supports the SPDX version 2.2 architecture. Users looking to implement other SBOM architectures can use this API call, which provides the full list of all supported formats.
