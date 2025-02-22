@@ -141,10 +141,10 @@ In order to call the API, the user must first include a minimum of one required 
 
 ### SBOM Metadata
 
-The `SBOMMetadata` object provides the API with additional metadata for use in configuring output metadata values in the SBOM file, e.g., product name or version:
+The `SbomMetadata` object provides the API with additional metadata for use in configuring output metadata values in the SBOM file, e.g., product name or version:
 
 ```C#
-SBOMMetadata metadata = new SBOMMetadata()
+SbomMetadata metadata = new SbomMetadata()
 {
     PackageName = "MyProject", //Required
     PackageVersion = "0.0.1", // Required
@@ -190,7 +190,7 @@ Assert.False(result.Errors.Any());
 * The `rootPath` dictates the destination path for publishing the build artifacts. The API will scan all files in 'rootPath' and will subsequently add them to the 'files' section in the SBOM output file. If the command does not include the `manifestDirPath` parameter, the tool will generate the SBOM inside the default `_manifest` folder.
 * The `componentPath` parameter normally contains the source folder, which the API will search for dependency components. The 'packages' section in the SBOM file will list the discovered components.
 
-* The `metadata` and `configuration` parameters accept the [`SBOMMetadata`](#sbommetadata) and [`RuntimeConfiguration`](#runtimeconfiguration) objects respectively.
+* The `metadata` and `configuration` parameters accept the [`SbomMetadata`](#sbommetadata) and [`RuntimeConfiguration`](#runtimeconfiguration) objects respectively.
 * As desired, the `manifestDirPath` parameter allows users to specify a full folder path if they want the API to save the SBOM to a directory other than the default `_manifest` location.  The API will store the SBOM file in the `_manifest` subfolder under the user-specified path.
 
 The API asynchronously returns a `SBOMGenerationResult` object. A successful SBOM file generation will set the `IsSuccessful` flag value to `true`.  A failed generation run will add the errors to the `Errors` list.
@@ -247,7 +247,7 @@ var result = await generator.GenerateSBOMAsync(rootPath: scanPath,
 * The `rootPath` specifies the path for placing the output SBOM file. User specifying the destination path with the `manifestDirPath` parameter can  utilize the `null` value for `rootPath`.
 * The `files` parameter contains a list of `SBOMFile` objects.
 * The `packages` parameter contains a list of `SBOMPackage` objects.
-* The `metadata` and `runtimeConfiguration` parameters accept the [`SBOMMetadata`](#sbommetadata) and [`RuntimeConfiguration`](#runtimeconfiguration) objects (respectively).
+* The `metadata` and `runtimeConfiguration` parameters accept the [`SbomMetadata`](#sbommetadata) and [`RuntimeConfiguration`](#runtimeconfiguration) objects (respectively).
 * If users want the API to generate the output SBOM in a different folder other the default location, they need to provide the path in the `manifestDirPath` parameter. Users will find the SBOM file under the `_manifest` directory at the user-specified path.
 
 ## SBOM Validation
