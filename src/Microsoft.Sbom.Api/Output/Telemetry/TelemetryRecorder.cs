@@ -296,7 +296,7 @@ public class TelemetryRecorder : IRecorder
             // Calculate SBOM file sizes.
             var sbomFormatsUsed = sbomFormats
                 .Where(f => File.Exists(f.Value))
-                .Select(f => new SBOMFile
+                .Select(f => new SBOMFile_
                 {
                     SbomFilePath = f.Value,
                     SbomFormatName = f.Key,
