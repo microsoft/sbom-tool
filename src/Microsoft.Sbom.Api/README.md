@@ -12,9 +12,9 @@ namespace SBOMApiExample
 {
     public class GenerationService: IHostedService
     {
-        private readonly ISBOMGenerator generator;
+        private readonly ISbomGenerator generator;
         private readonly IHostApplicationLifetime hostApplicationLifetime;
-        public GenerationService(ISBOMGenerator generator, IHostApplicationLifetime hostApplicationLifetime)
+        public GenerationService(ISbomGenerator generator, IHostApplicationLifetime hostApplicationLifetime)
         {
             this.generator = generator;
             this.hostApplicationLifetime = hostApplicationLifetime;
@@ -70,9 +70,9 @@ namespace SBOMApiExample
 {
     public class GenerationService: IHostedService
     {
-        private readonly ISBOMGenerator generator;
+        private readonly ISbomGenerator generator;
         private readonly IHostApplicationLifetime hostApplicationLifetime;
-        public GenerationService(ISBOMGenerator generator, IHostApplicationLifetime hostApplicationLifetime)
+        public GenerationService(ISbomGenerator generator, IHostApplicationLifetime hostApplicationLifetime)
         {
             this.generator = generator;
             this.hostApplicationLifetime = hostApplicationLifetime;
