@@ -201,12 +201,12 @@ There might be occasions where users do not want the API to scan for the target 
 
 Users will still have to provide the metadata and runtime objects for this API.
 
-### SBOMFile
+### SbomFile
 
-`Path` and `Checksum` are the only required properties for use in the `SBOMFile` object in order to represent a file inside the SBOM.  The API will serialize any additional values unchanged "as-is" in the output SBOM file.
+`Path` and `Checksum` are the only required properties for use in the `SbomFile` object in order to represent a file inside the SBOM.  The API will serialize any additional values unchanged "as-is" in the output SBOM file.
 
 ```C#
-var file = new SBOMFile
+var file = new SbomFile
 {
     Path = "./tmp/file2.txt",
     Checksum = new List<Checksum>
@@ -245,7 +245,7 @@ var result = await generator.GenerateSBOMAsync(rootPath: scanPath,
 ```
 
 * The `rootPath` specifies the path for placing the output SBOM file. User specifying the destination path with the `manifestDirPath` parameter can  utilize the `null` value for `rootPath`.
-* The `files` parameter contains a list of `SBOMFile` objects.
+* The `files` parameter contains a list of `SbomFile` objects.
 * The `packages` parameter contains a list of `SBOMPackage` objects.
 * The `metadata` and `runtimeConfiguration` parameters accept the [`SbomMetadata`](#sbommetadata) and [`RuntimeConfiguration`](#runtimeconfiguration) objects (respectively).
 * If users want the API to generate the output SBOM in a different folder other the default location, they need to provide the path in the `manifestDirPath` parameter. Users will find the SBOM file under the `_manifest` directory at the user-specified path.
