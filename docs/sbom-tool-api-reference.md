@@ -252,7 +252,7 @@ var result = await generator.GenerateSBOMAsync(rootPath: scanPath,
 
 ## SBOM Validation
 
-Now that you have generated the SBOM file, you can validate it using the `SBOMValidator` class. Setup for this will be very similar to the `SbomGenerator` class. Here is an example:
+Now that you have generated the SBOM file, you can validate it using the `SbomValidator` class. Setup for this will be very similar to the `SbomGenerator` class. Here is an example:
 
 ```C#
 using Microsoft.Extensions.DependencyInjection;
