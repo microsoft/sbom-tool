@@ -95,7 +95,7 @@ public class TelemetryRecorder : IRecorder
         try
         {
             // Create the telemetry object.
-            var telemetry = new SBOMTelemetry
+            var telemetry = new SBOMTelemetry_
             {
                 Result = Result.Failure,
                 Timings = timingRecorders.Select(t => t.ToTiming()).ToList(),
@@ -167,7 +167,7 @@ public class TelemetryRecorder : IRecorder
     /// </summary>
     /// <param name="telemetry">The telemetry object to be written to the file.</param>
     /// /// <param name="telemetryFilePath">The file path we want to write the telemetry to.</param>
-    private async Task RecordToFile(SBOMTelemetry telemetry, string telemetryFilePath)
+    private async Task RecordToFile(SBOMTelemetry_ telemetry, string telemetryFilePath)
     {
         // Write to file.
         if (!string.IsNullOrWhiteSpace(telemetryFilePath))
@@ -306,7 +306,7 @@ public class TelemetryRecorder : IRecorder
                 .ToList();
 
             // Create the telemetry object.
-            var telemetry = new SBOMTelemetry
+            var telemetry = new SBOMTelemetry_
             {
                 Result = this.result,
                 Errors = new ErrorContainer<FileValidationResult>
