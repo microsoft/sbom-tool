@@ -106,7 +106,7 @@ public class SbomRedactionWorkflowTests
         SetUpDirStructure();
 
         fileSystemUtilsMock.Setup(m => m.GetFilesInDirectory(SbomDirStub, true)).Returns(new string[] { SbomPathStub }).Verifiable();
-        var validatedSbomMock = new Mock<IValidatedSBOM_>();
+        var validatedSbomMock = new Mock<IValidatedSbom>();
         validatedSBOMFactoryMock.Setup(m => m.CreateValidatedSBOM(SbomPathStub)).Returns(validatedSbomMock.Object).Verifiable();
         var validationRes = new FormatValidationResults();
         validationRes.AggregateValidationStatus(FormatValidationStatus.NotValid);
@@ -122,7 +122,7 @@ public class SbomRedactionWorkflowTests
         SetUpDirStructure();
 
         fileSystemUtilsMock.Setup(m => m.GetFilesInDirectory(SbomDirStub, true)).Returns(new string[] { SbomPathStub }).Verifiable();
-        var validatedSbomMock = new Mock<IValidatedSBOM_>();
+        var validatedSbomMock = new Mock<IValidatedSbom>();
         validatedSBOMFactoryMock.Setup(m => m.CreateValidatedSBOM(SbomPathStub)).Returns(validatedSbomMock.Object).Verifiable();
         var validationRes = new FormatValidationResults();
         validationRes.AggregateValidationStatus(FormatValidationStatus.Valid);
