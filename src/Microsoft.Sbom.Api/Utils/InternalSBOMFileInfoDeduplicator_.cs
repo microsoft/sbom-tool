@@ -8,9 +8,9 @@ namespace Microsoft.Sbom.Api.Utils;
 /// <summary>
 /// Provides deduplication of InternalSBOMFileInfo objects inside a channel.
 /// </summary>
-public class InternalSBOMFileInfoDeduplicator : ChannelDeduplicator<InternalSbomFileInfo>
+public class InternalSBOMFileInfoDeduplicator_ : ChannelDeduplicator<InternalSbomFileInfo>
 {
-    public InternalSBOMFileInfoDeduplicator()
+    public InternalSBOMFileInfoDeduplicator_()
         : base() { }
 
     public override string GetKey(InternalSbomFileInfo obj)
