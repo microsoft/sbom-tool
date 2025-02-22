@@ -17,9 +17,9 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders;
 /// <summary>
 /// Provides a serialized list of packages given a list of <see cref="SbomPackage"/>.
 /// </summary>
-public class SBOMPackagesProvider : CommonPackagesProvider<SbomPackage>
+public class SbomPackagesProvider : CommonPackagesProvider<SbomPackage>
 {
-    public SBOMPackagesProvider(
+    public SbomPackagesProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
         ILogger logger,
@@ -37,7 +37,7 @@ public class SBOMPackagesProvider : CommonPackagesProvider<SbomPackage>
         {
             if (Configuration.PackagesList?.Value != null)
             {
-                Log.Debug($"Using the {nameof(SBOMPackagesProvider)} provider for the packages workflow.");
+                Log.Debug($"Using the {nameof(SbomPackagesProvider)} provider for the packages workflow.");
                 return true;
             }
         }
