@@ -15,12 +15,12 @@ namespace Microsoft.Sbom.Api.Metadata;
 /// <summary>
 /// Provides metadata provided by the user from the SBOM Api.
 /// </summary>
-public class SBOMApiMetadataProvider : IMetadataProvider
+public class SbomApiMetadataProvider : IMetadataProvider
 {
     private readonly SBOMMetadata metadata;
     private readonly IConfiguration configuration;
 
-    public SBOMApiMetadataProvider(SBOMMetadata metadata, IConfiguration configuration)
+    public SbomApiMetadataProvider(SBOMMetadata metadata, IConfiguration configuration)
     {
         this.metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
