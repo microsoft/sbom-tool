@@ -85,7 +85,7 @@ public class InterfaceConcretionTests
         public Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi) => throw new NotImplementedException();
     }
 
-    private class Pinned_SBOMReaderForExternalDocumentReference : ISBOMReaderForExternalDocumentReference_
+    private class Pinned_SBOMReaderForExternalDocumentReference : ISbomReaderForExternalDocumentReference
     {
         public (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSBOMFile(ChannelReader<string> sbomFileLocation) => throw new NotImplementedException();
     }
