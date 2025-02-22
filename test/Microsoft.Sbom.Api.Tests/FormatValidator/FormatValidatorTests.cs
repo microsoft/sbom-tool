@@ -20,7 +20,7 @@ public class FormatValidatorTests
     {
         using (var sbomStream = CreateStream(FormatValidatorTestStrings.JsonSuitableForRedaction))
         {
-            var sbom = new ValidatedSBOM(sbomStream);
+            var sbom = new ValidatedSBOM_(sbomStream);
             var rawspdx = await sbom.GetRawSPDXDocument();
             var details = await sbom.GetValidationResults();
 
@@ -49,7 +49,7 @@ public class FormatValidatorTests
     {
         using (var sbomStream = CreateStream(json))
         {
-            var sbom = new ValidatedSBOM(sbomStream);
+            var sbom = new ValidatedSBOM_(sbomStream);
             var rawspdx = await sbom.GetRawSPDXDocument();
             var details = await sbom.GetValidationResults();
 
@@ -70,7 +70,7 @@ public class FormatValidatorTests
         // the document was 2.x but the version was improperly serialized.
         using (var sbomStream = CreateStream(FormatValidatorTestStrings.JsonUnsupportedSpdxVersion))
         {
-            var sbom = new ValidatedSBOM(sbomStream);
+            var sbom = new ValidatedSBOM_(sbomStream);
             var rawspdx = await sbom.GetRawSPDXDocument();
             var details = await sbom.GetValidationResults();
 
@@ -87,7 +87,7 @@ public class FormatValidatorTests
     {
         using (var sbomStream = CreateStream(FormatValidatorTestStrings.MalformedJson))
         {
-            var sbom = new ValidatedSBOM(sbomStream);
+            var sbom = new ValidatedSBOM_(sbomStream);
             var rawspdx = await sbom.GetRawSPDXDocument();
             var details = await sbom.GetValidationResults();
 
@@ -106,7 +106,7 @@ public class FormatValidatorTests
     {
         using (var sbomStream = CreateStream(SpdxExemplars.JsonSpdx23Exemplar))
         {
-            var sbom = new ValidatedSBOM(sbomStream);
+            var sbom = new ValidatedSBOM_(sbomStream);
             var rawspdx = await sbom.GetRawSPDXDocument();
             var details = await sbom.GetValidationResults();
 

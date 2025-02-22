@@ -43,7 +43,7 @@ public class FormatValidationService : IHostedService
         {
             using (var sbomStream = new StreamReader(config.SbomPath.Value))
             {
-                var validatedSbom = new ValidatedSBOM(sbomStream.BaseStream);
+                var validatedSbom = new ValidatedSBOM_(sbomStream.BaseStream);
                 PrintLines(await validatedSbom.MultilineSummary());
             }
 
