@@ -27,7 +27,7 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
 
     public ExternalDocumentReferenceWriter ExternalDocumentReferenceWriter { get; }
 
-    public SBOMComponentsWalker SBOMComponentsWalker { get; }
+    public SBOMComponentsWalker_ SBOMComponentsWalker { get; }
 
     public CGScannedExternalDocumentReferenceFileProvider(
         IConfiguration configuration,
@@ -40,7 +40,7 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
         ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter,
         ExternalReferenceInfoToPathConverter externalReferenceInfoToPathConverter,
         ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
-        SBOMComponentsWalker sbomComponentsWalker)
+        SBOMComponentsWalker_ sbomComponentsWalker)
         : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
     {
         ComponentToExternalReferenceInfoConverter = componentToExternalReferenceInfoConverter ?? throw new ArgumentNullException(nameof(componentToExternalReferenceInfoConverter));
