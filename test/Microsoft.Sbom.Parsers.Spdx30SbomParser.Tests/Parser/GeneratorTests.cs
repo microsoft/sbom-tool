@@ -221,7 +221,7 @@ public class GeneratorTests
 
         var localMetadataProvider = new LocalMetadataProvider(config);
 
-        var sbomApiMetadataProvider = new SBOMApiMetadataProvider_(sbomMetadata, config);
+        var sbomApiMetadataProvider = new SbomApiMetadataProvider(sbomMetadata, config);
         var metadataProviders = new IMetadataProvider[] { localMetadataProvider, sbomApiMetadataProvider };
         IInternalMetadataProvider sbomConfigs = CreateSbomConfigs(metadataProviders);
 

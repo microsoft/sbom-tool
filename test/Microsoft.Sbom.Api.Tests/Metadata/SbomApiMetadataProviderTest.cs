@@ -40,33 +40,33 @@ public class SbomApiMetadataProviderTest
     {
         metadata.BuildEnvironmentName = "name";
 
-        var sbomApiMetadataProvider = new SBOMApiMetadataProvider_(metadata, config);
+        var sbomApiMetadataProvider = new SbomApiMetadataProvider(metadata, config);
         Assert.AreEqual("name", sbomApiMetadataProvider.BuildEnvironmentName);
     }
 
     [TestMethod]
     public void SbomApiMetadataProvider_BuildEnvironmentName_WithoutMetadata()
     {
-        var sbomApiMetadataProvider = new SBOMApiMetadataProvider_(metadata, config);
+        var sbomApiMetadataProvider = new SbomApiMetadataProvider(metadata, config);
         Assert.IsNull(sbomApiMetadataProvider.BuildEnvironmentName);
     }
 
     [TestMethod]
     public void SbomApiMetadataProvider_GetDocumentNamespaceUri()
     {
-        var sbomApiMetadataProvider = new SBOMApiMetadataProvider_(metadata, config);
+        var sbomApiMetadataProvider = new SbomApiMetadataProvider(metadata, config);
         Assert.AreEqual("http://sbom.microsoft/packageName/packageVersion/some-custom-value-here", sbomApiMetadataProvider.GetDocumentNamespaceUri());
     }
 
     [TestMethod]
     public void SbomApiMetadataProvider_WithNullConfiguration_ThrowArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new SBOMApiMetadataProvider_(metadata, null));
+        Assert.ThrowsException<ArgumentNullException>(() => new SbomApiMetadataProvider(metadata, null));
     }
 
     [TestMethod]
     public void SbomApiMetadataProvider_WithNullMetadata_ThrowArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new SBOMApiMetadataProvider_(null, config));
+        Assert.ThrowsException<ArgumentNullException>(() => new SbomApiMetadataProvider(null, config));
     }
 }

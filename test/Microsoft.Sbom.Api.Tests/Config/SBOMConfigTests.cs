@@ -59,7 +59,7 @@ public class SBOMConfigTests
             BuildEnvironmentName = "the-build-envsdfgsdg"
         };
 
-        var sbomApiMetadataProvider = new SBOMApiMetadataProvider_(sbomMetadata, config);
+        var sbomApiMetadataProvider = new SbomApiMetadataProvider(sbomMetadata, config);
         var metadataProviders = new IMetadataProvider[] { localMetadataProvider, sbomApiMetadataProvider };
         var sbomConfigs = CreateSbomConfigs(metadataProviders);
 
@@ -78,7 +78,7 @@ public class SBOMConfigTests
             BuildEnvironmentName = null
         };
 
-        var sbomApiMetadataProvider = new SBOMApiMetadataProvider_(sbomMetadata, config);
+        var sbomApiMetadataProvider = new SbomApiMetadataProvider(sbomMetadata, config);
         var metadataProviders = new IMetadataProvider[] { localMetadataProvider, sbomApiMetadataProvider };
         var sbomConfigs = CreateSbomConfigs(metadataProviders);
 
