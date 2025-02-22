@@ -5,7 +5,7 @@ namespace Microsoft.Sbom.Api.FormatValidator;
 
 using System.IO;
 
-public class ValidatedSBOMFactory_
+public class ValidatedSbomFactory
 {
     public virtual IValidatedSbom CreateValidatedSBOM(string sbomFilePath)
     {
