@@ -13,7 +13,7 @@ namespace Microsoft.Sbom.Api.Output.Telemetry.Entities;
 /// The telemetry that is logged to a file/console for the given SBOM execution.
 /// </summary>
 [Serializable]
-public class SBOMTelemetry
+public class SbomTelemetry
 {
     /// <summary>
     /// Gets or sets the result of the execution.
