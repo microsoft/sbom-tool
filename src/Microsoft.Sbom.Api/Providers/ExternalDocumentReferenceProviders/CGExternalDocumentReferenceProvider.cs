@@ -26,7 +26,7 @@ public class CGExternalDocumentReferenceProvider : EntityToJsonProviderBase<Scan
 
     private readonly ExternalDocumentReferenceWriter externalDocumentReferenceWriter;
 
-    private readonly SBOMComponentsWalker_ sbomComponentsWalker;
+    private readonly SbomComponentsWalker sbomComponentsWalker;
 
     private readonly ExternalReferenceDeduplicator externalReferenceDeduplicator;
 
@@ -36,7 +36,7 @@ public class CGExternalDocumentReferenceProvider : EntityToJsonProviderBase<Scan
         ILogger logger,
         ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter,
         ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
-        SBOMComponentsWalker_ sbomComponentsWalker,
+        SbomComponentsWalker sbomComponentsWalker,
         ExternalReferenceDeduplicator externalReferenceDeduplicator)
         : base(configuration, channelUtils, logger)
     {
