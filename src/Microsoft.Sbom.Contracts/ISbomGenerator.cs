@@ -19,7 +19,7 @@ public interface ISbomGenerator
     /// <param name="rootPath">The root path of the drop where the generated SBOM will be placed.</param>
     /// <param name="files">The list of <see cref="SbomFile">files</see> to include in this SBOM.</param>
     /// <param name="packages">The list of <see cref="SbomPackage">packages</see> to include in this SBOM.</param>
-    /// <param name="metadata">Provide any available metadata about your build environment using the SBOMMetadata object.</param>
+    /// <param name="metadata">Provide any available metadata about your build environment using the SbomMetadata object.</param>
     /// <param name="specifications">Provide a list of <see cref="SbomSpecification"/> that you want your SBOM to be generated
     /// for. If this is not provided, we will generate SBOMs for all the available formats.</param>
     /// <param name="runtimeConfiguration">Configuration to tweak the SBOM generator workflow.</param>
@@ -41,7 +41,7 @@ public interface ISbomGenerator
     /// </summary>
     /// <param name="rootPath">The root path of the drop where the generated SBOM will be placed.</param>
     /// <param name="componentPath">The path where all the build components for this drop can be found.</param>
-    /// <param name="metadata">Provide any available metadata about your build environment using the SBOMMetadata object.</param>
+    /// <param name="metadata">Provide any available metadata about your build environment using the SbomMetadata object.</param>
     /// <param name="specifications">Provide a list of <see cref="SbomSpecification"/> that you want your SBOM to be generated
     /// for. If this is not provided, we will generate SBOMs for all the available formats.</param>
     /// <param name="runtimeConfiguration">Configuration to tweak the SBOM generator workflow.</param>

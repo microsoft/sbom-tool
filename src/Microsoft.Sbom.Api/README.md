@@ -25,7 +25,7 @@ namespace SBOMApiExample
             string scanPath = @"D:\tmp\SBOM\";
             string outputPath = @"D:\tmp\SBOM\_manifest";
 
-            SBOMMetadata metadata = new SBOMMetadata()
+            SbomMetadata metadata = new SbomMetadata()
             {
                 PackageName = "MyVpack",
                 PackageVersion = "0.0.1"
