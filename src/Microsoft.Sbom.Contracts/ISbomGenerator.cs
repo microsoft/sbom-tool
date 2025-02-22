@@ -30,7 +30,7 @@ public interface ISbomGenerator
         string rootPath,
         IEnumerable<SbomFile> files,
         IEnumerable<SbomPackage> packages,
-        SBOMMetadata metadata,
+        SbomMetadata metadata,
         IList<SbomSpecification> specifications = null,
         RuntimeConfiguration runtimeConfiguration = null,
         string manifestDirPath = null,
@@ -51,7 +51,7 @@ public interface ISbomGenerator
     Task<SbomGenerationResult> GenerateSbomAsync(
         string rootPath,
         string componentPath,
-        SBOMMetadata metadata,
+        SbomMetadata metadata,
         IList<SbomSpecification> specifications = null,
         RuntimeConfiguration runtimeConfiguration = null,
         string manifestDirPath = null,

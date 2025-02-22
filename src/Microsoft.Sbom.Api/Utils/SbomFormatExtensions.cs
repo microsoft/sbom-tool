@@ -10,7 +10,7 @@ namespace Microsoft.Sbom.Api.Utils;
 /// <summary>
 /// Extension methods to convert SBOM format specificaitons from multiple formats.
 /// </summary>
-public static class SBOMFormatExtensions
+public static class SbomFormatExtensions
 {
     /// <summary>
     /// Converts a <see cref="SbomSpecification"/> to a <see cref="ManifestInfo"/> object.

@@ -17,10 +17,10 @@ namespace Microsoft.Sbom.Api.Metadata;
 /// </summary>
 public class SbomApiMetadataProvider : IMetadataProvider
 {
-    private readonly SBOMMetadata metadata;
+    private readonly SbomMetadata metadata;
     private readonly IConfiguration configuration;
 
-    public SbomApiMetadataProvider(SBOMMetadata metadata, IConfiguration configuration)
+    public SbomApiMetadataProvider(SbomMetadata metadata, IConfiguration configuration)
     {
         this.metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));

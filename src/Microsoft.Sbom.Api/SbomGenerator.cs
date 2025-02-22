@@ -49,7 +49,7 @@ public class SbomGenerator : ISbomGenerator
     public async Task<SbomGenerationResult> GenerateSbomAsync(
         string rootPath,
         string componentPath,
-        SBOMMetadata metadata,
+        SbomMetadata metadata,
         IList<SbomSpecification> specifications = null,
         RuntimeConfiguration runtimeConfiguration = null,
         string manifestDirPath = null,
@@ -88,7 +88,7 @@ public class SbomGenerator : ISbomGenerator
         string rootPath,
         IEnumerable<SbomFile> files,
         IEnumerable<SbomPackage> packages,
-        SBOMMetadata metadata,
+        SbomMetadata metadata,
         IList<SbomSpecification> specifications = null,
         RuntimeConfiguration runtimeConfiguration = null,
         string manifestDirPath = null,
