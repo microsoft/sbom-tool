@@ -25,7 +25,7 @@ namespace Microsoft.Sbom.Api.Executors;
 /// <summary>
 /// Reads SPDX json format SBOM file.
 /// </summary>
-public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternalDocumentReference_
+public class SPDXSBOMReaderForExternalDocumentReference : ISbomReaderForExternalDocumentReference
 {
     private readonly IHashCodeGenerator hashCodeGenerator;
     private readonly ILogger log;
