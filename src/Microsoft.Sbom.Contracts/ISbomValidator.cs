@@ -10,7 +10,7 @@ namespace Microsoft.Sbom.Contracts;
 /// <summary>
 /// Provides an interface to validate a SBOM.
 /// </summary>
-public interface ISBOMValidator
+public interface ISbomValidator
 {
     /// <summary>
     /// Validates all the files in a given SBOM with the files present in the build drop path
