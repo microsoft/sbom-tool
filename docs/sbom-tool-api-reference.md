@@ -56,7 +56,7 @@ class Program
 Now that the entry point is set up, we can define the hosted service. In this example, we will use the `GenerationService` class (This class is user defined) as the hosted service. The `GenerationService` class will be responsible for calling the SBOM API and generating the SBOM.
 The following snippet shows how to set up the `GenerationService` class so that arguments are resolved through DI.
 
-In this approach, your class must implement the `IHostedService` interface and provide an implementation for the `StartAsync` and `StopAsync` methods. Now you can pass an instance of the `ISBOMGenerator` interface to the constructor of your class. This interface is provided by the SBOM API and can be resolved by the DI framework. The `ISBOMGenerator` interface provides the methods to generate the SBOM.
+In this approach, your class must implement the `IHostedService` interface and provide an implementation for the `StartAsync` and `StopAsync` methods. Now you can pass an instance of the `ISbomGenerator` interface to the constructor of your class. This interface is provided by the SBOM API and can be resolved by the DI framework. The `ISbomGenerator` interface provides the methods to generate the SBOM.
 
 Descriptions of the arguments to the `GenerateSbomAsync` method can be found [here](#scan-based-sbom-generator-api) and [here](#self-provided-data-based-sbom-generator-api) and can be defined anywhere necessary as long as they are passed to the `GenerateSbomAsync` method.
 
@@ -68,9 +68,9 @@ namespace SBOMApiExample
 {
     public class GenerationService: IHostedService
     {
-        private readonly ISBOMGenerator generator;
+        private readonly ISbomGenerator generator;
         private readonly IHostApplicationLifetime hostApplicationLifetime;
-        public GenerationService(ISBOMGenerator generator, IHostApplicationLifetime hostApplicationLifetime)
+        public GenerationService(ISbomGenerator generator, IHostApplicationLifetime hostApplicationLifetime)
         {
             this.generator = generator;
             this.hostApplicationLifetime = hostApplicationLifetime;

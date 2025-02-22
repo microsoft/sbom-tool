@@ -11,7 +11,7 @@ namespace Microsoft.Sbom.Contracts;
 /// <summary>
 /// Provides an API interface to the SBOM generator workflow.
 /// </summary>
-public interface ISBOMGenerator
+public interface ISbomGenerator
 {
     /// <summary>
     /// Generate a SBOM in the rootPath using the provided file and package lists.

@@ -23,7 +23,7 @@ namespace Microsoft.Sbom.Api;
 /// <summary>
 /// Responsible for an API to generate SBOMs.
 /// </summary>
-public class SbomGenerator : ISBOMGenerator_
+public class SbomGenerator : ISbomGenerator
 {
     private readonly IWorkflow<SbomGenerationWorkflow> generationWorkflow;
     private readonly ManifestGeneratorProvider generatorProvider;
