@@ -73,7 +73,7 @@ public partial class GenerateSbom : Task
             // Set other configurations. The GenerateSBOMAsync() already sanitizes and checks for
             // a valid namespace URI and generates a random guid for NamespaceUriUniquePart if
             // one is not provided.
-            var sbomMetadata = new SBOMMetadata_
+            var sbomMetadata = new SbomMetadata
             {
                 PackageSupplier = this.PackageSupplier,
                 PackageName = this.PackageName,

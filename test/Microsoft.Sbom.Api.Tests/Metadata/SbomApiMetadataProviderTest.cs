@@ -13,7 +13,7 @@ namespace Microsoft.Sbom.Api.Tests.Metadata;
 public class SbomApiMetadataProviderTest
 {
     private Configuration config;
-    private SBOMMetadata_ metadata;
+    private SbomMetadata metadata;
 
     [TestInitialize]
     public void TestInitialize()
@@ -23,7 +23,7 @@ public class SbomApiMetadataProviderTest
             NamespaceUriUniquePart = new ConfigurationSetting<string>("some-custom-value-here"),
             NamespaceUriBase = new ConfigurationSetting<string>("http://sbom.microsoft")
         };
-        metadata = new SBOMMetadata_
+        metadata = new SbomMetadata
         {
             BuildId = "buildId",
             PackageName = "packageName",
