@@ -17,7 +17,7 @@ namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers;
 public class SbomRedactorTests
 {
     private Mock<ILogger> mockLogger;
-    private Mock<IValidatedSBOM> mockValidatedSbom;
+    private Mock<IValidatedSBOM_> mockValidatedSbom;
 
     private SbomRedactor testSubject;
 
@@ -25,7 +25,7 @@ public class SbomRedactorTests
     public void Init()
     {
         mockLogger = new Mock<ILogger>();
-        mockValidatedSbom = new Mock<IValidatedSBOM>();
+        mockValidatedSbom = new Mock<IValidatedSBOM_>();
         testSubject = new SbomRedactor(mockLogger.Object);
     }
 

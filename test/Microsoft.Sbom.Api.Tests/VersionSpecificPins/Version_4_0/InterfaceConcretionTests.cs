@@ -96,7 +96,7 @@ public class InterfaceConcretionTests
         public bool IsValid(string filePath) => throw new NotImplementedException();
     }
 
-    private class PinnedIValidatedSBOM : IValidatedSBOM
+    private class PinnedIValidatedSBOM : IValidatedSBOM_
     {
         public void Dispose() => throw new NotImplementedException();
         public Task<FormatEnforcedSPDX2> GetRawSPDXDocument() => throw new NotImplementedException();
@@ -196,7 +196,7 @@ public class InterfaceConcretionTests
 
     private class PinnedISbomRedactor : ISbomRedactor
     {
-        public Task<FormatEnforcedSPDX2> RedactSBOMAsync(IValidatedSBOM sbom) => throw new NotImplementedException();
+        public Task<FormatEnforcedSPDX2> RedactSBOMAsync(IValidatedSBOM_ sbom) => throw new NotImplementedException();
     }
 
     private class PinnedIWorkflow : IWorkflow<PinnedIWorkflow>
