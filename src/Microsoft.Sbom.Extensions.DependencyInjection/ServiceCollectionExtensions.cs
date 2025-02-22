@@ -108,7 +108,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<FileInfoWriter>()
             .AddTransient<ComponentToExternalReferenceInfoConverter>()
             .AddTransient<ExternalDocumentReferenceWriter>()
-            .AddTransient<SBOMComponentsWalker_>()
+            .AddTransient<SbomComponentsWalker>()
             .AddTransient<FileListEnumerator>()
             .AddTransient<ISbomReaderForExternalDocumentReference, SPDXSBOMReaderForExternalDocumentReference>()
             .AddTransient<SBOMMetadata>()
