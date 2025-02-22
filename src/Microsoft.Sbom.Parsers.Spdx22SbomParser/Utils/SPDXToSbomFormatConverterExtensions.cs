@@ -86,13 +86,13 @@ public static class SPDXToSbomFormatConverterExtensions
     }
 
     /// <summary>
-    /// Converts a <see cref="SpdxExternalDocumentReference"/> object to a <see cref="SBOMReference_"/> object.
+    /// Converts a <see cref="SpdxExternalDocumentReference"/> object to a <see cref="SbomReference"/> object.
     /// </summary>
     /// <param name="spdxExternalDocumentReference"></param>
     /// <returns></returns>
-    public static SBOMReference_ ToSbomReference(this SpdxExternalDocumentReference spdxExternalDocumentReference)
+    public static SbomReference ToSbomReference(this SpdxExternalDocumentReference spdxExternalDocumentReference)
     {
-        return new SBOMReference_
+        return new SbomReference
         {
             Checksum = spdxExternalDocumentReference.Checksum.ToSbomChecksum(),
             ExternalDocumentId = spdxExternalDocumentReference.ExternalDocumentId,
