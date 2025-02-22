@@ -27,7 +27,7 @@ public class ApiConfigurationBuilderTests
     private const string PackageName = "packageName";
     private const string PackageVersion = "packageVersion";
 
-    private readonly SBOMMetadata metadata = new SBOMMetadata()
+    private readonly SBOMMetadata_ metadata = new SBOMMetadata_()
     {
         PackageName = PackageName,
         PackageVersion = PackageVersion,

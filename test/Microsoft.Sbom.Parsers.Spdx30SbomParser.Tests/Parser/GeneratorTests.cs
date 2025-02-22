@@ -212,7 +212,7 @@ public class GeneratorTests
             PackageSupplier = new ConfigurationSetting<string>("the-package-supplier"),
         };
 
-        var sbomMetadata = new SBOMMetadata
+        var sbomMetadata = new SBOMMetadata_
         {
             PackageName = "sbom-package-name",
             PackageVersion = "sbom-package-version",

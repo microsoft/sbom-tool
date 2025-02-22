@@ -52,7 +52,7 @@ public class SBOMConfigTests
     [TestMethod]
     public void SBOMConfig_BuildEnvironmentMetadataProvider_Returned()
     {
-        var sbomMetadata = new SBOMMetadata
+        var sbomMetadata = new SBOMMetadata_
         {
             PackageName = "sbom-package-name",
             PackageVersion = "sbom-package-version",
@@ -71,7 +71,7 @@ public class SBOMConfigTests
     [TestMethod]
     public void SBOMConfig_NoBuildEnvironmentName_DefaultMetadataProvider_Returned()
     {
-        var sbomMetadata = new SBOMMetadata
+        var sbomMetadata = new SBOMMetadata_
         {
             PackageName = "sbom-package-name",
             PackageVersion = "sbom-package-version",
