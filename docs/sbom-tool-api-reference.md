@@ -276,7 +276,7 @@ class Program
 }
 ```
 
-After the Host is set up, you can inject the `ISBOMValidator` interface into your service and use it to validate the SBOM file. Here is an example:
+After the Host is set up, you can inject the `ISbomValidator` interface into your service and use it to validate the SBOM file. Here is an example:
 Note that the only arguments required are the `buildDropPath`,  the `outputPath`, and the `SbomSpecification`. The `buildDropPath` is the path to the directory containing the _manifest directory. The `outPath` is the path to the file where the validation output will be written. The only `SbomSpecification` currently supported is `SPDX 2.2`.
 All other arguments are optional.
 
@@ -288,11 +288,11 @@ namespace SBOMApiExample
 {
     public class ValidationService : IHostedService
     {
-        private readonly ISBOMValidator sbomValidator;
+        private readonly ISbomValidator sbomValidator;
         private readonly IHostApplicationLifetime hostApplicationLifetime;
 
         public ValidationService(
-        ISBOMValidator sbomValidator,
+        ISbomValidator sbomValidator,
         IHostApplicationLifetime hostApplicationLifetime)
         {
             this.sbomValidator = sbomValidator;
