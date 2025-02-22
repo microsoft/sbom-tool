@@ -40,7 +40,7 @@ public partial class GenerateSbom : Task
                 /* Manually adding some dependencies since `AddSbomTool()` does not add them when
                  * running the MSBuild Task from another project.
                  */
-                .AddSingleton<ISourcesProvider, SBOMPackagesProvider>()
+                .AddSingleton<ISourcesProvider, SBOMPackagesProvider_>()
                 .AddSingleton<ISourcesProvider, CGExternalDocumentReferenceProvider>()
                 .AddSingleton<ISourcesProvider, DirectoryTraversingFileToJsonProvider>()
                 .AddSingleton<ISourcesProvider, ExternalDocumentReferenceFileProvider>()
