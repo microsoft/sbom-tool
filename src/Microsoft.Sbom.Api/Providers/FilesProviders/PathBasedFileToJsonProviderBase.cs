@@ -25,7 +25,7 @@ public abstract class PathBasedFileToJsonProviderBase : EntityToJsonProviderBase
 
     private readonly FileInfoWriter fileHashWriter;
 
-    private readonly InternalSBOMFileInfoDeduplicator_ internalSBOMFileInfoDeduplicator;
+    private readonly InternalSbomFileInfoDeduplicator internalSBOMFileInfoDeduplicator;
 
     public PathBasedFileToJsonProviderBase(
         IConfiguration configuration,
@@ -34,7 +34,7 @@ public abstract class PathBasedFileToJsonProviderBase : EntityToJsonProviderBase
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
-        InternalSBOMFileInfoDeduplicator_ internalSBOMFileInfoDeduplicator)
+        InternalSbomFileInfoDeduplicator internalSBOMFileInfoDeduplicator)
         : base(configuration, channelUtils, log)
     {
         this.fileHasher = fileHasher ?? throw new ArgumentNullException(nameof(fileHasher));
