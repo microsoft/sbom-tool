@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.Sbom.Utils;
 
-public class ValidatedSBOM: IValidatedSbom
+public class ValidatedSbom: IValidatedSbom
 {
     private readonly Stream sbomStream;
     private readonly int requiredSpdxMajorVersion = 2;
@@ -26,7 +26,7 @@ public class ValidatedSBOM: IValidatedSbom
 
     private FormatValidationResults ValidationDetails { get; set; } = new FormatValidationResults();
 
-    public ValidatedSBOM(Stream sbomStream)
+    public ValidatedSbom(Stream sbomStream)
     {
         this.sbomStream = sbomStream;
         serializerOptions = ConfigureSerializer();

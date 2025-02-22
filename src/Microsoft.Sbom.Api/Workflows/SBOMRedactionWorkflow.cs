@@ -25,7 +25,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
 
     private readonly IFileSystemUtils fileSystemUtils;
 
-    private readonly ValidatedSBOMFactory validatedSBOMFactory;
+    private readonly ValidatedSBOMFactory_ validatedSBOMFactory;
 
     private readonly ISbomRedactor sbomRedactor;
 
@@ -33,7 +33,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
         ILogger log,
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
-        ValidatedSBOMFactory validatedSBOMFactory,
+        ValidatedSBOMFactory_ validatedSBOMFactory,
         ISbomRedactor sbomRedactor)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
