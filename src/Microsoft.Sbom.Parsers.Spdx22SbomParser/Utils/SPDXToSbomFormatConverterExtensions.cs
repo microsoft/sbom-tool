@@ -71,13 +71,13 @@ public static class SPDXToSbomFormatConverterExtensions
     }
 
     /// <summary>
-    /// Converts a <see cref="SPDXRelationship"/> object to a <see cref="SBOMRelationship_"/> object.
+    /// Converts a <see cref="SPDXRelationship"/> object to a <see cref="SbomRelationship"/> object.
     /// </summary>
     /// <param name="spdxRelationship"></param>
     /// <returns></returns>
-    public static SBOMRelationship_ ToSbomRelationship(this SPDXRelationship spdxRelationship)
+    public static SbomRelationship ToSbomRelationship(this SPDXRelationship spdxRelationship)
     {
-        return new SBOMRelationship_
+        return new SbomRelationship
         {
             RelationshipType = spdxRelationship.RelationshipType.ToString(),
             TargetElementId = spdxRelationship.TargetElementId,
