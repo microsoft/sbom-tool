@@ -28,7 +28,7 @@ public class ExternalDocumentReferenceFileProvider : PathBasedFileToJsonProvider
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
-        InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
+        InternalSBOMFileInfoDeduplicator_ internalSBOMFileInfoDeduplicator,
         FileListEnumerator listWalker)
         : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
     {

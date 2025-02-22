@@ -21,7 +21,7 @@ public class FileListBasedFileToJsonProvider : PathBasedFileToJsonProviderBase
 {
     private readonly FileListEnumerator listWalker;
 
-    public FileListBasedFileToJsonProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, FileInfoWriter fileHashWriter, InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator, FileListEnumerator listWalker)
+    public FileListBasedFileToJsonProvider(IConfiguration configuration, ChannelUtils channelUtils, ILogger log, FileHasher fileHasher, ManifestFolderFilterer fileFilterer, FileInfoWriter fileHashWriter, InternalSBOMFileInfoDeduplicator_ internalSBOMFileInfoDeduplicator, FileListEnumerator listWalker)
         : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
     {
         this.listWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));
