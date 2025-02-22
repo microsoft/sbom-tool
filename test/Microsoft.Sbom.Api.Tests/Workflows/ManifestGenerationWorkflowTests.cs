@@ -248,7 +248,7 @@ public class ManifestGenerationWorkflowTests
             new FileInfoWriter(
                 manifestGeneratorProvider,
                 mockLogger.Object),
-            new InternalSBOMFileInfoDeduplicator_(),
+            new InternalSbomFileInfoDeduplicator(),
             new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object));
 
         var fileListBasedProvider = new FileListBasedFileToJsonProvider(
@@ -267,7 +267,7 @@ public class ManifestGenerationWorkflowTests
             new FileInfoWriter(
                 manifestGeneratorProvider,
                 mockLogger.Object),
-            new InternalSBOMFileInfoDeduplicator_(),
+            new InternalSbomFileInfoDeduplicator(),
             new FileListEnumerator(fileSystemMock.Object, mockLogger.Object));
 
         var cgPackagesProvider = new CGScannedPackagesProvider(

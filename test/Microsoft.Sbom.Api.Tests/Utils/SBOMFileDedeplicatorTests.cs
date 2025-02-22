@@ -53,7 +53,7 @@ public class SBOMFileDedeplicatorTests
 
         inputChannel.Writer.Complete();
 
-        var deduplicator = new InternalSBOMFileInfoDeduplicator_();
+        var deduplicator = new InternalSbomFileInfoDeduplicator();
         var output = deduplicator.Deduplicate(inputChannel);
 
         var results = await output.ReadAllAsync().ToListAsync();
@@ -88,7 +88,7 @@ public class SBOMFileDedeplicatorTests
             }
         };
 
-        var deduplicator = new InternalSBOMFileInfoDeduplicator_();
+        var deduplicator = new InternalSbomFileInfoDeduplicator();
 
         var task1 = Task.Run(async () =>
         {
@@ -132,7 +132,7 @@ public class SBOMFileDedeplicatorTests
     [TestMethod]
     public void When_GetKeyForSBOMFile_ThenTestPass()
     {
-        var deduplicator = new InternalSBOMFileInfoDeduplicator_();
+        var deduplicator = new InternalSbomFileInfoDeduplicator();
 
         Assert.AreEqual("./file1.txt", deduplicator.GetKey(new InternalSbomFileInfo() { Path = "./file1.txt" }));
         Assert.IsNull(deduplicator.GetKey(null));

@@ -36,7 +36,7 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
-        InternalSBOMFileInfoDeduplicator_ internalSBOMFileInfoDeduplicator,
+        InternalSbomFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
         ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter,
         ExternalReferenceInfoToPathConverter externalReferenceInfoToPathConverter,
         ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
