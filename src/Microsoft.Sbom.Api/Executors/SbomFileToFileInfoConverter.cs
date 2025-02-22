@@ -15,7 +15,7 @@ using Microsoft.Sbom.Extensions.Entities;
 namespace Microsoft.Sbom.Api.Executors;
 
 /// <summary>
-/// Takes a SBOMFile and converts it to a FileInfo object.
+/// Takes a SbomFile and converts it to a FileInfo object.
 /// </summary>
 public class SbomFileToFileInfoConverter
 {
