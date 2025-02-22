@@ -27,7 +27,7 @@ using SPDX30= Microsoft.Sbom.Parsers.Spdx30SbomParser;
 /// </summary>
 public partial class GenerateSbom : Task
 {
-    private ISBOMGenerator Generator { get; set; }
+    private ISBOMGenerator_ Generator { get; set; }
 
     /// <summary>
     /// Constructor for the GenerateSbomTask.
@@ -60,7 +60,7 @@ public partial class GenerateSbom : Task
                 .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>()
                 .AddSingleton<IManifestConfigHandler, SPDX30ManifestConfigHandler>())
             .Build();
-        this.Generator = host.Services.GetRequiredService<ISBOMGenerator>();
+        this.Generator = host.Services.GetRequiredService<ISBOMGenerator_>();
     }
 
     /// <inheritdoc/>

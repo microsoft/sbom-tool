@@ -151,7 +151,7 @@ public static class ServiceCollectionExtensions
                     typeof(IMetadataProvider),
                     typeof(IManifestInterface)))
                 .AsImplementedInterfaces())
-            .AddScoped<ISBOMGenerator, SbomGenerator>()
+            .AddScoped<ISBOMGenerator_, SbomGenerator>()
             .AddScoped<ISBOMValidator, SbomValidator>()
             .AddSingleton(x =>
             {
