@@ -21,7 +21,7 @@ using PowerArgs;
 
 namespace Microsoft.Sbom.Api;
 
-public class SbomValidator : ISBOMValidator
+public class SbomValidator : ISBOMValidator_
 {
     private readonly IWorkflow<SbomParserBasedValidationWorkflow> sbomParserBasedValidationWorkflow;
     private readonly IRecorder recorder;
