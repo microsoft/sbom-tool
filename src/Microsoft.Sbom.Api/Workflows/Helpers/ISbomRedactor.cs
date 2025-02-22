@@ -12,5 +12,5 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 public interface ISbomRedactor
 {
-    public Task<FormatEnforcedSPDX2> RedactSBOMAsync(IValidatedSBOM_ sbom);
+    public Task<FormatEnforcedSPDX2> RedactSBOMAsync(IValidatedSbom sbom);
 }

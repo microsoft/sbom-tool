@@ -27,7 +27,7 @@ public class SbomRedactor: ISbomRedactor
         this.log = log ?? throw new ArgumentNullException(nameof(log));
     }
 
-    public virtual async Task<FormatEnforcedSPDX2> RedactSBOMAsync(IValidatedSBOM_ sbom)
+    public virtual async Task<FormatEnforcedSPDX2> RedactSBOMAsync(IValidatedSbom sbom)
     {
         var spdx = await sbom.GetRawSPDXDocument();
 
