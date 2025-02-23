@@ -14,7 +14,7 @@ namespace Microsoft.Sbom.Api.Utils;
 public class AssemblyConfig : IAssemblyConfig
 {
     /// <inheritdoc/>
-    public string DefaultSBOMNamespaceBaseUri => DefaultSBOMBaseNamespaceUri.Value;
+    public string DefaultSbomNamespaceBaseUri => DefaultSBOMBaseNamespaceUri.Value;
 
     /// <inheritdoc/>
     public ManifestInfo DefaultManifestInfoForValidationAction => DefaultManifestInfoForValidationActionValue.Value;
