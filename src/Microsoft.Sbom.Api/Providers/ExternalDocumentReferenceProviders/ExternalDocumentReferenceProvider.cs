@@ -58,7 +58,7 @@ public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string
     protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) ConvertToJson(ChannelReader<string> sourceChannel, IList<ISbomConfig> requiredConfigs)
     {
         IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
-        var (results, parseErrors) = spdxSbomReaderForExternalDocumentReference.ParseSBOMFile(sourceChannel);
+        var (results, parseErrors) = spdxSbomReaderForExternalDocumentReference.ParseSbomFile(sourceChannel);
         errors.Add(parseErrors);
         results = externalReferenceDeduplicator.Deduplicate(results);
         var (jsonDoc, jsonErrors) = externalDocumentReferenceWriter.Write(results, requiredConfigs);

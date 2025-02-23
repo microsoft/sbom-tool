@@ -66,7 +66,7 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISbomReaderForExternal
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
     }
 
-    public virtual (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSBOMFile(ChannelReader<string> sbomFileLocation)
+    public virtual (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSbomFile(ChannelReader<string> sbomFileLocation)
     {
         if (sbomFileLocation is null)
         {

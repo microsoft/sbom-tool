@@ -12,5 +12,5 @@ namespace Microsoft.Sbom.Api.Executors;
 /// </summary>
 public interface ISbomReaderForExternalDocumentReference
 {
-    (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSBOMFile(ChannelReader<string> sbomFileLocation);
+    (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSbomFile(ChannelReader<string> sbomFileLocation);
 }
