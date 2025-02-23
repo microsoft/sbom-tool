@@ -70,5 +70,5 @@ public interface ISbomGenerator
     /// Gets a list of <see cref="SbomSpecification"/> this SBOM generator supports.
     /// </summary>
     /// <returns>A list of <see cref="SbomSpecification"/>.</returns>
-    IEnumerable<SbomSpecification> GetSupportedSBOMSpecifications();
+    IEnumerable<SbomSpecification> GetSupportedSbomSpecifications();
 }

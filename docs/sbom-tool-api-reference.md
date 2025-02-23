@@ -99,7 +99,7 @@ The generator object provides two different API implementations for creating the
 
 Below are 2 additional helper methods.
 
-### GetSupportedSBOMSpecifications
+### `GetSupportedSbomSpecifications`
 
 The `SbomSpecification` object represents a SBOM format. Each `SbomSpecification` contains a `name` and a `version`. This structure defines a single format of SBOM.  Sample SPDX version 2.2 format representations include:
 
@@ -114,7 +114,7 @@ While this API supports the creation of a SBOM output file in multiple formats, 
 ```C#
 using Xunit;
 
-var specifications = generator.GetSupportedSBOMSpecifications();
+var specifications = generator.GetSupportedSbomSpecifications();
 
 Assert.True(specifications.Count() == 1);
 Assert.Equal("SPDX", specifications.First().Name);
