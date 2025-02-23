@@ -74,17 +74,17 @@ public class ApiConfigurationBuilderTests
         Assert.AreEqual(1, config.ManifestInfo.Value.Count);
         Assert.IsTrue(config.ManifestInfo.Value[0].Equals(expectedManifestInfo));
 
-        Assert.AreEqual(SettingSource.SBOMApi, config.BuildDropPath.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.BuildComponentPath.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.ManifestDirPath.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.PackageName.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.PackageVersion.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.Parallelism.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.Verbosity.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.PackagesList.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.FilesList.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.ExternalDocumentReferenceListFile.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.ManifestInfo.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.BuildDropPath.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.BuildComponentPath.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.ManifestDirPath.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.PackageName.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.PackageVersion.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.Parallelism.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.Verbosity.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.PackagesList.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.FilesList.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.ExternalDocumentReferenceListFile.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.ManifestInfo.Source);
     }
 
     [TestMethod]

@@ -72,7 +72,7 @@ public class SbomFileToFileInfoConverter
                 LicenseConcluded = component.LicenseConcluded,
                 LicenseInfoInFiles = component.LicenseInfoInFiles,
                 FileTypes = fileTypeUtils.GetFileTypesBy(component.Path),
-                IsOutsideDropPath = false, // assumption from SBOMApi is that Files are in dropPath
+                IsOutsideDropPath = false, // assumption from SbomApi is that Files are in dropPath
                 FileLocation = fileLocation,
             };
 

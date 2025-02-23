@@ -195,7 +195,7 @@ public static class ApiConfigurationBuilder
         return new ConfigurationSetting<T>
         {
             Value = value,
-            Source = SettingSource.SBOMApi
+            Source = SettingSource.SbomApi
         };
     }
 
