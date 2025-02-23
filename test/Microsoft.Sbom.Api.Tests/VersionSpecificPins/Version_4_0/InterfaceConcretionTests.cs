@@ -166,7 +166,7 @@ public class InterfaceConcretionTests
 
     private class PinnedIAssemblyConfig : IAssemblyConfig
     {
-        public string DefaultSBOMNamespaceBaseUri => throw new NotImplementedException();
+        public string DefaultSbomNamespaceBaseUri => throw new NotImplementedException();
 
         public ManifestInfo DefaultManifestInfoForValidationAction => throw new NotImplementedException();
 
