@@ -57,7 +57,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
                 .Where(s => s.IsSupported(ProviderType.Files));
 
             // Write the start of the array, if supported.
-            IList<ISbomConfig> filesArraySupportingSBOMs = new List<ISbomConfig>();
+            IList<ISbomConfig> filesArraySupportingSboms = new List<ISbomConfig>();
             foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
             {
                 var config = sbomConfigs.Get(manifestInfo);
@@ -65,14 +65,14 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
                 if (config.MetadataBuilder.TryGetFilesArrayHeaderName(out var filesArrayHeaderName))
                 {
                     config.JsonSerializer.StartJsonArray(filesArrayHeaderName);
-                    filesArraySupportingSBOMs.Add(config);
+                    filesArraySupportingSboms.Add(config);
                     this.logger.Verbose("Started writing files array for {configFile}.", config.ManifestJsonFilePath);
                 }
             }
 
             foreach (var sourcesProvider in sourcesProviders)
             {
-                var (jsondDocResults, errors) = sourcesProvider.Get(filesArraySupportingSBOMs);
+                var (jsondDocResults, errors) = sourcesProvider.Get(filesArraySupportingSboms);
 
                 await foreach (var jsonResults in jsondDocResults.ReadAllAsync())
                 {
@@ -90,7 +90,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
             }
 
             // Write the end of the array.
-            foreach (var config in filesArraySupportingSBOMs)
+            foreach (var config in filesArraySupportingSboms)
             {
                 config.JsonSerializer.EndJsonArray();
             }
