@@ -236,7 +236,7 @@ You can call the API as shown below:
 ```C#
 using Microsoft.Sbom.Contracts.Enums;
 
-var result = await generator.GenerateSBOMAsync(rootPath: scanPath,           
+var result = await generator.GenerateSbomAsync(rootPath: scanPath,           
                                                files: sbomFiles,
                                                packages: sbomPackages,
                                                metadata: metadata,
