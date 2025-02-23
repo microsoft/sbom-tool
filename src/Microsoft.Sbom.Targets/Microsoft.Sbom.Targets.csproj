@@ -13,7 +13,6 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <SbomCLIToolTargetFramework>net8.0</SbomCLIToolTargetFramework>
     <DevelopmentDependency>true</DevelopmentDependency>
-
     <!-- This target will run when MSBuild is collecting the files to be packaged, and we'll implement it below. This property controls the dependency list for this packaging process, so by adding our custom property we hook ourselves into the process in a supported way. -->
     <TargetsForTfmSpecificBuildOutput>
       $(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage
@@ -54,7 +53,7 @@
         <Visible>true</Visible>
       </Content>
     </ItemGroup>
-  </Target> 
+  </Target>
 
   <ItemGroup>
     <!-- these lines pack the build props/targets files to the `build` folder in the generated package.
@@ -78,6 +77,7 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
     <Compile Remove="GenerateSbomTask.cs" />
+    <Compile Remove="MSBuildLogger.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net472'">

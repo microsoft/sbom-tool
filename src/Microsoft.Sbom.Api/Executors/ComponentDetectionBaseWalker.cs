@@ -112,7 +112,8 @@ public abstract class ComponentDetectionBaseWalker
             var cmdLineParams = configuration.ToComponentDetectorCommandLineParams(cliArgumentBuilder);
 
             var scanSettings = cliArgumentBuilder.BuildScanSettingsFromParsedArgs(cmdLineParams);
-
+            // TODO: the MSBuild pathway needs a way to disable this setting, because the CG tools write directly to stdout (which is not kind).
+            scanSettings.NoSummary = true;
             var scanResult = await componentDetector.ScanAsync(scanSettings);
 
             if (scanResult.ResultCode != ProcessingResultCode.Success)
