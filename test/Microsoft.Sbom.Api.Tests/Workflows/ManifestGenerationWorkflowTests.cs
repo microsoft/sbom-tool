@@ -265,7 +265,7 @@ public class ManifestGenerationWorkflowTests
         externalDocumentReferenceChannel.Writer.Complete();
         externalDocumentReferenceErrorsChannel.Writer.Complete();
         sBOMReaderForExternalDocumentReferenceMock
-            .Setup(p => p.ParseSBOMFile(It.IsAny<ChannelReader<string>>()))
+            .Setup(p => p.ParseSbomFile(It.IsAny<ChannelReader<string>>()))
             .Returns((externalDocumentReferenceChannel, externalDocumentReferenceErrorsChannel));
 
         var directoryTraversingProvider = new DirectoryTraversingFileToJsonProvider(

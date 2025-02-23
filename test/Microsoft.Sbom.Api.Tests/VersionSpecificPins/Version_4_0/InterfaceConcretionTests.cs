@@ -87,7 +87,7 @@ public class InterfaceConcretionTests
 
     private class Pinned_SBOMReaderForExternalDocumentReference : ISbomReaderForExternalDocumentReference
     {
-        public (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSBOMFile(ChannelReader<string> sbomFileLocation) => throw new NotImplementedException();
+        public (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSbomFile(ChannelReader<string> sbomFileLocation) => throw new NotImplementedException();
     }
 
     private class PinnedIFilter : IFilter<PinnedIFilter>
