@@ -5,7 +5,8 @@ namespace Microsoft.Sbom.Targets;
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
+using System.Threading;
+using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,20 +16,24 @@ using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Providers.ExternalDocumentReferenceProviders;
 using Microsoft.Sbom.Api.Providers.FilesProviders;
 using Microsoft.Sbom.Api.Providers.PackagesProviders;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.Sbom.Contracts.Interfaces;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.DependencyInjection;
-using Serilog.Events;
 using SPDX22 = Microsoft.Sbom.Parsers.Spdx22SbomParser;
 using SPDX30 = Microsoft.Sbom.Parsers.Spdx30SbomParser;
 
 /// <summary>
 /// MSBuild task for generating SBOMs from build output.
 /// </summary>
-public partial class GenerateSbom : Task
+public partial class GenerateSbom : Task, ICancelableTask
 {
+    private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+    public void Cancel() => cancellationTokenSource.Cancel();
+
     /// <inheritdoc/>
     public override bool Execute()
     {
@@ -43,12 +48,13 @@ public partial class GenerateSbom : Task
             }
 
             var logVerbosity = ValidateAndAssignVerbosity();
-            var serilogLogVerbosity = MapSerilogLevel(logVerbosity);
-
+            var msbuildLogger = new MSBuildLogger(taskLoggingHelper);
+            Serilog.Log.Logger = msbuildLogger;
             var taskHost = Host.CreateDefaultBuilder()
                .ConfigureServices((host, services) =>
                services
-               .AddSbomTool(serilogLogVerbosity, taskLoggingHelper)
+               .AddSingleton<IConfiguration, Configuration>()
+               .AddSbomTool(msbuildLogger)
                /* Manually adding some dependencies since `AddSbomTool()` does not add them when
                 * running the MSBuild Task from another project.
                 */
@@ -98,28 +104,28 @@ public partial class GenerateSbom : Task
                 componentPath: this.BuildComponentPath,
                 runtimeConfiguration: runtimeConfiguration,
                 specifications: ValidateAndAssignSpecifications(),
-                externalDocumentReferenceListFile: this.ExternalDocumentListFile)).GetAwaiter().GetResult();
+                externalDocumentReferenceListFile: this.ExternalDocumentListFile),
+                this.cancellationTokenSource.Token).GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
+
+            if (!result.IsSuccessful)
+            {
+                Log.LogError("SBOM generation failed. Check the build log for details.");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                Log.LogMessage(MessageImportance.Normal, "{0}({1}) - {2} - {3}", error.Entity.Id, error.Entity.EntityType, error.ErrorType, error.Details);
+            }
 
             return result.IsSuccessful;
         }
         catch (Exception e)
         {
             Log.LogError($"SBOM generation failed: {e.Message}");
-            return false;
+            return Log.HasLoggedErrors;
         }
     }
-
-    private LogEventLevel MapSerilogLevel(EventLevel logVerbosity) =>
-        logVerbosity switch
-        {
-            EventLevel.Critical => LogEventLevel.Fatal,
-            EventLevel.Error => LogEventLevel.Error,
-            EventLevel.Warning => LogEventLevel.Warning,
-            EventLevel.Informational => LogEventLevel.Information,
-            EventLevel.Verbose => LogEventLevel.Verbose,
-            _ => LogEventLevel.Information,
-        };
 
     /// <summary>
     /// Check for ManifestInfo and create an SbomSpecification accordingly.
