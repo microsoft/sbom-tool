@@ -70,7 +70,7 @@ public partial class GenerateSbom : Task
                 return false;
             }
 
-            // Set other configurations. The GenerateSBOMAsync() already sanitizes and checks for
+            // Set other configurations. The GenerateSbomAsync() already sanitizes and checks for
             // a valid namespace URI and generates a random guid for NamespaceUriUniquePart if
             // one is not provided.
             var sbomMetadata = new SbomMetadata
