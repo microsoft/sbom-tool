@@ -149,7 +149,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     recorder.RecordTotalErrors(validErrors);
                 }
 
-               // Delete the generated _manifest folder if generation failed.
+                // Delete the generated _manifest folder if generation failed.
                 if (deleteSbomDir || validErrors.Any())
                 {
                     DeleteManifestFolder(sbomDir);
@@ -241,7 +241,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                         $"overwrite this folder.");
                 }
 
-                log.Warning(
+                log.Information(
                     $"Deleting pre-existing folder {rootManifestFolderPath} as {Constants.DeleteManifestDirBoolVariableName}" +
                     $" is 'true'.");
                 fileSystemUtils.DeleteDir(rootManifestFolderPath, true);
