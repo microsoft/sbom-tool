@@ -137,7 +137,7 @@ public class SbomGenerator : ISbomGenerator
             .ToList();
     }
 
-    public IEnumerable<SbomSpecification> GetSupportedSBOMSpecifications() => generatorProvider
+    public IEnumerable<SbomSpecification> GetSupportedSbomSpecifications() => generatorProvider
         .GetSupportedManifestInfos()
         .Select(ManifestInfo.ToSBOMSpecification)
         .ToList();
