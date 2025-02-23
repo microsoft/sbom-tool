@@ -57,7 +57,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
                 .Where(s => s.IsSupported(ProviderType.Files));
 
             // Write the start of the array, if supported.
-            IList<ISbomConfig> filesArraySupportingSBOMs = new List<ISbomConfig>();
+            IList<ISbomConfig> filesArraySupportingSboms = new List<ISbomConfig>();
             var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
             serializationStrategy.AddToFilesSupportingConfig(filesArraySupportingSBOMs, this.SbomConfig);
 
@@ -66,7 +66,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
             var jsonDocumentCollection = new JsonDocumentCollection<IManifestToolJsonSerializer>();
             foreach (var sourcesProvider in sourcesProviders)
             {
-                var (jsondDocResults, errors) = sourcesProvider.Get(filesArraySupportingSBOMs);
+                var (jsondDocResults, errors) = sourcesProvider.Get(filesArraySupportingSboms);
 
                 await foreach (var jsonResults in jsondDocResults.ReadAllAsync())
                 {
