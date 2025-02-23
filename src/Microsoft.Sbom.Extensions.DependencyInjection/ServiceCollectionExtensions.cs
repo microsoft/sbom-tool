@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Concurrent;
-using Microsoft.Build.Utilities;
 using Microsoft.ComponentDetection.Orchestrator;
 using Microsoft.ComponentDetection.Orchestrator.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,20 +55,29 @@ public static class ServiceCollectionExtensions
                 inputConfiguration.ToConfiguration();
                 return inputConfiguration;
             })
-            .AddSbomTool(logLevel);
+            .AddSbomTool();
         return services;
     }
 
-    public static IServiceCollection AddSbomTool(this IServiceCollection services, LogEventLevel logLevel = LogEventLevel.Information, TaskLoggingHelper? taskLoggingHelper = null)
+    public static IServiceCollection AddSbomTool(this IServiceCollection services, ILogger? logger = null)
     {
         services
             .AddSingleton<IConfiguration, Configuration>()
-            .AddTransient(_ => FileSystemUtilsProvider.CreateInstance(CreateLogger(logLevel, taskLoggingHelper)))
-            .AddTransient(x =>
+            .AddSingleton(x =>
             {
-                logLevel = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? logLevel;
-                return Log.Logger = CreateLogger(logLevel, taskLoggingHelper);
+                if (logger != null)
+                {
+                    return logger;
+                }
+                else
+                {
+                    var level = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? LogEventLevel.Information;
+                    var defaultLogger = CreateDefaultLogger(level);
+                    Log.Logger = defaultLogger;
+                    return defaultLogger;
+                }
             })
+            .AddTransient(x => FileSystemUtilsProvider.CreateInstance(x.GetRequiredService<ILogger>()))
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
             .AddTransient<IWorkflow<SbomRedactionWorkflow>, SbomRedactionWorkflow>()
@@ -126,7 +134,8 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IFileTypeUtils, FileTypeUtils>()
             .AddSingleton<ISignValidationProvider, SignValidationProvider>()
             .AddSingleton<IManifestParserProvider, ManifestParserProvider>()
-            .AddSingleton(x => {
+            .AddSingleton(x =>
+            {
                 var comparer = x.GetRequiredService<IOSUtils>().GetFileSystemStringComparer();
                 return new FileHashesDictionary(new ConcurrentDictionary<string, FileHashes>(comparer));
             })
@@ -201,33 +210,26 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static ILogger CreateLogger(LogEventLevel logLevel, TaskLoggingHelper? taskLoggingHelper = null)
+    private static ILogger CreateDefaultLogger(LogEventLevel logLevel = LogEventLevel.Information)
     {
-        if (taskLoggingHelper == null)
-        {
-            return new RemapComponentDetectionErrorsToWarningsLogger(
-                new LoggerConfiguration()
-                    .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
-                    .Filter.ByExcluding(Matching.FromSource("System.Net.Http.HttpClient"))
-                    .Enrich.With<LoggingEnricher>()
-                    .Enrich.FromLogContext()
-                    .WriteTo.Map(
-                        LoggingEnricher.LogFilePathPropertyName,
-                        (logFilePath, wt) => wt.Async(x => x.File($"{logFilePath}")),
-                        1) // sinkMapCountLimit
-                    .WriteTo.Map<bool>(
-                        LoggingEnricher.PrintStderrPropertyName,
-                        (printLogsToStderr, wt) => wt.Logger(lc => lc
-                            .WriteTo.Console(outputTemplate: Constants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
+        return new RemapComponentDetectionErrorsToWarningsLogger(
+            new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = logLevel })
+                .Filter.ByExcluding(Matching.FromSource("System.Net.Http.HttpClient"))
+                .Enrich.With<LoggingEnricher>()
+                .Enrich.FromLogContext()
+                .WriteTo.Map(
+                    LoggingEnricher.LogFilePathPropertyName,
+                    (logFilePath, wt) => wt.Async(x => x.File($"{logFilePath}")),
+                    1) // sinkMapCountLimit
+                .WriteTo.Map<bool>(
+                    LoggingEnricher.PrintStderrPropertyName,
+                    (printLogsToStderr, wt) => wt.Logger(lc => lc
+                        .WriteTo.Console(outputTemplate: Constants.LoggerTemplate, standardErrorFromLevel: printLogsToStderr ? LogEventLevel.Debug : null)
 
-                            // Don't write the detection times table from DetectorProcessingService to the console, only the log file
-                            .Filter.ByExcluding(Matching.WithProperty<string>("DetectionTimeLine", x => !string.IsNullOrEmpty(x)))),
-                        1) // sinkMapCountLimit
-                    .CreateLogger());
-        }
-        else
-        {
-            return new MSBuildLogger(taskLoggingHelper);
-        }
+                        // Don't write the detection times table from DetectorProcessingService to the console, only the log file
+                        .Filter.ByExcluding(Matching.WithProperty<string>("DetectionTimeLine", x => !string.IsNullOrEmpty(x)))),
+                    1) // sinkMapCountLimit
+                .CreateLogger());
     }
 }
