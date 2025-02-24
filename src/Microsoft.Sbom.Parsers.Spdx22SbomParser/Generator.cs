@@ -101,8 +101,8 @@ public class Generator : IManifestGenerator
 
         var generationData = internalMetadataProvider.GetGenerationData(Constants.Spdx22ManifestInfo);
 
-        var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolName);
-        var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
+        var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SbomToolName);
+        var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SbomToolVersion);
         var packageName = internalMetadataProvider.GetPackageName();
         var packageVersion = internalMetadataProvider.GetPackageVersion();
 

@@ -25,7 +25,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
 
     private readonly IFileSystemUtils fileSystemUtils;
 
-    private readonly ValidatedSBOMFactory validatedSBOMFactory;
+    private readonly ValidatedSbomFactory validatedSbomFactory;
 
     private readonly ISbomRedactor sbomRedactor;
 
@@ -33,13 +33,13 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
         ILogger log,
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
-        ValidatedSBOMFactory validatedSBOMFactory,
+        ValidatedSbomFactory validatedSbomFactory,
         ISbomRedactor sbomRedactor)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
-        this.validatedSBOMFactory = validatedSBOMFactory ?? throw new ArgumentNullException(nameof(validatedSBOMFactory));
+        this.validatedSbomFactory = validatedSbomFactory ?? throw new ArgumentNullException(nameof(validatedSbomFactory));
         this.sbomRedactor = sbomRedactor ?? throw new ArgumentNullException(nameof(sbomRedactor));
     }
 
@@ -49,11 +49,11 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
         var sbomPaths = GetInputSbomPaths();
         foreach (var sbomPath in sbomPaths)
         {
-            IValidatedSBOM validatedSbom = null;
+            IValidatedSbom validatedSbom = null;
             try
             {
                 log.Information($"Validating SBOM {sbomPath}");
-                validatedSbom = validatedSBOMFactory.CreateValidatedSBOM(sbomPath);
+                validatedSbom = validatedSbomFactory.CreateValidatedSBOM(sbomPath);
                 var validationDetails = await validatedSbom.GetValidationResults();
                 if (validationDetails.Status != FormatValidationStatus.Valid)
                 {
@@ -63,7 +63,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
                 {
                     log.Information($"Redacting SBOM {sbomPath}");
                     var outputPath = GetOutputPath(sbomPath);
-                    var redactedSpdx = await this.sbomRedactor.RedactSBOMAsync(validatedSbom);
+                    var redactedSpdx = await this.sbomRedactor.RedactSbomAsync(validatedSbom);
                     using (var outStream = fileSystemUtils.OpenWrite(outputPath))
                     {
                         await JsonSerializer.SerializeAsync(outStream, redactedSpdx);

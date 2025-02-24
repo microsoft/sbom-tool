@@ -8,13 +8,13 @@ using System.Collections.Generic;
 /// <summary>
 /// Represents the result of a SBOM validation action.
 /// </summary>
-public class SBOMValidationResult
+public class SbomValidationResult
 {
     public bool IsSuccess { get; private set; }
 
     public IList<EntityError> Errors { get; private set; }
 
-    public SBOMValidationResult(bool isSuccess, IList<EntityError> errors)
+    public SbomValidationResult(bool isSuccess, IList<EntityError> errors)
     {
         this.IsSuccess = isSuccess;
         this.Errors = errors;

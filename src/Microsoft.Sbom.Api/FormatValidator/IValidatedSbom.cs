@@ -7,7 +7,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 
-public interface IValidatedSBOM: IDisposable
+public interface IValidatedSbom: IDisposable
 {
     public Task<FormatValidationResults> GetValidationResults();
 

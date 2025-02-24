@@ -26,5 +26,5 @@ public enum SettingSource
     /// <summary>
     /// The settings was set using the SBOM Api.
     /// </summary>
-    SBOMApi
+    SbomApi
 }

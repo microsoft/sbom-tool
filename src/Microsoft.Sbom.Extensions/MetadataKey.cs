@@ -11,12 +11,12 @@ public enum MetadataKey
     /// <summary>
     /// The name of the tool that generated this SBOM.
     /// </summary>
-    SBOMToolName,
+    SbomToolName,
 
     /// <summary>
     /// The version of the tool that generated this SBOM.
     /// </summary>
-    SBOMToolVersion,
+    SbomToolVersion,
 
     /// <summary>
     /// The name of the package this SBOM represents.

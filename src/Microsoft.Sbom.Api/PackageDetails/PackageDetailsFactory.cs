@@ -35,7 +35,7 @@ public class PackageDetailsFactory : IPackageDetailsFactory
 
     public IDictionary<(string Name, string Version), PackageDetails> GetPackageDetailsDictionary(IEnumerable<ScannedComponent> scannedComponents)
     {
-        using (recorder.TraceEvent(Events.SBOMParseMetadata))
+        using (recorder.TraceEvent(Events.SbomParseMetadata))
         {
             var packageDetailsLocations = GetPackageDetailsLocations(scannedComponents);
 

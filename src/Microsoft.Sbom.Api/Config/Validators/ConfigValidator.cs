@@ -98,7 +98,7 @@ public abstract class ConfigValidator
 
     private bool NamespaceUriBaseIsNullOrHasDefaultValue(object propertyValue)
     {
-        var defaultProperty = assemblyConfig.DefaultSBOMNamespaceBaseUri;
+        var defaultProperty = assemblyConfig.DefaultSbomNamespaceBaseUri;
 
         if (propertyValue == null || !string.IsNullOrEmpty(defaultProperty))
         {

@@ -13,7 +13,7 @@ public interface IAssemblyConfig
     /// <summary>
     /// Gets the namespace base URI as defined in the assembly.
     /// </summary>
-    public string DefaultSBOMNamespaceBaseUri { get; }
+    public string DefaultSbomNamespaceBaseUri { get; }
 
     /// <summary>
     /// Gets the default value to use for ManifestInfo for validation action in case the user doesn't provide a

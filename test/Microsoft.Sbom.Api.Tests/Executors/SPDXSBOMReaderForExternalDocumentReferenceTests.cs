@@ -81,7 +81,7 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
         sbomLocationChannel.Writer.Complete();
 
         var spdxSBOMReaderForExternalDocumentReference = new SPDXSBOMReaderForExternalDocumentReference(mockHashGenerator.Object, mockLogger.Object, sbomConfigs, manifestGeneratorProvider, fileSystemMock.Object);
-        var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSBOMFile(sbomLocationChannel);
+        var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSbomFile(sbomLocationChannel);
         await foreach (var externalDocumentReferenceInfo in output.ReadAllAsync())
         {
             Assert.AreEqual("namespace", externalDocumentReferenceInfo.DocumentNamespace);
@@ -119,7 +119,7 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
         sbomLocationChannel.Writer.Complete();
 
         var spdxSBOMReaderForExternalDocumentReference = new SPDXSBOMReaderForExternalDocumentReference(mockHashGenerator.Object, mockLogger.Object, sbomConfigs, manifestGeneratorProvider, fileSystemMock.Object);
-        var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSBOMFile(sbomLocationChannel);
+        var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSbomFile(sbomLocationChannel);
 
         Assert.IsTrue(await errors.ReadAllAsync().AnyAsync());
         Assert.IsFalse(await output.ReadAllAsync().AnyAsync());
@@ -142,7 +142,7 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
         sbomLocationChannel.Writer.Complete();
 
         var spdxSBOMReaderForExternalDocumentReference = new SPDXSBOMReaderForExternalDocumentReference(mockHashGenerator.Object, mockLogger.Object, sbomConfigs, manifestGeneratorProvider, fileSystemMock.Object);
-        var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSBOMFile(sbomLocationChannel);
+        var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSbomFile(sbomLocationChannel);
 
         mockHashGenerator.VerifyNoOtherCalls();
         fileSystemMock.VerifyNoOtherCalls();
@@ -186,7 +186,7 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
 
         var spdxSBOMReaderForExternalDocumentReference = new SPDXSBOMReaderForExternalDocumentReference(mockHashGenerator.Object, mockLogger.Object, sbomConfigs, manifestGeneratorProvider, fileSystemMock.Object);
 
-        var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSBOMFile(sbomLocationChannel);
+        var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSbomFile(sbomLocationChannel);
 
         Assert.IsTrue(await errors.ReadAllAsync().AnyAsync());
         Assert.IsFalse(await output.ReadAllAsync().AnyAsync());

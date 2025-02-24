@@ -15,7 +15,7 @@ using Microsoft.Sbom.Extensions.Entities;
 namespace Microsoft.Sbom.Api.Executors;
 
 /// <summary>
-/// Takes a SBOMFile and converts it to a FileInfo object.
+/// Takes a SbomFile and converts it to a FileInfo object.
 /// </summary>
 public class SbomFileToFileInfoConverter
 {
@@ -72,7 +72,7 @@ public class SbomFileToFileInfoConverter
                 LicenseConcluded = component.LicenseConcluded,
                 LicenseInfoInFiles = component.LicenseInfoInFiles,
                 FileTypes = fileTypeUtils.GetFileTypesBy(component.Path),
-                IsOutsideDropPath = false, // assumption from SBOMApi is that Files are in dropPath
+                IsOutsideDropPath = false, // assumption from SbomApi is that Files are in dropPath
                 FileLocation = fileLocation,
             };
 

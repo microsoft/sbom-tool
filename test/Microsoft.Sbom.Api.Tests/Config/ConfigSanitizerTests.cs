@@ -248,7 +248,7 @@ public class ConfigSanitizerTests
     [TestMethod]
     public void NullDefaultNamespaceUriBaseShouldReturnExistingValue_Succeeds()
     {
-        mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns(string.Empty);
+        mockAssemblyConfig.SetupGet(a => a.DefaultSbomNamespaceBaseUri).Returns(string.Empty);
         var config = GetConfigurationBaseObject();
         config.NamespaceUriBase = new ConfigurationSetting<string>
         {
@@ -261,13 +261,13 @@ public class ConfigSanitizerTests
 
         Assert.AreEqual("http://base.uri", config.NamespaceUriBase.Value);
 
-        mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
+        mockAssemblyConfig.VerifyGet(a => a.DefaultSbomNamespaceBaseUri);
     }
 
     [TestMethod]
     public void UserProviderNamespaceUriBaseShouldReturnProvidedValue_Succeeds()
     {
-        mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns("http://internal.base.uri");
+        mockAssemblyConfig.SetupGet(a => a.DefaultSbomNamespaceBaseUri).Returns("http://internal.base.uri");
         var providedNamespaceValue = "http://base.uri";
         var config = GetConfigurationBaseObject();
         config.NamespaceUriBase = new ConfigurationSetting<string>
@@ -282,7 +282,7 @@ public class ConfigSanitizerTests
         Assert.AreEqual(providedNamespaceValue, config.NamespaceUriBase.Value);
         Assert.AreEqual(SettingSource.CommandLine, config.NamespaceUriBase.Source);
 
-        mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
+        mockAssemblyConfig.VerifyGet(a => a.DefaultSbomNamespaceBaseUri);
     }
 
     [TestMethod]

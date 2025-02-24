@@ -6,7 +6,7 @@ namespace Microsoft.Sbom.Contracts;
 /// <summary>
 /// Represents a reference for a differnt SBOM in the current SBOM.
 /// </summary>
-public class SBOMReference
+public class SbomReference
 {
     /// <summary>
     /// Gets or sets the unique identifier that defines the referred SBOM.

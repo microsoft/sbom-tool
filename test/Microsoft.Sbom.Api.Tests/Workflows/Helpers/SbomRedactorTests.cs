@@ -17,7 +17,7 @@ namespace Microsoft.Sbom.Api.Tests.Workflows.Helpers;
 public class SbomRedactorTests
 {
     private Mock<ILogger> mockLogger;
-    private Mock<IValidatedSBOM> mockValidatedSbom;
+    private Mock<IValidatedSbom> mockValidatedSbom;
 
     private SbomRedactor testSubject;
 
@@ -25,7 +25,7 @@ public class SbomRedactorTests
     public void Init()
     {
         mockLogger = new Mock<ILogger>();
-        mockValidatedSbom = new Mock<IValidatedSBOM>();
+        mockValidatedSbom = new Mock<IValidatedSbom>();
         testSubject = new SbomRedactor(mockLogger.Object);
     }
 
@@ -46,7 +46,7 @@ public class SbomRedactorTests
             }
         };
         mockValidatedSbom.Setup(x => x.GetRawSPDXDocument()).ReturnsAsync(mockSbom);
-        await testSubject.RedactSBOMAsync(mockValidatedSbom.Object);
+        await testSubject.RedactSbomAsync(mockValidatedSbom.Object);
         Assert.IsNull(mockSbom.Files);
     }
 
@@ -78,7 +78,7 @@ public class SbomRedactorTests
             }
         };
         mockValidatedSbom.Setup(x => x.GetRawSPDXDocument()).ReturnsAsync(mockSbom);
-        await testSubject.RedactSBOMAsync(mockValidatedSbom.Object);
+        await testSubject.RedactSbomAsync(mockValidatedSbom.Object);
         Assert.AreEqual(3, mockSbom.Packages.Count());
         foreach (var package in mockSbom.Packages)
         {
@@ -117,7 +117,7 @@ public class SbomRedactorTests
             }
         };
         mockValidatedSbom.Setup(x => x.GetRawSPDXDocument()).ReturnsAsync(mockSbom);
-        await testSubject.RedactSBOMAsync(mockValidatedSbom.Object);
+        await testSubject.RedactSbomAsync(mockValidatedSbom.Object);
         Assert.AreEqual(1, mockSbom.Relationships.Count());
         Assert.AreEqual(mockSbom.Relationships.First(), unredactedRelationship);
     }
@@ -135,7 +135,7 @@ public class SbomRedactorTests
             DocumentNamespace = docNamespace
         };
         mockValidatedSbom.Setup(x => x.GetRawSPDXDocument()).ReturnsAsync(mockSbom);
-        await testSubject.RedactSBOMAsync(mockValidatedSbom.Object);
+        await testSubject.RedactSbomAsync(mockValidatedSbom.Object);
         Assert.IsTrue(mockSbom.DocumentNamespace.Contains("microsoft/test/namespace/"));
         Assert.IsFalse(mockSbom.DocumentNamespace.Contains("fakeguid"));
     }
@@ -153,7 +153,7 @@ public class SbomRedactorTests
             DocumentNamespace = docNamespace
         };
         mockValidatedSbom.Setup(x => x.GetRawSPDXDocument()).ReturnsAsync(mockSbom);
-        await testSubject.RedactSBOMAsync(mockValidatedSbom.Object);
+        await testSubject.RedactSbomAsync(mockValidatedSbom.Object);
         Assert.AreEqual(mockSbom.DocumentNamespace, docNamespace);
     }
 }

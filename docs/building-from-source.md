@@ -20,7 +20,7 @@ The sbom tool code is designed to be as extensible as possible. All the interfac
 
 The `Microsoft.Sbom.Common` project contains the base of common code, constants, etc. that all the projects can call.
 
-The `Microsoft.Sbom.Contracts` project defines the interfaces that the tool uses to call the SBOM tool using a C# API. The `ISBOMGenerator` class defines two methods that the tool uses to directly call the SBOM tool from C# code. The `Microsoft.Sbom.Tool` project defines a command line interface (CLI) interface to talk to the SBOM tool.
+The `Microsoft.Sbom.Contracts` project defines the interfaces that the tool uses to call the SBOM tool using a C# API. The `ISbomGenerator` class defines two methods that the tool uses to directly call the SBOM tool from C# code. The `Microsoft.Sbom.Tool` project defines a command line interface (CLI) interface to talk to the SBOM tool.
 
 ## Building on Visual Studio
 

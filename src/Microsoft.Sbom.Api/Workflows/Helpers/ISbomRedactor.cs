@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
@@ -12,5 +12,5 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 public interface ISbomRedactor
 {
-    public Task<FormatEnforcedSPDX2> RedactSBOMAsync(IValidatedSBOM sbom);
+    public Task<FormatEnforcedSPDX2> RedactSbomAsync(IValidatedSbom sbom);
 }

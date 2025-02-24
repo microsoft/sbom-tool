@@ -5,12 +5,12 @@ namespace Microsoft.Sbom.Api.FormatValidator;
 
 using System.IO;
 
-public class ValidatedSBOMFactory
+public class ValidatedSbomFactory
 {
-    public virtual IValidatedSBOM CreateValidatedSBOM(string sbomFilePath)
+    public virtual IValidatedSbom CreateValidatedSBOM(string sbomFilePath)
     {
         var sbomStream = new StreamReader(sbomFilePath);
-        var validatedSbom = new ValidatedSBOM(sbomStream.BaseStream);
+        var validatedSbom = new ValidatedSbom(sbomStream.BaseStream);
         return validatedSbom;
     }
 }

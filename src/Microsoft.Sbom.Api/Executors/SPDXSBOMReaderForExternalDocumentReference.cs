@@ -25,7 +25,7 @@ namespace Microsoft.Sbom.Api.Executors;
 /// <summary>
 /// Reads SPDX json format SBOM file.
 /// </summary>
-public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternalDocumentReference
+public class SPDXSBOMReaderForExternalDocumentReference : ISbomReaderForExternalDocumentReference
 {
     private readonly IHashCodeGenerator hashCodeGenerator;
     private readonly ILogger log;
@@ -66,7 +66,7 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternal
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
     }
 
-    public virtual (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSBOMFile(ChannelReader<string> sbomFileLocation)
+    public virtual (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSbomFile(ChannelReader<string> sbomFileLocation)
     {
         if (sbomFileLocation is null)
         {

@@ -71,13 +71,13 @@ public static class SPDXToSbomFormatConverterExtensions
     }
 
     /// <summary>
-    /// Converts a <see cref="SPDXRelationship"/> object to a <see cref="SBOMRelationship"/> object.
+    /// Converts a <see cref="SPDXRelationship"/> object to a <see cref="SbomRelationship"/> object.
     /// </summary>
     /// <param name="spdxRelationship"></param>
     /// <returns></returns>
-    public static SBOMRelationship ToSbomRelationship(this SPDXRelationship spdxRelationship)
+    public static SbomRelationship ToSbomRelationship(this SPDXRelationship spdxRelationship)
     {
-        return new SBOMRelationship
+        return new SbomRelationship
         {
             RelationshipType = spdxRelationship.RelationshipType.ToString(),
             TargetElementId = spdxRelationship.TargetElementId,
@@ -86,13 +86,13 @@ public static class SPDXToSbomFormatConverterExtensions
     }
 
     /// <summary>
-    /// Converts a <see cref="SpdxExternalDocumentReference"/> object to a <see cref="SBOMReference"/> object.
+    /// Converts a <see cref="SpdxExternalDocumentReference"/> object to a <see cref="SbomReference"/> object.
     /// </summary>
     /// <param name="spdxExternalDocumentReference"></param>
     /// <returns></returns>
-    public static SBOMReference ToSbomReference(this SpdxExternalDocumentReference spdxExternalDocumentReference)
+    public static SbomReference ToSbomReference(this SpdxExternalDocumentReference spdxExternalDocumentReference)
     {
-        return new SBOMReference
+        return new SbomReference
         {
             Checksum = spdxExternalDocumentReference.Checksum.ToSbomChecksum(),
             ExternalDocumentId = spdxExternalDocumentReference.ExternalDocumentId,

@@ -43,7 +43,7 @@ public class SbomSpecification : IEquatable<SbomSpecification>
     /// Parse the given string into a <see cref="SbomSpecification"/> object.
     /// </summary>
     /// <param name="value">The string representation of the SBOM.</param>
-    /// <returns>A SBOMSpecification object.</returns>
+    /// <returns>A SbomSpecification object.</returns>
     /// <example>spdx:2.2.</example>
     public static SbomSpecification Parse(string value)
     {

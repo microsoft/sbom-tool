@@ -24,7 +24,7 @@ public class SbomFileBasedFileToJsonProvider : EntityToJsonProviderBase<SbomFile
 
     private readonly SbomFileToFileInfoConverter sbomFileToFileInfoConverter;
 
-    private readonly InternalSBOMFileInfoDeduplicator fileInfoDeduplicator;
+    private readonly InternalSbomFileInfoDeduplicator fileInfoDeduplicator;
 
     public SbomFileBasedFileToJsonProvider(
         IConfiguration configuration,
@@ -32,7 +32,7 @@ public class SbomFileBasedFileToJsonProvider : EntityToJsonProviderBase<SbomFile
         ILogger logger,
         FileInfoWriter fileHashWriter,
         SbomFileToFileInfoConverter sbomFileToFileInfoConverter,
-        InternalSBOMFileInfoDeduplicator fileInfo)
+        InternalSbomFileInfoDeduplicator fileInfo)
         : base(configuration, channelUtils, logger)
     {
         this.fileHashWriter = fileHashWriter ?? throw new ArgumentNullException(nameof(fileHashWriter));

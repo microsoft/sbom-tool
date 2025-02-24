@@ -20,7 +20,7 @@ public class FileHashes
     /// <summary>
     /// The hash of the file that was read from the SBOM file.
     /// </summary>
-    public Checksum SBOMFileHash { get; private set; }
+    public Checksum SbomFileHash { get; private set; }
 
     /// <summary>
     /// The enum flag that shows hashes for what location are already in this object.
@@ -38,7 +38,7 @@ public class FileHashes
     public Checksum GetHash(FileLocation fileLocation) => fileLocation switch
     {
         FileLocation.OnDisk => OnDiskHash,
-        FileLocation.InSbomFile => SBOMFileHash,
+        FileLocation.InSbomFile => SbomFileHash,
         _ => throw new Exception("Unknown file location type for SBOM file."),
     };
 
@@ -55,7 +55,7 @@ public class FileHashes
                 OnDiskHash = checksum;
                 break;
             case FileLocation.InSbomFile:
-                SBOMFileHash = checksum;
+                SbomFileHash = checksum;
                 break;
             default:
                 break;

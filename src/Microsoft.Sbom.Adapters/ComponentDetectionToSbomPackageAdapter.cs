@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace Microsoft.Sbom.Adapters;
 
-public class ComponentDetectionToSBOMPackageAdapter
+public class ComponentDetectionToSbomPackageAdapter
 {
     /// <summary>
     /// Parses the output from Component Detection and converts it into a list of <see cref="SbomPackage"/> objects.

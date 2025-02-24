@@ -22,7 +22,7 @@ public interface ISbomParser
     ParserStateResult? Next();
 
     /// <summary>
-    /// Returns a <see cref="SBOMMetadata"/> object using the metadata defined in the
+    /// Returns a <see cref="SbomMetadata"/> object using the metadata defined in the
     /// current SBOM.
     /// </summary>
     /// <param name="stream"></param>

@@ -26,7 +26,7 @@ using Microsoft.Sbom.Parsers.Spdx22SbomParser;
 /// </summary>
 public partial class GenerateSbom : Task
 {
-    private ISBOMGenerator Generator { get; set; }
+    private ISbomGenerator Generator { get; set; }
 
     /// <summary>
     /// Constructor for the GenerateSbomTask.
@@ -40,7 +40,7 @@ public partial class GenerateSbom : Task
                 /* Manually adding some dependencies since `AddSbomTool()` does not add them when
                  * running the MSBuild Task from another project.
                  */
-                .AddSingleton<ISourcesProvider, SBOMPackagesProvider>()
+                .AddSingleton<ISourcesProvider, SbomPackagesProvider>()
                 .AddSingleton<ISourcesProvider, CGExternalDocumentReferenceProvider>()
                 .AddSingleton<ISourcesProvider, DirectoryTraversingFileToJsonProvider>()
                 .AddSingleton<ISourcesProvider, ExternalDocumentReferenceFileProvider>()
@@ -52,11 +52,11 @@ public partial class GenerateSbom : Task
                 .AddSingleton<IAlgorithmNames, AlgorithmNames>()
                 .AddSingleton<IManifestGenerator, Generator>()
                 .AddSingleton<IMetadataProvider, LocalMetadataProvider>()
-                .AddSingleton<IMetadataProvider, SBOMApiMetadataProvider>()
+                .AddSingleton<IMetadataProvider, SbomApiMetadataProvider>()
                 .AddSingleton<IManifestInterface, Validator>()
                 .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>())
             .Build();
-        this.Generator = host.Services.GetRequiredService<ISBOMGenerator>();
+        this.Generator = host.Services.GetRequiredService<ISbomGenerator>();
     }
 
     /// <inheritdoc/>
@@ -70,10 +70,10 @@ public partial class GenerateSbom : Task
                 return false;
             }
 
-            // Set other configurations. The GenerateSBOMAsync() already sanitizes and checks for
+            // Set other configurations. The GenerateSbomAsync() already sanitizes and checks for
             // a valid namespace URI and generates a random guid for NamespaceUriUniquePart if
             // one is not provided.
-            var sbomMetadata = new SBOMMetadata
+            var sbomMetadata = new SbomMetadata
             {
                 PackageSupplier = this.PackageSupplier,
                 PackageName = this.PackageName,

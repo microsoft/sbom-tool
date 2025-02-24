@@ -7,7 +7,7 @@ namespace Microsoft.Sbom.Contracts;
 /// Use this class to provide addtional metadata to the SBOM generator
 /// about your specific environment.
 /// </summary>
-public class SBOMMetadata
+public class SbomMetadata
 {
     /// <summary>
     /// Gets or sets the name of your build environment, like CloudBuild or Azure Pipelines.

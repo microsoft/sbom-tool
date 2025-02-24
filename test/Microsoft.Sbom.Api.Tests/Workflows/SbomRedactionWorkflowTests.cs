@@ -27,7 +27,7 @@ public class SbomRedactionWorkflowTests
     private Mock<ILogger> mockLogger;
     private Mock<IConfiguration> configurationMock;
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
-    private Mock<ValidatedSBOMFactory> validatedSBOMFactoryMock;
+    private Mock<ValidatedSbomFactory> validatedSBOMFactoryMock;
     private Mock<ISbomRedactor> sbomRedactorMock;
     private SbomRedactionWorkflow testSubject;
 
@@ -43,7 +43,7 @@ public class SbomRedactionWorkflowTests
         mockLogger = new Mock<ILogger>();
         configurationMock = new Mock<IConfiguration>();
         fileSystemUtilsMock = new Mock<IFileSystemUtils>();
-        validatedSBOMFactoryMock = new Mock<ValidatedSBOMFactory>();
+        validatedSBOMFactoryMock = new Mock<ValidatedSbomFactory>();
         sbomRedactorMock = new Mock<ISbomRedactor>();
         testSubject = new SbomRedactionWorkflow(
             mockLogger.Object,
@@ -106,7 +106,7 @@ public class SbomRedactionWorkflowTests
         SetUpDirStructure();
 
         fileSystemUtilsMock.Setup(m => m.GetFilesInDirectory(SbomDirStub, true)).Returns(new string[] { SbomPathStub }).Verifiable();
-        var validatedSbomMock = new Mock<IValidatedSBOM>();
+        var validatedSbomMock = new Mock<IValidatedSbom>();
         validatedSBOMFactoryMock.Setup(m => m.CreateValidatedSBOM(SbomPathStub)).Returns(validatedSbomMock.Object).Verifiable();
         var validationRes = new FormatValidationResults();
         validationRes.AggregateValidationStatus(FormatValidationStatus.NotValid);
@@ -122,13 +122,13 @@ public class SbomRedactionWorkflowTests
         SetUpDirStructure();
 
         fileSystemUtilsMock.Setup(m => m.GetFilesInDirectory(SbomDirStub, true)).Returns(new string[] { SbomPathStub }).Verifiable();
-        var validatedSbomMock = new Mock<IValidatedSBOM>();
+        var validatedSbomMock = new Mock<IValidatedSbom>();
         validatedSBOMFactoryMock.Setup(m => m.CreateValidatedSBOM(SbomPathStub)).Returns(validatedSbomMock.Object).Verifiable();
         var validationRes = new FormatValidationResults();
         validationRes.AggregateValidationStatus(FormatValidationStatus.Valid);
         validatedSbomMock.Setup(m => m.GetValidationResults()).ReturnsAsync(validationRes).Verifiable();
         var redactedContent = new FormatEnforcedSPDX2() { Name = "redacted" };
-        sbomRedactorMock.Setup(m => m.RedactSBOMAsync(validatedSbomMock.Object)).ReturnsAsync(redactedContent).Verifiable();
+        sbomRedactorMock.Setup(m => m.RedactSbomAsync(validatedSbomMock.Object)).ReturnsAsync(redactedContent).Verifiable();
         var outStream = new MemoryStream();
         fileSystemUtilsMock.Setup(m => m.OpenWrite(OutPathStub)).Returns(outStream).Verifiable();
         validatedSbomMock.Setup(m => m.Dispose()).Verifiable();

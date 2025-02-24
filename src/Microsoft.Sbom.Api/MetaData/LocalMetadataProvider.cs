@@ -45,10 +45,10 @@ public class LocalMetadataProvider : IMetadataProvider, IDefaultMetadataProvider
 
             metadataDictionary = new Dictionary<MetadataKey, object>
             {
-                { MetadataKey.SBOMToolName, ProductName },
+                { MetadataKey.SbomToolName, ProductName },
 
                 // TODO get tool version from dll manifest.
-                { MetadataKey.SBOMToolVersion, Version.Value }
+                { MetadataKey.SbomToolVersion, Version.Value }
             };
 
             // Add the package name if available.
