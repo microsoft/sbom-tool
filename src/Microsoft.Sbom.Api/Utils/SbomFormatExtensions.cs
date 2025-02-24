@@ -38,7 +38,7 @@ public static class SbomFormatExtensions
     /// <param name="manifestInfo"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static SbomSpecification ToSBOMSpecification(this ManifestInfo manifestInfo)
+    public static SbomSpecification ToSbomSpecification(this ManifestInfo manifestInfo)
     {
         if (manifestInfo is null)
         {

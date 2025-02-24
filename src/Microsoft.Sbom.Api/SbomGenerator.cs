@@ -138,7 +138,7 @@ public class SbomGenerator : ISbomGenerator
 
     public IEnumerable<SbomSpecification> GetSupportedSbomSpecifications() => generatorProvider
         .GetSupportedManifestInfos()
-        .Select(g => g.ToSBOMSpecification())
+        .Select(g => g.ToSbomSpecification())
         .ToList();
 
     private InputConfiguration ValidateConfig(InputConfiguration config)
