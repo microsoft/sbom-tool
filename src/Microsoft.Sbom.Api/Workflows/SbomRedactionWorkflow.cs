@@ -63,7 +63,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
                 {
                     log.Information($"Redacting SBOM {sbomPath}");
                     var outputPath = GetOutputPath(sbomPath);
-                    var redactedSpdx = await this.sbomRedactor.RedactSBOMAsync(validatedSbom);
+                    var redactedSpdx = await this.sbomRedactor.RedactSbomAsync(validatedSbom);
                     using (var outStream = fileSystemUtils.OpenWrite(outputPath))
                     {
                         await JsonSerializer.SerializeAsync(outStream, redactedSpdx);
