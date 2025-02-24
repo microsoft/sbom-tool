@@ -6,7 +6,7 @@ namespace Microsoft.Sbom.Api.Utils;
 internal static class Events
 {
     internal const string SbomGenerationWorkflow = "Total generation time";
-    internal const string SBOMParseMetadata = "Total metadata parsing time";
+    internal const string SbomParseMetadata = "Total metadata parsing time";
     internal const string FilesGeneration = "Files generation time";
     internal const string PackagesGeneration = "Packages generation time";
     internal const string RelationshipsGeneration = "Relationships generation time";
