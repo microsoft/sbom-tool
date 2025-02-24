@@ -36,12 +36,12 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
-        InternalSbomFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
+        InternalSbomFileInfoDeduplicator internalSbomFileInfoDeduplicator,
         ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter,
         ExternalReferenceInfoToPathConverter externalReferenceInfoToPathConverter,
         ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
         SbomComponentsWalker sbomComponentsWalker)
-        : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
+        : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSbomFileInfoDeduplicator)
     {
         ComponentToExternalReferenceInfoConverter = componentToExternalReferenceInfoConverter ?? throw new ArgumentNullException(nameof(componentToExternalReferenceInfoConverter));
         ExternalReferenceInfoToPathConverter = externalReferenceInfoToPathConverter ?? throw new ArgumentNullException(nameof(externalReferenceInfoToPathConverter));

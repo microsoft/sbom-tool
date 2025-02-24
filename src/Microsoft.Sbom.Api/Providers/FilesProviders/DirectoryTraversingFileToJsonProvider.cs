@@ -27,9 +27,9 @@ public class DirectoryTraversingFileToJsonProvider : PathBasedFileToJsonProvider
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
-        InternalSbomFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
+        InternalSbomFileInfoDeduplicator internalSbomFileInfoDeduplicator,
         DirectoryWalker directoryWalker)
-        : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
+        : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSbomFileInfoDeduplicator)
     {
         this.directoryWalker = directoryWalker ?? throw new ArgumentNullException(nameof(directoryWalker));
     }
