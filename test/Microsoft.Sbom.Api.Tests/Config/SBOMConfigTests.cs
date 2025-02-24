@@ -44,7 +44,7 @@ public class SBOMConfigTests
         var metadataProviders = new IMetadataProvider[] { localMetadataProvider };
         var sbomConfigs = CreateSbomConfigs(metadataProviders);
 
-        var uri = sbomConfigs.GetSBOMNamespaceUri();
+        var uri = sbomConfigs.GetSbomNamespaceUri();
 
         Assert.AreEqual(localMetadataProvider.GetDocumentNamespaceUri(), uri);
     }
@@ -63,7 +63,7 @@ public class SBOMConfigTests
         var metadataProviders = new IMetadataProvider[] { localMetadataProvider, sbomApiMetadataProvider };
         var sbomConfigs = CreateSbomConfigs(metadataProviders);
 
-        var uri = sbomConfigs.GetSBOMNamespaceUri();
+        var uri = sbomConfigs.GetSbomNamespaceUri();
 
         Assert.AreEqual(sbomApiMetadataProvider.GetDocumentNamespaceUri(), uri);
     }
@@ -82,7 +82,7 @@ public class SBOMConfigTests
         var metadataProviders = new IMetadataProvider[] { localMetadataProvider, sbomApiMetadataProvider };
         var sbomConfigs = CreateSbomConfigs(metadataProviders);
 
-        var uri = sbomConfigs.GetSBOMNamespaceUri();
+        var uri = sbomConfigs.GetSbomNamespaceUri();
 
         Assert.AreEqual(localMetadataProvider.GetDocumentNamespaceUri(), uri);
     }
