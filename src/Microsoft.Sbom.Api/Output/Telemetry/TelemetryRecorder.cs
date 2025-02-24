@@ -316,7 +316,7 @@ public class TelemetryRecorder : IRecorder
                 },
                 Timings = timingRecorders.Select(t => t.ToTiming()).ToList(),
                 Parameters = Configuration,
-                SBOMFormatsUsed = sbomFormatsUsed,
+                SbomFormatsUsed = sbomFormatsUsed,
                 Switches = this.switches,
                 Exceptions = this.exceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),
                 APIExceptions = this.apiExceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),
