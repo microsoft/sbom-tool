@@ -272,7 +272,7 @@ public class InterfaceConcretionTests
     {
         public GenerationData GetGenerationData(ManifestInfo manifestInfo) => throw new NotImplementedException();
         public object GetMetadata(MetadataKey key) => throw new NotImplementedException();
-        public string GetSBOMNamespaceUri() => throw new NotImplementedException();
+        public string GetSbomNamespaceUri() => throw new NotImplementedException();
         public bool TryGetMetadata(MetadataKey key, out object value) => throw new NotImplementedException();
         public bool TryGetMetadata(MetadataKey key, out string value) => throw new NotImplementedException();
     }

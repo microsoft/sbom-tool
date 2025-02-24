@@ -183,7 +183,7 @@ public class SbomConfigProvider : ISbomConfigProvider
         throw new Exception($"Unable to get generation data for the {manifestInfo} SBOM.");
     }
 
-    public string GetSBOMNamespaceUri()
+    public string GetSbomNamespaceUri()
     {
         IMetadataProvider provider = null;
         if (MetadataDictionary.TryGetValue(MetadataKey.BuildEnvironmentName, out var buildEnvironmentName))
