@@ -200,7 +200,6 @@ public class GeneratorTests
         };
 
         mockConfigHandler.Setup(c => c.TryGetManifestConfig(out sbomConfig)).Returns(true);
-        recorderMock.Setup(r => r.RecordSBOMFormat(Constants.SPDX30ManifestInfo, It.IsAny<string>()));
         mockLogger.Setup(l => l.Debug(It.IsAny<string>()));
 
         var config = new Configuration
