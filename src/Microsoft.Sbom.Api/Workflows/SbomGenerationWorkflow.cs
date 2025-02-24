@@ -76,7 +76,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         IList<FileValidationResult> validErrors = new List<FileValidationResult>();
         string sbomDir = null;
         var deleteSBOMDir = false;
-        using (recorder.TraceEvent(Events.SBOMGenerationWorkflow))
+        using (recorder.TraceEvent(Events.SbomGenerationWorkflow))
         {
             try
             {
