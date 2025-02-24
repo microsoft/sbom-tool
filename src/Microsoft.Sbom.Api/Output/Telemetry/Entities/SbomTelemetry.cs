@@ -35,7 +35,7 @@ public class SbomTelemetry
     /// Gets or sets a list of the SBOM formats and related file properties that was used in the
     /// generation/validation of the SBOM.
     /// </summary>
-    public IList<SbomFile> SBOMFormatsUsed { get; set; }
+    public IList<SbomFile> SbomFormatsUsed { get; set; }
 
     /// <summary>
     /// Gets or sets a list of event time durations.
