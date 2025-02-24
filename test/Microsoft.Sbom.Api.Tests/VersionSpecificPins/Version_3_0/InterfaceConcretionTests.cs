@@ -192,7 +192,7 @@ public class InterfaceConcretionTests
 
     private class PinnedISbomRedactor : ISbomRedactor
     {
-        public Task<FormatEnforcedSPDX2> RedactSBOMAsync(IValidatedSbom sbom) => throw new NotImplementedException();
+        public Task<FormatEnforcedSPDX2> RedactSbomAsync(IValidatedSbom sbom) => throw new NotImplementedException();
     }
 
     private class PinnedIWorkflow : IWorkflow<PinnedIWorkflow>

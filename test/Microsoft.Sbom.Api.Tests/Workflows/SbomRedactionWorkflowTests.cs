@@ -128,7 +128,7 @@ public class SbomRedactionWorkflowTests
         validationRes.AggregateValidationStatus(FormatValidationStatus.Valid);
         validatedSbomMock.Setup(m => m.GetValidationResults()).ReturnsAsync(validationRes).Verifiable();
         var redactedContent = new FormatEnforcedSPDX2() { Name = "redacted" };
-        sbomRedactorMock.Setup(m => m.RedactSBOMAsync(validatedSbomMock.Object)).ReturnsAsync(redactedContent).Verifiable();
+        sbomRedactorMock.Setup(m => m.RedactSbomAsync(validatedSbomMock.Object)).ReturnsAsync(redactedContent).Verifiable();
         var outStream = new MemoryStream();
         fileSystemUtilsMock.Setup(m => m.OpenWrite(OutPathStub)).Returns(outStream).Verifiable();
         validatedSbomMock.Setup(m => m.Dispose()).Verifiable();
