@@ -10,8 +10,8 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using Serilog.Events;
-using ApiConstants = Microsoft.Sbom.Api.Utils.Constants;
-using Constants = Microsoft.Sbom.Common.Constants;
+using SbomConstants = Microsoft.Sbom.Common.Constants;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Config;
 
@@ -123,9 +123,10 @@ public static class ApiConfigurationBuilder
             throw new ArgumentException($"'{nameof(outputPath)}' cannot be null or whitespace.", nameof(outputPath));
         }
 
+        // TODO: update to SPDX 3.0 for default.
         if (specifications is null || specifications.Count == 0)
         {
-            specifications = new List<SbomSpecification>() { ApiConstants.SPDX22Specification };
+            specifications = SpdxConstants.SupportedSbomSpecifications;
         }
 
         var sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
@@ -185,7 +186,7 @@ public static class ApiConfigurationBuilder
             System.Diagnostics.Tracing.EventLevel.LogAlways => GetConfigurationSetting(LogEventLevel.Verbose),
             System.Diagnostics.Tracing.EventLevel.Warning => GetConfigurationSetting(LogEventLevel.Warning),
             System.Diagnostics.Tracing.EventLevel.Verbose => GetConfigurationSetting(LogEventLevel.Verbose),
-            _ => GetConfigurationSetting(Constants.DefaultLogLevel),
+            _ => GetConfigurationSetting(SbomConstants.DefaultLogLevel),
         };
     }
 
@@ -204,17 +205,17 @@ public static class ApiConfigurationBuilder
         {
             runtimeConfiguration = new RuntimeConfiguration
             {
-                WorkflowParallelism = Constants.DefaultParallelism,
+                WorkflowParallelism = SbomConstants.DefaultParallelism,
                 Verbosity = System.Diagnostics.Tracing.EventLevel.Warning,
                 DeleteManifestDirectoryIfPresent = false,
                 FollowSymlinks = true
             };
         }
 
-        if (runtimeConfiguration.WorkflowParallelism < Constants.MinParallelism
-            || runtimeConfiguration.WorkflowParallelism > Constants.MaxParallelism)
+        if (runtimeConfiguration.WorkflowParallelism < SbomConstants.MinParallelism
+            || runtimeConfiguration.WorkflowParallelism > SbomConstants.MaxParallelism)
         {
-            runtimeConfiguration.WorkflowParallelism = Constants.DefaultParallelism;
+            runtimeConfiguration.WorkflowParallelism = SbomConstants.DefaultParallelism;
         }
 
         return runtimeConfiguration;

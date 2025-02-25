@@ -8,8 +8,8 @@ using System.Text;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.JsonStrings;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Spdx30 = Microsoft.Sbom.Parsers.Spdx30SbomParser;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -28,7 +28,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         Assert.AreEqual(5, results.FormatEnforcedSPDX3Result.Graph.Count());
 
         var metadata = parser.GetMetadata();
-        Assert.IsInstanceOfType(metadata, typeof(Spdx22Metadata));
+        Assert.IsInstanceOfType(metadata, typeof(SpdxMetadata));
         Assert.IsNotNull(metadata);
         Assert.IsNotNull(metadata.DocumentNamespace);
         Assert.AreEqual("spdx-doc-name", metadata.Name);
@@ -51,7 +51,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         var results = this.Parse(parser);
 
         var metadata = parser.GetMetadata();
-        Assert.IsInstanceOfType(metadata, typeof(Spdx22Metadata));
+        Assert.IsInstanceOfType(metadata, typeof(SpdxMetadata));
         Assert.IsNotNull(metadata);
         Assert.IsNull(metadata.DocumentNamespace);
         Assert.IsNull(metadata.Name);
@@ -68,7 +68,11 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithMetadataJsonStrings.SbomWithSpdxDocumentMissingNameJsonString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new SPDX30Parser(stream, requiredComplianceStandard: "NTIA");
+        var parser = new SPDX30Parser(stream)
+        {
+            // Setting RequiredComplianceStandard to NTIA is done normally in the SBOMParserBasedValidationWorkflow but doing it manually here for testing purposes
+            RequiredComplianceStandard = "NTIA"
+        };
         Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 
@@ -117,8 +121,8 @@ public class SbomMetadataParserTests : SbomParserTestsBase
     public void StreamEmptyTestReturnsNull()
     {
         using var stream = new MemoryStream();
-        stream.Read(new byte[Constants.ReadBufferSize]);
-        var buffer = new byte[Constants.ReadBufferSize];
+        stream.Read(new byte[Spdx30.Constants.ReadBufferSize]);
+        var buffer = new byte[Spdx30.Constants.ReadBufferSize];
 
         Assert.ThrowsException<EndOfStreamException>(() => new SPDXParser(stream));
     }

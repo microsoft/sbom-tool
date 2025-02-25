@@ -2,13 +2,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common.Config;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Config;
 
@@ -35,7 +36,7 @@ public class Validator : ISbomService<ValidationArgs>
         bool result;
         try
         {
-            if (configuration.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
+            if (configuration.ManifestInfo.Value.Any(SpdxConstants.SupportedSpdxManifests.Contains))
             {
                 result = await parserValidationWorkflow.RunAsync();
             }

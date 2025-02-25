@@ -19,6 +19,7 @@ using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Manifest.Configuration;
+using Microsoft.Sbom.Api.Metadata;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.PackageDetails;
@@ -40,9 +41,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json.Linq;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
+using Generator30 = Microsoft.Sbom.Parsers.Spdx30SbomParser.Generator;
 using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
 using ILogger = Serilog.ILogger;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Workflows.Tests;
 
@@ -75,25 +77,44 @@ public class ManifestGenerationWorkflowTests
     }
 
     [TestMethod]
-    [DataRow(true, true)]
-    [DataRow(false, false)]
-    [DataRow(true, false)]
-    [DataRow(false, true)]
-    public async Task ManifestGenerationWorkflowTests_Succeeds(bool deleteExistingManifestDir, bool isDefaultSourceManifestDirPath)
+    [DataRow("test", true, true)]
+    [DataRow("test", false, false)]
+    [DataRow("test", true, false)]
+    [DataRow("test", false, true)]
+    [DataRow("3.0", true, true)]
+    [DataRow("3.0", false, false)]
+    [DataRow("3.0", true, false)]
+    [DataRow("3.0", false, true)]
+    public async Task ManifestGenerationWorkflowTests_Succeeds(string spdxVersionForGenerator, bool deleteExistingManifestDir, bool isDefaultSourceManifestDirPath)
     {
-        var manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
+        var manifestInfoPerSpdxVersion = new Dictionary<string, ManifestInfo>
+        {
+            { "test", SpdxConstants.TestManifestInfo },
+            { "3.0", SpdxConstants.SPDX30ManifestInfo }
+        };
+
+        ManifestGeneratorProvider manifestGeneratorProvider = null;
+        if (spdxVersionForGenerator == "test")
+        {
+            manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
+        }
+        else if (spdxVersionForGenerator == "3.0")
+        {
+            manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new Generator30() });
+        }
+
         manifestGeneratorProvider.Init();
 
         var metadataBuilder = new MetadataBuilder(
             mockLogger.Object,
             manifestGeneratorProvider,
-            Constants.TestManifestInfo,
+            manifestInfoPerSpdxVersion[spdxVersionForGenerator],
             recorderMock.Object);
         var jsonFilePath = "/root/_manifest/manifest.json";
 
         ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            ManifestInfo = Constants.TestManifestInfo,
+            ManifestInfo = manifestInfoPerSpdxVersion[spdxVersionForGenerator],
             ManifestJsonDirPath = "/root/_manifest",
             ManifestJsonFilePath = jsonFilePath,
             MetadataBuilder = metadataBuilder,
@@ -105,13 +126,18 @@ public class ManifestGenerationWorkflowTests
         {
             { MetadataKey.Build_BuildId, 12 },
             { MetadataKey.Build_DefinitionName, "test" },
+            { MetadataKey.SBOMToolName, "testMicrosoft" },
+            { MetadataKey.SBOMToolVersion, "Tool.Version" },
+            { MetadataKey.PackageVersion, "Package.Version" },
+            { MetadataKey.PackageSupplier, "testPackageSupplier" }
         });
 
+        var localMetadataProvider = new LocalMetadataProvider(configurationMock.Object);
         var sbomConfigs = new SbomConfigProvider(
-            new IManifestConfigHandler[] { mockConfigHandler.Object },
-            new IMetadataProvider[] { mockMetadataProvider.Object },
-            mockLogger.Object,
-            recorderMock.Object);
+            manifestConfigHandlers: new IManifestConfigHandler[] { mockConfigHandler.Object },
+            metadataProviders: new IMetadataProvider[] { localMetadataProvider, mockMetadataProvider.Object },
+            logger: mockLogger.Object,
+            recorder: recorderMock.Object);
 
         using var manifestStream = new MemoryStream();
         using var manifestWriter = new StreamWriter(manifestStream);
@@ -142,6 +168,15 @@ public class ManifestGenerationWorkflowTests
         configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Generate);
         configurationMock.SetupGet(c => c.BuildComponentPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
         configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
+
+        // Added config settings necessary for 3.0 SBOM generation
+        if (spdxVersionForGenerator == "3.0")
+        {
+            configurationMock.SetupGet(c => c.PackageName).Returns(new ConfigurationSetting<string>("the-package-name"));
+            configurationMock.SetupGet(c => c.PackageVersion).Returns(new ConfigurationSetting<string>("the-package-version"));
+            configurationMock.SetupGet(c => c.NamespaceUriUniquePart).Returns(new ConfigurationSetting<string>("some-custom-value-here"));
+            configurationMock.SetupGet(c => c.NamespaceUriBase).Returns(new ConfigurationSetting<string>("http://sbom.microsoft"));
+        }
 
         fileSystemMock
             .Setup(f => f.CreateDirectory(
@@ -302,15 +337,16 @@ public class ManifestGenerationWorkflowTests
             { externalDocumentReferenceProvider }
         };
 
-        var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object, mockLogger.Object);
+        var fileArrayGenerator = new FileArrayGenerator(sourcesProvider, recorderMock.Object, mockLogger.Object);
 
-        var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
+        var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sourcesProvider, recorderMock.Object, sbomConfigs);
 
-        var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
+        var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sourcesProvider, recorderMock.Object);
 
+        var generateResult = new Helpers.GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
         relationshipArrayGenerator
             .Setup(r => r.GenerateAsync())
-            .ReturnsAsync(await Task.FromResult(new List<FileValidationResult>()));
+            .ReturnsAsync(generateResult);
 
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,
@@ -329,18 +365,45 @@ public class ManifestGenerationWorkflowTests
         var result = Encoding.UTF8.GetString(manifestStream.ToArray());
         var resultJson = JObject.Parse(result);
 
-        Assert.AreEqual("1.0.0", resultJson["Version"]);
-        Assert.AreEqual(12, resultJson["Build"]);
-        Assert.AreEqual("test", resultJson["Definition"]);
+        if (spdxVersionForGenerator == "test")
+        {
+            Assert.AreEqual("1.0.0", resultJson["Version"]);
+            Assert.AreEqual(12, resultJson["Build"]);
+            Assert.AreEqual("test", resultJson["Definition"]);
 
-        var outputs = resultJson["Outputs"];
-        var sortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
-        var expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
+            var outputs = resultJson["Outputs"];
+            var sortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
+            var expectedSortedOutputs = new JArray(outputs.OrderBy(obj => (string)obj["Source"]));
 
-        var packages = resultJson["Packages"];
-        Assert.AreEqual(4, packages.Count());
+            var packages = resultJson["Packages"];
+            Assert.AreEqual(4, packages.Count());
 
-        Assert.IsTrue(JToken.DeepEquals(sortedOutputs, expectedSortedOutputs));
+            Assert.IsTrue(JToken.DeepEquals(sortedOutputs, expectedSortedOutputs));
+        }
+        else
+        {
+            // Test context is correct
+            var context = resultJson["@context"].ToArray();
+            Assert.AreEqual("https://spdx.org/rdf/3.0.1/spdx-context.json", context.FirstOrDefault().ToString());
+
+            // Test elements were generated correctly
+            var elements = resultJson["@graph"].ToArray();
+            var packages = elements.Where(element => element["type"].ToString() == "software_Package").ToList();
+            Assert.AreEqual(4, packages.Count);
+
+            var creationInfo = elements.Where(element => element["type"].ToString() == "CreationInfo").ToList();
+            Assert.AreEqual(1, creationInfo.Count);
+
+            // Test deduplication
+            var noAssertionElements = elements.Where(element => element["spdxId"].ToString() == "SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B").ToList();
+            Assert.AreEqual(1, noAssertionElements.Count);
+
+            var organizationElements = elements.Where(element => element["type"].ToString() == "Organization").ToList();
+            Assert.AreEqual(3, organizationElements.Count);
+
+            var organizationElement = elements.Where(element => element["spdxId"].ToString() == "SPDXRef-Organization-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969").ToList();
+            Assert.AreEqual(1, organizationElement.Count);
+        }
 
         configurationMock.VerifyAll();
         fileSystemMock.VerifyAll();
@@ -358,7 +421,7 @@ public class ManifestGenerationWorkflowTests
         mockOSUtils.Setup(o => o.GetEnvironmentVariable(It.IsAny<string>())).Returns("false");
         var sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            ManifestInfo = Constants.TestManifestInfo,
+            ManifestInfo = SpdxConstants.TestManifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
             ManifestJsonFilePath = "/root/_manifest/manifest.json"
         };
@@ -384,7 +447,7 @@ public class ManifestGenerationWorkflowTests
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         var sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            ManifestInfo = Constants.TestManifestInfo,
+            ManifestInfo = SpdxConstants.TestManifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
             ManifestJsonFilePath = "/root/_manifest/manifest.json"
         };
@@ -392,7 +455,8 @@ public class ManifestGenerationWorkflowTests
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
         var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
-        fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(new List<FileValidationResult> { new FileValidationResult() });
+        var generateResult = new Helpers.GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
+        fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generateResult);
 
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,

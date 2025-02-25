@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using AutoMapper;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Config.ValueConverters;
 
@@ -30,7 +30,7 @@ internal class HashAlgorithmNameConfigurationSettingAddingConverter : IValueConv
         return new ConfigurationSetting<AlgorithmName>
         {
             Source = settingSource,
-            Value = sourceMember ?? Constants.DefaultHashAlgorithmName
+            Value = sourceMember ?? SpdxConstants.DefaultHashAlgorithmName
         };
     }
 }

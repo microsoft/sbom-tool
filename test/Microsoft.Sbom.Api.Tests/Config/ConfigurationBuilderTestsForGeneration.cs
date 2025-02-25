@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Tests;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PowerArgs;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Config.Tests;
 
@@ -142,7 +142,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         Assert.IsNotNull(config);
         Assert.IsNotNull(config.ManifestDirPath);
 
-        var expectedPath = Path.Join(args.BuildDropPath, Constants.ManifestFolder);
+        var expectedPath = Path.Join(args.BuildDropPath, SpdxConstants.ManifestFolder);
         Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
 
         fileSystemUtilsMock.VerifyAll();
@@ -172,7 +172,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         Assert.IsNotNull(config);
         Assert.IsNotNull(config.ManifestDirPath);
 
-        var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
+        var expectedPath = Path.Join("ManifestDirPath", SpdxConstants.ManifestFolder);
         Assert.AreEqual(Path.GetFullPath(config.ManifestDirPath.Value), Path.GetFullPath(expectedPath));
 
         fileSystemUtilsMock.VerifyAll();
@@ -202,7 +202,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         Assert.IsNotNull(config);
         Assert.IsNotNull(config.ManifestDirPath);
 
-        var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
+        var expectedPath = Path.Join("ManifestDirPath", SpdxConstants.ManifestFolder);
         Assert.AreEqual(Path.GetFullPath(config.ManifestDirPath.Value), Path.GetFullPath(expectedPath));
 
         fileSystemUtilsMock.VerifyAll();
@@ -234,7 +234,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         Assert.IsNotNull(config);
         Assert.IsNotNull(config.ManifestDirPath);
 
-        var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
+        var expectedPath = Path.Join("ManifestDirPath", SpdxConstants.ManifestFolder);
         Assert.AreEqual(Path.GetFullPath(config.ManifestDirPath.Value), Path.GetFullPath(expectedPath));
 
         fileSystemUtilsMock.VerifyAll();
@@ -265,7 +265,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         Assert.IsNotNull(config);
         Assert.IsNotNull(args.ManifestDirPath);
         Assert.IsNotNull(config.NamespaceUriBase);
-        Assert.AreEqual(config.ManifestDirPath.Value, Path.Join("ManifestDirPath", Constants.ManifestFolder));
+        Assert.AreEqual(config.ManifestDirPath.Value, Path.Join("ManifestDirPath", SpdxConstants.ManifestFolder));
 
         fileSystemUtilsMock.VerifyAll();
     }

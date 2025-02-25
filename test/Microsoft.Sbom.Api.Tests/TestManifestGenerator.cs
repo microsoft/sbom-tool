@@ -110,6 +110,11 @@ internal class TestManifestGenerator : IManifestGenerator
         };
     }
 
+    public GenerationResult GenerateJsonDocument(IInternalMetadataProvider internalMetadataProvider)
+    {
+        return null;
+    }
+
     [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "Discard variable has a _ name")]
     public GenerationResult GenerateRootPackage(IInternalMetadataProvider _)
     {

@@ -15,9 +15,10 @@ using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
 using Serilog;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Workflows;
 
@@ -98,22 +99,33 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 {
                     sbomConfigs.ApplyToEachConfig(config => config.JsonSerializer.StartJsonObject());
 
-                    // Files section
-                    validErrors = await fileArrayGenerator.GenerateAsync();
+                    var manifestInfos = sbomConfigs.GetManifestInfos();
 
-                    // Packages section
-                    validErrors.Concat(await packageArrayGenerator.GenerateAsync());
+                    // If manifestInfos is empty (for example, this is the case for unit tests where GetManifestInfos() is not implemented), use the default SPDX 2.2 manifest info
+                    if (!manifestInfos.Any())
+                    {
+                        manifestInfos = new List<ManifestInfo> { SpdxConstants.SPDX22ManifestInfo };
+                    }
 
-                    // External Document Reference section
-                    validErrors.Concat(await externalDocumentReferenceGenerator.GenerateAsync());
+                    // Use the WriteJsonObjectsToSbomAsync method based on the SPDX version in manifest info
+                    foreach (var manifestInfo in manifestInfos)
+                    {
+                        var config = sbomConfigs.Get(manifestInfo);
 
-                    // Relationships section
-                    validErrors.Concat(await relationshipsArrayGenerator.GenerateAsync());
+                        // Get the appropriate strategy
+                        var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(manifestInfo.Version);
+                        validErrors = await serializationStrategy.WriteJsonObjectsToSbomAsync(
+                            config,
+                            manifestInfo.Version,
+                            fileArrayGenerator,
+                            packageArrayGenerator,
+                            relationshipsArrayGenerator,
+                            externalDocumentReferenceGenerator).
+                            ConfigureAwait(false);
 
-                    // Write headers
-                    sbomConfigs.ApplyToEachConfig(config =>
-                        config.JsonSerializer.WriteJsonString(
-                            config.MetadataBuilder.GetHeaderJsonString(sbomConfigs)));
+                        // Write headers
+                        serializationStrategy.AddHeadersToSbom(sbomConfigs);
+                    }
 
                     // Finalize JSON
                     sbomConfigs.ApplyToEachConfig(config => config.JsonSerializer.FinalizeJsonObject());
@@ -223,22 +235,22 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
             if (fileSystemUtils.DirectoryExists(rootManifestFolderPath))
             {
                 bool.TryParse(
-                    osUtils.GetEnvironmentVariable(Constants.DeleteManifestDirBoolVariableName),
+                    osUtils.GetEnvironmentVariable(SpdxConstants.DeleteManifestDirBoolVariableName),
                     out var deleteSbomDirSwitch);
 
-                recorder.RecordSwitch(Constants.DeleteManifestDirBoolVariableName, deleteSbomDirSwitch);
+                recorder.RecordSwitch(SpdxConstants.DeleteManifestDirBoolVariableName, deleteSbomDirSwitch);
 
                 if (!deleteSbomDirSwitch && !(configuration.DeleteManifestDirIfPresent?.Value ?? false))
                 {
                     throw new ManifestFolderExistsException(
                         $"The BuildDropRoot folder already contains a _manifest folder. Please" +
                         $" delete this folder before running the generation or set the " +
-                        $"{Constants.DeleteManifestDirBoolVariableName} environment variable to 'true' to " +
+                        $"{SpdxConstants.DeleteManifestDirBoolVariableName} environment variable to 'true' to " +
                         $"overwrite this folder.");
                 }
 
                 log.Warning(
-                    $"Deleting pre-existing folder {rootManifestFolderPath} as {Constants.DeleteManifestDirBoolVariableName}" +
+                    $"Deleting pre-existing folder {rootManifestFolderPath} as {SpdxConstants.DeleteManifestDirBoolVariableName}" +
                     $" is 'true'.");
                 fileSystemUtils.DeleteDir(rootManifestFolderPath, true);
             }

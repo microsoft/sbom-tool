@@ -17,7 +17,7 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Tests.Executors;
 
@@ -40,7 +40,7 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
     public SPDXSBOMReaderForExternalDocumentReferenceTests()
     {
         mockConfiguration.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
-        mockConfiguration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
+        mockConfiguration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = SpdxConstants.DefaultHashAlgorithmName });
         mockConfiguration.SetupGet(c => c.BuildComponentPath).Returns(new ConfigurationSetting<string> { Value = "root" });
 
         manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });

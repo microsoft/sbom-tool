@@ -24,7 +24,7 @@ using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parser;
 using PowerArgs;
 using Serilog;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
+using ApiConstants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows;
 
@@ -97,9 +97,12 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                 }
 
+                SetComplianceStandard(sbomConfig.ManifestInfo.Version, sbomParser);
+
                 var successfullyValidatedFiles = 0;
                 List<FileValidationResult> fileValidationFailures = null;
 
+                // This logic is the same as SbomParserTestsBase, however since that logic is part of the test suite we replicate it here
                 ParserStateResult? result = null;
                 do
                 {
@@ -110,12 +113,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                         {
                             case FilesResult filesResult:
                                 (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(filesResult.Files);
-                                var invalidInputFiles = fileValidationFailures.Where(f => f.ErrorType == ErrorType.InvalidInputFile).ToList();
-                                if (invalidInputFiles.Count != 0)
-                                {
-                                    throw new InvalidDataException($"Your manifest file is malformed. {invalidInputFiles.First().Path}");
-                                }
-
+                                ThrowOnInvalidInputFiles(fileValidationFailures);
                                 break;
                             case PackagesResult packagesResult:
                                 var packages = packagesResult.Packages.ToList();
@@ -126,6 +124,16 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                                 break;
                             case ExternalDocumentReferencesResult externalRefResult:
                                 externalRefResult.References.ToList();
+                                break;
+                            case ContextsResult contextsResult:
+                                contextsResult.Contexts.ToList();
+                                break;
+                            case ElementsResult elementsResult:
+                                elementsResult.Elements.ToList();
+                                totalNumberOfPackages = elementsResult.PackagesCount;
+
+                                (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(elementsResult.Files);
+                                ThrowOnInvalidInputFiles(fileValidationFailures);
                                 break;
                             default:
                                 break;
@@ -166,7 +174,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
                 await outputWriter.WriteAsync(JsonSerializer.Serialize(validationResultOutput, options));
 
-                validFailures = fileValidationFailures.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType));
+                validFailures = fileValidationFailures.Where(f => !ApiConstants.SkipFailureReportingForErrors.Contains(f.ErrorType));
 
                 if (configuration.IgnoreMissing.Value)
                 {
@@ -277,5 +285,38 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         }
 
         Console.WriteLine($"Unknown file failures . . . . . . . . . . . . .  {validFailures.Count(v => v.ErrorType == ErrorType.Other)}");
+    }
+
+    private void ThrowOnInvalidInputFiles(List<FileValidationResult> fileValidationFailures)
+    {
+        var invalidInputFiles = fileValidationFailures.Where(f => f.ErrorType == ErrorType.InvalidInputFile).ToList();
+        if (invalidInputFiles.Count != 0)
+        {
+            throw new InvalidDataException($"Your manifest file is malformed. {invalidInputFiles.First().Path}");
+        }
+    }
+
+    /// <summary>
+    /// Set compliance standard for SPDX 3.0 parsers and above.
+    /// </summary>
+    /// <param name="spdxVersion"></param>
+    private void SetComplianceStandard(string spdxVersion, ISbomParser sbomParser)
+    {
+        // Note that spdxVersion is already validated to be a valid double in ConfigValidator.
+        var spdxVersionAsDouble = Convert.ToDouble(spdxVersion);
+
+        if (!string.IsNullOrEmpty(configuration.ComplianceStandard?.Value) && spdxVersionAsDouble >= 3.0)
+        {
+            var complianceStandard = configuration.ComplianceStandard.Value;
+            try
+            {
+                (sbomParser as SPDX30Parser).RequiredComplianceStandard = complianceStandard;
+            }
+            catch (Exception e)
+            {
+                recorder.RecordException(e);
+                log.Error($"Unable to use the given compliance standard {complianceStandard} to parse the SBOM.");
+            }
+        }
     }
 }

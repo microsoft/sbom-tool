@@ -181,4 +181,9 @@ public class ConfigFile
     /// If set to true, we will attempt to parse metadata information of packages detected in the SBOM from the local package cache.
     /// </summary>
     public bool? EnablePackageMetadataParsing { get; set; }
+
+    /// <summary>
+    /// The compliance standard to validate against
+    /// </summary>
+    public string ComplianceStandard { get; set; }
 }

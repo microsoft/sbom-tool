@@ -18,8 +18,8 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ILogger = Serilog.ILogger;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Executors;
 
@@ -79,13 +79,19 @@ public abstract class ComponentDetectionBaseWalker
         cliArgumentBuilder.AddDetectorArg("SPDX22SBOM", "EnableIfDefaultOff");
         cliArgumentBuilder.AddDetectorArg("ConanLock", "EnableIfDefaultOff");
 
-        if (sbomConfigs.TryGet(Constants.SPDX22ManifestInfo, out var spdxSbomConfig))
+        // Iterate over all supported SPDX manifests and apply the necessary logic. Break after we find one match, since we can only match the sbomConfig once.
+        foreach (var supportedSpdxManifest in SpdxConstants.SupportedSpdxManifests)
         {
-            var directory = Path.GetDirectoryName(spdxSbomConfig.ManifestJsonFilePath);
-            directory = fileSystemUtils.GetFullPath(directory);
-            if (!string.IsNullOrEmpty(directory))
+            if (sbomConfigs.TryGet(supportedSpdxManifest, out var spdxSbomConfig))
             {
-                cliArgumentBuilder.AddArg("DirectoryExclusionList", directory);
+                var directory = Path.GetDirectoryName(spdxSbomConfig.ManifestJsonFilePath);
+                directory = fileSystemUtils.GetFullPath(directory);
+                if (!string.IsNullOrEmpty(directory))
+                {
+                    cliArgumentBuilder.AddArg("DirectoryExclusionList", directory);
+                }
+
+                break;
             }
         }
 

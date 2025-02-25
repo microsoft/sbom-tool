@@ -19,7 +19,8 @@ using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.Sbom.Contracts.Interfaces;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.DependencyInjection;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser;
+using SPDX22 = Microsoft.Sbom.Parsers.Spdx22SbomParser;
+using SPDX30= Microsoft.Sbom.Parsers.Spdx30SbomParser;
 
 /// <summary>
 /// MSBuild task for generating SBOMs from build output.
@@ -50,11 +51,14 @@ public partial class GenerateSbom : Task
                 .AddSingleton<ISourcesProvider, CGScannedExternalDocumentReferenceFileProvider>()
                 .AddSingleton<ISourcesProvider, CGScannedPackagesProvider>()
                 .AddSingleton<IAlgorithmNames, AlgorithmNames>()
-                .AddSingleton<IManifestGenerator, Generator>()
+                .AddSingleton<IManifestGenerator, SPDX22.Generator>()
+                .AddSingleton<IManifestGenerator, SPDX30.Generator>()
                 .AddSingleton<IMetadataProvider, LocalMetadataProvider>()
                 .AddSingleton<IMetadataProvider, SBOMApiMetadataProvider>()
-                .AddSingleton<IManifestInterface, Validator>()
-                .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>())
+                .AddSingleton<IManifestInterface, SPDX22.Validator>()
+                .AddSingleton<IManifestInterface, SPDX30.Validator>()
+                .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>()
+                .AddSingleton<IManifestConfigHandler, SPDX30ManifestConfigHandler>())
             .Build();
         this.Generator = host.Services.GetRequiredService<ISBOMGenerator>();
     }

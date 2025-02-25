@@ -172,14 +172,14 @@ public class SPDXParser : ISbomParser
         return null;
     }
 
-    public Spdx22Metadata GetMetadata()
+    public SpdxMetadata GetMetadata()
     {
         if (!this.parsingComplete)
         {
             throw new ParserException($"{nameof(this.GetMetadata)} can only be called after Parsing is complete to ensure that a whole object is returned.");
         }
 
-        var spdxMetadata = new Spdx22Metadata();
+        var spdxMetadata = new SpdxMetadata();
         foreach (var kvp in this.metadata)
         {
             switch (kvp.Key)

@@ -42,7 +42,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         var metadata = parser.GetMetadata();
 
         Assert.IsNotNull(metadata);
-        Assert.IsInstanceOfType(metadata, typeof(Spdx22Metadata));
+        Assert.IsInstanceOfType(metadata, typeof(SpdxMetadata));
         Assert.IsNotNull(metadata.CreationInfo);
         var expectedTime = DateTime.Parse("2023-05-11T00:24:54Z").ToUniversalTime();
         Assert.AreEqual(expectedTime, metadata.CreationInfo.Created);

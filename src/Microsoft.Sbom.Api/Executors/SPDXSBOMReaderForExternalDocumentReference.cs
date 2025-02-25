@@ -17,8 +17,8 @@ using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
-using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ErrorType = Microsoft.Sbom.Api.Entities.ErrorType;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Executors;
 
@@ -81,7 +81,7 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternal
             IList<ExternalDocumentReferenceInfo> externalDocumentReferenceInfos = new List<ExternalDocumentReferenceInfo>();
             await foreach (var file in sbomFileLocation.ReadAllAsync())
             {
-                if (!file.EndsWith(Constants.SPDXFileExtension, StringComparison.OrdinalIgnoreCase))
+                if (!file.EndsWith(SpdxConstants.SPDXFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     log.Warning($"The file {file} is not an spdx document.");
                 }
@@ -151,13 +151,13 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternal
             string versionValue;
             string rootElementValue;
 
-            if (root.TryGetProperty(Constants.SpdxVersionString, out var version))
+            if (root.TryGetProperty(SpdxConstants.SpdxVersionString, out var version))
             {
                 versionValue = version.GetString();
             }
             else
             {
-                throw new Exception($"{Constants.SpdxVersionString} property could not be parsed from referenced SPDX Document '{file}', this is not a valid SPDX-2.2 Document.");
+                throw new Exception($"{SpdxConstants.SpdxVersionString} property could not be parsed from referenced SPDX Document '{file}', this is not a valid SPDX-2.2 Document.");
             }
 
             if (!IsSPDXVersionSupported(versionValue))
@@ -165,31 +165,31 @@ public class SPDXSBOMReaderForExternalDocumentReference : ISBOMReaderForExternal
                 throw new Exception($"The SPDX version ${versionValue} is not valid format in the referenced SBOM, we currently only support SPDX-2.2 SBOM format.");
             }
 
-            if (root.TryGetProperty(Constants.NameString, out var name))
+            if (root.TryGetProperty(SpdxConstants.NameString, out var name))
             {
                 nameValue = name.GetString();
             }
             else
             {
-                throw new Exception($"{Constants.NameString} property could not be parsed from referenced SPDX Document '{file}'.");
+                throw new Exception($"{SpdxConstants.NameString} property could not be parsed from referenced SPDX Document '{file}'.");
             }
 
-            if (root.TryGetProperty(Constants.DocumentNamespaceString, out var documentNamespace))
+            if (root.TryGetProperty(SpdxConstants.DocumentNamespaceString, out var documentNamespace))
             {
                 documentNamespaceValue = documentNamespace.GetString();
             }
             else
             {
-                throw new Exception($"{Constants.DocumentNamespaceString} property could not be parsed from referenced SPDX Document '{file}'.");
+                throw new Exception($"{SpdxConstants.DocumentNamespaceString} property could not be parsed from referenced SPDX Document '{file}'.");
             }
 
-            if (root.TryGetProperty(Constants.DocumentDescribesString, out var rootElements))
+            if (root.TryGetProperty(SpdxConstants.DocumentDescribesString, out var rootElements))
             {
-                rootElementValue = rootElements.EnumerateArray().FirstOrDefault().ToString() ?? Constants.DefaultRootElement;
+                rootElementValue = rootElements.EnumerateArray().FirstOrDefault().ToString() ?? SpdxConstants.DefaultRootElement;
             }
             else
             {
-                throw new Exception($"{Constants.DocumentDescribesString} property could not be parsed from referenced SPDX Document '{file}'.");
+                throw new Exception($"{SpdxConstants.DocumentDescribesString} property could not be parsed from referenced SPDX Document '{file}'.");
             }
 
             return new ExternalDocumentReferenceInfo

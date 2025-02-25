@@ -4,7 +4,7 @@
 using AutoMapper;
 using Microsoft.Sbom.Common.Config;
 using Serilog.Events;
-using Constants = Microsoft.Sbom.Common.Constants;
+using SbomConstants = Microsoft.Sbom.Common.Constants;
 
 namespace Microsoft.Sbom.Api.Config.ValueConverters;
 
@@ -30,7 +30,7 @@ internal class LogEventLevelConfigurationSettingAddingConverter : IValueConverte
         return new ConfigurationSetting<LogEventLevel>
         {
             Source = settingSource,
-            Value = sourceMember ?? Constants.DefaultLogLevel
+            Value = sourceMember ?? SbomConstants.DefaultLogLevel
         };
     }
 }

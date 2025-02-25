@@ -50,5 +50,8 @@ public enum ErrorType
     ManifestFileSigningError = 12,
 
     [EnumMember(Value = "Invalid input file")]
-    InvalidInputFile = 13
+    InvalidInputFile = 13,
+
+    [EnumMember(Value = "Invalid manifest SPDX version")]
+    InvalidManifestVersion = 14
 }

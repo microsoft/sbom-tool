@@ -60,7 +60,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Warning("Files array not suppored on this SBOM format.");
+            logger.Warning("Files array not supported on this SBOM format.");
             return false;
         }
     }
@@ -75,7 +75,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Warning("Packages array not suppored on this SBOM format.");
+            logger.Warning("Packages array not supported on this SBOM format.");
             return false;
         }
     }
@@ -90,7 +90,7 @@ public class MetadataBuilder : IMetadataBuilder
         catch (NotSupportedException)
         {
             headerName = null;
-            logger.Warning("External Document Reference array not suppored on this SBOM format.");
+            logger.Warning("External Document Reference array not supported on this SBOM format.");
             return false;
         }
     }
@@ -99,8 +99,7 @@ public class MetadataBuilder : IMetadataBuilder
     {
         try
         {
-            generationResult = manifestGenerator
-                .GenerateRootPackage(internalMetadataProvider);
+            generationResult = manifestGenerator.GenerateRootPackage(internalMetadataProvider);
 
             if (generationResult == null)
             {
@@ -113,6 +112,27 @@ public class MetadataBuilder : IMetadataBuilder
         {
             generationResult = null;
             logger.Warning("Root package serialization not supported on this SBOM format.");
+            return false;
+        }
+    }
+
+    public bool TryGetCreationInfoJson(IInternalMetadataProvider internalMetadataProvider, out GenerationResult generationResult)
+    {
+        try
+        {
+            generationResult = manifestGenerator.GenerateJsonDocument(internalMetadataProvider);
+
+            if (generationResult == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        catch (NotSupportedException)
+        {
+            generationResult = null;
+            logger.Warning("Root package serialization is not supported on this SBOM format.");
             return false;
         }
     }

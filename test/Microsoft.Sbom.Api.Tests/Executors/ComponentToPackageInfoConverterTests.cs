@@ -12,7 +12,6 @@ using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Tests;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,6 +19,7 @@ using Moq;
 using HashAlgorithmName = Microsoft.Sbom.Contracts.Enums.AlgorithmName;
 using ILogger = Serilog.ILogger;
 using PackageInfo = Microsoft.Sbom.Contracts.SbomPackage;
+using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
 
@@ -40,7 +40,7 @@ public class ComponentToPackageInfoConverterTests
     public ComponentToPackageInfoConverterTests()
     {
         mockConfiguration.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
-        mockConfiguration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<HashAlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
+        mockConfiguration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<HashAlgorithmName> { Value = SpdxConstants.DefaultHashAlgorithmName });
         mockConfiguration.SetupGet(c => c.BuildComponentPath).Returns(new ConfigurationSetting<string> { Value = "root" });
 
         manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
