@@ -80,7 +80,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
                 }
             }
 
-            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson);
+            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, sourcesProviders);
         }
     }
 }

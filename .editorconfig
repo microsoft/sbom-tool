@@ -1116,21 +1116,3 @@ dotnet_diagnostic.VSTHRD111.severity = suggestion
 # https://github.com/microsoft/vs-threading/blob/main/doc/analyzers/VSTHRD200.md
 # VSTHRD200: Use Async suffix for async methods
 dotnet_diagnostic.VSTHRD200.severity = suggestion
-
-# .editorconfig file
-
-# Top-most EditorConfig file
-root = true
-
-# Suppress IDE0040 for the entire solution
-[*.cs]
-dotnet_diagnostic.IDE0040.severity = none
-
-[*.cs]
-dotnet_diagnostic.IDE0306.severity = none
-
-[*.cs]
-dotnet_diagnostic.IDE0120.severity = none
-
-[*.cs]
-dotnet_diagnostic.IDE0052.severity = none

@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -40,7 +41,7 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
         }
 
         return false;
-    }
+        }
 
     public void AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
@@ -99,7 +100,6 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
         var filesGenerateResult = await fileArrayGenerator.GenerateAsync();
         filesGenerateResult.Errors.AddRange(filesGenerateResult.Errors);
         WriteJsonObjectsFromGenerationResult(filesGenerateResult, fileArrayGenerator.SbomConfig);
-        EndJsonArrayForElementsSupportingConfigs(filesGenerateResult);
     }
 
     /// <summary>
@@ -112,7 +112,6 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
         var packagesGenerateResult = await packageArrayGenerator.GenerateAsync();
         packagesGenerateResult.Errors.AddRange(packagesGenerateResult.Errors);
         WriteJsonObjectsFromGenerationResult(packagesGenerateResult, packageArrayGenerator.SbomConfig);
-        EndJsonArrayForElementsSupportingConfigs(packagesGenerateResult);
     }
 
     /// <summary>
@@ -124,8 +123,7 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
     {
         var externalDocumentReferenceGenerateResult = await externalDocumentReferenceGenerator.GenerateAsync();
         externalDocumentReferenceGenerateResult.Errors.AddRange(externalDocumentReferenceGenerateResult.Errors);
-        WriteJsonObjectsFromGenerationResult(externalDocumentReferenceGenerateResult, externalDocumentReferenceGenerator.SbomConfig);
-        EndJsonArrayForElementsSupportingConfigs(externalDocumentReferenceGenerateResult);
+        WriteJsonObjectsFromGenerationResult(externalDocumentReferenceGenerateResult, externalDocumentReferenceGenerator.SbomConfig, externalDocumentReferenceGenerateResult.SourcesProviders);
     }
 
     /// <summary>
@@ -138,10 +136,9 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
         var relationshipGenerateResult = await relationshipsArrayGenerator.GenerateAsync();
         relationshipGenerateResult.Errors.AddRange(relationshipGenerateResult.Errors);
         WriteJsonObjectsFromGenerationResult(relationshipGenerateResult, relationshipsArrayGenerator.SbomConfig);
-        EndJsonArrayForSbomConfig(relationshipsArrayGenerator.SbomConfig);
-    }
+   }
 
-    private void WriteJsonObjectsFromGenerationResult(GenerationResult generationResult, ISbomConfig sbomConfig)
+    private void WriteJsonObjectsFromGenerationResult(GenerationResult generationResult, ISbomConfig sbomConfig, IEnumerable<ISourcesProvider> sourcesProviders = null)
     {
         foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
         {
@@ -153,19 +150,13 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
                     serializer.Write(jsonDocument);
                 }
             }
-        }
-    }
 
-    private void EndJsonArrayForElementsSupportingConfigs(GenerationResult generationResult)
-    {
-        foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
-        {
             serializer.EndJsonArray();
         }
-    }
 
-    private void EndJsonArrayForSbomConfig(ISbomConfig sbomConfig)
-    {
-        sbomConfig.JsonSerializer.EndJsonArray();
+        if (sourcesProviders is not null)
+        {
+            sbomConfig.JsonSerializer.EndJsonArray();
+        }
     }
 }
