@@ -383,8 +383,8 @@ public class ManifestGenerationWorkflowTests
         else
         {
             // Test context is correct
-            var context = resultJson["@context"].ToString();
-            Assert.AreEqual("[\r\n  \"https://spdx.org/rdf/3.0.1/spdx-context.json\"\r\n]", context);
+            var context = resultJson["@context"].ToArray();
+            Assert.AreEqual("https://spdx.org/rdf/3.0.1/spdx-context.json", context.FirstOrDefault().ToString());
 
             // Test elements were generated correctly
             var elements = resultJson["@graph"].ToArray();
