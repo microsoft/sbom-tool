@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.Sbom.Api\Microsoft.Sbom.Api.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.Sbom.Constants\Microsoft.Sbom.Constants.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Sbom.Parsers.Spdx30SbomParser\Microsoft.Sbom.Parsers.Spdx30SbomParser.csproj" />
   </ItemGroup>
 

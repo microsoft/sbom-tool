@@ -24,7 +24,7 @@ using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parser;
 using PowerArgs;
 using Serilog;
-using ApiConstants = Microsoft.Sbom.Api.Utils.Constants;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows;
 
@@ -174,7 +174,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
                 await outputWriter.WriteAsync(JsonSerializer.Serialize(validationResultOutput, options));
 
-                validFailures = fileValidationFailures.Where(f => !ApiConstants.SkipFailureReportingForErrors.Contains(f.ErrorType));
+                validFailures = fileValidationFailures.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType));
 
                 if (configuration.IgnoreMissing.Value)
                 {

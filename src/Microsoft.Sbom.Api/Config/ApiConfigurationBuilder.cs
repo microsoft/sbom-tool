@@ -10,8 +10,8 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using Serilog.Events;
-using SbomConstants = Microsoft.Sbom.Common.Constants;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
+using ApiConstants = Microsoft.Sbom.Api.Utils.Constants;
+using Constants = Microsoft.Sbom.Common.Constants;
 
 namespace Microsoft.Sbom.Api.Config;
 
@@ -126,7 +126,7 @@ public static class ApiConfigurationBuilder
         // TODO: update to SPDX 3.0 for default.
         if (specifications is null || specifications.Count == 0)
         {
-            specifications = SpdxConstants.SupportedSbomSpecifications;
+            specifications = ApiConstants.SupportedSbomSpecifications;
         }
 
         var sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
@@ -186,7 +186,7 @@ public static class ApiConfigurationBuilder
             System.Diagnostics.Tracing.EventLevel.LogAlways => GetConfigurationSetting(LogEventLevel.Verbose),
             System.Diagnostics.Tracing.EventLevel.Warning => GetConfigurationSetting(LogEventLevel.Warning),
             System.Diagnostics.Tracing.EventLevel.Verbose => GetConfigurationSetting(LogEventLevel.Verbose),
-            _ => GetConfigurationSetting(SbomConstants.DefaultLogLevel),
+            _ => GetConfigurationSetting(Constants.DefaultLogLevel),
         };
     }
 
@@ -205,17 +205,17 @@ public static class ApiConfigurationBuilder
         {
             runtimeConfiguration = new RuntimeConfiguration
             {
-                WorkflowParallelism = SbomConstants.DefaultParallelism,
+                WorkflowParallelism = Constants.DefaultParallelism,
                 Verbosity = System.Diagnostics.Tracing.EventLevel.Warning,
                 DeleteManifestDirectoryIfPresent = false,
                 FollowSymlinks = true
             };
         }
 
-        if (runtimeConfiguration.WorkflowParallelism < SbomConstants.MinParallelism
-            || runtimeConfiguration.WorkflowParallelism > SbomConstants.MaxParallelism)
+        if (runtimeConfiguration.WorkflowParallelism < Constants.MinParallelism
+            || runtimeConfiguration.WorkflowParallelism > Constants.MaxParallelism)
         {
-            runtimeConfiguration.WorkflowParallelism = SbomConstants.DefaultParallelism;
+            runtimeConfiguration.WorkflowParallelism = Constants.DefaultParallelism;
         }
 
         return runtimeConfiguration;

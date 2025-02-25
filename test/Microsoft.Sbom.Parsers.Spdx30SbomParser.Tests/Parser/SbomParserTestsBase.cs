@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 namespace Microsoft.Sbom.Parser;
@@ -39,10 +40,10 @@ public abstract class SbomParserTestsBase
                 results.FormatEnforcedSPDX3Result ??= new FormatEnforcedSPDX3();
                 switch (result.FieldName)
                 {
-                    case SPDX30Parser.ContextProperty:
+                    case Constants.SPDXContextHeaderName:
                         results.FormatEnforcedSPDX3Result.Context = (result as ContextsResult)?.Contexts.FirstOrDefault();
                         break;
-                    case SPDX30Parser.GraphProperty:
+                    case Constants.SPDXGraphHeaderName:
                         var elementsResult = (ElementsResult)result;
                         results.FormatEnforcedSPDX3Result.Graph = elementsResult.Elements;
                         results.FilesCount = elementsResult.FilesCount;

@@ -5,7 +5,7 @@ using System;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Convertors;
 
@@ -53,7 +53,7 @@ public class SbomToolManifestPathConverter : IManifestPathConverter
 
             // Allow spdx files to be outside the root path, all externalDocumentReference must be in the file array regardless of where they are located.
             // More details are in this spec: https://github.com/spdx/spdx-spec/issues/571
-            if (!path.EndsWith(SpdxConstants.SPDXFileExtension, osUtils.GetFileSystemStringComparisonType()))
+            if (!path.EndsWith(Constants.SPDXFileExtension, osUtils.GetFileSystemStringComparisonType()))
             {
                 throw new InvalidPathException($"The file at {path} is outside the root path {buildDropPath}.");
             }

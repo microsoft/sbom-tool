@@ -20,7 +20,7 @@ using PowerArgs;
 using Serilog;
 using Serilog.Core;
 using Spectre.Console;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Output.Telemetry;
 
@@ -82,7 +82,7 @@ public class TelemetryRecorder : IRecorder
         {
             logger = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = Configuration.Verbosity.Value })
-                .WriteTo.Console(outputTemplate: SpdxConstants.LoggerTemplate)
+                .WriteTo.Console(outputTemplate: Constants.LoggerTemplate)
                 .CreateLogger();
         }
 

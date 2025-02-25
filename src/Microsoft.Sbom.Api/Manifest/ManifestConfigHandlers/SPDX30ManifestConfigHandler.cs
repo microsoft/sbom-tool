@@ -5,7 +5,7 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers;
 
@@ -23,7 +23,7 @@ public class SPDX30ManifestConfigHandler : BaseManifestConfigHandler
     }
 
     /// <inheritdoc/>
-    protected override ManifestInfo ManifestInfo => SpdxConstants.SPDX30ManifestInfo;
+    protected override ManifestInfo ManifestInfo => Constants.SPDX30ManifestInfo;
 
     public override bool TryGetManifestConfig(out ISbomConfig sbomConfig)
     {
@@ -35,7 +35,7 @@ public class SPDX30ManifestConfigHandler : BaseManifestConfigHandler
         if (configuration.ManifestToolAction == ManifestToolActions.Generate)
         {
             if (configuration.ManifestInfo?.Value != null
-                && !configuration.ManifestInfo.Value.Contains(SpdxConstants.SPDX30ManifestInfo))
+                && !configuration.ManifestInfo.Value.Contains(Constants.SPDX30ManifestInfo))
             {
                 return false;
             }
@@ -48,7 +48,7 @@ public class SPDX30ManifestConfigHandler : BaseManifestConfigHandler
             // We can only validate one format at a time, so check if its this one and return true/false.
             if (configuration.ManifestInfo?.Value != null
                && configuration.ManifestInfo.Value.Count == 1
-               && configuration.ManifestInfo.Value.Contains(SpdxConstants.SPDX30ManifestInfo))
+               && configuration.ManifestInfo.Value.Contains(Constants.SPDX30ManifestInfo))
             {
                 return true;
             }

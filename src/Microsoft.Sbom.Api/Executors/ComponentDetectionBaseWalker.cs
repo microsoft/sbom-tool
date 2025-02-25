@@ -18,8 +18,8 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ILogger = Serilog.ILogger;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Executors;
 
@@ -79,8 +79,8 @@ public abstract class ComponentDetectionBaseWalker
         cliArgumentBuilder.AddDetectorArg("SPDX22SBOM", "EnableIfDefaultOff");
         cliArgumentBuilder.AddDetectorArg("ConanLock", "EnableIfDefaultOff");
 
-        // Iterate over all supported SPDX manifests and apply the necessary logic. Break after we find one match, since we can only match the sbomConfig once.
-        foreach (var supportedSpdxManifest in SpdxConstants.SupportedSpdxManifests)
+        // Iterate over all supported SPDX manifests and apply the necessary logic
+        foreach (var supportedSpdxManifest in Constants.SupportedSpdxManifests)
         {
             if (sbomConfigs.TryGet(supportedSpdxManifest, out var spdxSbomConfig))
             {

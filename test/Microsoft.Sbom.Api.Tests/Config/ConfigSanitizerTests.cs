@@ -18,7 +18,7 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PowerArgs;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Tests.Config;
 
@@ -81,7 +81,7 @@ public class ConfigSanitizerTests
             {
                 Source = SettingSource.Default,
                 Value = new List<ManifestInfo>
-                { SpdxConstants.TestManifestInfo }
+                { Constants.TestManifestInfo }
             },
             Verbosity = new ConfigurationSetting<Serilog.Events.LogEventLevel>
             {
@@ -152,13 +152,13 @@ public class ConfigSanitizerTests
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
         config.ManifestInfo.Value.Clear();
-        mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForValidationAction).Returns(SpdxConstants.TestManifestInfo);
+        mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForValidationAction).Returns(Constants.TestManifestInfo);
 
         var sanitizedConfig = configSanitizer.SanitizeConfig(config);
 
         Assert.IsNotNull(sanitizedConfig.ManifestInfo.Value);
         Assert.AreEqual(1, sanitizedConfig.ManifestInfo.Value.Count);
-        Assert.AreEqual(SpdxConstants.TestManifestInfo, sanitizedConfig.ManifestInfo.Value.First());
+        Assert.AreEqual(Constants.TestManifestInfo, sanitizedConfig.ManifestInfo.Value.First());
 
         mockAssemblyConfig.VerifyGet(a => a.DefaultManifestInfoForValidationAction);
     }

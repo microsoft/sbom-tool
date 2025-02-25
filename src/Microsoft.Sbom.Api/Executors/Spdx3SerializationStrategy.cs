@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
@@ -58,7 +58,7 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
 
         WriteContext(sbomConfig);
 
-        sbomConfig.JsonSerializer.StartJsonArray(SpdxConstants.SPDXGraphHeaderName);
+        sbomConfig.JsonSerializer.StartJsonArray(Constants.SPDXGraphHeaderName);
 
         // Files section
         var generateResult = await fileArrayGenerator.GenerateAsync();
@@ -109,8 +109,8 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
 
     private void WriteContext(ISbomConfig sbomConfig)
     {
-        sbomConfig.JsonSerializer.StartJsonArray(SpdxConstants.SPDXContextHeaderName);
-        var document = JsonDocument.Parse(SpdxConstants.SPDX3ContextValue);
+        sbomConfig.JsonSerializer.StartJsonArray(Constants.SPDXContextHeaderName);
+        var document = JsonDocument.Parse(Constants.SPDX3ContextValue);
         sbomConfig.JsonSerializer.Write(document);
         sbomConfig.JsonSerializer.EndJsonArray();
     }

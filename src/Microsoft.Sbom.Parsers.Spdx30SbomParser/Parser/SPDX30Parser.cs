@@ -15,7 +15,7 @@ using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
+using SPDX30Constants = Microsoft.Sbom.Parsers.Spdx30SbomParser.Constants;
 
 namespace Microsoft.Sbom.Parser;
 
@@ -29,12 +29,10 @@ namespace Microsoft.Sbom.Parser;
 /// </remarks>
 public class SPDX30Parser : ISbomParser
 {
-    public const string ContextProperty = SpdxConstants.SPDXContextHeaderName;
-    public const string GraphProperty = SpdxConstants.SPDXGraphHeaderName;
     public static readonly IReadOnlyCollection<string> RequiredFields = new List<string>
     {
-        ContextProperty,
-        GraphProperty,
+        SPDX30Constants.SPDXContextHeaderName,
+        SPDX30Constants.SPDXGraphHeaderName,
     };
 
     public string? RequiredComplianceStandard;
@@ -69,8 +67,8 @@ public class SPDX30Parser : ISbomParser
 
         var handlers = new Dictionary<string, PropertyHandler>
         {
-            { ContextProperty, new PropertyHandler<string>(ParameterType.Array) },
-            { GraphProperty, new PropertyHandler<JsonNode>(ParameterType.Array) },
+            { SPDX30Constants.SPDXContextHeaderName, new PropertyHandler<string>(ParameterType.Array) },
+            { SPDX30Constants.SPDXGraphHeaderName, new PropertyHandler<JsonNode>(ParameterType.Array) },
         };
 
         (_, this.EntitiesToEnforceComplianceStandardsFor) = GetEntitiesToEnforceComplianceStandard(this.RequiredComplianceStandard);
@@ -107,10 +105,10 @@ public class SPDX30Parser : ISbomParser
                 var jsonList = jsonElements?.ToList();
                 switch (fieldName)
                 {
-                    case ContextProperty:
+                    case SPDX30Constants.SPDXContextHeaderName:
                         result = ConvertToContexts(jsonList, result);
                         break;
-                    case GraphProperty:
+                    case SPDX30Constants.SPDXGraphHeaderName:
                         var elementsResult = ConvertToElements(jsonList, result);
                         this.Metadata = this.SetMetadata(elementsResult);
                         result = elementsResult;
@@ -150,7 +148,7 @@ public class SPDX30Parser : ISbomParser
         return this.Metadata;
     }
 
-    public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { SpdxConstants.SPDX30ManifestInfo };
+    public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { SPDX30Constants.SPDX30ManifestInfo };
 
     private ContextsResult ConvertToContexts(List<object>? jsonList, ParserStateResult? result)
     {

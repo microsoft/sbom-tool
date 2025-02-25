@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Sbom.Contracts.Enums;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 
 namespace Microsoft.Sbom.Api.Utils;
 
@@ -15,7 +14,7 @@ public class FileTypeUtils : IFileTypeUtils
 {
     public List<FileType> GetFileTypesBy(string fileName)
     {
-        if (!string.IsNullOrWhiteSpace(fileName) && fileName.EndsWith(SpdxConstants.SPDXFileExtension, StringComparison.OrdinalIgnoreCase))
+        if (!string.IsNullOrWhiteSpace(fileName) && fileName.EndsWith(Constants.SPDXFileExtension, StringComparison.OrdinalIgnoreCase))
         {
             return new List<FileType> { FileType.SPDX };
         }

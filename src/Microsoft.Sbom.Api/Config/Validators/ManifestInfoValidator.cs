@@ -5,7 +5,6 @@ using System;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Common.Config.Validators;
-using Microsoft.Sbom.Constants;
 using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
 
@@ -28,7 +27,7 @@ public class ManifestInfoValidator : ConfigValidator
 
     public override void ValidateInternal(string paramName, object paramValue, Attribute attribute)
     {
-        if (paramValue is not null && paramValue is ManifestInfo manifestInfo && !SpdxConstants.SupportedSpdxManifests.Contains(paramValue as ManifestInfo))
+        if (paramValue is not null && paramValue is ManifestInfo manifestInfo && !Constants.SupportedSpdxManifests.Contains(paramValue as ManifestInfo))
         {
             throw new ValidationArgException($"The value of {paramName} must be a valid ManifestInfo. Supported SPDX versions include 2.2 and 3.0.");
         }

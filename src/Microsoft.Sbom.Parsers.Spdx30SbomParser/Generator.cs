@@ -19,7 +19,6 @@ using HashAlgorithm = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.Has
 using RelationshipType = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.RelationshipType;
 using SbomEntities = Microsoft.Sbom.Extensions.Entities;
 using SHA1 = System.Security.Cryptography.SHA1;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
 using SpdxEntities = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
@@ -352,7 +351,7 @@ public class Generator : IManifestGenerator
             throw new ArgumentNullException(nameof(internalMetadataProvider));
         }
 
-        var generationData = internalMetadataProvider.GetGenerationData(SpdxConstants.SPDX30ManifestInfo);
+        var generationData = internalMetadataProvider.GetGenerationData(Constants.SPDX30ManifestInfo);
 
         var (sbomToolName, sbomToolVersion, packageName, packageVersion, documentName, creationInfo) = GetCommonMetadata(internalMetadataProvider);
 
@@ -381,7 +380,7 @@ public class Generator : IManifestGenerator
             throw new ArgumentNullException(nameof(internalMetadataProvider));
         }
 
-        var generationData = internalMetadataProvider.GetGenerationData(SpdxConstants.SPDX30ManifestInfo);
+        var generationData = internalMetadataProvider.GetGenerationData(Constants.SPDX30ManifestInfo);
 
         var (sbomToolName, sbomToolVersion, packageName, packageVersion, documentName, creationInfo) = GetCommonMetadata(internalMetadataProvider);
 
@@ -451,7 +450,7 @@ public class Generator : IManifestGenerator
         };
     }
 
-    public ManifestInfo RegisterManifest() => SpdxConstants.SPDX30ManifestInfo;
+    public ManifestInfo RegisterManifest() => Constants.SPDX30ManifestInfo;
 
     /// <summary>
     /// Use file info to generate file and relationship spdx elements.
@@ -639,7 +638,7 @@ public class Generator : IManifestGenerator
     {
         // Get a list of SHA1 checksums
         IList<string> sha1Checksums = new List<string>();
-        foreach (var checksumArray in internalMetadataProvider.GetGenerationData(SpdxConstants.SPDX30ManifestInfo).Checksums)
+        foreach (var checksumArray in internalMetadataProvider.GetGenerationData(Constants.SPDX30ManifestInfo).Checksums)
         {
             sha1Checksums.Add(checksumArray
                 .Where(c => c.Algorithm == AlgorithmName.SHA1)

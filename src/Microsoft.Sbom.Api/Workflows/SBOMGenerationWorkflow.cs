@@ -18,7 +18,7 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
 using Serilog;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows;
 
@@ -104,7 +104,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     // If manifestInfos is empty (for example, this is the case for unit tests where GetManifestInfos() is not implemented), use the default SPDX 2.2 manifest info
                     if (!manifestInfos.Any())
                     {
-                        manifestInfos = new List<ManifestInfo> { SpdxConstants.SPDX22ManifestInfo };
+                        manifestInfos = new List<ManifestInfo> { Constants.SPDX22ManifestInfo };
                     }
 
                     // Use the WriteJsonObjectsToSbomAsync method based on the SPDX version in manifest info
@@ -235,22 +235,22 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
             if (fileSystemUtils.DirectoryExists(rootManifestFolderPath))
             {
                 bool.TryParse(
-                    osUtils.GetEnvironmentVariable(SpdxConstants.DeleteManifestDirBoolVariableName),
+                    osUtils.GetEnvironmentVariable(Constants.DeleteManifestDirBoolVariableName),
                     out var deleteSbomDirSwitch);
 
-                recorder.RecordSwitch(SpdxConstants.DeleteManifestDirBoolVariableName, deleteSbomDirSwitch);
+                recorder.RecordSwitch(Constants.DeleteManifestDirBoolVariableName, deleteSbomDirSwitch);
 
                 if (!deleteSbomDirSwitch && !(configuration.DeleteManifestDirIfPresent?.Value ?? false))
                 {
                     throw new ManifestFolderExistsException(
                         $"The BuildDropRoot folder already contains a _manifest folder. Please" +
                         $" delete this folder before running the generation or set the " +
-                        $"{SpdxConstants.DeleteManifestDirBoolVariableName} environment variable to 'true' to " +
+                        $"{Constants.DeleteManifestDirBoolVariableName} environment variable to 'true' to " +
                         $"overwrite this folder.");
                 }
 
                 log.Warning(
-                    $"Deleting pre-existing folder {rootManifestFolderPath} as {SpdxConstants.DeleteManifestDirBoolVariableName}" +
+                    $"Deleting pre-existing folder {rootManifestFolderPath} as {Constants.DeleteManifestDirBoolVariableName}" +
                     $" is 'true'.");
                 fileSystemUtils.DeleteDir(rootManifestFolderPath, true);
             }

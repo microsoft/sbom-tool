@@ -8,7 +8,7 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers;
 
@@ -41,9 +41,9 @@ public abstract class BaseManifestConfigHandler : IManifestConfigHandler
 
     protected string ManifestJsonSha256FilePath => $"{SbomFilePath}.sha256";
 
-    protected string CatalogFilePath => fileSystemUtils.JoinPaths(SbomDirPath, SpdxConstants.CatalogFileName);
+    protected string CatalogFilePath => fileSystemUtils.JoinPaths(SbomDirPath, Constants.CatalogFileName);
 
-    protected string BsiFilePath => fileSystemUtils.JoinPaths(SbomDirPath, SpdxConstants.BsiFileName);
+    protected string BsiFilePath => fileSystemUtils.JoinPaths(SbomDirPath, Constants.BsiFileName);
 
     protected IMetadataBuilder MetadataBuilder => metadataBuilderFactory.Get(ManifestInfo);
 

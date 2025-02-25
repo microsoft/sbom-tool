@@ -11,7 +11,7 @@ using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PowerArgs;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Config.Tests;
 
@@ -149,7 +149,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
 
         Assert.IsNotNull(config);
         Assert.IsNotNull(config.ManifestDirPath);
-        Assert.AreEqual(Path.Join("BuildDropPath", SpdxConstants.ManifestFolder), config.ManifestDirPath.Value);
+        Assert.AreEqual(Path.Join("BuildDropPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
 
         fileSystemUtilsMock.VerifyAll();
     }

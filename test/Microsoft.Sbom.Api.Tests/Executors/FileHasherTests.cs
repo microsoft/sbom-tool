@@ -21,7 +21,7 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
-using SpdxConstants = Microsoft.Sbom.Constants.SpdxConstants;
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
 
@@ -61,14 +61,14 @@ public class FileHasherTests
         var manifestPathConverter = new Mock<IManifestPathConverter>();
 
         mockConfiguration.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
-        mockConfiguration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = SpdxConstants.DefaultHashAlgorithmName });
+        mockConfiguration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
 
         hashCodeGeneratorMock.Setup(m => m.GenerateHashes(
                 It.IsAny<string>(),
-                new AlgorithmName[] { SpdxConstants.DefaultHashAlgorithmName }))
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
             .Returns(new Checksum[]
             {
-                new Checksum { Algorithm = SpdxConstants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
+                new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
             });
         manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>(), false)).Returns((string r, bool v) => (r, true));
 
@@ -107,17 +107,17 @@ public class FileHasherTests
     public async Task FileHasherTest_Validate_ManifestPathConverterThrows_ReturnsValidationFailureAsync()
     {
         mockConfiguration.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
-        mockConfiguration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = SpdxConstants.DefaultHashAlgorithmName });
+        mockConfiguration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
 
         var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
         var manifestPathConverter = new Mock<IManifestPathConverter>();
 
         hashCodeGeneratorMock.Setup(m => m.GenerateHashes(
                 It.IsAny<string>(),
-                new AlgorithmName[] { SpdxConstants.DefaultHashAlgorithmName }))
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
             .Returns(new Checksum[]
             {
-                new Checksum { Algorithm = SpdxConstants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
+                new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
             });
 
         manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>(), false)).Returns((string r, bool v) => (r, true));
@@ -174,21 +174,21 @@ public class FileHasherTests
     public async Task FileHasherTest_Validate_HashError_ReturnsValidationFailureAsync()
     {
         mockConfiguration.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Validate);
-        mockConfiguration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = SpdxConstants.DefaultHashAlgorithmName });
+        mockConfiguration.SetupGet(c => c.HashAlgorithm).Returns(new ConfigurationSetting<AlgorithmName> { Value = Constants.DefaultHashAlgorithmName });
 
         var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
         var manifestPathConverter = new Mock<IManifestPathConverter>();
 
         hashCodeGeneratorMock.SetupSequence(m => m.GenerateHashes(
                 It.IsAny<string>(),
-                new AlgorithmName[] { SpdxConstants.DefaultHashAlgorithmName }))
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
             .Returns(new Checksum[]
             {
-                new Checksum { Algorithm = SpdxConstants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
+                new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
             })
             .Returns(new Checksum[]
             {
-                new Checksum { Algorithm = SpdxConstants.DefaultHashAlgorithmName, ChecksumValue = string.Empty }
+                new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = string.Empty }
             })
             .Throws(new UnauthorizedAccessException("Can't access file"));
         manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>(), false)).Returns((string r, bool v) => (r, true));
@@ -249,10 +249,10 @@ public class FileHasherTests
 
         hashCodeGeneratorMock.Setup(m => m.GenerateHashes(
                 It.IsAny<string>(),
-                new AlgorithmName[] { SpdxConstants.DefaultHashAlgorithmName }))
+                new AlgorithmName[] { Constants.DefaultHashAlgorithmName }))
             .Returns(new Checksum[]
             {
-                new Checksum { Algorithm = SpdxConstants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
+                new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "hash" }
             });
 
         var manifestInfoList = new List<ManifestInfo>
