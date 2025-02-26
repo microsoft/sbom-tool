@@ -5,17 +5,17 @@ using Microsoft.Sbom.Api.Utils;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
-public static class JsonSerializationStrategyFactory
+internal static class JsonSerializationStrategyFactory
 {
     public static IJsonSerializationStrategy GetStrategy(string manifestInfoSpdxVersion)
     {
         if (manifestInfoSpdxVersion == Constants.SPDX30ManifestInfo.Version)
         {
-            return new Spdx3SerializationStrategy();
+            return new Spdx30SerializationStrategy();
         }
         else
         {
-            return new Spdx2SerializationStrategy();
+            return new Spdx22SerializationStrategy();
         }
     }
 }

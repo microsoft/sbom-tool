@@ -47,8 +47,6 @@ public abstract class BaseManifestConfigHandler : IManifestConfigHandler
 
     protected IMetadataBuilder MetadataBuilder => metadataBuilderFactory.Get(ManifestInfo);
 
-    public abstract bool TryGetManifestConfig(out ISbomConfig sbomConfig);
-
     protected ISbomConfig CreateSbomConfig()
     {
         return new SbomConfig(fileSystemUtils)
@@ -62,5 +60,40 @@ public abstract class BaseManifestConfigHandler : IManifestConfigHandler
             MetadataBuilder = MetadataBuilder,
             Recorder = new SbomPackageDetailsRecorder()
         };
+    }
+
+    public virtual bool TryGetManifestConfig(out ISbomConfig sbomConfig)
+    {
+        sbomConfig = CreateSbomConfig();
+
+        // For generation the default behavior is to always return true
+        // as we generate all the current formats of SBOM. Only override if the -mi
+        // argument is specified.
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        {
+            if (configuration.ManifestInfo?.Value != null
+                && !configuration.ManifestInfo.Value.Contains(Constants.SPDX30ManifestInfo))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        if (configuration.ManifestToolAction == ManifestToolActions.Validate)
+        {
+            // We can only validate one format at a time, so check if its this one and return true/false.
+            if (configuration.ManifestInfo?.Value != null
+               && configuration.ManifestInfo.Value.Count == 1
+               && configuration.ManifestInfo.Value.Contains(Constants.SPDX30ManifestInfo))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        sbomConfig = null;
+        return false;
     }
 }

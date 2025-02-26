@@ -13,7 +13,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// <summary>
 /// Serialization methods for SPDX 3.0.
 /// </summary>
-public class Spdx3SerializationStrategy : IJsonSerializationStrategy
+internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
 {
     public void AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
@@ -61,35 +61,35 @@ public class Spdx3SerializationStrategy : IJsonSerializationStrategy
         sbomConfig.JsonSerializer.StartJsonArray(Constants.SPDXGraphHeaderName);
 
         // Files section
-        var generateResult = await fileArrayGenerator.GenerateAsync();
-        WriteElementsToSbom(generateResult, elementsSpdxIdList);
+        var generationResult = await fileArrayGenerator.GenerateAsync();
+        WriteElementsToSbom(generationResult, elementsSpdxIdList);
 
         // Packages section
-        var packagesGenerateResult = await packageArrayGenerator.GenerateAsync();
-        generateResult.Errors.AddRange(packagesGenerateResult.Errors);
-        WriteElementsToSbom(packagesGenerateResult, elementsSpdxIdList);
+        var packagesGenerationResult = await packageArrayGenerator.GenerateAsync();
+        generationResult.Errors.AddRange(packagesGenerationResult.Errors);
+        WriteElementsToSbom(packagesGenerationResult, elementsSpdxIdList);
 
         // External Document Reference section
-        var externalDocumentReferenceGenerateResult = await externalDocumentReferenceGenerator.GenerateAsync();
-        generateResult.Errors.AddRange(externalDocumentReferenceGenerateResult.Errors);
-        WriteElementsToSbom(externalDocumentReferenceGenerateResult, elementsSpdxIdList);
+        var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync();
+        generationResult.Errors.AddRange(externalDocumentReferenceGenerationResult.Errors);
+        WriteElementsToSbom(externalDocumentReferenceGenerationResult, elementsSpdxIdList);
 
         // Relationships section
-        var relationshipGenerateResult = await relationshipsArrayGenerator.GenerateAsync();
-        generateResult.Errors.AddRange(relationshipGenerateResult.Errors);
-        WriteElementsToSbom(relationshipGenerateResult, elementsSpdxIdList);
+        var relationshipGenerationResult = await relationshipsArrayGenerator.GenerateAsync();
+        generationResult.Errors.AddRange(relationshipGenerationResult.Errors);
+        WriteElementsToSbom(relationshipGenerationResult, elementsSpdxIdList);
 
         sbomConfig.JsonSerializer.EndJsonArray();
 
-        return generateResult.Errors;
+        return generationResult.Errors;
     }
 
-    private void WriteElementsToSbom(GenerationResult generateResult, HashSet<string> elementsSpdxIdList)
+    private void WriteElementsToSbom(GenerationResult generationResult, HashSet<string> elementsSpdxIdList)
     {
         // Write the JSON objects to the SBOM
-        foreach (var serializer in generateResult.SerializerToJsonDocuments.Keys)
+        foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
         {
-            var jsonDocuments = generateResult.SerializerToJsonDocuments[serializer];
+            var jsonDocuments = generationResult.SerializerToJsonDocuments[serializer];
             foreach (var jsonDocument in jsonDocuments)
             {
                 if (jsonDocument.RootElement.ValueKind == JsonValueKind.Object)

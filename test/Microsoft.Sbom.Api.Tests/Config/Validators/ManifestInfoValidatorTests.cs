@@ -28,13 +28,15 @@ public class ManifestInfoValidatorTests
         Assert.ThrowsException<ValidationArgException>(() => validator.ValidateInternal("property", invalidManifestInfo, null));
     }
 
+    [DataRow("2.2")]
+    [DataRow("3.0")]
     [TestMethod]
-    public void ValidManifestInfoPasses()
+    public void ValidManifestInfoPasses(string spdxVersion)
     {
         var validManifestInfo = new ManifestInfo
         {
             Name = "SPDX",
-            Version = "3.0"
+            Version = spdxVersion
         };
 
         var validator = new ManifestInfoValidator(mockAssemblyConfig.Object);

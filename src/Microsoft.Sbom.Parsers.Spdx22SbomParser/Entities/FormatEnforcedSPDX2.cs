@@ -6,7 +6,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-public class FormatEnforcedSPDX2 : SPDX2RequiredProperties
+public class FormatEnforcedSPDX2 : SPDX22RequiredProperties
 {
     // These attributes are not required by the SPDX spec, but may be present in
     // SBOMs produced by sbom-tool or 3P SBOMs. We want to (de)serialize them if they are present.

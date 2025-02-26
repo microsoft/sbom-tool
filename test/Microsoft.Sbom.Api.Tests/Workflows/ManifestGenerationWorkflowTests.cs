@@ -344,10 +344,10 @@ public class ManifestGenerationWorkflowTests
 
         var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sourcesProvider, recorderMock.Object);
 
-        var generateResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
+        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
         relationshipArrayGenerator
             .Setup(r => r.GenerateAsync())
-            .ReturnsAsync(generateResult);
+            .ReturnsAsync(generationResult);
 
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,
@@ -456,8 +456,8 @@ public class ManifestGenerationWorkflowTests
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
         var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
-        var generateResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
-        fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generateResult);
+        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
+        fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
 
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,

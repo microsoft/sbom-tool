@@ -8,7 +8,7 @@ using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
-public interface IJsonSerializationStrategy
+internal interface IJsonSerializationStrategy
 {
     public void AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
 

@@ -55,9 +55,9 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
             var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
 
             // Write the relationship array only if supported
-            if (serializationStrategy.AddToRelationshipsSupportingConfig(relationshipsArraySupportingConfigs, this.SbomConfig))
+            if (serializationStrategy.AddToRelationshipsSupportingConfig(relationshipsArraySupportingConfigs, SbomConfig))
             {
-                var generationData = this.SbomConfig?.Recorder.GetGenerationData();
+                var generationData = SbomConfig?.Recorder.GetGenerationData();
 
                 var jsonChannelsArray = new ChannelReader<JsonDocument>[]
                 {
@@ -66,7 +66,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                         GetRelationships(
                             RelationshipType.DEPENDS_ON,
                             generationData),
-                        this.SbomConfig.ManifestInfo),
+                        SbomConfig.ManifestInfo),
 
                     // Root package relationship
                     generator.Run(
@@ -74,7 +74,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                             RelationshipType.DESCRIBES,
                             generationData.DocumentId,
                             new string[] { generationData.RootPackageId }),
-                        this.SbomConfig.ManifestInfo),
+                        SbomConfig.ManifestInfo),
 
                     // External reference relationship
                     generator.Run(
@@ -82,7 +82,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                             RelationshipType.PREREQUISITE_FOR,
                             generationData.RootPackageId,
                             generationData.ExternalDocumentReferenceIDs),
-                        this.SbomConfig.ManifestInfo),
+                        SbomConfig.ManifestInfo),
 
                     // External reference file relationship
                     generator.Run(
@@ -90,7 +90,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                             RelationshipType.DESCRIBED_BY,
                             generationData.SPDXFileIds,
                             generationData.DocumentId),
-                        this.SbomConfig.ManifestInfo),
+                        SbomConfig.ManifestInfo),
                 };
 
                 // Collect all the json elements and write to the serializer.
@@ -99,7 +99,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                 await foreach (var jsonDoc in channelUtils.Merge(jsonChannelsArray).ReadAllAsync())
                 {
                     count++;
-                    jsonDocumentCollection.AddJsonDocument(this.SbomConfig.JsonSerializer, jsonDoc);
+                    jsonDocumentCollection.AddJsonDocument(SbomConfig.JsonSerializer, jsonDoc);
                 }
 
                 log.Debug($"Wrote {count} relationship elements in the SBOM.");

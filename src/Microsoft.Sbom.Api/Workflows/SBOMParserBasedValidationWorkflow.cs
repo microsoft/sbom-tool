@@ -76,6 +76,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 using var stream = fileSystemUtils.OpenRead(sbomConfig.ManifestJsonFilePath);
                 var manifestInterface = manifestParserProvider.Get(sbomConfig.ManifestInfo);
                 var sbomParser = manifestInterface.CreateParser(stream);
+                sbomParser.SetComplianceStandard(configuration.ComplianceStandard?.Value);
 
                 // Validate signature
                 if (configuration.ValidateSignature != null && configuration.ValidateSignature.Value)
@@ -97,12 +98,9 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                 }
 
-                SetComplianceStandard(sbomConfig.ManifestInfo.Version, sbomParser);
-
                 var successfullyValidatedFiles = 0;
                 List<FileValidationResult> fileValidationFailures = null;
 
-                // This logic is the same as SbomParserTestsBase, however since that logic is part of the test suite we replicate it here
                 ParserStateResult? result = null;
                 do
                 {
@@ -293,30 +291,6 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         if (invalidInputFiles.Count != 0)
         {
             throw new InvalidDataException($"Your manifest file is malformed. {invalidInputFiles.First().Path}");
-        }
-    }
-
-    /// <summary>
-    /// Set compliance standard for SPDX 3.0 parsers and above.
-    /// </summary>
-    /// <param name="spdxVersion"></param>
-    private void SetComplianceStandard(string spdxVersion, ISbomParser sbomParser)
-    {
-        // Note that spdxVersion is already validated to be a valid double in ConfigValidator.
-        var spdxVersionAsDouble = Convert.ToDouble(spdxVersion);
-
-        if (!string.IsNullOrEmpty(configuration.ComplianceStandard?.Value) && spdxVersionAsDouble >= 3.0)
-        {
-            var complianceStandard = configuration.ComplianceStandard.Value;
-            try
-            {
-                (sbomParser as SPDX30Parser).RequiredComplianceStandard = complianceStandard;
-            }
-            catch (Exception e)
-            {
-                recorder.RecordException(e);
-                log.Error($"Unable to use the given compliance standard {complianceStandard} to parse the SBOM.");
-            }
         }
     }
 }

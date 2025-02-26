@@ -38,7 +38,7 @@ using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
 
-namespace Microsoft.Sbom.Api.Tests.VersionSpecificPins.Version_3_0;
+namespace Microsoft.Sbom.Api.Tests.VersionSpecificPins.Version_4_0;
 
 /// <summary>
 /// Test class to pin concrete implementations of interfaces. If this class (or any of its private classes) fails to
@@ -289,6 +289,7 @@ public class InterfaceConcretionTests
         public SpdxMetadata GetMetadata() => throw new NotImplementedException();
         public ParserStateResult Next() => throw new NotImplementedException();
         public ManifestInfo[] RegisterManifest() => throw new NotImplementedException();
+        public void SetComplianceStandard(string complianceStandardFromCli) => throw new NotImplementedException();
     }
 
     private class PinnedIConfiguration : IConfiguration

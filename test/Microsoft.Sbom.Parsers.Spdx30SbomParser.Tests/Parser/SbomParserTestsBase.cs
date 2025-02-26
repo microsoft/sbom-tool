@@ -37,7 +37,7 @@ public abstract class SbomParserTestsBase
 
             if (result is not null && result.Result is not null)
             {
-                results.FormatEnforcedSPDX3Result ??= new FormatEnforcedSPDX3();
+                results.FormatEnforcedSPDX3Result ??= new FormatEnforcedSPDX30();
                 switch (result.FieldName)
                 {
                     case Constants.SPDXContextHeaderName:

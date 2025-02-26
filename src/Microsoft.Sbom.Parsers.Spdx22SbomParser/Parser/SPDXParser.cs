@@ -215,6 +215,19 @@ public class SPDXParser : ISbomParser
 
     public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { this.spdxManifestInfo };
 
+    public void SetComplianceStandard(string? complianceStandardFromCli)
+    {
+        if (!string.IsNullOrEmpty(complianceStandardFromCli))
+        {
+            throw new ParserException($"SPDX 2.2 does not support validation based on compliance standards. " +
+                $"Please use SPDX >=3.0 or remove the ComplianceStandard parameter.");
+        }
+        else
+        {
+            return;
+        }
+    }
+
     private T Coerce<T>(string name, object? value)
     {
         if (value is T t)

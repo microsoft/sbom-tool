@@ -3,7 +3,6 @@
 
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
@@ -24,39 +23,4 @@ public class SPDX22ManifestConfigHandler : BaseManifestConfigHandler
 
     /// <inheritdoc/>
     protected override ManifestInfo ManifestInfo => Constants.SPDX22ManifestInfo;
-
-    public override bool TryGetManifestConfig(out ISbomConfig sbomConfig)
-    {
-        sbomConfig = CreateSbomConfig();
-
-        // For generation the default behavior is to always return true
-        // as we generate all the current formats of SBOM. Only override if the -mi
-        // argument is specified.
-        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
-        {
-            if (configuration.ManifestInfo?.Value != null
-                && !configuration.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        if (configuration.ManifestToolAction == ManifestToolActions.Validate)
-        {
-            // We can only validate one format at a time, so check if its this one and return true/false.
-            if (configuration.ManifestInfo?.Value != null
-               && configuration.ManifestInfo.Value.Count == 1
-               && configuration.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        sbomConfig = null;
-        return false;
-    }
 }

@@ -7,7 +7,7 @@ using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 public class ParserResults
 {
-    public FormatEnforcedSPDX3 FormatEnforcedSPDX3Result { get; set; }
+    public FormatEnforcedSPDX30 FormatEnforcedSPDX3Result { get; set; }
 
     public int FilesCount = 0;
     public int PackagesCount = 0;

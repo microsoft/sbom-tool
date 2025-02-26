@@ -12,7 +12,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// <summary>
 /// Serialization methods for SPDX 2.2.
 /// </summary>
-public class Spdx2SerializationStrategy : IJsonSerializationStrategy
+internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
 {
     public void AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
@@ -97,9 +97,9 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
     /// <returns></returns>
     private async Task WriteFiles(IJsonArrayGenerator<FileArrayGenerator> fileArrayGenerator)
     {
-        var filesGenerateResult = await fileArrayGenerator.GenerateAsync();
-        filesGenerateResult.Errors.AddRange(filesGenerateResult.Errors);
-        WriteJsonObjectsFromGenerationResult(filesGenerateResult, fileArrayGenerator.SbomConfig);
+        var filesGenerationResult = await fileArrayGenerator.GenerateAsync();
+        filesGenerationResult.Errors.AddRange(filesGenerationResult.Errors);
+        WriteJsonObjectsFromGenerationResult(filesGenerationResult, fileArrayGenerator.SbomConfig);
     }
 
     /// <summary>
@@ -109,9 +109,9 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
     /// <returns></returns>
     private async Task WritePackages(IJsonArrayGenerator<PackageArrayGenerator> packageArrayGenerator)
     {
-        var packagesGenerateResult = await packageArrayGenerator.GenerateAsync();
-        packagesGenerateResult.Errors.AddRange(packagesGenerateResult.Errors);
-        WriteJsonObjectsFromGenerationResult(packagesGenerateResult, packageArrayGenerator.SbomConfig);
+        var packagesGenerationResult = await packageArrayGenerator.GenerateAsync();
+        packagesGenerationResult.Errors.AddRange(packagesGenerationResult.Errors);
+        WriteJsonObjectsFromGenerationResult(packagesGenerationResult, packageArrayGenerator.SbomConfig);
     }
 
     /// <summary>
@@ -121,9 +121,9 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
     /// <returns></returns>
     private async Task WriteExternalDocRefs(IJsonArrayGenerator<ExternalDocumentReferenceGenerator> externalDocumentReferenceGenerator)
     {
-        var externalDocumentReferenceGenerateResult = await externalDocumentReferenceGenerator.GenerateAsync();
-        externalDocumentReferenceGenerateResult.Errors.AddRange(externalDocumentReferenceGenerateResult.Errors);
-        WriteJsonObjectsFromGenerationResult(externalDocumentReferenceGenerateResult, externalDocumentReferenceGenerator.SbomConfig, externalDocumentReferenceGenerateResult.SourcesProviders);
+        var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync();
+        externalDocumentReferenceGenerationResult.Errors.AddRange(externalDocumentReferenceGenerationResult.Errors);
+        WriteJsonObjectsFromGenerationResult(externalDocumentReferenceGenerationResult, externalDocumentReferenceGenerator.SbomConfig, externalDocumentReferenceGenerationResult.SourcesProviders);
     }
 
     /// <summary>
@@ -133,9 +133,9 @@ public class Spdx2SerializationStrategy : IJsonSerializationStrategy
     /// <returns></returns>
     private async Task WriteRelationships(IJsonArrayGenerator<RelationshipsArrayGenerator> relationshipsArrayGenerator)
     {
-        var relationshipGenerateResult = await relationshipsArrayGenerator.GenerateAsync();
-        relationshipGenerateResult.Errors.AddRange(relationshipGenerateResult.Errors);
-        WriteJsonObjectsFromGenerationResult(relationshipGenerateResult, relationshipsArrayGenerator.SbomConfig);
+        var relationshipGenerationResult = await relationshipsArrayGenerator.GenerateAsync();
+        relationshipGenerationResult.Errors.AddRange(relationshipGenerationResult.Errors);
+        WriteJsonObjectsFromGenerationResult(relationshipGenerationResult, relationshipsArrayGenerator.SbomConfig);
    }
 
     private void WriteJsonObjectsFromGenerationResult(GenerationResult generationResult, ISbomConfig sbomConfig, IEnumerable<ISourcesProvider> sourcesProviders = null)
