@@ -455,24 +455,43 @@ public class ManifestGenerationWorkflowTests
         configurationMock.SetupGet(x => x.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.CommandLine });
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
-        var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
+
         var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
-        fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
+        var generationResultWithFailure = new GenerationResult(new List<FileValidationResult> { new FileValidationResult() }, new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
+
+        var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
+        fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResultWithFailure);
+
+        var packageArrayGeneratorMock = new Mock<IJsonArrayGenerator<PackageArrayGenerator>>();
+        packageArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
+
+        var relationshipsArrayGeneratorMock = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>();
+        relationshipsArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
+
+        var externalDocumentReferenceGeneratorMock = new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>();
+        externalDocumentReferenceGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResultWithFailure);
+
+        var sbomConfigsMock = new Mock<ISbomConfigProvider>();
+        sbomConfigsMock.Setup(f => f.GetManifestInfos()).Returns(new List<ManifestInfo> { Constants.TestManifestInfo });
 
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,
             fileSystemMock.Object,
             mockLogger.Object,
             fileArrayGeneratorMock.Object,
-            new Mock<IJsonArrayGenerator<PackageArrayGenerator>>().Object,
-            new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>().Object,
-            new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>().Object,
-            new Mock<ISbomConfigProvider>().Object,
+            packageArrayGeneratorMock.Object,
+            relationshipsArrayGeneratorMock.Object,
+            externalDocumentReferenceGeneratorMock.Object,
+            sbomConfigsMock.Object,
             mockOSUtils.Object,
             recorderMock.Object);
 
         var result = await workflow.RunAsync();
 
+        fileArrayGeneratorMock.VerifyAll();
+        packageArrayGeneratorMock.VerifyAll();
+        relationshipsArrayGeneratorMock.VerifyAll();
+        externalDocumentReferenceGeneratorMock.VerifyAll();
         fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Once);
         Assert.IsFalse(result);
     }

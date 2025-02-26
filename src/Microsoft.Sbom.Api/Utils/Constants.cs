@@ -26,25 +26,27 @@ public static class Constants
         Version = "3.0"
     };
 
+    // TODO: move to test csproj
+    public static ManifestInfo TestManifestInfo = new ManifestInfo
+    {
+        Name = "TestManifest",
+        Version = "1.0.0"
+    };
+
     public static SbomSpecification SPDX22Specification = ManifestInfo.ToSBOMSpecification(SPDX22ManifestInfo);
 
     public static Collection<SbomSpecification> SupportedSbomSpecifications = new()
     {
         ManifestInfo.ToSBOMSpecification(SPDX22ManifestInfo),
         ManifestInfo.ToSBOMSpecification(SPDX30ManifestInfo),
+        ManifestInfo.ToSBOMSpecification(TestManifestInfo),
     };
 
     public static Collection<ManifestInfo> SupportedSpdxManifests = new()
     {
         SPDX22ManifestInfo,
         SPDX30ManifestInfo,
-    };
-
-    // TODO: move to test csproj
-    public static ManifestInfo TestManifestInfo = new ManifestInfo
-    {
-        Name = "TestManifest",
-        Version = "1.0.0"
+        TestManifestInfo,
     };
 
     public static List<Entities.ErrorType> SkipFailureReportingForErrors = new()

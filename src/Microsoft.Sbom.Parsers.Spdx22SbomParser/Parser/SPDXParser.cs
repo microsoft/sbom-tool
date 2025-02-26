@@ -217,14 +217,14 @@ public class SPDXParser : ISbomParser
 
     public void SetComplianceStandard(string? complianceStandardFromCli)
     {
-        if (!string.IsNullOrEmpty(complianceStandardFromCli))
+        if (string.IsNullOrEmpty(complianceStandardFromCli))
         {
-            throw new ParserException($"SPDX 2.2 does not support validation based on compliance standards. " +
-                $"Please use SPDX >=3.0 or remove the ComplianceStandard parameter.");
+            return;
         }
         else
         {
-            return;
+            throw new ParserException($"SPDX 2.2 does not support validation based on compliance standards. " +
+                $"Please use SPDX >=3.0 or remove the ComplianceStandard parameter.");
         }
     }
 

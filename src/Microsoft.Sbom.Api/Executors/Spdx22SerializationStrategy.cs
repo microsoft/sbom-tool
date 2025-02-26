@@ -79,13 +79,13 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
 
         var errors = new List<FileValidationResult>();
 
-        await WriteFiles(fileArrayGenerator);
+        await WriteFiles(fileArrayGenerator, errors);
 
-        await WritePackages(packageArrayGenerator);
+        await WritePackages(packageArrayGenerator, errors);
 
-        await WriteExternalDocRefs(externalDocumentReferenceGenerator);
+        await WriteExternalDocRefs(externalDocumentReferenceGenerator, errors);
 
-        await WriteRelationships(relationshipsArrayGenerator);
+        await WriteRelationships(relationshipsArrayGenerator, errors);
 
         return errors;
     }
@@ -95,10 +95,10 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
     /// </summary>
     /// <param name="fileArrayGenerator"></param>
     /// <returns></returns>
-    private async Task WriteFiles(IJsonArrayGenerator<FileArrayGenerator> fileArrayGenerator)
+    private async Task WriteFiles(IJsonArrayGenerator<FileArrayGenerator> fileArrayGenerator, List<FileValidationResult> errors)
     {
         var filesGenerationResult = await fileArrayGenerator.GenerateAsync();
-        filesGenerationResult.Errors.AddRange(filesGenerationResult.Errors);
+        errors.AddRange(filesGenerationResult.Errors);
         WriteJsonObjectsFromGenerationResult(filesGenerationResult, fileArrayGenerator.SbomConfig);
     }
 
@@ -107,10 +107,10 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
     /// </summary>
     /// <param name="packageArrayGenerator"></param>
     /// <returns></returns>
-    private async Task WritePackages(IJsonArrayGenerator<PackageArrayGenerator> packageArrayGenerator)
+    private async Task WritePackages(IJsonArrayGenerator<PackageArrayGenerator> packageArrayGenerator, List<FileValidationResult> errors)
     {
         var packagesGenerationResult = await packageArrayGenerator.GenerateAsync();
-        packagesGenerationResult.Errors.AddRange(packagesGenerationResult.Errors);
+        errors.AddRange(packagesGenerationResult.Errors);
         WriteJsonObjectsFromGenerationResult(packagesGenerationResult, packageArrayGenerator.SbomConfig);
     }
 
@@ -119,10 +119,10 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
     /// </summary>
     /// <param name="externalDocumentReferenceGenerator"></param>
     /// <returns></returns>
-    private async Task WriteExternalDocRefs(IJsonArrayGenerator<ExternalDocumentReferenceGenerator> externalDocumentReferenceGenerator)
+    private async Task WriteExternalDocRefs(IJsonArrayGenerator<ExternalDocumentReferenceGenerator> externalDocumentReferenceGenerator, List<FileValidationResult> errors)
     {
         var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync();
-        externalDocumentReferenceGenerationResult.Errors.AddRange(externalDocumentReferenceGenerationResult.Errors);
+        errors.AddRange(externalDocumentReferenceGenerationResult.Errors);
         WriteJsonObjectsFromGenerationResult(externalDocumentReferenceGenerationResult, externalDocumentReferenceGenerator.SbomConfig, externalDocumentReferenceGenerationResult.SourcesProviders);
     }
 
@@ -131,10 +131,10 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
     /// </summary>
     /// <param name="relationshipsArrayGenerator"></param>
     /// <returns></returns>
-    private async Task WriteRelationships(IJsonArrayGenerator<RelationshipsArrayGenerator> relationshipsArrayGenerator)
+    private async Task WriteRelationships(IJsonArrayGenerator<RelationshipsArrayGenerator> relationshipsArrayGenerator, List<FileValidationResult> errors)
     {
         var relationshipGenerationResult = await relationshipsArrayGenerator.GenerateAsync();
-        relationshipGenerationResult.Errors.AddRange(relationshipGenerationResult.Errors);
+        errors.AddRange(relationshipGenerationResult.Errors);
         WriteJsonObjectsFromGenerationResult(relationshipGenerationResult, relationshipsArrayGenerator.SbomConfig);
    }
 
