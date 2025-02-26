@@ -15,7 +15,6 @@ using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
 using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
