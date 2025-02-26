@@ -101,12 +101,6 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
 
                     var manifestInfos = sbomConfigs.GetManifestInfos();
 
-                    // If manifestInfos is empty (for example, this is the case for unit tests where GetManifestInfos() is not implemented), use the default SPDX 2.2 manifest info
-                    if (!manifestInfos.Any())
-                    {
-                        manifestInfos = new List<ManifestInfo> { Constants.SPDX22ManifestInfo };
-                    }
-
                     // Use the WriteJsonObjectsToSbomAsync method based on the SPDX version in manifest info
                     foreach (var manifestInfo in manifestInfos)
                     {
