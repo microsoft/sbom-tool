@@ -45,8 +45,6 @@ public partial class GenerateSbom : Task, ICancelableTask
     {
         try
         {
-            var taskLoggingHelper = new TaskLoggingHelper(this);
-
             // Validate required args and args that take paths as input.
             if (!ValidateAndSanitizeRequiredParams() || !ValidateAndSanitizeNamespaceUriUniquePart())
             {
@@ -54,7 +52,7 @@ public partial class GenerateSbom : Task, ICancelableTask
             }
 
             var logVerbosity = ValidateAndAssignVerbosity();
-            var msbuildLogger = new MSBuildLogger(taskLoggingHelper);
+            var msbuildLogger = new MSBuildLogger(this.Log);
             Serilog.Log.Logger = msbuildLogger;
             var taskHost = Host.CreateDefaultBuilder()
                .ConfigureServices((host, services) =>
@@ -118,7 +116,19 @@ public partial class GenerateSbom : Task, ICancelableTask
 
             foreach (var error in result.Errors)
             {
-                Log.LogMessage(MessageImportance.Normal, "{0}({1}) - {2} - {3}", error.Entity.Id, error.Entity.EntityType, error.ErrorType, error.Details);
+                var file = error.Entity is FileEntity fe ? fe.Path : null;
+                Log.LogMessage(
+                    subcategory: null,
+                    code: null,
+                    helpKeyword: null,
+                    file: file,
+                    lineNumber: 0,
+                    columnNumber: 0,
+                    endLineNumber: 0,
+                    endColumnNumber: 0,
+                    importance: MessageImportance.Normal,
+                    message: "{0}({1}) - {2} - {3}",
+                    messageArgs: [error.Entity.Id, error.Entity.EntityType, error.ErrorType, error.Details]);
             }
 
             return result.IsSuccessful;
@@ -126,7 +136,7 @@ public partial class GenerateSbom : Task, ICancelableTask
         catch (Exception e)
         {
             Log.LogError($"SBOM generation failed: {e.Message}");
-            return Log.HasLoggedErrors;
+            return !Log.HasLoggedErrors;
         }
     }
 
