@@ -48,10 +48,21 @@ public partial class GenerateSbom : Task, ICancelableTask
             var logVerbosity = ValidateAndAssignVerbosity();
             var msbuildLogger = new MSBuildLogger(this.Log);
             Serilog.Log.Logger = msbuildLogger;
+
+            var runtimeConfiguration = new RuntimeConfiguration
+            {
+                NamespaceUriBase = this.NamespaceBaseUri,
+                NamespaceUriUniquePart = this.NamespaceUriUniquePart,
+                DeleteManifestDirectoryIfPresent = this.DeleteManifestDirIfPresent,
+                Verbosity = logVerbosity,
+                NoComponentGovernanceSummary = true
+            };
+
             var taskHost = Host.CreateDefaultBuilder()
                .ConfigureServices((host, services) =>
                services
                .AddSingleton<IConfiguration, Configuration>()
+               .AddSingleton(runtimeConfiguration)
                .AddSbomTool(msbuildLogger)
                /* Manually adding some dependencies since `AddSbomTool()` does not add them when
                 * running the MSBuild Task from another project.
@@ -86,13 +97,6 @@ public partial class GenerateSbom : Task, ICancelableTask
                 PackageSupplier = this.PackageSupplier,
                 PackageName = this.PackageName,
                 PackageVersion = this.PackageVersion,
-            };
-            var runtimeConfiguration = new RuntimeConfiguration
-            {
-                NamespaceUriBase = this.NamespaceBaseUri,
-                NamespaceUriUniquePart = this.NamespaceUriUniquePart,
-                DeleteManifestDirectoryIfPresent = this.DeleteManifestDirIfPresent,
-                Verbosity = logVerbosity,
             };
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
             var result = System.Threading.Tasks.Task.Run(() => generator.GenerateSbomAsync(

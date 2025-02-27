@@ -17,6 +17,7 @@ using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ILogger = Serilog.ILogger;
@@ -34,6 +35,7 @@ public abstract class ComponentDetectionBaseWalker
     private readonly ISbomConfigProvider sbomConfigs;
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly ILicenseInformationFetcher licenseInformationFetcher;
+    private readonly RuntimeConfiguration? runtimeConfiguration;
     private readonly IPackageDetailsFactory packageDetailsFactory;
 
     public ConcurrentDictionary<string, string> LicenseDictionary = new ConcurrentDictionary<string, string>();
@@ -48,7 +50,8 @@ public abstract class ComponentDetectionBaseWalker
         ISbomConfigProvider sbomConfigs,
         IFileSystemUtils fileSystemUtils,
         IPackageDetailsFactory packageDetailsFactory,
-        ILicenseInformationFetcher licenseInformationFetcher)
+        ILicenseInformationFetcher licenseInformationFetcher,
+        RuntimeConfiguration? runtimeConfiguration)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.componentDetector = componentDetector ?? throw new ArgumentNullException(nameof(componentDetector));
@@ -57,6 +60,7 @@ public abstract class ComponentDetectionBaseWalker
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         this.packageDetailsFactory = packageDetailsFactory ?? throw new ArgumentNullException(nameof(packageDetailsFactory));
         this.licenseInformationFetcher = licenseInformationFetcher ?? throw new ArgumentNullException(nameof(licenseInformationFetcher));
+        this.runtimeConfiguration = runtimeConfiguration;
     }
 
     public (ChannelReader<ScannedComponent> output, ChannelReader<ComponentDetectorException> error) GetComponents(string buildComponentDirPath)
@@ -112,8 +116,11 @@ public abstract class ComponentDetectionBaseWalker
             var cmdLineParams = configuration.ToComponentDetectorCommandLineParams(cliArgumentBuilder);
 
             var scanSettings = cliArgumentBuilder.BuildScanSettingsFromParsedArgs(cmdLineParams);
-            // TODO: the MSBuild pathway needs a way to disable this setting, because the CG tools write directly to stdout (which is not kind).
-            scanSettings.NoSummary = true;
+            if (runtimeConfiguration != null)
+            {
+                scanSettings.NoSummary = runtimeConfiguration.NoComponentGovernanceSummary;
+            }
+
             var scanResult = await componentDetector.ScanAsync(scanSettings);
 
             if (scanResult.ResultCode != ProcessingResultCode.Success)
