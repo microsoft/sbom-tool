@@ -38,15 +38,13 @@ public static class Constants
     public static Collection<SbomSpecification> SupportedSbomSpecifications = new()
     {
         ManifestInfo.ToSBOMSpecification(SPDX22ManifestInfo),
-        ManifestInfo.ToSBOMSpecification(SPDX30ManifestInfo),
-        ManifestInfo.ToSBOMSpecification(TestManifestInfo),
+        ManifestInfo.ToSBOMSpecification(SPDX30ManifestInfo)
     };
 
     public static Collection<ManifestInfo> SupportedSpdxManifests = new()
     {
         SPDX22ManifestInfo,
-        SPDX30ManifestInfo,
-        TestManifestInfo,
+        SPDX30ManifestInfo
     };
 
     public static List<Entities.ErrorType> SkipFailureReportingForErrors = new()
