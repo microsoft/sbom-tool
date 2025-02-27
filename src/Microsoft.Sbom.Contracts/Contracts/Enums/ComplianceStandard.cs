@@ -11,6 +11,6 @@ namespace Microsoft.Sbom.Contracts.Enums;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum ComplianceStandard
 {
+    None,
     NTIA,
-    None
 }
