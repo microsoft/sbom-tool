@@ -49,4 +49,6 @@ public class RuntimeConfiguration
     /// Gets or sets a value indicating whether if set to false, we will not follow symlinks while traversing the build drop folder.
     /// </summary>
     public bool FollowSymlinks { get; set; } = true;
+
+    public bool PrintCDSummary { get; set; } = true;
 }

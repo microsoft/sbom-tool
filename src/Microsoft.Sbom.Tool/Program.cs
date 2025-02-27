@@ -11,6 +11,7 @@ using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Exceptions;
+using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions.DependencyInjection;
 using PowerArgs;
 
@@ -43,6 +44,7 @@ internal class Program
 
         try
         {
+#pragma warning disable IDE0001
             await Host.CreateDefaultBuilder(args)
                 .ConfigureServices((host, services) =>
                 {
@@ -55,9 +57,12 @@ internal class Program
                         _ => services
                     };
 
-                    services
+                    var runtimeConfiguration = new RuntimeConfiguration() { PrintCDSummary = false }; // TODO do this in GenerateSbomTask instead of in the tool set up
+
+                    _ = services
                         .AddTransient<ConfigFileParser>()
                         .AddSingleton(typeof(IConfigurationBuilder<>), typeof(ConfigurationBuilder<>))
+                        .AddSingleton<RuntimeConfiguration>((x) => runtimeConfiguration)
                         .AddSingleton(x =>
                         {
                             var validationConfigurationBuilder = x.GetService<IConfigurationBuilder<ValidationArgs>>();
@@ -80,6 +85,7 @@ internal class Program
                         .AddSbomTool();
                 })
                 .RunConsoleAsync(x => x.SuppressStatusMessages = true);
+#pragma warning restore IDE0001
             Environment.ExitCode = (int)ExitCode.Success;
         }
         catch (AccessDeniedValidationArgException e)
