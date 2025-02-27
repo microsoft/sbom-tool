@@ -111,7 +111,7 @@ public class SBOMGeneratorTest
         var manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new Generator() });
         manifestGeneratorProvider.Init();
 
-        var metadata = new SBOMMetadata()
+        var metadata = new SbomMetadata()
         {
             PackageSupplier = "Contoso"
         };

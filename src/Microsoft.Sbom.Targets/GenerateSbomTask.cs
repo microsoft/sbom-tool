@@ -54,7 +54,7 @@ public partial class GenerateSbom : Task
                 .AddSingleton<IManifestGenerator, SPDX22.Generator>()
                 .AddSingleton<IManifestGenerator, SPDX30.Generator>()
                 .AddSingleton<IMetadataProvider, LocalMetadataProvider>()
-                .AddSingleton<IMetadataProvider, SBOMApiMetadataProvider>()
+                .AddSingleton<IMetadataProvider, SbomApiMetadataProvider>()
                 .AddSingleton<IManifestInterface, SPDX22.Validator>()
                 .AddSingleton<IManifestInterface, SPDX30.Validator>()
                 .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>()

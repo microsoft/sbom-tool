@@ -59,7 +59,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
             // Write the start of the array, if supported.
             IList<ISbomConfig> filesArraySupportingSboms = new List<ISbomConfig>();
             var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
-            serializationStrategy.AddToFilesSupportingConfig(filesArraySupportingSBOMs, this.SbomConfig);
+            serializationStrategy.AddToFilesSupportingConfig(filesArraySupportingSboms, this.SbomConfig);
 
             this.logger.Verbose("Started writing files array for {configFile}.", this.SbomConfig.ManifestJsonFilePath);
 

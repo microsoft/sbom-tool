@@ -33,12 +33,12 @@ public static class Constants
         Version = "1.0.0"
     };
 
-    public static SbomSpecification SPDX22Specification = ManifestInfo.ToSBOMSpecification(SPDX22ManifestInfo);
+    public static SbomSpecification SPDX22Specification = ManifestInfo.ToSbomSpecification(SPDX22ManifestInfo);
 
     public static Collection<SbomSpecification> SupportedSbomSpecifications = new()
     {
-        ManifestInfo.ToSBOMSpecification(SPDX22ManifestInfo),
-        ManifestInfo.ToSBOMSpecification(SPDX30ManifestInfo)
+        ManifestInfo.ToSbomSpecification(SPDX22ManifestInfo),
+        ManifestInfo.ToSbomSpecification(SPDX30ManifestInfo)
     };
 
     public static Collection<ManifestInfo> SupportedSpdxManifests = new()

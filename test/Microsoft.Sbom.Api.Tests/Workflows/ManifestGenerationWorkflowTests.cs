@@ -127,8 +127,8 @@ public class ManifestGenerationWorkflowTests
         {
             { MetadataKey.Build_BuildId, 12 },
             { MetadataKey.Build_DefinitionName, "test" },
-            { MetadataKey.SBOMToolName, "testMicrosoft" },
-            { MetadataKey.SBOMToolVersion, "Tool.Version" },
+            { MetadataKey.SbomToolName, "testMicrosoft" },
+            { MetadataKey.SbomToolVersion, "Tool.Version" },
             { MetadataKey.PackageVersion, "Package.Version" },
             { MetadataKey.PackageSupplier, "testPackageSupplier" }
         });
