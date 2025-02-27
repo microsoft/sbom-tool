@@ -9,11 +9,11 @@ using Constants = Microsoft.Sbom.Api.Utils.Constants;
 namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers;
 
 /// <summary>
-/// Provides the ManifestConfig for the SPDX 2.2 format.
+/// Provides the ManifestConfig for the SPDX 3.0 format.
 /// </summary>
-public class SPDX22ManifestConfigHandler : BaseManifestConfigHandler
+public class SPDX30ManifestConfigHandler : BaseManifestConfigHandler
 {
-    public SPDX22ManifestConfigHandler(
+    public SPDX30ManifestConfigHandler(
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
         IMetadataBuilderFactory metadataBuilderFactory)
@@ -22,5 +22,5 @@ public class SPDX22ManifestConfigHandler : BaseManifestConfigHandler
     }
 
     /// <inheritdoc/>
-    protected override ManifestInfo ManifestInfo => Constants.SPDX22ManifestInfo;
+    protected override ManifestInfo ManifestInfo => Constants.SPDX30ManifestInfo;
 }

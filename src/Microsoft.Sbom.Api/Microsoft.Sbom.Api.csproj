@@ -53,6 +53,7 @@
       <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
       <ProjectReference Include="..\Microsoft.Sbom.Extensions\Microsoft.Sbom.Extensions.csproj" />
       <ProjectReference Include="..\Microsoft.Sbom.Parsers.Spdx22SbomParser\Microsoft.Sbom.Parsers.Spdx22SbomParser.csproj" />
+      <ProjectReference Include="..\Microsoft.Sbom.Parsers.Spdx30SbomParser\Microsoft.Sbom.Parsers.Spdx30SbomParser.csproj" />
     </ItemGroup>
 
 </Project>

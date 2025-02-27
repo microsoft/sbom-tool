@@ -31,20 +31,4 @@ public static class SBOMFormatExtensions
             Version = specification.Version
         };
     }
-
-    /// <summary>
-    /// Converts a <see cref="ManifestInfo"/> to a <see cref="SbomSpecification"/> object.
-    /// </summary>
-    /// <param name="manifestInfo"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    public static SbomSpecification ToSBOMSpecification(this ManifestInfo manifestInfo)
-    {
-        if (manifestInfo is null)
-        {
-            throw new ArgumentNullException(nameof(manifestInfo));
-        }
-
-        return new SbomSpecification(manifestInfo.Name, manifestInfo.Version);
-    }
 }

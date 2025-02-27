@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 // This class uses JSON serialization attributes to enforce the SPDX 2.x format
 // Metadata fields tagged as required are required by the SPDX 2.x specification.
-public class SPDX2RequiredProperties
+public class SPDX22RequiredProperties
 {
     // These attributes are required by the SPDX 2.x spec.
     [JsonRequired]

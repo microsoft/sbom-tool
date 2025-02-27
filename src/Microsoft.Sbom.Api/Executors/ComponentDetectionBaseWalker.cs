@@ -79,13 +79,19 @@ public abstract class ComponentDetectionBaseWalker
         cliArgumentBuilder.AddDetectorArg("SPDX22SBOM", "EnableIfDefaultOff");
         cliArgumentBuilder.AddDetectorArg("ConanLock", "EnableIfDefaultOff");
 
-        if (sbomConfigs.TryGet(Constants.SPDX22ManifestInfo, out var spdxSbomConfig))
+        // Iterate over all supported SPDX manifests and apply the necessary logic
+        foreach (var supportedSpdxManifest in Constants.SupportedSpdxManifests)
         {
-            var directory = Path.GetDirectoryName(spdxSbomConfig.ManifestJsonFilePath);
-            directory = fileSystemUtils.GetFullPath(directory);
-            if (!string.IsNullOrEmpty(directory))
+            if (sbomConfigs.TryGet(supportedSpdxManifest, out var spdxSbomConfig))
             {
-                cliArgumentBuilder.AddArg("DirectoryExclusionList", directory);
+                var directory = Path.GetDirectoryName(spdxSbomConfig.ManifestJsonFilePath);
+                directory = fileSystemUtils.GetFullPath(directory);
+                if (!string.IsNullOrEmpty(directory))
+                {
+                    cliArgumentBuilder.AddArg("DirectoryExclusionList", directory);
+                }
+
+                break;
             }
         }
 

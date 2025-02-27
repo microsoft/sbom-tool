@@ -38,7 +38,7 @@ using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
 
-namespace Microsoft.Sbom.Api.Tests.VersionSpecificPins.Version_3_0;
+namespace Microsoft.Sbom.Api.Tests.VersionSpecificPins.Version_4_0;
 
 /// <summary>
 /// Test class to pin concrete implementations of interfaces. If this class (or any of its private classes) fails to
@@ -187,7 +187,11 @@ public class InterfaceConcretionTests
 
     private class PinnedIJsonArrayGenerator : IJsonArrayGenerator<PinnedIJsonArrayGenerator>
     {
+        public ISbomConfig SbomConfig { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string SpdxManifestVersion { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public Task<IList<FileValidationResult>> GenerateAsync() => throw new NotImplementedException();
+        Task<Api.Workflows.Helpers.GenerationResult> IJsonArrayGenerator<PinnedIJsonArrayGenerator>.GenerateAsync() => throw new NotImplementedException();
     }
 
     private class PinnedISbomRedactor : ISbomRedactor
@@ -231,11 +235,12 @@ public class InterfaceConcretionTests
     private class PinnedIMetadataBuilder : IMetadataBuilder
     {
         public string GetHeaderJsonString(IInternalMetadataProvider internalMetadataProvider) => throw new NotImplementedException();
+        public bool TryGetCreationInfoJson(IInternalMetadataProvider internalMetadataProvider, out Extensions.Entities.GenerationResult generationResult) => throw new NotImplementedException();
         public bool TryGetExternalRefArrayHeaderName(out string headerName) => throw new NotImplementedException();
         public bool TryGetFilesArrayHeaderName(out string headerName) => throw new NotImplementedException();
         public bool TryGetPackageArrayHeaderName(out string headerName) => throw new NotImplementedException();
         public bool TryGetRelationshipsHeaderName(out string headerName) => throw new NotImplementedException();
-        public bool TryGetRootPackageJson(IInternalMetadataProvider internalMetadataProvider, out GenerationResult generationResult) => throw new NotImplementedException();
+        public bool TryGetRootPackageJson(IInternalMetadataProvider internalMetadataProvider, out Extensions.Entities.GenerationResult generationResult) => throw new NotImplementedException();
     }
 
     private class PinnedIManifestToolJsonSerializer : IManifestToolJsonSerializer
@@ -247,6 +252,7 @@ public class InterfaceConcretionTests
         public void StartJsonArray(string arrayHeader) => throw new NotImplementedException();
         public void StartJsonObject() => throw new NotImplementedException();
         public void Write(JsonDocument jsonDocument) => throw new NotImplementedException();
+        public void Write(JsonElement jsonElement) => throw new NotImplementedException();
         public void WriteJsonString(string jsonString) => throw new NotImplementedException();
     }
 
@@ -280,9 +286,10 @@ public class InterfaceConcretionTests
 
     private class PinnedISbomParser : ISbomParser
     {
-        public Spdx22Metadata GetMetadata() => throw new NotImplementedException();
+        public SpdxMetadata GetMetadata() => throw new NotImplementedException();
         public ParserStateResult Next() => throw new NotImplementedException();
         public ManifestInfo[] RegisterManifest() => throw new NotImplementedException();
+        public void SetComplianceStandard(string complianceStandardFromCli) => throw new NotImplementedException();
     }
 
     private class PinnedIConfiguration : IConfiguration
@@ -322,6 +329,7 @@ public class InterfaceConcretionTests
         public ConfigurationSetting<bool> EnablePackageMetadataParsing { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<string> SbomPath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<string> SbomDir { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ConfigurationSetting<string> ComplianceStandard { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
     private class PinnedISettingSourceable : ISettingSourceable
@@ -369,7 +377,7 @@ public class InterfaceConcretionTests
     // ScanSettings (CD)
     // SettingSource
     // Snippet
-    // Spdx22Metadata
+    // SpdxMetadata
     // SPDXFile
     // SPDXPackage
     // SPDXRelationship

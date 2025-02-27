@@ -10,7 +10,7 @@ using System.Text.Json.Serialization;
 // Metadata fields tagged as required are required by the SPDX 3.x specification.
 // SPDX 3.x specification link, only the Core Profile is mandatory: https://spdx.github.io/spdx-spec/v3.0.1/conformance/
 // The SPDX 3.x documents also have to be a strict subset of JSON-LD https://json-ld.org/
-public class FormatEnforcedSPDX3
+public class FormatEnforcedSPDX30
 {
     /// <summary>
     /// Indicates that this is an SPDX document, and this provided URL tells us how to decode it.

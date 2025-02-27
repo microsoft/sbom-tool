@@ -28,7 +28,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         Assert.AreEqual(5, results.FormatEnforcedSPDX3Result.Graph.Count());
 
         var metadata = parser.GetMetadata();
-        Assert.IsInstanceOfType(metadata, typeof(Spdx22Metadata));
+        Assert.IsInstanceOfType(metadata, typeof(SpdxMetadata));
         Assert.IsNotNull(metadata);
         Assert.IsNotNull(metadata.DocumentNamespace);
         Assert.AreEqual("spdx-doc-name", metadata.Name);
@@ -51,7 +51,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         var results = this.Parse(parser);
 
         var metadata = parser.GetMetadata();
-        Assert.IsInstanceOfType(metadata, typeof(Spdx22Metadata));
+        Assert.IsInstanceOfType(metadata, typeof(SpdxMetadata));
         Assert.IsNotNull(metadata);
         Assert.IsNull(metadata.DocumentNamespace);
         Assert.IsNull(metadata.Name);
@@ -68,7 +68,8 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithMetadataJsonStrings.SbomWithSpdxDocumentMissingNameJsonString);
         using var stream = new MemoryStream(bytes);
 
-        var parser = new SPDX30Parser(stream, requiredComplianceStandard: "NTIA");
+        var parser = new SPDX30Parser(stream);
+        parser.SetComplianceStandard("NTIA");
         Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 

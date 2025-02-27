@@ -156,4 +156,7 @@ public class InputConfiguration : IConfiguration2
     /// <inheritdoc cref="IConfiguration.SbomPath" />
     [Path]
     public ConfigurationSetting<string> SbomPath { get; set; }
+
+    /// <inheritdoc cref="IConfiguration.ComplianceStandard" />
+    public ConfigurationSetting<string> ComplianceStandard { get; set; }
 }

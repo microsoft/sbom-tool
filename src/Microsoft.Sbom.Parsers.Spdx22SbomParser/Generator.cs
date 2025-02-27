@@ -352,4 +352,14 @@ public class Generator : IManifestGenerator
             PackageVerificationCodeExcludedFiles = null // We currently don't ignore any files.
         };
     }
+
+    /// <summary>
+    /// Creation info will not be generated in SPDX 2.2 format.
+    /// </summary>
+    /// <param name="internalMetadataProvider"></param>
+    /// <returns></returns>
+    public GenerationResult GenerateJsonDocument(IInternalMetadataProvider internalMetadataProvider)
+    {
+        return null;
+    }
 }

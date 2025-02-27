@@ -162,7 +162,7 @@ public static class ServiceCollectionExtensions
 
                 var manifestData = new ManifestData();
 
-                if (!configuration.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
+                if (!configuration.ManifestInfo.Value.Any(manifestInfo => Constants.SupportedSpdxManifests.Contains(manifestInfo)))
                 {
                     var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo?.Value?.FirstOrDefault());
                     var parserProvider = x.GetRequiredService<IManifestParserProvider>();

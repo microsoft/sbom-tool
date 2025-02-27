@@ -27,7 +27,7 @@ public interface ISbomParser
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    Spdx22Metadata GetMetadata();
+    SpdxMetadata GetMetadata();
 
     /// <summary>
     /// This function is called by the sbom tool upon initialization to get all the
@@ -36,4 +36,11 @@ public interface ISbomParser
     /// <returns>An version sorted array in ascending order of
     /// <see cref="ManifestInfo">manifests</see> this library can parse.</returns>
     ManifestInfo[] RegisterManifest();
+
+    /// <summary>
+    /// Set compliance standard for SPDX 3.0 parsers and above.
+    /// Returns the compliance standard set by the user, if it is valid.
+    /// </summary>
+    /// <param name="spdxVersion"></param>
+    void SetComplianceStandard(string? complianceStandardFromCli);
 }

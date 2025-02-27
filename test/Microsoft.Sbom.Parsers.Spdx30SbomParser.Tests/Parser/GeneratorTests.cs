@@ -195,12 +195,12 @@ public class GeneratorTests
     {
         ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            ManifestInfo = Constants.Spdx30ManifestInfo,
+            ManifestInfo = Constants.SPDX30ManifestInfo,
             Recorder = new SbomPackageDetailsRecorder()
         };
 
         mockConfigHandler.Setup(c => c.TryGetManifestConfig(out sbomConfig)).Returns(true);
-        recorderMock.Setup(r => r.RecordSBOMFormat(Constants.Spdx30ManifestInfo, It.IsAny<string>()));
+        recorderMock.Setup(r => r.RecordSBOMFormat(Constants.SPDX30ManifestInfo, It.IsAny<string>()));
         mockLogger.Setup(l => l.Debug(It.IsAny<string>()));
 
         var config = new Configuration

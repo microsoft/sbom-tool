@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
+using HashAlgorithm = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.HashAlgorithm;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
@@ -16,6 +16,7 @@ public class PackageVerificationCode : Element
     /// <summary>
     /// Gets or sets the algorithm being used to calculate the type of verification.
     /// </summary>
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     [JsonRequired]
     [JsonPropertyName("algorithm")]
     public HashAlgorithm Algorithm { get; set; }
