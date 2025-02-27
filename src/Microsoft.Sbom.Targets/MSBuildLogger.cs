@@ -29,6 +29,12 @@ public class MSBuildLogger : ILogger
     public void Write(LogEvent logEvent)
     {
         var logLevel = logEvent.Level;
+        if (logLevel is LogEventLevel.Warning && logEvent.Properties["SourceContext"].ToString().StartsWith("Microsoft.ComponentDetection.Detectors", StringComparison.Ordinal))
+        {
+            // Component Detection fires a lot of warnings, translate these to Information
+            logLevel = LogEventLevel.Information;
+        }
+
         switch (logLevel)
         {
             case LogEventLevel.Debug:
