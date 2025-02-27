@@ -110,7 +110,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<ExternalDocumentReferenceWriter>()
             .AddTransient<SbomComponentsWalker>()
             .AddTransient<FileListEnumerator>()
-            .AddTransient<ISbomReaderForExternalDocumentReference, SPDXSBOMReaderForExternalDocumentReference_>()
+            .AddTransient<ISbomReaderForExternalDocumentReference, SPDXSbomReaderForExternalDocumentReference>()
             .AddTransient<SbomMetadata>()
             .AddTransient<ILicenseInformationService, LicenseInformationService>()
             .AddSingleton<IPackageDetailsFactory, PackageDetailsFactory>()
