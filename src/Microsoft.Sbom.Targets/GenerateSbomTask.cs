@@ -58,7 +58,7 @@ public partial class GenerateSbom : Task, ICancelableTask
                .ConfigureServices((host, services) =>
                services
                .AddSingleton<IConfiguration, Configuration>()
-               .AddSbomTool(msbuildLogger)
+               .AddSbomTool()
                /* Manually adding some dependencies since `AddSbomTool()` does not add them when
                 * running the MSBuild Task from another project.
                 */

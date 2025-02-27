@@ -55,29 +55,20 @@ public static class ServiceCollectionExtensions
                 inputConfiguration.ToConfiguration();
                 return inputConfiguration;
             })
-            .AddSbomTool();
+            .AddSbomTool(logLevel);
         return services;
     }
 
-    public static IServiceCollection AddSbomTool(this IServiceCollection services, ILogger? logger = null)
+    public static IServiceCollection AddSbomTool(this IServiceCollection services, LogEventLevel logLevel = LogEventLevel.Information)
     {
         services
             .AddSingleton<IConfiguration, Configuration>()
-            .AddSingleton(x =>
+            .AddTransient(_ => FileSystemUtilsProvider.CreateInstance(CreateLogger(logLevel)))
+            .AddTransient(x =>
             {
-                if (logger != null)
-                {
-                    return logger;
-                }
-                else
-                {
-                    var level = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? LogEventLevel.Information;
-                    var defaultLogger = CreateDefaultLogger(level);
-                    Log.Logger = defaultLogger;
-                    return defaultLogger;
-                }
+                logLevel = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? logLevel;
+                return Log.Logger = CreateLogger(logLevel);
             })
-            .AddTransient(x => FileSystemUtilsProvider.CreateInstance(x.GetRequiredService<ILogger>()))
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
             .AddTransient<IWorkflow<SbomRedactionWorkflow>, SbomRedactionWorkflow>()
@@ -210,7 +201,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static ILogger CreateDefaultLogger(LogEventLevel logLevel = LogEventLevel.Information)
+    private static ILogger CreateLogger(LogEventLevel logLevel)
     {
         return new RemapComponentDetectionErrorsToWarningsLogger(
             new LoggerConfiguration()
