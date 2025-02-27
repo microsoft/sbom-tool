@@ -39,7 +39,7 @@ public class SbomConfigProvider : ISbomConfigProvider
                 if (configHandler.TryGetManifestConfig(out var sbomConfig))
                 {
                     configsDictionary.AddIfKeyNotPresentAndValueNotNull(sbomConfig.ManifestInfo, sbomConfig);
-                    recorder.RecordSbomormat(sbomConfig.ManifestInfo, sbomConfig.ManifestJsonFilePath);
+                    recorder.RecordSbomFormat(sbomConfig.ManifestInfo, sbomConfig.ManifestJsonFilePath);
                 }
             }
 

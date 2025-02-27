@@ -134,7 +134,7 @@ public class InterfaceConcretionTests
         public void RecordAPIException(Exception exception) => throw new NotImplementedException();
         public void RecordException(Exception exception) => throw new NotImplementedException();
         public void RecordMetadataException(Exception exception) => throw new NotImplementedException();
-        public void RecordSbomormat(ManifestInfo manifestInfo, string sbomFilePath) => throw new NotImplementedException();
+        public void RecordSbomFormat(ManifestInfo manifestInfo, string sbomFilePath) => throw new NotImplementedException();
         public void RecordSwitch(string switchName, object value) => throw new NotImplementedException();
         public void RecordTotalErrors(IList<FileValidationResult> errors) => throw new NotImplementedException();
         public void RecordTotalNumberOfPackages(int count) => throw new NotImplementedException();

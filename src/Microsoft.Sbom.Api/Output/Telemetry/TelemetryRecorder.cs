@@ -147,7 +147,7 @@ public class TelemetryRecorder : IRecorder
     }
 
     /// <inheritdoc/>
-    public void RecordSbomormat(ManifestInfo manifestInfo, string sbomFilePath)
+    public void RecordSbomFormat(ManifestInfo manifestInfo, string sbomFilePath)
     {
         if (manifestInfo is null)
         {
