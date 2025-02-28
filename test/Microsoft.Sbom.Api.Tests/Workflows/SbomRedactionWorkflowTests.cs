@@ -163,6 +163,12 @@ public class SbomRedactionWorkflowTests
     {
         configurationMock.SetupGet(c => c.SbomDir).Returns(new ConfigurationSetting<string> { Value = SbomDirStub });
         configurationMock.SetupGet(c => c.OutputPath).Returns(new ConfigurationSetting<string> { Value = OutDirStub });
+        var validManifestInfo = new ConfigurationSetting<IList<ManifestInfo>>
+        {
+            Value = new List<ManifestInfo> { new ManifestInfo { Name = "SPDX", Version = "2.2" } }
+        };
+
+        configurationMock.SetupGet(c => c.ManifestInfo).Returns(validManifestInfo);
         fileSystemUtilsMock.Setup(m => m.DirectoryExists(SbomDirStub)).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(m => m.DirectoryExists(OutDirStub)).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(m => m.GetFullPath(SbomDirStub)).Returns(SbomDirStub).Verifiable();
