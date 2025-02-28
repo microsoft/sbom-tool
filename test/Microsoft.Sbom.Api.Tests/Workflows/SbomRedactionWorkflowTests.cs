@@ -4,6 +4,7 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -137,6 +139,24 @@ public class SbomRedactionWorkflowTests
         Assert.IsTrue(result);
         var redactedResult = Encoding.ASCII.GetString(outStream.ToArray());
         Assert.IsTrue(redactedResult.Contains(@"""name"":""redacted"""));
+    }
+
+    [DataRow("SPDX", "1.0")]
+    [DataRow("SPDX", "3.0")]
+    [DataRow("asdfi", "2.2")]
+    [TestMethod]
+    public async Task SbomRedactionWorkflow_FailsForInvalidManifestVersions(string name, string spdxVersion)
+    {
+        SetUpDirStructure();
+        fileSystemUtilsMock.Setup(m => m.GetFilesInDirectory(SbomDirStub, true)).Returns(new string[] { SbomPathStub }).Verifiable();
+        var invalidManifestInfo = new ConfigurationSetting<IList<ManifestInfo>>
+        {
+            Value = new List<ManifestInfo> { new ManifestInfo { Name = name, Version = spdxVersion } }
+        };
+
+        configurationMock.SetupGet(c => c.ManifestInfo).Returns(invalidManifestInfo);
+
+        await Assert.ThrowsExceptionAsync<InvalidOperationException>(testSubject.RunAsync);
     }
 
     private void SetUpDirStructure()
