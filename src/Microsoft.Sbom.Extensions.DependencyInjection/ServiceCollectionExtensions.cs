@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
-using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities.Output;
@@ -46,38 +45,11 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddSbomConfiguration(this IServiceCollection services, InputConfiguration inputConfiguration, LogEventLevel logLevel = LogEventLevel.Information)
-    {
-        ArgumentNullException.ThrowIfNull(inputConfiguration);
-        services
-            .AddSingleton(_ =>
-            {
-                inputConfiguration.ToConfiguration();
-                return inputConfiguration;
-            })
-            .AddSbomTool();
-        return services;
-    }
-
-    public static IServiceCollection AddSbomTool(this IServiceCollection services, ILogger? logger = null)
+    public static IServiceCollection AddSbomTool(this IServiceCollection services)
     {
         services
             .AddSingleton<IConfiguration, Configuration>()
-            .AddSingleton(x =>
-            {
-                if (logger != null)
-                {
-                    return logger;
-                }
-                else
-                {
-                    var level = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? LogEventLevel.Information;
-                    var defaultLogger = CreateDefaultLogger(level);
-                    Log.Logger = defaultLogger;
-                    return defaultLogger;
-                }
-            })
-            .AddTransient(x => FileSystemUtilsProvider.CreateInstance(x.GetRequiredService<ILogger>()))
+            .AddTransient(x => FileSystemUtilsProvider.CreateInstance(CreateDefaultLogger()))
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
             .AddTransient<IWorkflow<SbomRedactionWorkflow>, SbomRedactionWorkflow>()
@@ -210,7 +182,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static ILogger CreateDefaultLogger(LogEventLevel logLevel = LogEventLevel.Information)
+    public static ILogger CreateDefaultLogger(LogEventLevel logLevel = LogEventLevel.Information)
     {
         return new RemapComponentDetectionErrorsToWarningsLogger(
             new LoggerConfiguration()
