@@ -4,13 +4,16 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.FormatValidator;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
+using ApiConstants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows;
 
@@ -52,6 +55,8 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
             IValidatedSBOM validatedSbom = null;
             try
             {
+                CheckIfSpdxVersionSupportsRedaction(configuration.ManifestInfo.Value);
+
                 log.Information($"Validating SBOM {sbomPath}");
                 validatedSbom = validatedSBOMFactory.CreateValidatedSBOM(sbomPath);
                 var validationDetails = await validatedSbom.GetValidationResults();
@@ -139,5 +144,18 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
         }
 
         return outputDir;
+    }
+
+    private void CheckIfSpdxVersionSupportsRedaction(IList<ManifestInfo> manifestInfos)
+    {
+        var unsupportedManifests = manifestInfos
+        .Where(manifest => !ApiConstants.SupportedSpdxManifestsForRedaction.Contains(manifest))
+        .ToList();
+
+        if (unsupportedManifests.Any())
+        {
+            throw new InvalidOperationException($"The following manifests are not supported for redaction: {string.Join(", ", unsupportedManifests)}. " +
+                $"Supported manifests include: {string.Join(", ", ApiConstants.SupportedSpdxManifestsForRedaction)}");
+        }
     }
 }

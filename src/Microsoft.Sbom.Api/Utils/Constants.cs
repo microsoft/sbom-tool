@@ -47,6 +47,11 @@ public static class Constants
         SPDX30ManifestInfo
     };
 
+    public static Collection<ManifestInfo> SupportedSpdxManifestsForRedaction = new()
+    {
+        SPDX22ManifestInfo
+    };
+
     public static List<Entities.ErrorType> SkipFailureReportingForErrors = new()
     {
         Entities.ErrorType.ManifestFolder,
