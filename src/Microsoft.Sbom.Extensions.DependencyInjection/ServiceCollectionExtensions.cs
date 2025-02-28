@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
-using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities.Output;
@@ -46,29 +45,11 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddSbomConfiguration(this IServiceCollection services, InputConfiguration inputConfiguration, LogEventLevel logLevel = LogEventLevel.Information)
-    {
-        ArgumentNullException.ThrowIfNull(inputConfiguration);
-        services
-            .AddSingleton(_ =>
-            {
-                inputConfiguration.ToConfiguration();
-                return inputConfiguration;
-            })
-            .AddSbomTool(logLevel);
-        return services;
-    }
-
-    public static IServiceCollection AddSbomTool(this IServiceCollection services, LogEventLevel logLevel = LogEventLevel.Information)
+    public static IServiceCollection AddSbomTool(this IServiceCollection services)
     {
         services
             .AddSingleton<IConfiguration, Configuration>()
-            .AddTransient(_ => FileSystemUtilsProvider.CreateInstance(CreateLogger(logLevel)))
-            .AddTransient(x =>
-            {
-                logLevel = x.GetService<InputConfiguration>()?.Verbosity?.Value ?? logLevel;
-                return Log.Logger = CreateLogger(logLevel);
-            })
+            .AddTransient(x => FileSystemUtilsProvider.CreateInstance(CreateDefaultLogger()))
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
             .AddTransient<IWorkflow<SbomRedactionWorkflow>, SbomRedactionWorkflow>()
@@ -125,7 +106,8 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IFileTypeUtils, FileTypeUtils>()
             .AddSingleton<ISignValidationProvider, SignValidationProvider>()
             .AddSingleton<IManifestParserProvider, ManifestParserProvider>()
-            .AddSingleton(x => {
+            .AddSingleton(x =>
+            {
                 var comparer = x.GetRequiredService<IOSUtils>().GetFileSystemStringComparer();
                 return new FileHashesDictionary(new ConcurrentDictionary<string, FileHashes>(comparer));
             })
@@ -200,7 +182,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static ILogger CreateLogger(LogEventLevel logLevel)
+    public static ILogger CreateDefaultLogger(LogEventLevel logLevel = LogEventLevel.Information)
     {
         return new RemapComponentDetectionErrorsToWarningsLogger(
             new LoggerConfiguration()

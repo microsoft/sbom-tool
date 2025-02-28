@@ -76,7 +76,13 @@ internal class Program
                             inputConfiguration.ToConfiguration();
                             return inputConfiguration;
                         })
-
+                        .AddSingleton(x =>
+                        {
+                            var level = x.GetService<Common.Config.InputConfiguration>()?.Verbosity?.Value ?? Serilog.Events.LogEventLevel.Information;
+                            var defaultLogger = Extensions.DependencyInjection.ServiceCollectionExtensions.CreateDefaultLogger(level);
+                            Serilog.Log.Logger = defaultLogger;
+                            return defaultLogger;
+                        })
                         .AddSbomTool();
                 })
                 .RunConsoleAsync(x => x.SuppressStatusMessages = true);
