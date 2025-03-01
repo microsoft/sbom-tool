@@ -79,7 +79,7 @@ internal class Program
                         .AddSingleton(x =>
                         {
                             var level = x.GetService<Common.Config.InputConfiguration>()?.Verbosity?.Value ?? Serilog.Events.LogEventLevel.Information;
-                            var defaultLogger = Extensions.DependencyInjection.ServiceCollectionExtensions.CreateDefaultLogger(level);
+                            var defaultLogger = Extensions.DependencyInjection.ServiceCollectionExtensions.CreateLogger(level);
                             Serilog.Log.Logger = defaultLogger;
                             return defaultLogger;
                         })

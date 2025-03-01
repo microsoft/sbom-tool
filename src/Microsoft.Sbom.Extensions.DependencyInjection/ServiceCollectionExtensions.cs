@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
+using Microsoft.Sbom.Api.Config.Extensions;
 using Microsoft.Sbom.Api.Converters;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities.Output;
@@ -45,11 +46,38 @@ namespace Microsoft.Sbom.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddSbomTool(this IServiceCollection services)
+    /// <summary>
+    /// Initializes the services required to use the SBOM Tool using a default <see cref="InputConfiguration"/> and <see cref="LogEventLevel"/>.
+    /// </summary>
+    /// <param name="services">The services to which registrations are added.</param>
+    /// <param name="inputConfiguration">The default configuration to use, which will be registered as a singleton and will overwrite the currently-set <see cref="Configuration"/>.</param>
+    /// <param name="logLevel">The log verbosity level with which to use for the minimal logger used for internal services. These services require an <see cref="ILogger"/> but may themselves be used to <strong>initialize</strong> an <see cref="ILogger"/>, so need separate configuration.</param>
+    /// <remarks>The <see cref="InputConfiguration"/> is registered as a singleton in the container, and the <paramref name="logLevel"/> is used to create a default logger for internal utility classes, irrespective of any other <see cref="ILogger"/> registered in the container. This method does not register an instance of <see cref="ILogger"/>, however one is required for the system to function. Callers need to provide their own implementation.</remarks>
+    /// <returns></returns>
+    public static IServiceCollection AddSbomConfiguration(this IServiceCollection services, InputConfiguration inputConfiguration, LogEventLevel logLevel = LogEventLevel.Information)
+    {
+        ArgumentNullException.ThrowIfNull(inputConfiguration);
+        services
+            .AddSingleton(_ =>
+            {
+                inputConfiguration.ToConfiguration();
+                return inputConfiguration;
+            })
+            .AddSbomTool(logLevel);
+        return services;
+    }
+
+    /// <summary>
+    /// Initializes the services required to use the SBOM Tool using a default <see cref="LogEventLevel"/>.
+    /// </summary>
+    /// <param name="services">The services to which registrations are added.</param>
+    /// <param name="logLevel">The log verbosity level with which to use for the minimal logger used for internal services. These services require an <see cref="ILogger"/> but may themselves be used to <strong>initialize</strong> an <see cref="ILogger"/>, so need separate configuration.</param>
+    /// <remarks>This method does not register an instance of <see cref="ILogger"/>, however one is required for the system to function. Callers need to provide their own implementation.</remarks>
+    public static IServiceCollection AddSbomTool(this IServiceCollection services, LogEventLevel logLevel = LogEventLevel.Information)
     {
         services
             .AddSingleton<IConfiguration, Configuration>()
-            .AddTransient(x => FileSystemUtilsProvider.CreateInstance(CreateDefaultLogger()))
+            .AddTransient(x => FileSystemUtilsProvider.CreateInstance(CreateLogger(logLevel)))
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
             .AddTransient<IWorkflow<SbomRedactionWorkflow>, SbomRedactionWorkflow>()
@@ -162,6 +190,11 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    /// This method integrates Serilog into the <see cref="Microsoft.Extensions.Logging"/> infrastructure.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
     public static IServiceCollection ConfigureLoggingProviders(this IServiceCollection services)
     {
         var providers = new LoggerProviderCollection();
@@ -182,7 +215,13 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static ILogger CreateDefaultLogger(LogEventLevel logLevel = LogEventLevel.Information)
+    /// <summary>
+    /// Creates a logger with the specified <paramref name="logLevel"/> that writes to a file and optionally to stderr.
+    /// This logger converts all errors from ComponentDetection assemblies to warnings, and does not write tabular output to stdout/stderr, only the configured file.
+    /// </summary>
+    /// <param name="logLevel"></param>
+    /// <returns></returns>
+    public static ILogger CreateLogger(LogEventLevel logLevel = LogEventLevel.Information)
     {
         return new RemapComponentDetectionErrorsToWarningsLogger(
             new LoggerConfiguration()
