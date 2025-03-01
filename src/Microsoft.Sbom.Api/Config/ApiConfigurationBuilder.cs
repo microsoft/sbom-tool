@@ -37,7 +37,7 @@ public static class ApiConfigurationBuilder
         string manifestDirPath,
         IEnumerable<SbomFile> files,
         IEnumerable<SbomPackage> packages,
-        SBOMMetadata metadata,
+        SbomMetadata metadata,
         IList<SbomSpecification> specifications = null,
         RuntimeConfiguration runtimeConfiguration = null,
         string externalDocumentReferenceListFile = null,
@@ -195,7 +195,7 @@ public static class ApiConfigurationBuilder
         return new ConfigurationSetting<T>
         {
             Value = value,
-            Source = SettingSource.SBOMApi
+            Source = SettingSource.SbomApi
         };
     }
 

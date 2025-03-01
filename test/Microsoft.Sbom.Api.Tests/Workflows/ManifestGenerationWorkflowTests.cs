@@ -64,7 +64,7 @@ public class ManifestGenerationWorkflowTests
     private readonly Mock<ComponentDetectorCachedExecutor> mockDetector = new Mock<ComponentDetectorCachedExecutor>(new Mock<ILogger>().Object, new Mock<IComponentDetector>().Object);
     private readonly Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>> relationshipArrayGenerator = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>();
     private readonly Mock<ComponentToPackageInfoConverter> packageInfoConverterMock = new Mock<ComponentToPackageInfoConverter>();
-    private readonly Mock<ISBOMReaderForExternalDocumentReference> sBOMReaderForExternalDocumentReferenceMock = new Mock<ISBOMReaderForExternalDocumentReference>();
+    private readonly Mock<ISbomReaderForExternalDocumentReference> sBOMReaderForExternalDocumentReferenceMock = new Mock<ISbomReaderForExternalDocumentReference>();
     private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new Mock<IFileSystemUtilsExtension>();
     private readonly Mock<ILicenseInformationFetcher> licenseInformationFetcherMock = new Mock<ILicenseInformationFetcher>();
     private readonly Mock<IPackageDetailsFactory> mockPackageDetailsFactory = new Mock<IPackageDetailsFactory>();
@@ -127,8 +127,8 @@ public class ManifestGenerationWorkflowTests
         {
             { MetadataKey.Build_BuildId, 12 },
             { MetadataKey.Build_DefinitionName, "test" },
-            { MetadataKey.SBOMToolName, "testMicrosoft" },
-            { MetadataKey.SBOMToolVersion, "Tool.Version" },
+            { MetadataKey.SbomToolName, "testMicrosoft" },
+            { MetadataKey.SbomToolVersion, "Tool.Version" },
             { MetadataKey.PackageVersion, "Package.Version" },
             { MetadataKey.PackageSupplier, "testPackageSupplier" }
         });
@@ -265,7 +265,7 @@ public class ManifestGenerationWorkflowTests
         externalDocumentReferenceChannel.Writer.Complete();
         externalDocumentReferenceErrorsChannel.Writer.Complete();
         sBOMReaderForExternalDocumentReferenceMock
-            .Setup(p => p.ParseSBOMFile(It.IsAny<ChannelReader<string>>()))
+            .Setup(p => p.ParseSbomFile(It.IsAny<ChannelReader<string>>()))
             .Returns((externalDocumentReferenceChannel, externalDocumentReferenceErrorsChannel));
 
         var directoryTraversingProvider = new DirectoryTraversingFileToJsonProvider(
@@ -284,7 +284,7 @@ public class ManifestGenerationWorkflowTests
             new FileInfoWriter(
                 manifestGeneratorProvider,
                 mockLogger.Object),
-            new InternalSBOMFileInfoDeduplicator(),
+            new InternalSbomFileInfoDeduplicator(),
             new DirectoryWalker(fileSystemMock.Object, mockLogger.Object, configurationMock.Object));
 
         var fileListBasedProvider = new FileListBasedFileToJsonProvider(
@@ -303,7 +303,7 @@ public class ManifestGenerationWorkflowTests
             new FileInfoWriter(
                 manifestGeneratorProvider,
                 mockLogger.Object),
-            new InternalSBOMFileInfoDeduplicator(),
+            new InternalSbomFileInfoDeduplicator(),
             new FileListEnumerator(fileSystemMock.Object, mockLogger.Object));
 
         var cgPackagesProvider = new CGScannedPackagesProvider(

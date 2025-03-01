@@ -10,7 +10,7 @@ namespace Microsoft.Sbom.Contracts;
 /// <summary>
 /// Provides an interface to validate a SBOM.
 /// </summary>
-public interface ISBOMValidator
+public interface ISbomValidator
 {
     /// <summary>
     /// Validates all the files in a given SBOM with the files present in the build drop path
@@ -30,7 +30,7 @@ public interface ISBOMValidator
     /// <param name="runtimeConfiguration">The runtime configuration to use for validation.</param>
     /// <param name="algorithmName">The algorithm to use for hashing.</param>
     /// </summary>
-    Task<SBOMValidationResult> ValidateSbomAsync(
+    Task<SbomValidationResult> ValidateSbomAsync(
         string buildDropPath,
         string outputPath,
         IList<SbomSpecification> specifications,

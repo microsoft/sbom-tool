@@ -663,8 +663,8 @@ public class Generator : IManifestGenerator
 
     private (string sbomToolName, string sbomToolVersion, string packageName, string packageVersion, string documentName, CreationInfo creationInfo) GetCommonMetadata(IInternalMetadataProvider internalMetadataProvider)
     {
-        var sbomToolName = (string)internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolName);
-        var sbomToolVersion = (string)internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
+        var sbomToolName = (string)internalMetadataProvider.GetMetadata(MetadataKey.SbomToolName);
+        var sbomToolVersion = (string)internalMetadataProvider.GetMetadata(MetadataKey.SbomToolVersion);
         var packageName = internalMetadataProvider.GetPackageName();
         var packageVersion = internalMetadataProvider.GetPackageVersion();
 

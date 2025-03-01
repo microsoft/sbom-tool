@@ -11,7 +11,7 @@ namespace Microsoft.Sbom.Contracts;
 /// <summary>
 /// Provides an API interface to the SBOM generator workflow.
 /// </summary>
-public interface ISBOMGenerator
+public interface ISbomGenerator
 {
     /// <summary>
     /// Generate a SBOM in the rootPath using the provided file and package lists.
@@ -19,7 +19,7 @@ public interface ISBOMGenerator
     /// <param name="rootPath">The root path of the drop where the generated SBOM will be placed.</param>
     /// <param name="files">The list of <see cref="SbomFile">files</see> to include in this SBOM.</param>
     /// <param name="packages">The list of <see cref="SbomPackage">packages</see> to include in this SBOM.</param>
-    /// <param name="metadata">Provide any available metadata about your build environment using the SBOMMetadata object.</param>
+    /// <param name="metadata">Provide any available metadata about your build environment using the SbomMetadata object.</param>
     /// <param name="specifications">Provide a list of <see cref="SbomSpecification"/> that you want your SBOM to be generated
     /// for. If this is not provided, we will generate SBOMs for all the available formats.</param>
     /// <param name="runtimeConfiguration">Configuration to tweak the SBOM generator workflow.</param>
@@ -30,7 +30,7 @@ public interface ISBOMGenerator
         string rootPath,
         IEnumerable<SbomFile> files,
         IEnumerable<SbomPackage> packages,
-        SBOMMetadata metadata,
+        SbomMetadata metadata,
         IList<SbomSpecification> specifications = null,
         RuntimeConfiguration runtimeConfiguration = null,
         string manifestDirPath = null,
@@ -41,7 +41,7 @@ public interface ISBOMGenerator
     /// </summary>
     /// <param name="rootPath">The root path of the drop where the generated SBOM will be placed.</param>
     /// <param name="componentPath">The path where all the build components for this drop can be found.</param>
-    /// <param name="metadata">Provide any available metadata about your build environment using the SBOMMetadata object.</param>
+    /// <param name="metadata">Provide any available metadata about your build environment using the SbomMetadata object.</param>
     /// <param name="specifications">Provide a list of <see cref="SbomSpecification"/> that you want your SBOM to be generated
     /// for. If this is not provided, we will generate SBOMs for all the available formats.</param>
     /// <param name="runtimeConfiguration">Configuration to tweak the SBOM generator workflow.</param>
@@ -51,7 +51,7 @@ public interface ISBOMGenerator
     Task<SbomGenerationResult> GenerateSbomAsync(
         string rootPath,
         string componentPath,
-        SBOMMetadata metadata,
+        SbomMetadata metadata,
         IList<SbomSpecification> specifications = null,
         RuntimeConfiguration runtimeConfiguration = null,
         string manifestDirPath = null,
@@ -70,5 +70,5 @@ public interface ISBOMGenerator
     /// Gets a list of <see cref="SbomSpecification"/> this SBOM generator supports.
     /// </summary>
     /// <returns>A list of <see cref="SbomSpecification"/>.</returns>
-    IEnumerable<SbomSpecification> GetSupportedSBOMSpecifications();
+    IEnumerable<SbomSpecification> GetSupportedSbomSpecifications();
 }

@@ -27,7 +27,7 @@ public class ConfigSanitizer
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IAssemblyConfig assemblyConfig;
 
-    internal static string SBOMToolVersion => VersionValue.Value;
+    internal static string SbomToolVersion => VersionValue.Value;
 
     private static readonly Lazy<string> VersionValue = new Lazy<string>(() => typeof(SbomToolCmdRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty);
 
@@ -208,15 +208,15 @@ public class ConfigSanitizer
     private ConfigurationSetting<string> GetNamespaceBaseUri(IConfiguration configuration, ILogger logger)
     {
         // If assembly name is not defined but a namespace was provided, then return the current value.
-        if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri) && !string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
+        if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSbomNamespaceBaseUri) && !string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
         {
             return configuration.NamespaceUriBase;
         }
 
         // If assembly name is not defined and namespace was not provided then return the default namespace as per spdx spec https://spdx.github.io/spdx-spec/v2.2.2/document-creation-information/#653-examples.
-        if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri) && string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
+        if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSbomNamespaceBaseUri) && string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
         {
-            var defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SBOMToolVersion}-{Guid.NewGuid()}";
+            var defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SbomToolVersion}-{Guid.NewGuid()}";
 
             logger.Information($"No namespace URI base provided, using unique generated default value {defaultNamespaceUriBase}");
 
@@ -231,7 +231,7 @@ public class ConfigSanitizer
         // show a warning on the console.
         if (!string.IsNullOrWhiteSpace(configuration.NamespaceUriBase?.Value))
         {
-            if (!string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri))
+            if (!string.IsNullOrWhiteSpace(assemblyConfig.DefaultSbomNamespaceBaseUri))
             {
                 logger.Information("Custom namespace URI base provided, using provided value instead of default");
             }
@@ -242,7 +242,7 @@ public class ConfigSanitizer
         return new ConfigurationSetting<string>
         {
             Source = SettingSource.Default,
-            Value = assemblyConfig.DefaultSBOMNamespaceBaseUri
+            Value = assemblyConfig.DefaultSbomNamespaceBaseUri
         };
     }
 

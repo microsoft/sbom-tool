@@ -214,7 +214,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns("https://uri");
+        mockAssemblyConfig.SetupGet(a => a.DefaultSbomNamespaceBaseUri).Returns("https://uri");
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
@@ -238,7 +238,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         Assert.AreEqual(Path.GetFullPath(config.ManifestDirPath.Value), Path.GetFullPath(expectedPath));
 
         fileSystemUtilsMock.VerifyAll();
-        mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
+        mockAssemblyConfig.VerifyGet(a => a.DefaultSbomNamespaceBaseUri);
     }
 
     [TestMethod]
