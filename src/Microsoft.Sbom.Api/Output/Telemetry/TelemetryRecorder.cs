@@ -86,7 +86,7 @@ public class TelemetryRecorder : IRecorder
                 .CreateLogger();
         }
 
-        // Convert thrown Exception to list of exceptions for the SBOMTelemetry object.
+        // Convert thrown Exception to list of exceptions for the SbomTelemetry object.
         var exceptionList = new List<Exception>
         {
             exception
@@ -95,7 +95,7 @@ public class TelemetryRecorder : IRecorder
         try
         {
             // Create the telemetry object.
-            var telemetry = new SBOMTelemetry
+            var telemetry = new SbomTelemetry
             {
                 Result = Result.Failure,
                 Timings = timingRecorders.Select(t => t.ToTiming()).ToList(),
@@ -147,7 +147,7 @@ public class TelemetryRecorder : IRecorder
     }
 
     /// <inheritdoc/>
-    public void RecordSBOMFormat(ManifestInfo manifestInfo, string sbomFilePath)
+    public void RecordSbomFormat(ManifestInfo manifestInfo, string sbomFilePath)
     {
         if (manifestInfo is null)
         {
@@ -167,7 +167,7 @@ public class TelemetryRecorder : IRecorder
     /// </summary>
     /// <param name="telemetry">The telemetry object to be written to the file.</param>
     /// /// <param name="telemetryFilePath">The file path we want to write the telemetry to.</param>
-    private async Task RecordToFile(SBOMTelemetry telemetry, string telemetryFilePath)
+    private async Task RecordToFile(SbomTelemetry telemetry, string telemetryFilePath)
     {
         // Write to file.
         if (!string.IsNullOrWhiteSpace(telemetryFilePath))
@@ -296,7 +296,7 @@ public class TelemetryRecorder : IRecorder
             // Calculate SBOM file sizes.
             var sbomFormatsUsed = sbomFormats
                 .Where(f => File.Exists(f.Value))
-                .Select(f => new SBOMFile
+                .Select(f => new SbomFile
                 {
                     SbomFilePath = f.Value,
                     SbomFormatName = f.Key,
@@ -306,7 +306,7 @@ public class TelemetryRecorder : IRecorder
                 .ToList();
 
             // Create the telemetry object.
-            var telemetry = new SBOMTelemetry
+            var telemetry = new SbomTelemetry
             {
                 Result = this.result,
                 Errors = new ErrorContainer<FileValidationResult>
@@ -316,7 +316,7 @@ public class TelemetryRecorder : IRecorder
                 },
                 Timings = timingRecorders.Select(t => t.ToTiming()).ToList(),
                 Parameters = Configuration,
-                SBOMFormatsUsed = sbomFormatsUsed,
+                SbomFormatsUsed = sbomFormatsUsed,
                 Switches = this.switches,
                 Exceptions = this.exceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),
                 APIExceptions = this.apiExceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),

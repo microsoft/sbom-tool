@@ -200,7 +200,7 @@ public class GeneratorTests
         };
 
         mockConfigHandler.Setup(c => c.TryGetManifestConfig(out sbomConfig)).Returns(true);
-        recorderMock.Setup(r => r.RecordSBOMFormat(Constants.SPDX30ManifestInfo, It.IsAny<string>()));
+        recorderMock.Setup(r => r.RecordSbomFormat(Constants.SPDX30ManifestInfo, It.IsAny<string>()));
         mockLogger.Setup(l => l.Debug(It.IsAny<string>()));
 
         var config = new Configuration
@@ -212,7 +212,7 @@ public class GeneratorTests
             PackageSupplier = new ConfigurationSetting<string>("the-package-supplier"),
         };
 
-        var sbomMetadata = new SBOMMetadata
+        var sbomMetadata = new SbomMetadata
         {
             PackageName = "sbom-package-name",
             PackageVersion = "sbom-package-version",
@@ -221,7 +221,7 @@ public class GeneratorTests
 
         var localMetadataProvider = new LocalMetadataProvider(config);
 
-        var sbomApiMetadataProvider = new SBOMApiMetadataProvider(sbomMetadata, config);
+        var sbomApiMetadataProvider = new SbomApiMetadataProvider(sbomMetadata, config);
         var metadataProviders = new IMetadataProvider[] { localMetadataProvider, sbomApiMetadataProvider };
         IInternalMetadataProvider sbomConfigs = CreateSbomConfigs(metadataProviders);
 

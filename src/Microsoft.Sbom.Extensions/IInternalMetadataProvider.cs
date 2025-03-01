@@ -46,5 +46,5 @@ public interface IInternalMetadataProvider
     /// Gets the namespace URI for the SBOM document that is unique within this build environment.
     /// </summary>
     /// <returns></returns>
-    string GetSBOMNamespaceUri();
+    string GetSbomNamespaceUri();
 }

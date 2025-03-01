@@ -178,7 +178,7 @@ public class InternalMetadataProviderIdentityExtensionsTests
             .Returns(true);
         mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.PackageName, out packageName))
             .Returns(true);
-        mdProviderMock.Setup(m => m.GetSBOMNamespaceUri())
+        mdProviderMock.Setup(m => m.GetSbomNamespaceUri())
         .Returns(namespaceUri.ToString);
 
         var actualSwidPurl = mdProviderMock.Object.GetSwidTagId();

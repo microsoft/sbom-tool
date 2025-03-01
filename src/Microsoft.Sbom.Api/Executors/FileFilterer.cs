@@ -67,7 +67,7 @@ public class FileFilterer
             if (file.FileTypes != null && file.FileTypes.Contains(Contracts.Enums.FileType.SPDX))
             {
                 // If the file is in the buildDropPath => validate it
-                // If it's outside, throw referencedSBOMFile error.
+                // If it's outside, throw ReferencedSbomFile error.
                 if (!fullPath.StartsWith(configuration.BuildDropPath.Value, StringComparison.InvariantCultureIgnoreCase))
                 {
                     await errors.Writer.WriteAsync(new FileValidationResult

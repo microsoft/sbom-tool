@@ -100,7 +100,7 @@ public class ManifestInfo : IEquatable<ManifestInfo>
     /// <param name="manifestInfo"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static SbomSpecification ToSBOMSpecification(ManifestInfo manifestInfo)
+    public static SbomSpecification ToSbomSpecification(ManifestInfo manifestInfo)
     {
         if (manifestInfo is null)
         {
