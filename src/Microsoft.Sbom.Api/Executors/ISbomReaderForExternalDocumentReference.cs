@@ -10,7 +10,7 @@ namespace Microsoft.Sbom.Api.Executors;
 /// <summary>
 /// Interface to read read SBOM file. Implement this class for different formats of SBOM file.
 /// </summary>
-public interface ISBOMReaderForExternalDocumentReference
+public interface ISbomReaderForExternalDocumentReference
 {
-    (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSBOMFile(ChannelReader<string> sbomFileLocation);
+    (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSbomFile(ChannelReader<string> sbomFileLocation);
 }

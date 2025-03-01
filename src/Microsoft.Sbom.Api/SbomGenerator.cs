@@ -24,7 +24,7 @@ namespace Microsoft.Sbom.Api;
 /// <summary>
 /// Responsible for an API to generate SBOMs.
 /// </summary>
-public class SbomGenerator : ISBOMGenerator
+public class SbomGenerator : ISbomGenerator
 {
     private readonly IWorkflow<SbomGenerationWorkflow> generationWorkflow;
     private readonly ManifestGeneratorProvider generatorProvider;
@@ -50,7 +50,7 @@ public class SbomGenerator : ISBOMGenerator
     public async Task<SbomGenerationResult> GenerateSbomAsync(
         string rootPath,
         string componentPath,
-        SBOMMetadata metadata,
+        SbomMetadata metadata,
         IList<SbomSpecification> specifications = null,
         RuntimeConfiguration runtimeConfiguration = null,
         string manifestDirPath = null,
@@ -89,7 +89,7 @@ public class SbomGenerator : ISBOMGenerator
         string rootPath,
         IEnumerable<SbomFile> files,
         IEnumerable<SbomPackage> packages,
-        SBOMMetadata metadata,
+        SbomMetadata metadata,
         IList<SbomSpecification> specifications = null,
         RuntimeConfiguration runtimeConfiguration = null,
         string manifestDirPath = null,
@@ -137,9 +137,9 @@ public class SbomGenerator : ISBOMGenerator
             .ToList();
     }
 
-    public IEnumerable<SbomSpecification> GetSupportedSBOMSpecifications() => generatorProvider
+    public IEnumerable<SbomSpecification> GetSupportedSbomSpecifications() => generatorProvider
         .GetSupportedManifestInfos()
-        .Select(ManifestInfo.ToSBOMSpecification)
+        .Select(ManifestInfo.ToSbomSpecification)
         .ToList();
 
     private InputConfiguration ValidateConfig(InputConfiguration config)

@@ -75,8 +75,8 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
     {
         IList<FileValidationResult> validErrors = new List<FileValidationResult>();
         string sbomDir = null;
-        var deleteSBOMDir = false;
-        using (recorder.TraceEvent(Events.SBOMGenerationWorkflow))
+        var deleteSbomDir = false;
+        using (recorder.TraceEvent(Events.SbomGenerationWorkflow))
         {
             try
             {
@@ -137,7 +137,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
 
                 if (e is not ManifestFolderExistsException)
                 {
-                    deleteSBOMDir = true;
+                    deleteSbomDir = true;
                 }
 
                 // TODO: Create EntityError with exception message and record to surface unexpected exceptions to client.
@@ -151,7 +151,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 }
 
                // Delete the generated _manifest folder if generation failed.
-                if (deleteSBOMDir || validErrors.Any())
+                if (deleteSbomDir || validErrors.Any())
                 {
                     DeleteManifestFolder(sbomDir);
                 }

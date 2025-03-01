@@ -28,9 +28,9 @@ public class ExternalDocumentReferenceFileProvider : PathBasedFileToJsonProvider
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
-        InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
+        InternalSbomFileInfoDeduplicator internalSbomFileInfoDeduplicator,
         FileListEnumerator listWalker)
-        : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
+        : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSbomFileInfoDeduplicator)
     {
         this.listWalker = listWalker ?? throw new ArgumentNullException(nameof(listWalker));
     }

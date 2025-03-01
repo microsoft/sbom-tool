@@ -21,7 +21,7 @@ using PowerArgs;
 
 namespace Microsoft.Sbom.Api;
 
-public class SbomValidator : ISBOMValidator
+public class SbomValidator : ISbomValidator
 {
     private readonly IWorkflow<SbomParserBasedValidationWorkflow> sbomParserBasedValidationWorkflow;
     private readonly IRecorder recorder;
@@ -64,7 +64,7 @@ public class SbomValidator : ISBOMValidator
         return isSuccess;
     }
 
-    public async Task<SBOMValidationResult> ValidateSbomAsync(
+    public async Task<SbomValidationResult> ValidateSbomAsync(
         string buildDropPath,
         string outputPath,
         IList<SbomSpecification> specifications,
@@ -107,7 +107,7 @@ public class SbomValidator : ISBOMValidator
         await recorder.FinalizeAndLogTelemetryAsync();
 
         var errors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
-        return new SBOMValidationResult(!errors.Any(), errors);
+        return new SbomValidationResult(!errors.Any(), errors);
     }
 
     private InputConfiguration ValidateConfig(InputConfiguration config)

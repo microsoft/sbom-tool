@@ -6,7 +6,7 @@ namespace Microsoft.Sbom.Contracts;
 /// <summary>
 /// Defines a relationship between SBOM elements.
 /// </summary>
-public class SBOMRelationship
+public class SbomRelationship
 {
     /// <summary>
     /// Defines the relationship between the source and target element.
