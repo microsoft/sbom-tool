@@ -9,7 +9,6 @@ using System.Threading;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers;
 using Microsoft.Sbom.Api.Metadata;
 using Microsoft.Sbom.Api.Providers;
@@ -58,9 +57,7 @@ public partial class GenerateSbom : Task, ICancelableTask
                 NoComponentGovernanceSummary = true
             };
 
-            var taskHost = Host.CreateDefaultBuilder()
-               .ConfigureServices((host, services) =>
-               services
+            using var services = new ServiceCollection()
                .AddSingleton<IConfiguration, Configuration>()
                .AddSingleton(runtimeConfiguration)
                .AddSingleton<Serilog.ILogger>(msbuildLogger)
@@ -85,10 +82,10 @@ public partial class GenerateSbom : Task, ICancelableTask
                .AddSingleton<IManifestInterface, SPDX22.Validator>()
                .AddSingleton<IManifestInterface, SPDX30.Validator>()
                .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>()
-               .AddSingleton<IManifestConfigHandler, SPDX30ManifestConfigHandler>())
-               .Build();
+               .AddSingleton<IManifestConfigHandler, SPDX30ManifestConfigHandler>()
+               .BuildServiceProvider();
 
-            var generator = taskHost.Services.GetRequiredService<ISbomGenerator>();
+            var generator = services.GetRequiredService<ISbomGenerator>();
 
             // Set other configurations. The GenerateSBOMAsync() already sanitizes and checks for
             // a valid namespace URI and generates a random guid for NamespaceUriUniquePart if
