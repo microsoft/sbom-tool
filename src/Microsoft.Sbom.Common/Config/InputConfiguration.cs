@@ -13,7 +13,7 @@ using Serilog.Events;
 namespace Microsoft.Sbom.Common.Config;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.NamingRules", "SA1311:Static readonly fields should begin with upper-case letter", Justification = "Private fields with the same name as public properties.")]
-public class InputConfiguration : IConfiguration2
+public class InputConfiguration : IConfiguration
 {
     /// <inheritdoc cref="IConfiguration.BuildDropPath" />
     [DirectoryExists]
@@ -141,7 +141,7 @@ public class InputConfiguration : IConfiguration2
     [DefaultValue(false)]
     public ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
 
-    /// <inheritdoc cref="IConfiguration2.LicenseInformationTimeoutInSeconds" />
+    /// <inheritdoc cref="IConfiguration.LicenseInformationTimeoutInSeconds" />
     [DefaultValue(Constants.DefaultLicenseFetchTimeoutInSeconds)]
     public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get; set; }
 
