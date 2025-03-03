@@ -49,4 +49,9 @@ public class RuntimeConfiguration
     /// Gets or sets a value indicating whether if set to false, we will not follow symlinks while traversing the build drop folder.
     /// </summary>
     public bool FollowSymlinks { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether if set to true, we will not print a summary of the component governance to stdout.
+    /// </summary>
+    public bool NoComponentGovernanceSummary { get; set; } = false;
 }
