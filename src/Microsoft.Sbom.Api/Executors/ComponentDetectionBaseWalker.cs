@@ -144,22 +144,8 @@ public abstract class ComponentDetectionBaseWalker
                     licenseInformationRetrieved = true;
 
                     List<string> apiResponses;
-                    var licenseInformationFetcher2 = licenseInformationFetcher as ILicenseInformationFetcher2;
-                    var licenseInformationTimeoutInSecondsConfigSetting = GetLicenseInformationTimeoutInSecondsSetting(configuration);
 
-                    if (licenseInformationFetcher2 is null && (bool)!licenseInformationTimeoutInSecondsConfigSetting?.IsDefaultSource)
-                    {
-                        log.Warning("Timeout value is specified, but ILicenseInformationFetcher2 is not implemented for the licenseInformationFetcher");
-                    }
-
-                    if (licenseInformationFetcher2 is null || licenseInformationTimeoutInSecondsConfigSetting is null)
-                    {
-                        apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi);
-                    }
-                    else
-                    {
-                        apiResponses = await licenseInformationFetcher2.FetchLicenseInformationAsync(listOfComponentsForApi, licenseInformationTimeoutInSecondsConfigSetting.Value);
-                    }
+                    apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi, configuration.LicenseInformationTimeoutInSeconds.Value);
 
                     foreach (var response in apiResponses)
                     {
@@ -233,15 +219,4 @@ public abstract class ComponentDetectionBaseWalker
     }
 
     protected abstract IEnumerable<ScannedComponent> FilterScannedComponents(ScanResult result);
-
-    private ConfigurationSetting<int>? GetLicenseInformationTimeoutInSecondsSetting(IConfiguration configuration)
-    {
-        var configuration2 = configuration as IConfiguration2;
-        if (configuration2 is not null)
-        {
-            return configuration2.LicenseInformationTimeoutInSeconds;
-        }
-
-        return null;
-    }
 }

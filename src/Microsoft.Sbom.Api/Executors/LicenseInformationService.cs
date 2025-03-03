@@ -15,7 +15,7 @@ using Serilog;
 
 namespace Microsoft.Sbom.Api.Executors;
 
-public class LicenseInformationService : ILicenseInformationService2
+public class LicenseInformationService : ILicenseInformationService
 {
     private readonly ILogger log;
     private readonly IRecorder recorder;
@@ -28,11 +28,6 @@ public class LicenseInformationService : ILicenseInformationService2
         this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     }
 
-    public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi)
-    {
-        return await FetchLicenseInformationFromAPI(listOfComponentsForApi, Common.Constants.MaxLicenseFetchTimeoutInSeconds);
-    }
-
     public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi, int timeoutInSeconds)
     {
         var batchSize = 500;
@@ -42,10 +37,7 @@ public class LicenseInformationService : ILicenseInformationService2
         var uri = new Uri("https://api.clearlydefined.io/definitions?expand=-files");
 
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        if (timeoutInSeconds > 0)
-        {
-            httpClient.Timeout = TimeSpan.FromSeconds(timeoutInSeconds);
-        } // The else cases should be sanitized in Config Sanitizer, and even if not, it'll just use httpClient's default timeout
+        httpClient.Timeout = TimeSpan.FromSeconds(timeoutInSeconds);
 
         for (var i = 0; i < listOfComponentsForApi.Count; i += batchSize)
         {
