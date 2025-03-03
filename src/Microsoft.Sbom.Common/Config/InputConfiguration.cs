@@ -141,7 +141,7 @@ public class InputConfiguration : IConfiguration
     [DefaultValue(false)]
     public ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
 
-    /// <inheritdoc cref="IConfiguration2.LicenseInformationTimeoutInSeconds" />
+    /// <inheritdoc cref="IConfiguration.LicenseInformationTimeoutInSeconds" />
     [DefaultValue(Constants.DefaultLicenseFetchTimeoutInSeconds)]
     public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get; set; }
 

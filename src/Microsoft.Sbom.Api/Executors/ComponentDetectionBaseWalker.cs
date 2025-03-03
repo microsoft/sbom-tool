@@ -144,21 +144,8 @@ public abstract class ComponentDetectionBaseWalker
                     licenseInformationRetrieved = true;
 
                     List<string> apiResponses;
-                    var licenseInformationTimeoutInSecondsConfigSetting = configuration.LicenseInformationTimeoutInSeconds;
 
-                    if (licenseInformationFetcher is null && (bool)!licenseInformationTimeoutInSecondsConfigSetting?.IsDefaultSource)
-                    {
-                        log.Warning("Timeout value is specified, but ILicenseInformationFetcher2 is not implemented for the licenseInformationFetcher");
-                    }
-
-                    if (licenseInformationFetcher is null || licenseInformationTimeoutInSecondsConfigSetting is null)
-                    {
-                        apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi);
-                    }
-                    else
-                    {
-                        apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi, licenseInformationTimeoutInSecondsConfigSetting.Value);
-                    }
+                    apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi, configuration.LicenseInformationTimeoutInSeconds.Value);
 
                     foreach (var response in apiResponses)
                     {
