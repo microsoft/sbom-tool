@@ -21,11 +21,15 @@ public class IntegrationTests
     public TestContext TestContext { get; set; }
 
     private static string testRunDirectory;
+    private static string testDropDirectory;
 
     [ClassInitialize]
     public static void Setup(TestContext context)
     {
         testRunDirectory = context.TestRunDirectory;
+        var executingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        testDropDirectory = Path.GetFullPath(Path.Combine(executingDirectory, "..", nameof(IntegrationTests)));
+        Xcopy(executingDirectory, testDropDirectory);
     }
 
     [ClassCleanup(ClassCleanupBehavior.EndOfClass)]
@@ -37,6 +41,14 @@ public class IntegrationTests
             if (Directory.Exists(testRunDirectory))
             {
                 Directory.Delete(testRunDirectory, true);
+            }
+        }
+
+        if (testDropDirectory is not null)
+        {
+            if (Directory.Exists(testDropDirectory))
+            {
+                Directory.Delete(testDropDirectory, true);
             }
         }
     }
@@ -92,7 +104,7 @@ public class IntegrationTests
 
         var outputFile = Path.Combine(TestContext.TestRunDirectory, TestContext.TestName, "validation.json");
         var manifestRootFolderName = Path.Combine(testFolderPath, ManifestRootFolderName);
-        var arguments = $"validate -m \"{manifestRootFolderName}\" -b . -o \"{outputFile}\" -mi spdx:2.2";
+        var arguments = $"validate -m \"{manifestRootFolderName}\" -b \"{testDropDirectory}\" -o \"{outputFile}\" -mi spdx:2.2";
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -133,7 +145,7 @@ public class IntegrationTests
 
     private void GenerateManifestAndValidateSuccess(string testFolderPath)
     {
-        var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\"  -b . -bc \"{GetSolutionFolderPath()}\"";
+        var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\"  -b \"{testDropDirectory}\" -bc \"{GetSolutionFolderPath()}\"";
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -230,5 +242,18 @@ public class IntegrationTests
         }
 
         return (stdout, stderr, exitCode);
+    }
+
+    private static void Xcopy(string sourceDir, string targetDir)
+    {
+        foreach (var dirPath in Directory.GetDirectories(sourceDir, "*.*", SearchOption.AllDirectories))
+        {
+            Directory.CreateDirectory(dirPath.Replace(sourceDir, targetDir));
+        }
+
+        foreach (var newPath in Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories))
+        {
+            File.Copy(newPath, newPath.Replace(sourceDir, targetDir), true);
+        }
     }
 }
