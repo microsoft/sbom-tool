@@ -19,14 +19,15 @@ using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.Sbom.Contracts.Interfaces;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.DependencyInjection;
-using Microsoft.Sbom.Parsers.Spdx22SbomParser;
+using SPDX22 = Microsoft.Sbom.Parsers.Spdx22SbomParser;
+using SPDX30= Microsoft.Sbom.Parsers.Spdx30SbomParser;
 
 /// <summary>
 /// MSBuild task for generating SBOMs from build output.
 /// </summary>
 public partial class GenerateSbom : Task
 {
-    private ISBOMGenerator Generator { get; set; }
+    private ISbomGenerator Generator { get; set; }
 
     /// <summary>
     /// Constructor for the GenerateSbomTask.
@@ -40,7 +41,7 @@ public partial class GenerateSbom : Task
                 /* Manually adding some dependencies since `AddSbomTool()` does not add them when
                  * running the MSBuild Task from another project.
                  */
-                .AddSingleton<ISourcesProvider, SBOMPackagesProvider>()
+                .AddSingleton<ISourcesProvider, SbomPackagesProvider>()
                 .AddSingleton<ISourcesProvider, CGExternalDocumentReferenceProvider>()
                 .AddSingleton<ISourcesProvider, DirectoryTraversingFileToJsonProvider>()
                 .AddSingleton<ISourcesProvider, ExternalDocumentReferenceFileProvider>()
@@ -50,13 +51,16 @@ public partial class GenerateSbom : Task
                 .AddSingleton<ISourcesProvider, CGScannedExternalDocumentReferenceFileProvider>()
                 .AddSingleton<ISourcesProvider, CGScannedPackagesProvider>()
                 .AddSingleton<IAlgorithmNames, AlgorithmNames>()
-                .AddSingleton<IManifestGenerator, Generator>()
+                .AddSingleton<IManifestGenerator, SPDX22.Generator>()
+                .AddSingleton<IManifestGenerator, SPDX30.Generator>()
                 .AddSingleton<IMetadataProvider, LocalMetadataProvider>()
-                .AddSingleton<IMetadataProvider, SBOMApiMetadataProvider>()
-                .AddSingleton<IManifestInterface, Validator>()
-                .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>())
+                .AddSingleton<IMetadataProvider, SbomApiMetadataProvider>()
+                .AddSingleton<IManifestInterface, SPDX22.Validator>()
+                .AddSingleton<IManifestInterface, SPDX30.Validator>()
+                .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>()
+                .AddSingleton<IManifestConfigHandler, SPDX30ManifestConfigHandler>())
             .Build();
-        this.Generator = host.Services.GetRequiredService<ISBOMGenerator>();
+        this.Generator = host.Services.GetRequiredService<ISbomGenerator>();
     }
 
     /// <inheritdoc/>
@@ -70,10 +74,10 @@ public partial class GenerateSbom : Task
                 return false;
             }
 
-            // Set other configurations. The GenerateSBOMAsync() already sanitizes and checks for
+            // Set other configurations. The GenerateSbomAsync() already sanitizes and checks for
             // a valid namespace URI and generates a random guid for NamespaceUriUniquePart if
             // one is not provided.
-            var sbomMetadata = new SBOMMetadata
+            var sbomMetadata = new SbomMetadata
             {
                 PackageSupplier = this.PackageSupplier,
                 PackageName = this.PackageName,

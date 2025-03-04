@@ -15,9 +15,11 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Entities;
+using Microsoft.Sbom.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using EntityErrorType = Microsoft.Sbom.Contracts.Enums.ErrorType;
+using Generator = Microsoft.Sbom.Parsers.Spdx30SbomParser.Generator;
 
 namespace Microsoft.Sbom.Api.Tests;
 
@@ -67,7 +69,7 @@ public class SBOMGeneratorTest
         mockRecorder.Setup(c => c.Errors).Returns(fileValidationResults).Verifiable();
         mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
 
-        var metadata = new SBOMMetadata()
+        var metadata = new SbomMetadata()
         {
             PackageSupplier = "Contoso"
         };
@@ -88,13 +90,34 @@ public class SBOMGeneratorTest
         mockRecorder.Setup(c => c.Errors).Returns(new List<FileValidationResult>()).Verifiable();
         mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
 
-        var metadata = new SBOMMetadata()
+        var metadata = new SbomMetadata()
         {
             PackageSupplier = "Contoso"
         };
 
         generator = new SbomGenerator(mockWorkflow.Object, mockGeneratorProvider.Object, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
         var result = await generator.GenerateSbomAsync("rootPath", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
+
+        Assert.AreEqual(0, result.Errors.Count);
+        mockRecorder.Verify();
+        mockWorkflow.Verify();
+    }
+
+    [TestMethod]
+    public async Task When_GenerateSbomAsync_Spdx30Generator_WithNoRecordedErrors_Then_EmptyEntityErrors()
+    {
+        mockRecorder.Setup(c => c.Errors).Returns(new List<FileValidationResult>()).Verifiable();
+        mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
+        var manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new Generator() });
+        manifestGeneratorProvider.Init();
+
+        var metadata = new SbomMetadata()
+        {
+            PackageSupplier = "Contoso"
+        };
+
+        generator = new SbomGenerator(mockWorkflow.Object, manifestGeneratorProvider, mockRecorder.Object, new List<ConfigValidator>(), mockSanitizer.Object);
+        var result = await generator.GenerateSbomAsync(".", "compPath", metadata, runtimeConfiguration: runtimeConfiguration);
 
         Assert.AreEqual(0, result.Errors.Count);
         mockRecorder.Verify();

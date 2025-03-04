@@ -71,6 +71,11 @@ public sealed class ManifestToolJsonSerializer : IManifestToolJsonSerializer
         }
     }
 
+    public void Write(JsonElement jsonElement)
+    {
+        jsonElement.WriteTo(jsonWriter);
+    }
+
     /// <summary>
     /// Write a json string object. This usually is some metadata about the document
     /// that is generated.

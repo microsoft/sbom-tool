@@ -12,6 +12,7 @@ using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using Microsoft.Sbom.Utils;
 using Serilog;
 
@@ -58,7 +59,8 @@ public class FilesValidator
         this.spdxFileFilterer = spdxFileFilterer ?? throw new ArgumentNullException(nameof(spdxFileFilterer));
     }
 
-    public async Task<(int, List<FileValidationResult>)> Validate(IEnumerable<SPDXFile> files)
+    public async Task<(int, List<FileValidationResult>)> Validate<T>(IEnumerable<T> files)
+        where T : class
     {
         var errors = new List<ChannelReader<FileValidationResult>>();
         var results = new List<ChannelReader<FileValidationResult>>();
@@ -159,17 +161,25 @@ public class FilesValidator
         return (filesWithHashes, errors);
     }
 
-    private (List<ChannelReader<FileValidationResult>>, List<ChannelReader<FileValidationResult>>) GetInsideSbomFiles(IEnumerable<SPDXFile> files)
+    private (List<ChannelReader<FileValidationResult>>, List<ChannelReader<FileValidationResult>>) GetInsideSbomFiles<T>(IEnumerable<T> files)
+        where T : class
     {
         var errors = new List<ChannelReader<FileValidationResult>>();
         var filesWithHashes = new List<ChannelReader<FileValidationResult>>();
 
         // Enumerate files from SBOM
-        var (sbomFiles, sbomFileErrors) = enumeratorChannel.Enumerate(() => files.Select(f => f.ToSbomFile()));
+        var sbomFiles = files.Select(f => f switch
+        {
+            SPDXFile spdxFile => spdxFile.ToSbomFile(),
+            File file => file.ToSbomFile(),
+            _ => throw new InvalidOperationException("Unsupported file type")
+        });
+
+        var (sbomFilesChannel, sbomFileErrors) = enumeratorChannel.Enumerate(() => sbomFiles);
         errors.Add(sbomFileErrors);
 
         log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
-        var splitFilesChannels = channelUtils.Split(sbomFiles, configuration.Parallelism.Value);
+        var splitFilesChannels = channelUtils.Split(sbomFilesChannel, configuration.Parallelism.Value);
 
         log.Debug("Waiting for the workflow to finish...");
         foreach (var fileChannel in splitFilesChannels)

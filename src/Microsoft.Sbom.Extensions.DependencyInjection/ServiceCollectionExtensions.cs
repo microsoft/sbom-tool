@@ -73,7 +73,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
             .AddTransient<IWorkflow<SbomRedactionWorkflow>, SbomRedactionWorkflow>()
             .AddTransient<ISbomRedactor, SbomRedactor>()
-            .AddTransient<ValidatedSBOMFactory>()
+            .AddTransient<ValidatedSbomFactory>()
             .AddTransient<DirectoryWalker>()
             .AddTransient<IFilter<DownloadedRootPathFilter>, DownloadedRootPathFilter>()
             .AddTransient<IFilter<ManifestFolderFilter>, ManifestFolderFilter>()
@@ -108,10 +108,10 @@ public static class ServiceCollectionExtensions
             .AddTransient<FileInfoWriter>()
             .AddTransient<ComponentToExternalReferenceInfoConverter>()
             .AddTransient<ExternalDocumentReferenceWriter>()
-            .AddTransient<SBOMComponentsWalker>()
+            .AddTransient<SbomComponentsWalker>()
             .AddTransient<FileListEnumerator>()
-            .AddTransient<ISBOMReaderForExternalDocumentReference, SPDXSBOMReaderForExternalDocumentReference>()
-            .AddTransient<SBOMMetadata>()
+            .AddTransient<ISbomReaderForExternalDocumentReference, SPDXSbomReaderForExternalDocumentReference>()
+            .AddTransient<SbomMetadata>()
             .AddTransient<ILicenseInformationService, LicenseInformationService>()
             .AddSingleton<IPackageDetailsFactory, PackageDetailsFactory>()
             .AddSingleton<IPackageManagerUtils<NugetUtils>, NugetUtils>()
@@ -134,7 +134,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IAssemblyConfig, AssemblyConfig>()
             .AddSingleton<ComponentDetectorCachedExecutor>()
             .AddSingleton<ILicenseInformationFetcher, LicenseInformationFetcher>()
-            .AddSingleton<InternalSBOMFileInfoDeduplicator>()
+            .AddSingleton<InternalSbomFileInfoDeduplicator>()
             .AddSingleton<ExternalReferenceInfoToPathConverter>()
             .AddSingleton<ExternalReferenceDeduplicator>()
             .AddSingleton<ISbomConfigFactory, SbomConfigFactory>()
@@ -151,8 +151,8 @@ public static class ServiceCollectionExtensions
                     typeof(IMetadataProvider),
                     typeof(IManifestInterface)))
                 .AsImplementedInterfaces())
-            .AddScoped<ISBOMGenerator, SbomGenerator>()
-            .AddScoped<ISBOMValidator, SbomValidator>()
+            .AddScoped<ISbomGenerator, SbomGenerator>()
+            .AddScoped<ISbomValidator, SbomValidator>()
             .AddSingleton(x =>
             {
                 var fileSystemUtils = x.GetRequiredService<IFileSystemUtils>();
@@ -162,7 +162,7 @@ public static class ServiceCollectionExtensions
 
                 var manifestData = new ManifestData();
 
-                if (!configuration.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
+                if (!configuration.ManifestInfo.Value.Any(manifestInfo => Constants.SupportedSpdxManifests.Contains(manifestInfo)))
                 {
                     var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo?.Value?.FirstOrDefault());
                     var parserProvider = x.GetRequiredService<IManifestParserProvider>();

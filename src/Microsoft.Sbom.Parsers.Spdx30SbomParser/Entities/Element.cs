@@ -10,9 +10,9 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 /// Base domain class from which all other SPDX-3.0 domain classes derive.
 /// https://spdx.github.io/spdx-spec/v3.0.1/model/Core/Classes/Element/
 /// </summary>
-public abstract class Element
+public class Element
 {
-    protected Element()
+    public Element()
     {
         CreationInfoDetails = "_:creationinfo";
         Type = GetType().Name;

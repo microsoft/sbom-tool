@@ -28,7 +28,8 @@ public class SbomFileParserTests : SbomParserTestsBase
     {
         var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithFilesStrings.SbomFileWithMissingVerificationJsonString);
         using var stream = new MemoryStream(bytes);
-        var parser = new SPDX30Parser(stream, requiredComplianceStandard: "NTIA");
+        var parser = new SPDX30Parser(stream);
+        parser.SetComplianceStandard("NTIA");
         Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 
@@ -37,7 +38,8 @@ public class SbomFileParserTests : SbomParserTestsBase
     {
         var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithFilesStrings.SbomFileWithMissingSHA256JsonString);
         using var stream = new MemoryStream(bytes);
-        var parser = new SPDX30Parser(stream, requiredComplianceStandard: "NTIA");
+        var parser = new SPDX30Parser(stream);
+        parser.SetComplianceStandard("NTIA");
         Assert.ThrowsException<ParserException>(() => this.Parse(parser));
     }
 

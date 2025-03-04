@@ -27,7 +27,7 @@ public class ConfigSanitizer
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IAssemblyConfig assemblyConfig;
 
-    internal static string SBOMToolVersion => VersionValue.Value;
+    internal static string SbomToolVersion => VersionValue.Value;
 
     private static readonly Lazy<string> VersionValue = new Lazy<string>(() => typeof(SbomToolCmdRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty);
 
@@ -78,32 +78,28 @@ public class ConfigSanitizer
         // Set default package supplier if not provided in configuration.
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
 
-        var configuration2 = configuration as IConfiguration2;
-        if (configuration2 is not null)
+        // Prevent null value for LicenseInformationTimeoutInSeconds.
+        // Values of (0, Constants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
+        // the higher values are truncated to the maximum of Common.Constants.MaxLicenseFetchTimeoutInSeconds
+        if (configuration.LicenseInformationTimeoutInSeconds is null)
         {
-            // Prevent null value for LicenseInformationTimeoutInSeconds.
-            // Values of (0, Constants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
-            // the higher values are truncated to the maximum of Common.Constants.MaxLicenseFetchTimeoutInSeconds
-            if (configuration2.LicenseInformationTimeoutInSeconds is null)
-            {
-                configuration2.LicenseInformationTimeoutInSeconds = new(Common.Constants.DefaultLicenseFetchTimeoutInSeconds, SettingSource.Default);
-            }
-            else if (configuration2.LicenseInformationTimeoutInSeconds.Value <= 0)
-            {
-                logger.Warning($"Negative and Zero Values not allowed for timeout. Using the default {Common.Constants.DefaultLicenseFetchTimeoutInSeconds} seconds instead.");
-                configuration2.LicenseInformationTimeoutInSeconds.Value = Common.Constants.DefaultLicenseFetchTimeoutInSeconds;
-            }
-            else if (configuration2.LicenseInformationTimeoutInSeconds.Value > Common.Constants.MaxLicenseFetchTimeoutInSeconds)
-            {
-                logger.Warning($"Specified timeout exceeds maximum allowed. Truncating the timeout to {Common.Constants.MaxLicenseFetchTimeoutInSeconds} seconds.");
-                configuration2.LicenseInformationTimeoutInSeconds.Value = Common.Constants.MaxLicenseFetchTimeoutInSeconds;
-            }
+            configuration.LicenseInformationTimeoutInSeconds = new(Common.Constants.DefaultLicenseFetchTimeoutInSeconds, SettingSource.Default);
+        }
+        else if (configuration.LicenseInformationTimeoutInSeconds.Value <= 0)
+        {
+            logger.Warning($"Negative and Zero Values not allowed for timeout. Using the default {Common.Constants.DefaultLicenseFetchTimeoutInSeconds} seconds instead.");
+            configuration.LicenseInformationTimeoutInSeconds.Value = Common.Constants.DefaultLicenseFetchTimeoutInSeconds;
+        }
+        else if (configuration.LicenseInformationTimeoutInSeconds.Value > Common.Constants.MaxLicenseFetchTimeoutInSeconds)
+        {
+            logger.Warning($"Specified timeout exceeds maximum allowed. Truncating the timeout to {Common.Constants.MaxLicenseFetchTimeoutInSeconds} seconds.");
+            configuration.LicenseInformationTimeoutInSeconds.Value = Common.Constants.MaxLicenseFetchTimeoutInSeconds;
+        }
 
-            // Check if arg -lto is specified but -li is not
-            if (configuration.FetchLicenseInformation?.Value != true && !configuration2.LicenseInformationTimeoutInSeconds.IsDefaultSource)
-            {
-                logger.Warning("A license fetching timeout is specified (argument -lto), but this has no effect when FetchLicenseInfo is unspecified or false (argument -li)");
-            }
+        // Check if arg -lto is specified but -li is not
+        if (configuration.FetchLicenseInformation?.Value != true && !configuration.LicenseInformationTimeoutInSeconds.IsDefaultSource)
+        {
+            logger.Warning("A license fetching timeout is specified (argument -lto), but this has no effect when FetchLicenseInfo is unspecified or false (argument -li)");
         }
 
         // Replace backslashes in directory paths with the OS-sepcific directory separator character.
@@ -208,15 +204,15 @@ public class ConfigSanitizer
     private ConfigurationSetting<string> GetNamespaceBaseUri(IConfiguration configuration, ILogger logger)
     {
         // If assembly name is not defined but a namespace was provided, then return the current value.
-        if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri) && !string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
+        if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSbomNamespaceBaseUri) && !string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
         {
             return configuration.NamespaceUriBase;
         }
 
         // If assembly name is not defined and namespace was not provided then return the default namespace as per spdx spec https://spdx.github.io/spdx-spec/v2.2.2/document-creation-information/#653-examples.
-        if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri) && string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
+        if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSbomNamespaceBaseUri) && string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
         {
-            var defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SBOMToolVersion}-{Guid.NewGuid()}";
+            var defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SbomToolVersion}-{Guid.NewGuid()}";
 
             logger.Information($"No namespace URI base provided, using unique generated default value {defaultNamespaceUriBase}");
 
@@ -231,7 +227,7 @@ public class ConfigSanitizer
         // show a warning on the console.
         if (!string.IsNullOrWhiteSpace(configuration.NamespaceUriBase?.Value))
         {
-            if (!string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri))
+            if (!string.IsNullOrWhiteSpace(assemblyConfig.DefaultSbomNamespaceBaseUri))
             {
                 logger.Information("Custom namespace URI base provided, using provided value instead of default");
             }
@@ -242,7 +238,7 @@ public class ConfigSanitizer
         return new ConfigurationSetting<string>
         {
             Source = SettingSource.Default,
-            Value = assemblyConfig.DefaultSBOMNamespaceBaseUri
+            Value = assemblyConfig.DefaultSbomNamespaceBaseUri
         };
     }
 

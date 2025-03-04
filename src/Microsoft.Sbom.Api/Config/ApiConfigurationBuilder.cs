@@ -37,7 +37,7 @@ public static class ApiConfigurationBuilder
         string manifestDirPath,
         IEnumerable<SbomFile> files,
         IEnumerable<SbomPackage> packages,
-        SBOMMetadata metadata,
+        SbomMetadata metadata,
         IList<SbomSpecification> specifications = null,
         RuntimeConfiguration runtimeConfiguration = null,
         string externalDocumentReferenceListFile = null,
@@ -123,9 +123,10 @@ public static class ApiConfigurationBuilder
             throw new ArgumentException($"'{nameof(outputPath)}' cannot be null or whitespace.", nameof(outputPath));
         }
 
+        // TODO: update to SPDX 3.0 for default.
         if (specifications is null || specifications.Count == 0)
         {
-            specifications = new List<SbomSpecification>() { ApiConstants.SPDX22Specification };
+            specifications = ApiConstants.SupportedSbomSpecifications;
         }
 
         var sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
@@ -194,7 +195,7 @@ public static class ApiConfigurationBuilder
         return new ConfigurationSetting<T>
         {
             Value = value,
-            Source = SettingSource.SBOMApi
+            Source = SettingSource.SbomApi
         };
     }
 
