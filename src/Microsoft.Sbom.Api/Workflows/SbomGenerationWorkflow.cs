@@ -102,7 +102,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     var config = sbomConfigs.Get(manifestInfo);
                     await using (sbomConfigs.StartJsonSerializationAsync(config))
                     {
-                        config.JsonSerializer.StartJsonObject();
+                        config.JsonSerializer?.StartJsonObject();
 
                         // Get the appropriate strategy
                         var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(manifestInfo.Version);
@@ -119,7 +119,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                         serializationStrategy.AddHeadersToSbom(sbomConfigs, config);
 
                         // Finalize JSON
-                        config.JsonSerializer.FinalizeJsonObject();
+                        config.JsonSerializer?.FinalizeJsonObject();
                     }
 
                     // Generate SHA256 for manifest json
