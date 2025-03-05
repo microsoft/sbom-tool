@@ -18,7 +18,7 @@ internal interface IJsonSerializationStrategy
 
     public void AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
 
-    public void AddHeadersToSbom(ISbomConfigProvider sbomConfigs)
+    public void AddHeadersToSbom(ISbomConfigProvider sbomConfigs, ISbomConfig config)
     {
     }
 

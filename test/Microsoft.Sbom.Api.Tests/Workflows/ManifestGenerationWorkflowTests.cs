@@ -169,6 +169,7 @@ public class ManifestGenerationWorkflowTests
         configurationMock.SetupGet(c => c.ManifestToolAction).Returns(ManifestToolActions.Generate);
         configurationMock.SetupGet(c => c.BuildComponentPath).Returns(new ConfigurationSetting<string> { Value = "/root" });
         configurationMock.SetupGet(c => c.FollowSymlinks).Returns(new ConfigurationSetting<bool> { Value = true });
+        configurationMock.SetupGet(x => x.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>> { Value = new List<ManifestInfo> { manifestInfoPerSpdxVersion[spdxVersionForGenerator] }, Source = SettingSource.CommandLine });
 
         // Added config settings necessary for 3.0 SBOM generation
         if (spdxVersionForGenerator == "3.0")
@@ -452,7 +453,10 @@ public class ManifestGenerationWorkflowTests
             ManifestJsonDirPath = "/root/_manifest",
             ManifestJsonFilePath = "/root/_manifest/manifest.json"
         };
+
+        IList<ManifestInfo> testManifestInfo = new List<ManifestInfo> { Constants.TestManifestInfo };
         configurationMock.SetupGet(x => x.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.CommandLine });
+        configurationMock.SetupGet(x => x.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>> { Value = testManifestInfo, Source = SettingSource.CommandLine });
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
 
@@ -472,7 +476,7 @@ public class ManifestGenerationWorkflowTests
         externalDocumentReferenceGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResultWithFailure);
 
         var sbomConfigsMock = new Mock<ISbomConfigProvider>();
-        sbomConfigsMock.Setup(f => f.GetManifestInfos()).Returns(new List<ManifestInfo> { Constants.TestManifestInfo });
+        sbomConfigsMock.Setup(f => f.Get(It.IsAny<ManifestInfo>())).Returns(sbomConfig);
 
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,

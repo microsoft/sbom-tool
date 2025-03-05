@@ -52,11 +52,9 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
         }
     }
 
-    public void AddHeadersToSbom(ISbomConfigProvider sbomConfigs)
+    public void AddHeadersToSbom(ISbomConfigProvider sbomConfigs, ISbomConfig config)
     {
-        sbomConfigs.ApplyToEachConfig(config =>
-            config.JsonSerializer.WriteJsonString(
-                config.MetadataBuilder.GetHeaderJsonString(sbomConfigs)));
+        config.JsonSerializer?.WriteJsonString(config.MetadataBuilder.GetHeaderJsonString(sbomConfigs));
     }
 
     public async Task<List<FileValidationResult>> WriteJsonObjectsToSbomAsync(

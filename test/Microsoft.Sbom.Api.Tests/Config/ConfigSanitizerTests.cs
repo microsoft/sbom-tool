@@ -112,6 +112,27 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
+    public void SetValueForManifestInfoForGeneration_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        configSanitizer.SanitizeConfig(config);
+
+        mockAssemblyConfig.Verify();
+    }
+
+    [TestMethod]
+    public void NoValueForManifestInfoForGeneration_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        config.ManifestInfo.Value.Clear();
+        configSanitizer.SanitizeConfig(config);
+
+        mockAssemblyConfig.Verify();
+    }
+
+    [TestMethod]
     public void NoValueForBuildDropPathForRedaction_Succeeds()
     {
         var config = GetConfigurationBaseObject();

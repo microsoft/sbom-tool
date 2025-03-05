@@ -124,6 +124,12 @@ public class SbomConfigProvider : ISbomConfigProvider
         return this;
     }
 
+    public IAsyncDisposable StartJsonSerializationAsync(ISbomConfig configuration)
+    {
+        configuration.StartJsonSerialization();
+        return this;
+    }
+
     /// <summary>
     /// Helper method to operate an action on each included configs.
     /// </summary>

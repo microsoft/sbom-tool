@@ -67,9 +67,8 @@ public abstract class BaseManifestConfigHandler : IManifestConfigHandler
     {
         sbomConfig = CreateSbomConfig();
 
-        // For generation the default behavior is to always return true
-        // as we generate all the current formats of SBOM. Only override if the -mi
-        // argument is specified.
+        // For generation the default behavior is to return the SPDX 2.2 SBOM.
+        // Only override if the -mi argument is specified.
         if (configuration.ManifestToolAction == ManifestToolActions.Generate)
         {
             if (configuration.ManifestInfo?.Value != null
