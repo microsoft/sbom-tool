@@ -75,19 +75,19 @@ public class InterfaceConcretionTests
         public void AppendLicensesToDictionary(Dictionary<string, string> partialLicenseDictionary) => throw new NotImplementedException();
         public Dictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent) => throw new NotImplementedException();
         public List<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents) => throw new NotImplementedException();
-        public Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi) => throw new NotImplementedException();
+        public Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi, int timeoutInSeconds) => throw new NotImplementedException();
         public string GetFromLicenseDictionary(string key) => throw new NotImplementedException();
         public ConcurrentDictionary<string, string> GetLicenseDictionary() => throw new NotImplementedException();
     }
 
-    private class PinnedILicenstInformationSErvice : ILicenseInformationService
+    private class PinnedILicenstInformationService : ILicenseInformationService
     {
-        public Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi) => throw new NotImplementedException();
+        public Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi, int timeoutInSeconds) => throw new NotImplementedException();
     }
 
-    private class Pinned_SBOMReaderForExternalDocumentReference : ISBOMReaderForExternalDocumentReference
+    private class Pinned_SBOMReaderForExternalDocumentReference : ISbomReaderForExternalDocumentReference
     {
-        public (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSBOMFile(ChannelReader<string> sbomFileLocation) => throw new NotImplementedException();
+        public (ChannelReader<ExternalDocumentReferenceInfo> results, ChannelReader<FileValidationResult> errors) ParseSbomFile(ChannelReader<string> sbomFileLocation) => throw new NotImplementedException();
     }
 
     private class PinnedIFilter : IFilter<PinnedIFilter>
@@ -96,7 +96,7 @@ public class InterfaceConcretionTests
         public bool IsValid(string filePath) => throw new NotImplementedException();
     }
 
-    private class PinnedIValidatedSBOM : IValidatedSBOM
+    private class PinnedIValidatedSBOM : IValidatedSbom
     {
         public void Dispose() => throw new NotImplementedException();
         public Task<FormatEnforcedSPDX2> GetRawSPDXDocument() => throw new NotImplementedException();
@@ -134,7 +134,7 @@ public class InterfaceConcretionTests
         public void RecordAPIException(Exception exception) => throw new NotImplementedException();
         public void RecordException(Exception exception) => throw new NotImplementedException();
         public void RecordMetadataException(Exception exception) => throw new NotImplementedException();
-        public void RecordSBOMFormat(ManifestInfo manifestInfo, string sbomFilePath) => throw new NotImplementedException();
+        public void RecordSbomFormat(ManifestInfo manifestInfo, string sbomFilePath) => throw new NotImplementedException();
         public void RecordSwitch(string switchName, object value) => throw new NotImplementedException();
         public void RecordTotalErrors(IList<FileValidationResult> errors) => throw new NotImplementedException();
         public void RecordTotalNumberOfPackages(int count) => throw new NotImplementedException();
@@ -166,7 +166,7 @@ public class InterfaceConcretionTests
 
     private class PinnedIAssemblyConfig : IAssemblyConfig
     {
-        public string DefaultSBOMNamespaceBaseUri => throw new NotImplementedException();
+        public string DefaultSbomNamespaceBaseUri => throw new NotImplementedException();
 
         public ManifestInfo DefaultManifestInfoForValidationAction => throw new NotImplementedException();
 
@@ -196,7 +196,7 @@ public class InterfaceConcretionTests
 
     private class PinnedISbomRedactor : ISbomRedactor
     {
-        public Task<FormatEnforcedSPDX2> RedactSBOMAsync(IValidatedSBOM sbom) => throw new NotImplementedException();
+        public Task<FormatEnforcedSPDX2> RedactSbomAsync(IValidatedSbom sbom) => throw new NotImplementedException();
     }
 
     private class PinnedIWorkflow : IWorkflow<PinnedIWorkflow>
@@ -272,7 +272,7 @@ public class InterfaceConcretionTests
     {
         public GenerationData GetGenerationData(ManifestInfo manifestInfo) => throw new NotImplementedException();
         public object GetMetadata(MetadataKey key) => throw new NotImplementedException();
-        public string GetSBOMNamespaceUri() => throw new NotImplementedException();
+        public string GetSbomNamespaceUri() => throw new NotImplementedException();
         public bool TryGetMetadata(MetadataKey key, out object value) => throw new NotImplementedException();
         public bool TryGetMetadata(MetadataKey key, out string value) => throw new NotImplementedException();
     }
@@ -330,6 +330,7 @@ public class InterfaceConcretionTests
         public ConfigurationSetting<string> SbomPath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<string> SbomDir { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<string> ComplianceStandard { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
     private class PinnedISettingSourceable : ISettingSourceable

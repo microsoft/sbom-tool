@@ -27,7 +27,7 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
 
     public ExternalDocumentReferenceWriter ExternalDocumentReferenceWriter { get; }
 
-    public SBOMComponentsWalker SBOMComponentsWalker { get; }
+    public SbomComponentsWalker SbomComponentsWalker { get; }
 
     public CGScannedExternalDocumentReferenceFileProvider(
         IConfiguration configuration,
@@ -36,17 +36,17 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
-        InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator,
+        InternalSbomFileInfoDeduplicator internalSbomFileInfoDeduplicator,
         ComponentToExternalReferenceInfoConverter componentToExternalReferenceInfoConverter,
         ExternalReferenceInfoToPathConverter externalReferenceInfoToPathConverter,
         ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
-        SBOMComponentsWalker sbomComponentsWalker)
-        : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSBOMFileInfoDeduplicator)
+        SbomComponentsWalker sbomComponentsWalker)
+        : base(configuration, channelUtils, log, fileHasher, fileFilterer, fileHashWriter, internalSbomFileInfoDeduplicator)
     {
         ComponentToExternalReferenceInfoConverter = componentToExternalReferenceInfoConverter ?? throw new ArgumentNullException(nameof(componentToExternalReferenceInfoConverter));
         ExternalReferenceInfoToPathConverter = externalReferenceInfoToPathConverter ?? throw new ArgumentNullException(nameof(externalReferenceInfoToPathConverter));
         ExternalDocumentReferenceWriter = externalDocumentReferenceWriter ?? throw new ArgumentNullException(nameof(externalDocumentReferenceWriter));
-        SBOMComponentsWalker = sbomComponentsWalker ?? throw new ArgumentNullException(nameof(sbomComponentsWalker));
+        SbomComponentsWalker = sbomComponentsWalker ?? throw new ArgumentNullException(nameof(sbomComponentsWalker));
     }
 
     public override bool IsSupported(ProviderType providerType)
@@ -62,7 +62,7 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
 
     protected override (ChannelReader<string> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
     {
-        var (sbomOutput, cdErrors) = SBOMComponentsWalker.GetComponents(Configuration.BuildComponentPath?.Value);
+        var (sbomOutput, cdErrors) = SbomComponentsWalker.GetComponents(Configuration.BuildComponentPath?.Value);
         IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
 
         if (cdErrors.TryRead(out var e))

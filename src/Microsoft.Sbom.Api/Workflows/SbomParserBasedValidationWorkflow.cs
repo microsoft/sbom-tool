@@ -67,7 +67,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         IEnumerable<FileValidationResult> validFailures = null;
         var totalNumberOfPackages = 0;
 
-        using (recorder.TraceEvent(Events.SBOMValidationWorkflow))
+        using (recorder.TraceEvent(Events.SbomValidationWorkflow))
         {
             try
             {

@@ -22,7 +22,7 @@ public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string
 {
     private readonly FileListEnumerator listWalker;
 
-    private readonly ISBOMReaderForExternalDocumentReference spdxSbomReaderForExternalDocumentReference;
+    private readonly ISbomReaderForExternalDocumentReference spdxSbomReaderForExternalDocumentReference;
 
     private readonly ExternalDocumentReferenceWriter externalDocumentReferenceWriter;
 
@@ -33,7 +33,7 @@ public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string
         ChannelUtils channelUtils,
         ILogger logger,
         FileListEnumerator listWalker,
-        ISBOMReaderForExternalDocumentReference spdxSbomReaderForExternalDocumentReference,
+        ISbomReaderForExternalDocumentReference spdxSbomReaderForExternalDocumentReference,
         ExternalDocumentReferenceWriter externalDocumentReferenceWriter,
         ExternalReferenceDeduplicator externalReferenceDeduplicator)
         : base(configuration, channelUtils, logger)
@@ -58,7 +58,7 @@ public class ExternalDocumentReferenceProvider : EntityToJsonProviderBase<string
     protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) ConvertToJson(ChannelReader<string> sourceChannel, IList<ISbomConfig> requiredConfigs)
     {
         IList<ChannelReader<FileValidationResult>> errors = new List<ChannelReader<FileValidationResult>>();
-        var (results, parseErrors) = spdxSbomReaderForExternalDocumentReference.ParseSBOMFile(sourceChannel);
+        var (results, parseErrors) = spdxSbomReaderForExternalDocumentReference.ParseSbomFile(sourceChannel);
         errors.Add(parseErrors);
         results = externalReferenceDeduplicator.Deduplicate(results);
         var (jsonDoc, jsonErrors) = externalDocumentReferenceWriter.Write(results, requiredConfigs);

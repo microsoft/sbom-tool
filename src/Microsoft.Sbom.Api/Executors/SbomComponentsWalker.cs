@@ -17,9 +17,9 @@ namespace Microsoft.Sbom.Api.Executors;
 /// <summary>
 /// Runs the component detection tool and returns a list of SBOM components scanned in the given folder.
 /// </summary>
-public class SBOMComponentsWalker : ComponentDetectionBaseWalker
+public class SbomComponentsWalker : ComponentDetectionBaseWalker
 {
-    public SBOMComponentsWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils, IPackageDetailsFactory packageDetailsFactory, ILicenseInformationFetcher licenseInformationFetcher)
+    public SbomComponentsWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils, IPackageDetailsFactory packageDetailsFactory, ILicenseInformationFetcher licenseInformationFetcher)
         : base(log, componentDetector, configuration, sbomConfigs, fileSystemUtils, packageDetailsFactory, licenseInformationFetcher)
     {
     }

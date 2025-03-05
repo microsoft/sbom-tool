@@ -69,7 +69,7 @@ public class SBOMGeneratorTest
         mockRecorder.Setup(c => c.Errors).Returns(fileValidationResults).Verifiable();
         mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
 
-        var metadata = new SBOMMetadata()
+        var metadata = new SbomMetadata()
         {
             PackageSupplier = "Contoso"
         };
@@ -90,7 +90,7 @@ public class SBOMGeneratorTest
         mockRecorder.Setup(c => c.Errors).Returns(new List<FileValidationResult>()).Verifiable();
         mockWorkflow.Setup(c => c.RunAsync()).Returns(Task.FromResult(true)).Verifiable();
 
-        var metadata = new SBOMMetadata()
+        var metadata = new SbomMetadata()
         {
             PackageSupplier = "Contoso"
         };
@@ -111,7 +111,7 @@ public class SBOMGeneratorTest
         var manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new Generator() });
         manifestGeneratorProvider.Init();
 
-        var metadata = new SBOMMetadata()
+        var metadata = new SbomMetadata()
         {
             PackageSupplier = "Contoso"
         };
