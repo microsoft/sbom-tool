@@ -72,6 +72,9 @@ public class ConfigSanitizer
             configuration.NamespaceUriBase = GetNamespaceBaseUri(configuration, logger);
         }
 
+        // Set default ManifestInfo for generation in case user doesn't provide a value.
+        configuration.ManifestInfo = GetDefaultManifestInfoForGenerationAction(configuration);
+
         // Set default ManifestInfo for validation in case user doesn't provide a value.
         configuration.ManifestInfo = GetDefaultManifestInfoForValidationAction(configuration);
 
@@ -150,6 +153,37 @@ public class ConfigSanitizer
                 }
             };
         }
+
+    private ConfigurationSetting<IList<ManifestInfo>> GetDefaultManifestInfoForGenerationAction(IConfiguration configuration)
+    {
+        if (configuration.ManifestToolAction != ManifestToolActions.Generate
+            || (configuration.ManifestInfo?.Value != null && configuration.ManifestInfo?.Value?.Count != 0))
+        {
+            return configuration.ManifestInfo;
+        }
+
+        ManifestInfo defaultManifestInfo = null;
+
+        // Use SPDX 2.2 for validation if none is given.
+        if (configuration.ManifestInfo.Value == null || configuration.ManifestInfo.Value.Count == 0)
+        {
+            defaultManifestInfo = Constants.SPDX22ManifestInfo;
+        }
+
+        if (defaultManifestInfo is null)
+        {
+            throw new ValidationArgException($"Error in setting default ManifestInfo. Please provide a value for the ManifestInfo (-mi) parameter to generate the SBOM.");
+        }
+
+        return new ConfigurationSetting<IList<ManifestInfo>>
+        {
+            Source = SettingSource.Default,
+            Value = new List<ManifestInfo>()
+                {
+                    defaultManifestInfo
+                }
+        };
+    }
 
     private void ValidateBuildDropPathConfiguration(IConfiguration configuration)
     {
