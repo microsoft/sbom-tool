@@ -158,10 +158,9 @@ public class ConfigSanitizer
             return configuration.ManifestInfo;
         }
 
-        ManifestInfo defaultManifestInfo = null;
-
         // Use SPDX 2.2 for validation if none is given.
-        if (configuration.ManifestInfo.Value == null || configuration.ManifestInfo.Value.Count == 0)
+        ManifestInfo defaultManifestInfo = null;
+        if (configuration.ManifestInfo?.Value == null || configuration.ManifestInfo?.Value?.Count == 0)
         {
             defaultManifestInfo = Constants.SPDX22ManifestInfo;
         }
