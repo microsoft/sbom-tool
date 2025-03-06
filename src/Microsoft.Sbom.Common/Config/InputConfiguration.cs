@@ -60,6 +60,7 @@ public class InputConfiguration : IConfiguration
     public ConfigurationSetting<string> ConfigFilePath { get; set; }
 
     /// <inheritdoc cref="IConfiguration.ManifestInfo" />
+    [ValidManifestInfo]
     public ConfigurationSetting<IList<ManifestInfo>> ManifestInfo { get; set; }
 
     /// <inheritdoc cref="IConfiguration.HashAlgorithm" />

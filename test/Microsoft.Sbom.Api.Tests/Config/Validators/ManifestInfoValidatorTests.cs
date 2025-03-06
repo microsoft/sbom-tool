@@ -15,13 +15,17 @@ public class ManifestInfoValidatorTests
 {
     private readonly Mock<IAssemblyConfig> mockAssemblyConfig = new Mock<IAssemblyConfig>();
 
+    [DataRow("randomName", "2.2")]
+    [DataRow("randomName", "3.0")]
+    [DataRow("SPDX", "randomVersion")]
+    [DataRow("SPDX", "randomVersion")]
     [TestMethod]
-    public void InvalidManifestInfoThrows()
+    public void InvalidManifestInfoThrows(string name, string version)
     {
         var invalidManifestInfo = new ManifestInfo
         {
-            Name = "SPDX",
-            Version = "asdf"
+            Name = name,
+            Version = version
         };
 
         var validator = new ManifestInfoValidator(mockAssemblyConfig.Object);

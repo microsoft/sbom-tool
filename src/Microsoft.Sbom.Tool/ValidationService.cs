@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Sbom.Api;
-using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
 using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
@@ -40,14 +39,7 @@ public class ValidationService : IHostedService
         bool result;
         try
         {
-            if (configuration.ManifestInfo.Value.Contains(Api.Utils.Constants.SPDX22ManifestInfo))
-            {
-                result = await parserValidationWorkflow.RunAsync();
-            }
-            else
-            {
-                throw new ConfigurationException($"Validation only supports the SPDX2.2 or SPDX3.0 format.");
-            }
+            result = await parserValidationWorkflow.RunAsync();
 
             await recorder.FinalizeAndLogTelemetryAsync();
             Environment.ExitCode = result ? (int)ExitCode.Success : (int)ExitCode.ValidationError;
