@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+//using System.Linq;
 using System.Reflection;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
@@ -141,42 +142,33 @@ public class ConfigSanitizer
         }
 
         return new ConfigurationSetting<IList<ManifestInfo>>
+        {
+            Source = SettingSource.Default,
+            Value = new List<ManifestInfo>()
             {
-                Source = SettingSource.Default,
-                Value = new List<ManifestInfo>()
-                {
-                    defaultManifestInfo
-                }
-            };
-        }
+                defaultManifestInfo
+            }
+        };
+    }
 
     private ConfigurationSetting<IList<ManifestInfo>> GetDefaultManifestInfoForGenerationAction(IConfiguration configuration)
     {
-        if (configuration.ManifestToolAction != ManifestToolActions.Generate
-            || (configuration.ManifestInfo?.Value != null && configuration.ManifestInfo?.Value?.Count != 0))
+        if (configuration.ManifestToolAction != ManifestToolActions.Generate)
         {
             return configuration.ManifestInfo;
         }
 
-        // Use SPDX 2.2 for validation if none is given.
-        ManifestInfo defaultManifestInfo = null;
-        if (configuration.ManifestInfo?.Value == null || configuration.ManifestInfo?.Value?.Count == 0)
+        if (configuration.ManifestInfo?.Value != null && configuration.ManifestInfo.Value.Count != 0)
         {
-            defaultManifestInfo = Constants.SPDX22ManifestInfo;
+            return configuration.ManifestInfo;
         }
 
-        if (defaultManifestInfo is null)
-        {
-            throw new ValidationArgException($"Error in setting default ManifestInfo. Please provide a value for the ManifestInfo (-mi) parameter to generate the SBOM.");
-        }
-
+        // Use default ManifestInfo for generation if none is given.
+        var defaultManifestInfo = assemblyConfig.DefaultManifestInfoForGenerationAction;
         return new ConfigurationSetting<IList<ManifestInfo>>
         {
             Source = SettingSource.Default,
-            Value = new List<ManifestInfo>()
-                {
-                    defaultManifestInfo
-                }
+            Value = new List<ManifestInfo> { defaultManifestInfo }
         };
     }
 
