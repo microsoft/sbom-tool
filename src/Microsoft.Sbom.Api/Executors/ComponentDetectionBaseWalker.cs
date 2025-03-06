@@ -90,8 +90,6 @@ public abstract class ComponentDetectionBaseWalker
                 {
                     cliArgumentBuilder.AddArg("DirectoryExclusionList", directory);
                 }
-
-                break;
             }
         }
 
