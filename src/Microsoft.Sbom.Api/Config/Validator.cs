@@ -2,12 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config.Args;
-using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common.Config;
 
@@ -36,15 +33,7 @@ public class Validator : ISbomService<ValidationArgs>
         bool result;
         try
         {
-            if (configuration.ManifestInfo.Value.Any(Constants.SupportedSpdxManifests.Contains))
-            {
-                result = await parserValidationWorkflow.RunAsync();
-            }
-            else
-            {
-                // On deprecation path.
-                throw new ConfigurationException($"Validation only supports the SPDX2.2 format.");
-            }
+            result = await parserValidationWorkflow.RunAsync();
 
             await recorder.FinalizeAndLogTelemetryAsync();
         }
