@@ -51,6 +51,9 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
     private readonly Mock<ISignValidator> signValidatorMock = new();
     private readonly Mock<ISignValidationProvider> signValidationProviderMock = new();
 
+    private const string SPDX22ManifestInfoJsonFilePath = "/root/_manifest/spdx_2.2/manifest.spdx.json";
+    private const string SPDX30ManifestInfoJsonFilePath = "/root/_manifest/spdx_3.0/manifest.spdx.json";
+
     [TestInitialize]
     public void Init()
     {
@@ -64,9 +67,13 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         FileHashesDictionarySingleton.Reset();
     }
 
+    [DataRow(SPDX22ManifestInfoJsonFilePath)]
+    [DataRow(SPDX30ManifestInfoJsonFilePath)]
     [TestMethod]
-    public async Task SbomParserBasedValidationWorkflowTests_ReturnsSuccessAndValidationFailures_IgnoreMissingTrue_Succeeds()
+    public async Task SbomParserBasedValidationWorkflowTests_ReturnsSuccessAndValidationFailures_IgnoreMissingTrue_Succeeds(string manifestInfoJsonFilePath)
     {
+        var manifestInfo = manifestInfoJsonFilePath.Contains("2.2") ? Constants.SPDX22ManifestInfo : Constants.SPDX30ManifestInfo;
+
         var manifestParserProvider = new Mock<IManifestParserProvider>();
         var manifestInterface = new Mock<IManifestInterface>();
         var sbomParser = new Mock<ISbomParser>();
@@ -101,20 +108,20 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
         configurationMock.SetupGet(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
         {
-            Value = new List<ManifestInfo>() { Constants.SPDX22ManifestInfo }
+            Value = new List<ManifestInfo>() { manifestInfo }
         });
 
         ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            ManifestInfo = Constants.SPDX22ManifestInfo,
+            ManifestInfo = manifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
-            ManifestJsonFilePath = "/root/_manifest/spdx_2.2/manifest.spdx.json",
+            ManifestJsonFilePath = manifestInfoJsonFilePath,
             MetadataBuilder = null,
             Recorder = new SbomPackageDetailsRecorder()
         };
-        sbomConfigs.Setup(c => c.Get(Constants.SPDX22ManifestInfo)).Returns(sbomConfig);
+        sbomConfigs.Setup(c => c.Get(manifestInfo)).Returns(sbomConfig);
 
-        fileSystemMock.Setup(f => f.OpenRead("/root/_manifest/spdx_2.2/manifest.spdx.json")).Returns(Stream.Null);
+        fileSystemMock.Setup(f => f.OpenRead(manifestInfoJsonFilePath)).Returns(Stream.Null);
         fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
             .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
 
@@ -220,9 +227,13 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         osUtilsMock.VerifyAll();
     }
 
+    [DataRow(SPDX22ManifestInfoJsonFilePath)]
+    [DataRow(SPDX30ManifestInfoJsonFilePath)]
     [TestMethod]
-    public async Task SbomParserBasedValidationWorkflowTests_ReturnsSuccessAndValidationFailures_Succeeds()
+    public async Task SbomParserBasedValidationWorkflowTests_ReturnsSuccessAndValidationFailures_Succeeds(string manifestInfoJsonFilePath)
     {
+        var manifestInfo = manifestInfoJsonFilePath.Contains("2.2") ? Constants.SPDX22ManifestInfo : Constants.SPDX30ManifestInfo;
+
         var manifestParserProvider = new Mock<IManifestParserProvider>();
         var manifestInterface = new Mock<IManifestInterface>();
         var sbomParser = new Mock<ISbomParser>();
@@ -252,20 +263,20 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         configurationMock.SetupGet(c => c.ValidateSignature).Returns(new ConfigurationSetting<bool> { Value = true });
         configurationMock.SetupGet(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
         {
-            Value = new List<ManifestInfo>() { Constants.SPDX22ManifestInfo }
+            Value = new List<ManifestInfo>() { manifestInfo }
         });
 
         ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
-            ManifestInfo = Constants.SPDX22ManifestInfo,
+            ManifestInfo = manifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
-            ManifestJsonFilePath = "/root/_manifest/spdx_2.2/manifest.spdx.json",
+            ManifestJsonFilePath = manifestInfoJsonFilePath,
             MetadataBuilder = null,
             Recorder = new SbomPackageDetailsRecorder()
         };
-        sbomConfigs.Setup(c => c.Get(Constants.SPDX22ManifestInfo)).Returns(sbomConfig);
+        sbomConfigs.Setup(c => c.Get(manifestInfo)).Returns(sbomConfig);
 
-        fileSystemMock.Setup(f => f.OpenRead("/root/_manifest/spdx_2.2/manifest.spdx.json")).Returns(Stream.Null);
+        fileSystemMock.Setup(f => f.OpenRead(manifestInfoJsonFilePath)).Returns(Stream.Null);
         fileSystemMock.Setup(f => f.GetRelativePath(It.IsAny<string>(), It.IsAny<string>()))
             .Returns((string r, string p) => PathUtils.GetRelativePath(r, p));
 

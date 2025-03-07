@@ -81,6 +81,19 @@ public interface IManifestGenerator
     GenerationResult GenerateJsonDocument(ExternalDocumentReferenceInfo externalDocumentReferenceInfo);
 
     /// <summary>
+    /// Generate and return the creationInfo element this SBOM describes. The <see cref="GenerationData"/> object can be used
+    /// to add more information to the final object.
+    /// This applies to only SPDX 3.0 and above.
+    /// The JsonDocument implements <see cref="System.IDisposable"/>, the caller of this function
+    /// has the responsibility to dispose this object, so don't use 'using' or dispose this object
+    /// in this function.
+    /// </summary>
+    /// <param name="internalMetadataProvider">The <see cref="IInternalMetadataProvider"/> object provides
+    /// internal metadata that was generated for this SBOM run.</param>
+    /// <returns></returns>
+    GenerationResult GenerateJsonDocument(IInternalMetadataProvider internalMetadataProvider);
+
+    /// <summary>
     /// Gets an array of <see cref="AlgorithmName">hash algorithm names</see> this
     /// manifest needs to generate for each file.
     /// </summary>

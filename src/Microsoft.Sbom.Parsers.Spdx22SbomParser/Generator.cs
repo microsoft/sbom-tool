@@ -101,8 +101,8 @@ public class Generator : IManifestGenerator
 
         var generationData = internalMetadataProvider.GetGenerationData(Constants.Spdx22ManifestInfo);
 
-        var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolName);
-        var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
+        var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SbomToolName);
+        var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SbomToolVersion);
         var packageName = internalMetadataProvider.GetPackageName();
         var packageVersion = internalMetadataProvider.GetPackageVersion();
 
@@ -351,5 +351,15 @@ public class Generator : IManifestGenerator
                 .ToLowerInvariant(),
             PackageVerificationCodeExcludedFiles = null // We currently don't ignore any files.
         };
+    }
+
+    /// <summary>
+    /// Creation info will not be generated in SPDX 2.2 format.
+    /// </summary>
+    /// <param name="internalMetadataProvider"></param>
+    /// <returns></returns>
+    public GenerationResult GenerateJsonDocument(IInternalMetadataProvider internalMetadataProvider)
+    {
+        return null;
     }
 }

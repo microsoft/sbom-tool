@@ -14,21 +14,27 @@ namespace Microsoft.Sbom.Api.Utils;
 public class AssemblyConfig : IAssemblyConfig
 {
     /// <inheritdoc/>
-    public string DefaultSBOMNamespaceBaseUri => DefaultSBOMBaseNamespaceUri.Value;
+    public string DefaultSbomNamespaceBaseUri => DefaultSbomBaseNamespaceUri.Value;
 
     /// <inheritdoc/>
     public ManifestInfo DefaultManifestInfoForValidationAction => DefaultManifestInfoForValidationActionValue.Value;
+
+    /// <inheritdoc>
+    public ManifestInfo DefaultManifestInfoForGenerationAction => DefaultManifestInfoForGenerationActionValue.Value;
 
     public string DefaultPackageSupplier => PackageSupplier.Value;
 
     /// <inheritdoc/>
     public string AssemblyDirectory => AssemblyDirectoryValue.Value;
 
-    private static readonly Lazy<string> DefaultSBOMBaseNamespaceUri
+    private static readonly Lazy<string> DefaultSbomBaseNamespaceUri
         = GetCustomAttributeValue<DefaultNamespaceBaseUriAttribute, string>(a => a?.DefaultBaseNamespaceUri);
 
     private static readonly Lazy<ManifestInfo> DefaultManifestInfoForValidationActionValue
         = GetCustomAttributeValue<DefaultManifestInfoArgForValidationAttribute, ManifestInfo>(a => a?.ManifestInfo);
+
+    private static readonly Lazy<ManifestInfo> DefaultManifestInfoForGenerationActionValue
+        = GetCustomAttributeValue<DefaultManifestInfoArgForGenerationAttribute, ManifestInfo>(a => a?.ManifestInfo);
 
     private static readonly Lazy<string> PackageSupplier = GetCustomAttributeValue<PackageSupplierAttribute, string>(a => a?.PackageSupplier);
 

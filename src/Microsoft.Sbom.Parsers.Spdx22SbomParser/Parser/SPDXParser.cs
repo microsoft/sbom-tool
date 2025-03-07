@@ -172,14 +172,14 @@ public class SPDXParser : ISbomParser
         return null;
     }
 
-    public Spdx22Metadata GetMetadata()
+    public SpdxMetadata GetMetadata()
     {
         if (!this.parsingComplete)
         {
             throw new ParserException($"{nameof(this.GetMetadata)} can only be called after Parsing is complete to ensure that a whole object is returned.");
         }
 
-        var spdxMetadata = new Spdx22Metadata();
+        var spdxMetadata = new SpdxMetadata();
         foreach (var kvp in this.metadata)
         {
             switch (kvp.Key)
@@ -214,6 +214,19 @@ public class SPDXParser : ISbomParser
     }
 
     public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { this.spdxManifestInfo };
+
+    public void SetComplianceStandard(string? complianceStandardFromCli)
+    {
+        if (string.IsNullOrEmpty(complianceStandardFromCli))
+        {
+            return;
+        }
+        else
+        {
+            throw new ParserException($"SPDX 2.2 does not support validation based on compliance standards. " +
+                $"Please use SPDX >=3.0 or remove the ComplianceStandard parameter.");
+        }
+    }
 
     private T Coerce<T>(string name, object? value)
     {

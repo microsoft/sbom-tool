@@ -155,6 +155,12 @@ public class IntegrationTests
         var shaFilePath = Path.Combine(manifestFolderPath, "manifest.spdx.json.sha256");
         Assert.IsTrue(File.Exists(jsonFilePath));
         Assert.IsTrue(File.Exists(shaFilePath));
+
+        // Check that manifestFolderPath is the only folder in the directory
+        var directories = Directory.GetDirectories(Path.Combine(testFolderPath, ManifestRootFolderName));
+        Assert.AreEqual(1, directories.Length, "There should be only one folder in the test directory.");
+        Assert.AreEqual(manifestFolderPath, directories[0], "The only folder in the test directory should be the manifest folder.");
+
         Assert.AreEqual(0, exitCode.Value);
     }
 

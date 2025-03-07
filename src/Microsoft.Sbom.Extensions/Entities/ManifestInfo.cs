@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Sbom.Contracts;
 
 namespace Microsoft.Sbom.Extensions.Entities;
 
@@ -91,5 +92,21 @@ public class ManifestInfo : IEquatable<ManifestInfo>
     public string ToLowerString()
     {
         return $"{Name.ToLowerInvariant()}:{Version.ToUpperInvariant()}";
+    }
+
+    /// <summary>
+    /// Converts a <see cref="ManifestInfo"/> to a <see cref="SbomSpecification"/> object.
+    /// </summary>
+    /// <param name="manifestInfo"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static SbomSpecification ToSbomSpecification(ManifestInfo manifestInfo)
+    {
+        if (manifestInfo is null)
+        {
+            throw new ArgumentNullException(nameof(manifestInfo));
+        }
+
+        return new SbomSpecification(manifestInfo.Name, manifestInfo.Version);
     }
 }

@@ -8,6 +8,7 @@ namespace Microsoft.Sbom.Contracts;
 
 /// <summary>
 /// The object representation of all the metadata in an SPDX document.
+/// Name, SpdxVersion, and SpdxId are required fields.
 /// </summary>
 public class SpdxMetadata
 {
@@ -19,7 +20,7 @@ public class SpdxMetadata
     /// <summary>
     /// The license of the SPDX document.
     /// </summary>
-    public string DataLicense { get; set; }
+    public string? DataLicense { get; set; }
 
     /// <summary>
     /// The name of the SPDX document. Usually the name of the package and version.
@@ -29,17 +30,17 @@ public class SpdxMetadata
     /// <summary>
     /// The unique namespace URI of the SPDX document.
     /// </summary>
-    public Uri DocumentNamespace { get; set; }
+    public Uri? DocumentNamespace { get; set; }
 
     /// <summary>
     /// Information about the creation of the SPDX document.
     /// </summary>
-    public MetadataCreationInfo CreationInfo { get; set; }
+    public MetadataCreationInfo? CreationInfo { get; set; }
 
     /// <summary>
     /// Information about the package this SPDX document represents.
     /// </summary>
-    public IEnumerable<string> DocumentDescribes { get; set; }
+    public IEnumerable<string>? DocumentDescribes { get; set; }
 
     /// <summary>
     /// The id of the spdx document.

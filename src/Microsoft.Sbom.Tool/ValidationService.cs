@@ -2,12 +2,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Output.Telemetry;
+using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows;
 using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
 
@@ -40,13 +42,13 @@ public class ValidationService : IHostedService
         bool result;
         try
         {
-            if (configuration.ManifestInfo.Value.Contains(Api.Utils.Constants.SPDX22ManifestInfo))
+            if (configuration.ManifestInfo.Value.Any(Constants.SupportedSpdxManifests.Contains))
             {
                 result = await parserValidationWorkflow.RunAsync();
             }
             else
             {
-                throw new ConfigurationException($"Validation only supports the SPDX2.2 format.");
+                throw new ConfigurationException($"Validation only supports the SPDX2.2 or SPDX3.0 format.");
             }
 
             await recorder.FinalizeAndLogTelemetryAsync();

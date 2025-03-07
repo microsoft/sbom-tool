@@ -25,7 +25,7 @@ public abstract class PathBasedFileToJsonProviderBase : EntityToJsonProviderBase
 
     private readonly FileInfoWriter fileHashWriter;
 
-    private readonly InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator;
+    private readonly InternalSbomFileInfoDeduplicator internalSbomFileInfoDeduplicator;
 
     public PathBasedFileToJsonProviderBase(
         IConfiguration configuration,
@@ -34,13 +34,13 @@ public abstract class PathBasedFileToJsonProviderBase : EntityToJsonProviderBase
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
         FileInfoWriter fileHashWriter,
-        InternalSBOMFileInfoDeduplicator internalSBOMFileInfoDeduplicator)
+        InternalSbomFileInfoDeduplicator internalSbomFileInfoDeduplicator)
         : base(configuration, channelUtils, log)
     {
         this.fileHasher = fileHasher ?? throw new ArgumentNullException(nameof(fileHasher));
         this.fileFilterer = fileFilterer ?? throw new ArgumentNullException(nameof(fileFilterer));
         this.fileHashWriter = fileHashWriter ?? throw new ArgumentNullException(nameof(fileHashWriter));
-        this.internalSBOMFileInfoDeduplicator = internalSBOMFileInfoDeduplicator ?? throw new ArgumentNullException(nameof(internalSBOMFileInfoDeduplicator));
+        this.internalSbomFileInfoDeduplicator = internalSbomFileInfoDeduplicator ?? throw new ArgumentNullException(nameof(internalSbomFileInfoDeduplicator));
     }
 
     protected override (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors)
@@ -55,7 +55,7 @@ public abstract class PathBasedFileToJsonProviderBase : EntityToJsonProviderBase
         // Generate hash code for the files
         var (fileInfos, hashingErrors) = fileHasher.Run(filteredFiles);
         errors.Add(hashingErrors);
-        var deduplicatedFileInfos = internalSBOMFileInfoDeduplicator.Deduplicate(fileInfos);
+        var deduplicatedFileInfos = internalSbomFileInfoDeduplicator.Deduplicate(fileInfos);
 
         var (jsonDocCount, jsonErrors) = fileHashWriter.Write(deduplicatedFileInfos, requiredConfigs);
         errors.Add(jsonErrors);
