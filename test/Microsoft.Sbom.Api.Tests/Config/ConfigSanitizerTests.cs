@@ -112,6 +112,27 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
+    public void SetValueForManifestInfoForGeneration_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        configSanitizer.SanitizeConfig(config);
+
+        mockAssemblyConfig.Verify();
+    }
+
+    [TestMethod]
+    public void NoValueForManifestInfoForGeneration_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        config.ManifestInfo.Value.Clear();
+        configSanitizer.SanitizeConfig(config);
+
+        mockAssemblyConfig.Verify();
+    }
+
+    [TestMethod]
     public void NoValueForBuildDropPathForRedaction_Succeeds()
     {
         var config = GetConfigurationBaseObject();
@@ -161,6 +182,23 @@ public class ConfigSanitizerTests
         Assert.AreEqual(Constants.TestManifestInfo, sanitizedConfig.ManifestInfo.Value.First());
 
         mockAssemblyConfig.VerifyGet(a => a.DefaultManifestInfoForValidationAction);
+    }
+
+    [TestMethod]
+    public void NoValueForManifestInfoForGeneration_SetsDefaultValue()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        config.ManifestInfo.Value.Clear();
+        mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForGenerationAction).Returns(Constants.TestManifestInfo);
+
+        var sanitizedConfig = configSanitizer.SanitizeConfig(config);
+
+        Assert.IsNotNull(sanitizedConfig.ManifestInfo.Value);
+        Assert.AreEqual(1, sanitizedConfig.ManifestInfo.Value.Count);
+        Assert.AreEqual(Constants.TestManifestInfo, sanitizedConfig.ManifestInfo.Value.First());
+
+        mockAssemblyConfig.VerifyGet(a => a.DefaultManifestInfoForGenerationAction);
     }
 
     [TestMethod]

@@ -94,16 +94,15 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     log.Information("Manifest directory path was explicitly defined. Will not attempt to delete any existing _manifest directory.");
                 }
 
-                await using (sbomConfigs.StartJsonSerializationAsync())
+                var manifestInfos = configuration.ManifestInfo.Value;
+
+                // Use the WriteJsonObjectsToSbomAsync method based on the SPDX version in manifest info
+                foreach (var manifestInfo in manifestInfos)
                 {
-                    sbomConfigs.ApplyToEachConfig(config => config.JsonSerializer.StartJsonObject());
-
-                    var manifestInfos = sbomConfigs.GetManifestInfos();
-
-                    // Use the WriteJsonObjectsToSbomAsync method based on the SPDX version in manifest info
-                    foreach (var manifestInfo in manifestInfos)
+                    var config = sbomConfigs.Get(manifestInfo);
+                    await using (sbomConfigs.StartJsonSerializationAsync(config))
                     {
-                        var config = sbomConfigs.Get(manifestInfo);
+                        config.JsonSerializer?.StartJsonObject();
 
                         // Get the appropriate strategy
                         var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(manifestInfo.Version);
@@ -117,15 +116,15 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                             ConfigureAwait(false);
 
                         // Write headers
-                        serializationStrategy.AddHeadersToSbom(sbomConfigs);
+                        serializationStrategy.AddHeadersToSbom(sbomConfigs, config);
+
+                        // Finalize JSON
+                        config.JsonSerializer?.FinalizeJsonObject();
                     }
 
-                    // Finalize JSON
-                    sbomConfigs.ApplyToEachConfig(config => config.JsonSerializer.FinalizeJsonObject());
+                    // Generate SHA256 for manifest json
+                    GenerateHashForManifestJson(config.ManifestJsonFilePath);
                 }
-
-                // Generate SHA256 for manifest json
-                sbomConfigs.ApplyToEachConfig(config => GenerateHashForManifestJson(config.ManifestJsonFilePath));
 
                 return !validErrors.Any();
             }
