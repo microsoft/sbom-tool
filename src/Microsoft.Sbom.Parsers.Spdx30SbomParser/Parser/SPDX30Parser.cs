@@ -41,10 +41,9 @@ public class SPDX30Parser : ISbomParser
     {
         "SpdxDocument",
         "File",
-        "Package",
     };
 
-    private IReadOnlyCollection<string>? entitiesToEnforceComplianceStandardsFor;
+    private IReadOnlyCollection<string>? entititesRequiringDeserializationWithNTIA;
     private SpdxMetadata metadata = new SpdxMetadata();
     private readonly LargeJsonParser parser;
     private readonly IList<string> observedFieldNames = new List<string>();
@@ -161,7 +160,7 @@ public class SPDX30Parser : ISbomParser
             {
                 case ComplianceStandard.NTIA:
                     RequiredComplianceStandard = complianceStandardAsEnum;
-                    entitiesToEnforceComplianceStandardsFor = EntitiesWithDifferentNTIARequirements;
+                    entititesRequiringDeserializationWithNTIA = EntitiesWithDifferentNTIARequirements;
                     break;
                 default:
                     break;
@@ -262,7 +261,7 @@ public class SPDX30Parser : ISbomParser
         switch (requiredComplianceStandard)
         {
             case ComplianceStandard.NTIA:
-                if (this.entitiesToEnforceComplianceStandardsFor?.Contains(entityType) == true)
+                if (this.entititesRequiringDeserializationWithNTIA?.Contains(entityType) == true)
                 {
                     entityType = "NTIA" + entityType;
                 }
@@ -337,10 +336,10 @@ public class SPDX30Parser : ISbomParser
         {
             var packageSpdxId = packageElement.SpdxId;
 
-            var packageHasSha256Hash = packageElement.VerifiedUsing.
+            var packageHasSha256Hash = packageElement.VerifiedUsing?.
                 Any(packageVerificationCode => packageVerificationCode.Algorithm == HashAlgorithm.sha256);
 
-            if (!packageHasSha256Hash)
+            if (packageHasSha256Hash is null || packageHasSha256Hash is false)
             {
                 throw new ParserException($"SBOM document is not NTIA compliant because package with SPDX ID {packageSpdxId} does not have a SHA256 hash.");
             }
