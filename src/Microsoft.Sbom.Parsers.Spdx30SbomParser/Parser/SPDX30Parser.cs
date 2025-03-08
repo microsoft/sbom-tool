@@ -339,7 +339,7 @@ public class SPDX30Parser : ISbomParser
             var packageHasSha256Hash = packageElement.VerifiedUsing?.
                 Any(packageVerificationCode => packageVerificationCode.Algorithm == HashAlgorithm.sha256);
 
-            if (packageHasSha256Hash is null || packageHasSha256Hash is false)
+            if (packageHasSha256Hash is null || packageHasSha256Hash == false)
             {
                 throw new ParserException($"SBOM document is not NTIA compliant because package with SPDX ID {packageSpdxId} does not have a SHA256 hash.");
             }
