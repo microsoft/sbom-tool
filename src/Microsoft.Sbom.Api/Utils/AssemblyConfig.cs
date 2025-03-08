@@ -19,6 +19,9 @@ public class AssemblyConfig : IAssemblyConfig
     /// <inheritdoc/>
     public ManifestInfo DefaultManifestInfoForValidationAction => DefaultManifestInfoForValidationActionValue.Value;
 
+    /// <inheritdoc>
+    public ManifestInfo DefaultManifestInfoForGenerationAction => DefaultManifestInfoForGenerationActionValue.Value;
+
     public string DefaultPackageSupplier => PackageSupplier.Value;
 
     /// <inheritdoc/>
@@ -29,6 +32,9 @@ public class AssemblyConfig : IAssemblyConfig
 
     private static readonly Lazy<ManifestInfo> DefaultManifestInfoForValidationActionValue
         = GetCustomAttributeValue<DefaultManifestInfoArgForValidationAttribute, ManifestInfo>(a => a?.ManifestInfo);
+
+    private static readonly Lazy<ManifestInfo> DefaultManifestInfoForGenerationActionValue
+        = GetCustomAttributeValue<DefaultManifestInfoArgForGenerationAttribute, ManifestInfo>(a => a?.ManifestInfo);
 
     private static readonly Lazy<string> PackageSupplier = GetCustomAttributeValue<PackageSupplierAttribute, string>(a => a?.PackageSupplier);
 

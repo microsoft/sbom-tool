@@ -22,6 +22,12 @@ public interface IAssemblyConfig
     public ManifestInfo DefaultManifestInfoForValidationAction { get; }
 
     /// <summary>
+    /// Gets the default value to use for ManifestInfo for generation action in case the user doesn't provide a
+    /// value.
+    /// </summary>
+    public ManifestInfo DefaultManifestInfoForGenerationAction { get; }
+
+    /// <summary>
     /// Gets the directory where the current executing assembly is located.
     /// </summary>
     public string AssemblyDirectory { get; }

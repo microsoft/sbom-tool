@@ -170,6 +170,8 @@ public class InterfaceConcretionTests
 
         public ManifestInfo DefaultManifestInfoForValidationAction => throw new NotImplementedException();
 
+        public ManifestInfo DefaultManifestInfoForGenerationAction => throw new NotImplementedException();
+
         public string AssemblyDirectory => throw new NotImplementedException();
 
         public string DefaultPackageSupplier => throw new NotImplementedException();
