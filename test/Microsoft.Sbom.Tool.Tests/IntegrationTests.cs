@@ -178,7 +178,14 @@ public class IntegrationTests
 
     private static string GetSolutionFolderPath()
     {
-        return Path.GetFullPath(Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", ".."));
+        // Walk up the folder path until we find our solution folder
+        var pathToTry = Assembly.GetExecutingAssembly().Location;
+        while (!File.Exists(Path.Combine(pathToTry, "Microsoft.Sbom.sln")))
+        {
+            pathToTry = Path.GetFullPath(Path.Combine(pathToTry, ".."));
+        }
+
+        return pathToTry;
     }
 
     private static string GetAppName()
