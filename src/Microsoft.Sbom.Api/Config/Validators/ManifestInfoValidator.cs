@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config.Attributes;
@@ -23,7 +24,7 @@ public class ManifestInfoValidator : ConfigValidator
 
     public override void ValidateInternal(string paramName, object paramValue, Attribute attribute)
     {
-        if (paramValue is not null && paramValue is ManifestInfo manifestInfo && !Constants.SupportedSpdxManifests.Contains(paramValue as ManifestInfo))
+        if (paramValue is not null && paramValue is List<ManifestInfo> listOfManifestInfos && !Constants.SupportedSpdxManifests.Any(listOfManifestInfos.Contains))
         {
             var supportedManifests = string.Join(", ", Constants.SupportedSpdxManifests.Select(m => m.ToString()));
             throw new ValidationArgException($"The value of {paramName} must be a valid ManifestInfo. Supported SPDX versions include: {supportedManifests}");

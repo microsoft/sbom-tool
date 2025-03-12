@@ -36,7 +36,8 @@ public class ConfigurationBuilderTestsBase
             new FileExistsValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object),
             new DirectoryExistsValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object),
             new DirectoryPathIsWritableValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object),
-            new UriValidator(mockAssemblyConfig.Object)
+            new UriValidator(mockAssemblyConfig.Object),
+            new ManifestInfoValidator(mockAssemblyConfig.Object)
         };
 
         var hashAlgorithmProvider = new HashAlgorithmProvider(new IAlgorithmNames[] { new AlgorithmNames() });

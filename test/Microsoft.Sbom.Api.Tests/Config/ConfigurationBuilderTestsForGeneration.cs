@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config.Args;
@@ -8,6 +9,7 @@ using Microsoft.Sbom.Api.Exceptions;
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PowerArgs;
@@ -294,5 +296,32 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         };
 
         await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args), "The value of NamespaceUriBase must be a valid URI.");
+    }
+
+    [TestMethod]
+    [DataRow("SPDX:randomVersion")]
+    [DataRow("randomName:2.2")]
+    [DataRow("randomName:3.0")]
+    public async Task ConfigurationBuilderTest_Generation_BadManifestInfo_Fails(string manifestInfo)
+    {
+        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+
+        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
+        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
+        fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
+
+        IList<ManifestInfo> manifestInfos = new List<ManifestInfo> { ManifestInfo.Parse(manifestInfo) };
+        var args = new GenerationArgs
+        {
+            BuildDropPath = "BuildDropPath",
+            ManifestDirPath = "ManifestDirPath",
+            NamespaceUriBase = "https://base.uri",
+            PackageSupplier = "Contoso",
+            ManifestInfo = manifestInfos
+        };
+
+        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args), "The value of ManifestInfo must be a valid ManifestInfo.");
     }
 }
