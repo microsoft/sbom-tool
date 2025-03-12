@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Linq;
 using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Recorder;
 using Microsoft.Sbom.Common;
@@ -72,8 +71,7 @@ public abstract class BaseManifestConfigHandler : IManifestConfigHandler
         // argument is specified.
         if (configuration.ManifestToolAction == ManifestToolActions.Generate)
         {
-            if (configuration.ManifestInfo?.Value != null
-                && !Constants.SupportedSpdxManifests.Any(configuration.ManifestInfo.Value.Contains))
+            if (configuration.ManifestInfo?.Value != null)
             {
                 return false;
             }
@@ -85,8 +83,7 @@ public abstract class BaseManifestConfigHandler : IManifestConfigHandler
         {
             // We can only validate one format at a time, so check if its this one and return true/false.
             if (configuration.ManifestInfo?.Value != null
-               && configuration.ManifestInfo.Value.Count == 1
-               && Constants.SupportedSpdxManifests.Any(configuration.ManifestInfo.Value.Contains))
+               && configuration.ManifestInfo.Value.Count == 1)
             {
                 return true;
             }

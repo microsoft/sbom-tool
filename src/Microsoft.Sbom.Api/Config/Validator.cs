@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
-using Microsoft.Sbom.Common.Config;
 
 namespace Microsoft.Sbom.Api.Config;
 
@@ -14,17 +13,13 @@ public class Validator : ISbomService<ValidationArgs>
 {
     private readonly IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow;
 
-    private readonly IConfiguration configuration;
-
     private readonly IRecorder recorder;
 
     public Validator(
-        IConfiguration configuration,
         IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow,
         IRecorder recorder)
     {
         this.parserValidationWorkflow = parserValidationWorkflow;
-        this.configuration = configuration;
         this.recorder = recorder;
     }
 

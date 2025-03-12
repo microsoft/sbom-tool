@@ -8,7 +8,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
-using IConfiguration = Microsoft.Sbom.Common.Config.IConfiguration;
 
 namespace Microsoft.Sbom.Tool;
 
@@ -16,20 +15,16 @@ public class ValidationService : IHostedService
 {
     private readonly IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow;
 
-    private readonly IConfiguration configuration;
-
     private readonly IRecorder recorder;
 
     private readonly IHostApplicationLifetime hostApplicationLifetime;
 
     public ValidationService(
-        IConfiguration configuration,
         IWorkflow<SbomParserBasedValidationWorkflow> parserValidationWorkflow,
         IRecorder recorder,
         IHostApplicationLifetime hostApplicationLifetime)
     {
         this.parserValidationWorkflow = parserValidationWorkflow;
-        this.configuration = configuration;
         this.recorder = recorder;
         this.hostApplicationLifetime = hostApplicationLifetime;
     }
