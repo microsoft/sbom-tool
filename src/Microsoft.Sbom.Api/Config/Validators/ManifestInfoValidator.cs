@@ -27,7 +27,7 @@ public class ManifestInfoValidator : ConfigValidator
         if (paramValue is not null && paramValue is List<ManifestInfo> listOfManifestInfos && !Constants.SupportedSpdxManifests.Any(listOfManifestInfos.Contains))
         {
             var supportedManifests = string.Join(", ", Constants.SupportedSpdxManifests.Select(m => m.ToString()));
-            throw new ValidationArgException($"The value of {paramName} must be a valid ManifestInfo. Supported SPDX versions include: {supportedManifests}");
+            throw new ValidationArgException($"Please provide a valid value for the ManifestInfo (-mi) parameter. Supported values include: {supportedManifests}");
         }
     }
 }
