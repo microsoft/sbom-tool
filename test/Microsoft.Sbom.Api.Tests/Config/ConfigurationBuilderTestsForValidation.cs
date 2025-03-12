@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -8,6 +9,7 @@ using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PowerArgs;
@@ -178,5 +180,31 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
         Assert.AreEqual("ManifestDirPath", config.ManifestDirPath.Value);
 
         fileSystemUtilsMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [DataRow("SPDX:randomVersion")]
+    [DataRow("randomName:2.2")]
+    [DataRow("randomName:3.0")]
+    public async Task ConfigurationBuilderTest_Validation_BadManifestInfo_Fails(string manifestInfo)
+    {
+        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+        var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
+
+        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath)).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.GetDirectoryName(It.IsAny<string>())).Returns("test").Verifiable();
+        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
+
+        IList<ManifestInfo> manifestInfos = new List<ManifestInfo> { ManifestInfo.Parse(manifestInfo) };
+        var args = new ValidationArgs
+        {
+            BuildDropPath = "BuildDropPath",
+            ConfigFilePath = "config.json",
+            ManifestInfo = manifestInfos
+        };
+
+        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args), "The value of ManifestInfo must be a valid ManifestInfo.");
     }
 }

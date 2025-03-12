@@ -6,7 +6,7 @@ using System;
 namespace Microsoft.Sbom.Common.Config.Attributes;
 
 /// <summary>
-/// Validate if the property value is a valid URI.
+/// Validate if the property value is a valid ManifestInfo.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Assembly, Inherited = false, AllowMultiple = false)]
 public sealed class ValidManifestInfoAttribute : Attribute
