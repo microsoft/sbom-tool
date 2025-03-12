@@ -27,6 +27,7 @@ public class ConfigurationBuilderTestsBase
         fileSystemUtilsMock = new Mock<IFileSystemUtils>();
         mockAssemblyConfig = new Mock<IAssemblyConfig>();
         mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForValidationAction).Returns(Constants.TestManifestInfo);
+        mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForGenerationAction).Returns(Constants.TestManifestInfo);
 
         configValidators = new ConfigValidator[]
         {
