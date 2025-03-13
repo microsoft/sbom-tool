@@ -85,7 +85,7 @@ public abstract class BaseManifestConfigHandler : IManifestConfigHandler
             // We can only validate one format at a time, so check if its this one and return true/false.
             if (configuration.ManifestInfo?.Value != null
                && configuration.ManifestInfo.Value.Count == 1
-               && !Constants.SupportedSpdxManifests.Any(configuration.ManifestInfo.Value.Contains))
+               && Constants.SupportedSpdxManifests.Any(configuration.ManifestInfo.Value.Contains))
             {
                 return true;
             }

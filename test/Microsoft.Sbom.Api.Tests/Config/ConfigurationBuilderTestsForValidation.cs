@@ -202,9 +202,11 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
         {
             BuildDropPath = "BuildDropPath",
             ConfigFilePath = "config.json",
+            OutputPath = "Test",
             ManifestInfo = manifestInfos
         };
 
-        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args), "The value of ManifestInfo must be a valid ManifestInfo.");
+        var exception = await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
+        Assert.IsTrue(exception.Message.Contains("Please provide a valid value for the ManifestInfo"));
     }
 }

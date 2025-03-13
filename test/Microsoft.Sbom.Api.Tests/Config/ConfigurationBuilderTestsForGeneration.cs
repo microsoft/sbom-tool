@@ -322,6 +322,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
             ManifestInfo = manifestInfos
         };
 
-        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args), "The value of ManifestInfo must be a valid ManifestInfo.");
+        var exception = await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
+        Assert.IsTrue(exception.Message.Contains("Please provide a valid value for the ManifestInfo"));
     }
 }
