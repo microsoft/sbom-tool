@@ -19,7 +19,6 @@ public class ManifestInfoValidatorTests
     [DataRow("randomName", "2.2")]
     [DataRow("randomName", "3.0")]
     [DataRow("SPDX", "randomVersion")]
-    [DataRow("spdx", "randomVersion")]
     [DataRow("asodijf", "randomVersion")]
     [TestMethod]
     public void InvalidManifestInfoThrows(string name, string version)
@@ -36,14 +35,16 @@ public class ManifestInfoValidatorTests
         Assert.ThrowsException<ValidationArgException>(() => validator.ValidateInternal("property", listOfManifestInfos, null));
     }
 
-    [DataRow("2.2")]
-    [DataRow("3.0")]
+    [DataRow("SPDX", "2.2")]
+    [DataRow("SPDX", "3.0")]
+    [DataRow("spdx", "2.2")]
+    [DataRow("spdx", "3.0")]
     [TestMethod]
-    public void ValidManifestInfoPasses(string spdxVersion)
+    public void ValidManifestInfoPasses(string name, string spdxVersion)
     {
         var validManifestInfo = new ManifestInfo
         {
-            Name = "SPDX",
+            Name = name,
             Version = spdxVersion
         };
 
