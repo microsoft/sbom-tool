@@ -123,7 +123,7 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
     {
         var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync();
         errors.AddRange(externalDocumentReferenceGenerationResult.Errors);
-        WriteJsonObjectsFromGenerationResult(externalDocumentReferenceGenerationResult, externalDocumentReferenceGenerator.SbomConfig, externalDocumentReferenceGenerationResult.SourcesProviders);
+        WriteJsonObjectsFromGenerationResultForExternalDocRefs(externalDocumentReferenceGenerationResult, externalDocumentReferenceGenerator.SbomConfig, externalDocumentReferenceGenerationResult.SourcesProviders);
     }
 
     /// <summary>
@@ -152,6 +152,26 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
             }
 
             serializer.EndJsonArray();
+        }
+
+        if (sourcesProviders is not null)
+        {
+            sbomConfig.JsonSerializer.EndJsonArray();
+        }
+    }
+
+    private void WriteJsonObjectsFromGenerationResultForExternalDocRefs(GenerationResult generationResult, ISbomConfig sbomConfig, IEnumerable<ISourcesProvider> sourcesProviders)
+    {
+        foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
+        {
+            var jsonDocuments = generationResult.SerializerToJsonDocuments[serializer];
+            if (jsonDocuments.Count > 0)
+            {
+                foreach (var jsonDocument in jsonDocuments)
+                {
+                    serializer.Write(jsonDocument);
+                }
+            }
         }
 
         if (sourcesProviders is not null)
