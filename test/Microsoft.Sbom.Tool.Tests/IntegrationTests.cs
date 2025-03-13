@@ -90,9 +90,8 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
 
-        var outputFile = Path.Combine(TestContext.TestRunDirectory, TestContext.TestName, "validation.json");
-        var manifestRootFolderName = Path.Combine(testFolderPath, ManifestRootFolderName);
-        var arguments = $"validate -m \"{manifestRootFolderName}\" -b . -o \"{outputFile}\" -mi spdx:2.2";
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath);
+        arguments += " -mi SPDX:2.2";
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -131,6 +130,68 @@ public class IntegrationTests
         Assert.IsTrue(redactedManifestSize < originalManifestSize, "Redacted file must be smaller than the original");
     }
 
+    [TestMethod]
+    public void E2E_Generate_WithBadManifestInfo_ReturnsNonZeroExitCode()
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var testFolderPath = CreateTestFolder();
+        var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\" -b . -bc \"{GetSolutionFolderPath()}\" -mi randomName:randomVersion";
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+        Assert.AreEqual("Please provide a valid value for the ManifestInfo (-mi) parameter. Supported values include: SPDX:2.2, SPDX:3.0\r\n", stderr);
+        Assert.AreNotEqual(0, exitCode.Value);
+    }
+
+    [TestMethod]
+    public void E2E_Validate_WithBadManifestInfo_ReturnsNonZeroExitCode()
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var testFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(testFolderPath);
+
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath);
+        arguments += " -mi randomName:randomVersion";
+
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+        Assert.AreEqual("Please provide a valid value for the ManifestInfo (-mi) parameter. Supported values include: SPDX:2.2, SPDX:3.0\r\n", stderr);
+        Assert.AreNotEqual(0, exitCode.Value);
+    }
+
+    [DataRow("SPDX:2.2")]
+    [DataRow("SPDX:3.0")]
+    [DataRow("randomName:randomVersion")]
+    [TestMethod]
+    public void E2E_Redact_WithManifestInfo_ReturnsNonZeroExitCode(string manifestInfoValue)
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var testFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(testFolderPath);
+
+        var outputFolder = Path.Combine(TestContext.TestRunDirectory, TestContext.TestName, "redacted");
+        var originalManifestFolderPath = AppendFullManifestFolderPath(testFolderPath);
+        var originalManifestFilePath = Path.Combine(AppendFullManifestFolderPath(testFolderPath), ManifestFileName);
+        var arguments = $"redact -sp \"{originalManifestFilePath}\" -o \"{outputFolder}\" -verbosity verbose";
+        arguments += $" -mi {manifestInfoValue}";
+
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+        Assert.IsTrue(stdout.Contains("Unexpected named argument: mi"));
+        Assert.AreNotEqual(0, exitCode.Value);
+    }
+
     private void GenerateManifestAndValidateSuccess(string testFolderPath)
     {
         var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\"  -b . -bc \"{GetSolutionFolderPath()}\"";
@@ -143,7 +204,22 @@ public class IntegrationTests
         var shaFilePath = Path.Combine(manifestFolderPath, "manifest.spdx.json.sha256");
         Assert.IsTrue(File.Exists(jsonFilePath));
         Assert.IsTrue(File.Exists(shaFilePath));
+
+        // Check that manifestFolderPath is the only folder in the directory
+        var directories = Directory.GetDirectories(Path.Combine(testFolderPath, ManifestRootFolderName));
+        Assert.AreEqual(1, directories.Length, "There should be only one folder in the test directory.");
+        Assert.AreEqual(manifestFolderPath, directories[0], "The only folder in the test directory should be the manifest folder.");
+
         Assert.AreEqual(0, exitCode.Value);
+    }
+
+    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath)
+    {
+        var outputFile = Path.Combine(TestContext.TestRunDirectory, TestContext.TestName, "validation.json");
+        var manifestRootFolderName = Path.Combine(testFolderPath, ManifestRootFolderName);
+        var arguments = $"validate -m \"{manifestRootFolderName}\" -b . -o \"{outputFile}\"";
+
+        return (arguments, outputFile);
     }
 
     private string CreateTestFolder()

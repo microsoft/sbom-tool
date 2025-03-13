@@ -27,6 +27,7 @@ public class ConfigurationBuilderTestsBase
         fileSystemUtilsMock = new Mock<IFileSystemUtils>();
         mockAssemblyConfig = new Mock<IAssemblyConfig>();
         mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForValidationAction).Returns(Constants.TestManifestInfo);
+        mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForGenerationAction).Returns(Constants.TestManifestInfo);
 
         configValidators = new ConfigValidator[]
         {
@@ -36,7 +37,8 @@ public class ConfigurationBuilderTestsBase
             new FileExistsValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object),
             new DirectoryExistsValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object),
             new DirectoryPathIsWritableValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object),
-            new UriValidator(mockAssemblyConfig.Object)
+            new UriValidator(mockAssemblyConfig.Object),
+            new ManifestInfoValidator(mockAssemblyConfig.Object)
         };
 
         var hashAlgorithmProvider = new HashAlgorithmProvider(new IAlgorithmNames[] { new AlgorithmNames() });
@@ -63,5 +65,5 @@ public class ConfigurationBuilderTestsBase
     }
 
     protected const string JSONConfigWithManifestPath = $"{{ \"ManifestDirPath\": \"manifestDirPath\"}}";
-    protected const string JSONConfigGoodWithManifestInfo = $"{{ \"ManifestInfo\": [{{ \"Name\":\"manifest\", \"Version\":\"1\"}}]}}";
+    protected const string JSONConfigGoodWithManifestInfo = $"{{ \"ManifestInfo\": [{{ \"Name\":\"SPDX\", \"Version\":\"2.2\"}}]}}";
 }

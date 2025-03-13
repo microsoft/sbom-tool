@@ -72,6 +72,9 @@ public class ConfigSanitizer
             configuration.NamespaceUriBase = GetNamespaceBaseUri(configuration, logger);
         }
 
+        // Set default ManifestInfo for generation in case user doesn't provide a value.
+        configuration.ManifestInfo = GetDefaultManifestInfoForGenerationAction(configuration);
+
         // Set default ManifestInfo for validation in case user doesn't provide a value.
         configuration.ManifestInfo = GetDefaultManifestInfoForValidationAction(configuration);
 
@@ -138,14 +141,35 @@ public class ConfigSanitizer
         }
 
         return new ConfigurationSetting<IList<ManifestInfo>>
+        {
+            Source = SettingSource.Default,
+            Value = new List<ManifestInfo>()
             {
-                Source = SettingSource.Default,
-                Value = new List<ManifestInfo>()
-                {
-                    defaultManifestInfo
-                }
-            };
+                defaultManifestInfo
+            }
+        };
+    }
+
+    private ConfigurationSetting<IList<ManifestInfo>> GetDefaultManifestInfoForGenerationAction(IConfiguration configuration)
+    {
+        if (configuration.ManifestToolAction != ManifestToolActions.Generate)
+        {
+            return configuration.ManifestInfo;
         }
+
+        if (configuration.ManifestInfo?.Value != null && configuration.ManifestInfo.Value.Count != 0)
+        {
+            return configuration.ManifestInfo;
+        }
+
+        // Use default ManifestInfo for generation if none is given.
+        var defaultManifestInfo = assemblyConfig.DefaultManifestInfoForGenerationAction;
+        return new ConfigurationSetting<IList<ManifestInfo>>
+        {
+            Source = SettingSource.Default,
+            Value = new List<ManifestInfo> { defaultManifestInfo }
+        };
+    }
 
     private void ValidateBuildDropPathConfiguration(IConfiguration configuration)
     {
