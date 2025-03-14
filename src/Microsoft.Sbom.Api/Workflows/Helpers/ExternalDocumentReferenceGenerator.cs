@@ -51,7 +51,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
             if (!sourcesProviders.Any())
             {
                 log.Debug($"No source providers found for {ProviderType.ExternalDocumentReference}");
-                return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson);
+                return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, sourcesProviders);
             }
 
             // Write the start of the array, if supported.

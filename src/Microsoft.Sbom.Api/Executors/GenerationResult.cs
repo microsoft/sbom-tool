@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Providers;
@@ -20,10 +21,15 @@ public class GenerationResult
 
     public IEnumerable<ISourcesProvider> SourcesProviders { get; set; }
 
+    /// <summary>
+    /// Result from generators. This result is used to write to the SBOM manifest file.
+    /// </summary>
+    /// <param name="errors">List of FileValidationResult errors.</param>
+    /// <param name="serializerToJsonDocuments">Dictionary to map serializer to the JSON document that should be written to it.</param>
+    /// <param name="sourcesProviders">Only used for the external document reference generator in SPDX 2.2.</param>
     public GenerationResult(List<FileValidationResult> errors, Dictionary<IManifestToolJsonSerializer, List<JsonDocument>> serializerToJsonDocuments, IEnumerable<ISourcesProvider> sourcesProviders = null)
     {
         Errors = errors;
         SerializerToJsonDocuments = serializerToJsonDocuments;
-        this.SourcesProviders = sourcesProviders;
     }
 }
