@@ -159,6 +159,9 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
     private void WriteJsonObjectsFromGenerationResultForExternalDocRefs(GenerationResult generationResult, ISbomConfig sbomConfig, IEnumerable<ISourcesProvider> sourcesProviders)
     {
         WriteJsonObjectsFromGenerationResult(generationResult, sbomConfig, false);
-        sbomConfig.JsonSerializer.EndJsonArray();
+        if (generationResult.SerializerToJsonDocuments.Count != 0)
+        {
+            sbomConfig.JsonSerializer.EndJsonArray();
+        }
     }
 }
