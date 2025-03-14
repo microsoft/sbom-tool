@@ -136,7 +136,7 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
         WriteJsonObjectsFromGenerationResult(relationshipGenerationResult, relationshipsArrayGenerator.SbomConfig);
    }
 
-    private void WriteJsonObjectsFromGenerationResult(GenerationResult generationResult, ISbomConfig sbomConfig, IEnumerable<ISourcesProvider> sourcesProviders = null)
+    private void WriteJsonObjectsFromGenerationResult(GenerationResult generationResult, ISbomConfig sbomConfig, bool endArrayForEachSerializer = true)
     {
         foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
         {
@@ -149,31 +149,22 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
                 }
             }
 
-            serializer.EndJsonArray();
-        }
-
-        if (sourcesProviders is not null)
-        {
-            sbomConfig.JsonSerializer.EndJsonArray();
+            if (endArrayForEachSerializer)
+            {
+                serializer.EndJsonArray();
+            }
         }
     }
 
     private void WriteJsonObjectsFromGenerationResultForExternalDocRefs(GenerationResult generationResult, ISbomConfig sbomConfig, IEnumerable<ISourcesProvider> sourcesProviders)
     {
-        foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
+        if (sourcesProviders is null)
         {
-            var jsonDocuments = generationResult.SerializerToJsonDocuments[serializer];
-            if (jsonDocuments.Count > 0)
-            {
-                foreach (var jsonDocument in jsonDocuments)
-                {
-                    serializer.Write(jsonDocument);
-                }
-            }
+            WriteJsonObjectsFromGenerationResult(generationResult, sbomConfig);
         }
-
-        if (sourcesProviders is not null)
+        else
         {
+            WriteJsonObjectsFromGenerationResult(generationResult, sbomConfig, false);
             sbomConfig.JsonSerializer.EndJsonArray();
         }
     }
