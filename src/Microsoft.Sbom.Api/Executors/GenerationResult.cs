@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Providers;
@@ -30,5 +31,6 @@ public class GenerationResult
     {
         Errors = errors;
         SerializerToJsonDocuments = serializerToJsonDocuments;
+        SourcesProviders = sourcesProviders ?? Enumerable.Empty<ISourcesProvider>();
     }
 }
