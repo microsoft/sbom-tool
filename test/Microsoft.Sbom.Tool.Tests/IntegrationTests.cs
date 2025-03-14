@@ -142,7 +142,7 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\" -b . -bc \"{GetSolutionFolderPath()}\" -mi randomName:randomVersion";
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
-        Assert.AreEqual("Please provide a valid value for the ManifestInfo (-mi) parameter. Supported values include: SPDX:2.2, SPDX:3.0\r\n", stderr);
+        Assert.AreEqual("Please provide a valid value for the ManifestInfo (-mi) parameter. Supported values include: SPDX:2.2, SPDX:3.0. The values are case-insensitive.\r\n", stderr);
         Assert.AreNotEqual(0, exitCode.Value);
     }
 
@@ -162,7 +162,7 @@ public class IntegrationTests
         arguments += " -mi randomName:randomVersion";
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
-        Assert.AreEqual("Please provide a valid value for the ManifestInfo (-mi) parameter. Supported values include: SPDX:2.2, SPDX:3.0\r\n", stderr);
+        Assert.AreEqual("Please provide a valid value for the ManifestInfo (-mi) parameter. Supported values include: SPDX:2.2, SPDX:3.0. The values are case-insensitive.\r\n", stderr);
         Assert.AreNotEqual(0, exitCode.Value);
     }
 
