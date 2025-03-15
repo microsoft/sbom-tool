@@ -15,14 +15,16 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
 {
-    public void AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         elementsSupportingConfigs.Add(config);
+        return true;
     }
 
-    public void AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         elementsSupportingConfigs.Add(config);
+        return true;
     }
 
     public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
@@ -30,9 +32,10 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
         return true;
     }
 
-    public void AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         elementsSupportingConfigs.Add(config);
+        return true;
     }
 
     public async Task<List<FileValidationResult>> WriteJsonObjectsToSbomAsync(

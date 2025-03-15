@@ -55,7 +55,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
             // Write the start of the array, if supported.
             IList<ISbomConfig> packagesArraySupportingConfigs = new List<ISbomConfig>();
             var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
-            serializationStrategy.AddToPackagesSupportingConfig(packagesArraySupportingConfigs, this.SbomConfig);
+            var jsonArrayStarted = serializationStrategy.AddToPackagesSupportingConfig(packagesArraySupportingConfigs, this.SbomConfig);
 
             var (jsonDocResults, errors) = sourcesProvider.Get(packagesArraySupportingConfigs);
 
@@ -100,7 +100,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
                 }
             }
 
-            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson);
+            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStarted);
         }
     }
 }
