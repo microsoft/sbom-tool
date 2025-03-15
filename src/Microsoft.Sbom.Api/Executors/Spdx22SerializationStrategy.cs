@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -14,22 +13,28 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
 {
-    public void AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetFilesArrayHeaderName(out var headerName))
         {
             config.JsonSerializer.StartJsonArray(headerName);
             elementsSupportingConfigs.Add(config);
+            return true;
         }
+
+        return false;
     }
 
-    public void AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetPackageArrayHeaderName(out var headerName))
         {
             config.JsonSerializer.StartJsonArray(headerName);
             elementsSupportingConfigs.Add(config);
+            return true;
         }
+
+        return false;
     }
 
     public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
@@ -41,15 +46,18 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
         }
 
         return false;
-        }
+    }
 
-    public void AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetExternalRefArrayHeaderName(out var headerName))
         {
             config.JsonSerializer.StartJsonArray(headerName);
             elementsSupportingConfigs.Add(config);
+            return true;
         }
+
+        return false;
     }
 
     public void AddHeadersToSbom(ISbomConfigProvider sbomConfigs, ISbomConfig config)
@@ -121,7 +129,7 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
     {
         var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync();
         errors.AddRange(externalDocumentReferenceGenerationResult.Errors);
-        WriteJsonObjectsFromGenerationResultForExternalDocRefs(externalDocumentReferenceGenerationResult, externalDocumentReferenceGenerator.SbomConfig, externalDocumentReferenceGenerationResult.SourcesProviders);
+        WriteJsonObjectsFromGenerationResult(externalDocumentReferenceGenerationResult, externalDocumentReferenceGenerator.SbomConfig);
     }
 
     /// <summary>
@@ -136,7 +144,7 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
         WriteJsonObjectsFromGenerationResult(relationshipGenerationResult, relationshipsArrayGenerator.SbomConfig);
    }
 
-    private void WriteJsonObjectsFromGenerationResult(GenerationResult generationResult, ISbomConfig sbomConfig, bool endArrayForEachSerializer = true)
+    private void WriteJsonObjectsFromGenerationResult(GenerationResult generationResult, ISbomConfig sbomConfig)
     {
         foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
         {
@@ -148,18 +156,9 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
                     serializer.Write(jsonDocument);
                 }
             }
-
-            if (endArrayForEachSerializer)
-            {
-                serializer.EndJsonArray();
-            }
         }
-    }
 
-    private void WriteJsonObjectsFromGenerationResultForExternalDocRefs(GenerationResult generationResult, ISbomConfig sbomConfig, IEnumerable<ISourcesProvider> sourcesProviders)
-    {
-        WriteJsonObjectsFromGenerationResult(generationResult, sbomConfig, false);
-        if (generationResult.SerializerToJsonDocuments.Count != 0)
+        if (generationResult.JsonArrayStarted)
         {
             sbomConfig.JsonSerializer.EndJsonArray();
         }

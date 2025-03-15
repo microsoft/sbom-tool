@@ -55,7 +55,8 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
             var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
 
             // Write the relationship array only if supported
-            if (serializationStrategy.AddToRelationshipsSupportingConfig(relationshipsArraySupportingConfigs, SbomConfig))
+            var jsonArrayStarted = serializationStrategy.AddToRelationshipsSupportingConfig(relationshipsArraySupportingConfigs, SbomConfig);
+            if (jsonArrayStarted)
             {
                 var generationData = SbomConfig?.Recorder.GetGenerationData();
 
@@ -105,7 +106,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                 log.Debug($"Wrote {count} relationship elements in the SBOM.");
             }
 
-            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson);
+            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStarted);
         }
     }
 

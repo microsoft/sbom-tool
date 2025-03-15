@@ -51,13 +51,13 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
             if (!sourcesProviders.Any())
             {
                 log.Debug($"No source providers found for {ProviderType.ExternalDocumentReference}");
-                return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, sourcesProviders);
+                return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStarted: false);
             }
 
             // Write the start of the array, if supported.
             IList<ISbomConfig> externalRefArraySupportingConfigs = new List<ISbomConfig>();
             var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
-            serializationStrategy.AddToExternalDocRefsSupportingConfig(externalRefArraySupportingConfigs, this.SbomConfig);
+            var jsonArrayStarted = serializationStrategy.AddToExternalDocRefsSupportingConfig(externalRefArraySupportingConfigs, this.SbomConfig);
 
             foreach (var sourcesProvider in sourcesProviders)
             {
@@ -80,7 +80,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
                 }
             }
 
-            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, sourcesProviders);
+            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStarted);
         }
     }
 }
