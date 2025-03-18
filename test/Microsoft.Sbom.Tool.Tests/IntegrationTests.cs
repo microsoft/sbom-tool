@@ -248,7 +248,7 @@ public class IntegrationTests
         Assert.AreEqual(1, directories.Length, "There should be only one folder in the test directory.");
         Assert.AreEqual(manifestFolderPath, directories[0], "The only folder in the test directory should be a folder with the correct SBOM version name.");
 
-        Assert.AreEqual(0, exitCode.Value, $"Unexpected error. stdout = {stdout}");
+        Assert.AreEqual(0, exitCode.Value, $"Unexpected failure. stdout = {stdout}");
     }
 
     private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoValue = "SPDX:2.2")
