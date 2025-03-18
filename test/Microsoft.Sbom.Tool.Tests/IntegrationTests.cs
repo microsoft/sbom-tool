@@ -272,7 +272,6 @@ public class IntegrationTests
         return Path.Combine(manifestDir, ManifestRootFolderName, $"spdx_{spdxVersion ?? "2.2"}");
     }
 
-
     /// <summary>
     /// Consistently return the path that contains our solution file. Starts from the location of the executing
     /// assembly, then walks up the tree until is finds a solution file
