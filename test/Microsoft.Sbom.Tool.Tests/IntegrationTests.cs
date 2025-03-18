@@ -148,10 +148,7 @@ public class IntegrationTests
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
-        var validationError = "Error deserializing SBOM with SPDX 2.2: JSON deserialization for type \'Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.FormatEnforcedSPDX2\' " +
-            "was missing required properties including: \'packages\', \'relationships\', \'spdxVersion\', \'dataLicense\', \'SPDXID\'. " +
-            "Redaction is only supported for SPDX 2.2 currently, please provide a valid SPDX 2.2 SBOM.";
-        Assert.IsTrue(stdout.Contains(validationError));
+        Assert.IsTrue(stdout.Contains("Redaction is only supported for SPDX 2.2 currently. Please provide a valid SPDX 2.2 SBOM."), $"Unexpected output: {stdout}");
         Assert.AreEqual(1, exitCode.Value);
     }
 
@@ -257,7 +254,7 @@ public class IntegrationTests
         return testFolderPath;
     }
 
-    private static string AppendFullManifestFolderPath(string manifestDir, string spdxVersion = "2.2")
+    private static string AppendFullManifestFolderPath(string manifestDir, string spdxVersion = null)
     {
         return Path.Combine(manifestDir, ManifestRootFolderName, $"spdx_{spdxVersion ?? "2.2"}");
     }
