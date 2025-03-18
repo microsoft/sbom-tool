@@ -13,18 +13,19 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 public class GenerationResult
 {
-    public List<FileValidationResult> Errors { get; set; }
+    public List<FileValidationResult> Errors { get; }
 
-    public Dictionary<IManifestToolJsonSerializer, List<JsonDocument>> SerializerToJsonDocuments { get; set; }
+    public Dictionary<IManifestToolJsonSerializer, List<JsonDocument>> SerializerToJsonDocuments { get; }
 
-    public bool JsonArrayStarted { get; set; }
+    public bool JsonArrayStarted { get; }
 
     /// <summary>
     /// Result from generators. This result is used to write to the SBOM manifest file.
     /// </summary>
     /// <param name="errors">List of FileValidationResult errors.</param>
     /// <param name="serializerToJsonDocuments">Dictionary to map serializer to the JSON document that should be written to it.</param>
-    public GenerationResult(List<FileValidationResult> errors, Dictionary<IManifestToolJsonSerializer, List<JsonDocument>> serializerToJsonDocuments, bool jsonArrayStarted = false)
+    /// <param name="jsonArrayStarted">This value determines whether a JSON array for a section is started. This is only used for SPDX 2.2 SBOM generation.</param>
+    public GenerationResult(List<FileValidationResult> errors, Dictionary<IManifestToolJsonSerializer, List<JsonDocument>> serializerToJsonDocuments, bool jsonArrayStarted)
     {
         Errors = errors;
         SerializerToJsonDocuments = serializerToJsonDocuments;

@@ -345,7 +345,7 @@ public class ManifestGenerationWorkflowTests
 
         var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sourcesProvider, recorderMock.Object);
 
-        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
+        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>(), false);
         relationshipArrayGenerator
             .Setup(r => r.GenerateAsync())
             .ReturnsAsync(generationResult);
@@ -446,6 +446,8 @@ public class ManifestGenerationWorkflowTests
     [TestMethod]
     public async Task ManifestGenerationWorkflowTests_SBOMDir_NotDefault_NotDeleted()
     {
+        using var manifestStream = new MemoryStream();
+
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         var sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
@@ -460,8 +462,8 @@ public class ManifestGenerationWorkflowTests
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
 
-        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
-        var generationResultWithFailure = new GenerationResult(new List<FileValidationResult> { new FileValidationResult() }, new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>());
+        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>(), false);
+        var generationResultWithFailure = new GenerationResult(new List<FileValidationResult> { new FileValidationResult() }, new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>(), false);
 
         var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
         fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResultWithFailure);
@@ -473,7 +475,7 @@ public class ManifestGenerationWorkflowTests
         relationshipsArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
 
         var externalDocumentReferenceGeneratorMock = new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>();
-        externalDocumentReferenceGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResultWithFailure);
+        externalDocumentReferenceGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
 
         var sbomConfigsMock = new Mock<ISbomConfigProvider>();
         sbomConfigsMock.Setup(f => f.Get(It.IsAny<ManifestInfo>())).Returns(sbomConfig);
