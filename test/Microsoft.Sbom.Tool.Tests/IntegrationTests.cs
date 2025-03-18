@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -261,7 +262,13 @@ public class IntegrationTests
 
     private static string GetSolutionFolderPath()
     {
-        return Path.GetFullPath(Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", ".."));
+        var pathToCheck = Path.GetFullPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+        while (!Directory.EnumerateFiles(pathToCheck, "*.sln").Any())
+        {
+            pathToCheck = Path.GetFullPath(Path.Combine(pathToCheck, ".."));
+        }
+
+        return pathToCheck;
     }
 
     private static string GetAppName()
