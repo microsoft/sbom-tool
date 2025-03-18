@@ -86,7 +86,7 @@ public class ValidatedSbom: IValidatedSbom
         catch (Exception e)
         {
             ValidationDetails.AggregateValidationStatus(FormatValidationStatus.NotValid);
-            ValidationDetails.Errors.Add($"Error deserializing SBOM: {e.Message}");
+            ValidationDetails.Errors.Add($"Error deserializing SBOM with SPDX 2.2: {e.Message}");
         }
 
         return sbom;

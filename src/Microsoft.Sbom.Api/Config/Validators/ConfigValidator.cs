@@ -2,8 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.Sbom.Api.Utils;
+using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Common.Config.Validators;
 
@@ -89,6 +91,10 @@ public abstract class ConfigValidator
 
             case ConfigurationSetting<string> configSettingString:
                 ValidateInternal(propertyName, configSettingString.Value, attribute);
+                break;
+
+            case ConfigurationSetting<IList<ManifestInfo>> configSettingList:
+                ValidateInternal(propertyName, configSettingList.Value, attribute);
                 break;
 
             default:

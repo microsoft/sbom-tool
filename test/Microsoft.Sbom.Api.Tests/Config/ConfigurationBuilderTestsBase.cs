@@ -65,5 +65,5 @@ public class ConfigurationBuilderTestsBase
     }
 
     protected const string JSONConfigWithManifestPath = $"{{ \"ManifestDirPath\": \"manifestDirPath\"}}";
-    protected const string JSONConfigGoodWithManifestInfo = $"{{ \"ManifestInfo\": [{{ \"Name\":\"manifest\", \"Version\":\"1\"}}]}}";
+    protected const string JSONConfigGoodWithManifestInfo = $"{{ \"ManifestInfo\": [{{ \"Name\":\"SPDX\", \"Version\":\"2.2\"}}]}}";
 }
