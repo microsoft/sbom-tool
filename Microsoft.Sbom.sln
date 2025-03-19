@@ -54,6 +54,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Targets.Tests", "test\Microsoft.Sbom.Targets.Tests\Microsoft.Sbom.Targets.Tests.csproj", "{E31B914C-F24B-4DC8-ACC7-CAEA952563B8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Sbom.Tool.Tests", "test\Microsoft.Sbom.Tool.Tests\Microsoft.Sbom.Tool.Tests.csproj", "{FC5A9799-7C44-4BFA-BA22-55DCAF1A1B9F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C27560E-B0B0-44E3-B4AE-6FB92CE9FE4A} = {6C27560E-B0B0-44E3-B4AE-6FB92CE9FE4A}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Sbom.Targets.E2E.Tests", "test\Microsoft.Sbom.Targets.E2E.Tests\Microsoft.Sbom.Targets.E2E.Tests.csproj", "{3FDE7800-F61F-4C45-93AB-648A4C7979C7}"
 EndProject
