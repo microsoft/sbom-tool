@@ -18,12 +18,12 @@ public interface ISourcesProvider
     /// </summary>
     /// <param name="requiredConfigs">The configurations for which to generate serialized Json.</param>
     /// <returns></returns>
-    (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) Get(IList<ISbomConfig> requiredConfigs);
+    public (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) Get(IList<ISbomConfig> requiredConfigs);
 
     /// <summary>
     /// Returns true if this provider is suppored for the provided source.
     /// </summary>
     /// <param name="providerType">The type of the provider that is required.</param>
     /// <returns></returns>
-    bool IsSupported(ProviderType providerType);
+    public bool IsSupported(ProviderType providerType);
 }

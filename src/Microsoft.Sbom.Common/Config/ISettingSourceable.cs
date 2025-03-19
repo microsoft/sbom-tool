@@ -11,5 +11,5 @@ public interface ISettingSourceable
     /// <summary>
     /// Gets or sets the <see cref="SettingSource">source</see> where this setting came from.
     /// </summary>
-    SettingSource Source { get; set; }
+    public SettingSource Source { get; set; }
 }

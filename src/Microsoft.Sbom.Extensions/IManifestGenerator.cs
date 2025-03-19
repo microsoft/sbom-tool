@@ -22,7 +22,7 @@ public interface IManifestGenerator
     /// manifest this library can generate.
     /// </summary>
     /// <returns>A <see cref="ManifestInfo">manifest</see> this library can generate.</returns>
-    ManifestInfo RegisterManifest();
+    public ManifestInfo RegisterManifest();
 
     /// <summary>
     /// Syncrhonously generates a JSON element from the given fileInfo object.
@@ -31,7 +31,7 @@ public interface IManifestGenerator
     /// has the responsibility to dispose this object.
     /// </summary>
     /// <param name="fileInfo">The fileInfo object.</param>
-    GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo);
+    public GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo);
 
     /// <summary>
     /// Generates a JSON element representation of the <paramref name="packageInfo"/> object.
@@ -42,7 +42,7 @@ public interface IManifestGenerator
     /// </summary>
     /// <param name="packageInfo">The current package that needs to be serialized.</param>
     /// <returns></returns>
-    GenerationResult GenerateJsonDocument(SbomPackage packageInfo);
+    public GenerationResult GenerateJsonDocument(SbomPackage packageInfo);
 
     /// <summary>
     /// Generate and return the package this SBOM describes. The <see cref="GenerationData"/> object can be used
@@ -56,7 +56,7 @@ public interface IManifestGenerator
     /// internal metadata that was generated for this SBOM run.</param>
     /// <param name="rootPackageId">Return the generated root package id.</param>
     /// <returns></returns>
-    GenerationResult GenerateRootPackage(IInternalMetadataProvider internalMetadataProvider);
+    public GenerationResult GenerateRootPackage(IInternalMetadataProvider internalMetadataProvider);
 
     /// <summary>
     /// Generate and return the JSON relationship information between this SBOM and its elements.
@@ -67,7 +67,7 @@ public interface IManifestGenerator
     /// </summary>
     /// <param name="relationship"></param>
     /// <returns></returns>
-    GenerationResult GenerateJsonDocument(Relationship relationship);
+    public GenerationResult GenerateJsonDocument(Relationship relationship);
 
     /// <summary>
     /// Generate and return the JSON relationship information between this SBOM and external documents such as SBOMs.
@@ -78,7 +78,7 @@ public interface IManifestGenerator
     /// </summary>
     /// <param name="externalDocumentReferenceInfo"></param>
     /// <returns></returns>
-    GenerationResult GenerateJsonDocument(ExternalDocumentReferenceInfo externalDocumentReferenceInfo);
+    public GenerationResult GenerateJsonDocument(ExternalDocumentReferenceInfo externalDocumentReferenceInfo);
 
     /// <summary>
     /// Generate and return the creationInfo element this SBOM describes. The <see cref="GenerationData"/> object can be used
@@ -91,42 +91,42 @@ public interface IManifestGenerator
     /// <param name="internalMetadataProvider">The <see cref="IInternalMetadataProvider"/> object provides
     /// internal metadata that was generated for this SBOM run.</param>
     /// <returns></returns>
-    GenerationResult GenerateJsonDocument(IInternalMetadataProvider internalMetadataProvider);
+    public GenerationResult GenerateJsonDocument(IInternalMetadataProvider internalMetadataProvider);
 
     /// <summary>
     /// Gets an array of <see cref="AlgorithmName">hash algorithm names</see> this
     /// manifest needs to generate for each file.
     /// </summary>
-    AlgorithmName[] RequiredHashAlgorithms { get; }
+    public AlgorithmName[] RequiredHashAlgorithms { get; }
 
     /// <summary>
     /// Gets the version of this <see cref="IManifestInterface"/>.
     /// </summary>
-    string Version { get; }
+    public string Version { get; }
 
     /// <summary>
     /// Gets the value of the header to use where the files section of the SBOM will be placed.
     /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
     /// </summary>
-    string FilesArrayHeaderName { get; }
+    public string FilesArrayHeaderName { get; }
 
     /// <summary>
     /// Gets the value of the header to use where the packages section of the SBOM will be placed.
     /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
     /// </summary>
-    string PackagesArrayHeaderName { get; }
+    public string PackagesArrayHeaderName { get; }
 
     /// <summary>
     /// Gets the value of the header where the relationship data about this SBOM will be placed.
     /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
     /// </summary>
-    string RelationshipsArrayHeaderName { get; }
+    public string RelationshipsArrayHeaderName { get; }
 
     /// <summary>
     /// Gets the value of the header where the external document reference data about this SBOM will be placed.
     /// If this is not supported, this method should throw a <see cref="System.NotSupportedException"/>.
     /// </summary>
-    string ExternalDocumentRefArrayHeaderName { get; }
+    public string ExternalDocumentRefArrayHeaderName { get; }
 
     /// <summary>
     /// Return a dictionary of items that need to be added to the header of
@@ -135,5 +135,5 @@ public interface IManifestGenerator
     /// <param name="internalMetadataProvider">The <see cref="IInternalMetadataProvider"/> object provides
     /// internal metadata that was generated for this SBOM run.</param>
     /// <returns></returns>
-    IDictionary<string, object> GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider);
+    public IDictionary<string, object> GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider);
 }

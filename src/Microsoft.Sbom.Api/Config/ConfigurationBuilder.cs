@@ -69,5 +69,5 @@ public class ConfigurationBuilder<T> : IConfigurationBuilder<T>
 /// <typeparam name="T">The action args parameter.</typeparam>
 public interface IConfigurationBuilder<T>
 {
-    Task<InputConfiguration> GetConfiguration(T args);
+    public Task<InputConfiguration> GetConfiguration(T args);
 }
