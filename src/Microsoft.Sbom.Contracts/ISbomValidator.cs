@@ -16,7 +16,7 @@ public interface ISbomValidator
     /// Validates all the files in a given SBOM with the files present in the build drop path
     /// and writes JSON output to the outputPath file location.
     /// </summary>
-    Task<bool> ValidateSbomAsync();
+    public Task<bool> ValidateSbomAsync();
 
     /// <summary>
     /// Validates all the files in a given SBOM with the files present in the build drop path
@@ -30,7 +30,7 @@ public interface ISbomValidator
     /// <param name="runtimeConfiguration">The runtime configuration to use for validation.</param>
     /// <param name="algorithmName">The algorithm to use for hashing.</param>
     /// </summary>
-    Task<SbomValidationResult> ValidateSbomAsync(
+    public Task<SbomValidationResult> ValidateSbomAsync(
         string buildDropPath,
         string outputPath,
         IList<SbomSpecification> specifications,

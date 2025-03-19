@@ -13,5 +13,5 @@ public interface IPackageDetailsFactory
     /// </summary>
     /// <param name="scannedComponents">An IEnumerable of ScannedComponents which is the output of a component-detection scan.</param>
     /// <returns></returns>
-    IDictionary<(string Name, string Version), PackageDetails> GetPackageDetailsDictionary(IEnumerable<ScannedComponent> scannedComponents);
+    public IDictionary<(string Name, string Version), PackageDetails> GetPackageDetailsDictionary(IEnumerable<ScannedComponent> scannedComponents);
 }

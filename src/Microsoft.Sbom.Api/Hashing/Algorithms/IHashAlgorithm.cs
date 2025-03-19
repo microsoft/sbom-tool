@@ -16,5 +16,5 @@ internal interface IHashAlgorithm
     /// </summary>
     /// <param name="inputStream">The read stream of the content to be hashed.</param>
     /// <returns>A byte array of the hash value.</returns>
-    byte[] ComputeHash(Stream inputStream);
+    public byte[] ComputeHash(Stream inputStream);
 }

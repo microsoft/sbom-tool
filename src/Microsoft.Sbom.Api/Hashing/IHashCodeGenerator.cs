@@ -15,5 +15,5 @@ public interface IHashCodeGenerator
     /// <param name="filePath">The path of the file.</param>
     /// <param name="hashAlgorithmNames">A list of the hash algorithms for which hashes will be generated.</param>
     /// <returns>A list of <see cref="Checksum"/>.</returns>
-    Checksum[] GenerateHashes(string filePath, AlgorithmName[] hashAlgorithmNames);
+    public Checksum[] GenerateHashes(string filePath, AlgorithmName[] hashAlgorithmNames);
 }

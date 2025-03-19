@@ -5,5 +5,5 @@ namespace Microsoft.Sbom.Common;
 
 public interface IProcessExecutor
 {
-    string? ExecuteCommand(string fileName, string arguments, int timeoutInMilliseconds);
+    public string? ExecuteCommand(string fileName, string arguments, int timeoutInMilliseconds);
 }

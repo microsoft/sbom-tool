@@ -18,5 +18,5 @@ public interface IAlgorithmNames
     /// Returns a list of <see cref="AlgorithmName"/> that this implementation provides.
     /// </summary>
     /// <returns></returns>
-    IList<AlgorithmName> GetAlgorithmNames();
+    public IList<AlgorithmName> GetAlgorithmNames();
 }

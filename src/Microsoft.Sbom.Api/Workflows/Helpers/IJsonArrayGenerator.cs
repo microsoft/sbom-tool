@@ -12,14 +12,14 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 public interface IJsonArrayGenerator<T>
     where T : IJsonArrayGenerator<T>
 {
-    ISbomConfig SbomConfig { get; set; }
+    public ISbomConfig SbomConfig { get; set; }
 
-    string SpdxManifestVersion { get; set; }
+    public string SpdxManifestVersion { get; set; }
 
     /// <summary>
     /// Generates an array in the json serializer with the headerName and writes all elements of the
     /// specific type into the array.
     /// </summary>
     /// <returns>The list of failures.</returns>
-    Task<GenerationResult> GenerateAsync();
+    public Task<GenerationResult> GenerateAsync();
 }

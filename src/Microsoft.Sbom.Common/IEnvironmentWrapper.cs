@@ -14,5 +14,5 @@ public interface IEnvironmentWrapper
     /// Method to call System.Environment.GetEnvironmentVariables.
     /// </summary>
     /// <returns> A dictionary of available environment variables. </returns>
-    IDictionary GetEnvironmentVariables();
+    public IDictionary GetEnvironmentVariables();
 }

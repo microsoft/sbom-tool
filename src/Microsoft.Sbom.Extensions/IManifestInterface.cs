@@ -21,24 +21,24 @@ public interface IManifestInterface
     /// </summary>
     /// <returns>An version sorted array in ascending order of
     /// <see cref="ManifestInfo">manifests</see> this library can parse.</returns>
-    ManifestInfo[] RegisterManifest();
+    public ManifestInfo[] RegisterManifest();
 
     /// <summary>
     /// This function parses a given manifest file.
     /// </summary>
     /// <param name="manifest">The string contents of the manifest file.</param>
     /// <returns>The manifest mapped to an instance of a <see cref="ManifestData"/> object.</returns>
-    ManifestData ParseManifest(string manifest);
+    public ManifestData ParseManifest(string manifest);
 
     /// <summary>
     /// Creates a parser object for the given SBOM file stream.
     /// </summary>
     /// <param name="stream">The stream for the SBOM file.</param>
     /// <returns></returns>
-    ISbomParser CreateParser(Stream stream);
+    public ISbomParser CreateParser(Stream stream);
 
     /// <summary>
     /// Gets or sets the version of this <see cref="IManifestInterface"/>.
     /// </summary>
-    string Version { get; set; }
+    public string Version { get; set; }
 }

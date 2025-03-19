@@ -49,11 +49,11 @@ public interface IManifestToolJsonSerializer : IAsyncDisposable, IDisposable
     /// We also call dispose on the JsonDocument once we finish writing.
     /// </summary>
     /// <param name="jsonDocument">The json document.</param>
-    void Write(JsonElement jsonElement);
+    public void Write(JsonElement jsonElement);
 
     /// <summary>
     /// Write a json string object. This usually is some metadata about the document
     /// that is generated.
     /// </summary>
-    void WriteJsonString(string jsonString);
+    public void WriteJsonString(string jsonString);
 }
