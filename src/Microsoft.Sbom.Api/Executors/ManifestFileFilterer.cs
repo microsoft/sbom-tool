@@ -47,7 +47,7 @@ public class ManifestFileFilterer
         Task.Run(async () =>
         {
             var manifestKeys = manifestData.HashesMap != null
-                ? new List<string>(manifestData.HashesMap.Keys)
+                ? [.. manifestData.HashesMap.Keys]
                 : new List<string>();
 
             foreach (var manifestFile in manifestKeys)
