@@ -45,9 +45,10 @@ public class SbomPackageParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
         var parser = new SPDX30Parser(stream);
         parser.SetComplianceStandard("NTIA");
-        var exception = Assert.ThrowsException<ParserException>(() => this.Parse(parser));
-        var expectedMessage = "SBOM document is not NTIA compliant because package with SPDX ID";
-        Assert.IsTrue(exception.Message.Contains(expectedMessage), $"Expected message to contain: {expectedMessage}, but was: {exception.Message}");
+        var results = this.Parse(parser);
+
+        Assert.AreEqual(1, results.InvalidComplianceStandardElements.Count);
+        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("SPDXRef-software_Package-4739C82D88855A138C811B8CE05CC97113BEC7F7C7F66EC7E4C6C176EEA0FECE"));
     }
 
     [TestMethod]

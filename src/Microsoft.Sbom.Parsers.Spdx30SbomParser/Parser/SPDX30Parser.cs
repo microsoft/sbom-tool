@@ -168,7 +168,8 @@ public class SPDX30Parser : ISbomParser
         }
         else
         {
-            throw new ParserException($"Unable to use the given compliance standard {complianceStandardFromCli} to parse the SBOM.");
+            throw new ParserException($"Unable to use the given compliance standard {complianceStandardFromCli} to parse the SBOM." +
+                $"Current supported compliance standards for validation include: {ComplianceStandard.NTIA}");
         }
     }
 
@@ -202,39 +203,29 @@ public class SPDX30Parser : ISbomParser
     private ElementsResult ConvertToElements(List<object>? jsonList, ParserStateResult? result)
     {
         var elementsResult = new ElementsResult(result);
-        var elementsList = new List<Element>();
         var elementsSpdxIdList = new HashSet<string>();
-        var filesList = new List<Parsers.Spdx30SbomParser.Entities.File>();
 
         if (jsonList is null)
         {
-            elementsResult.FilesCount = 0;
-            elementsResult.PackagesCount = 0;
-            elementsResult.ReferencesCount = 0;
-            elementsResult.RelationshipsCount = 0;
-            elementsResult.Elements = elementsList;
             return elementsResult;
         }
 
         foreach (JsonObject jsonObject in jsonList)
         {
-            var deserializedElement = ParseJsonObject(jsonObject, RequiredComplianceStandard);
+            var deserializedElement = ParseJsonObject(jsonObject, RequiredComplianceStandard, elementsResult.InvalidComplianceStandardElements);
 
             if (deserializedElement is not null)
             {
-                if (IsUniqueElement(deserializedElement.SpdxId, elementsSpdxIdList))
+                if (IsUniqueElement(deserializedElement.SpdxId, elementsResult.ElementsSpdxIdList))
                 {
-                    elementsList.Add(deserializedElement);
+                    elementsResult.Elements.Add(deserializedElement);
                 }
 
-                AggregateElementsBasedOnType(deserializedElement, elementsResult, filesList);
+                AggregateElementsBasedOnType(deserializedElement, elementsResult);
             }
         }
 
-        ValidateElementsBasedOnComplianceStandard(RequiredComplianceStandard, elementsList);
-
-        elementsResult.Elements = elementsList;
-        elementsResult.Files = filesList;
+        ValidateElementsBasedOnComplianceStandard(RequiredComplianceStandard, elementsResult);
 
         return elementsResult;
     }
@@ -274,11 +265,11 @@ public class SPDX30Parser : ISbomParser
         return type;
     }
 
-    private void ValidateNTIARequirements(List<Element> elementsList)
+    private void ValidateNTIARequirements(ElementsResult elementsResult)
     {
-        ValidateSbomDocCreationForNTIA(elementsList);
-        ValidateSbomFilesForNTIA(elementsList);
-        ValidateSbomPackagesForNTIA(elementsList);
+        ValidateSbomDocCreationForNTIA(elementsResult.SpdxDocuments, elementsResult.CreationInfos, elementsResult.InvalidComplianceStandardElements);
+        ValidateSbomFilesForNTIA(elementsResult.Files, elementsResult.InvalidComplianceStandardElements);
+        ValidateSbomPackagesForNTIA(elementsResult.Packages, elementsResult.InvalidComplianceStandardElements);
     }
 
     /// <summary>
@@ -286,20 +277,28 @@ public class SPDX30Parser : ISbomParser
     /// </summary>
     /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
-    private void ValidateSbomDocCreationForNTIA(List<Element> elementsList)
+    private void ValidateSbomDocCreationForNTIA(List<SpdxDocument> spdxDocuments, List<CreationInfo> creationInfos, HashSet<string> invalidElements)
     {
-        var spdxDocumentElements = elementsList.Where(element => element is SpdxDocument).ToList();
-        if (spdxDocumentElements.Count != 1)
+        // There should only be one SPDX document element in the SBOM.
+        if (spdxDocuments.Count == 0)
         {
-            throw new ParserException("SBOM document is not NTIA compliant because it must only contain one SpdxDocument element.");
+            invalidElements.Add("missingValidSpdxDocument");
         }
+        else if (spdxDocuments.Count > 1)
+        {
+            invalidElements.UnionWith(spdxDocuments.Select(spdxDocument => "additionalSpdxDocumentWithSpdxId: \"" + spdxDocument.SpdxId + "\""));
+        }
+        else
+        {
+            var spdxDocumentElement = spdxDocuments.First();
+            var spdxCreationInfoElement = creationInfos.
+                FirstOrDefault(element => element.Id == spdxDocumentElement.CreationInfoDetails);
 
-        var spdxDocumentElement = spdxDocumentElements.First();
-
-        var spdxCreationInfoElement = (CreationInfo?)elementsList.
-            Where(element => element.Type == nameof(CreationInfo)).
-            FirstOrDefault(element => ((CreationInfo)element).Id == spdxDocumentElement.CreationInfoDetails)
-            ?? throw new ParserException($"SBOM document is not NTIA compliant because it must have a creationInfo element with ID of {spdxDocumentElement.CreationInfoDetails}");
+            if (spdxCreationInfoElement is null)
+            {
+                invalidElements.Add($"missingValidCreationInfoWithId: \"{spdxDocumentElement?.CreationInfoDetails}\"");
+            }
+        }
     }
 
     /// <summary>
@@ -307,19 +306,18 @@ public class SPDX30Parser : ISbomParser
     /// </summary>
     /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
-    private void ValidateSbomFilesForNTIA(List<Element> elementsList)
+    private void ValidateSbomFilesForNTIA(List<Parsers.Spdx30SbomParser.Entities.File> files, HashSet<string> invalidElements)
     {
-        var fileElements = elementsList.Where(element => element is Parsers.Spdx30SbomParser.Entities.File);
-        foreach (var fileElement in fileElements)
+        foreach (var file in files)
         {
-            var fileSpdxId = fileElement.SpdxId;
+            var fileSpdxId = file.SpdxId;
 
-            var fileHasSha256Hash = fileElement.VerifiedUsing.
+            var fileHasSha256Hash = file.VerifiedUsing.
                 Any(packageVerificationCode => packageVerificationCode.Algorithm == HashAlgorithm.sha256);
 
             if (!fileHasSha256Hash)
             {
-                throw new ParserException($"SBOM document is not NTIA compliant because file with SPDX ID {fileSpdxId} does not have a SHA256 hash.");
+                invalidElements.Add(fileSpdxId);
             }
         }
     }
@@ -329,19 +327,18 @@ public class SPDX30Parser : ISbomParser
     /// </summary>
     /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
-    private void ValidateSbomPackagesForNTIA(List<Element> elementsList)
+    private void ValidateSbomPackagesForNTIA(List<Package> packages, HashSet<string> invalidElements)
     {
-        var packageElements = elementsList.Where(element => element is Package);
-        foreach (var packageElement in packageElements)
+        foreach (var package in packages)
         {
-            var packageSpdxId = packageElement.SpdxId;
+            var packageSpdxId = package.SpdxId;
 
-            var packageHasSha256Hash = packageElement.VerifiedUsing?.
+            var packageHasSha256Hash = package.VerifiedUsing?.
                 Any(packageVerificationCode => packageVerificationCode.Algorithm == HashAlgorithm.sha256);
 
             if (packageHasSha256Hash is null || packageHasSha256Hash == false)
             {
-                throw new ParserException($"SBOM document is not NTIA compliant because package with SPDX ID {packageSpdxId} does not have a SHA256 hash.");
+                invalidElements.Add(packageSpdxId);
             }
         }
     }
@@ -406,23 +403,21 @@ public class SPDX30Parser : ISbomParser
     }
 
     /// <summary>
-    /// Validate if elements meet required compliance standards
+    /// Validate if elements meet the compliance standard provided by the user through the CLI command.
     /// </summary>
-    /// <param name="complianceStandardAsEnum"></param>
-    /// <param name="elementsList"></param>
-    private void ValidateElementsBasedOnComplianceStandard(ComplianceStandard? complianceStandardAsEnum, List<Element> elementsList)
+    private void ValidateElementsBasedOnComplianceStandard(ComplianceStandard? complianceStandardAsEnum, ElementsResult elementsResult)
     {
         switch (complianceStandardAsEnum)
         {
             case ComplianceStandard.NTIA:
-                ValidateNTIARequirements(elementsList);
+                ValidateNTIARequirements(elementsResult);
                 break;
             default:
                 break;
         }
     }
 
-    private Element? ParseJsonObject(JsonObject jsonObject, ComplianceStandard? complianceStandardAsEnum)
+    private Element? ParseJsonObject(JsonObject jsonObject, ComplianceStandard? complianceStandardAsEnum, HashSet<string> invalidElementsForComplianceStandardList)
     {
         if (jsonObject is null || !jsonObject.Any())
         {
@@ -433,16 +428,19 @@ public class SPDX30Parser : ISbomParser
             var entityType = GetEntityType(jsonObject, complianceStandardAsEnum);
 
             object? deserializedObject = null;
+            var jsonObjectAsString = jsonObject.ToString();
             try
             {
-                deserializedObject = JsonSerializer.Deserialize(jsonObject.ToString(), entityType, jsonSerializerOptions);
+                deserializedObject = JsonSerializer.Deserialize(jsonObjectAsString, entityType, jsonSerializerOptions);
             }
             catch (Exception e)
             {
                 switch (complianceStandardAsEnum)
                 {
                     case ComplianceStandard.NTIA:
-                        throw new ParserException($"SBOM document is not NTIA compliant because {jsonObject} does not have all the required fields for NTIA compliance.");
+                        var deserializedAsElement = JsonSerializer.Deserialize(jsonObjectAsString, typeof(Element), jsonSerializerOptions) as Element;
+                        invalidElementsForComplianceStandardList.Add(deserializedAsElement?.SpdxId ?? jsonObjectAsString);
+                        break;
                     default:
                         throw new ParserException(e.Message);
                 }
@@ -474,17 +472,20 @@ public class SPDX30Parser : ISbomParser
         }
     }
 
-    private void AggregateElementsBasedOnType(Element deserializedElement, ElementsResult elementsResult, List<Parsers.Spdx30SbomParser.Entities.File> filesList)
+    private void AggregateElementsBasedOnType(
+        Element deserializedElement,
+        ElementsResult elementsResult)
     {
         var entityType = deserializedElement.GetType();
 
         switch (entityType?.Name)
         {
             case string name when name.Contains("File"):
-                filesList.Add((Parsers.Spdx30SbomParser.Entities.File)deserializedElement);
+                elementsResult.Files.Add((Parsers.Spdx30SbomParser.Entities.File)deserializedElement);
                 elementsResult.FilesCount += 1;
                 break;
             case string name when name.Contains("Package"):
+                elementsResult.Packages.Add((Package)deserializedElement);
                 elementsResult.PackagesCount += 1;
                 break;
             case string name when name.Contains("ExternalMap"):
@@ -492,6 +493,12 @@ public class SPDX30Parser : ISbomParser
                 break;
             case string name when name.Contains("Relationship"):
                 elementsResult.RelationshipsCount += 1;
+                break;
+            case string name when name.Contains("SpdxDocument"):
+                elementsResult.SpdxDocuments.Add((SpdxDocument)deserializedElement);
+                break;
+            case string name when name.Contains("CreationInfo"):
+                elementsResult.CreationInfos.Add((CreationInfo)deserializedElement);
                 break;
             default:
                 break;

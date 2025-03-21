@@ -131,6 +131,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                                 totalNumberOfPackages = elementsResult.PackagesCount;
 
                                 (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(elementsResult.Files);
+                                AddInvalidComplianceStandardElementsToFailures(fileValidationFailures, elementsResult.InvalidComplianceStandardElements);
                                 ThrowOnInvalidInputFiles(fileValidationFailures);
                                 break;
                             default:
@@ -238,6 +239,12 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         Console.WriteLine(string.Empty);
         validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => Console.WriteLine(f.Path));
         Console.WriteLine("------------------------------------------------------------");
+
+        Console.WriteLine("Elements that do not comply with NTIA compliance standard:");
+        Console.WriteLine(string.Empty);
+        validFailures.Where(vf => vf.ErrorType == ErrorType.InvalidNTIAElement).ForEach(f => Console.WriteLine(f.Path));
+        Console.WriteLine("------------------------------------------------------------");
+
         Console.WriteLine("Unknown file failures:");
         Console.WriteLine(string.Empty);
         validFailures.Where(vf => vf.ErrorType == ErrorType.Other).ForEach(f => Console.WriteLine(f.Path));
@@ -276,6 +283,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         Console.WriteLine($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
         Console.WriteLine($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
         Console.WriteLine($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
+        Console.WriteLine($"Elements in the manifest that do not comply with the NTIA compliance standard . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidNTIAElement)}");
 
         if (validFailures.Any(vf => vf.ErrorType == ErrorType.NoPackagesFound))
         {
@@ -291,6 +299,43 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         if (invalidInputFiles.Count != 0)
         {
             throw new InvalidDataException($"Your manifest file is malformed. {invalidInputFiles.First().Path}");
+        }
+    }
+
+    private void AddInvalidComplianceStandardElementsToFailures(List<FileValidationResult> fileValidationFailures, HashSet<string> invalidElements)
+    {
+        if (invalidElements == null || !invalidElements.Any())
+        {
+            return;
+        }
+
+        switch (configuration.ComplianceStandard?.Value)
+        {
+            case "NTIA":
+                AddInvalidNTIAElementsToFailures(fileValidationFailures, invalidElements);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void AddInvalidNTIAElementsToFailures(List<FileValidationResult> fileValidationFailures, HashSet<string> invalidElements)
+    {
+        foreach (var elementId in invalidElements)
+        {
+            var errorType = elementId switch
+            {
+                string id when id.Contains("missingValidSpdxDocument") => ErrorType.MissingValidSpdxDocument,
+                string id when id.Contains("SpdxDocument") => ErrorType.AdditionalSpdxDocument,
+                string id when id.Contains("CreationInfo") => ErrorType.MissingValidCreationInfo,
+                _ => ErrorType.InvalidNTIAElement
+            };
+
+            fileValidationFailures.Add(new FileValidationResult
+            {
+                Path = errorType == ErrorType.MissingValidSpdxDocument ? null : elementId,
+                ErrorType = errorType
+            });
         }
     }
 }

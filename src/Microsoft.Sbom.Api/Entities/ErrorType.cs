@@ -52,6 +52,15 @@ public enum ErrorType
     [EnumMember(Value = "Invalid input file")]
     InvalidInputFile = 13,
 
-    [EnumMember(Value = "Invalid manifest SPDX version")]
-    InvalidManifestVersion = 14
+    [EnumMember(Value = "Invalid NTIA element")]
+    InvalidNTIAElement = 14,
+
+    [EnumMember(Value = "Missing valid SpdxDocument")]
+    MissingValidSpdxDocument = 15,
+
+    [EnumMember(Value = "Additional SpdxDocument")]
+    AdditionalSpdxDocument = 16,
+
+    [EnumMember(Value = "Missing valid CreationInfo")]
+    MissingValidCreationInfo = 17,
 }

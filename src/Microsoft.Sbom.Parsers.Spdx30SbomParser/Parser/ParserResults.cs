@@ -3,11 +3,14 @@
 
 namespace Microsoft.Sbom.Parser;
 
+using System.Collections.Generic;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 public class ParserResults
 {
     public FormatEnforcedSPDX30 FormatEnforcedSPDX3Result { get; set; }
+
+    public HashSet<string> InvalidComplianceStandardElements { get; set; } = [];
 
     public int FilesCount = 0;
     public int PackagesCount = 0;
