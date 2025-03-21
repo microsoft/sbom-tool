@@ -282,11 +282,13 @@ public class SPDX30Parser : ISbomParser
         // There should only be one SPDX document element in the SBOM.
         if (spdxDocuments.Count == 0)
         {
-            invalidElements.Add("missingValidSpdxDocument");
+            invalidElements.Add("MissingValidSpdxDocument");
         }
         else if (spdxDocuments.Count > 1)
         {
-            invalidElements.UnionWith(spdxDocuments.Select(spdxDocument => "additionalSpdxDocumentWithSpdxId: \"" + spdxDocument.SpdxId + "\""));
+            invalidElements.UnionWith(
+                spdxDocuments.Select(spdxDocument =>
+                    $"AdditionalSpdxDocument. {GetInvalidElementInfo(spdxDocument)}"));
         }
         else
         {
@@ -296,7 +298,7 @@ public class SPDX30Parser : ISbomParser
 
             if (spdxCreationInfoElement is null)
             {
-                invalidElements.Add($"missingValidCreationInfoWithId: \"{spdxDocumentElement?.CreationInfoDetails}\"");
+                invalidElements.Add($"MissingValidCreationInfoWithId: \"{spdxDocumentElement?.CreationInfoDetails}\"");
             }
         }
     }
@@ -317,7 +319,7 @@ public class SPDX30Parser : ISbomParser
 
             if (!fileHasSha256Hash)
             {
-                invalidElements.Add(fileSpdxId);
+                invalidElements.Add(GetInvalidElementInfo(file));
             }
         }
     }
@@ -338,7 +340,7 @@ public class SPDX30Parser : ISbomParser
 
             if (packageHasSha256Hash is null || packageHasSha256Hash == false)
             {
-                invalidElements.Add(packageSpdxId);
+                invalidElements.Add(GetInvalidElementInfo(package));
             }
         }
     }
@@ -439,7 +441,8 @@ public class SPDX30Parser : ISbomParser
                 {
                     case ComplianceStandard.NTIA:
                         var deserializedAsElement = JsonSerializer.Deserialize(jsonObjectAsString, typeof(Element), jsonSerializerOptions) as Element;
-                        invalidElementsForComplianceStandardList.Add(deserializedAsElement?.SpdxId ?? jsonObjectAsString);
+                        var invalidElementInfo = GetInvalidElementInfo(deserializedAsElement);
+                        invalidElementsForComplianceStandardList.Add((invalidElementInfo.Length != 0) ? invalidElementInfo : jsonObjectAsString);
                         break;
                     default:
                         throw new ParserException(e.Message);
@@ -502,6 +505,26 @@ public class SPDX30Parser : ISbomParser
                 break;
             default:
                 break;
+        }
+    }
+
+    private string GetInvalidElementInfo(Element? element)
+    {
+        if (element == null)
+        {
+            return string.Empty;
+        }
+        else if (element.SpdxId == null && element.Name != null)
+        {
+            return $"Name: \"{element.Name}\"";
+        }
+        else if (element.SpdxId != null && element.Name == null)
+        {
+            return $"SpdxId: \"{element.SpdxId}\"";
+        }
+        else
+        {
+            return $"SpdxId: \"{element.SpdxId}\". Name: \"{element.Name}\"";
         }
     }
 }

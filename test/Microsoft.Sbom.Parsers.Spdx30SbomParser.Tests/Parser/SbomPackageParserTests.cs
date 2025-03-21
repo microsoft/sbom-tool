@@ -15,7 +15,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [TestMethod]
     [DataRow(SbomFullDocWithPackagesStrings.SbomPackageWithMissingNameJsonString, "was missing required properties including: 'name'")]
     [DataRow(SbomFullDocWithPackagesStrings.SbomPackageWithMissingSpdxIdJsonString, "was missing required properties including: 'spdxId'")]
-    public void MissingPropertiesTest_Throws(string json, string expectedMessage)
+    public void MissingPropertiesTest_SPDX_Throws(string json, string expectedMessage)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
@@ -27,7 +27,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [TestMethod]
     [DataRow(SbomFullDocWithPackagesStrings.SbomPackageWithMissingVerificationJsonString)]
     [DataRow(SbomFullDocWithPackagesStrings.SbomPackageWithMissingSHA256JsonString)]
-    public void MissingPropertiesTest_Succeeds(string json)
+    public void MissingPropertiesTest_NTIA_VerificationCode_Succeeds(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
@@ -48,7 +48,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         var results = this.Parse(parser);
 
         Assert.AreEqual(1, results.InvalidComplianceStandardElements.Count);
-        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("SPDXRef-software_Package-4739C82D88855A138C811B8CE05CC97113BEC7F7C7F66EC7E4C6C176EEA0FECE"));
+        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("SpdxId: \"SPDXRef-software_Package-4739C82D88855A138C811B8CE05CC97113BEC7F7C7F66EC7E4C6C176EEA0FECE\". Name: \"test\""));
     }
 
     [TestMethod]

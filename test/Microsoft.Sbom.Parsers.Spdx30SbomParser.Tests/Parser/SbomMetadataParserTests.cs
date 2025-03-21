@@ -86,8 +86,8 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         parser.SetComplianceStandard("NTIA");
         var results = this.Parse(parser);
         Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
-        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1"));
-        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("missingValidSpdxDocument"));
+        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("SpdxId: \"SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1\""));
+        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("MissingValidSpdxDocument"));
     }
 
     [TestMethod]
@@ -100,8 +100,8 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         parser.SetComplianceStandard("NTIA");
         var results = this.Parse(parser);
         Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
-        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("additionalSpdxDocumentWithSpdxId: \"SPDXRef-SpdxDocument-A93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1\""));
-        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("additionalSpdxDocumentWithSpdxId: \"SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1\""));
+        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("AdditionalSpdxDocument. SpdxId: \"SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1\". Name: \"spdx-doc1-name\""));
+        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("AdditionalSpdxDocument. SpdxId: \"SPDXRef-SpdxDocument-A93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1\". Name: \"spdx-doc2-name\""));
     }
 
     [TestMethod]
@@ -131,7 +131,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         parser.SetComplianceStandard("NTIA");
         var results = this.Parse(parser);
         Assert.AreEqual(1, results.InvalidComplianceStandardElements.Count);
-        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("missingValidCreationInfoWithId: \"_:creationinfo\""));
+        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("MissingValidCreationInfoWithId: \"_:creationinfo\""));
     }
 
     [TestMethod]
