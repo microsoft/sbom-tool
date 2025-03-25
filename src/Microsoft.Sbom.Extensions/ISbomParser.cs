@@ -4,6 +4,7 @@
 #nullable enable
 
 using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 
@@ -42,5 +43,5 @@ public interface ISbomParser
     /// Returns the compliance standard set by the user, if it is valid.
     /// </summary>
     /// <param name="spdxVersion"></param>
-    void SetComplianceStandard(string? complianceStandardFromCli);
+    void SetComplianceStandard(ComplianceStandardType complianceStandard);
 }

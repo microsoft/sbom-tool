@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
@@ -80,6 +81,8 @@ public class ConfigSanitizer
 
         // Set default package supplier if not provided in configuration.
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
+
+        configuration.ComplianceStandard = GetComplianceStandard(configuration);
 
         // Prevent null value for LicenseInformationTimeoutInSeconds.
         // Values of (0, Constants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
@@ -223,6 +226,27 @@ public class ConfigSanitizer
             Source = oldValue.Source,
             Value = newValue
         };
+    }
+
+    private ConfigurationSetting<ComplianceStandardType> GetComplianceStandard(IConfiguration configuration)
+    {
+        // Convert to ComplianceStandard enum value.
+        var oldValue = configuration.ComplianceStandard;
+        var newValue = ComplianceStandardType.FromString(oldValue?.Value?.ToString());
+
+        // Compliance standard is only supported for ManifestInfo value of SPDX 3.0 and above.
+        if (!newValue.Equals(ComplianceStandardType.None) && !configuration.ManifestInfo.Value.Any(mi => mi.Equals(Constants.SPDX30ManifestInfo)))
+        {
+            throw new ValidationArgException($"Please use SPDX >=3.0 or remove the ComplianceStandard parameter.");
+        }
+        else
+        {
+            return new ConfigurationSetting<ComplianceStandardType>
+            {
+                Source = oldValue != null ? oldValue.Source : SettingSource.Default,
+                Value = newValue
+            };
+        }
     }
 
     private ConfigurationSetting<string> GetNamespaceBaseUri(IConfiguration configuration, ILogger logger)

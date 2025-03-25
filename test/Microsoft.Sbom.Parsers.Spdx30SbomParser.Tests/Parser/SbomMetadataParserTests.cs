@@ -83,7 +83,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard("NTIA");
+        parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
         Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("SpdxId: \"SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1\""));
@@ -97,7 +97,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard("NTIA");
+        parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
         Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("AdditionalSpdxDocument. SpdxId: \"SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1\". Name: \"spdx-doc1-name\""));
@@ -111,7 +111,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard("NTIA");
+        parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(6, results.FormatEnforcedSPDX3Result.Graph.Count());
 
@@ -128,7 +128,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard("NTIA");
+        parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(1, results.InvalidComplianceStandardElements.Count);
         Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("MissingValidCreationInfoWithId: \"_:creationinfo\""));
@@ -141,7 +141,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard("NTIA");
+        parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(5, results.FormatEnforcedSPDX3Result.Graph.Count());
 
@@ -156,7 +156,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard("NTIA");
+        parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(4, results.FormatEnforcedSPDX3Result.Graph.Count());
 

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
@@ -52,6 +53,23 @@ public class ArgRevivers
         catch (Exception e)
         {
             throw new ValidationArgException($"Unable to parse algorithm name: {value}. Error: {e.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Creates an <see cref="ComplianceStandardType"/> object from a string value.
+    /// </summary>
+    [ArgReviver]
+    public static ComplianceStandardType ReviveComplianceStandard(string _, string value)
+    {
+        try
+        {
+            return ComplianceStandardType.FromString(value);
+        }
+        catch (ArgumentException)
+        {
+            var supportedComplianceStandards = string.Join(", ", Constants.SupportedComplianceStandards);
+            throw new ValidationArgException($"Unknown Compliance Standard '{value}'. Options are {supportedComplianceStandards}");
         }
     }
 }

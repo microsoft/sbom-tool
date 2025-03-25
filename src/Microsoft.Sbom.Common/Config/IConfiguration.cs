@@ -211,7 +211,7 @@ public interface IConfiguration
     /// <summary>
     /// The compliance standard to validate against.
     /// </summary>
-    ConfigurationSetting<string> ComplianceStandard { get; set; }
+    ConfigurationSetting<ComplianceStandardType> ComplianceStandard { get; set; }
 
     /// Specifies the timeout in seconds for fetching the license information. Defaults to <see cref="Constants.DefaultLicenseFetchTimeoutInSeconds"/>.
     /// Has no effect if FetchLicenseInformation (li) argument is false or not provided. Negative values are set to the default and values exceeding the

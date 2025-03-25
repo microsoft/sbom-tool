@@ -309,10 +309,12 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
             return;
         }
 
-        switch (configuration.ComplianceStandard?.Value)
+        switch (configuration.ComplianceStandard.Value.Name)
         {
             case "NTIA":
                 AddInvalidNTIAElementsToFailures(fileValidationFailures, invalidElements);
+                break;
+            case "None":
                 break;
             default:
                 break;

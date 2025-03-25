@@ -29,7 +29,7 @@ namespace Microsoft.Sbom.Parser;
 /// </remarks>
 public class SPDX30Parser : ISbomParser
 {
-    internal ComplianceStandard? RequiredComplianceStandard;
+    internal ComplianceStandardType RequiredComplianceStandard;
 
     private static readonly IReadOnlyCollection<string> RequiredFields = new List<string>
     {
@@ -79,6 +79,9 @@ public class SPDX30Parser : ISbomParser
         {
             this.parser = new LargeJsonParser(stream, handlers, this.jsonSerializerOptions, bufferSize.Value);
         }
+
+        // Set to default value.
+        this.RequiredComplianceStandard = ComplianceStandardType.None;
     }
 
     /// <summary>
@@ -147,29 +150,18 @@ public class SPDX30Parser : ISbomParser
 
     public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { SPDX30Constants.SPDX30ManifestInfo };
 
-    public void SetComplianceStandard(string? complianceStandardFromCli)
+    public void SetComplianceStandard(ComplianceStandardType complianceStandard)
     {
-        if (string.IsNullOrEmpty(complianceStandardFromCli))
+        switch (complianceStandard.Name)
         {
-            // If no compliance standard is set, then we don't need to enforce any compliance standards.
-            return;
-        }
-        else if (Enum.TryParse<ComplianceStandard>(complianceStandardFromCli, true, out var complianceStandardAsEnum))
-        {
-            switch (complianceStandardAsEnum)
-            {
-                case ComplianceStandard.NTIA:
-                    RequiredComplianceStandard = complianceStandardAsEnum;
-                    entititesRequiringDeserializationWithNTIA = EntitiesWithDifferentNTIARequirements;
-                    break;
-                default:
-                    break;
-            }
-        }
-        else
-        {
-            throw new ParserException($"Unable to use the given compliance standard {complianceStandardFromCli} to parse the SBOM." +
-                $"Current supported compliance standards for validation include: {ComplianceStandard.NTIA}");
+            case "NTIA":
+                RequiredComplianceStandard = complianceStandard;
+                entititesRequiringDeserializationWithNTIA = EntitiesWithDifferentNTIARequirements;
+                break;
+            case "None":
+                break;
+            default:
+                break;
         }
     }
 
@@ -230,7 +222,7 @@ public class SPDX30Parser : ISbomParser
         return elementsResult;
     }
 
-    private Type GetEntityType(JsonObject jsonObject, ComplianceStandard? requiredComplianceStandard)
+    private Type GetEntityType(JsonObject jsonObject, ComplianceStandardType requiredComplianceStandard)
     {
         var assembly = typeof(Element).Assembly;
         var typeFromSbom = jsonObject["type"]?.ToString();
@@ -249,14 +241,18 @@ public class SPDX30Parser : ISbomParser
 
         // If the entity type is in the list of entities that require different NTIA requirements, then add the NTIA prefix.
         // This will allow for deserialization based on compliance standard so that we can detect if certain required fields are missing.
-        switch (requiredComplianceStandard)
+        switch (requiredComplianceStandard.Name)
         {
-            case ComplianceStandard.NTIA:
+            case "NTIA":
                 if (this.entititesRequiringDeserializationWithNTIA?.Contains(entityType) == true)
                 {
                     entityType = "NTIA" + entityType;
                 }
 
+                break;
+            case "None":
+                break;
+            default:
                 break;
         }
 
@@ -407,19 +403,21 @@ public class SPDX30Parser : ISbomParser
     /// <summary>
     /// Validate if elements meet the compliance standard provided by the user through the CLI command.
     /// </summary>
-    private void ValidateElementsBasedOnComplianceStandard(ComplianceStandard? complianceStandardAsEnum, ElementsResult elementsResult)
+    private void ValidateElementsBasedOnComplianceStandard(ComplianceStandardType complianceStandardAsEnum, ElementsResult elementsResult)
     {
-        switch (complianceStandardAsEnum)
+        switch (complianceStandardAsEnum.Name)
         {
-            case ComplianceStandard.NTIA:
+            case "NTIA":
                 ValidateNTIARequirements(elementsResult);
+                break;
+            case "None":
                 break;
             default:
                 break;
         }
     }
 
-    private Element? ParseJsonObject(JsonObject jsonObject, ComplianceStandard? complianceStandardAsEnum, HashSet<string> invalidElementsForComplianceStandardList)
+    private Element? ParseJsonObject(JsonObject jsonObject, ComplianceStandardType complianceStandardAsEnum, HashSet<string> invalidElementsForComplianceStandardList)
     {
         if (jsonObject is null || !jsonObject.Any())
         {
@@ -437,9 +435,9 @@ public class SPDX30Parser : ISbomParser
             }
             catch (Exception e)
             {
-                switch (complianceStandardAsEnum)
+                switch (complianceStandardAsEnum.Name)
                 {
-                    case ComplianceStandard.NTIA:
+                    case "NTIA":
                         var deserializedAsElement = JsonSerializer.Deserialize(jsonObjectAsString, typeof(Element), jsonSerializerOptions) as Element;
                         var invalidElementInfo = GetInvalidElementInfo(deserializedAsElement);
                         invalidElementsForComplianceStandardList.Add((invalidElementInfo.Length != 0) ? invalidElementInfo : jsonObjectAsString);

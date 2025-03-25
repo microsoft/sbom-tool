@@ -291,7 +291,7 @@ public class InterfaceConcretionTests
         public SpdxMetadata GetMetadata() => throw new NotImplementedException();
         public ParserStateResult Next() => throw new NotImplementedException();
         public ManifestInfo[] RegisterManifest() => throw new NotImplementedException();
-        public void SetComplianceStandard(string complianceStandardFromCli) => throw new NotImplementedException();
+        public void SetComplianceStandard(ComplianceStandardType complianceStandard) => throw new NotImplementedException();
     }
 
     private class PinnedIConfiguration : IConfiguration
@@ -331,7 +331,7 @@ public class InterfaceConcretionTests
         public ConfigurationSetting<bool> EnablePackageMetadataParsing { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<string> SbomPath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<string> SbomDir { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ConfigurationSetting<string> ComplianceStandard { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ConfigurationSetting<ComplianceStandardType> ComplianceStandard { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
