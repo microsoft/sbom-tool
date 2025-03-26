@@ -36,6 +36,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 {
     private readonly IRecorder recorder;
     private readonly ISignValidationProvider signValidationProvider;
+    private readonly ISignatureValidationProvider signatureValidationProvider;
     private readonly ILogger log;
     private readonly IManifestParserProvider manifestParserProvider;
     private readonly IConfiguration configuration;
@@ -46,10 +47,11 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IOSUtils osUtils;
 
-    public SbomParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ILogger log, IManifestParserProvider manifestParserProvider, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils, IOSUtils osUtils)
+    public SbomParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ISignatureValidationProvider signatureValidationProvider, ILogger log, IManifestParserProvider manifestParserProvider, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils, IOSUtils osUtils)
     {
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.signValidationProvider = signValidationProvider ?? throw new ArgumentNullException(nameof(signValidationProvider));
+        this.signatureValidationProvider = signatureValidationProvider ?? throw new ArgumentNullException(nameof(signatureValidationProvider));
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.manifestParserProvider = manifestParserProvider ?? throw new ArgumentNullException(nameof(manifestParserProvider));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -67,6 +69,8 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         IEnumerable<FileValidationResult> validFailures = null;
         var totalNumberOfPackages = 0;
 
+        var validationResultSigntoolExe = false;
+        var validationResultNonSigntoolExe = false;
         using (recorder.TraceEvent(Events.SbomValidationWorkflow))
         {
             try
@@ -89,11 +93,29 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                     else
                     {
-                        if (!signValidator.Validate())
+                        validationResultSigntoolExe = signValidator.Validate();
+                        if (!validationResultSigntoolExe)
                         {
                             log.Error("Sign validation failed.");
                             validFailures = new List<FileValidationResult> { new FileValidationResult { ErrorType = ErrorType.ManifestFileSigningError } };
                             return false;
+                        }
+                    }
+
+                    // Validate signature (with not the signtool.exe way)
+                    var signatureValidator = signatureValidationProvider.Get();
+                    if (signatureValidator == null)
+                    {
+                        log.Warning($"ValidateSignature switch is true, but couldn't find a signature validator for the current OS, skipping validation.");
+                    }
+                    else
+                    {
+                        validationResultNonSigntoolExe = signatureValidator.Validate();
+                        if (!validationResultNonSigntoolExe)
+                        {
+                            log.Error("Signature validation with the non-signtool.exe way failed.");
+                            //validFailures = new List<FileValidationResult> { new FileValidationResult { ErrorType = ErrorType.ManifestFileSigningError } };
+                            //return false;
                         }
                     }
                 }
@@ -200,6 +222,10 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 recorder.RecordTotalNumberOfPackages(totalNumberOfPackages);
                 LogResultsSummary(validationResultOutput, validFailures);
                 LogIndividualFileResults(validFailures);
+
+                // Record the validation results from the method using the 'signtool.exe verify' command and
+                // the other method not using the tool.
+                recorder.RecordSignatureValidationResult(validationResultSigntoolExe, validationResultNonSigntoolExe);
             }
         }
     }

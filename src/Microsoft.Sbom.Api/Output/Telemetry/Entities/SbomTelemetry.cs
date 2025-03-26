@@ -75,4 +75,9 @@ public class SbomTelemetry
     /// Gets or sets the total number of PackageDetails entries created during the execution of the tool.
     /// </summary>
     public int PackageDetailsEntries { get; set; }
+
+    /// <summary>
+    /// Gets or sets the SBOM validation results from the signtool.exe implementation and the non-signtool.exe implementation.
+    /// </summary>
+    public IDictionary<string, bool> SbomValidationResults { get; set; }
 }

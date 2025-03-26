@@ -42,6 +42,9 @@ public class TelemetryRecorder : IRecorder
     private int totalNumberOfLicenses = 0;
     private int packageDetailsEntries = 0;
 
+    private bool validationResultNonSigntoolExe;
+    private bool validationResultSigntoolExe;
+
     public IFileSystemUtils FileSystemUtils { get; }
 
     public IConfiguration Configuration { get; }
@@ -281,6 +284,17 @@ public class TelemetryRecorder : IRecorder
     }
 
     /// <summary>
+    /// Record the results from validating the signatures using 1) signtool.exe verify command and 2) our own implementation (without signtool.exe).
+    /// </summary>
+    /// <param name="validationResultSigntoolExe">The result from validating signatures using the signtool.exe verify command</param>
+    /// <param name="validationResultNonSigntoolExe">The result from validating signatures using our own implementation (without signtool.exe)</param>
+    public void RecordSignatureValidationResult(bool validationResultSigntoolExe, bool validationResultNonSigntoolExe)
+    {
+        this.validationResultNonSigntoolExe = validationResultNonSigntoolExe;
+        this.validationResultSigntoolExe = validationResultSigntoolExe;
+    }
+
+    /// <summary>
     /// Finalize the recorder, and log the telemetry.
     /// </summary>
     public async Task FinalizeAndLogTelemetryAsync()
@@ -322,7 +336,14 @@ public class TelemetryRecorder : IRecorder
                 APIExceptions = this.apiExceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),
                 MetadataExceptions = this.metadataExceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(g => g.Key, g => g.First().Message),
                 TotalLicensesDetected = this.totalNumberOfLicenses,
-                PackageDetailsEntries = this.packageDetailsEntries
+                PackageDetailsEntries = this.packageDetailsEntries,
+                // Temporary telemetry to record the results from running the signtool.exe verify command versus the results from running our own implementation.
+                // We should remove this once we migrate completely from the signtool.exe implementation.
+                SbomValidationResults = new Dictionary<string, bool>
+                {
+                    { "ValidationResultSigntoolExe", this.validationResultSigntoolExe },
+                    { "ValidationResultNonSigntoolExe", this.validationResultNonSigntoolExe }
+                }
             };
 
             // Log to logger.
