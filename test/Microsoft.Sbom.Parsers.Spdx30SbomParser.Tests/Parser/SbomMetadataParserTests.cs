@@ -63,20 +63,6 @@ public class SbomMetadataParserTests : SbomParserTestsBase
     }
 
     [TestMethod]
-    public void DocCreation_NoName_Passes()
-    {
-        var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithMetadataJsonStrings.SbomWithSpdxDocumentMissingNameJsonString);
-        using var stream = new MemoryStream(bytes);
-
-        var parser = new SPDX30Parser(stream);
-        var results = this.Parse(parser);
-        Assert.AreEqual(5, results.FormatEnforcedSPDX3Result.Graph.Count());
-
-        var metadata = parser.GetMetadata();
-        Assert.IsNotNull(metadata);
-    }
-
-    [TestMethod]
     public void DocCreation_NoName_NTIA_Throws()
     {
         var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithMetadataJsonStrings.SbomWithSpdxDocumentMissingNameJsonString);
@@ -88,6 +74,20 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
         Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("SpdxId: \"SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1\""));
         Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("MissingValidSpdxDocument"));
+    }
+
+    [TestMethod]
+    public void DocCreation_NoName_Passes()
+    {
+        var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithMetadataJsonStrings.SbomWithSpdxDocumentMissingNameJsonString);
+        using var stream = new MemoryStream(bytes);
+
+        var parser = new SPDX30Parser(stream);
+        var results = this.Parse(parser);
+        Assert.AreEqual(5, results.FormatEnforcedSPDX3Result.Graph.Count());
+
+        var metadata = parser.GetMetadata();
+        Assert.IsNotNull(metadata);
     }
 
     [TestMethod]
@@ -111,7 +111,6 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(6, results.FormatEnforcedSPDX3Result.Graph.Count());
 
@@ -141,7 +140,6 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(5, results.FormatEnforcedSPDX3Result.Graph.Count());
 
@@ -156,7 +154,6 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(4, results.FormatEnforcedSPDX3Result.Graph.Count());
 

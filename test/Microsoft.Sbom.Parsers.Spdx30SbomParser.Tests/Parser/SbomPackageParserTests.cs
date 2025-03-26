@@ -27,7 +27,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [TestMethod]
     [DataRow(SbomFullDocWithPackagesStrings.SbomPackageWithMissingVerificationJsonString)]
     [DataRow(SbomFullDocWithPackagesStrings.SbomPackageWithMissingSHA256JsonString)]
-    public void MissingPropertiesTest_NTIA_VerificationCode_Succeeds(string json)
+    public void MissingPropertiesTest_SPDX_VerificationCode_Succeeds(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
