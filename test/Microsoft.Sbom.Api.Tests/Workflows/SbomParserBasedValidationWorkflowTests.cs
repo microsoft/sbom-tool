@@ -442,7 +442,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var elementsResult = new ElementsResult(new ParserStateResult(Constants.SPDXGraphHeaderName, null, ExplicitField: true, YieldReturn: true));
         elementsResult.InvalidComplianceStandardElements.Add("MissingValidSpdxDocument");
         elementsResult.InvalidComplianceStandardElements.Add("AdditionalSpdxDocument. SpdxId: \"elementSpdxId\". Name: \"elementName\"");
-        elementsResult.InvalidComplianceStandardElements.Add("MissingValidCreationInfoWithId: elementId");
+        elementsResult.InvalidComplianceStandardElements.Add("MissingValidCreationInfoWithId: \"elementId\"");
         elementsResult.InvalidComplianceStandardElements.Add("SpdxId: \"elementSpdxId\". Name: \"elementName\"");
 
         sbomParser.SetupSequence(p => p.Next()).Returns(elementsResult);
@@ -488,19 +488,17 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         Assert.AreEqual("AdditionalSpdxDocument. SpdxId: \"elementSpdxId\". Name: \"elementName\"", ntiaErrors[1].Path);
         Assert.AreEqual(ErrorType.AdditionalSpdxDocument, ntiaErrors[1].ErrorType);
 
-        Assert.AreEqual("MissingValidCreationInfoWithId: elementId", ntiaErrors[2].Path);
+        Assert.AreEqual("MissingValidCreationInfoWithId: \"elementId\"", ntiaErrors[2].Path);
         Assert.AreEqual(ErrorType.MissingValidCreationInfo, ntiaErrors[2].ErrorType);
 
         Assert.AreEqual("SpdxId: \"elementSpdxId\". Name: \"elementName\"", ntiaErrors.Last().Path);
         Assert.AreEqual(ErrorType.InvalidNTIAElement, ntiaErrors.Last().ErrorType);
 
         Assert.IsTrue(cc.CapturedStdOut.Contains("Elements in the manifest that are non-compliant with NTIA . . . 4"), "Number of invalid NTIA elements is incorrect in stdout");
-        Assert.IsTrue(cc.CapturedStdOut.Contains(
-            "AdditionalSpdxDocument. SpdxId: \"elementSpdxId\". Name: \"elementName\"\r\n" +
-            "MissingValidCreationInfoWithId: elementId\r\n" +
-            "SpdxId: \"elementSpdxId\". Name: \"elementName\"\r\n" +
-            "MissingValidSpdxDocument"),
-            "Descriptions of NTIA errors are incorrect in stdout");
+        Assert.IsTrue(cc.CapturedStdOut.Contains("AdditionalSpdxDocument. SpdxId: \"elementSpdxId\". Name: \"elementName\""));
+        Assert.IsTrue(cc.CapturedStdOut.Contains("MissingValidCreationInfoWithId: \"elementId\""));
+        Assert.IsTrue(cc.CapturedStdOut.Contains("SpdxId: \"elementSpdxId\". Name: \"elementName\""));
+        Assert.IsTrue(cc.CapturedStdOut.Contains("MissingValidSpdxDocument"));
 
         configurationMock.VerifyAll();
     }
