@@ -20,7 +20,7 @@ public interface ISbomParser
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    ParserStateResult? Next();
+    public ParserStateResult? Next();
 
     /// <summary>
     /// Returns a <see cref="SbomMetadata"/> object using the metadata defined in the
@@ -28,7 +28,7 @@ public interface ISbomParser
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    SpdxMetadata GetMetadata();
+    public SpdxMetadata GetMetadata();
 
     /// <summary>
     /// This function is called by the sbom tool upon initialization to get all the
@@ -36,7 +36,7 @@ public interface ISbomParser
     /// </summary>
     /// <returns>An version sorted array in ascending order of
     /// <see cref="ManifestInfo">manifests</see> this library can parse.</returns>
-    ManifestInfo[] RegisterManifest();
+    public ManifestInfo[] RegisterManifest();
 
     /// <summary>
     /// Set compliance standard for SPDX 3.0 parsers and above.

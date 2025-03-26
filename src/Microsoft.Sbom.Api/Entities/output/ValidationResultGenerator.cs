@@ -96,7 +96,7 @@ public class ValidationResultGenerator
                 {
                     FilesSuccessfulCount = successCount,
                     FilesValidatedCount = NodeValidationResults.Count + successCount,
-                    FilesFailedCount = validationErrors.Where(r => r.ErrorType != ErrorType.NoPackagesFound).Count(),
+                    FilesFailedCount = validationErrors.Count(r => r.ErrorType != ErrorType.NoPackagesFound),
                     FilesSkippedCount = skippedErrors.Count,
                     TotalFilesInManifest = totalFiles,
                     TotalPackagesInManifest = totalPackages

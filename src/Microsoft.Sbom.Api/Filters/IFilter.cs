@@ -10,7 +10,7 @@ namespace Microsoft.Sbom.Api.Filters;
 public interface IFilter<T>
     where T : IFilter<T>
 {
-    bool IsValid(string filePath);
+    public bool IsValid(string filePath);
 
-    void Init();
+    public void Init();
 }

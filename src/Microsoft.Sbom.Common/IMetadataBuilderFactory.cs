@@ -16,5 +16,5 @@ public interface IMetadataBuilderFactory
     /// </summary>
     /// <param name="manifestInfo"></param>
     /// <returns></returns>
-    IMetadataBuilder Get(ManifestInfo manifestInfo);
+    public IMetadataBuilder Get(ManifestInfo manifestInfo);
 }

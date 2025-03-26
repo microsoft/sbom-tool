@@ -11,7 +11,7 @@ namespace Microsoft.Sbom.Api.Manifest;
 /// </summary>
 public interface IManifestParserProvider
 {
-    IManifestInterface Get(ManifestInfo manifestInfo);
+    public IManifestInterface Get(ManifestInfo manifestInfo);
 
-    void Init();
+    public void Init();
 }

@@ -9,5 +9,5 @@ namespace Microsoft.Sbom.Api.Utils;
 
 public interface IComponentDetector
 {
-    Task<ScanResult> ScanAsync(ScanSettings args);
+    public Task<ScanResult> ScanAsync(ScanSettings args);
 }
