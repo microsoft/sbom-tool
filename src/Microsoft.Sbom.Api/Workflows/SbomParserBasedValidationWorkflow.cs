@@ -240,7 +240,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => Console.WriteLine(f.Path));
         Console.WriteLine("------------------------------------------------------------");
 
-        Console.WriteLine("Elements that do not comply with NTIA compliance standard:");
+        Console.WriteLine("Elements in the manifest that are non-compliant with NTIA:");
         Console.WriteLine(string.Empty);
         validFailures.Where(vf => vf.ErrorType == ErrorType.InvalidNTIAElement).ForEach(f => Console.WriteLine(f.Path));
         Console.WriteLine("------------------------------------------------------------");
@@ -283,7 +283,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         Console.WriteLine($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
         Console.WriteLine($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
         Console.WriteLine($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
-        Console.WriteLine($"Elements in the manifest that do not comply with the NTIA compliance standard . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidNTIAElement)}");
+        Console.WriteLine($"Elements in the manifest that are non-compliant with NTIA . . . {validFailures.Count(v => v.ErrorType == ErrorType.InvalidNTIAElement)}");
 
         if (validFailures.Any(vf => vf.ErrorType == ErrorType.NoPackagesFound))
         {

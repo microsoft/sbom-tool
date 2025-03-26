@@ -187,6 +187,70 @@ public class IntegrationTests
         Assert.AreNotEqual(0, exitCode.Value);
     }
 
+    [TestMethod]
+    public void E2E_Validate_WithBadComplianceStandard_SupportedManifestInfo_ReturnsNonZeroExitCode()
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var testFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoValue: "3.0");
+
+        // Add the compliance standard
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "3.0", complianceStandardValue: "aeg12");
+
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+
+        Assert.IsTrue(stdout.Contains("Unknown Compliance Standard 'aeg12'. Options are NTIA"));
+        Assert.AreEqual(1, exitCode.Value);
+    }
+
+    [TestMethod]
+    public void E2E_Validate_WithValidComplianceStandard_UnsupportedManifestInfo_ReturnsNonZeroExitCode()
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var testFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoValue: "2.2");
+
+        // Add the compliance standard
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "2.2", complianceStandardValue: "NTIA");
+
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+
+        Assert.IsTrue(stderr.Contains("Please use SPDX >=3.0 or remove the ComplianceStandard parameter.\r\n"));
+        Assert.AreNotEqual(0, exitCode.Value);
+    }
+
+    [TestMethod]
+    public void E2E_Validate_WithValidComplianceStandard_SupportedManifestInfo_StdOutContainsNTIAErrors()
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var testFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoValue: "3.0");
+
+        // Add the compliance standard
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "3.0", complianceStandardValue: "NTIA");
+
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+
+        // Assert that the validation failures show up
+        Assert.IsTrue(stdout.Contains("Elements in the manifest that are non-compliant with NTIA . . . 1"));
+        Assert.IsTrue(stdout.Contains("SPDXRef-software_Package-BBC2D465DDBC52CC6119533C2E784684B7088775E3FD28438F7E557563D03915"));
+    }
+
     [DataRow("SPDX:2.2")]
     [DataRow("SPDX:3.0")]
     [DataRow("randomName:randomVersion")]
@@ -216,10 +280,7 @@ public class IntegrationTests
     private void GenerateManifestAndValidateSuccess(string testFolderPath, string manifestInfoValue = null)
     {
         var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\"  -b . -bc \"{GetSolutionFolderPath()}\"";
-        if (!string.IsNullOrEmpty(manifestInfoValue))
-        {
-            arguments += $" -mi SPDX:{manifestInfoValue}";
-        }
+        arguments += string.IsNullOrEmpty(manifestInfoValue) ? string.Empty : $" -mi SPDX:{manifestInfoValue}";
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -238,12 +299,13 @@ public class IntegrationTests
         Assert.AreEqual(0, exitCode.Value);
     }
 
-    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoValue = "SPDX:2.2")
+    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoValue = "2.2", string complianceStandardValue = "")
     {
         var outputFile = Path.Combine(TestContext.TestRunDirectory, TestContext.TestName, "validation.json");
         var manifestRootFolderName = Path.Combine(testFolderPath, ManifestRootFolderName);
         var arguments = $"validate -m \"{manifestRootFolderName}\" -b . -o \"{outputFile}\"";
-        arguments += $" -mi {manifestInfoValue}";
+        arguments += string.IsNullOrEmpty(manifestInfoValue) ? string.Empty : $" -mi SPDX:{manifestInfoValue}";
+        arguments += string.IsNullOrEmpty(complianceStandardValue) ? string.Empty : $" -cs {complianceStandardValue}";
         return (arguments, outputFile);
     }
 
