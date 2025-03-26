@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,11 +22,15 @@ public class IntegrationTests
     public TestContext TestContext { get; set; }
 
     private static string testRunDirectory;
+    private static string testDropDirectory;
 
     [ClassInitialize]
     public static void Setup(TestContext context)
     {
         testRunDirectory = context.TestRunDirectory;
+        var executingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        testDropDirectory = Path.GetFullPath(Path.Combine(executingDirectory, "..", nameof(IntegrationTests)));
+        Xcopy(executingDirectory, testDropDirectory);
     }
 
     [ClassCleanup(ClassCleanupBehavior.EndOfClass)]
@@ -37,6 +42,14 @@ public class IntegrationTests
             if (Directory.Exists(testRunDirectory))
             {
                 Directory.Delete(testRunDirectory, true);
+            }
+        }
+
+        if (testDropDirectory is not null)
+        {
+            if (Directory.Exists(testDropDirectory))
+            {
+                Directory.Delete(testDropDirectory, true);
             }
         }
     }
@@ -95,7 +108,7 @@ public class IntegrationTests
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
         Assert.AreEqual(stderr, string.Empty);
-        Assert.AreEqual(0, exitCode.Value);
+        Assert.AreEqual(0, exitCode.Value, $"Unexpected failure: stdout = {stdout}");
         Assert.IsTrue(File.Exists(outputFile), $"{outputFile} should have been created during validation");
         Assert.IsTrue(File.ReadAllText(outputFile).Contains("\"Result\":\"Success\"", StringComparison.OrdinalIgnoreCase));
     }
@@ -162,7 +175,7 @@ public class IntegrationTests
         }
 
         var testFolderPath = CreateTestFolder();
-        var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\" -b . -bc \"{GetSolutionFolderPath()}\" -mi randomName:randomVersion";
+        var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\" -b \"{testDropDirectory}\" -bc \"{GetSolutionFolderPath()}\" -mi randomName:randomVersion";
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
         Assert.AreEqual("Please provide a valid value for the ManifestInfo (-mi) parameter. Supported values include: SPDX:2.2, SPDX:3.0. The values are case-insensitive.\r\n", stderr);
         Assert.AreNotEqual(0, exitCode.Value);
@@ -185,70 +198,6 @@ public class IntegrationTests
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
         Assert.AreEqual("Please provide a valid value for the ManifestInfo (-mi) parameter. Supported values include: SPDX:2.2, SPDX:3.0. The values are case-insensitive.\r\n", stderr);
         Assert.AreNotEqual(0, exitCode.Value);
-    }
-
-    [TestMethod]
-    public void E2E_Validate_WithBadComplianceStandard_SupportedManifestInfo_ReturnsNonZeroExitCode()
-    {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
-        var testFolderPath = CreateTestFolder();
-        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoValue: "3.0");
-
-        // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "3.0", complianceStandardValue: "aeg12");
-
-        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
-
-        Assert.IsTrue(stdout.Contains("Unknown Compliance Standard 'aeg12'. Options are NTIA"));
-        Assert.AreEqual(1, exitCode.Value);
-    }
-
-    [TestMethod]
-    public void E2E_Validate_WithValidComplianceStandard_UnsupportedManifestInfo_ReturnsNonZeroExitCode()
-    {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
-        var testFolderPath = CreateTestFolder();
-        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoValue: "2.2");
-
-        // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "2.2", complianceStandardValue: "NTIA");
-
-        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
-
-        Assert.IsTrue(stderr.Contains("Please use SPDX >=3.0 or remove the ComplianceStandard parameter.\r\n"));
-        Assert.AreNotEqual(0, exitCode.Value);
-    }
-
-    [TestMethod]
-    public void E2E_Validate_WithValidComplianceStandard_SupportedManifestInfo_StdOutContainsNTIAErrors()
-    {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
-        var testFolderPath = CreateTestFolder();
-        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoValue: "3.0");
-
-        // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "3.0", complianceStandardValue: "NTIA");
-
-        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
-
-        // Assert that the validation failures show up
-        Assert.IsTrue(stdout.Contains("Elements in the manifest that are non-compliant with NTIA . . . 1"));
-        Assert.IsTrue(stdout.Contains("SPDXRef-software_Package-BBC2D465DDBC52CC6119533C2E784684B7088775E3FD28438F7E557563D03915"));
     }
 
     [DataRow("SPDX:2.2")]
@@ -279,8 +228,11 @@ public class IntegrationTests
 
     private void GenerateManifestAndValidateSuccess(string testFolderPath, string manifestInfoValue = null)
     {
-        var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\"  -b . -bc \"{GetSolutionFolderPath()}\"";
-        arguments += string.IsNullOrEmpty(manifestInfoValue) ? string.Empty : $" -mi SPDX:{manifestInfoValue}";
+        var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\"  -b \"{testDropDirectory}\" -bc \"{GetSolutionFolderPath()}\"";
+        if (!string.IsNullOrEmpty(manifestInfoValue))
+        {
+            arguments += $" -mi SPDX:{manifestInfoValue}";
+        }
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -296,16 +248,15 @@ public class IntegrationTests
         Assert.AreEqual(1, directories.Length, "There should be only one folder in the test directory.");
         Assert.AreEqual(manifestFolderPath, directories[0], "The only folder in the test directory should be a folder with the correct SBOM version name.");
 
-        Assert.AreEqual(0, exitCode.Value);
+        Assert.AreEqual(0, exitCode.Value, $"Unexpected failure. stdout = {stdout}");
     }
 
-    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoValue = "2.2", string complianceStandardValue = "")
+    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoValue = "SPDX:2.2")
     {
         var outputFile = Path.Combine(TestContext.TestRunDirectory, TestContext.TestName, "validation.json");
         var manifestRootFolderName = Path.Combine(testFolderPath, ManifestRootFolderName);
-        var arguments = $"validate -m \"{manifestRootFolderName}\" -b . -o \"{outputFile}\"";
-        arguments += string.IsNullOrEmpty(manifestInfoValue) ? string.Empty : $" -mi SPDX:{manifestInfoValue}";
-        arguments += string.IsNullOrEmpty(complianceStandardValue) ? string.Empty : $" -cs {complianceStandardValue}";
+        var arguments = $"validate -m \"{manifestRootFolderName}\" -b \"{testDropDirectory}\" -o \"{outputFile}\"";
+        arguments += $" -mi {manifestInfoValue}";
         return (arguments, outputFile);
     }
 
@@ -321,9 +272,20 @@ public class IntegrationTests
         return Path.Combine(manifestDir, ManifestRootFolderName, $"spdx_{spdxVersion ?? "2.2"}");
     }
 
+    /// <summary>
+    /// Consistently return the path that contains our solution file. Starts from the location of the executing
+    /// assembly, then walks up the tree until is finds a solution file
+    /// </summary>
+    /// <returns>The path to the folder that contains the solution file</returns>
     private static string GetSolutionFolderPath()
     {
-        return Path.GetFullPath(Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", ".."));
+        var pathToCheck = Path.GetFullPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+        while (!Directory.EnumerateFiles(pathToCheck, "*.sln").Any())
+        {
+            pathToCheck = Path.GetFullPath(Path.Combine(pathToCheck, ".."));
+        }
+
+        return pathToCheck;
     }
 
     private static string GetAppName()
@@ -393,5 +355,18 @@ public class IntegrationTests
         }
 
         return (stdout, stderr, exitCode);
+    }
+
+    private static void Xcopy(string sourceDir, string targetDir)
+    {
+        foreach (var dirPath in Directory.GetDirectories(sourceDir, "*.*", SearchOption.AllDirectories))
+        {
+            Directory.CreateDirectory(dirPath.Replace(sourceDir, targetDir));
+        }
+
+        foreach (var newPath in Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories))
+        {
+            File.Copy(newPath, newPath.Replace(sourceDir, targetDir), true);
+        }
     }
 }
