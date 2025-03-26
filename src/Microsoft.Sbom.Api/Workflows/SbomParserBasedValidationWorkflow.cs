@@ -242,7 +242,16 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
         Console.WriteLine("Elements in the manifest that are non-compliant with NTIA:");
         Console.WriteLine(string.Empty);
-        validFailures.Where(vf => vf.ErrorType == ErrorType.InvalidNTIAElement).ForEach(f => Console.WriteLine(f.Path));
+        validFailures.Where(
+        vf => vf.ErrorType == ErrorType.MissingValidSpdxDocument ||
+        vf.ErrorType == ErrorType.AdditionalSpdxDocument ||
+        vf.ErrorType == ErrorType.MissingValidCreationInfo ||
+        vf.ErrorType == ErrorType.InvalidNTIAElement).
+        ForEach(f => Console.WriteLine(f.Path));
+
+        validFailures.Where(
+        vf => vf.ErrorType == ErrorType.MissingValidSpdxDocument).
+        ForEach(f => Console.WriteLine(f.ErrorType.ToString()));
         Console.WriteLine("------------------------------------------------------------");
 
         Console.WriteLine("Unknown file failures:");
@@ -283,7 +292,11 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         Console.WriteLine($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
         Console.WriteLine($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
         Console.WriteLine($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
-        Console.WriteLine($"Elements in the manifest that are non-compliant with NTIA . . . {validFailures.Count(v => v.ErrorType == ErrorType.InvalidNTIAElement)}");
+        Console.WriteLine($"Elements in the manifest that are non-compliant with NTIA . . . " +
+        $"{validFailures.Count(v => v.ErrorType == ErrorType.MissingValidSpdxDocument ||
+        v.ErrorType == ErrorType.AdditionalSpdxDocument ||
+        v.ErrorType == ErrorType.MissingValidCreationInfo ||
+        v.ErrorType == ErrorType.InvalidNTIAElement)}");
 
         if (validFailures.Any(vf => vf.ErrorType == ErrorType.NoPackagesFound))
         {
@@ -309,7 +322,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
             return;
         }
 
-        switch (configuration.ComplianceStandard.Value.Name)
+        switch (configuration.ComplianceStandard?.Value?.Name)
         {
             case "NTIA":
                 AddInvalidNTIAElementsToFailures(fileValidationFailures, invalidElements);
@@ -327,8 +340,8 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         {
             var errorType = elementId switch
             {
-                string id when id.Contains("missingValidSpdxDocument") => ErrorType.MissingValidSpdxDocument,
-                string id when id.Contains("SpdxDocument") => ErrorType.AdditionalSpdxDocument,
+                string id when id.Contains("MissingValidSpdxDocument") => ErrorType.MissingValidSpdxDocument,
+                string id when id.Contains("AdditionalSpdxDocument") => ErrorType.AdditionalSpdxDocument,
                 string id when id.Contains("CreationInfo") => ErrorType.MissingValidCreationInfo,
                 _ => ErrorType.InvalidNTIAElement
             };

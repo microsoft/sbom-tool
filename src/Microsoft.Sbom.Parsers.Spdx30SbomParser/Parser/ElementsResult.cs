@@ -37,8 +37,7 @@ public record ElementsResult : ParserStateResult
     public List<CreationInfo> CreationInfos { get; set; }
 
     /// <summary>
-    /// SPDX ID's of invalid elements that don't comply with the given compliance standard.
-    /// If SPDX ID is missing, the JSON object will be used to identify the element.
+    /// SPDX ID's and/or names of invalid elements that don't comply with the given compliance standard.
     /// </summary>
     public HashSet<string> InvalidComplianceStandardElements { get; set; }
 
