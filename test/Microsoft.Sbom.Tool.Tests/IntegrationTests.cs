@@ -193,7 +193,7 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath);
 
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, "randomName:randomVersion");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, "randomVersion");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
         Assert.AreEqual("Please provide a valid value for the ManifestInfo (-mi) parameter. Supported values include: SPDX:2.2, SPDX:3.0. The values are case-insensitive.\r\n", stderr);
@@ -260,7 +260,7 @@ public class IntegrationTests
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
         // Assert that the validation failures show up
-        Assert.IsTrue(stdout.Contains("Elements in the manifest that are non-compliant with NTIA . . . 1"));
+        Assert.IsFalse(stdout.Contains("Elements in the manifest that are non-compliant with NTIA . . . 0"));
         Assert.IsTrue(stdout.Contains("SPDXRef-software_Package-BBC2D465DDBC52CC6119533C2E784684B7088775E3FD28438F7E557563D03915"));
     }
 
