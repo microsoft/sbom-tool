@@ -69,7 +69,7 @@ public class ArgRevivers
         catch (ArgumentException)
         {
             var supportedComplianceStandards = string.Join(", ", Constants.SupportedComplianceStandards);
-            throw new ValidationArgException($"Unknown Compliance Standard '{value}'. Options are {supportedComplianceStandards}");
+            throw new ValidationArgException($"Unknown Compliance Standard '{value}'. Options are {supportedComplianceStandards}.");
         }
     }
 }
