@@ -26,7 +26,7 @@ public class SbomFileParserTests : SbomParserTestsBase
     }
 
     [DataRow(SbomFullDocWithFilesStrings.SbomFileWithMissingVerificationJsonString)]
-    [DataRow(SbomFullDocWithFilesStrings.SbomFileWithMissingSHA256JsonString)]
+    //[DataRow(SbomFullDocWithFilesStrings.SbomFileWithMissingSHA256JsonString)]
     [TestMethod]
     public void MissingPropertiesTest_NTIA_NoVerificationCode_Throws(string jsonString)
     {

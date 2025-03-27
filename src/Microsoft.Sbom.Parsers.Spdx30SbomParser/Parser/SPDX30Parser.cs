@@ -266,7 +266,6 @@ public class SPDX30Parser : ISbomParser
 
     private void ValidateNTIARequirements(ElementsResult elementsResult)
     {
-        elementsResult.InvalidComplianceStandardElements = new HashSet<InvalidElementInfo>();
         ValidateSbomDocCreationForNTIA(elementsResult.SpdxDocuments, elementsResult.CreationInfos, elementsResult.InvalidComplianceStandardElements);
         ValidateSbomFilesForNTIA(elementsResult.Files, elementsResult.InvalidComplianceStandardElements);
         ValidateSbomPackagesForNTIA(elementsResult.Packages, elementsResult.InvalidComplianceStandardElements);

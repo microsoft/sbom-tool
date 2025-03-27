@@ -80,7 +80,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         Assert.IsNull(invalidElement1.Name);
         Assert.AreEqual(NTIAErrorType.InvalidNTIAElement, invalidElement1.ErrorType);
 
-        var invalidElement2 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.ErrorType == NTIAErrorType.MissingValidSpdxDocument);
+        var invalidElement2 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.ErrorType.Equals(NTIAErrorType.MissingValidSpdxDocument));
         Assert.IsNotNull(invalidElement2);
         Assert.AreEqual(NTIAErrorType.MissingValidSpdxDocument, invalidElement2.ErrorType);
     }
@@ -150,7 +150,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         var results = this.Parse(parser);
         Assert.AreEqual(1, results.InvalidComplianceStandardElements.Count);
 
-        var invalidElement = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.ErrorType == NTIAErrorType.MissingValidCreationInfo);
+        var invalidElement = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.ErrorType.Equals(NTIAErrorType.MissingValidCreationInfo));
         Assert.IsNotNull(invalidElement);
         Assert.AreEqual(NTIAErrorType.MissingValidCreationInfo, invalidElement.ErrorType);
     }
