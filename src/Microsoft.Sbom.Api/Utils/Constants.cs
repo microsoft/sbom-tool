@@ -50,6 +50,7 @@ public static class Constants
     public static Collection<ComplianceStandardType> SupportedComplianceStandards = new()
     {
         ComplianceStandardType.NTIA,
+        ComplianceStandardType.None
     };
 
     public static List<Entities.ErrorType> SkipFailureReportingForErrors = new()

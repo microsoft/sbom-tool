@@ -56,5 +56,5 @@ public enum ErrorType
     /// An unknown error occured.
     /// </summary>
     [EnumMember(Value = "Other")]
-    Other = 7,
+    Other = 255,
 }
