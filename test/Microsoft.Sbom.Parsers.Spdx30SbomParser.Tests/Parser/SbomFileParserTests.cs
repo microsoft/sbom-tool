@@ -2,9 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.JsonStrings;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Sbom.Parser;
@@ -34,8 +36,10 @@ public class SbomFileParserTests : SbomParserTestsBase
         parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var result = this.Parse(parser);
 
-        Assert.AreEqual(1, result.InvalidComplianceStandardElements.Count);
-        Assert.IsTrue(result.InvalidComplianceStandardElements.Contains("SpdxId: \"SPDXRef-software_File-B4A9F99A3A03B9273AE34753D96564CB4F2B0FAD885BBD36B0DD619E9E8AC967\". Name: \"./sample/path\""));
+        var invalidElement = result.InvalidComplianceStandardElements.First();
+        Assert.AreEqual("SPDXRef-software_File-B4A9F99A3A03B9273AE34753D96564CB4F2B0FAD885BBD36B0DD619E9E8AC967", invalidElement.SpdxId);
+        Assert.AreEqual("./sample/path", invalidElement.Name);
+        Assert.AreEqual(NTIAErrorType.InvalidNTIAElement, invalidElement.ErrorType);
     }
 
     [DataRow(SbomFullDocWithFilesStrings.SbomFileWithMissingVerificationJsonString)]

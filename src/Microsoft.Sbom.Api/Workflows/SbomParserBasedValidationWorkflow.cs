@@ -22,6 +22,7 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parser;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard;
 using PowerArgs;
 using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
@@ -244,16 +245,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         {
             Console.WriteLine($"Elements in the manifest that are non-compliant with {configuration.ComplianceStandard}:");
             Console.WriteLine(string.Empty);
-            validFailures.Where(
-            vf => vf.ErrorType == ErrorType.MissingValidSpdxDocument ||
-            vf.ErrorType == ErrorType.AdditionalSpdxDocument ||
-            vf.ErrorType == ErrorType.MissingValidCreationInfo ||
-            vf.ErrorType == ErrorType.InvalidNTIAElement).
-            ForEach(f => Console.WriteLine(f.Path));
-
-            validFailures.Where(
-            vf => vf.ErrorType == ErrorType.MissingValidSpdxDocument).
-            ForEach(f => Console.WriteLine(f.ErrorType.ToString()));
+            validFailures.Where(vf => vf.ErrorType == ErrorType.ComplianceStandardError).ForEach(f => Console.WriteLine(f.Path));
             Console.WriteLine("------------------------------------------------------------");
         }
 
@@ -298,10 +290,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         if (!NoOpComplianceStandard(configuration.ComplianceStandard))
         {
             Console.WriteLine($"Elements in the manifest that are non-compliant with {configuration.ComplianceStandard} . . . " +
-            $"{validFailures.Count(v => v.ErrorType == ErrorType.MissingValidSpdxDocument ||
-            v.ErrorType == ErrorType.AdditionalSpdxDocument ||
-            v.ErrorType == ErrorType.MissingValidCreationInfo ||
-            v.ErrorType == ErrorType.InvalidNTIAElement)}");
+            $"{validFailures.Count(v => v.ErrorType == ErrorType.ComplianceStandardError)}");
         }
 
         if (validFailures.Any(vf => vf.ErrorType == ErrorType.NoPackagesFound))
@@ -321,7 +310,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         }
     }
 
-    private void AddInvalidComplianceStandardElementsToFailures(List<FileValidationResult> fileValidationFailures, HashSet<string> invalidElements)
+    private void AddInvalidComplianceStandardElementsToFailures(List<FileValidationResult> fileValidationFailures, HashSet<InvalidElementInfo> invalidElements)
     {
         if (invalidElements == null || !invalidElements.Any())
         {
@@ -340,22 +329,14 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         }
     }
 
-    private void AddInvalidNTIAElementsToFailures(List<FileValidationResult> fileValidationFailures, HashSet<string> invalidElements)
+    private void AddInvalidNTIAElementsToFailures(List<FileValidationResult> fileValidationFailures, HashSet<InvalidElementInfo> invalidElements)
     {
-        foreach (var elementId in invalidElements)
+        foreach (var invalidElementInfo in invalidElements)
         {
-            var errorType = elementId switch
-            {
-                string id when id.Contains("MissingValidSpdxDocument") => ErrorType.MissingValidSpdxDocument,
-                string id when id.Contains("AdditionalSpdxDocument") => ErrorType.AdditionalSpdxDocument,
-                string id when id.Contains("CreationInfo") => ErrorType.MissingValidCreationInfo,
-                _ => ErrorType.InvalidNTIAElement
-            };
-
             fileValidationFailures.Add(new FileValidationResult
             {
-                Path = errorType == ErrorType.MissingValidSpdxDocument ? null : elementId,
-                ErrorType = errorType
+                Path = invalidElementInfo.ToString(),
+                ErrorType = ErrorType.ComplianceStandardError,
             });
         }
     }

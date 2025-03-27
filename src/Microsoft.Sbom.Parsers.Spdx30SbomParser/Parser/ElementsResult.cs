@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 namespace Microsoft.Sbom.Parser;
@@ -17,7 +18,7 @@ public record ElementsResult : ParserStateResult
         this.Packages = new List<Package>();
         this.SpdxDocuments = new List<SpdxDocument>();
         this.CreationInfos = new List<CreationInfo>();
-        this.InvalidComplianceStandardElements = new HashSet<string>();
+        this.InvalidComplianceStandardElements = new HashSet<InvalidElementInfo>();
         this.ElementsSpdxIdList = new HashSet<string>();
 
         this.FilesCount = 0;
@@ -37,9 +38,9 @@ public record ElementsResult : ParserStateResult
     public List<CreationInfo> CreationInfos { get; set; }
 
     /// <summary>
-    /// SPDX ID's and/or names of invalid elements that don't comply with the given compliance standard.
+    /// Invalid elements that don't comply with the given compliance standard.
     /// </summary>
-    public HashSet<string> InvalidComplianceStandardElements { get; set; }
+    public HashSet<InvalidElementInfo> InvalidComplianceStandardElements { get; set; }
 
     /// <summary>
     /// SPDX ID's of elements used for deduplication when parsing an SBOM.

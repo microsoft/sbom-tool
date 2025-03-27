@@ -47,10 +47,10 @@ public enum ErrorType
     JsonSerializationError = 5,
 
     /// <summary>
-    /// Element does not meet NTIA compliance standards.
+    /// Element does not meet compliance standard.
     /// </summary>
-    [EnumMember(Value = "NTIA compliance standard validation error")]
-    NTIAError = 6,
+    [EnumMember(Value = "Compliance standard validation error")]
+    ComplianceStandardError = 6,
 
     /// <summary>
     /// An unknown error occured.

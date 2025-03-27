@@ -2,9 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.JsonStrings;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Sbom.Parser;
@@ -45,10 +47,14 @@ public class SbomPackageParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
         var parser = new SPDX30Parser(stream);
         parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
-        var results = this.Parse(parser);
+        var result = this.Parse(parser);
 
-        Assert.AreEqual(1, results.InvalidComplianceStandardElements.Count);
-        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("SpdxId: \"SPDXRef-software_Package-4739C82D88855A138C811B8CE05CC97113BEC7F7C7F66EC7E4C6C176EEA0FECE\". Name: \"test\""));
+        Assert.AreEqual(1, result.InvalidComplianceStandardElements.Count);
+
+        var invalidElement = result.InvalidComplianceStandardElements.First();
+        Assert.AreEqual("SPDXRef-software_Package-4739C82D88855A138C811B8CE05CC97113BEC7F7C7F66EC7E4C6C176EEA0FECE", invalidElement.SpdxId);
+        Assert.AreEqual("test", invalidElement.Name);
+        Assert.AreEqual(NTIAErrorType.InvalidNTIAElement, invalidElement.ErrorType);
     }
 
     [TestMethod]

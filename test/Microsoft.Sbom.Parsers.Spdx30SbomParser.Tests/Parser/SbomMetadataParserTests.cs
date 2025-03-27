@@ -9,6 +9,7 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.JsonStrings;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Sbom.Parser;
@@ -72,8 +73,16 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
-        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("SpdxId: \"SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1\""));
-        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("MissingValidSpdxDocument"));
+
+        var invalidElement1 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.SpdxId == "SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
+        Assert.IsNotNull(invalidElement1);
+        Assert.AreEqual("SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1", invalidElement1.SpdxId);
+        Assert.IsNull(invalidElement1.Name);
+        Assert.AreEqual(NTIAErrorType.InvalidNTIAElement, invalidElement1.ErrorType);
+
+        var invalidElement2 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.ErrorType == NTIAErrorType.MissingValidSpdxDocument);
+        Assert.IsNotNull(invalidElement2);
+        Assert.AreEqual(NTIAErrorType.MissingValidSpdxDocument, invalidElement2.ErrorType);
     }
 
     [TestMethod]
@@ -100,8 +109,18 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
-        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("AdditionalSpdxDocument. SpdxId: \"SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1\". Name: \"spdx-doc1-name\""));
-        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("AdditionalSpdxDocument. SpdxId: \"SPDXRef-SpdxDocument-A93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1\". Name: \"spdx-doc2-name\""));
+
+        var invalidElement1 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.SpdxId == "SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
+        Assert.IsNotNull(invalidElement1);
+        Assert.AreEqual("SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1", invalidElement1.SpdxId);
+        Assert.AreEqual("spdx-doc1-name", invalidElement1.Name);
+        Assert.AreEqual(NTIAErrorType.AdditionalSpdxDocument, invalidElement1.ErrorType);
+
+        var invalidElement2 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.SpdxId == "SPDXRef-SpdxDocument-A93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
+        Assert.IsNotNull(invalidElement2);
+        Assert.AreEqual("SPDXRef-SpdxDocument-A93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1", invalidElement2.SpdxId);
+        Assert.AreEqual("spdx-doc2-name", invalidElement2.Name);
+        Assert.AreEqual(NTIAErrorType.AdditionalSpdxDocument, invalidElement2.ErrorType);
     }
 
     [TestMethod]
@@ -130,7 +149,10 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(1, results.InvalidComplianceStandardElements.Count);
-        Assert.IsTrue(results.InvalidComplianceStandardElements.Contains("MissingValidCreationInfoWithId: \"_:creationinfo\""));
+
+        var invalidElement = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.ErrorType == NTIAErrorType.MissingValidCreationInfo);
+        Assert.IsNotNull(invalidElement);
+        Assert.AreEqual(NTIAErrorType.MissingValidCreationInfo, invalidElement.ErrorType);
     }
 
     [TestMethod]

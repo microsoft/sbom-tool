@@ -13,6 +13,9 @@ using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Enums;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
 using SPDX30Constants = Microsoft.Sbom.Parsers.Spdx30SbomParser.Constants;
@@ -263,6 +266,7 @@ public class SPDX30Parser : ISbomParser
 
     private void ValidateNTIARequirements(ElementsResult elementsResult)
     {
+        elementsResult.InvalidComplianceStandardElements = new HashSet<InvalidElementInfo>();
         ValidateSbomDocCreationForNTIA(elementsResult.SpdxDocuments, elementsResult.CreationInfos, elementsResult.InvalidComplianceStandardElements);
         ValidateSbomFilesForNTIA(elementsResult.Files, elementsResult.InvalidComplianceStandardElements);
         ValidateSbomPackagesForNTIA(elementsResult.Packages, elementsResult.InvalidComplianceStandardElements);
@@ -273,18 +277,17 @@ public class SPDX30Parser : ISbomParser
     /// </summary>
     /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
-    private void ValidateSbomDocCreationForNTIA(List<SpdxDocument> spdxDocuments, List<CreationInfo> creationInfos, HashSet<string> invalidElements)
+    private void ValidateSbomDocCreationForNTIA(List<SpdxDocument> spdxDocuments, List<CreationInfo> creationInfos, HashSet<InvalidElementInfo> invalidElements)
     {
         // There should only be one SPDX document element in the SBOM.
         if (spdxDocuments.Count == 0)
         {
-            invalidElements.Add("MissingValidSpdxDocument");
+            invalidElements.Add(GetInvalidElementInfo(null, errorType: NTIAErrorType.MissingValidSpdxDocument));
         }
         else if (spdxDocuments.Count > 1)
         {
-            invalidElements.UnionWith(
-                spdxDocuments.Select(spdxDocument =>
-                    $"AdditionalSpdxDocument. {GetInvalidElementInfo(spdxDocument)}"));
+            invalidElements.UnionWith(spdxDocuments.Select(
+                spdxDocument => GetInvalidElementInfo(spdxDocument, errorType: NTIAErrorType.AdditionalSpdxDocument)));
         }
         else
         {
@@ -294,7 +297,7 @@ public class SPDX30Parser : ISbomParser
 
             if (spdxCreationInfoElement is null)
             {
-                invalidElements.Add($"MissingValidCreationInfoWithId: \"{spdxDocumentElement?.CreationInfoDetails}\"");
+                invalidElements.Add(GetInvalidElementInfo(null, errorType: NTIAErrorType.MissingValidCreationInfo));
             }
         }
     }
@@ -304,7 +307,7 @@ public class SPDX30Parser : ISbomParser
     /// </summary>
     /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
-    private void ValidateSbomFilesForNTIA(List<Parsers.Spdx30SbomParser.Entities.File> files, HashSet<string> invalidElements)
+    private void ValidateSbomFilesForNTIA(List<Parsers.Spdx30SbomParser.Entities.File> files, HashSet<InvalidElementInfo> invalidElements)
     {
         foreach (var file in files)
         {
@@ -315,7 +318,7 @@ public class SPDX30Parser : ISbomParser
 
             if (!fileHasSha256Hash)
             {
-                invalidElements.Add(GetInvalidElementInfo(file));
+                invalidElements.Add(GetInvalidElementInfo(file, errorType: NTIAErrorType.InvalidNTIAElement));
             }
         }
     }
@@ -325,7 +328,7 @@ public class SPDX30Parser : ISbomParser
     /// </summary>
     /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
-    private void ValidateSbomPackagesForNTIA(List<Package> packages, HashSet<string> invalidElements)
+    private void ValidateSbomPackagesForNTIA(List<Package> packages, HashSet<InvalidElementInfo> invalidElements)
     {
         foreach (var package in packages)
         {
@@ -336,7 +339,7 @@ public class SPDX30Parser : ISbomParser
 
             if (packageHasSha256Hash is null || packageHasSha256Hash == false)
             {
-                invalidElements.Add(GetInvalidElementInfo(package));
+                invalidElements.Add(GetInvalidElementInfo(package, errorType: NTIAErrorType.InvalidNTIAElement));
             }
         }
     }
@@ -417,7 +420,7 @@ public class SPDX30Parser : ISbomParser
         }
     }
 
-    private Element? ParseJsonObject(JsonObject jsonObject, ComplianceStandardType complianceStandardAsEnum, HashSet<string> invalidElementsForComplianceStandardList)
+    private Element? ParseJsonObject(JsonObject jsonObject, ComplianceStandardType complianceStandardAsEnum, HashSet<InvalidElementInfo> invalidElementsForComplianceStandardList)
     {
         if (jsonObject is null || !jsonObject.Any())
         {
@@ -439,8 +442,8 @@ public class SPDX30Parser : ISbomParser
                 {
                     case "NTIA":
                         var deserializedAsElement = JsonSerializer.Deserialize(jsonObjectAsString, typeof(Element), jsonSerializerOptions) as Element;
-                        var invalidElementInfo = GetInvalidElementInfo(deserializedAsElement);
-                        invalidElementsForComplianceStandardList.Add((invalidElementInfo.Length != 0) ? invalidElementInfo : jsonObjectAsString);
+                        var invalidElementInfo = GetInvalidElementInfo(deserializedAsElement, errorType: NTIAErrorType.InvalidNTIAElement);
+                        invalidElementsForComplianceStandardList.Add(invalidElementInfo);
                         break;
                     default:
                         throw new ParserException(e.Message);
@@ -506,23 +509,8 @@ public class SPDX30Parser : ISbomParser
         }
     }
 
-    private string GetInvalidElementInfo(Element? element)
+    private InvalidElementInfo GetInvalidElementInfo(Element? element, IComplianceStandardErrorType errorType)
     {
-        if (element == null)
-        {
-            return string.Empty;
-        }
-        else if (element.SpdxId == null && element.Name != null)
-        {
-            return $"Name: \"{element.Name}\"";
-        }
-        else if (element.SpdxId != null && element.Name == null)
-        {
-            return $"SpdxId: \"{element.SpdxId}\"";
-        }
-        else
-        {
-            return $"SpdxId: \"{element.SpdxId}\". Name: \"{element.Name}\"";
-        }
+        return new InvalidElementInfo(element?.Name, element?.SpdxId, errorType);
     }
 }

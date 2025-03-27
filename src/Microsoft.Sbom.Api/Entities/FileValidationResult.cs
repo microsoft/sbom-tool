@@ -53,17 +53,8 @@ public class FileValidationResult
                 errorType = EntityErrorType.PackageError;
                 entityType = EntityType.Package;
                 break;
-            case ErrorType.InvalidNTIAElement:
-                errorType = EntityErrorType.NTIAError;
-                break;
-            case ErrorType.MissingValidSpdxDocument:
-                errorType = EntityErrorType.NTIAError;
-                break;
-            case ErrorType.AdditionalSpdxDocument:
-                errorType = EntityErrorType.NTIAError;
-                break;
-            case ErrorType.MissingValidCreationInfo:
-                errorType = EntityErrorType.NTIAError;
+            case ErrorType.ComplianceStandardError:
+                errorType = EntityErrorType.ComplianceStandardError;
                 break;
             case ErrorType.Other:
                 errorType = EntityErrorType.Other;
