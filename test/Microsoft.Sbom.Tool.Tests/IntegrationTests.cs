@@ -238,7 +238,7 @@ public class IntegrationTests
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
-        Assert.IsTrue(stderr.Contains("Please use SPDX >=3.0 or remove the ComplianceStandard parameter.\r\n"));
+        Assert.IsTrue(stderr.Contains("Please use a supported combination."));
         Assert.AreNotEqual(0, exitCode.Value);
     }
 

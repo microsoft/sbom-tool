@@ -160,7 +160,7 @@ public class ConfigSanitizerTests
         };
 
         var exception = Assert.ThrowsException<ValidationArgException>(() => configSanitizer.SanitizeConfig(config));
-        Assert.AreEqual("Please use SPDX >=3.0 or remove the ComplianceStandard parameter.", exception.Message);
+        Assert.IsTrue(exception.Message.Contains("Please use a supported combination."));
     }
 
     [TestMethod]

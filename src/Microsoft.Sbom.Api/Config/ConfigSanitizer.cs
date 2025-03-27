@@ -237,7 +237,8 @@ public class ConfigSanitizer
         // Compliance standard is only supported for ManifestInfo value of SPDX 3.0 and above.
         if (!newValue.Equals(ComplianceStandardType.None) && !configuration.ManifestInfo.Value.Any(mi => mi.Equals(Constants.SPDX30ManifestInfo)))
         {
-            throw new ValidationArgException($"Please use SPDX >=3.0 or remove the ComplianceStandard parameter.");
+            throw new ValidationArgException($"Compliance standard {newValue.Name} is not supported with ManifestInfo value of {configuration.ManifestInfo.Value}. " +
+                $"Please use a supported combination.");
         }
         else
         {
