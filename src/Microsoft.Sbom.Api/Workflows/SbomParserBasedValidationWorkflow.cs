@@ -240,19 +240,22 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => Console.WriteLine(f.Path));
         Console.WriteLine("------------------------------------------------------------");
 
-        Console.WriteLine("Elements in the manifest that are non-compliant with NTIA:");
-        Console.WriteLine(string.Empty);
-        validFailures.Where(
-        vf => vf.ErrorType == ErrorType.MissingValidSpdxDocument ||
-        vf.ErrorType == ErrorType.AdditionalSpdxDocument ||
-        vf.ErrorType == ErrorType.MissingValidCreationInfo ||
-        vf.ErrorType == ErrorType.InvalidNTIAElement).
-        ForEach(f => Console.WriteLine(f.Path));
+        if (!NoOpComplianceStandard(configuration.ComplianceStandard))
+        {
+            Console.WriteLine($"Elements in the manifest that are non-compliant with {configuration.ComplianceStandard}:");
+            Console.WriteLine(string.Empty);
+            validFailures.Where(
+            vf => vf.ErrorType == ErrorType.MissingValidSpdxDocument ||
+            vf.ErrorType == ErrorType.AdditionalSpdxDocument ||
+            vf.ErrorType == ErrorType.MissingValidCreationInfo ||
+            vf.ErrorType == ErrorType.InvalidNTIAElement).
+            ForEach(f => Console.WriteLine(f.Path));
 
-        validFailures.Where(
-        vf => vf.ErrorType == ErrorType.MissingValidSpdxDocument).
-        ForEach(f => Console.WriteLine(f.ErrorType.ToString()));
-        Console.WriteLine("------------------------------------------------------------");
+            validFailures.Where(
+            vf => vf.ErrorType == ErrorType.MissingValidSpdxDocument).
+            ForEach(f => Console.WriteLine(f.ErrorType.ToString()));
+            Console.WriteLine("------------------------------------------------------------");
+        }
 
         Console.WriteLine("Unknown file failures:");
         Console.WriteLine(string.Empty);
@@ -292,11 +295,14 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         Console.WriteLine($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
         Console.WriteLine($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
         Console.WriteLine($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
-        Console.WriteLine($"Elements in the manifest that are non-compliant with NTIA . . . " +
-        $"{validFailures.Count(v => v.ErrorType == ErrorType.MissingValidSpdxDocument ||
-        v.ErrorType == ErrorType.AdditionalSpdxDocument ||
-        v.ErrorType == ErrorType.MissingValidCreationInfo ||
-        v.ErrorType == ErrorType.InvalidNTIAElement)}");
+        if (!NoOpComplianceStandard(configuration.ComplianceStandard))
+        {
+            Console.WriteLine($"Elements in the manifest that are non-compliant with {configuration.ComplianceStandard} . . . " +
+            $"{validFailures.Count(v => v.ErrorType == ErrorType.MissingValidSpdxDocument ||
+            v.ErrorType == ErrorType.AdditionalSpdxDocument ||
+            v.ErrorType == ErrorType.MissingValidCreationInfo ||
+            v.ErrorType == ErrorType.InvalidNTIAElement)}");
+        }
 
         if (validFailures.Any(vf => vf.ErrorType == ErrorType.NoPackagesFound))
         {
@@ -351,6 +357,18 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 Path = errorType == ErrorType.MissingValidSpdxDocument ? null : elementId,
                 ErrorType = errorType
             });
+        }
+    }
+
+    private bool NoOpComplianceStandard(ConfigurationSetting<Contracts.Enums.ComplianceStandardType> complianceStandard)
+    {
+        if (complianceStandard?.Value?.Name == "None")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }

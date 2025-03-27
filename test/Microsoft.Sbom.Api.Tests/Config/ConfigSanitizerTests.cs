@@ -133,6 +133,22 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
+    public void SetNoneValueForComplianceStandardWithValidManifestInfoForValidation_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX30ManifestInfo };
+        config.ComplianceStandard = new ConfigurationSetting<ComplianceStandardType>
+        {
+            Source = SettingSource.CommandLine,
+            Value = ComplianceStandardType.None
+        };
+
+        configSanitizer.SanitizeConfig(config);
+        Assert.AreEqual(ComplianceStandardType.None, config.ComplianceStandard.Value);
+    }
+
+    [TestMethod]
     public void SetValueForComplianceStandardWithInvalidManifestInfoForValidation_Throws()
     {
         var config = GetConfigurationBaseObject();
