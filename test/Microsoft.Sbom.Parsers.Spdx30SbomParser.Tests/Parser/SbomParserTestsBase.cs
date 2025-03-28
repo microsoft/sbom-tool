@@ -4,9 +4,9 @@
 using System;
 using System.IO;
 using System.Linq;
+using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 namespace Microsoft.Sbom.Parser;
 

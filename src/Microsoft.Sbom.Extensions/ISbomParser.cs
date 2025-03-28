@@ -43,5 +43,5 @@ public interface ISbomParser
     /// Returns the compliance standard set by the user, if it is valid.
     /// </summary>
     /// <param name="spdxVersion"></param>
-    public void SetComplianceStandard(ComplianceStandardType complianceStandard);
+    public void EnforceComplianceStandard(ComplianceStandardType complianceStandard);
 }

@@ -7,10 +7,10 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Utils;
 
@@ -126,7 +126,7 @@ public static class SPDXExtensions
         creationInfo.SpdxId = GenerateSpdxId(creationInfo, creationInfo.Id);
     }
 
-    public static void AddSpdxId(this Entities.Relationship relationship)
+    public static void AddSpdxId(this Relationship relationship)
     {
         relationship.SpdxId = GenerateSpdxId(relationship, relationship.To + relationship.RelationshipType.ToString());
     }
