@@ -19,5 +19,5 @@ public interface ISignatureValidator
     /// Validates the given manifest.json using the platform specific sign verification mechanism.
     /// </summary>
     /// <returns>true if valid, false otherwise.</returns>
-    bool Validate();
+    public bool Validate();
 }

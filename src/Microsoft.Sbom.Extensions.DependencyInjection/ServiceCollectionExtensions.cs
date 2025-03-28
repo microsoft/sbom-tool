@@ -124,6 +124,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IRecorder, TelemetryRecorder>()
             .AddSingleton<IFileTypeUtils, FileTypeUtils>()
             .AddSingleton<ISignValidationProvider, SignValidationProvider>()
+            .AddSingleton<ISignatureValidationProvider, SignatureValidationProvider>()
             .AddSingleton<IManifestParserProvider, ManifestParserProvider>()
             .AddSingleton(x => {
                 var comparer = x.GetRequiredService<IOSUtils>().GetFileSystemStringComparer();
@@ -146,6 +147,7 @@ public static class ServiceCollectionExtensions
                     typeof(IAlgorithmNames),
                     typeof(IManifestConfigHandler),
                     typeof(ISignValidator),
+                    typeof(ISignatureValidator),
                     typeof(ISourcesProvider),
                     typeof(IManifestGenerator),
                     typeof(IMetadataProvider),

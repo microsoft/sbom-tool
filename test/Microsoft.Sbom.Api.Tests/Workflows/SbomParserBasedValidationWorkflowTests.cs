@@ -50,6 +50,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
     private readonly Mock<IFileSystemUtilsExtension> fileSystemUtilsExtensionMock = new();
     private readonly Mock<ISignValidator> signValidatorMock = new();
     private readonly Mock<ISignValidationProvider> signValidationProviderMock = new();
+    private readonly Mock<ISignatureValidator> signatureValidatorMock = new();
+    private readonly Mock<ISignatureValidationProvider> signatureValidationProviderMock = new();
 
     private const string SPDX22ManifestInfoJsonFilePath = "/root/_manifest/spdx_2.2/manifest.spdx.json";
     private const string SPDX30ManifestInfoJsonFilePath = "/root/_manifest/spdx_3.0/manifest.spdx.json";
@@ -59,6 +61,9 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
     {
         signValidatorMock.Setup(s => s.Validate()).Returns(true);
         signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
+
+        signatureValidatorMock.Setup(s => s.Validate()).Returns(true);
+        signatureValidationProviderMock.Setup(s => s.Get()).Returns(signatureValidatorMock.Object);
     }
 
     [TestCleanup]
@@ -182,6 +187,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var validator = new SbomParserBasedValidationWorkflow(
             recorder.Object,
             signValidationProviderMock.Object,
+            signatureValidationProviderMock.Object,
             mockLogger.Object,
             manifestParserProvider.Object,
             configurationMock.Object,
@@ -343,6 +349,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var validator = new SbomParserBasedValidationWorkflow(
             recorder.Object,
             signValidationProviderMock.Object,
+            signatureValidationProviderMock.Object,
             mockLogger.Object,
             manifestParserProvider.Object,
             configurationMock.Object,

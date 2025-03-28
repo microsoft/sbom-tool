@@ -11,7 +11,7 @@ namespace Microsoft.Sbom.Api.SignValidator;
 /// </summary>
 public interface ISignatureValidationProvider
 {
-    ISignatureValidator Get();
+    public ISignatureValidator Get();
 
-    void Init();
+    public void Init();
 }
