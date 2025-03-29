@@ -35,6 +35,7 @@ public static class ScannedComponentExtensions
             PipComponent pipComponent => pipComponent.ToSbomPackage(component),
             PodComponent podComponent => podComponent.ToSbomPackage(component),
             RubyGemsComponent rubyGemsComponent => rubyGemsComponent.ToSbomPackage(component),
+            DotNetComponent dotNetComponent => dotNetComponent.ToSbomPackage(component),
             null => Error(report => report.LogNullComponent(nameof(ToSbomPackage))),
             _ => Error(report => report.LogNoConversionFound(component.Component.GetType(), component.Component))
         };

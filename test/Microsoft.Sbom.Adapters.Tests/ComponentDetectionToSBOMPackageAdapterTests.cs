@@ -271,6 +271,58 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         AssertPackageUrlIsCorrect(gitComponent.PackageUrl, sbomPackage.PackageUrl);
     }
 
+    [TestMethod]
+    public void DotNetComponent_ToSbomPackage()
+    {
+        var dotnetComponent = new DotNetComponent("6.0.102", "net6.0", "application");
+        var scannedComponent = new ExtendedScannedComponent() { Component = dotnetComponent };
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+
+        Assert.AreEqual(dotnetComponent.Id, sbomPackage.Id);
+        Assert.AreEqual(dotnetComponent.SdkVersion, sbomPackage.PackageVersion);
+        Assert.IsNotNull(sbomPackage.PackageName);
+
+        var nameSegments = sbomPackage.PackageName.Split(' ');
+        Assert.AreEqual(2, nameSegments.Length);
+
+        Assert.AreEqual(dotnetComponent.TargetFramework, nameSegments[0], $"{nameof(dotnetComponent.TargetFramework)} should be part of package name");
+        Assert.AreEqual(dotnetComponent.ProjectType, nameSegments[1], $"{nameof(dotnetComponent.ProjectType)} should be part of package name");
+
+        dotnetComponent = new DotNetComponent("6.0.102", "net6.0");
+        scannedComponent = new ExtendedScannedComponent() { Component = dotnetComponent };
+        sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+
+        Assert.AreEqual(dotnetComponent.Id, sbomPackage.Id);
+        Assert.AreEqual(dotnetComponent.SdkVersion, sbomPackage.PackageVersion);
+        Assert.IsNotNull(sbomPackage.PackageName);
+
+        nameSegments = sbomPackage.PackageName.Split(' ');
+        Assert.AreEqual(1, nameSegments.Length);
+
+        Assert.AreEqual(dotnetComponent.TargetFramework, nameSegments[0], $"{nameof(dotnetComponent.TargetFramework)} should be part of package name");
+
+        dotnetComponent = new DotNetComponent("6.0.102");
+        scannedComponent = new ExtendedScannedComponent() { Component = dotnetComponent };
+        sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+
+        Assert.AreEqual(dotnetComponent.Id, sbomPackage.Id);
+        Assert.IsNotNull(sbomPackage.PackageName);
+        Assert.AreEqual(dotnetComponent.SdkVersion, sbomPackage.PackageVersion);
+        Assert.AreEqual(dotnetComponent.SdkVersion, sbomPackage.PackageName);
+
+        dotnetComponent = new DotNetComponent(sdkVersion: null, targetFramework: "net6.0");
+        scannedComponent = new ExtendedScannedComponent() { Component = dotnetComponent };
+        sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+
+        Assert.AreEqual(dotnetComponent.Id, sbomPackage.Id);
+        Assert.IsNull(sbomPackage.PackageVersion);
+        Assert.IsNotNull(sbomPackage.PackageName);
+
+        nameSegments = sbomPackage.PackageName.Split(' ');
+        Assert.AreEqual(1, nameSegments.Length);
+        Assert.AreEqual(dotnetComponent.TargetFramework, nameSegments[0], $"{nameof(dotnetComponent.TargetFramework)} should be part of package name");
+    }
+
     private void AssertPackageUrlIsCorrect(PackageUrl.PackageURL expectedPackageUrl, string actualPackageUrl)
     {
         if (expectedPackageUrl is null)
