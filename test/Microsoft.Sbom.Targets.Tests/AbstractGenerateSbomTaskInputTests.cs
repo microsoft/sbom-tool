@@ -337,4 +337,17 @@ public abstract class AbstractGenerateSbomTaskInputTests
         Assert.IsTrue(result, $"result: {result} is not set to true.");
         Assert.AreEqual(mappedVerbosity, task.Verbosity);
     }
+
+    private static void Xcopy(string sourceDir, string targetDir)
+    {
+        foreach (var dirPath in Directory.GetDirectories(sourceDir, "*.*", SearchOption.AllDirectories))
+        {
+            Directory.CreateDirectory(dirPath.Replace(sourceDir, targetDir));
+        }
+
+        foreach (var newPath in Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories))
+        {
+            File.Copy(newPath, newPath.Replace(sourceDir, targetDir), true);
+        }
+    }
 }
