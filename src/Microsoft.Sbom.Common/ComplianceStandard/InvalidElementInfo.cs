@@ -41,19 +41,19 @@ public class InvalidElementInfo
         }
         else if (this.ErrorType.Equals(NTIAErrorType.AdditionalSpdxDocument))
         {
-            return $"AdditionalSpdxDocument. SpdxId: \"{this.SpdxId}\". Name: \"{this.Name}\"";
+            return $"AdditionalSpdxDocument. SpdxId: {this.SpdxId}. Name: {this.Name}";
         }
         else if (this.SpdxId == null && this.Name != null)
         {
-            return $"Name: \"{this.Name}\"";
+            return $"Name: {this.Name}";
         }
         else if (this.SpdxId != null && this.Name == null)
         {
-            return $"SpdxId: \"{this.SpdxId}\"";
+            return $"SpdxId: {this.SpdxId}";
         }
         else if (this.SpdxId != null && this.Name != null)
         {
-            return $"SpdxId: \"{this.SpdxId}\". Name: \"{this.Name}\"";
+            return $"SpdxId: {this.SpdxId}. Name: {this.Name}";
         }
         else
         {
