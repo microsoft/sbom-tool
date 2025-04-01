@@ -32,11 +32,11 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
     {
         if (EntitiesWithDifferentNTIARequirements.Contains(entityType))
         {
-            return string.IsNullOrEmpty(entityType) ? string.Empty : "NTIA" + ComplianceStandardEnforcer.GetCommonEntityType(entityType);
+            return string.IsNullOrEmpty(entityType) ? string.Empty : "NTIA" + ComplianceExtensions.GetCommonEntityType(entityType);
         }
         else
         {
-            return ComplianceStandardEnforcer.GetCommonEntityType(entityType);
+            return ComplianceExtensions.GetCommonEntityType(entityType);
         }
     }
 

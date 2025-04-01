@@ -3,13 +3,13 @@
 
 namespace Microsoft.Sbom.Common.ComplianceStandard;
 
-public class ComplianceStandardEnforcer
+internal class ComplianceExtensions
 {
     /// <summary>
     /// Get the entity type based on the compliance standard.
     /// For example, for files that are validated with the NTIA compliance standard, the entity type is "NTIAFile".
     /// </summary>
-    public static string GetCommonEntityType(string entityType)
+    internal static string GetCommonEntityType(string entityType)
     {
         // For these special cases, remove the prefix from the type.
         switch (entityType)
