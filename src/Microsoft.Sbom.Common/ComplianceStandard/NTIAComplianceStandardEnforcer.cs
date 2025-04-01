@@ -14,7 +14,7 @@ using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
 
 namespace Microsoft.Sbom.Common.ComplianceStandard;
 
-public class NTIAComplianceStandardEnforcer : ComplianceStandardEnforcer
+public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
 {
     private static readonly IReadOnlyCollection<string> EntitiesWithDifferentNTIARequirements = new List<string>
     {
@@ -22,25 +22,25 @@ public class NTIAComplianceStandardEnforcer : ComplianceStandardEnforcer
         "File",
     };
 
-    public override ComplianceStandardType ComplianceStandard => ComplianceStandardType.None;
+    public ComplianceStandardType ComplianceStandard => ComplianceStandardType.None;
 
     public NTIAComplianceStandardEnforcer()
     {
     }
 
-    public override string GetComplianceStandardEntityType(string? entityType)
+    public string GetComplianceStandardEntityType(string? entityType)
     {
         if (EntitiesWithDifferentNTIARequirements.Contains(entityType))
         {
-            return string.IsNullOrEmpty(entityType) ? string.Empty : "NTIA" + base.GetComplianceStandardEntityType(entityType);
+            return string.IsNullOrEmpty(entityType) ? string.Empty : "NTIA" + ComplianceStandardEnforcer.GetCommonEntityType(entityType);
         }
         else
         {
-            return base.GetComplianceStandardEntityType(entityType);
+            return ComplianceStandardEnforcer.GetCommonEntityType(entityType);
         }
     }
 
-    public override void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, HashSet<InvalidElementInfo> invalidElements, Exception e)
+    public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, HashSet<InvalidElementInfo> invalidElements, Exception e)
     {
         try
         {
@@ -57,7 +57,7 @@ public class NTIAComplianceStandardEnforcer : ComplianceStandardEnforcer
     /// <summary>
     /// Add invalid NTIA elements to the list of invalid elements after deserialization.
     /// </summary>
-    public override void AddInvalidElements(ElementsResult elementsResult)
+    public void AddInvalidElements(ElementsResult elementsResult)
     {
         ValidateSbomDocCreationForNTIA(elementsResult.SpdxDocuments, elementsResult.CreationInfos, elementsResult.InvalidComplianceStandardElements);
         ValidateSbomFilesForNTIA(elementsResult.Files, elementsResult.InvalidComplianceStandardElements);

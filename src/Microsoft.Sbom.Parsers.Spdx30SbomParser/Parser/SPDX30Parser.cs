@@ -16,6 +16,7 @@ using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
 using SPDX30Constants = Microsoft.Sbom.Parsers.Spdx30SbomParser.Constants;
 
 namespace Microsoft.Sbom.Parser;
@@ -42,7 +43,7 @@ public class SPDX30Parser : ISbomParser
     private readonly bool requiredFieldsCheck = true;
     private readonly JsonSerializerOptions jsonSerializerOptions;
     private bool parsingComplete = false;
-    private ComplianceStandardEnforcer complianceStandardEnforcer;
+    private IComplianceStandardEnforcer complianceStandardEnforcer;
 
     public SPDX30Parser(
         Stream stream,

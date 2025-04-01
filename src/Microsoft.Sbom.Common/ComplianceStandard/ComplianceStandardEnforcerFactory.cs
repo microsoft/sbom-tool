@@ -3,12 +3,13 @@
 
 using System;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
 
 namespace Microsoft.Sbom.Common.ComplianceStandard;
 
 public static class ComplianceStandardEnforcerFactory
 {
-    public static ComplianceStandardEnforcer Create(ComplianceStandardType complianceStandard)
+    public static IComplianceStandardEnforcer Create(ComplianceStandardType complianceStandard)
     {
         return complianceStandard.Name switch
         {
