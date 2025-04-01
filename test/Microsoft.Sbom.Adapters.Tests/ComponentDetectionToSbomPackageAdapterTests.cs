@@ -15,11 +15,21 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Sbom.Adapters.Tests;
 
 using Microsoft.Sbom.Adapters.ComponentDetection;
+using Microsoft.Sbom.Common;
+using Moq;
 
 [TestClass]
 public class ComponentDetectionToSBOMPackageAdapterTests
 {
+    private Mock<IOSUtils> osUtils;
+
     public TestContext TestContext { get; set; }
+
+    [TestInitialize]
+    public void Setup()
+    {
+        this.osUtils = new Mock<IOSUtils>();
+    }
 
     [TestMethod]
     public void BasicAdapterTest_Succeeds()
@@ -109,7 +119,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     {
         Assert.ThrowsException<ArgumentNullException>(() =>
         {
-            var adapter = new ComponentDetectionToSbomPackageAdapter();
+            var adapter = new ComponentDetectionToSbomPackageAdapter(this.osUtils.Object);
             adapter.TryConvert("not/a/real/path");
         });
     }
@@ -120,7 +130,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var cargoComponent = new CargoComponent("name", "version");
         var scannedComponent = new ExtendedScannedComponent() { Component = cargoComponent };
 
-        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.IsNotNull(sbomPackage.Id);
         Assert.IsNotNull(sbomPackage.PackageUrl);
@@ -137,7 +147,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var conanComponent = new ConanComponent("name", "version", md5, sha1Hash);
         var scannedComponent = new ExtendedScannedComponent() { Component = conanComponent };
 
-        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.IsNotNull(sbomPackage.Id);
         Assert.IsNotNull(sbomPackage.PackageUrl);
@@ -154,7 +164,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var condaComponent = new CondaComponent("name", "version", "build", "channel", "subdir", "namespace", "http://microsoft.com", "md5");
         var scannedComponent = new ExtendedScannedComponent() { Component = condaComponent };
 
-        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.AreEqual(condaComponent.Id, sbomPackage.Id);
         AssertPackageUrlIsCorrect(condaComponent.PackageUrl, sbomPackage.PackageUrl);
@@ -170,7 +180,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var dockerImageComponent = new DockerImageComponent("name", "version", "tag") { Digest = "digest" };
         var scannedComponent = new ExtendedScannedComponent() { Component = dockerImageComponent };
 
-        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.AreEqual(dockerImageComponent.Id, sbomPackage.Id);
         AssertPackageUrlIsCorrect(dockerImageComponent.PackageUrl, sbomPackage.PackageUrl);
@@ -185,7 +195,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var npmComponent = new NpmComponent("name", "verison", author: new NpmAuthor("name", "email@contoso.com"));
         var scannedComponent = new ExtendedScannedComponent() { Component = npmComponent };
 
-        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.AreEqual(npmComponent.Id, sbomPackage.Id);
         Assert.IsNotNull(npmComponent.PackageUrl);
@@ -201,7 +211,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var npmComponent = new NpmComponent("name", "verison");
         var scannedComponent = new ExtendedScannedComponent() { Component = npmComponent };
 
-        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.AreEqual(npmComponent.Id, sbomPackage.Id);
         Assert.IsNotNull(npmComponent.PackageUrl);
@@ -217,7 +227,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var nuGetComponent = new NuGetComponent("name", "version", new string[] { "Author Name1, Another Author" });
         var scannedComponent = new ExtendedScannedComponent() { Component = nuGetComponent };
 
-        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.AreEqual(nuGetComponent.Id, sbomPackage.Id);
         AssertPackageUrlIsCorrect(nuGetComponent.PackageUrl, sbomPackage.PackageUrl);
@@ -233,7 +243,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var nuGetComponent = new NuGetComponent("name", "version");
         var scannedComponent = new ExtendedScannedComponent() { Component = nuGetComponent };
 
-        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.AreEqual(nuGetComponent.Id, sbomPackage.Id);
         Assert.IsNotNull(nuGetComponent.PackageUrl);
@@ -249,7 +259,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var pipComponent = new PipComponent("name", "version");
         var scannedComponent = new ExtendedScannedComponent() { Component = pipComponent };
 
-        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.AreEqual(pipComponent.Id, sbomPackage.Id);
         Assert.IsNotNull(pipComponent.PackageUrl);
@@ -265,7 +275,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         var gitComponent = new GitComponent(uri, "version");
         var scannedComponent = new ExtendedScannedComponent() { Component = gitComponent };
 
-        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.AreEqual(gitComponent.Id, sbomPackage.Id);
         AssertPackageUrlIsCorrect(gitComponent.PackageUrl, sbomPackage.PackageUrl);
@@ -274,9 +284,11 @@ public class ComponentDetectionToSBOMPackageAdapterTests
     [TestMethod]
     public void DotNetComponent_ToSbomPackage()
     {
+        this.osUtils.Setup(x => x.GetEnvironmentVariable("EnableSBOM_DotNetComponent")).Returns("true");
+
         var dotnetComponent = new DotNetComponent("6.0.102", "net6.0", "application");
         var scannedComponent = new ExtendedScannedComponent() { Component = dotnetComponent };
-        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.AreEqual(dotnetComponent.Id, sbomPackage.Id);
         Assert.AreEqual(dotnetComponent.SdkVersion, sbomPackage.PackageVersion);
@@ -290,7 +302,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
 
         dotnetComponent = new DotNetComponent("6.0.102", "net6.0");
         scannedComponent = new ExtendedScannedComponent() { Component = dotnetComponent };
-        sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.AreEqual(dotnetComponent.Id, sbomPackage.Id);
         Assert.AreEqual(dotnetComponent.SdkVersion, sbomPackage.PackageVersion);
@@ -303,7 +315,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
 
         dotnetComponent = new DotNetComponent("6.0.102");
         scannedComponent = new ExtendedScannedComponent() { Component = dotnetComponent };
-        sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.AreEqual(dotnetComponent.Id, sbomPackage.Id);
         Assert.IsNotNull(sbomPackage.PackageName);
@@ -312,7 +324,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
 
         dotnetComponent = new DotNetComponent(sdkVersion: null, targetFramework: "net6.0");
         scannedComponent = new ExtendedScannedComponent() { Component = dotnetComponent };
-        sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport());
+        sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
 
         Assert.AreEqual(dotnetComponent.Id, sbomPackage.Id);
         Assert.IsNull(sbomPackage.PackageVersion);
@@ -321,6 +333,17 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         nameSegments = sbomPackage.PackageName.Split(' ');
         Assert.AreEqual(1, nameSegments.Length);
         Assert.AreEqual(dotnetComponent.TargetFramework, nameSegments[0], $"{nameof(dotnetComponent.TargetFramework)} should be part of package name");
+    }
+
+    [TestMethod]
+    public void DotNetComponentDisabled_ToSbomPackage()
+    {
+        this.osUtils.Setup(x => x.GetEnvironmentVariable("EnableSBOM_DotNetComponent")).Returns("false");
+
+        var dotnetComponent = new DotNetComponent("6.0.102", "net6.0", "application");
+        var scannedComponent = new ExtendedScannedComponent() { Component = dotnetComponent };
+        var sbomPackage = scannedComponent.ToSbomPackage(new AdapterReport(), this.osUtils.Object);
+        Assert.IsNull(sbomPackage);
     }
 
     private void AssertPackageUrlIsCorrect(PackageUrl.PackageURL expectedPackageUrl, string actualPackageUrl)
@@ -342,7 +365,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         Directory.CreateDirectory(baseDirectory);
         File.WriteAllText(bcdeOutputPath, json);
 
-        var adapter = new ComponentDetectionToSbomPackageAdapter();
+        var adapter = new ComponentDetectionToSbomPackageAdapter(this.osUtils.Object);
         var (errors, packages) = adapter.TryConvert(bcdeOutputPath);
         var output = packages.ToList();
 
