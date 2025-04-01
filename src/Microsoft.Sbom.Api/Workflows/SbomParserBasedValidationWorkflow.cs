@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -105,7 +104,10 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                         log.Debug("Sign validation passed (using signtool.exe).");
                     }
 
-                    // Validate signature (with not the signtool.exe way) - works on Windows, Linux and MacOS
+                    // Validate signature (using not the signtool.exe way) - works on Windows, Linux and MacOS
+                    // If the platform is Windows,
+                    // - do not fail the workflow based on results from the below implementation, run signtool.exe side by side with this method
+                    // - signtool.exe decides the final result.
                     var signatureValidator = signatureValidationProvider.Get();
                     if (signatureValidator == null)
                     {
@@ -116,20 +118,20 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                         validationResultNonSigntoolExe = signatureValidator.Validate();
                         if (!validationResultNonSigntoolExe)
                         {
-                            log.Error("Signature validation with the non-signtool.exe way failed.");
+                            log.Error("Signature validation using the non-signtool.exe way failed.");
 
-                            // if the platform is Windows,
-                            // - do not fail the workflow, run signtool.exe side by side with this method
-                            // - signtool.exe decides the final result.
-                            // remove this conditional check after we have fully migrated to using the non-signtool.exe way.
-                            if (signatureValidator.SupportedPlatform == OSPlatform.Linux || signatureValidator.SupportedPlatform == OSPlatform.OSX)
+                            // This check is expected to succeed when the current OS is non-Windows
+                            // Remove this conditional check after we have fully migrated to using the non-signtool.exe way.
+                            if (signValidator == null)
                             {
                                 validFailures = new List<FileValidationResult> { new FileValidationResult { ErrorType = ErrorType.ManifestFileSigningError } };
                                 return false;
                             }
                         }
-
-                        log.Debug("Signature validation with the non-signtool.exe way passed.");
+                        else
+                        {
+                            log.Debug("Signature validation using the non-signtool.exe way passed.");
+                        }
                     }
                 }
 
