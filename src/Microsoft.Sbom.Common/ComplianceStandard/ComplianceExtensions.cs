@@ -3,11 +3,10 @@
 
 namespace Microsoft.Sbom.Common.ComplianceStandard;
 
-internal class ComplianceExtensions
+internal static class ComplianceExtensions
 {
     /// <summary>
-    /// Get the entity type based on the compliance standard.
-    /// For example, for files that are validated with the NTIA compliance standard, the entity type is "NTIAFile".
+    /// Gets the common entity type that is used by the parser.
     /// </summary>
     internal static string GetCommonEntityType(string entityType)
     {
