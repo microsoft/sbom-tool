@@ -250,8 +250,8 @@ public class IntegrationTests
 
     private void GenerateManifestAndValidateSuccess(string testFolderPath, string manifestInfoSpdxVersion = null)
     {
-        var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\"  -b \"{testDropDirectory}\" -bc \"{GetSolutionFolderPath()}\"";
-        arguments += !string.IsNullOrEmpty(manifestInfoSpdxVersion) ? $" -mi SPDX:{manifestInfoSpdxVersion}" : string.Empty;
+        var manifestInfoArg = string.IsNullOrEmpty(manifestInfoSpdxVersion) ? string.Empty : $"-mi SPDX:{manifestInfoSpdxVersion}";
+        var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\" -b \"{testDropDirectory}\" -bc \"{GetSolutionFolderPath()}\" {manifestInfoArg}";
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
