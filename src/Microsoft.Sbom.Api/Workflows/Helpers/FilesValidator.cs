@@ -10,9 +10,9 @@ using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using Microsoft.Sbom.Utils;
 using Serilog;
 

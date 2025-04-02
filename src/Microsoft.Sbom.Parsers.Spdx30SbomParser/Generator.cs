@@ -7,19 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Spdx30Entities;
+using Microsoft.Sbom.Common.Spdx30Entities.Enums;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Utils;
-using HashAlgorithm = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.HashAlgorithm;
-using RelationshipType = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.RelationshipType;
+using RelationshipType = Microsoft.Sbom.Common.Spdx30Entities.Enums.RelationshipType;
 using SbomEntities = Microsoft.Sbom.Extensions.Entities;
 using SHA1 = System.Security.Cryptography.SHA1;
-using SpdxEntities = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
+using SpdxEntities = Microsoft.Sbom.Common.Spdx30Entities;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
 

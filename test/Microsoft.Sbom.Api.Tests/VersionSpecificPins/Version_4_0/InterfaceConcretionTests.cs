@@ -291,7 +291,7 @@ public class InterfaceConcretionTests
         public SpdxMetadata GetMetadata() => throw new NotImplementedException();
         public ParserStateResult Next() => throw new NotImplementedException();
         public ManifestInfo[] RegisterManifest() => throw new NotImplementedException();
-        public void SetComplianceStandard(ComplianceStandardType complianceStandard) => throw new NotImplementedException();
+        public void EnforceComplianceStandard(ComplianceStandardType complianceStandard) => throw new NotImplementedException();
     }
 
     private class PinnedIConfiguration : IConfiguration

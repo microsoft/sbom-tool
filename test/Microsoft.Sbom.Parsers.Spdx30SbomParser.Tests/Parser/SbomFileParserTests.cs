@@ -4,9 +4,9 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.Sbom.Common.ComplianceStandard.Enums;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.JsonStrings;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Sbom.Parser;
@@ -26,14 +26,14 @@ public class SbomFileParserTests : SbomParserTestsBase
     }
 
     [DataRow(SbomFullDocWithFilesStrings.SbomFileWithMissingVerificationJsonString)]
-    //[DataRow(SbomFullDocWithFilesStrings.SbomFileWithMissingSHA256JsonString)]
+    [DataRow(SbomFullDocWithFilesStrings.SbomFileWithMissingSHA256JsonString)]
     [TestMethod]
     public void MissingPropertiesTest_NTIA_NoVerificationCode_Throws(string jsonString)
     {
         var bytes = Encoding.UTF8.GetBytes(jsonString);
         using var stream = new MemoryStream(bytes);
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var result = this.Parse(parser);
 
         var invalidElement = result.InvalidComplianceStandardElements.First();
