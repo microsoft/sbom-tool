@@ -481,15 +481,15 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         Assert.AreEqual(4, ntiaErrors.Count);
 
         Assert.AreEqual("MissingValidSpdxDocument", ntiaErrors.First().Path);
-        Assert.AreEqual("AdditionalSpdxDocument. SpdxId: \"spdxDocElementSpdxId\". Name: \"spdxDocElementName\"", ntiaErrors[1].Path);
+        Assert.AreEqual("AdditionalSpdxDocument. SpdxId: spdxDocElementSpdxId. Name: spdxDocElementName", ntiaErrors[1].Path);
         Assert.AreEqual("MissingValidCreationInfo", ntiaErrors[2].Path);
-        Assert.AreEqual("SpdxId: \"elementSpdxId\". Name: \"elementName\"", ntiaErrors[3].Path);
+        Assert.AreEqual("SpdxId: elementSpdxId. Name: elementName", ntiaErrors[3].Path);
 
         Assert.IsTrue(cc.CapturedStdOut.Contains("Elements in the manifest that are non-compliant with NTIA . . . 4"), "Number of invalid NTIA elements is incorrect in stdout");
         Assert.IsTrue(cc.CapturedStdOut.Contains("MissingValidSpdxDocument"));
-        Assert.IsTrue(cc.CapturedStdOut.Contains("AdditionalSpdxDocument. SpdxId: \"spdxDocElementSpdxId\". Name: \"spdxDocElementName\""));
+        Assert.IsTrue(cc.CapturedStdOut.Contains("AdditionalSpdxDocument. SpdxId: spdxDocElementSpdxId. Name: spdxDocElementName"));
         Assert.IsTrue(cc.CapturedStdOut.Contains("MissingValidCreationInfo"));
-        Assert.IsTrue(cc.CapturedStdOut.Contains("SpdxId: \"elementSpdxId\". Name: \"elementName\""));
+        Assert.IsTrue(cc.CapturedStdOut.Contains("SpdxId: elementSpdxId. Name: elementName"));
 
         configurationMock.VerifyAll();
     }
