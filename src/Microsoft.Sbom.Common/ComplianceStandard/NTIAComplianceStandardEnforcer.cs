@@ -24,19 +24,15 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
 
     public ComplianceStandardType ComplianceStandard => ComplianceStandardType.None;
 
-    public NTIAComplianceStandardEnforcer()
-    {
-    }
-
     public string GetComplianceStandardEntityType(string? entityType)
     {
         if (EntitiesWithDifferentNTIARequirements.Contains(entityType))
         {
-            return string.IsNullOrEmpty(entityType) ? string.Empty : "NTIA" + ComplianceExtensions.GetCommonEntityType(entityType);
+            return string.IsNullOrEmpty(entityType) ? string.Empty : "NTIA" + entityType.GetCommonEntityType();
         }
         else
         {
-            return ComplianceExtensions.GetCommonEntityType(entityType);
+            return entityType.GetCommonEntityType();
         }
     }
 

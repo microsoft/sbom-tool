@@ -14,11 +14,9 @@ public class NoneComplianceStandardEnforcer : IComplianceStandardEnforcer
 {
     public ComplianceStandardType ComplianceStandard => ComplianceStandardType.None;
 
-    public NoneComplianceStandardEnforcer() { }
-
     public string GetComplianceStandardEntityType(string entityType)
     {
-        return ComplianceExtensions.GetCommonEntityType(entityType);
+        return entityType.GetCommonEntityType();
     }
 
     public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, HashSet<InvalidElementInfo> invalidElements, Exception e)

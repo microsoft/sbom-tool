@@ -8,7 +8,7 @@ internal static class ComplianceExtensions
     /// <summary>
     /// Gets the common entity type that is used by the parser.
     /// </summary>
-    internal static string GetCommonEntityType(string entityType)
+    internal static string GetCommonEntityType(this string entityType)
     {
         // For these special cases, remove the prefix from the type.
         switch (entityType)
