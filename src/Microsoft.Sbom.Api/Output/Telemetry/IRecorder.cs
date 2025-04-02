@@ -89,7 +89,7 @@ public interface IRecorder
     /// </summary>
     /// <param name="validationResultSigntoolExe">The result from validating signatures using the signtool.exe verify command</param>
     /// <param name="validationResultNonSigntoolExe">The result from validating signatures using our own implementation (without signtool.exe)</param>
-    public void RecordSignatureValidationResult(bool validationResultSigntoolExe, bool validationResultNonSigntoolExe);
+    public void RecordSignatureValidationResult(bool? validationResultSigntoolExe, bool? validationResultNonSigntoolExe);
 
     /// <summary>
     /// Finalize the recorder, and log the telemetry.

@@ -79,5 +79,5 @@ public class SbomTelemetry
     /// <summary>
     /// Gets or sets the SBOM validation results from the signtool.exe implementation and the non-signtool.exe implementation.
     /// </summary>
-    public IDictionary<string, bool> SbomValidationResults { get; set; }
+    public IDictionary<string, bool?> SbomValidationResults { get; set; }
 }

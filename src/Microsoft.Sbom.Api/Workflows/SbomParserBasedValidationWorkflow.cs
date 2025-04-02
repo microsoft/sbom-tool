@@ -69,8 +69,8 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         IEnumerable<FileValidationResult> validFailures = null;
         var totalNumberOfPackages = 0;
 
-        var validationResultSigntoolExe = false;
-        var validationResultNonSigntoolExe = false;
+        bool? validationResultSigntoolExe = null;
+        bool? validationResultNonSigntoolExe = null;
         using (recorder.TraceEvent(Events.SbomValidationWorkflow))
         {
             try
@@ -93,14 +93,14 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                     else
                     {
-                        validationResultSigntoolExe = signValidator.Validate();
-                        if (!validationResultSigntoolExe)
+                        if (!signValidator.Validate())
                         {
                             log.Error("Sign validation failed.");
                             validFailures = new List<FileValidationResult> { new FileValidationResult { ErrorType = ErrorType.ManifestFileSigningError } };
                             return false;
                         }
 
+                        validationResultSigntoolExe = true;
                         log.Debug("Sign validation passed (using signtool.exe).");
                     }
 
@@ -115,8 +115,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                     else
                     {
-                        validationResultNonSigntoolExe = signatureValidator.Validate();
-                        if (!validationResultNonSigntoolExe)
+                        if (!signatureValidator.Validate())
                         {
                             log.Error("Signature validation using the non-signtool.exe way failed.");
 
@@ -130,6 +129,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                         }
                         else
                         {
+                            validationResultNonSigntoolExe = true;
                             log.Debug("Signature validation using the non-signtool.exe way passed.");
                         }
                     }
