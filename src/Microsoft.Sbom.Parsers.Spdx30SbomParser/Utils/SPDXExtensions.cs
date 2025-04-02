@@ -31,7 +31,11 @@ public static class SPDXExtensions
     /// </summary>
     public static string GenerateSpdxId(Element element, string id) => $"SPDXRef-{element.Type}-{GetStringHash(id)}";
 
-    public static string GetSpdxId(Element element, string id) => $"SPDXRef{element.Type}-{element.Name}-{id}";
+    public static string GetSpdxId(Element element, string id)
+    {
+        var spdxFileId = $"{Constants.SPDXRefFile}-{element.Name}-{id}";
+        return SpdxIdAllowedCharsRegex.Replace(spdxFileId, "-");
+    }
 
     /// <summary>
     /// Returns the SPDX-compliant external document ID.
