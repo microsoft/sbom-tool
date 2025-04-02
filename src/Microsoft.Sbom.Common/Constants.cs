@@ -20,4 +20,8 @@ public static class Constants
 
     public const string DefaultManifestInfoName = "SPDX";
     public const string DefaultManifestInfoVersion = "2.2";
+
+    public const string SPDXRefFile = "SPDXRef-File";
+    public const string SPDXRefPackage = "SPDXRef-Package";
+    public const string SPDXRefExternalDocument = "DocumentRef";
 }
