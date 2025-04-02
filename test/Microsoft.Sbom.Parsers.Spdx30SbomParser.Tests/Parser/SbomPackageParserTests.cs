@@ -4,9 +4,9 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.Sbom.Common.ComplianceStandard.Enums;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.JsonStrings;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Sbom.Parser;
@@ -46,7 +46,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithPackagesStrings.SbomPackageWithMissingVerificationJsonString);
         using var stream = new MemoryStream(bytes);
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var result = this.Parse(parser);
 
         Assert.AreEqual(1, result.InvalidComplianceStandardElements.Count);
@@ -73,7 +73,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithPackagesStrings.SbomNTIAValidPackageJsonString);
         using var stream = new MemoryStream(bytes);
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
         var result = this.Parse(parser);
         Assert.AreEqual(1, result.PackagesCount);
     }

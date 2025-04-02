@@ -4,8 +4,8 @@
 namespace Microsoft.Sbom.Parser;
 
 using System.Collections.Generic;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
+using Microsoft.Sbom.Common.ComplianceStandard;
+using Microsoft.Sbom.Common.Spdx30Entities;
 
 public class ParserResults
 {
