@@ -5,6 +5,7 @@ namespace Microsoft.Sbom.Adapters.ComponentDetection;
 
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.Sbom.Adapters.Report;
+using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Contracts;
 
 /// <summary>
@@ -54,6 +55,7 @@ public class ExtendedScannedComponent : ScannedComponent
     /// Converts a <see cref="ExtendedScannedComponent" /> to an <see cref="SbomPackage" />.
     /// </summary>
     /// <param name="report">The <see cref="AdapterReport" /> to use.</param>
+    /// <param name="osUtils">The <see cref="IOSUtils" /> to use. Optionally turns on component adapters. Example: EnableSBOM_DotNetComponent=true</param>
     /// <returns>The converted <see cref="SbomPackage" />.</returns>
-    public SbomPackage? ToSbomPackage(AdapterReport report) => ScannedComponentExtensions.ToSbomPackage(this, report);
+    public SbomPackage? ToSbomPackage(AdapterReport report, IOSUtils osUtils) => ScannedComponentExtensions.ToSbomPackage(this, report, osUtils);
 }
