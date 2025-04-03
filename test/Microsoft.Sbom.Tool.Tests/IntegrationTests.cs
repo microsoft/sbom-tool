@@ -92,7 +92,7 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void E2E_GenerateAndValidateManifest_ValidationSucceeds_ReturnsZeroExitCode()
+    public void E2E_GenerateAndValidateSPDX22Manifest_ValidationSucceeds_ReturnsZeroExitCode()
     {
         if (!IsWindows)
         {
@@ -104,6 +104,28 @@ public class IntegrationTests
         GenerateManifestAndValidateSuccess(testFolderPath);
 
         var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath);
+
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+
+        Assert.AreEqual(stderr, string.Empty);
+        Assert.AreEqual(0, exitCode.Value, $"Unexpected failure: stdout = {stdout}");
+        Assert.IsTrue(File.Exists(outputFile), $"{outputFile} should have been created during validation");
+        Assert.IsTrue(File.ReadAllText(outputFile).Contains("\"Result\":\"Success\"", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [TestMethod]
+    public void E2E_GenerateAndValidateSPDX30Manifest_ValidationSucceeds_ReturnsZeroExitCode()
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var testFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
+
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "SPDX:3.0");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -152,7 +174,7 @@ public class IntegrationTests
         }
 
         var testFolderPath = CreateTestFolder();
-        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoValue: "3.0");
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
         var outputFolder = Path.Combine(TestContext.TestRunDirectory, TestContext.TestName, "redacted");
         var originalManifestFolderPath = AppendFullManifestFolderPath(testFolderPath, spdxVersion: "3.0");
@@ -226,18 +248,15 @@ public class IntegrationTests
         Assert.AreNotEqual(0, exitCode.Value);
     }
 
-    private void GenerateManifestAndValidateSuccess(string testFolderPath, string manifestInfoValue = null)
+    private void GenerateManifestAndValidateSuccess(string testFolderPath, string manifestInfoSpdxVersion = null)
     {
-        var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\"  -b \"{testDropDirectory}\" -bc \"{GetSolutionFolderPath()}\"";
-        if (!string.IsNullOrEmpty(manifestInfoValue))
-        {
-            arguments += $" -mi SPDX:{manifestInfoValue}";
-        }
+        var manifestInfoArg = string.IsNullOrEmpty(manifestInfoSpdxVersion) ? string.Empty : $"-mi SPDX:{manifestInfoSpdxVersion}";
+        var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\" -b \"{testDropDirectory}\" -bc \"{GetSolutionFolderPath()}\" {manifestInfoArg}";
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
         Assert.AreEqual(stderr, string.Empty);
-        var manifestFolderPath = AppendFullManifestFolderPath(testFolderPath, spdxVersion: manifestInfoValue);
+        var manifestFolderPath = AppendFullManifestFolderPath(testFolderPath, spdxVersion: manifestInfoSpdxVersion);
         var jsonFilePath = Path.Combine(manifestFolderPath, ManifestFileName);
         var shaFilePath = Path.Combine(manifestFolderPath, "manifest.spdx.json.sha256");
         Assert.IsTrue(File.Exists(jsonFilePath));
