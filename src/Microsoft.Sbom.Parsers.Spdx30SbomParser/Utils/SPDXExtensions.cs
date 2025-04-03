@@ -31,6 +31,12 @@ public static class SPDXExtensions
     /// </summary>
     public static string GenerateSpdxId(Element element, string id) => $"SPDXRef-{element.Type}-{GetStringHash(id)}";
 
+    public static string GetSpdxId(Element element, string id)
+    {
+        var spdxFileId = $"{Constants.SPDXRefFile}-{element.Name}-{id}";
+        return SpdxIdAllowedCharsRegex.Replace(spdxFileId, "-");
+    }
+
     /// <summary>
     /// Returns the SPDX-compliant external document ID.
     /// </summary>
@@ -64,8 +70,7 @@ public static class SPDXExtensions
     }
 
     /// <summary>
-    /// Adds a SPDXID property to the given file. The id of the file should be the same
-    /// for any build as long as the contents of the file haven't changed.
+    /// Gets the SHA1 checksum value for a file.
     /// </summary>
     /// <param name="fileName"></param>
     /// <param name="checksums"></param>
@@ -146,7 +151,12 @@ public static class SPDXExtensions
         packageVerificationCode.SpdxId = GenerateSpdxId(packageVerificationCode, packageVerificationCode.Algorithm.ToString());
     }
 
-    public static void AddSpdxId(this Element element, string id)
+    public static void AddSpdxId(this File element, string id)
+    {
+        element.SpdxId = GetSpdxId(element, id);
+    }
+
+    public static void AddSpdxId(this Package element, string id)
     {
         element.SpdxId = GenerateSpdxId(element, id);
     }

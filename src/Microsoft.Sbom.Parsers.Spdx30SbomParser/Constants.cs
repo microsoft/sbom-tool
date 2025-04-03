@@ -15,6 +15,7 @@ internal static class Constants
     internal const string DataLicenceValue = "CC0-1.0";
     internal const string SPDXDocumentIdValue = "SPDXRef-DOCUMENT";
     internal const string RootPackageIdValue = "SPDXRef-RootPackage";
+    internal const string SPDXRefFile = "SPDXRef-File";
     internal const string SPDXDocumentNameFormatString = "{0} {1}";
     internal const string PackageSupplierFormatString = "Organization: {0}";
     internal const string SPDXVersionHeaderName = "spdxVersion";
