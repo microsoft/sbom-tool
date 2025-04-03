@@ -337,7 +337,7 @@ public class IntegrationTests
     {
         var manifestInfoArg = string.IsNullOrEmpty(manifestInfoSpdxVersion) ? string.Empty : $"-mi SPDX:{manifestInfoSpdxVersion}";
         var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\" -b \"{testDropDirectory}\" -bc \"{GetSolutionFolderPath()}\" {manifestInfoArg}";
-      
+
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
         Assert.AreEqual(stderr, string.Empty);
