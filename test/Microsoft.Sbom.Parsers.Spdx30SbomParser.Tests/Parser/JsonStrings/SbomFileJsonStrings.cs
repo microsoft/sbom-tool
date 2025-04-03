@@ -12,7 +12,7 @@ public static class SbomFileJsonStrings
             ""name"": ""./sample/path"",
             ""software_copyrightText"": ""sampleCopyright"",
             ""creationInfo"": ""_:creationinfo"",
-            ""spdxId"": ""SPDXRef-software_File-B4A9F99A3A03B9273AE34753D96564CB4F2B0FAD885BBD36B0DD619E9E8AC967"",
+            ""spdxId"": ""SPDXRef-File-.-sample-path-sha1Value"",
             ""verifiedUsing"": [
               {
                 ""algorithm"": ""sha1"",
@@ -38,7 +38,7 @@ public static class SbomFileJsonStrings
             ""type"": ""AnyLicenseInfo""
           },
           {
-            ""from"": ""SPDXRef-software_File-B4A9F99A3A03B9273AE34753D96564CB4F2B0FAD885BBD36B0DD619E9E8AC967"",
+            ""from"": ""SPDXRef-File-.-sample-path-sha1Value"",
             ""relationshipType"": ""HAS_CONCLUDED_LICENSE"",
             ""to"": [
               ""SPDXRef-AnyLicenseInfo-3BA3FA6D3D66FE2BA75992BB0850D080F1223256368A76C77BEF8E0F6AC71896""
@@ -48,7 +48,7 @@ public static class SbomFileJsonStrings
             ""type"": ""Relationship""
           },
           {
-            ""from"": ""SPDXRef-software_File-B4A9F99A3A03B9273AE34753D96564CB4F2B0FAD885BBD36B0DD619E9E8AC967"",
+            ""from"": ""SPDXRef-File-.-sample-path-sha1Value"",
             ""relationshipType"": ""HAS_DECLARED_LICENSE"",
             ""to"": [
               ""SPDXRef-AnyLicenseInfo-3BA3FA6D3D66FE2BA75992BB0850D080F1223256368A76C77BEF8E0F6AC71896""
