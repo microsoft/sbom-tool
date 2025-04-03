@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
@@ -215,17 +216,10 @@ public class SPDXParser : ISbomParser
 
     public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { this.spdxManifestInfo };
 
-    public void SetComplianceStandard(string? complianceStandardFromCli)
+    public void EnforceComplianceStandard(ComplianceStandardType complianceStandard)
     {
-        if (string.IsNullOrEmpty(complianceStandardFromCli))
-        {
-            return;
-        }
-        else
-        {
-            throw new ParserException($"SPDX 2.2 does not support validation based on compliance standards. " +
-                $"Please use SPDX >=3.0 or remove the ComplianceStandard parameter.");
-        }
+        // No-op, SPDX 2.2 does not support validation based on compliance standards.
+        return;
     }
 
     private T Coerce<T>(string name, object? value)

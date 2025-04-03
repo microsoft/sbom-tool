@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.Sbom.Common.ComplianceStandard.Enums;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.JsonStrings;
@@ -69,8 +70,19 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.SetComplianceStandard("NTIA");
-        Assert.ThrowsException<ParserException>(() => this.Parse(parser));
+        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        var results = this.Parse(parser);
+        Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
+
+        var invalidElement1 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.SpdxId == "SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
+        Assert.IsNotNull(invalidElement1);
+        Assert.AreEqual("SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1", invalidElement1.SpdxId);
+        Assert.IsNull(invalidElement1.Name);
+        Assert.AreEqual(NTIAErrorType.InvalidNTIAElement, invalidElement1.ErrorType);
+
+        var invalidElement2 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.ErrorType.Equals(NTIAErrorType.MissingValidSpdxDocument));
+        Assert.IsNotNull(invalidElement2);
+        Assert.AreEqual(NTIAErrorType.MissingValidSpdxDocument, invalidElement2.ErrorType);
     }
 
     [TestMethod]
@@ -82,6 +94,90 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         var parser = new SPDX30Parser(stream);
         var results = this.Parse(parser);
         Assert.AreEqual(5, results.FormatEnforcedSPDX3Result.Graph.Count());
+
+        var metadata = parser.GetMetadata();
+        Assert.IsNotNull(metadata);
+    }
+
+    [TestMethod]
+    public void DocCreation_MultipleSpdxDocuments_NTIA_Throws()
+    {
+        var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithMetadataJsonStrings.SbomWithMultipleSpdxDocumentsJsonString);
+        using var stream = new MemoryStream(bytes);
+
+        var parser = new SPDX30Parser(stream);
+        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        var results = this.Parse(parser);
+        Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
+
+        var invalidElement1 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.SpdxId == "SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
+        Assert.IsNotNull(invalidElement1);
+        Assert.AreEqual("SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1", invalidElement1.SpdxId);
+        Assert.AreEqual("spdx-doc1-name", invalidElement1.Name);
+        Assert.AreEqual(NTIAErrorType.AdditionalSpdxDocument, invalidElement1.ErrorType);
+
+        var invalidElement2 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.SpdxId == "SPDXRef-SpdxDocument-A93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
+        Assert.IsNotNull(invalidElement2);
+        Assert.AreEqual("SPDXRef-SpdxDocument-A93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1", invalidElement2.SpdxId);
+        Assert.AreEqual("spdx-doc2-name", invalidElement2.Name);
+        Assert.AreEqual(NTIAErrorType.AdditionalSpdxDocument, invalidElement2.ErrorType);
+    }
+
+    [TestMethod]
+    public void DocCreation_MultipleSpdxDocuments_Passes()
+    {
+        var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithMetadataJsonStrings.SbomWithMultipleSpdxDocumentsJsonString);
+        using var stream = new MemoryStream(bytes);
+
+        var parser = new SPDX30Parser(stream);
+        var results = this.Parse(parser);
+        Assert.AreEqual(6, results.FormatEnforcedSPDX3Result.Graph.Count());
+
+        var metadata = parser.GetMetadata();
+        Assert.IsNotNull(metadata);
+    }
+
+    [DataRow(SbomFullDocWithMetadataJsonStrings.SbomWithMissingValidCreationInfoJsonString)]
+    [DataRow(SbomFullDocWithMetadataJsonStrings.SbomWithMissingCreationInfoJsonString)]
+    [TestMethod]
+    public void DocCreation_InvalidCreationInfo_NTIA_Throws(string jsonString)
+    {
+        var bytes = Encoding.UTF8.GetBytes(jsonString);
+        using var stream = new MemoryStream(bytes);
+
+        var parser = new SPDX30Parser(stream);
+        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        var results = this.Parse(parser);
+        Assert.AreEqual(1, results.InvalidComplianceStandardElements.Count);
+
+        var invalidElement = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.ErrorType.Equals(NTIAErrorType.MissingValidCreationInfo));
+        Assert.IsNotNull(invalidElement);
+        Assert.AreEqual(NTIAErrorType.MissingValidCreationInfo, invalidElement.ErrorType);
+    }
+
+    [TestMethod]
+    public void DocCreation_InvalidCreationInfo_Passes()
+    {
+        var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithMetadataJsonStrings.SbomWithMissingValidCreationInfoJsonString);
+        using var stream = new MemoryStream(bytes);
+
+        var parser = new SPDX30Parser(stream);
+        var results = this.Parse(parser);
+        Assert.AreEqual(5, results.FormatEnforcedSPDX3Result.Graph.Count());
+
+        var metadata = parser.GetMetadata();
+        Assert.IsNotNull(metadata);
+    }
+
+    [TestMethod]
+    public void DocCreation_MissingCreationInfo_Passes()
+    {
+        var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithMetadataJsonStrings.SbomWithMissingCreationInfoJsonString);
+        using var stream = new MemoryStream(bytes);
+
+        var parser = new SPDX30Parser(stream);
+        var results = this.Parse(parser);
+        Assert.AreEqual(4, results.FormatEnforcedSPDX3Result.Graph.Count());
 
         var metadata = parser.GetMetadata();
         Assert.IsNotNull(metadata);
