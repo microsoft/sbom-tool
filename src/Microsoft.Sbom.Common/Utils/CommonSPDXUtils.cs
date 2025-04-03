@@ -11,7 +11,7 @@ namespace Microsoft.Sbom.Common.Utils;
 /// <summary>
 /// Provides utility methods for SPDX objects.
 /// </summary>
-public class CommonSPDXUtils
+public static class CommonSPDXUtils
 {
     /// <summary>
     /// Only these chars are allowed in a SPDX id. Replace all other chars with '-'.
@@ -21,12 +21,12 @@ public class CommonSPDXUtils
     /// <summary>
     /// Returns the SPDX-compliant package ID.
     /// </summary>
-    public string GenerateSpdxPackageId(string id) => $"{Constants.SPDXRefPackage}-{GetStringHash(id)}";
+    public static string GenerateSpdxPackageId(string id) => $"{Constants.SPDXRefPackage}-{GetStringHash(id)}";
 
     /// <summary>
     /// Returns the SPDX-compliant file ID.
     /// </summary>
-    public string GenerateSpdxFileId(string fileName, string sha1Value)
+    public static string GenerateSpdxFileId(string fileName, string sha1Value)
     {
         var spdxFileId = $"{Constants.SPDXRefFile}-{fileName}-{sha1Value}";
         return SpdxIdAllowedCharsRegex.Replace(spdxFileId, "-");
@@ -35,7 +35,7 @@ public class CommonSPDXUtils
     /// <summary>
     /// Returns the SPDX-compliant external document ID.
     /// </summary>
-    public string GenerateSpdxExternalDocumentId(string fileName, string sha1Value)
+    public static string GenerateSpdxExternalDocumentId(string fileName, string sha1Value)
     {
         var spdxExternalDocumentId = $"{Constants.SPDXRefExternalDocument}-{fileName}-{sha1Value}";
         return SpdxIdAllowedCharsRegex.Replace(spdxExternalDocumentId, "-");
@@ -47,7 +47,7 @@ public class CommonSPDXUtils
     /// <remarks>
     /// TODO:  refactor this into Core as similar functionality is duplicated in a few different places in the codebase
     /// </remarks>
-    private string GetStringHash(string str)
+    private static string GetStringHash(string str)
     {
         var hash = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(str));
         var spdxId = BitConverter.ToString(hash).Replace("-", string.Empty);
