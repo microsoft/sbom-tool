@@ -38,22 +38,6 @@ public class CommonSPDXUtilsTests
         Assert.AreEqual(expectedSpdxId, spdxId);
     }
 
-    [TestMethod]
-    public void GenerateSpdxPackageIdTest_SameStrings()
-    {
-        var spdxId1 = CommonSPDXUtils.GenerateSpdxPackageId(TestPackage1);
-        var spdxId2 = CommonSPDXUtils.GenerateSpdxPackageId(TestPackage1);
-        Assert.AreEqual(spdxId1, spdxId2);
-    }
-
-    [TestMethod]
-    public void GenerateSpdxPackageIdTest_DiffStrings()
-    {
-        var spdxId1 = CommonSPDXUtils.GenerateSpdxPackageId(TestPackage1);
-        var spdxId2 = CommonSPDXUtils.GenerateSpdxPackageId(TestPackage2);
-        Assert.AreNotEqual(spdxId1, spdxId2);
-    }
-
     [DataRow(TestFile1, TestHash1, TestFile1Hash1SpdxId)]
     [DataRow(TestFile2, TestHash2, TestFile2Hash2SpdxId)]
     [TestMethod]
@@ -61,14 +45,6 @@ public class CommonSPDXUtilsTests
     {
         var spdxId = CommonSPDXUtils.GenerateSpdxFileId(file, sha1Value);
         Assert.AreEqual(expectedSpdxId, spdxId);
-    }
-
-    [TestMethod]
-    public void GenerateSpdxFileIdTest_SameNameAndSha1Value()
-    {
-        var spdxId1 = CommonSPDXUtils.GenerateSpdxFileId(TestFile1, TestHash1);
-        var spdxId2 = CommonSPDXUtils.GenerateSpdxFileId(TestFile1, TestHash1);
-        Assert.AreEqual(spdxId1, spdxId2);
     }
 
     [TestMethod]
@@ -94,14 +70,6 @@ public class CommonSPDXUtilsTests
     {
         var spdxId = CommonSPDXUtils.GenerateSpdxExternalDocumentId(externalDoc, sha1value);
         Assert.AreEqual(expectedSpdxId, spdxId);
-    }
-
-    [TestMethod]
-    public void GenerateSpdxExternalDocumentIdTest_SameNameAndSha1Value()
-    {
-        var spdxId1 = CommonSPDXUtils.GenerateSpdxExternalDocumentId(TestExternalDoc1, TestHash1);
-        var spdxId2 = CommonSPDXUtils.GenerateSpdxExternalDocumentId(TestExternalDoc1, TestHash1);
-        Assert.AreEqual(spdxId1, spdxId2);
     }
 
     [TestMethod]
