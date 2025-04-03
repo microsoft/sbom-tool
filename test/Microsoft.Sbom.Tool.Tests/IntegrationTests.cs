@@ -232,7 +232,7 @@ public class IntegrationTests
         }
 
         var testFolderPath = CreateTestFolder();
-        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoValue: "3.0");
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
         // Add the compliance standard
         var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "3.0", complianceStandardValue: "aeg12");
@@ -253,7 +253,7 @@ public class IntegrationTests
         }
 
         var testFolderPath = CreateTestFolder();
-        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoValue: "2.2");
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "2.2");
 
         // Add the compliance standard
         var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "2.2", complianceStandardValue: "NTIA");
@@ -274,7 +274,7 @@ public class IntegrationTests
         }
 
         var testFolderPath = CreateTestFolder();
-        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoValue: "3.0");
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
         // Add the compliance standard
         var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "3.0", complianceStandardValue: "none");
@@ -295,7 +295,7 @@ public class IntegrationTests
         }
 
         var testFolderPath = CreateTestFolder();
-        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoValue: "3.0");
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
         // Add the compliance standard
         var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "3.0", complianceStandardValue: "NTIA");
