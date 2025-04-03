@@ -14,6 +14,7 @@ using Serilog;
 namespace Microsoft.Sbom.Api.Executors;
 
 using Microsoft.Sbom.Adapters.ComponentDetection;
+using Microsoft.Sbom.Common;
 
 /// <summary>
 /// Takes a <see cref="ScannedComponent"/> object and converts it to a <see cref="PackageInfo"/>
@@ -22,14 +23,16 @@ using Microsoft.Sbom.Adapters.ComponentDetection;
 public class ComponentToPackageInfoConverter
 {
     private readonly ILogger log;
+    private readonly IOSUtils osUtils;
 
     // TODO: Remove and use interface
     // For unit testing only
     public ComponentToPackageInfoConverter() { }
 
-    public ComponentToPackageInfoConverter(ILogger log)
+    public ComponentToPackageInfoConverter(ILogger log, IOSUtils oSUtils)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
+        this.osUtils = oSUtils ?? throw new ArgumentNullException(nameof(oSUtils));
     }
 
     public virtual (ChannelReader<SbomPackage> output, ChannelReader<FileValidationResult> errors) Convert(ChannelReader<ScannedComponent> componentReader)
@@ -52,7 +55,7 @@ public class ComponentToPackageInfoConverter
             {
                 try
                 {
-                    var sbom = scannedComponent.ToSbomPackage(report);
+                    var sbom = scannedComponent.ToSbomPackage(report, this.osUtils);
 
                     if (sbom == null)
                     {
