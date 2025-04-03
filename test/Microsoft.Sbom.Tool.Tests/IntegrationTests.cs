@@ -125,7 +125,7 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "SPDX:3.0");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "3.0");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -359,9 +359,9 @@ public class IntegrationTests
     {
         var outputFile = Path.Combine(TestContext.TestRunDirectory, TestContext.TestName, "validation.json");
         var manifestRootFolderName = Path.Combine(testFolderPath, ManifestRootFolderName);
-        var arguments = $"validate -m \"{manifestRootFolderName}\" -b \"{testDropDirectory}\" -o \"{outputFile}\"";
-        arguments += string.IsNullOrEmpty(manifestInfoValue) ? string.Empty : $" -mi SPDX:{manifestInfoValue}";
-        arguments += string.IsNullOrEmpty(complianceStandardValue) ? string.Empty : $" -cs {complianceStandardValue}";
+        var manifestInfoArg = string.IsNullOrEmpty(manifestInfoValue) ? string.Empty : $" -mi SPDX:{manifestInfoValue}";
+        var complianceStandardArg = string.IsNullOrEmpty(complianceStandardValue) ? string.Empty : $" -cs {complianceStandardValue}";
+        var arguments = $"validate -m \"{manifestRootFolderName}\" -b \"{testDropDirectory}\" -o \"{outputFile}\" {manifestInfoArg} {complianceStandardArg}";
         return (arguments, outputFile);
     }
 
