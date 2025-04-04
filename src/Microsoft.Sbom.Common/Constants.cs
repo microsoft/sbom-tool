@@ -23,4 +23,7 @@ public static class Constants
 
     public const string SPDXContextHeaderName = "@context";
     public const string SPDXGraphHeaderName = "@graph";
+    public const string SPDXRefFile = "SPDXRef-File";
+    public const string SPDXRefPackage = "SPDXRef-Package";
+    public const string SPDXRefExternalDocument = "DocumentRef";
 }
