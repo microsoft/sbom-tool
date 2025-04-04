@@ -132,6 +132,8 @@ This sample command provides the minimum mandatory arguments required to validat
      `-o` is the output path where the tool will write the validation results. This path can be any file path on the system. In this case the tool will look for the validationOutputPath directory, create a file named output.json, and write the validation output.
      `-mi` is the ManifestInfo, which provides the user's desired name and version of the manifest format.
 
+NOTE: The output path should not be in the same drop path as specified in the generate command, otherwise the validation file will be added to the files to validate. The first validation will report SUCCESS but then other validate commands after it will fail.  This is because the validation file has been added in the drop path location and it will no longer validate because it detects that your validate output file has been injected into your drop path.
+
 Currently only SPDX2.2 is supported.
 
 ## Common scenarios where users can provide additional parameters
