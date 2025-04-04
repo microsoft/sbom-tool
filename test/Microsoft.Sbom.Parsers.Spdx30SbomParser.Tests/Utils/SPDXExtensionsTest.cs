@@ -86,20 +86,18 @@ public class SPDXExtensionsTest
         Assert.ThrowsException<ArgumentNullException>(() => spdxPackage.AddSpdxId(null));
     }
 
-    [DataRow(true)]
-    [DataRow(false)]
     [TestMethod]
-    public void AddSpdxIdToPackage_PackageInfoWithId_Success(bool usePackageWithVersion)
+    public void AddSpdxIdToPackage_PackageInfoWithIdAndVersion_Success()
     {
-        if (usePackageWithVersion)
-        {
-            spdxPackage.AddSpdxId(packageInfo);
-        }
-        else
-        {
-            packageInfo.PackageVersion = null;
-            spdxPackage.AddSpdxId(packageInfo);
-        }
+        spdxPackage.AddSpdxId(packageInfo);
+        Assert.AreEqual(PackageSpdxIdWithPackageId, spdxPackage.SpdxId);
+    }
+
+    [TestMethod]
+    public void AddSpdxIdToPackage_PackageInfoWithIdAndMissingVersion_Success()
+    {
+        packageInfo.PackageVersion = null;
+        spdxPackage.AddSpdxId(packageInfo);
 
         Assert.AreEqual(PackageSpdxIdWithPackageId, spdxPackage.SpdxId);
     }
