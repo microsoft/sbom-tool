@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
@@ -66,7 +67,7 @@ public static class SPDXExtensions
             .Select(s => s.ChecksumValue)
             .FirstOrDefault();
 
-        element.SpdxId = CommonSPDXUtils.GenerateSpdxFileId(element.Name, sha1Value);
+        element.SpdxId = CommonSPDXUtils.GenerateSpdxFileId(fileInfo.Path, sha1Value);
         return element.SpdxId;
     }
 
@@ -119,7 +120,7 @@ public static class SPDXExtensions
         license.SpdxId = GenerateSpdxIdBasedOnElement(license, license.Name);
     }
 
-    public static void AddSpdxId(this Entities.Relationship relationship)
+    public static void AddSpdxId(this Common.Spdx30Entities.Relationship relationship)
     {
         relationship.SpdxId = GenerateSpdxIdBasedOnElement(relationship, relationship.To + relationship.RelationshipType.ToString());
     }
@@ -139,7 +140,7 @@ public static class SPDXExtensions
         element.SpdxId = GenerateSpdxIdBasedOnElement(element, element.Name);
     }
 
-    private static string GenerateSpdxIdBasedOnElement(Element element, string id)
+    public static string GenerateSpdxIdBasedOnElement(Element element, string id)
     {
         var uniqueIdentifier = CommonSPDXUtils.GenerateHashBasedOnId(id);
         return $"{SpdxIdPrefix}-{element.Type}-{uniqueIdentifier}";
