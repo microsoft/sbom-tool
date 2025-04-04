@@ -22,6 +22,51 @@ public static class SPDXExtensions
     private const string SpdxIdPrefix = "SPDXRef";
 
     /// <summary>
+    /// Adds SPDX ID that corresponds to the package info.
+    /// </summary>
+    /// <param name="spdxPackage"></param>
+    /// <param name="packageInfo"></param>
+    /// <returns>Package ID that encapsulates unique info about a package.</returns>
+    public static string AddSpdxId(this Package spdxPackage, SbomPackage packageInfo)
+    {
+        if (packageInfo is null)
+        {
+            throw new ArgumentNullException(nameof(packageInfo));
+        }
+
+        // Get package identity as package name and package version. If version is empty, just use package name
+        var packageIdentity = $"{packageInfo.Type}-{packageInfo.PackageName}";
+        if (!string.IsNullOrWhiteSpace(packageInfo.PackageVersion))
+        {
+            packageIdentity = string.Join("-", packageInfo.Type, packageInfo.PackageName, packageInfo.PackageVersion);
+        }
+
+        spdxPackage.SpdxId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.Id ?? packageIdentity);
+        return spdxPackage.SpdxId;
+    }
+
+    public static string AddSpdxId(this File element, InternalSbomFileInfo fileInfo)
+    {
+        if (string.IsNullOrEmpty(fileInfo.Path))
+        {
+            throw new ArgumentException($"'{nameof(fileInfo.Path)}' cannot be null or empty.", nameof(fileInfo.Path));
+        }
+
+        if (fileInfo.Checksum is null || !fileInfo.Checksum.Any(c => c.Algorithm == AlgorithmName.SHA1))
+        {
+            throw new MissingHashValueException($"The file {fileInfo.Path} is missing the {HashAlgorithmName.SHA1} hash value.");
+        }
+
+        // Get the SHA1 for this file.
+        var sha1Value = fileInfo.Checksum.Where(c => c.Algorithm == AlgorithmName.SHA1)
+            .Select(s => s.ChecksumValue)
+            .FirstOrDefault();
+
+        element.SpdxId = CommonSPDXUtils.GenerateSpdxFileId(fileInfo.Path, sha1Value);
+        return element.SpdxId;
+    }
+
+    /// <summary>
     /// Adds ExternalSpdxId property to the SPDXExternalDocumentReference based on name and checksum information.
     /// </summary>
     public static string AddExternalSpdxId(this ExternalMap reference, string name, IEnumerable<Checksum> checksums)
@@ -50,74 +95,14 @@ public static class SPDXExtensions
         return reference.ExternalSpdxId;
     }
 
-    public static string AddSpdxId(this File element, InternalSbomFileInfo fileInfo)
+    public static void AddSpdxId(this Element element)
     {
-        if (string.IsNullOrEmpty(fileInfo.Path))
-        {
-            throw new ArgumentException($"'{nameof(fileInfo.Path)}' cannot be null or empty.", nameof(fileInfo.Path));
-        }
-
-        if (fileInfo.Checksum is null || !fileInfo.Checksum.Any(c => c.Algorithm == AlgorithmName.SHA1))
-        {
-            throw new MissingHashValueException($"The file {fileInfo.Path} is missing the {HashAlgorithmName.SHA1} hash value.");
-        }
-
-        // Get the SHA1 for this file.
-        var sha1Value = fileInfo.Checksum.Where(c => c.Algorithm == AlgorithmName.SHA1)
-            .Select(s => s.ChecksumValue)
-            .FirstOrDefault();
-
-        element.SpdxId = CommonSPDXUtils.GenerateSpdxFileId(fileInfo.Path, sha1Value);
-        return element.SpdxId;
-    }
-
-    /// <summary>
-    /// Adds SPDX ID that corresponds to the package info.
-    /// </summary>
-    /// <param name="spdxPackage"></param>
-    /// <param name="packageInfo"></param>
-    /// <returns>Package ID that encapsulates unique info about a package.</returns>
-    public static string AddSpdxId(this Package spdxPackage, SbomPackage packageInfo)
-    {
-        if (packageInfo is null)
-        {
-            throw new ArgumentNullException(nameof(packageInfo));
-        }
-
-        // Get package identity as package name and package version. If version is empty, just use package name
-        var packageIdentity = $"{packageInfo.Type}-{packageInfo.PackageName}";
-        if (!string.IsNullOrWhiteSpace(packageInfo.PackageVersion))
-        {
-            packageIdentity = string.Join("-", packageInfo.Type, packageInfo.PackageName, packageInfo.PackageVersion);
-        }
-
-        spdxPackage.SpdxId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.Id ?? packageIdentity);
-        return spdxPackage.SpdxId;
+        element.SpdxId = GenerateSpdxIdBasedOnElement(element, element.Name);
     }
 
     public static void AddSpdxId(this CreationInfo creationInfo)
     {
         creationInfo.SpdxId = GenerateSpdxIdBasedOnElement(creationInfo, creationInfo.Id);
-    }
-
-    public static void AddSpdxId(this Organization organization)
-    {
-        organization.SpdxId = GenerateSpdxIdBasedOnElement(organization, organization.Name);
-    }
-
-    public static void AddSpdxId(this Tool tool)
-    {
-        tool.SpdxId = GenerateSpdxIdBasedOnElement(tool, tool.Name);
-    }
-
-    public static void AddSpdxId(this SpdxDocument spdxDocument)
-    {
-        spdxDocument.SpdxId = GenerateSpdxIdBasedOnElement(spdxDocument, spdxDocument.Name);
-    }
-
-    public static void AddSpdxId(this AnyLicenseInfo license)
-    {
-        license.SpdxId = GenerateSpdxIdBasedOnElement(license, license.Name);
     }
 
     public static void AddSpdxId(this Common.Spdx30Entities.Relationship relationship)
@@ -133,11 +118,6 @@ public static class SPDXExtensions
     public static void AddSpdxId(this PackageVerificationCode packageVerificationCode)
     {
         packageVerificationCode.SpdxId = GenerateSpdxIdBasedOnElement(packageVerificationCode, packageVerificationCode.Algorithm.ToString());
-    }
-
-    public static void AddSpdxId(this Element element)
-    {
-        element.SpdxId = GenerateSpdxIdBasedOnElement(element, element.Name);
     }
 
     public static string GenerateSpdxIdBasedOnElement(Element element, string id)
