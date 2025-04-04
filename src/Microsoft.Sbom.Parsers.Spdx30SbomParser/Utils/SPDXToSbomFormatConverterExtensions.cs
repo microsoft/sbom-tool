@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Linq;
+using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 using SbomChecksum = Microsoft.Sbom.Contracts.Checksum;
 
 namespace Microsoft.Sbom.Utils;

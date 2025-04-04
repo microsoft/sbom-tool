@@ -10,7 +10,6 @@ using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Extensions.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Utils;
 
