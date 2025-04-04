@@ -128,6 +128,7 @@ public class InterfaceConcretionTests
     {
         public IList<FileValidationResult> Errors => throw new NotImplementedException();
 
+        public void AddResult(string propertyName, string value) => throw new NotImplementedException();
         public void AddToTotalCountOfLicenses(int count) => throw new NotImplementedException();
         public void AddToTotalNumberOfPackageDetailsEntries(int count) => throw new NotImplementedException();
         public Task FinalizeAndLogTelemetryAsync() => throw new NotImplementedException();

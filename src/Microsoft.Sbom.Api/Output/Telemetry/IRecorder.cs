@@ -89,5 +89,10 @@ public interface IRecorder
     /// </summary>
     public Task FinalizeAndLogTelemetryAsync();
 
+    /// <summary>
+    /// Add an extra result in the form of a key-value pair to the telemetry.
+    /// </summary>
+    public void AddResult(string propertyName, string value);
+
     public IList<FileValidationResult> Errors { get; }
 }
