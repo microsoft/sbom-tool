@@ -35,7 +35,7 @@ public class TelemetryRecorder : IRecorder
     private readonly IList<Exception> exceptions = new List<Exception>();
     private readonly IList<Exception> apiExceptions = new List<Exception>();
     private readonly IList<Exception> metadataExceptions = new List<Exception>();
-    private readonly Dictionary<string, string> propertyBag = new Dictionary<string, string>();
+    private readonly Dictionary<string, string> additionalResults = new Dictionary<string, string>();
     private IList<FileValidationResult> errors = new List<FileValidationResult>();
     private Result result = Result.Success;
 
@@ -103,7 +103,7 @@ public class TelemetryRecorder : IRecorder
                 Switches = this.switches,
                 Parameters = Configuration,
                 Exceptions = exceptionList.ToDictionary(k => k.GetType().ToString(), v => v.Message),
-                Properties = propertyBag,
+                AdditionalResults = additionalResults,
             };
 
             // Log to logger.
@@ -347,8 +347,11 @@ public class TelemetryRecorder : IRecorder
         }
     }
 
-    public void AddProperty(string propertyName, string value)
+    /// <summary>
+    /// Add an extra result in the form of a key-value pair to the telemetry.
+    /// </summary>
+    public void AddResult(string propertyName, string propertyValue)
     {
-        propertyBag[propertyName] = value;
+        this.additionalResults[propertyName] = propertyValue;
     }
 }

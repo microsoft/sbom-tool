@@ -76,5 +76,8 @@ public class SbomTelemetry
     /// </summary>
     public int PackageDetailsEntries { get; set; }
 
-    public Dictionary<string, string> Properties { get; set; }
+    /// <summary>
+    /// Gets or sets additional properties, like signature validation results, etc.
+    /// </summary>
+    public Dictionary<string, string> AdditionalResults { get; set; }
 }
