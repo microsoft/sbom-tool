@@ -50,9 +50,6 @@ public static class CommonSPDXUtils
     /// <summary>
     /// Compute the SHA256 string representation (omitting dashes) of a given string
     /// </summary>
-    /// <remarks>
-    /// TODO:  refactor this into Core as similar functionality is duplicated in a few different places in the codebase
-    /// </remarks>
     private static string GetStringHash(string str)
     {
         var hash = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(str));
