@@ -41,6 +41,12 @@ public static class CommonSPDXUtils
         return SpdxIdAllowedCharsRegex.Replace(spdxExternalDocumentId, "-");
     }
 
+    public static string GenerateHashBasedOnId(string id)
+    {
+        var hash = GetStringHash(id);
+        return SpdxIdAllowedCharsRegex.Replace(hash, "-");
+    }
+
     /// <summary>
     /// Compute the SHA256 string representation (omitting dashes) of a given string
     /// </summary>
