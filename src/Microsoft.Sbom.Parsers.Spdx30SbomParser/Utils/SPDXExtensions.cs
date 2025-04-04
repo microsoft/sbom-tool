@@ -49,7 +49,7 @@ public static class SPDXExtensions
     {
         if (string.IsNullOrEmpty(fileInfo.Path))
         {
-            throw new ArgumentException($"'{nameof(fileInfo.Path)}' cannot be null or empty.", nameof(fileInfo.Path));
+            throw new ArgumentException("Parameter cannot be null or empty.", nameof(fileInfo.Path));
         }
 
         if (fileInfo.Checksum is null || !fileInfo.Checksum.Any(c => c.Algorithm == AlgorithmName.SHA1))
@@ -78,7 +78,7 @@ public static class SPDXExtensions
 
         if (string.IsNullOrEmpty(name))
         {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+            throw new ArgumentException("Parameter cannot be null or empty.", nameof(name));
         }
 
         var sha1checksums = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1);
