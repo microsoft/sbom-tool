@@ -94,7 +94,7 @@ public class GeneratorTests
             FileCopyrightText = "sampleCopyright",
             LicenseConcluded = "sampleLicense1",
             LicenseInfoInFiles = new List<string> { "sampleLicense1" },
-            Path = "/sample/path",
+            Path = "./sample/path",
         };
 
         var generatorResult = generator.GenerateJsonDocument(fileInfo);
