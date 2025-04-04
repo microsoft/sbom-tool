@@ -75,4 +75,6 @@ public class SbomTelemetry
     /// Gets or sets the total number of PackageDetails entries created during the execution of the tool.
     /// </summary>
     public int PackageDetailsEntries { get; set; }
+
+    public Dictionary<string, string> Properties { get; set; }
 }
