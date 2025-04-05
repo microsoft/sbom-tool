@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
@@ -161,7 +162,7 @@ public class Generator : IManifestGenerator
         var dependOnId = packageInfo.DependOn;
         if (dependOnId is not null && dependOnId != Constants.RootPackageIdValue)
         {
-            dependOnId = SPDXExtensions.GenerateSpdxPackageId(packageInfo.DependOn);
+            dependOnId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.DependOn);
         }
 
         return new GenerationResult

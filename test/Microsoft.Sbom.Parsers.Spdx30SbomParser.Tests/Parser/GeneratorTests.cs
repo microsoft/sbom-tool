@@ -61,7 +61,7 @@ public class GeneratorTests
         var regexPattern = ConvertJsonToRegex(expectedJsonContentAsString);
 
         Assert.IsFalse(generatedJsonString.Contains("null"));
-        Assert.IsTrue(Regex.IsMatch(generatedJsonString, regexPattern));
+        Assert.IsTrue(Regex.IsMatch(generatedJsonString, regexPattern), $"Unexpected output: {generatedJsonString}");
     }
 
     [TestMethod]
@@ -94,7 +94,7 @@ public class GeneratorTests
             FileCopyrightText = "sampleCopyright",
             LicenseConcluded = "sampleLicense1",
             LicenseInfoInFiles = new List<string> { "sampleLicense1" },
-            Path = "/sample/path",
+            Path = "./sample/path",
         };
 
         var generatorResult = generator.GenerateJsonDocument(fileInfo);
@@ -106,6 +106,37 @@ public class GeneratorTests
 
         Assert.IsFalse(generatedJsonString.Contains("null"));
         Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_FilesWithDifferingChecksums_CreatesDifferentSpdxFiles()
+    {
+        var fileInfo1 = new InternalSbomFileInfo
+        {
+            Checksum = GetSampleChecksums(),
+            FileCopyrightText = "sampleCopyright",
+            LicenseConcluded = "sampleLicense1",
+            LicenseInfoInFiles = new List<string> { "sampleLicense1" },
+            Path = "/sample/path",
+        };
+
+        var fileInfo2 = new InternalSbomFileInfo
+        {
+            Checksum = GetDifferentSampleChecksums(),
+            FileCopyrightText = "sampleCopyright",
+            LicenseConcluded = "sampleLicense1",
+            LicenseInfoInFiles = new List<string> { "sampleLicense1" },
+            Path = "/sample/path",
+        };
+
+        var generatorResultFile1 = generator.GenerateJsonDocument(fileInfo1);
+        var generatorResultFile2 = generator.GenerateJsonDocument(fileInfo2);
+
+        // Compare entity IDs which is the same as the SPDX ID for each file.
+        Assert.AreNotEqual(generatorResultFile1.ResultMetadata.EntityId, generatorResultFile2.ResultMetadata.EntityId);
+        Assert.IsTrue(generatorResultFile1.ResultMetadata.EntityId.Contains("sha1Value"));
+        Assert.IsTrue(generatorResultFile2.ResultMetadata.EntityId.Contains("DIFFsha1Value"));
+        Assert.AreNotEqual(generatorResultFile1, generatorResultFile2);
     }
 
     [TestMethod]
@@ -187,6 +218,22 @@ public class GeneratorTests
           {
             Algorithm = AlgorithmName.SHA256,
             ChecksumValue = "sha256Value"
+          },
+        };
+    }
+
+    private List<Checksum> GetDifferentSampleChecksums()
+    {
+        return new List<Checksum>
+        {
+          new Checksum
+          {
+            Algorithm = AlgorithmName.SHA1,
+            ChecksumValue = "DIFFsha1Value"
+          },  new Checksum
+          {
+            Algorithm = AlgorithmName.SHA256,
+            ChecksumValue = "DIFFsha256Value"
           },
         };
     }

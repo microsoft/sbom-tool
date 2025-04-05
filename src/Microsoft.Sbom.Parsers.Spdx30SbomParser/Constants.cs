@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
-using HashAlgorithm = Microsoft.Sbom.Parsers.Spdx30SbomParser.Entities.Enums.HashAlgorithm;
+using HashAlgorithm = Microsoft.Sbom.Common.Spdx30Entities.Enums.HashAlgorithm;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
 
@@ -15,10 +15,9 @@ internal static class Constants
     internal const string DataLicenceValue = "CC0-1.0";
     internal const string SPDXDocumentIdValue = "SPDXRef-DOCUMENT";
     internal const string RootPackageIdValue = "SPDXRef-RootPackage";
+    internal const string SPDXRefFile = "SPDXRef-File";
     internal const string SPDXDocumentNameFormatString = "{0} {1}";
     internal const string PackageSupplierFormatString = "Organization: {0}";
-    internal const string SPDXContextHeaderName = "@context";
-    internal const string SPDXGraphHeaderName = "@graph";
     internal const string SPDXVersionHeaderName = "spdxVersion";
     internal const string DataLicenseHeaderName = "dataLicense";
     internal const string SPDXIDHeaderName = "SPDXID";

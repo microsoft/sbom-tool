@@ -47,6 +47,12 @@ public static class Constants
         SPDX30ManifestInfo
     };
 
+    public static Collection<ComplianceStandardType> SupportedComplianceStandards = new()
+    {
+        ComplianceStandardType.NTIA,
+        ComplianceStandardType.None
+    };
+
     public static List<Entities.ErrorType> SkipFailureReportingForErrors = new()
     {
         Entities.ErrorType.ManifestFolder,

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.Sbom.Adapters.Report;
+using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Contracts;
 using Newtonsoft.Json;
 
@@ -14,6 +15,13 @@ namespace Microsoft.Sbom.Adapters;
 
 public class ComponentDetectionToSbomPackageAdapter
 {
+    private readonly IOSUtils osUtils;
+
+    public ComponentDetectionToSbomPackageAdapter(IOSUtils osUtils)
+    {
+        this.osUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
+    }
+
     /// <summary>
     /// Parses the output from Component Detection and converts it into a list of <see cref="SbomPackage"/> objects.
     /// The report returned by this function will also indicate any errors encountered by the adapter, and on successful
@@ -43,7 +51,7 @@ public class ComponentDetectionToSbomPackageAdapter
             else if (componentDetectionScanResult.ComponentsFound != null)
             {
                 packages = componentDetectionScanResult.ComponentsFound
-                    .Select(component => component.ToSbomPackage(report))
+                    .Select(component => component.ToSbomPackage(report, this.osUtils))
                     .Where(package => package != null) // It is acceptable to return a partial list of values with null filtered out since they should be reported as failures already
                     .Select(package => package!);
 
