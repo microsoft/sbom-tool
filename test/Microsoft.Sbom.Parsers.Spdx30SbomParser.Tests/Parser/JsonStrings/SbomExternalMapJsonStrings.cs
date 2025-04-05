@@ -11,7 +11,7 @@ public static class SbomExternalMapJsonStrings
     {
         ""externalSpdxId"": ""DocumentRef-sample-external-doc-sha1Value"",
         ""creationInfo"": ""_:creationinfo"",
-        ""spdxId"": ""SPDXRef-ExternalMap-2AB84930C880E9632BC8FCFBC0BA22D66E2912252D3457ACB89A9DDE4745E2D0"",
+        ""spdxId"": ""DocumentRef-sample-external-doc-sha1Value"",
         ""verifiedUsing"": [
         {
             ""algorithm"": ""sha1"",

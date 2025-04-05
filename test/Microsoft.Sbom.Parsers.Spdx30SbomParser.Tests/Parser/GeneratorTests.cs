@@ -61,7 +61,7 @@ public class GeneratorTests
         var regexPattern = ConvertJsonToRegex(expectedJsonContentAsString);
 
         Assert.IsFalse(generatedJsonString.Contains("null"));
-        Assert.IsTrue(Regex.IsMatch(generatedJsonString, regexPattern));
+        Assert.IsTrue(Regex.IsMatch(generatedJsonString, regexPattern), $"Unexpected output: {generatedJsonString}");
     }
 
     [TestMethod]
@@ -94,7 +94,7 @@ public class GeneratorTests
             FileCopyrightText = "sampleCopyright",
             LicenseConcluded = "sampleLicense1",
             LicenseInfoInFiles = new List<string> { "sampleLicense1" },
-            Path = "/sample/path",
+            Path = "./sample/path",
         };
 
         var generatorResult = generator.GenerateJsonDocument(fileInfo);

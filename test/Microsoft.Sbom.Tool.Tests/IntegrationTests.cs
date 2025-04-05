@@ -304,7 +304,7 @@ public class IntegrationTests
 
         // Assert that the validation failures show up
         Assert.IsFalse(stdout.Contains("Elements in the manifest that are non-compliant with NTIA . . . 0"));
-        Assert.IsTrue(stdout.Contains("SPDXRef-software_Package-BBC2D465DDBC52CC6119533C2E784684B7088775E3FD28438F7E557563D03915"));
+        Assert.IsTrue(stdout.Contains("SPDXRef-Package"));
     }
 
     [DataRow("SPDX:2.2")]

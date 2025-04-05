@@ -5,11 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
 using Microsoft.Sbom.Common.Spdx30Entities;
+using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Extensions.Exceptions;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Utils;
@@ -19,40 +19,15 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Utils;
 /// </summary>
 public static class SPDXExtensions
 {
-    /// <summary>
-    /// Only these chars are allowed in a SPDX id. Replace all other chars with '-'.
-    /// </summary>
-    private static readonly Regex SpdxIdAllowedCharsRegex = new Regex("[^a-zA-Z0-9.-]");
+    private const string SpdxIdPrefix = "SPDXRef";
 
     /// <summary>
-    /// Returns the SPDX-compliant ID for a general element.
-    /// <paramref name="element"/> The element to generate the ID for.
-    /// <paramref name="id"/> The ID that uniquely identifies an element to generate the hash for.
-    /// </summary>
-    public static string GenerateSpdxId(Element element, string id) => $"SPDXRef-{element.Type}-{GetStringHash(id)}";
-
-    public static string GetSpdxId(Element element, string id)
-    {
-        var spdxFileId = $"{Constants.SPDXRefFile}-{element.Name}-{id}";
-        return SpdxIdAllowedCharsRegex.Replace(spdxFileId, "-");
-    }
-
-    /// <summary>
-    /// Returns the SPDX-compliant external document ID.
-    /// </summary>
-    public static string GenerateSpdxExternalDocumentId(string fileName, string sha1Value)
-    {
-        var spdxExternalDocumentId = $"DocumentRef-{fileName}-{sha1Value}";
-        return SpdxIdAllowedCharsRegex.Replace(spdxExternalDocumentId, "-");
-    }
-
-    /// <summary>
-    /// Get's an ID that corresponds to the package info
+    /// Adds SPDX ID that corresponds to the package info.
     /// </summary>
     /// <param name="spdxPackage"></param>
     /// <param name="packageInfo"></param>
     /// <returns>Package ID that encapsulates unique info about a package.</returns>
-    public static string GetSpdxElementId(SbomPackage packageInfo)
+    public static string AddSpdxId(this Package spdxPackage, SbomPackage packageInfo)
     {
         if (packageInfo is null)
         {
@@ -66,38 +41,35 @@ public static class SPDXExtensions
             packageIdentity = string.Join("-", packageInfo.Type, packageInfo.PackageName, packageInfo.PackageVersion);
         }
 
-        return packageInfo.Id ?? packageIdentity;
+        spdxPackage.SpdxId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.Id ?? packageIdentity);
+        return spdxPackage.SpdxId;
     }
 
-    /// <summary>
-    /// Gets the SHA1 checksum value for a file.
-    /// </summary>
-    /// <param name="fileName"></param>
-    /// <param name="checksums"></param>
-    public static string GetSpdxFileId(string fileName, IEnumerable<Checksum> checksums)
+    public static string AddSpdxId(this File element, InternalSbomFileInfo fileInfo)
     {
-        if (string.IsNullOrEmpty(fileName))
+        if (string.IsNullOrEmpty(fileInfo.Path))
         {
-            throw new ArgumentException($"'{nameof(fileName)}' cannot be null or empty.", nameof(fileName));
+            throw new ArgumentException("Parameter cannot be null or empty.", nameof(fileInfo.Path));
         }
 
-        if (checksums is null || !checksums.Any(c => c.Algorithm == AlgorithmName.SHA1))
+        if (fileInfo.Checksum is null || !fileInfo.Checksum.Any(c => c.Algorithm == AlgorithmName.SHA1))
         {
-            throw new MissingHashValueException($"The file {fileName} is missing the {HashAlgorithmName.SHA1} hash value.");
+            throw new MissingHashValueException($"The file {fileInfo.Path} is missing the {HashAlgorithmName.SHA1} hash value.");
         }
 
         // Get the SHA1 for this file.
-        var sha1Value = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1)
+        var sha1Value = fileInfo.Checksum.Where(c => c.Algorithm == AlgorithmName.SHA1)
             .Select(s => s.ChecksumValue)
             .FirstOrDefault();
 
-        return sha1Value;
+        element.SpdxId = CommonSPDXUtils.GenerateSpdxFileId(fileInfo.Path, sha1Value);
+        return element.SpdxId;
     }
 
     /// <summary>
     /// Adds ExternalSpdxId property to the SPDXExternalDocumentReference based on name and checksum information.
     /// </summary>
-    public static void AddExternalSpdxId(this ExternalMap reference, string name, IEnumerable<Checksum> checksums)
+    public static string AddExternalSpdxId(this ExternalMap reference, string name, IEnumerable<Checksum> checksums)
     {
         if (reference is null)
         {
@@ -106,7 +78,7 @@ public static class SPDXExtensions
 
         if (string.IsNullOrEmpty(name))
         {
-            throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+            throw new ArgumentException("Parameter cannot be null or empty.", nameof(name));
         }
 
         var sha1checksums = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1);
@@ -118,59 +90,39 @@ public static class SPDXExtensions
         // Get the SHA1 for this file.
         var sha1Value = sha1checksums.FirstOrDefault().ChecksumValue;
 
-        reference.ExternalSpdxId = GenerateSpdxExternalDocumentId(name, sha1Value);
+        reference.ExternalSpdxId = CommonSPDXUtils.GenerateSpdxExternalDocumentId(name, sha1Value);
+        reference.SpdxId = reference.ExternalSpdxId;
+        return reference.ExternalSpdxId;
     }
 
     public static void AddSpdxId(this Element element)
     {
-        element.SpdxId = GenerateSpdxId(element, element.Name);
+        element.SpdxId = GenerateSpdxIdBasedOnElement(element, element.Name);
     }
 
     public static void AddSpdxId(this CreationInfo creationInfo)
     {
-        creationInfo.SpdxId = GenerateSpdxId(creationInfo, creationInfo.Id);
+        creationInfo.SpdxId = GenerateSpdxIdBasedOnElement(creationInfo, creationInfo.Id);
     }
 
-    public static void AddSpdxId(this Relationship relationship)
+    public static void AddSpdxId(this Common.Spdx30Entities.Relationship relationship)
     {
-        relationship.SpdxId = GenerateSpdxId(relationship, relationship.To + relationship.RelationshipType.ToString());
+        relationship.SpdxId = GenerateSpdxIdBasedOnElement(relationship, relationship.To + relationship.RelationshipType.ToString());
     }
 
     public static void AddSpdxId(this ExternalIdentifier externalIdentifier)
     {
-        externalIdentifier.SpdxId = GenerateSpdxId(externalIdentifier, externalIdentifier.Identifier.ToString());
-    }
-
-    public static void AddSpdxId(this ExternalMap externalMap)
-    {
-        externalMap.SpdxId = GenerateSpdxId(externalMap, externalMap.ExternalSpdxId);
+        externalIdentifier.SpdxId = GenerateSpdxIdBasedOnElement(externalIdentifier, externalIdentifier.Identifier.ToString());
     }
 
     public static void AddSpdxId(this PackageVerificationCode packageVerificationCode)
     {
-        packageVerificationCode.SpdxId = GenerateSpdxId(packageVerificationCode, packageVerificationCode.Algorithm.ToString());
+        packageVerificationCode.SpdxId = GenerateSpdxIdBasedOnElement(packageVerificationCode, packageVerificationCode.Algorithm.ToString());
     }
 
-    public static void AddSpdxId(this File element, string id)
+    public static string GenerateSpdxIdBasedOnElement(Element element, string id)
     {
-        element.SpdxId = GetSpdxId(element, id);
-    }
-
-    public static void AddSpdxId(this Package element, string id)
-    {
-        element.SpdxId = GenerateSpdxId(element, id);
-    }
-
-    /// <summary>
-    /// Compute the SHA256 string representation (omitting dashes) of a given string
-    /// </summary>
-    /// <remarks>
-    /// TODO:  refactor this into Core as similar functionality is duplicated in a few different places in the codebase
-    /// </remarks>
-    private static string GetStringHash(string str)
-    {
-        var hash = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(str));
-        var spdxId = Convert.ToHexString(hash).Replace("-", string.Empty);
-        return spdxId;
+        var uniqueIdentifier = CommonSPDXUtils.GenerateHashBasedOnId(id);
+        return $"{SpdxIdPrefix}-{element.Type}-{uniqueIdentifier}";
     }
 }
