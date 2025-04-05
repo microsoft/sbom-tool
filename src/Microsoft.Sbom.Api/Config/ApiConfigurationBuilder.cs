@@ -69,6 +69,7 @@ public static class ApiConfigurationBuilder
             NamespaceUriUniquePart = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriUniquePart),
             FollowSymlinks = GetConfigurationSetting(sanitizedRuntimeConfiguration.FollowSymlinks),
             DeleteManifestDirIfPresent = GetConfigurationSetting(sanitizedRuntimeConfiguration.DeleteManifestDirectoryIfPresent),
+            AdditionalComponentDetectorArgs = GetConfigurationSetting(sanitizedRuntimeConfiguration.AdditionComponentDetectorArgs),
         };
 
         SetVerbosity(sanitizedRuntimeConfiguration, configuration);
@@ -143,6 +144,7 @@ public static class ApiConfigurationBuilder
             IgnoreMissing = GetConfigurationSetting(ignoreMissing),
             Parallelism = GetConfigurationSetting(sanitizedRuntimeConfiguration.WorkflowParallelism),
             ManifestInfo = ConvertSbomSpecificationToManifestInfo(specifications),
+            AdditionalComponentDetectorArgs = GetConfigurationSetting(sanitizedRuntimeConfiguration.AdditionComponentDetectorArgs),
         };
 
         SetVerbosity(sanitizedRuntimeConfiguration, configuration);
