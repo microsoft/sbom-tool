@@ -324,7 +324,8 @@ public class TelemetryRecorder : IRecorder
                 APIExceptions = this.apiExceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(group => group.Key, group => group.First().Message),
                 MetadataExceptions = this.metadataExceptions.GroupBy(e => e.GetType().ToString()).ToDictionary(g => g.Key, g => g.First().Message),
                 TotalLicensesDetected = this.totalNumberOfLicenses,
-                PackageDetailsEntries = this.packageDetailsEntries
+                PackageDetailsEntries = this.packageDetailsEntries,
+                AdditionalResults = this.additionalResults,
             };
 
             // Log to logger.
