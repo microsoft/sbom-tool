@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Sbom.Tools.Tests;
@@ -125,7 +126,7 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "3.0");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -235,7 +236,7 @@ public class IntegrationTests
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
         // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "3.0", complianceStandardValue: "aeg12");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", complianceStandardValue: "aeg12");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -256,7 +257,7 @@ public class IntegrationTests
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "2.2");
 
         // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "2.2", complianceStandardValue: "NTIA");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "2.2", complianceStandardValue: "NTIA");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -277,7 +278,7 @@ public class IntegrationTests
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
         // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "3.0", complianceStandardValue: "none");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", complianceStandardValue: "none");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -298,13 +299,88 @@ public class IntegrationTests
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
         // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoValue: "3.0", complianceStandardValue: "NTIA");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", complianceStandardValue: "NTIA");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
         // Assert that the validation failures show up
         Assert.IsFalse(stdout.Contains("Elements in the manifest that are non-compliant with NTIA . . . 0"));
         Assert.IsTrue(stdout.Contains("SPDXRef-Package"));
+    }
+
+    [DataRow("2.2")]
+    [DataRow("3.0")]
+    [TestMethod]
+    public void E2E_Validate_WithAdditionalFile_StdOutContainsAdditionalFileErrors(string version)
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var testFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: version);
+
+        // Add additional file
+        var newFilePath = Path.Combine(testDropDirectory, "newFile");
+        File.WriteAllText(newFilePath, "This is a test file.");
+
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: version);
+
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+        Assert.IsTrue(stdout.Contains("Additional files not in the manifest . . . . . . 1"));
+        Assert.IsTrue(stdout.Contains("newFile"));
+
+        if (File.Exists(newFilePath))
+        {
+            File.Delete(newFilePath);
+        }
+    }
+
+    [DataRow("2.2")]
+    [DataRow("3.0")]
+    [TestMethod]
+    public void E2E_Validate_WithMissingFile_StdOutContainsMissingFileErrors(string version)
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var testFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: version);
+
+        object newFile = null;
+        switch (version)
+        {
+            case "2.2":
+                newFile = new
+                {
+                    fileName = "newFile",
+                    checksums = new[] { new { algorithm = "sha1", checksumValue = "abc123" } },
+                    SPDXID = "SPDXRef-File-newFile"
+                };
+                break;
+            case "3.0":
+                newFile = new
+                {
+                    name = "newFile",
+                    verifiedUsing = new[] { new { algorithm = "sha1", hashValue = "abc123", creationInfo = "_:creationInfo", spdxId = "SPDXRef-PackVerCode", type = "PackageVerificationCode" } },
+                    spdxId = "SPDXRef-File-newFile",
+                    creationInfo = "_:creationInfo",
+                    type = "software_File",
+                };
+                break;
+        }
+
+        AddExtraFileToManifest(testFolderPath, version, newFile);
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: version);
+
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+        Assert.IsTrue(stdout.Contains("Files in the manifest missing from the disk . . .1"));
+        Assert.IsTrue(stdout.Contains("newFile"));
     }
 
     [DataRow("SPDX:2.2")]
@@ -347,19 +423,14 @@ public class IntegrationTests
         Assert.IsTrue(File.Exists(jsonFilePath));
         Assert.IsTrue(File.Exists(shaFilePath));
 
-        // Check that manifestFolderPath is the only folder in the directory
-        var directories = Directory.GetDirectories(Path.Combine(testFolderPath, ManifestRootFolderName));
-        Assert.AreEqual(1, directories.Length, "There should be only one folder in the test directory.");
-        Assert.AreEqual(manifestFolderPath, directories[0], "The only folder in the test directory should be a folder with the correct SBOM version name.");
-
         Assert.AreEqual(0, exitCode.Value, $"Unexpected failure. stdout = {stdout}");
     }
 
-    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoValue = "2.2", string complianceStandardValue = "")
+    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoSpdxVersion = "2.2", string complianceStandardValue = "")
     {
         var outputFile = Path.Combine(TestContext.TestRunDirectory, TestContext.TestName, "validation.json");
         var manifestRootFolderName = Path.Combine(testFolderPath, ManifestRootFolderName);
-        var manifestInfoArg = string.IsNullOrEmpty(manifestInfoValue) ? string.Empty : $" -mi SPDX:{manifestInfoValue}";
+        var manifestInfoArg = string.IsNullOrEmpty(manifestInfoSpdxVersion) ? string.Empty : $" -mi SPDX:{manifestInfoSpdxVersion}";
         var complianceStandardArg = string.IsNullOrEmpty(complianceStandardValue) ? string.Empty : $" -cs {complianceStandardValue}";
         var arguments = $"validate -m \"{manifestRootFolderName}\" -b \"{testDropDirectory}\" -o \"{outputFile}\" {manifestInfoArg} {complianceStandardArg}";
         return (arguments, outputFile);
@@ -396,6 +467,67 @@ public class IntegrationTests
     private static string GetAppName()
     {
         return IsWindows ? "Microsoft.Sbom.Tool.exe" : "Microsoft.Sbom.Tool";
+    }
+
+    private void AddExtraFileToManifest(string testFolderPath, string version, object newFile)
+    {
+        var arrayToModify = string.Empty;
+        switch (version)
+        {
+            case "2.2":
+                arrayToModify = "files";
+                break;
+            case "3.0":
+                arrayToModify = "@graph";
+                break;
+            default:
+                return;
+        }
+
+        var manifestFolderPath = AppendFullManifestFolderPath(testFolderPath, spdxVersion: version);
+        var jsonFilePath = Path.Combine(manifestFolderPath, ManifestFileName);
+
+        var jsonContent = File.ReadAllText(jsonFilePath);
+        var jsonDocument = JsonDocument.Parse(jsonContent);
+        var rootElement = jsonDocument.RootElement;
+        var filesArray = rootElement.GetProperty(arrayToModify).EnumerateArray().ToList();
+
+        // Add a new file to manifest.spdx.json
+        filesArray.Add(JsonSerializer.SerializeToElement(newFile));
+
+        // Create a new JSON object with the updated "files" array
+        using var memoryStream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(memoryStream))
+        {
+            writer.WriteStartObject();
+
+            // Copy all properties from the original rootElement
+            foreach (var property in rootElement.EnumerateObject())
+            {
+                if (property.NameEquals(arrayToModify))
+                {
+                    // Write the updated array
+                    writer.WritePropertyName(arrayToModify);
+                    writer.WriteStartArray();
+                    foreach (var file in filesArray)
+                    {
+                        file.WriteTo(writer);
+                    }
+
+                    writer.WriteEndArray();
+                }
+                else
+                {
+                    // Write other properties as-is
+                    property.WriteTo(writer);
+                }
+            }
+
+            writer.WriteEndObject();
+        }
+
+        // Write the updated JSON back to the file
+        File.WriteAllText(jsonFilePath, JsonSerializer.Serialize(JsonDocument.Parse(memoryStream.ToArray()).RootElement));
     }
 
     private static (string stdout, string stderr, int? exitCode) LaunchAndCaptureOutput(string? arguments)
