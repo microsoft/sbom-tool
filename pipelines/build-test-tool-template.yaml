@@ -5,14 +5,6 @@ steps:
       useGlobalJson: true
 
   - task: DotNetCoreCLI@2
-    displayName: 'Access version'
-    inputs:
-      command: --version
-      feedsToUse: config
-      nugetConfigPath: nuget.config
-      verbosityRestore: Normal
-
-  - task: DotNetCoreCLI@2
     displayName: 'Restore solution'
     inputs:
       command: restore
