@@ -110,7 +110,8 @@ public static class SPDXToSbomFormatConverterExtensions
 
         return new ExternalDocumentReferenceInfo
         {
-            Checksum = new List<SbomChecksum> { externalDocumentReference.Checksum.ToSbomChecksum() },
+            ExternalDocumentName = externalDocumentReference.ExternalDocumentId,
+            Checksum = new List<SbomChecksum> { externalDocumentReference.Checksum?.ToSbomChecksum() },
             DocumentNamespace = externalDocumentReference.SpdxDocument,
         };
     }
