@@ -18,6 +18,19 @@ namespace Microsoft.Sbom.Utils;
 /// </summary>
 public static class SPDXToSbomFormatConverterExtensions
 {
+    public static SbomFile ToSbomFile(this File spdxFile)
+    {
+        var sbomFile = new SbomFile
+        {
+            Checksum = spdxFile.VerifiedUsing.ToSbomChecksum(),
+            FileCopyrightText = spdxFile.CopyrightText == "NOASSERTION" ? null : spdxFile.CopyrightText,
+            Path = spdxFile.Name,
+            Id = spdxFile.SpdxId
+        };
+
+        return sbomFile;
+    }
+
     /// <summary>
     /// Converts a <see cref="SPDXFile"/> object to a <see cref="SbomFile"/> object.
     /// </summary>
@@ -25,15 +38,15 @@ public static class SPDXToSbomFormatConverterExtensions
     /// <returns></returns>
     public static SbomFile ToSbomFile(this File spdxFile, List<Element> spdx30Elements, List<Common.Spdx30Entities.Relationship> relationships)
     {
-        // Manually setting the last two properties to default values.
         // Note that the SPDX 3.0 HAS_DECLARED_LICENSE relationship type is equivalent to LicenseInfoInFiles internally.
         var sbomFile = new SbomFile
         {
             Checksum = spdxFile.VerifiedUsing.ToSbomChecksum(),
             FileCopyrightText = spdxFile.CopyrightText == "NOASSERTION" ? null : spdxFile.CopyrightText,
-            LicenseConcluded = spdxFile.GetLicense(RelationshipType.HAS_CONCLUDED_LICENSE, spdx30Elements, relationships).FirstOrDefault(),
-            LicenseInfoInFiles = spdxFile.GetLicense(RelationshipType.HAS_DECLARED_LICENSE, spdx30Elements, relationships),
+            LicenseConcluded = spdxFile.GetSingleLicense(RelationshipType.HAS_CONCLUDED_LICENSE, spdx30Elements, relationships),
+            LicenseInfoInFiles = spdxFile.GetMultipleLicenses(RelationshipType.HAS_DECLARED_LICENSE, spdx30Elements, relationships),
             Path = spdxFile.Name,
+            Id = spdxFile.SpdxId
         };
 
         return sbomFile;
@@ -50,12 +63,13 @@ public static class SPDXToSbomFormatConverterExtensions
             Checksum = spdxPackage.VerifiedUsing.ToSbomChecksum(),
             LicenseInfo = new LicenseInfo
             {
-                Concluded = spdxPackage.GetLicense(RelationshipType.HAS_CONCLUDED_LICENSE, spdx30Elements, relationships).FirstOrDefault(),
-                Declared = spdxPackage.GetLicense(RelationshipType.HAS_DECLARED_LICENSE, spdx30Elements, relationships).FirstOrDefault(),
+                Concluded = spdxPackage.GetSingleLicense(RelationshipType.HAS_CONCLUDED_LICENSE, spdx30Elements, relationships),
+                Declared = spdxPackage.GetSingleLicense(RelationshipType.HAS_DECLARED_LICENSE, spdx30Elements, relationships),
             },
             Supplier = spdxPackage.GetSupplier(spdx30Elements),
             PackageUrl = spdxPackage.GetPackageUrl(spdx30Elements),
-            FilesAnalyzed = false,
+            FilesAnalyzed = true,
+            Id = spdxPackage.SpdxId,
         };
 
         return sbomPackage;
@@ -117,7 +131,7 @@ public static class SPDXToSbomFormatConverterExtensions
         return internalChecksums;
     }
 
-    internal static List<string> GetLicense(this Element element, RelationshipType relationshipType, List<Element> spdx30Elements, List<Common.Spdx30Entities.Relationship> relationships)
+    internal static List<string> GetMultipleLicenses(this Element element, RelationshipType relationshipType, List<Element> spdx30Elements, List<Common.Spdx30Entities.Relationship> relationships)
     {
         var spdxId = element.SpdxId;
         var relationshipsDescribingElement = relationships.Where(relationship => relationship.From == spdxId);
@@ -134,19 +148,56 @@ public static class SPDXToSbomFormatConverterExtensions
         var licenseElements = new List<string>();
         foreach (var toElementSpdxId in toElements)
         {
-            var licenseElement = spdx30Elements.FirstOrDefault(element => element.SpdxId == toElementSpdxId);
-            if (!licenseElement.Name.Equals("NoAssertion"))
+            var licenseElementsWithMatchingSpdxId = spdx30Elements.Where(element => element.SpdxId == toElementSpdxId);
+            if (licenseElementsWithMatchingSpdxId.Count() != 1)
             {
-                licenseElements.Add(licenseElement.Name);
+                return null;
+            }
+            else
+            {
+                licenseElements.Add(licenseElementsWithMatchingSpdxId.First().Name);
             }
         }
 
+        // If there are no license elements, return null.
         return licenseElements.Count == 0 ? null : licenseElements;
+    }
+
+    internal static string GetSingleLicense(this Element element, RelationshipType relationshipType, List<Element> spdx30Elements, List<Common.Spdx30Entities.Relationship> relationships)
+    {
+        var spdxId = element.SpdxId;
+        var relationshipsDescribingElement = relationships.Where(relationship => relationship.From == spdxId);
+
+        // Get all relationships that describe license information for the given package.
+        var toElements = new List<string>();
+        foreach (var relationship in relationshipsDescribingElement)
+        {
+            if (relationship.RelationshipType.Equals(relationshipType))
+            {
+                toElements = relationship.To;
+            }
+        }
+
+        // There should only be 1 relationship element for a given RelationshipType for the given Package.
+        if (toElements.Count != 1)
+        {
+            return null;
+        }
+
+        var licenseElements = spdx30Elements.Where(element => element.SpdxId == toElements.First());
+
+        // There should only be 1 matching license element.
+        return licenseElements.Count() == 1 ? licenseElements.First().Name : null;
     }
 
     internal static string GetSupplier(this Package spdxPackage, List<Element> spdx30Elements)
     {
         var organizationSpdxId = spdxPackage.SuppliedBy;
+        if (organizationSpdxId is null)
+        {
+            return null;
+        }
+
         var organizationElement = spdx30Elements
             .FirstOrDefault(element => element is Organization && element.SpdxId == organizationSpdxId);
         return organizationElement.Name.Equals("NOASSERTION") ? null : organizationElement.Name;

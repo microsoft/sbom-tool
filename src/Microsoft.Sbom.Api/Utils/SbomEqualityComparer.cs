@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions.Entities;
@@ -20,7 +21,7 @@ using Spdx30Entities = Microsoft.Sbom.Common.Spdx30Entities;
 /// <summary>
 /// Finds the differences between an SPDX 2.2 document and an SPDX 3.0 document.
 /// </summary>
-internal class SPDXDiffFinder
+internal class SbomEqualityComparer
 {
     private JsonSerializerOptions serializerOptions = new JsonSerializerOptions
     {
@@ -30,7 +31,7 @@ internal class SPDXDiffFinder
     private readonly string spdx22FilePath;
     private readonly string spdx30FilePath;
 
-    public SPDXDiffFinder(string spdx22FilePath, string spdx30FilePath)
+    public SbomEqualityComparer(string spdx22FilePath, string spdx30FilePath)
     {
         this.spdx22FilePath = spdx22FilePath;
         this.spdx30FilePath = spdx30FilePath;
@@ -81,7 +82,7 @@ internal class SPDXDiffFinder
         return true;
     }
 
-    private bool CheckFiles(List<SPDXFile> spdx22Files, List<Spdx30Entities.File> spdx30Files, List<Element> spdx30Elements, List<Spdx30Entities.Relationship> relationships)
+    internal bool CheckFiles(List<SPDXFile> spdx22Files, List<Spdx30Entities.File> spdx30Files, List<Element> spdx30Elements, List<Spdx30Entities.Relationship> relationships)
     {
         if (spdx22Files.Count != spdx30Files.Count)
         {
@@ -94,7 +95,7 @@ internal class SPDXDiffFinder
         return spdx22InternalSbomFileInfos.SetEquals(spdx30InternalSbomFileInfos);
     }
 
-    private bool CheckPackages(List<SPDXPackage> spdx22Packages, List<Package> spdx30Packages, List<Element> spdx30Elements, List<Spdx30Entities.Relationship> relationships)
+    internal bool CheckPackages(List<SPDXPackage> spdx22Packages, List<Package> spdx30Packages, List<Element> spdx30Elements, List<Spdx30Entities.Relationship> relationships)
     {
         if (spdx22Packages.Count != spdx30Packages.Count)
         {
@@ -107,7 +108,7 @@ internal class SPDXDiffFinder
         return spdx22InternalSbomPackages.SetEquals(spdx30InternalSbomPackages);
     }
 
-    private bool CheckRelationships(List<SPDXRelationship> spdx22Relationships, List<Spdx30Entities.Relationship> spdx30Relationships)
+    internal bool CheckRelationships(List<SPDXRelationship> spdx22Relationships, List<Spdx30Entities.Relationship> spdx30Relationships)
     {
         if (spdx22Relationships.Count != spdx30Relationships.Count)
         {
@@ -120,7 +121,7 @@ internal class SPDXDiffFinder
         return spdx22InternalRelationships.SetEquals(spdx30InternalRelationships);
     }
 
-    private bool CheckExternalDocRefs(List<SpdxExternalDocumentReference> spdx22ExternalDocumentRefs, List<ExternalMap> spdx30ExternalDocumentRefs)
+    internal bool CheckExternalDocRefs(List<SpdxExternalDocumentReference> spdx22ExternalDocumentRefs, List<ExternalMap> spdx30ExternalDocumentRefs)
     {
         if (spdx22ExternalDocumentRefs.Count != spdx30ExternalDocumentRefs.Count)
         {
@@ -135,7 +136,7 @@ internal class SPDXDiffFinder
 
     private HashSet<SbomFile> ConvertToSbomFiles(List<SPDXFile> files)
     {
-        var sbomFiles = new HashSet<SbomFile>();
+        var sbomFiles = new HashSet<SbomFile>(new SbomFileComparer());
 
         foreach (var file in files)
         {
@@ -147,7 +148,7 @@ internal class SPDXDiffFinder
 
     private HashSet<SbomFile> ConvertToSbomFiles(List<Spdx30Entities.File> files, List<Element> spdx30Elements, List<Spdx30Entities.Relationship> relationships)
     {
-        var sbomFiles = new HashSet<SbomFile>();
+        var sbomFiles = new HashSet<SbomFile>(new SbomFileComparer());
 
         foreach (var file in files)
         {
@@ -159,7 +160,7 @@ internal class SPDXDiffFinder
 
     private HashSet<SbomPackage> ConvertToSbomPackages(List<SPDXPackage> packages)
     {
-        var sbomPackages = new HashSet<SbomPackage>();
+        var sbomPackages = new HashSet<SbomPackage>(new SbompackageComparer());
 
         foreach (var package in packages)
         {
