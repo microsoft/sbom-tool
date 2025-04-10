@@ -9,6 +9,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Microsoft.Sbom.Tools.Tests;
 
@@ -308,10 +310,8 @@ public class IntegrationTests
         Assert.IsTrue(stdout.Contains("SPDXRef-Package"));
     }
 
-    [DataRow("2.2")]
-    [DataRow("3.0")]
     [TestMethod]
-    public void E2E_Validate_WithAdditionalFile_StdOutContainsAdditionalFileErrors(string version)
+    public void E2E_Validate_WithAdditionalFile_SPDX22_StdOutContainsAdditionalFileErrors()
     {
         if (!IsWindows)
         {
@@ -319,6 +319,7 @@ public class IntegrationTests
             return;
         }
 
+        var version = "2.2";
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: version);
 
@@ -329,6 +330,7 @@ public class IntegrationTests
         var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: version);
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+        Assert.AreEqual(3, exitCode.Value, $"Unexpected failure: stdout = {stdout}");
         Assert.IsTrue(stdout.Contains("Additional files not in the manifest . . . . . . 1"));
         Assert.IsTrue(stdout.Contains("newFile"));
 
@@ -338,10 +340,8 @@ public class IntegrationTests
         }
     }
 
-    [DataRow("2.2")]
-    [DataRow("3.0")]
     [TestMethod]
-    public void E2E_Validate_WithMissingFile_StdOutContainsMissingFileErrors(string version)
+    public void E2E_Validate_WithAdditionalFile_SPDX30_StdOutContainsAdditionalFileErrors()
     {
         if (!IsWindows)
         {
@@ -349,36 +349,83 @@ public class IntegrationTests
             return;
         }
 
+        var version = "3.0";
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: version);
 
-        object newFile = null;
-        switch (version)
-        {
-            case "2.2":
-                newFile = new
-                {
-                    fileName = "newFile",
-                    checksums = new[] { new { algorithm = "sha1", checksumValue = "abc123" } },
-                    SPDXID = "SPDXRef-File-newFile"
-                };
-                break;
-            case "3.0":
-                newFile = new
-                {
-                    name = "newFile",
-                    verifiedUsing = new[] { new { algorithm = "sha1", hashValue = "abc123", creationInfo = "_:creationInfo", spdxId = "SPDXRef-PackVerCode", type = "PackageVerificationCode" } },
-                    spdxId = "SPDXRef-File-newFile",
-                    creationInfo = "_:creationInfo",
-                    type = "software_File",
-                };
-                break;
-        }
+        // Add additional file
+        var newFilePath = Path.Combine(testDropDirectory, "newFile");
+        File.WriteAllText(newFilePath, "This is a test file.");
 
-        AddExtraFileToManifest(testFolderPath, version, newFile);
         var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: version);
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+        Assert.AreEqual(3, exitCode.Value, $"Unexpected failure: stdout = {stdout}");
+        Assert.IsTrue(stdout.Contains("Additional files not in the manifest . . . . . . 1"));
+        Assert.IsTrue(stdout.Contains("newFile"));
+
+        if (File.Exists(newFilePath))
+        {
+            File.Delete(newFilePath);
+        }
+    }
+
+    [TestMethod]
+    public void E2E_Validate_WithMissingFile_SPDX22_StdOutContainsMissingFileErrors()
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var spdxVersion = "2.2";
+        var testFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: spdxVersion);
+
+        var newFile = new
+        {
+            fileName = "newFile",
+            checksums = new[] { new { algorithm = "sha1", checksumValue = "abc123" } },
+            SPDXID = "SPDXRef-File-newFile"
+        };
+
+        AddExtraFileToManifest(testFolderPath, spdxVersion, newFile);
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: spdxVersion);
+
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+        Assert.AreEqual(3, exitCode.Value, $"Unexpected failure: stdout = {stdout}");
+        Assert.IsTrue(stdout.Contains("Files in the manifest missing from the disk . . .1"));
+        Assert.IsTrue(stdout.Contains("newFile"));
+    }
+
+    [TestMethod]
+    public void E2E_Validate_WithMissingFile_SPDX30_StdOutContainsMissingFileErrors()
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var spdxVersion = "3.0";
+        var testFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: spdxVersion);
+
+        var newFile = new
+        {
+            name = "newFile",
+            verifiedUsing = new[] { new { algorithm = "sha1", hashValue = "abc123", creationInfo = "_:creationInfo", spdxId = "SPDXRef-PackVerCode", type = "PackageVerificationCode" } },
+            spdxId = "SPDXRef-File-newFile",
+            creationInfo = "_:creationInfo",
+            type = "software_File",
+        };
+
+        AddExtraFileToManifest(testFolderPath, spdxVersion, newFile);
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: spdxVersion);
+
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+        Assert.AreEqual(3, exitCode.Value, $"Unexpected failure: stdout = {stdout}");
         Assert.IsTrue(stdout.Contains("Files in the manifest missing from the disk . . .1"));
         Assert.IsTrue(stdout.Contains("newFile"));
     }
@@ -422,6 +469,11 @@ public class IntegrationTests
         var shaFilePath = Path.Combine(manifestFolderPath, "manifest.spdx.json.sha256");
         Assert.IsTrue(File.Exists(jsonFilePath));
         Assert.IsTrue(File.Exists(shaFilePath));
+
+        // Check that manifestFolderPath is the only folder in the directory
+        var directories = Directory.GetDirectories(Path.Combine(testFolderPath, ManifestRootFolderName));
+        Assert.AreEqual(1, directories.Length, "There should be only one folder in the test directory.");
+        Assert.AreEqual(manifestFolderPath, directories[0], "The only folder in the test directory should be a folder with the correct SBOM version name.");
 
         Assert.AreEqual(0, exitCode.Value, $"Unexpected failure. stdout = {stdout}");
     }
@@ -471,63 +523,40 @@ public class IntegrationTests
 
     private void AddExtraFileToManifest(string testFolderPath, string version, object newFile)
     {
-        var arrayToModify = string.Empty;
-        switch (version)
+        // Determine the array to modify based on the version
+        var keyForArrayToModify = version switch
         {
-            case "2.2":
-                arrayToModify = "files";
-                break;
-            case "3.0":
-                arrayToModify = "@graph";
-                break;
-            default:
-                return;
-        }
+            "2.2" => "files",
+            "3.0" => "@graph",
+            _ => throw new ArgumentException("Unsupported version", nameof(version))
+        };
 
         var manifestFolderPath = AppendFullManifestFolderPath(testFolderPath, spdxVersion: version);
         var jsonFilePath = Path.Combine(manifestFolderPath, ManifestFileName);
 
+        // Read and deserialize the JSON content
         var jsonContent = File.ReadAllText(jsonFilePath);
         var jsonDocument = JsonDocument.Parse(jsonContent);
         var rootElement = jsonDocument.RootElement;
-        var filesArray = rootElement.GetProperty(arrayToModify).EnumerateArray().ToList();
+        var originalArrayToModify = rootElement.GetProperty(keyForArrayToModify).EnumerateArray()
+                .Select(element => JsonSerializer.Deserialize<JsonElement>(element.GetRawText()))
+                .ToList();
 
         // Add a new file to manifest.spdx.json
-        filesArray.Add(JsonSerializer.SerializeToElement(newFile));
+        var modifiedArray = originalArrayToModify;
+        modifiedArray.Add(JsonSerializer.SerializeToElement(newFile));
+        var serializedModifiedArray = JsonSerializer.Serialize(modifiedArray);
 
-        // Create a new JSON object with the updated "files" array
-        using var memoryStream = new MemoryStream();
-        using (var writer = new Utf8JsonWriter(memoryStream))
-        {
-            writer.WriteStartObject();
-
-            // Copy all properties from the original rootElement
-            foreach (var property in rootElement.EnumerateObject())
-            {
-                if (property.NameEquals(arrayToModify))
-                {
-                    // Write the updated array
-                    writer.WritePropertyName(arrayToModify);
-                    writer.WriteStartArray();
-                    foreach (var file in filesArray)
-                    {
-                        file.WriteTo(writer);
-                    }
-
-                    writer.WriteEndArray();
-                }
-                else
-                {
-                    // Write other properties as-is
-                    property.WriteTo(writer);
-                }
-            }
-
-            writer.WriteEndObject();
-        }
+        // Update the JSON with the modified array
+        var updatedJson = JsonConvert.SerializeObject(rootElement.EnumerateObject()
+            .ToDictionary(
+                property => property.Name,
+                property => property.Name.Equals(keyForArrayToModify, StringComparison.Ordinal)
+                    ? JsonConvert.DeserializeObject(serializedModifiedArray)
+                    : JsonConvert.DeserializeObject(property.Value.GetRawText())));
 
         // Write the updated JSON back to the file
-        File.WriteAllText(jsonFilePath, JsonSerializer.Serialize(JsonDocument.Parse(memoryStream.ToArray()).RootElement));
+        File.WriteAllText(jsonFilePath, updatedJson);
     }
 
     private static (string stdout, string stderr, int? exitCode) LaunchAndCaptureOutput(string? arguments)
