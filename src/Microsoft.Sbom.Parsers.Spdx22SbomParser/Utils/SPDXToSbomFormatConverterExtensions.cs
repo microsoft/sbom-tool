@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using SbomChecksum = Microsoft.Sbom.Contracts.Checksum;
@@ -97,6 +98,20 @@ public static class SPDXToSbomFormatConverterExtensions
             Checksum = spdxExternalDocumentReference.Checksum.ToSbomChecksum(),
             ExternalDocumentId = spdxExternalDocumentReference.ExternalDocumentId,
             Document = spdxExternalDocumentReference.SpdxDocument,
+        };
+    }
+
+    public static ExternalDocumentReferenceInfo ToExternalDocumentReferenceInfo(this SpdxExternalDocumentReference externalDocumentReference)
+    {
+        if (externalDocumentReference is null)
+        {
+            return null;
+        }
+
+        return new ExternalDocumentReferenceInfo
+        {
+            Checksum = new List<SbomChecksum> { externalDocumentReference.Checksum.ToSbomChecksum() },
+            DocumentNamespace = externalDocumentReference.SpdxDocument,
         };
     }
 
