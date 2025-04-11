@@ -9,6 +9,7 @@ using Microsoft.Sbom.Common.Spdx30Entities.Enums;
 using Microsoft.Sbom.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PackageVerificationCode = Microsoft.Sbom.Common.Spdx30Entities.PackageVerificationCode;
+using SbomFile = Microsoft.Sbom.Contracts.SbomFile;
 
 namespace Microsoft.Sbom.Utils;
 
@@ -149,6 +150,79 @@ public class SbomFormatConverterTests
         Assert.IsNull(sbomPackage.LicenseInfo.Concluded);
         Assert.AreEqual(organization.Name, sbomPackage.Supplier);
         Assert.IsNull(sbomPackage.PackageUrl);
+    }
+
+    [TestMethod]
+    public void ToSbomRelationship_SimpleConversion_ReturnsExpectedRelationships()
+    {
+        var spdxRelationship = new Relationship
+        {
+            From = "SPDXRef-Source",
+            To = new List<string> { "SPDXRef-Target1", "SPDXRef-Target2" },
+            RelationshipType = RelationshipType.DESCRIBES
+        };
+
+        var sbomRelationships = spdxRelationship.ToSbomRelationship();
+
+        Assert.AreEqual(2, sbomRelationships.Count);
+        Assert.AreEqual(spdxRelationship.From, sbomRelationships[0].SourceElementId);
+        Assert.AreEqual("DESCRIBES", sbomRelationships[0].RelationshipType);
+        Assert.AreEqual(spdxRelationship.To.First().ToString(), sbomRelationships[0].TargetElementId);
+
+        Assert.AreEqual(spdxRelationship.From, sbomRelationships[1].SourceElementId);
+        Assert.AreEqual("DESCRIBES", sbomRelationships[1].RelationshipType);
+        Assert.AreEqual(spdxRelationship.To.Last().ToString(), sbomRelationships[1].TargetElementId);
+    }
+
+    [TestMethod]
+    public void ToSbomRelationship_EmptyToList_ReturnsNoRelationships()
+    {
+        var spdxRelationship = new Relationship
+        {
+            From = "SPDXRef-Source",
+            To = new List<string>(),
+            RelationshipType = RelationshipType.DESCRIBES
+        };
+
+        var sbomRelationships = spdxRelationship.ToSbomRelationship();
+
+        Assert.AreEqual(0, sbomRelationships.Count);
+    }
+
+    [TestMethod]
+    public void ToExternalDocumentReferenceInfo_SimpleConversion_ReturnsExpectedInfo()
+    {
+        var externalDocumentReference = new ExternalMap
+        {
+            ExternalSpdxId = "SPDXRef-External",
+            VerifiedUsing = new List<PackageVerificationCode>
+                {
+                    new PackageVerificationCode
+                    {
+                        Algorithm = HashAlgorithm.sha256,
+                        HashValue = "abc123"
+                    }
+                }
+        };
+
+        var externalDocumentReferenceInfo = externalDocumentReference.ToExternalDocumentReferenceInfo();
+
+        Assert.IsNotNull(externalDocumentReferenceInfo);
+        Assert.AreEqual(externalDocumentReference.ExternalSpdxId, externalDocumentReferenceInfo.DocumentNamespace);
+        Assert.AreEqual(1, externalDocumentReferenceInfo.Checksum.Count());
+        Assert.IsTrue(externalDocumentReferenceInfo.Checksum.First().Algorithm.Name.Equals(
+            HashAlgorithm.sha256.ToString(),
+            StringComparison.OrdinalIgnoreCase),
+            "Hash algorithm names are not equal");
+        Assert.AreEqual(externalDocumentReference.VerifiedUsing.First().HashValue, externalDocumentReferenceInfo.Checksum.First().ChecksumValue);
+    }
+
+    [TestMethod]
+    public void ToExternalDocumentReferenceInfo_NullInput_ReturnsNull()
+    {
+        ExternalMap externalDocumentReference = null;
+        var externalDocumentReferenceInfo = externalDocumentReference.ToExternalDocumentReferenceInfo();
+        Assert.IsNull(externalDocumentReferenceInfo);
     }
 
     private void AssertSimpleFileConversionSucceeded(SbomFile sbomFile)

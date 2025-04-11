@@ -80,12 +80,13 @@ public static class SPDXToSbomFormatConverterExtensions
         var sbomRelationships = new List<SbomRelationship>();
         foreach (var toElement in spdxRelationship.To)
         {
+            sbomRelationships.Add(
             new SbomRelationship
             {
                 SourceElementId = spdxRelationship.From,
                 RelationshipType = spdxRelationship.RelationshipType.ToString(),
                 TargetElementId = toElement,
-            };
+            });
         }
 
         return sbomRelationships;
