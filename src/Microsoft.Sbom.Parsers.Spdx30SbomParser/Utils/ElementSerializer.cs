@@ -9,8 +9,64 @@ using Microsoft.Sbom.Common.Spdx30Entities;
 
 public class ElementSerializer : JsonConverter<List<Element>>
 {
-    public override List<Element> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
-        throw new NotImplementedException("Deserialization of Elements into specific subtypes is not implemented yet.");
+    public override List<Element> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType != JsonTokenType.StartArray)
+        {
+            throw new JsonException("Expected a JSON array.");
+        }
+
+        var elements = new List<Element>();
+
+        // Read the start of the array
+        reader.Read();
+
+        while (reader.TokenType != JsonTokenType.EndArray)
+        {
+            // Create a JsonDocument for the current element
+            using var jsonDocument = JsonDocument.ParseValue(ref reader);
+            var jsonObject = jsonDocument.RootElement;
+
+            // Determine the type of the element
+            if (!jsonObject.TryGetProperty("type", out var typeProperty))
+            {
+                throw new JsonException("Missing 'type' property in JSON element.");
+            }
+
+            var typeValue = typeProperty.GetString();
+            Element element;
+
+            // Map the type to the corresponding subclass
+            switch (typeValue)
+            {
+                case "software_File":
+                    element = JsonSerializer.Deserialize<File>(jsonObject.GetRawText(), options);
+                    break;
+
+                case "software_Package":
+                    element = JsonSerializer.Deserialize<Package>(jsonObject.GetRawText(), options);
+                    break;
+
+                case "ExternalMap":
+                    element = JsonSerializer.Deserialize<ExternalMap>(jsonObject.GetRawText(), options);
+                    break;
+
+                case "Relationship":
+                    element = JsonSerializer.Deserialize<Relationship>(jsonObject.GetRawText(), options);
+                    break;
+
+                default:
+                    throw new JsonException($"Unknown element type: {typeValue}");
+            }
+
+            elements.Add(element);
+
+            // Move to the next element in the array
+            reader.Read();
+        }
+
+        return elements;
+    }
 
     public override void Write(Utf8JsonWriter writer, List<Element> elements, JsonSerializerOptions options)
     {
