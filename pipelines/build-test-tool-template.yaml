@@ -8,16 +8,15 @@ steps:
     -restore -build -pack -c $(BuildConfiguration)
     displayName: Build
 
-  - powershell: dotnet test
-    --no-build -c $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory)
-    --coverage --coverage-output $(Agent.TempDirectory/coverage.cobertura.xml --coverage-output-format cobertura'
-    condition: eq(variables['Agent.OS'], 'Windows_NT')
-    displayName: Run unit tests on Windows
-
-  - powershell: dotnet test
-    --no-build -c $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory)
-    condition: ne(variables['Agent.OS'], 'Windows_NT')
-    displayName: Run unit tests on non-windows
+  - ${{ if eq(variables['Agent.OS'], 'Windows_NT') }}:
+    - powershell: dotnet test
+        --no-build -c $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory)
+        --coverage --coverage-output $(Agent.TempDirectory/coverage.cobertura.xml --coverage-output-format cobertura'
+      displayName: Run unit tests on Windows
+  - ${{ else }}:
+    - powershell: dotnet test
+        --no-build -c $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory)
+      displayName: Run unit tests on non-windows
 
 #  - task: DotNetCoreCLI@2
 #    displayName: 'Restore solution'
