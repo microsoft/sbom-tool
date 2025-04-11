@@ -80,12 +80,13 @@ public static class SPDXToSbomFormatConverterExtensions
         var sbomRelationships = new List<SbomRelationship>();
         foreach (var toElement in spdxRelationship.To)
         {
+            sbomRelationships.Add(
             new SbomRelationship
             {
                 SourceElementId = spdxRelationship.From,
                 RelationshipType = spdxRelationship.RelationshipType.ToString(),
                 TargetElementId = toElement,
-            };
+            });
         }
 
         return sbomRelationships;
@@ -205,7 +206,7 @@ public static class SPDXToSbomFormatConverterExtensions
 
     internal static string GetPackageUrl(this Package spdxPackage, List<Element> spdx30Elements)
     {
-        var externalIdentifierSpdxId = spdxPackage.ExternalIdentifier.FirstOrDefault();
+        var externalIdentifierSpdxId = spdxPackage.ExternalIdentifier?.FirstOrDefault();
         if (externalIdentifierSpdxId is null)
         {
             return null;
