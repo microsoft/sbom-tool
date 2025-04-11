@@ -4,8 +4,8 @@ steps:
     inputs:
       useGlobalJson: true
 
-  - powershell: dotnet build
-      -pack -c $(BuildConfiguration)
+  - powershell: dotnet pack
+      -c $(BuildConfiguration)
     displayName: Build
 
   - ${{ if eq(variables['Agent.OS'], 'Windows_NT') }}:
