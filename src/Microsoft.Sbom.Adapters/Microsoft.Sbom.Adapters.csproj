@@ -14,7 +14,6 @@
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="packageurl-dotnet" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.Extensions.Primitives" />
   </ItemGroup>
 
