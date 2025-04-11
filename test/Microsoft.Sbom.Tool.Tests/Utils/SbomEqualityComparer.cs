@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text.Json;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Contracts;
-using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.Sbom.Utils;
 using File = System.IO.File;
@@ -205,25 +204,25 @@ internal class SbomEqualityComparer
         return sbomRelationships;
     }
 
-    private HashSet<ExternalDocumentReferenceInfo> ConvertToSbomReferences(List<SpdxExternalDocumentReference> externalDocRefs)
+    private HashSet<SbomReference> ConvertToSbomReferences(List<SpdxExternalDocumentReference> externalDocRefs)
     {
-        var sbomReferences = new HashSet<ExternalDocumentReferenceInfo>();
+        var sbomReferences = new HashSet<SbomReference>();
 
         foreach (var externalDocRef in externalDocRefs)
         {
-            sbomReferences.Add(externalDocRef.ToExternalDocumentReferenceInfo());
+            sbomReferences.Add(externalDocRef.ToSbomReference());
         }
 
         return sbomReferences;
     }
 
-    private HashSet<ExternalDocumentReferenceInfo> ConvertToSbomReferences(List<ExternalMap> externalDocRefs)
+    private HashSet<SbomReference> ConvertToSbomReferences(List<ExternalMap> externalDocRefs)
     {
-        var sbomReferences = new HashSet<ExternalDocumentReferenceInfo>();
+        var sbomReferences = new HashSet<SbomReference>();
 
         foreach (var externalDocRef in externalDocRefs)
         {
-            sbomReferences.Add(externalDocRef.ToExternalDocumentReferenceInfo());
+            sbomReferences.Add(externalDocRef.ToSbomReference());
         }
 
         return sbomReferences;

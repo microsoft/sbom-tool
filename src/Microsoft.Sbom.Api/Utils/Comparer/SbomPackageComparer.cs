@@ -6,10 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Sbom.Contracts;
 
-namespace Microsoft.Sbom.Api.Utils;
+namespace Microsoft.Sbom.Api.Utils.Comparer;
 
-public class SbompackageComparer : IEqualityComparer<SbomPackage>
+public class SbomPackageComparer : IEqualityComparer<SbomPackage>
 {
+    private static readonly SbomChecksumComparer ChecksumComparer = new SbomChecksumComparer();
+
     public bool Equals(SbomPackage package1, SbomPackage package2)
     {
         if (package1 == null || package2 == null)
@@ -18,7 +20,7 @@ public class SbompackageComparer : IEqualityComparer<SbomPackage>
         }
 
         var checksumsEqual = (package1.Checksum == null && package2.Checksum == null) ||
-                         package1.Checksum?.SequenceEqual(package2.Checksum ?? Enumerable.Empty<Checksum>()) == true;
+                         package1.Checksum?.SequenceEqual(package2.Checksum ?? Enumerable.Empty<Checksum>(), ChecksumComparer) == true;
 
         // Compare relevant fields.
         // Note: FilesAnalyzed is not compared as it is not relevant for equality since it's not a valid field in SPDX 3.0.

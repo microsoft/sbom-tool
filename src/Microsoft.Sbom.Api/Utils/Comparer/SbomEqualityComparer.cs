@@ -1,22 +1,17 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.Sbom.Tools.Tests.Utils;
+namespace Microsoft.Sbom.Api.Utils.Comparer;
 
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Contracts;
-using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.Sbom.Utils;
 using File = System.IO.File;
-#pragma warning disable IDE0001 // Simplify Names
-using Spdx30Entities = Microsoft.Sbom.Common.Spdx30Entities;
-#pragma warning restore IDE0001 // Simplify Names
 
 /// <summary>
 /// Finds the differences between an SPDX 2.2 document and an SPDX 3.0 document.
@@ -31,10 +26,19 @@ internal class SbomEqualityComparer
     private readonly string spdx22FilePath;
     private readonly string spdx30FilePath;
 
+    private readonly SbomFileComparer sbomFileComparer;
+    private readonly SbomPackageComparer sbomPackageComparer;
+    private readonly SbomRelationshipComparer sbomRelationshipComparer;
+    private readonly SbomReferenceComparer sbomReferenceComparer;
+
     public SbomEqualityComparer(string spdx22FilePath, string spdx30FilePath)
     {
         this.spdx22FilePath = spdx22FilePath;
         this.spdx30FilePath = spdx30FilePath;
+        this.sbomFileComparer = new SbomFileComparer();
+        this.sbomPackageComparer = new SbomPackageComparer();
+        this.sbomRelationshipComparer = new SbomRelationshipComparer();
+        this.sbomReferenceComparer = new SbomReferenceComparer();
     }
 
     public bool DocumentsEqual()
@@ -48,9 +52,9 @@ internal class SbomEqualityComparer
         var spdx22Relationships = GetSpdx22Relationships(spdx22Json);
 
         var graphArray = spdx30Json.GetProperty("graph");
-        var elements = JsonSerializer.Deserialize<List<Element>>(graphArray, this.serializerOptions);
+        var elements = graphArray.Deserialize<List<Element>>(this.serializerOptions);
 
-        var spdx30Files = elements.OfType<Spdx30Entities.File>().ToList();
+        var spdx30Files = elements.OfType<Common.Spdx30Entities.File>().ToList();
         var spdx30Packages = elements.OfType<Package>().ToList();
         var spdx30ExternalDocumentRefs = elements.OfType<ExternalMap>().ToList();
         var spdx30Relationships = GetSpdx30Relationships(elements);
@@ -82,7 +86,7 @@ internal class SbomEqualityComparer
         return true;
     }
 
-    internal bool CheckFiles(List<SPDXFile> spdx22Files, List<Spdx30Entities.File> spdx30Files, List<Element> spdx30Elements, List<Spdx30Entities.Relationship> relationships)
+    internal bool CheckFiles(List<SPDXFile> spdx22Files, List<Common.Spdx30Entities.File> spdx30Files, List<Element> spdx30Elements, List<Relationship> relationships)
     {
         if (spdx22Files.Count != spdx30Files.Count)
         {
@@ -95,7 +99,7 @@ internal class SbomEqualityComparer
         return spdx22InternalSbomFileInfos.SetEquals(spdx30InternalSbomFileInfos);
     }
 
-    internal bool CheckPackages(List<SPDXPackage> spdx22Packages, List<Package> spdx30Packages, List<Element> spdx30Elements, List<Spdx30Entities.Relationship> relationships)
+    internal bool CheckPackages(List<SPDXPackage> spdx22Packages, List<Package> spdx30Packages, List<Element> spdx30Elements, List<Relationship> relationships)
     {
         if (spdx22Packages.Count != spdx30Packages.Count)
         {
@@ -108,7 +112,7 @@ internal class SbomEqualityComparer
         return spdx22InternalSbomPackages.SetEquals(spdx30InternalSbomPackages);
     }
 
-    internal bool CheckRelationships(List<SPDXRelationship> spdx22Relationships, List<Spdx30Entities.Relationship> spdx30Relationships)
+    internal bool CheckRelationships(List<SPDXRelationship> spdx22Relationships, List<Relationship> spdx30Relationships)
     {
         if (spdx22Relationships.Count != spdx30Relationships.Count)
         {
@@ -136,7 +140,7 @@ internal class SbomEqualityComparer
 
     private HashSet<SbomFile> ConvertToSbomFiles(List<SPDXFile> files)
     {
-        var sbomFiles = new HashSet<SbomFile>(new SbomFileComparer());
+        var sbomFiles = new HashSet<SbomFile>(sbomFileComparer);
 
         foreach (var file in files)
         {
@@ -146,9 +150,9 @@ internal class SbomEqualityComparer
         return sbomFiles;
     }
 
-    private HashSet<SbomFile> ConvertToSbomFiles(List<Spdx30Entities.File> files, List<Element> spdx30Elements, List<Spdx30Entities.Relationship> relationships)
+    private HashSet<SbomFile> ConvertToSbomFiles(List<Common.Spdx30Entities.File> files, List<Element> spdx30Elements, List<Relationship> relationships)
     {
-        var sbomFiles = new HashSet<SbomFile>(new SbomFileComparer());
+        var sbomFiles = new HashSet<SbomFile>(sbomFileComparer);
 
         foreach (var file in files)
         {
@@ -160,7 +164,7 @@ internal class SbomEqualityComparer
 
     private HashSet<SbomPackage> ConvertToSbomPackages(List<SPDXPackage> packages)
     {
-        var sbomPackages = new HashSet<SbomPackage>(new SbompackageComparer());
+        var sbomPackages = new HashSet<SbomPackage>(sbomPackageComparer);
 
         foreach (var package in packages)
         {
@@ -170,9 +174,9 @@ internal class SbomEqualityComparer
         return sbomPackages;
     }
 
-    private HashSet<SbomPackage> ConvertToSbomPackages(List<Package> packages, List<Element> spdx30Elements, List<Spdx30Entities.Relationship> relationships)
+    private HashSet<SbomPackage> ConvertToSbomPackages(List<Package> packages, List<Element> spdx30Elements, List<Relationship> relationships)
     {
-        var sbomPackages = new HashSet<SbomPackage>();
+        var sbomPackages = new HashSet<SbomPackage>(sbomPackageComparer);
 
         foreach (var package in packages)
         {
@@ -184,7 +188,7 @@ internal class SbomEqualityComparer
 
     private HashSet<SbomRelationship> ConvertToRelationships(List<SPDXRelationship> relationships)
     {
-        var sbomRelationships = new HashSet<SbomRelationship>();
+        var sbomRelationships = new HashSet<SbomRelationship>(sbomRelationshipComparer);
 
         foreach (var relationship in relationships)
         {
@@ -194,9 +198,9 @@ internal class SbomEqualityComparer
         return sbomRelationships;
     }
 
-    private HashSet<SbomRelationship> ConvertToRelationships(List<Spdx30Entities.Relationship> relationships)
+    private HashSet<SbomRelationship> ConvertToRelationships(List<Relationship> relationships)
     {
-        var sbomRelationships = new HashSet<SbomRelationship>();
+        var sbomRelationships = new HashSet<SbomRelationship>(sbomRelationshipComparer);
 
         foreach (var relationship in relationships)
         {
@@ -206,25 +210,25 @@ internal class SbomEqualityComparer
         return sbomRelationships;
     }
 
-    private HashSet<ExternalDocumentReferenceInfo> ConvertToSbomReferences(List<SpdxExternalDocumentReference> externalDocRefs)
+    private HashSet<SbomReference> ConvertToSbomReferences(List<SpdxExternalDocumentReference> externalDocRefs)
     {
-        var sbomReferences = new HashSet<ExternalDocumentReferenceInfo>();
+        var sbomReferences = new HashSet<SbomReference>(sbomReferenceComparer);
 
         foreach (var externalDocRef in externalDocRefs)
         {
-            sbomReferences.Add(externalDocRef.ToExternalDocumentReferenceInfo());
+            sbomReferences.Add(externalDocRef.ToSbomReference());
         }
 
         return sbomReferences;
     }
 
-    private HashSet<ExternalDocumentReferenceInfo> ConvertToSbomReferences(List<ExternalMap> externalDocRefs)
+    private HashSet<SbomReference> ConvertToSbomReferences(List<ExternalMap> externalDocRefs)
     {
-        var sbomReferences = new HashSet<ExternalDocumentReferenceInfo>();
+        var sbomReferences = new HashSet<SbomReference>(sbomReferenceComparer);
 
         foreach (var externalDocRef in externalDocRefs)
         {
-            sbomReferences.Add(externalDocRef.ToExternalDocumentReferenceInfo());
+            sbomReferences.Add(externalDocRef.ToSbomReference());
         }
 
         return sbomReferences;
@@ -278,12 +282,12 @@ internal class SbomEqualityComparer
     /// </summary>
     /// <param name="elements"></param>
     /// <returns></returns>
-    private List<Spdx30Entities.Relationship> GetSpdx30Relationships(List<Element> elements)
+    private List<Relationship> GetSpdx30Relationships(List<Element> elements)
     {
-        var relationships = elements.OfType<Spdx30Entities.Relationship>().ToList();
+        var relationships = elements.OfType<Relationship>().ToList();
         return relationships
-            .Where(element => element.RelationshipType != Spdx30Entities.Enums.RelationshipType.HAS_CONCLUDED_LICENSE &&
-                              element.RelationshipType != Spdx30Entities.Enums.RelationshipType.HAS_DECLARED_LICENSE)
+            .Where(element => element.RelationshipType != Common.Spdx30Entities.Enums.RelationshipType.HAS_CONCLUDED_LICENSE &&
+                              element.RelationshipType != Common.Spdx30Entities.Enums.RelationshipType.HAS_DECLARED_LICENSE)
             .ToList();
     }
 }

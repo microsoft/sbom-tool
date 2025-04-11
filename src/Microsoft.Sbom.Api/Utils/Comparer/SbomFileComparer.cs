@@ -6,10 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Sbom.Contracts;
 
-namespace Microsoft.Sbom.Api.Utils;
+namespace Microsoft.Sbom.Api.Utils.Comparer;
 
 public class SbomFileComparer : IEqualityComparer<SbomFile>
 {
+    private static readonly SbomChecksumComparer ChecksumComparer = new SbomChecksumComparer();
+
     public bool Equals(SbomFile file1, SbomFile file2)
     {
         if (file1 == null || file2 == null)
@@ -20,7 +22,7 @@ public class SbomFileComparer : IEqualityComparer<SbomFile>
         var licenseInfosEqual = (file1.LicenseInfoInFiles == null && file2.LicenseInfoInFiles == null) ||
                         file1.LicenseInfoInFiles?.SequenceEqual(file2.LicenseInfoInFiles ?? Enumerable.Empty<string>()) == true;
         var checksumsEqual = (file1.Checksum == null && file2.Checksum == null) ||
-                         file1.Checksum?.SequenceEqual(file2.Checksum ?? Enumerable.Empty<Checksum>()) == true;
+                         file1.Checksum?.SequenceEqual(file2.Checksum ?? Enumerable.Empty<Checksum>(), ChecksumComparer) == true;
 
         // Compare relevant fields
         return file1.Id == file2.Id &&

@@ -3,10 +3,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Sbom.Api.Utils.Comparer;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Common.Spdx30Entities.Enums;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
-using Microsoft.Sbom.Tools.Tests.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Sbom.Api.Tests.Utils;
@@ -276,6 +276,167 @@ public class SbomEqualityComparerTests
 
         var result = comparer.CheckPackages(spdx22Packages, spdx30Packages, spdx30Elements, relationships);
         Assert.IsFalse(result, "Different license info should result in different package contents");
+    }
+
+    [TestMethod]
+    public void CheckRelationships_MatchingRelationships_ReturnsTrue()
+    {
+        var spdx22Relationships = new List<SPDXRelationship>
+        {
+            new SPDXRelationship
+            {
+                SourceElementId = "SPDXRef-Source",
+                TargetElementId = "SPDXRef-Target",
+                RelationshipType = "DESCRIBES"
+            }
+        };
+
+        var spdx30Relationships = new List<Relationship>
+        {
+            new Relationship
+            {
+                From = "SPDXRef-Source",
+                To = new List<string> { "SPDXRef-Target" },
+                RelationshipType = RelationshipType.DESCRIBES
+            }
+        };
+
+        var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
+        Assert.IsTrue(result, "Matching relationships should return true.");
+    }
+
+    [TestMethod]
+    public void CheckRelationships_MatchingRelationships_CaseInsensitiveRelationshipType_ReturnsTrue()
+    {
+        var spdx22Relationships = new List<SPDXRelationship>
+        {
+            new SPDXRelationship
+            {
+                SourceElementId = "SPDXRef-Source",
+                TargetElementId = "SPDXRef-Target",
+                RelationshipType = "describes"
+            }
+        };
+
+        var spdx30Relationships = new List<Relationship>
+        {
+            new Relationship
+            {
+                From = "SPDXRef-Source",
+                To = new List<string> { "SPDXRef-Target" },
+                RelationshipType = RelationshipType.DESCRIBES
+            }
+        };
+
+        var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
+        Assert.IsTrue(result, "Matching relationships should return true.");
+    }
+
+    [TestMethod]
+    public void CheckRelationships_NonMatchingRelationships_ReturnsFalse()
+    {
+        var spdx22Relationships = new List<SPDXRelationship>
+        {
+            new SPDXRelationship
+            {
+                SourceElementId = "SPDXRef-Source",
+                TargetElementId = "SPDXRef-Target",
+                RelationshipType = "describes"
+            }
+        };
+
+        var spdx30Relationships = new List<Relationship>
+        {
+            new Relationship
+            {
+                From = "SPDXRef-Source",
+                To = new List<string> { "SPDXRef-DifferentTarget" },
+                RelationshipType = RelationshipType.DESCRIBES
+            }
+        };
+
+        var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
+        Assert.IsFalse(result, "Non-matching relationships should return false.");
+    }
+
+    [TestMethod]
+    public void CheckExternalDocRefs_MatchingExternalDocRefs_ReturnsTrue()
+    {
+        var spdx22ExternalDocRefs = new List<SpdxExternalDocumentReference>
+        {
+            new SpdxExternalDocumentReference
+            {
+                ExternalDocumentId = "SPDX-ExternalRef",
+                SpdxDocument = "SPDX-OtherDoc",
+            }
+        };
+
+        var spdx30ExternalDocRefs = new List<ExternalMap>
+        {
+            new ExternalMap
+            {
+                SpdxId = "SPDX-ExternalRef",
+                ExternalSpdxId = "SPDX-OtherDoc",
+            }
+        };
+
+        var result = comparer.CheckExternalDocRefs(spdx22ExternalDocRefs, spdx30ExternalDocRefs);
+        Assert.IsTrue(result, "Matching external document references should return true.");
+    }
+
+    [TestMethod]
+    public void CheckExternalDocRefs_NonMatchingExternalDocRefs_ReturnsFalse()
+    {
+        var spdx22ExternalDocRefs = new List<SpdxExternalDocumentReference>
+        {
+            new SpdxExternalDocumentReference
+            {
+                ExternalDocumentId = "SPDX-ExternalRef",
+                SpdxDocument = "SPDX-OtherDoc",
+            }
+        };
+
+        var spdx30ExternalDocRefs = new List<ExternalMap>
+        {
+            new ExternalMap
+            {
+                SpdxId = "SPDX-ExternalRef",
+                ExternalSpdxId = "SPDX-vairushf",
+            }
+        };
+
+        var result = comparer.CheckExternalDocRefs(spdx22ExternalDocRefs, spdx30ExternalDocRefs);
+        Assert.IsFalse(result, "Non-matching external document references should return false.");
+    }
+
+    [TestMethod]
+    public void CheckExternalDocRefs_NonMatchingExternalDocRefs_DifferentChecksums_ReturnsFalse()
+    {
+        var spdx22ExternalDocRefs = new List<SpdxExternalDocumentReference>
+        {
+            new SpdxExternalDocumentReference
+            {
+                ExternalDocumentId = "SPDX-ExternalRef",
+                SpdxDocument = "SPDX-OtherDoc",
+                Checksum = new Checksum
+                {
+                    ChecksumValue = "checksumValue",
+                    Algorithm = "SHA1",
+                }
+            }
+        };
+
+        var spdx30ExternalDocRefs = new List<ExternalMap>
+        {
+            new ExternalMap
+            {
+                SpdxId = "SPDX-ExternalRef",
+                ExternalSpdxId = "SPDX-OtherDoc",
+            }
+        };
+
+        var result = comparer.CheckExternalDocRefs(spdx22ExternalDocRefs, spdx30ExternalDocRefs);
+        Assert.IsFalse(result, "Non-matching external document references should return false.");
     }
 
     private void ChangeLicense(string spdxId, RelationshipType relationshipType)
