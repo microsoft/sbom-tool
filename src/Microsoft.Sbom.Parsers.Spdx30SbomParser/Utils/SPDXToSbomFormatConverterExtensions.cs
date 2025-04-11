@@ -205,7 +205,7 @@ public static class SPDXToSbomFormatConverterExtensions
 
     internal static string GetPackageUrl(this Package spdxPackage, List<Element> spdx30Elements)
     {
-        var externalIdentifierSpdxId = spdxPackage.ExternalIdentifier.FirstOrDefault();
+        var externalIdentifierSpdxId = spdxPackage.ExternalIdentifier?.FirstOrDefault();
         if (externalIdentifierSpdxId is null)
         {
             return null;
