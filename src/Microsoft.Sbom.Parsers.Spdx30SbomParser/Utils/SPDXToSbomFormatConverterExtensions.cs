@@ -6,7 +6,6 @@ using System.Linq;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Extensions.Entities;
 using RelationshipType = Microsoft.Sbom.Common.Spdx30Entities.Enums.RelationshipType;
 using SbomChecksum = Microsoft.Sbom.Contracts.Checksum;
 
@@ -75,7 +74,7 @@ public static class SPDXToSbomFormatConverterExtensions
         return sbomPackage;
     }
 
-    public static List<SbomRelationship> ToSbomRelationship(this Common.Spdx30Entities.Relationship spdxRelationship)
+    public static List<SbomRelationship> ToSbomRelationship(this Relationship spdxRelationship)
     {
         var sbomRelationships = new List<SbomRelationship>();
         foreach (var toElement in spdxRelationship.To)
@@ -92,17 +91,18 @@ public static class SPDXToSbomFormatConverterExtensions
         return sbomRelationships;
     }
 
-    public static ExternalDocumentReferenceInfo ToExternalDocumentReferenceInfo(this ExternalMap externalDocumentReference)
+    public static SbomReference ToSbomReference(this ExternalMap externalDocumentReference)
     {
         if (externalDocumentReference is null)
         {
             return null;
         }
 
-        return new ExternalDocumentReferenceInfo
+        return new SbomReference
         {
-            Checksum = externalDocumentReference.VerifiedUsing.ToSbomChecksum(),
-            DocumentNamespace = externalDocumentReference.ExternalSpdxId,
+            Checksum = externalDocumentReference.VerifiedUsing?.ToSbomChecksum().FirstOrDefault(),
+            ExternalDocumentId = externalDocumentReference.SpdxId,
+            Document = externalDocumentReference.ExternalSpdxId,
         };
     }
 
