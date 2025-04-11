@@ -17,10 +17,7 @@ public partial class GenerateSbom : ToolTask
     /// Get full path to SBOM CLI tool.
     /// </summary>
     /// <returns></returns>
-    protected override string GenerateFullPathToTool()
-    {
-        return Path.Combine(this.SbomToolPath, $"{this.ToolName}.exe");
-    }
+    protected override string GenerateFullPathToTool() => Path.Combine(this.SbomToolPath, $"{this.ToolName}.exe");
 
     /// <summary>
     /// Return a formatted list of arguments for the SBOM CLI tool.

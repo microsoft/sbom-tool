@@ -33,7 +33,7 @@ public class NugetUtilsTests
             Component = new NuGetComponent("testName", "1.0.0")
         };
 
-        var nuspecPath = $"{NugetPackagesPath}{((NuGetComponent)scannedComponent.Component).Name.ToLower()}/{((NuGetComponent)scannedComponent.Component).Version}/{((NuGetComponent)scannedComponent.Component).Name.ToLower()}.nuspec";
+        var nuspecPath = $"{NugetPackagesPath}\\{((NuGetComponent)scannedComponent.Component).Name.ToLower()}/{((NuGetComponent)scannedComponent.Component).Version}/{((NuGetComponent)scannedComponent.Component).Name.ToLower()}.nuspec";
 
         mockFileSystemUtils.Setup(fs => fs.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
         mockFileSystemUtils.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
