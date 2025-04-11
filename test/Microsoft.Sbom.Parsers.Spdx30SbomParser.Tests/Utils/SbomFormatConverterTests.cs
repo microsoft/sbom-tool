@@ -190,39 +190,87 @@ public class SbomFormatConverterTests
     }
 
     [TestMethod]
-    public void ToExternalDocumentReferenceInfo_SimpleConversion_ReturnsExpectedInfo()
+    public void ToSbomExternalDocumentRef_SimpleConversion_ReturnsExpectedExternalDocumentRef()
     {
-        var externalDocumentReference = new ExternalMap
+        var externalDocumentRef = new ExternalMap
         {
-            ExternalSpdxId = "SPDXRef-External",
-            VerifiedUsing = new List<PackageVerificationCode>
+            SpdxId = "DocumentRef-ExternalRef",
+            ExternalSpdxId = "SPDXRef-OtherDoc",
+            VerifiedUsing = new List<PackageVerificationCode> {
+                new PackageVerificationCode
                 {
-                    new PackageVerificationCode
-                    {
-                        Algorithm = HashAlgorithm.sha256,
-                        HashValue = "abc123"
-                    }
+                    Algorithm = HashAlgorithm.sha256,
+                    HashValue = "123456789abcdef"
                 }
+            }
         };
 
-        var externalDocumentReferenceInfo = externalDocumentReference.ToExternalDocumentReferenceInfo();
+        var sbomReference = externalDocumentRef.ToSbomReference();
 
-        Assert.IsNotNull(externalDocumentReferenceInfo);
-        Assert.AreEqual(externalDocumentReference.ExternalSpdxId, externalDocumentReferenceInfo.DocumentNamespace);
-        Assert.AreEqual(1, externalDocumentReferenceInfo.Checksum.Count());
-        Assert.IsTrue(externalDocumentReferenceInfo.Checksum.First().Algorithm.Name.Equals(
-            HashAlgorithm.sha256.ToString(),
-            StringComparison.OrdinalIgnoreCase),
-            "Hash algorithm names are not equal");
-        Assert.AreEqual(externalDocumentReference.VerifiedUsing.First().HashValue, externalDocumentReferenceInfo.Checksum.First().ChecksumValue);
+        Assert.AreEqual(externalDocumentRef.SpdxId, sbomReference.ExternalDocumentId);
+        Assert.AreEqual(externalDocumentRef.ExternalSpdxId, sbomReference.Document);
+        Assert.AreEqual(externalDocumentRef.VerifiedUsing.First().Algorithm.ToString(), sbomReference.Checksum.Algorithm.ToString(), ignoreCase: true);
+        Assert.AreEqual(externalDocumentRef.VerifiedUsing.First().HashValue, sbomReference.Checksum.ChecksumValue);
     }
 
     [TestMethod]
-    public void ToExternalDocumentReferenceInfo_NullInput_ReturnsNull()
+    public void ToSbomExternalDocumentRef_WithNullChecksum_ReturnsNullChecksum()
     {
-        ExternalMap externalDocumentReference = null;
-        var externalDocumentReferenceInfo = externalDocumentReference.ToExternalDocumentReferenceInfo();
-        Assert.IsNull(externalDocumentReferenceInfo);
+        var externalDocumentRef = new ExternalMap
+        {
+            SpdxId = "DocumentRef-ExternalRef",
+            ExternalSpdxId = "SPDXRef-OtherDoc",
+            VerifiedUsing = new List<PackageVerificationCode>(),
+        };
+
+        var sbomReference = externalDocumentRef.ToSbomReference();
+
+        Assert.AreEqual(externalDocumentRef.SpdxId, sbomReference.ExternalDocumentId);
+        Assert.AreEqual(externalDocumentRef.ExternalSpdxId, sbomReference.Document);
+        Assert.IsNull(sbomReference.Checksum);
+    }
+
+    [TestMethod]
+    public void ToSbomChecksum_MultipleChecksums_ReturnsExpectedChecksums()
+    {
+        var verificationCodes = new List<PackageVerificationCode>
+        {
+            new PackageVerificationCode
+            {
+                Algorithm = HashAlgorithm.sha256,
+                HashValue = "abc123"
+            },
+            new PackageVerificationCode
+            {
+                Algorithm = HashAlgorithm.sha1,
+                HashValue = "def456"
+            }
+        };
+
+        var sbomChecksums = verificationCodes.ToSbomChecksum();
+
+        Assert.IsNotNull(sbomChecksums);
+        Assert.AreEqual(2, sbomChecksums.Count);
+        Assert.AreEqual("sha256", sbomChecksums[0].Algorithm.Name, ignoreCase: true);
+        Assert.AreEqual("abc123", sbomChecksums[0].ChecksumValue);
+        Assert.AreEqual("sha1", sbomChecksums[1].Algorithm.Name, ignoreCase: true);
+        Assert.AreEqual("def456", sbomChecksums[1].ChecksumValue);
+    }
+
+    [TestMethod]
+    public void ToSbomChecksum_NullVerificationCodes_ReturnsNull()
+    {
+        List<PackageVerificationCode> verificationCodes = null;
+        var sbomChecksums = verificationCodes.ToSbomChecksum();
+        Assert.IsNull(sbomChecksums);
+    }
+
+    [TestMethod]
+    public void ToSbomChecksum_EmptyVerificationCodes_ReturnsNull()
+    {
+        var verificationCodes = new List<PackageVerificationCode>();
+        var sbomChecksums = verificationCodes.ToSbomChecksum();
+        Assert.AreEqual(0, sbomChecksums.Count());
     }
 
     private void AssertSimpleFileConversionSucceeded(SbomFile sbomFile)
