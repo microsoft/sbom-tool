@@ -5,7 +5,7 @@ steps:
       useGlobalJson: true
 
   - powershell: dotnet build
-      -restore -build -pack -c $(BuildConfiguration)
+      -pack -c $(BuildConfiguration)
     displayName: Build
 
   - ${{ if eq(variables['Agent.OS'], 'Windows_NT') }}:
