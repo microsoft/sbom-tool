@@ -22,7 +22,7 @@ public static class SPDXToSbomFormatConverterExtensions
     {
         return new SbomFile
         {
-            Checksum = spdxFile.VerifiedUsing.ToSbomChecksum(),
+            Checksum = spdxFile.VerifiedUsing?.ToSbomChecksum(),
             FileCopyrightText = spdxFile.CopyrightText == "NOASSERTION" ? null : spdxFile.CopyrightText,
             Path = spdxFile.Name,
             Id = spdxFile.SpdxId,
@@ -43,7 +43,7 @@ public static class SPDXToSbomFormatConverterExtensions
             PackageVersion = spdxPackage.PackageVersion,
             PackageSource = spdxPackage.DownloadLocation == "NOASSERTION" ? null : spdxPackage.DownloadLocation,
             CopyrightText = spdxPackage.CopyrightText == "NOASSERTION" ? null : spdxPackage.CopyrightText,
-            Checksum = spdxPackage.VerifiedUsing.ToSbomChecksum(),
+            Checksum = spdxPackage.VerifiedUsing?.ToSbomChecksum(),
             LicenseInfo = new LicenseInfo
             {
                 Concluded = spdxPackage.GetSingleLicense(RelationshipType.HAS_CONCLUDED_LICENSE, spdx30Elements, relationships),
@@ -96,12 +96,12 @@ public static class SPDXToSbomFormatConverterExtensions
     /// <returns></returns>
     internal static List<SbomChecksum> ToSbomChecksum(this List<PackageVerificationCode> verificationCodes)
     {
-        var internalChecksums = new List<SbomChecksum>();
-        if (verificationCodes is null || verificationCodes.Count == 0)
+        if (verificationCodes is null)
         {
-            return internalChecksums;
+            return null;
         }
 
+        var internalChecksums = new List<SbomChecksum>();
         foreach (var verificationCode in verificationCodes)
         {
             var internalChecksum = new SbomChecksum

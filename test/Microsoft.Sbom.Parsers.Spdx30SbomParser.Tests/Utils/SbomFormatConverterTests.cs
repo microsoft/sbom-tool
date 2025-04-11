@@ -231,20 +231,46 @@ public class SbomFormatConverterTests
     }
 
     [TestMethod]
-    public void ToSbomExternalDocumentRef_WithEmptyChecksum_ReturnsNullChecksum()
+    public void ToSbomChecksum_MultipleChecksums_ReturnsExpectedChecksums()
     {
-        var externalDocumentRef = new ExternalMap
+        var verificationCodes = new List<PackageVerificationCode>
         {
-            SpdxId = "DocumentRef-ExternalRef",
-            ExternalSpdxId = "SPDXRef-OtherDoc",
-            VerifiedUsing = null
+            new PackageVerificationCode
+            {
+                Algorithm = HashAlgorithm.sha256,
+                HashValue = "abc123"
+            },
+            new PackageVerificationCode
+            {
+                Algorithm = HashAlgorithm.sha1,
+                HashValue = "def456"
+            }
         };
 
-        var sbomReference = externalDocumentRef.ToSbomReference();
+        var sbomChecksums = verificationCodes.ToSbomChecksum();
 
-        Assert.AreEqual(externalDocumentRef.SpdxId, sbomReference.ExternalDocumentId);
-        Assert.AreEqual(externalDocumentRef.ExternalSpdxId, sbomReference.Document);
-        Assert.IsNull(sbomReference.Checksum);
+        Assert.IsNotNull(sbomChecksums);
+        Assert.AreEqual(2, sbomChecksums.Count);
+        Assert.AreEqual("sha256", sbomChecksums[0].Algorithm.Name, ignoreCase: true);
+        Assert.AreEqual("abc123", sbomChecksums[0].ChecksumValue);
+        Assert.AreEqual("sha1", sbomChecksums[1].Algorithm.Name, ignoreCase: true);
+        Assert.AreEqual("def456", sbomChecksums[1].ChecksumValue);
+    }
+
+    [TestMethod]
+    public void ToSbomChecksum_NullVerificationCodes_ReturnsNull()
+    {
+        List<PackageVerificationCode> verificationCodes = null;
+        var sbomChecksums = verificationCodes.ToSbomChecksum();
+        Assert.IsNull(sbomChecksums);
+    }
+
+    [TestMethod]
+    public void ToSbomChecksum_EmptyVerificationCodes_ReturnsNull()
+    {
+        var verificationCodes = new List<PackageVerificationCode>();
+        var sbomChecksums = verificationCodes.ToSbomChecksum();
+        Assert.AreEqual(0, sbomChecksums.Count());
     }
 
     private void AssertSimpleFileConversionSucceeded(SbomFile sbomFile)
