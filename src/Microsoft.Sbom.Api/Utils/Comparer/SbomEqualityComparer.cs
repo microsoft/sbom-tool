@@ -1,40 +1,38 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.Sbom.Api.Utils.Comparer;
-
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.Sbom.Utils;
-using File = System.IO.File;
+
+namespace Microsoft.Sbom.Api.Utils.Comparer;
 
 /// <summary>
 /// Finds the differences between an SPDX 2.2 document and an SPDX 3.0 document.
 /// </summary>
-internal class SbomEqualityComparer
+public class SbomEqualityComparer
 {
     private JsonSerializerOptions serializerOptions = new JsonSerializerOptions
     {
         Converters = { new ElementSerializer() },
     };
 
-    private readonly string spdx22FilePath;
-    private readonly string spdx30FilePath;
+    private readonly JsonElement spdx22Json;
+    private readonly JsonElement spdx30Json;
 
     private readonly SbomFileComparer sbomFileComparer;
     private readonly SbomPackageComparer sbomPackageComparer;
     private readonly SbomRelationshipComparer sbomRelationshipComparer;
     private readonly SbomReferenceComparer sbomReferenceComparer;
 
-    public SbomEqualityComparer(string spdx22FilePath, string spdx30FilePath)
+    public SbomEqualityComparer(JsonElement spdx22Json, JsonElement spdx30Json)
     {
-        this.spdx22FilePath = spdx22FilePath;
-        this.spdx30FilePath = spdx30FilePath;
+        this.spdx22Json = spdx22Json;
+        this.spdx30Json = spdx30Json;
         this.sbomFileComparer = new SbomFileComparer();
         this.sbomPackageComparer = new SbomPackageComparer();
         this.sbomRelationshipComparer = new SbomRelationshipComparer();
@@ -43,9 +41,6 @@ internal class SbomEqualityComparer
 
     public bool DocumentsEqual()
     {
-        var spdx22Json = ReadJsonFile(spdx22FilePath);
-        var spdx30Json = ReadJsonFile(spdx30FilePath);
-
         var spdx22Files = GetSpdx22Files(spdx22Json);
         var spdx22Packages = GetSpdx22Packages(spdx22Json);
         var spdx22ExternalDocumentRefs = GetSpdx22ExternalDocumentRefs(spdx22Json);
@@ -54,7 +49,7 @@ internal class SbomEqualityComparer
         var graphArray = spdx30Json.GetProperty("graph");
         var elements = graphArray.Deserialize<List<Element>>(this.serializerOptions);
 
-        var spdx30Files = elements.OfType<Common.Spdx30Entities.File>().ToList();
+        var spdx30Files = elements.OfType<File>().ToList();
         var spdx30Packages = elements.OfType<Package>().ToList();
         var spdx30ExternalDocumentRefs = elements.OfType<ExternalMap>().ToList();
         var spdx30Relationships = GetSpdx30Relationships(elements);
@@ -86,7 +81,7 @@ internal class SbomEqualityComparer
         return true;
     }
 
-    internal bool CheckFiles(List<SPDXFile> spdx22Files, List<Common.Spdx30Entities.File> spdx30Files, List<Element> spdx30Elements, List<Relationship> relationships)
+    internal bool CheckFiles(List<SPDXFile> spdx22Files, List<File> spdx30Files, List<Element> spdx30Elements, List<Relationship> relationships)
     {
         if (spdx22Files.Count != spdx30Files.Count)
         {
@@ -150,7 +145,7 @@ internal class SbomEqualityComparer
         return sbomFiles;
     }
 
-    private HashSet<SbomFile> ConvertToSbomFiles(List<Common.Spdx30Entities.File> files, List<Element> spdx30Elements, List<Relationship> relationships)
+    private HashSet<SbomFile> ConvertToSbomFiles(List<File> files, List<Element> spdx30Elements, List<Relationship> relationships)
     {
         var sbomFiles = new HashSet<SbomFile>(sbomFileComparer);
 
@@ -232,17 +227,6 @@ internal class SbomEqualityComparer
         }
 
         return sbomReferences;
-    }
-
-    private JsonElement ReadJsonFile(string filePath)
-    {
-        if (!File.Exists(filePath))
-        {
-            throw new FileNotFoundException($"The file at path {filePath} does not exist.");
-        }
-
-        var jsonContent = File.ReadAllText(filePath);
-        return JsonDocument.Parse(jsonContent).RootElement;
     }
 
     private List<SPDXFile> GetSpdx22Files(JsonElement spdx22Json)

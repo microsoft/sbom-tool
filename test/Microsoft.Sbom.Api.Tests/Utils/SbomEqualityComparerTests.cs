@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using Microsoft.Sbom.Api.Utils.Comparer;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Common.Spdx30Entities.Enums;
@@ -25,7 +26,7 @@ public class SbomEqualityComparerTests
 
     public SbomEqualityComparerTests()
     {
-        comparer = new SbomEqualityComparer("dummyPath1", "dummyPath2");
+        comparer = new SbomEqualityComparer(new JsonElement(), new JsonElement());
     }
 
     [TestInitialize]
