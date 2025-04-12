@@ -1,22 +1,39 @@
 steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET Core'
+    displayName: Use .NET Core
     inputs:
       useGlobalJson: true
 
-  - powershell: dotnet pack
-      -c $(BuildConfiguration)
-    displayName: Build
+  - pwsh: dotnet --info
+    displayName: Show .NET Core version
 
-  - ${{ if eq(variables['Agent.OS'], 'Windows_NT') }}:
-    - powershell: dotnet test
-        --no-build -c $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory)
-        --coverage --coverage-output $(Agent.TempDirectory/coverage.cobertura.xml --coverage-output-format cobertura'
-      displayName: Run unit tests on Windows
-  - ${{ else }}:
-    - powershell: dotnet test
-        --no-build -c $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory)
-      displayName: Run unit tests on non-windows
+  - pwsh: dotnet restore --configfile nuget.config
+    displayName: Restore solution
+
+  - pwsh: dotnet build --configuration $(BuildConfiguration) --no-restore
+    displayName: Build solution
+
+  - pwsh: dotnet test --no-build --configuration $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory) --coverage --coverage-output $(Agent.TempDirectory)/coverage.cobertura.xml --coverage-output-format cobertura
+    displayName: Run unit tests (with coverage on Windows)
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
+
+  - pwsh: dotnet test --no-build --configuration $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory)
+    displayName: Run unit tests (without coverage on non-Windows)
+    condition: ne(variables['Agent.OS'], 'Windows_NT')
+
+  # - powershell: dotnet pack
+  #     -c $(BuildConfiguration)
+  #   displayName: Build
+
+  # - ${{ if eq(variables['Agent.OS'], 'Windows_NT') }}:
+  #   - powershell: dotnet test
+  #       --no-build -c $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory)
+  #       --coverage --coverage-output $(Agent.TempDirectory/coverage.cobertura.xml --coverage-output-format cobertura'
+  #     displayName: Run unit tests on Windows
+  # - ${{ else }}:
+  #   - powershell: dotnet test
+  #       --no-build -c $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory)
+  #     displayName: Run unit tests on non-windows
 
 #  - task: DotNetCoreCLI@2
 #    displayName: 'Restore solution'
@@ -25,12 +42,12 @@ steps:
 #      feedsToUse: config
 #      nugetConfigPath: nuget.config
 #      verbosityRestore: Normal
-#
+
 #  - task: DotNetCoreCLI@2
 #    displayName: Build
 #    inputs:
 #      arguments: '-c $(BuildConfiguration)'
-#
+
 #  - task: DotNetCoreCLI@2
 #    displayName: Run unit tests (with coverage on Windows)
 #    condition: eq(variables['Agent.OS'], 'Windows_NT')
@@ -39,7 +56,7 @@ steps:
 #      nobuild: true
 #      configuration: '$(BuildConfiguration)'
 #      arguments: '-- --report-trx --results-directory $(Agent.TempDirectory) --coverage --coverage-output $(Agent.TempDirectory)/coverage.cobertura.xml --coverage-output-format cobertura'
-#
+
 #  - task: DotNetCoreCLI@2
 #    displayName: Run unit tests (without coverage on non-Windows)
 #    condition: ne(variables['Agent.OS'], 'Windows_NT')
@@ -53,7 +70,7 @@ steps:
   # https://github.com/microsoft/azure-pipelines-tasks/issues/18254
   # https://github.com/microsoft/azure-pipelines-tasks/blob/32b9a3224f25403218dd995eec248f64025f3e2e/Tasks/DotNetCoreCLIV2/dotnetcore.ts#L196-L208
   - task: PublishCodeCoverageResults@2
-    displayName: "Publish code coverage (Windows only)"
+    displayName: Publish code coverage (Windows only)
     condition: eq(variables['Agent.OS'], 'Windows_NT')
     inputs:
       summaryFileLocation: '$(Agent.TempDirectory)/coverage.cobertura.xml'
