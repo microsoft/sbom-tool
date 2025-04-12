@@ -410,7 +410,7 @@ public class SbomEqualityComparerTests
     }
 
     [TestMethod]
-    public void CheckExternalDocRefs_NonMatchingExternalDocRefs_DifferentChecksums_ReturnsFalse()
+    public void CheckExternalDocRefs_NonMatchingExternalDocRefs_WithNullChecksum_ReturnsFalse()
     {
         var spdx22ExternalDocRefs = new List<SpdxExternalDocumentReference>
         {
