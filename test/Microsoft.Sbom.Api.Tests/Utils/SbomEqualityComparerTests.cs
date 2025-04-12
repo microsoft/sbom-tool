@@ -367,7 +367,7 @@ public class SbomEqualityComparerTests
             new SpdxExternalDocumentReference
             {
                 ExternalDocumentId = "SPDX-ExternalRef",
-                SpdxDocument = "SPDX-OtherDoc",
+                SpdxDocument = "OtherDoc",
             }
         };
 
@@ -376,7 +376,7 @@ public class SbomEqualityComparerTests
             new ExternalMap
             {
                 SpdxId = "SPDX-ExternalRef",
-                ExternalSpdxId = "SPDX-OtherDoc",
+                ExternalSpdxId = "OtherDoc",
             }
         };
 
@@ -392,7 +392,7 @@ public class SbomEqualityComparerTests
             new SpdxExternalDocumentReference
             {
                 ExternalDocumentId = "SPDX-ExternalRef",
-                SpdxDocument = "SPDX-OtherDoc",
+                SpdxDocument = "OtherDoc",
             }
         };
 
@@ -401,7 +401,7 @@ public class SbomEqualityComparerTests
             new ExternalMap
             {
                 SpdxId = "SPDX-ExternalRef",
-                ExternalSpdxId = "SPDX-vairushf",
+                ExternalSpdxId = "OtherMismatchingDoc",
             }
         };
 
@@ -417,7 +417,7 @@ public class SbomEqualityComparerTests
             new SpdxExternalDocumentReference
             {
                 ExternalDocumentId = "SPDX-ExternalRef",
-                SpdxDocument = "SPDX-OtherDoc",
+                SpdxDocument = "OtherDoc",
                 Checksum = new Checksum
                 {
                     ChecksumValue = "checksumValue",
@@ -431,7 +431,7 @@ public class SbomEqualityComparerTests
             new ExternalMap
             {
                 SpdxId = "SPDX-ExternalRef",
-                ExternalSpdxId = "SPDX-OtherDoc",
+                ExternalSpdxId = "OtherDoc",
             }
         };
 
