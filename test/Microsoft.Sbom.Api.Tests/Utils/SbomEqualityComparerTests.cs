@@ -26,7 +26,7 @@ public class SbomEqualityComparerTests
 
     public SbomEqualityComparerTests()
     {
-        comparer = new SbomEqualityComparer(new JsonElement(), new JsonElement());
+        comparer = new SbomEqualityComparer(default, default);
     }
 
     [TestInitialize]
