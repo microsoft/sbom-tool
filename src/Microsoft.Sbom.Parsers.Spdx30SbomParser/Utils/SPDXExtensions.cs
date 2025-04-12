@@ -90,9 +90,8 @@ public static class SPDXExtensions
         // Get the SHA1 for this file.
         var sha1Value = sha1checksums.FirstOrDefault().ChecksumValue;
 
-        reference.ExternalSpdxId = CommonSPDXUtils.GenerateSpdxExternalDocumentId(name, sha1Value);
-        reference.SpdxId = reference.ExternalSpdxId;
-        return reference.ExternalSpdxId;
+        reference.SpdxId = CommonSPDXUtils.GenerateSpdxExternalDocumentId(name, sha1Value);
+        return reference.SpdxId;
     }
 
     public static void AddSpdxId(this Element element)
