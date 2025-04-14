@@ -46,7 +46,7 @@ public class SbomEqualityComparer
         var spdx22ExternalDocumentRefs = GetSpdx22ExternalDocumentRefs(spdx22Json);
         var spdx22Relationships = GetSpdx22Relationships(spdx22Json);
 
-        var graphArray = spdx30Json.GetProperty("graph");
+        var graphArray = spdx30Json.GetProperty(Constants.SPDXGraphHeaderName);
         var elements = graphArray.Deserialize<List<Element>>(this.serializerOptions);
 
         var spdx30Files = elements.OfType<File>().ToList();

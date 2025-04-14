@@ -56,7 +56,8 @@ public class ElementSerializer : JsonConverter<List<Element>>
                     break;
 
                 default:
-                    throw new JsonException($"Unknown element type: {typeValue}");
+                    element = JsonSerializer.Deserialize<Element>(jsonObject.GetRawText(), options);
+                    break;
             }
 
             elements.Add(element);
