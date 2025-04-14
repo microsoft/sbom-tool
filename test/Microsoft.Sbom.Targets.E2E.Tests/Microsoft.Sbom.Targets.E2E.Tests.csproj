@@ -8,7 +8,7 @@
     <IsPackable>false</IsPackable>
     <SignAssembly>True</SignAssembly>
     <RootNamespace>Microsoft.Sbom.Targets.E2E.Tests</RootNamespace>
-    <SbomCLIToolTargetFramework>net8.0</SbomCLIToolTargetFramework>
+    <SbomCLIToolTargetFramework>net472</SbomCLIToolTargetFramework>
     <SBOMCLIToolProjectDir>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Tool\</SBOMCLIToolProjectDir>
     <SBOMGenerationTargetsPath>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.targets</SBOMGenerationTargetsPath>
     <NoWarn>CA1515;NU1903</NoWarn>
