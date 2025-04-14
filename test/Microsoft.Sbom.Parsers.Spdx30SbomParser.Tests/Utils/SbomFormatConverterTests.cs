@@ -123,7 +123,7 @@ public class SbomFormatConverterTests
         Assert.IsNull(sbomPackage.LicenseInfo.Declared);
         Assert.IsNull(sbomPackage.LicenseInfo.Concluded);
         Assert.IsNull(sbomPackage.Supplier);
-        Assert.AreEqual(externalIdentifier.Identifier, sbomPackage.PackageUrl);
+        Assert.AreEqual("pkg:npm/test-package@1.0.0", sbomPackage.PackageUrl);
     }
 
     [TestMethod]
@@ -148,7 +148,7 @@ public class SbomFormatConverterTests
         AssertSimplePackageConversionSucceeded(sbomPackage);
         Assert.IsNull(sbomPackage.LicenseInfo.Declared);
         Assert.IsNull(sbomPackage.LicenseInfo.Concluded);
-        Assert.AreEqual(organization.Name, sbomPackage.Supplier);
+        Assert.AreEqual("Microsoft", sbomPackage.Supplier);
         Assert.IsNull(sbomPackage.PackageUrl);
     }
 
@@ -165,13 +165,13 @@ public class SbomFormatConverterTests
         var sbomRelationships = spdxRelationship.ToSbomRelationship();
 
         Assert.AreEqual(2, sbomRelationships.Count);
-        Assert.AreEqual(spdxRelationship.From, sbomRelationships[0].SourceElementId);
+        Assert.AreEqual("SPDXRef-Source", sbomRelationships[0].SourceElementId);
         Assert.AreEqual("DESCRIBES", sbomRelationships[0].RelationshipType);
-        Assert.AreEqual(spdxRelationship.To.First().ToString(), sbomRelationships[0].TargetElementId);
+        Assert.AreEqual("SPDXRef-Target1", sbomRelationships[0].TargetElementId);
 
-        Assert.AreEqual(spdxRelationship.From, sbomRelationships[1].SourceElementId);
+        Assert.AreEqual("SPDXRef-Source", sbomRelationships[1].SourceElementId);
         Assert.AreEqual("DESCRIBES", sbomRelationships[1].RelationshipType);
-        Assert.AreEqual(spdxRelationship.To.Last().ToString(), sbomRelationships[1].TargetElementId);
+        Assert.AreEqual("SPDXRef-Target2", sbomRelationships[1].TargetElementId);
     }
 
     [TestMethod]
@@ -207,10 +207,10 @@ public class SbomFormatConverterTests
 
         var sbomReference = externalDocumentRef.ToSbomReference();
 
-        Assert.AreEqual(externalDocumentRef.SpdxId, sbomReference.ExternalDocumentId);
-        Assert.AreEqual(externalDocumentRef.ExternalSpdxId, sbomReference.Document);
-        Assert.AreEqual(externalDocumentRef.VerifiedUsing.First().Algorithm.ToString(), sbomReference.Checksum.Algorithm.ToString(), ignoreCase: true);
-        Assert.AreEqual(externalDocumentRef.VerifiedUsing.First().HashValue, sbomReference.Checksum.ChecksumValue);
+        Assert.AreEqual("DocumentRef-ExternalRef", sbomReference.ExternalDocumentId);
+        Assert.AreEqual("SPDXRef-OtherDoc", sbomReference.Document);
+        Assert.AreEqual("sha256", sbomReference.Checksum.Algorithm.ToString(), ignoreCase: true);
+        Assert.AreEqual("123456789abcdef", sbomReference.Checksum.ChecksumValue);
     }
 
     [TestMethod]
@@ -225,8 +225,8 @@ public class SbomFormatConverterTests
 
         var sbomReference = externalDocumentRef.ToSbomReference();
 
-        Assert.AreEqual(externalDocumentRef.SpdxId, sbomReference.ExternalDocumentId);
-        Assert.AreEqual(externalDocumentRef.ExternalSpdxId, sbomReference.Document);
+        Assert.AreEqual("DocumentRef-ExternalRef", sbomReference.ExternalDocumentId);
+        Assert.AreEqual("SPDXRef-OtherDoc", sbomReference.Document);
         Assert.IsNull(sbomReference.Checksum);
     }
 
@@ -288,16 +288,16 @@ public class SbomFormatConverterTests
 
     private void AssertSimplePackageConversionSucceeded(SbomPackage sbomPackage)
     {
-        Assert.AreEqual(spdxPackage.Name, sbomPackage.PackageName);
-        Assert.AreEqual(spdxPackage.PackageVersion, sbomPackage.PackageVersion);
-        Assert.AreEqual(spdxPackage.DownloadLocation, sbomPackage.PackageSource);
-        Assert.AreEqual(spdxPackage.CopyrightText, sbomPackage.CopyrightText);
+        Assert.AreEqual("testPackage", sbomPackage.PackageName);
+        Assert.AreEqual("1.0.0", sbomPackage.PackageVersion);
+        Assert.AreEqual("https://example.com", sbomPackage.PackageSource);
+        Assert.AreEqual("copyright", sbomPackage.CopyrightText);
         Assert.AreEqual(1, sbomPackage.Checksum.Count());
         Assert.IsTrue(sbomPackage.Checksum.First().Algorithm.Name.Equals(
                     HashAlgorithm.sha256.ToString(),
                     StringComparison.OrdinalIgnoreCase),
                     "Hash algorithm names are not equal");
-        Assert.AreEqual(spdxPackage.SpdxId, sbomPackage.Id);
+        Assert.AreEqual("SPDXRef-Package", sbomPackage.Id);
     }
 
     private List<Element> AddLicensesToElement(Element element)

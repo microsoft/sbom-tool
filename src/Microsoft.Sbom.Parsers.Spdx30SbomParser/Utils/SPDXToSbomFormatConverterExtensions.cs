@@ -23,15 +23,11 @@ public static class SPDXToSbomFormatConverterExtensions
         return new SbomFile
         {
             Checksum = spdxFile.VerifiedUsing?.ToSbomChecksum(),
-            FileCopyrightText = spdxFile.CopyrightText == "NOASSERTION" ? null : spdxFile.CopyrightText,
+            FileCopyrightText = spdxFile.CopyrightText,
             Path = spdxFile.Name,
             Id = spdxFile.SpdxId,
-            LicenseConcluded = spdx30Elements != null && relationships != null
-            ? spdxFile.GetSingleLicense(RelationshipType.HAS_CONCLUDED_LICENSE, spdx30Elements, relationships)
-            : null,
-            LicenseInfoInFiles = spdx30Elements != null && relationships != null
-            ? spdxFile.GetMultipleLicenses(RelationshipType.HAS_DECLARED_LICENSE, spdx30Elements, relationships)
-            : null
+            LicenseConcluded = spdxFile.GetSingleLicense(RelationshipType.HAS_CONCLUDED_LICENSE, spdx30Elements, relationships),
+            LicenseInfoInFiles = spdxFile.GetMultipleLicenses(RelationshipType.HAS_DECLARED_LICENSE, spdx30Elements, relationships)
         };
     }
 
@@ -41,8 +37,8 @@ public static class SPDXToSbomFormatConverterExtensions
         {
             PackageName = spdxPackage.Name,
             PackageVersion = spdxPackage.PackageVersion,
-            PackageSource = spdxPackage.DownloadLocation == "NOASSERTION" ? null : spdxPackage.DownloadLocation,
-            CopyrightText = spdxPackage.CopyrightText == "NOASSERTION" ? null : spdxPackage.CopyrightText,
+            PackageSource = spdxPackage.DownloadLocation,
+            CopyrightText = spdxPackage.CopyrightText,
             Checksum = spdxPackage.VerifiedUsing?.ToSbomChecksum(),
             LicenseInfo = new LicenseInfo
             {
@@ -118,6 +114,12 @@ public static class SPDXToSbomFormatConverterExtensions
 
     private static List<string> GetMultipleLicenses(this Element element, RelationshipType relationshipType, List<Element> spdx30Elements, List<Relationship> relationships)
     {
+        // Return null if spdx30Elements or relationships are null
+        if (spdx30Elements == null || relationships == null)
+        {
+            return null;
+        }
+
         var spdxId = element.SpdxId;
         var relationshipsDescribingElement = relationships.Where(relationship => relationship.From == spdxId);
 
@@ -150,6 +152,12 @@ public static class SPDXToSbomFormatConverterExtensions
 
     private static string GetSingleLicense(this Element element, RelationshipType relationshipType, List<Element> spdx30Elements, List<Relationship> relationships)
     {
+        // Return null if spdx30Elements or relationships are null
+        if (spdx30Elements == null || relationships == null)
+        {
+            return null;
+        }
+
         var spdxId = element.SpdxId;
         var relationshipsDescribingElement = relationships.Where(relationship => relationship.From == spdxId);
 
@@ -185,7 +193,7 @@ public static class SPDXToSbomFormatConverterExtensions
 
         var organizationElement = spdx30Elements
             .FirstOrDefault(element => element is Organization && element.SpdxId == organizationSpdxId);
-        return organizationElement.Name.Equals("NOASSERTION") ? null : organizationElement.Name;
+        return organizationElement?.Name;
     }
 
     private static string GetPackageUrl(this Package spdxPackage, List<Element> spdx30Elements)
