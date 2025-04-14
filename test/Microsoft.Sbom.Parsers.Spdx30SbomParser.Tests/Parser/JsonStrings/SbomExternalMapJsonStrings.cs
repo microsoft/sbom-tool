@@ -9,7 +9,7 @@ public static class SbomExternalMapJsonStrings
     public const string ExternalMapJsonString =
     @"
     {
-        ""externalSpdxId"": ""DocumentRef-sample-external-doc-sha1Value"",
+        ""externalSpdxId"": ""sample-namespace"",
         ""creationInfo"": ""_:creationinfo"",
         ""spdxId"": ""DocumentRef-sample-external-doc-sha1Value"",
         ""verifiedUsing"": [
