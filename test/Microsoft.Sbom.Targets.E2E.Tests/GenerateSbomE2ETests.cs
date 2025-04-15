@@ -150,80 +150,6 @@ public class GenerateSbomE2ETests
         }
     }
 
-    // [TestMethod]
-    public void SbomGenerationSucceedsForDefaultProperties()
-    {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
-        // Create and setup a Project object for ProjectSample1
-        var sampleProject = SetupSampleProject();
-
-        // Restore, build, and pack the project
-        RestoreBuildPack(sampleProject);
-
-        // Extract the NuGet package
-        InspectPackageIsWellFormed();
-    }
-
-    // [TestMethod]
-    public void SbomGenerationSucceedsForValidNamespaceBaseUriUniquePart()
-    {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
-        // Create and setup a Project object for ProjectSample1
-        var sampleProject = SetupSampleProject();
-
-        // Manually set the NamespaceUriUniquePart
-        var namespaceUriUniquePart = Guid.NewGuid().ToString();
-        sampleProject.SetProperty("SbomGenerationNamespaceUriUniquePart", namespaceUriUniquePart);
-
-        // Restore, build, and pack the project
-        RestoreBuildPack(sampleProject);
-
-        // Extract the NuGet package
-        InspectPackageIsWellFormed();
-    }
-
-    // [TestMethod]
-    public void SbomGenerationSucceedsForValidRequiredParams()
-    {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
-        // Create and setup a Project object for ProjectSample1
-        var sampleProject = SetupSampleProject();
-
-        // Set require params
-        expectedPackageName = "SampleName";
-        expectedVersion = "3.2.5";
-        expectedSupplier = "SampleSupplier";
-        expectedNamespace = "https://example.com";
-
-        sampleProject.SetProperty("PackageId", expectedPackageName);
-        sampleProject.SetProperty("Version", expectedVersion);
-        sampleProject.SetProperty("SbomGenerationPackageName", expectedPackageName);
-        sampleProject.SetProperty("SbomGenerationPackageVersion", expectedVersion);
-        sampleProject.SetProperty("SbomGenerationPackageSupplier", expectedSupplier);
-        sampleProject.SetProperty("SbomGenerationNamespaceBaseUri", expectedNamespace);
-
-        // Restore, build, and pack the project
-        RestoreBuildPack(sampleProject);
-
-        // Extract the NuGet package
-        InspectPackageIsWellFormed();
-    }
-
     [TestMethod]
     public void SbomGenerationFailsForInvalidNamespaceUri()
     {
@@ -309,28 +235,5 @@ public class GenerateSbomE2ETests
 
         // Extract the NuGet package
         InspectPackageIsWellFormed(isManifestPathGenerated: false);
-    }
-
-    // [TestMethod]
-    public void SbomGenerationSucceedsForMultiTargetedProject()
-    {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
-        // Create and setup a Project object for ProjectSample1
-        var sampleProject = SetupSampleProject();
-
-        // Set multi-target frameworks
-        sampleProject.SetProperty("TargetFramework", string.Empty);
-        sampleProject.SetProperty("TargetFrameworks", "net472;net8.0");
-
-        // Restore, build, and pack the project
-        RestoreBuildPack(sampleProject);
-
-        // Extract the NuGet package
-        InspectPackageIsWellFormed();
     }
 }
