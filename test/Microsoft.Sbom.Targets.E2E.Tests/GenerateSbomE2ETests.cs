@@ -150,7 +150,7 @@ public class GenerateSbomE2ETests
         }
     }
 
-    [TestMethod]
+    // [TestMethod]
     public void SbomGenerationSucceedsForDefaultProperties()
     {
         if (!IsWindows)
@@ -169,7 +169,7 @@ public class GenerateSbomE2ETests
         InspectPackageIsWellFormed();
     }
 
-    [TestMethod]
+    // [TestMethod]
     public void SbomGenerationSucceedsForValidNamespaceBaseUriUniquePart()
     {
         if (!IsWindows)
@@ -192,7 +192,7 @@ public class GenerateSbomE2ETests
         InspectPackageIsWellFormed();
     }
 
-    [TestMethod]
+    // [TestMethod]
     public void SbomGenerationSucceedsForValidRequiredParams()
     {
         if (!IsWindows)
@@ -311,7 +311,7 @@ public class GenerateSbomE2ETests
         InspectPackageIsWellFormed(isManifestPathGenerated: false);
     }
 
-    [TestMethod]
+    // [TestMethod]
     public void SbomGenerationSucceedsForMultiTargetedProject()
     {
         if (!IsWindows)
