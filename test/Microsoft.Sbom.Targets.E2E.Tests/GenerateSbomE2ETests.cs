@@ -34,7 +34,6 @@ public class GenerateSbomE2ETests
     private static string sbomSpecificationDirectoryName = $"{sbomSpecificationName}_{sbomSpecificationVersion}".ToLowerInvariant();
     private string expectedPackageName;
     private string expectedVersion;
-    private string expectedSupplier;
     private string assemblyName;
     private string expectedNamespace;
     private string configuration;
