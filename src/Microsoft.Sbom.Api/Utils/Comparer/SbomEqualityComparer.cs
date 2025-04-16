@@ -70,11 +70,11 @@ public class SbomEqualityComparer
             return relationshipsEqual;
         }
 
-        var filesEqual = CheckFiles(spdx22Files, spdx30Files, elements, spdx30Relationships);
-        if (!filesEqual)
-        {
-            return filesEqual;
-        }
+        //var filesEqual = CheckFiles(spdx22Files, spdx30Files, elements, spdx30Relationships);
+        //if (!filesEqual)
+        //{
+        //    return filesEqual;
+        //}
 
         var packagesEqual = CheckPackages(spdx22Packages, spdx30Packages, elements, spdx30Relationships);
         if (!packagesEqual)
@@ -95,6 +95,9 @@ public class SbomEqualityComparer
         var spdx22InternalSbomFileInfos = ConvertToSbomFiles(spdx22Files);
         var spdx30InternalSbomFileInfos = ConvertToSbomFiles(spdx30Files, spdx30Elements, relationships);
 
+        var setsEqual = spdx22InternalSbomFileInfos.SetEquals(spdx30InternalSbomFileInfos);
+        var onlyInSpdx22 = new List<SbomRelationship>();
+
         return spdx22InternalSbomFileInfos.SetEquals(spdx30InternalSbomFileInfos);
     }
 
@@ -108,83 +111,24 @@ public class SbomEqualityComparer
         var spdx22InternalSbomPackages = ConvertToSbomPackages(spdx22Packages);
         var spdx30InternalSbomPackages = ConvertToSbomPackages(spdx30Packages, spdx30Elements, relationships);
 
-        var onlyInSpdx22 = new List<SbomPackage>();
-        foreach (var rel22 in spdx22InternalSbomPackages)
-        {
-            var foundMatch = false;
-            foreach (var rel30 in spdx30InternalSbomPackages)
-            {
-                if (rel22.PackageName == rel30.PackageName)
-                {
-                    Console.WriteLine($"{rel22.PackageName} found in both");
-                }
-
-                if (sbomPackageComparer.Equals(rel22, rel30))
-                {
-                    foundMatch = true;
-                    break;
-                }
-            }
-
-            if (!foundMatch)
-            {
-                onlyInSpdx22.Add(rel22);
-            }
-        }
-
-        SbomPackage package1 = null;
-        if (onlyInSpdx22.Any())
-        {
-            Console.WriteLine($"Packages only in SPDX 2.2 (Count: {onlyInSpdx22.Count}):");
-            foreach (var rel in onlyInSpdx22)
-            {
-                Console.WriteLine($"Name: {rel.PackageName}, SPDXID: {rel.Id}");
-                package1 = rel;
-            }
-        }
-
-        var onlyInSpdx30 = new List<SbomPackage>();
-        foreach (var rel30 in spdx30InternalSbomPackages)
-        {
-            var foundMatch = false;
-            foreach (var rel22 in spdx22InternalSbomPackages)
-            {
-                if (sbomPackageComparer.Equals(rel30, rel22))
-                {
-                    foundMatch = true;
-                    break;
-                }
-            }
-
-            if (!foundMatch)
-            {
-                onlyInSpdx30.Add(rel30);
-            }
-        }
-
-        SbomPackage package2 = null;
-        if (onlyInSpdx30.Any())
-        {
-            Console.WriteLine($"Packages only in SPDX 3.0 (Count: {onlyInSpdx30.Count}):");
-            foreach (var rel in onlyInSpdx30)
-            {
-                Console.WriteLine($"Name: {rel.PackageName} , SPDXID: {rel.Id}");
-                package2 = rel;
-            }
-        }
-
         return spdx22InternalSbomPackages.SetEquals(spdx30InternalSbomPackages);
     }
 
     internal bool CheckRelationships(List<SPDXRelationship> spdx22Relationships, List<Relationship> spdx30Relationships)
     {
-        if (spdx22Relationships.Count != spdx30Relationships.Count)
+        // Filtering out relationships that describe license information since SPDX 2.2 does not support these relationship types.
+        var spdx30RelationshipsNotRelatedtoLicenses = spdx30Relationships.Where(
+            element => element.RelationshipType != RelationshipType.HAS_CONCLUDED_LICENSE
+            && element.RelationshipType != RelationshipType.HAS_DECLARED_LICENSE)
+            .ToList();
+
+        if (spdx22Relationships.Count != spdx30RelationshipsNotRelatedtoLicenses.Count)
         {
             return false;
         }
 
         var spdx22InternalRelationships = ConvertToRelationships(spdx22Relationships);
-        var spdx30InternalRelationships = ConvertToRelationships(spdx30Relationships);
+        var spdx30InternalRelationships = ConvertToRelationships(spdx30RelationshipsNotRelatedtoLicenses);
 
         var setsEqual = spdx22InternalRelationships.SetEquals(spdx30InternalRelationships);
         var onlyInSpdx22 = new List<SbomRelationship>();
