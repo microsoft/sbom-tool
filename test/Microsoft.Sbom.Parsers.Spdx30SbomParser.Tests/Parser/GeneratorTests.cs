@@ -181,6 +181,69 @@ public class GeneratorTests
         Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
     }
 
+    [TestMethod]
+    public void GenerateJsonDocumentTest_PrereqFor_Relationship()
+    {
+        var relationshipInfo = new Relationship
+        {
+            SourceElementId = "source-id",
+            TargetElementId = "target-id",
+            RelationshipType = RelationshipType.PREREQUISITE_FOR,
+        };
+
+        var generatorResult = generator.GenerateJsonDocument(relationshipInfo);
+        var generatedJsonString = generatorResult.Document.RootElement.GetRawText();
+        generatedJsonString = NormalizeString(generatedJsonString);
+
+        var expectedJsonContentAsString = SbomRelationshipJsonStrings.RelationshipPrereqForJsonString;
+        expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
+
+        Assert.IsFalse(generatedJsonString.Contains("null"));
+        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_DescribedBy_Relationship()
+    {
+        var relationshipInfo = new Relationship
+        {
+            SourceElementId = "source-id",
+            TargetElementId = "target-id",
+            RelationshipType = RelationshipType.DESCRIBED_BY,
+        };
+
+        var generatorResult = generator.GenerateJsonDocument(relationshipInfo);
+        var generatedJsonString = generatorResult.Document.RootElement.GetRawText();
+        generatedJsonString = NormalizeString(generatedJsonString);
+
+        var expectedJsonContentAsString = SbomRelationshipJsonStrings.RelationshipDescribedByJsonString;
+        expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
+
+        Assert.IsFalse(generatedJsonString.Contains("null"));
+        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_PatchFor_Relationship()
+    {
+        var relationshipInfo = new Relationship
+        {
+            SourceElementId = "source-id",
+            TargetElementId = "target-id",
+            RelationshipType = RelationshipType.PATCH_FOR,
+        };
+
+        var generatorResult = generator.GenerateJsonDocument(relationshipInfo);
+        var generatedJsonString = generatorResult.Document.RootElement.GetRawText();
+        generatedJsonString = NormalizeString(generatedJsonString);
+
+        var expectedJsonContentAsString = SbomRelationshipJsonStrings.RelationshipPatchForJsonString;
+        expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
+
+        Assert.IsFalse(generatedJsonString.Contains("null"));
+        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
     [TestCleanup]
     public void Cleanup()
     {

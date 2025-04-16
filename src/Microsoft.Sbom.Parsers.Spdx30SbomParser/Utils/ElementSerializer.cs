@@ -55,6 +55,13 @@ public class ElementSerializer : JsonConverter<List<Element>>
                     element = JsonSerializer.Deserialize<Relationship>(jsonObject.GetRawText(), options);
                     break;
 
+                case "ExternalIdentifier":
+                    element = JsonSerializer.Deserialize<ExternalIdentifier>(jsonObject.GetRawText(), options);
+                    break;
+
+                case "CreationInfo":
+                    element = JsonSerializer.Deserialize<CreationInfo>(jsonObject.GetRawText(), options);
+                    break;
                 default:
                     element = JsonSerializer.Deserialize<Element>(jsonObject.GetRawText(), options);
                     break;

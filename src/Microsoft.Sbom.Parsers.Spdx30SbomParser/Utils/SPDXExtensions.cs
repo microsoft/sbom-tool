@@ -106,7 +106,13 @@ public static class SPDXExtensions
 
     public static void AddSpdxId(this Common.Spdx30Entities.Relationship relationship)
     {
-        relationship.SpdxId = GenerateSpdxIdBasedOnElement(relationship, relationship.To + relationship.RelationshipType.ToString());
+        var relationsipToString = string.Empty;
+        if (relationship?.To != null && relationship.To.Any())
+        {
+            relationsipToString = string.Join(string.Empty, relationship.To);
+        }
+
+        relationship.SpdxId = GenerateSpdxIdBasedOnElement(relationship, relationship.From + relationsipToString + relationship.RelationshipType.ToString());
     }
 
     public static void AddSpdxId(this ExternalIdentifier externalIdentifier)

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using Microsoft.Sbom.Contracts;
 
@@ -18,9 +19,16 @@ public class SbomRelationshipComparer : IEqualityComparer<SbomRelationship>
             return false;
         }
 
-        return relationship1.RelationshipType.ToString().Equals(relationship2.RelationshipType.ToString(), System.StringComparison.OrdinalIgnoreCase) &&
+        var equals = relationship1.RelationshipType.ToString().Equals(relationship2.RelationshipType.ToString(), StringComparison.OrdinalIgnoreCase) &&
                 relationship1.SourceElementId == relationship2.SourceElementId &&
                 relationship1.TargetElementId == relationship2.TargetElementId;
+
+        if (!equals)
+        {
+            Console.WriteLine($"RelationshipType: {relationship1.RelationshipType} != {relationship2.RelationshipType}");
+        }
+
+        return equals;
     }
 
     public int GetHashCode(SbomRelationship obj)
@@ -30,8 +38,19 @@ public class SbomRelationshipComparer : IEqualityComparer<SbomRelationship>
             return 0;
         }
 
-        return obj.RelationshipType.ToLowerInvariant().GetHashCode() ^
-              obj.SourceElementId.GetHashCode() ^
-              obj.TargetElementId.GetHashCode();
+        var hashCode = obj.RelationshipType?.ToString().ToLowerInvariant().GetHashCode() ?? 0;
+
+        // Use XOR to combine hash codes
+        if (obj.SourceElementId != null)
+        {
+            hashCode ^= obj.SourceElementId.GetHashCode();
+        }
+
+        if (obj.TargetElementId != null)
+        {
+            hashCode ^= obj.TargetElementId.GetHashCode();
+        }
+
+        return hashCode;
     }
 }

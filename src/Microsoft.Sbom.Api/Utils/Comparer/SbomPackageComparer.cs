@@ -19,6 +19,17 @@ public class SbomPackageComparer : IEqualityComparer<SbomPackage>
             return false;
         }
 
+        // Normalize PackageUrl for root packages since the SBOM tool version will vary between SPDX 2.2 and SPDX 3.0.
+        // Also normalize the Checksum since SPDX 2.2 does not support PackageVerificationCode to Checksum conversions for Root packages.
+        if (package1.Id == Constants.RootPackageIdValue && package2.Id == Constants.RootPackageIdValue)
+        {
+            package1.PackageUrl = NormalizePackagePurl(package1);
+            package2.PackageUrl = NormalizePackagePurl(package2);
+
+            package1.Checksum = null;
+            package2.Checksum = null;
+        }
+
         var checksumsEqual = (package1.Checksum == null && package2.Checksum == null) ||
                          package1.Checksum?.SequenceEqual(package2.Checksum ?? Enumerable.Empty<Checksum>(), ChecksumComparer) == true;
 
@@ -46,5 +57,19 @@ public class SbomPackageComparer : IEqualityComparer<SbomPackage>
         }
 
         return obj.Id.GetHashCode();
+    }
+
+    private string NormalizePackagePurl(SbomPackage package)
+    {
+        var packageUrl = package?.PackageUrl;
+        if (!string.IsNullOrEmpty(packageUrl))
+        {
+            // Remove everything after the '=' character
+            var index = packageUrl.IndexOf('=');
+            var normalizedPackageUrl = index >= 0 ? packageUrl.Substring(0, index) : packageUrl;
+            return normalizedPackageUrl;
+        }
+
+        return packageUrl;
     }
 }

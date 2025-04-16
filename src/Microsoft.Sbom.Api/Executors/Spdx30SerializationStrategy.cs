@@ -89,6 +89,8 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
 
     private void WriteElementsToSbom(GenerationResult generationResult, HashSet<string> elementsSpdxIdList)
     {
+        var count = 0;
+        var duplicateElementCount = 0;
         // Write the JSON objects to the SBOM
         foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
         {
@@ -97,7 +99,15 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
             {
                 if (jsonDocument.RootElement.ValueKind == JsonValueKind.Object)
                 {
-                    WriteElement(serializer, jsonDocument.RootElement, elementsSpdxIdList);
+                    var isDuplicate = WriteElement(serializer, jsonDocument.RootElement, elementsSpdxIdList);
+                    if (isDuplicate)
+                    {
+                        duplicateElementCount++;
+                    }
+                    else
+                    {
+                        count++;
+                    }
                 }
                 else
                 {
@@ -118,15 +128,17 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
         sbomConfig.JsonSerializer.EndJsonArray();
     }
 
-    private void WriteElement(IManifestToolJsonSerializer serializer, JsonElement element, HashSet<string> elementsSpdxIdList)
+    private bool WriteElement(IManifestToolJsonSerializer serializer, JsonElement element, HashSet<string> elementsSpdxIdList)
     {
+        var duplicateElement = false;
         if (element.TryGetProperty("spdxId", out var spdxIdField))
         {
             var spdxId = spdxIdField.GetString();
 
             if (elementsSpdxIdList.TryGetValue(spdxId, out _))
             {
-                return;
+                duplicateElement = true;
+                return duplicateElement;
             }
             else
             {
@@ -134,5 +146,7 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
                 elementsSpdxIdList.Add(spdxId);
             }
         }
+
+        return duplicateElement;
     }
 }

@@ -9,6 +9,7 @@ using System.Text.Json;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Common.Spdx30Entities.Enums;
+using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
@@ -160,7 +161,7 @@ public class Generator : IManifestGenerator
         var dependOnId = packageInfo.DependOn;
         if (dependOnId is not null && dependOnId != Constants.RootPackageIdValue)
         {
-            dependOnId = spdxPackage.AddSpdxId(packageInfo);
+            dependOnId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.DependOn);
         }
 
         return new GenerationResult
@@ -326,13 +327,7 @@ public class Generator : IManifestGenerator
             : relationship.TargetElementId;
         var sourceElement = relationship.SourceElementId;
 
-        var spdxRelationship = new SpdxEntities.Relationship
-        {
-            From = sourceElement,
-            RelationshipType = this.GetSPDXRelationshipType(relationship.RelationshipType),
-            To = new List<string> { targetElement },
-        };
-        spdxRelationship.AddSpdxId();
+        var spdxRelationship = GetSpdxRelationship(sourceElement, targetElement, relationship.RelationshipType);
 
         return new GenerationResult
         {
@@ -380,8 +375,8 @@ public class Generator : IManifestGenerator
 
         var (sbomToolName, sbomToolVersion, packageName, packageVersion, documentName, creationInfo) = GetCommonMetadata(internalMetadataProvider);
 
-        var orgName = internalMetadataProvider.GetPackageSupplier();
-        var toolName = sbomToolName + "-" + sbomToolVersion;
+        var orgName = $"Organization: {internalMetadataProvider.GetPackageSupplier()}";
+        var toolName = $"Tool: {sbomToolName}-{sbomToolVersion}";
 
         var spdxOrganization = new Organization
         {
@@ -599,6 +594,28 @@ public class Generator : IManifestGenerator
 
         licenseElement.AddSpdxId();
         return licenseElement;
+    }
+
+    private SpdxEntities.Relationship GetSpdxRelationship(string sourceElement, string targetElement, SbomEntities.RelationshipType relationshipType)
+    {
+        var spdxRelationshipType = this.GetSPDXRelationshipType(relationshipType);
+
+        // Switch source and target IDs for these specific relationship types
+        if (relationshipType == SbomEntities.RelationshipType.PREREQUISITE_FOR ||
+            relationshipType == SbomEntities.RelationshipType.DESCRIBED_BY ||
+            relationshipType == SbomEntities.RelationshipType.PATCH_FOR)
+        {
+            (sourceElement, targetElement) = (targetElement, sourceElement);
+        }
+
+        var spdxRelationship = new SpdxEntities.Relationship
+        {
+            From = sourceElement,
+            RelationshipType = spdxRelationshipType,
+            To = new List<string> { targetElement },
+        };
+        spdxRelationship.AddSpdxId();
+        return spdxRelationship;
     }
 
     /// <summary>

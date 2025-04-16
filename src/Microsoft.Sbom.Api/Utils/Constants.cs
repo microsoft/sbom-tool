@@ -71,6 +71,7 @@ public static class Constants
     public const string CatalogFileName = "manifest.cat";
     public const string BsiFileName = "bsi.json";
     public const string DeleteManifestDirBoolVariableName = "DeleteManifestDirIfPresent";
+    public const string RootPackageIdValue = "SPDXRef-RootPackage";
 
     public const string SPDXContextHeaderName = "@context";
     public const string SPDXGraphHeaderName = "@graph";

@@ -8,6 +8,7 @@ using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Common.Spdx30Entities.Enums;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Checksum = Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities.Checksum;
 
 namespace Microsoft.Sbom.Api.Tests.Utils;
 
@@ -279,7 +280,7 @@ public class SbomEqualityComparerTests
     }
 
     [TestMethod]
-    public void CheckRelationships_MatchingRelationships_ReturnsTrue()
+    public void CheckRelationships_IdenticalRelationships_ReturnsTrue()
     {
         var spdx22Relationships = new List<SPDXRelationship>
         {
@@ -287,7 +288,7 @@ public class SbomEqualityComparerTests
             {
                 SourceElementId = "SPDXRef-Source",
                 TargetElementId = "SPDXRef-Target",
-                RelationshipType = "DESCRIBES"
+                RelationshipType = "DEPENDS_ON"
             }
         };
 
@@ -297,7 +298,7 @@ public class SbomEqualityComparerTests
             {
                 From = "SPDXRef-Source",
                 To = new List<string> { "SPDXRef-Target" },
-                RelationshipType = RelationshipType.DESCRIBES
+                RelationshipType = RelationshipType.DEPENDS_ON
             }
         };
 
@@ -314,7 +315,7 @@ public class SbomEqualityComparerTests
             {
                 SourceElementId = "SPDXRef-Source",
                 TargetElementId = "SPDXRef-Target",
-                RelationshipType = "describes"
+                RelationshipType = "depends_on"
             }
         };
 
@@ -324,12 +325,93 @@ public class SbomEqualityComparerTests
             {
                 From = "SPDXRef-Source",
                 To = new List<string> { "SPDXRef-Target" },
-                RelationshipType = RelationshipType.DESCRIBES
+                RelationshipType = RelationshipType.DEPENDS_ON
             }
         };
 
         var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
         Assert.IsTrue(result, "Matching relationships should return true.");
+    }
+
+    [TestMethod]
+    public void CheckRelationships_MatchingRelationships_DescribesRelationshipType_ReturnsTrue()
+    {
+        var spdx22Relationships = new List<SPDXRelationship>
+        {
+            new SPDXRelationship
+            {
+                SourceElementId = "SPDXRef-Source",
+                TargetElementId = "SPDXRef-Target",
+                RelationshipType = "DESCRIBED_BY"
+            }
+        };
+
+        var spdx30Relationships = new List<Relationship>
+        {
+            new Relationship
+            {
+                From = "SPDXRef-Target",
+                To = new List<string> { "SPDXRef-Source" },
+                RelationshipType = RelationshipType.DESCRIBES
+            }
+        };
+
+        var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
+        Assert.IsTrue(result, "\"SPDXRef-Source DESCRIBED_BY SPDXRef-Target\" and \"SPDXRef-Target DESCRIBES SPDXRef-Source\" should be equivalent.");
+    }
+
+    [TestMethod]
+    public void CheckRelationships_MatchingRelationships_PrereqRelationshipType_ReturnsTrue()
+    {
+        var spdx22Relationships = new List<SPDXRelationship>
+        {
+            new SPDXRelationship
+            {
+                SourceElementId = "SPDXRef-Source",
+                TargetElementId = "SPDXRef-Target",
+                RelationshipType = "PREREQUISITE_FOR"
+            }
+        };
+
+        var spdx30Relationships = new List<Relationship>
+        {
+            new Relationship
+            {
+                From = "SPDXRef-Target",
+                To = new List<string> { "SPDXRef-Source" },
+                RelationshipType = RelationshipType.HAS_PREREQUISITE
+            }
+        };
+
+        var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
+        Assert.IsTrue(result, "\"SPDXRef-Source PREREQUISITE_FOR SPDXRef-Target\" and \"SPDXRef-Target HAS_PREREQUISITE SPDXRef-Source\" should be equivalent.");
+    }
+
+    [TestMethod]
+    public void CheckRelationships_MatchingRelationships_PatchedRelationshipType_ReturnsTrue()
+    {
+        var spdx22Relationships = new List<SPDXRelationship>
+        {
+            new SPDXRelationship
+            {
+                SourceElementId = "SPDXRef-Source",
+                TargetElementId = "SPDXRef-Target",
+                RelationshipType = "PATCH_FOR"
+            }
+        };
+
+        var spdx30Relationships = new List<Relationship>
+        {
+            new Relationship
+            {
+                From = "SPDXRef-Target",
+                To = new List<string> { "SPDXRef-Source" },
+                RelationshipType = RelationshipType.PATCHED_BY
+            }
+        };
+
+        var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
+        Assert.IsTrue(result, "\"SPDXRef-Source PATCH_FOR SPDXRef-Target\" and \"SPDXRef-Target PATCHED_BY SPDXRef-Source\" should be equivalent.");
     }
 
     [TestMethod]
