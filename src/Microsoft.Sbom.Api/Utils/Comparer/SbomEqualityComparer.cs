@@ -64,17 +64,17 @@ public class SbomEqualityComparer
             return externalDocRefsEqual;
         }
 
-        var relationshipsEqual = CheckRelationships(spdx22Relationships, spdx30Relationships);
-        if (!relationshipsEqual)
-        {
-            return relationshipsEqual;
-        }
-
-        //var filesEqual = CheckFiles(spdx22Files, spdx30Files, elements, spdx30Relationships);
-        //if (!filesEqual)
+        //var relationshipsEqual = CheckRelationships(spdx22Relationships, spdx30Relationships);
+        //if (!relationshipsEqual)
         //{
-        //    return filesEqual;
+        //    return relationshipsEqual;
         //}
+
+        var filesEqual = CheckFiles(spdx22Files, spdx30Files, elements, spdx30Relationships);
+        if (!filesEqual)
+        {
+            return filesEqual;
+        }
 
         var packagesEqual = CheckPackages(spdx22Packages, spdx30Packages, elements, spdx30Relationships);
         if (!packagesEqual)
@@ -95,8 +95,64 @@ public class SbomEqualityComparer
         var spdx22InternalSbomFileInfos = ConvertToSbomFiles(spdx22Files);
         var spdx30InternalSbomFileInfos = ConvertToSbomFiles(spdx30Files, spdx30Elements, relationships);
 
-        var setsEqual = spdx22InternalSbomFileInfos.SetEquals(spdx30InternalSbomFileInfos);
-        var onlyInSpdx22 = new List<SbomRelationship>();
+        var onlyInSpdx22 = new List<SbomFile>();
+        foreach (var file22 in spdx22InternalSbomFileInfos)
+        {
+            var foundMatch = false;
+            foreach (var file30 in spdx30InternalSbomFileInfos)
+            {
+                if (file22.Id == file30.Id)
+                {
+                    if (sbomFileComparer.Equals(file22, file30))
+                    {
+                        foundMatch = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!foundMatch)
+            {
+                onlyInSpdx22.Add(file22);
+            }
+        }
+
+        if (onlyInSpdx22.Any())
+        {
+            Console.WriteLine($"Files only in SPDX 2.2 (Count: {onlyInSpdx22.Count}):");
+            foreach (var file in onlyInSpdx22)
+            {
+                Console.WriteLine($"Name: {file.Path}, Id: {file.Id}");
+            }
+        }
+
+        var onlyInSpdx30 = new List<SbomFile>();
+        foreach (var file30 in spdx30InternalSbomFileInfos)
+        {
+            var foundMatch = false;
+            foreach (var file22 in spdx22InternalSbomFileInfos)
+            {
+                if (sbomFileComparer.Equals(file30, file22))
+                {
+                    foundMatch = true;
+                    break;
+                }
+            }
+
+            if (!foundMatch)
+            {
+                onlyInSpdx30.Add(file30);
+            }
+        }
+
+        if (onlyInSpdx30.Any())
+        {
+            Console.WriteLine($"Files only in SPDX 3.0 (Count: {onlyInSpdx30.Count}):");
+            foreach (var file in onlyInSpdx30)
+            {
+                Console.WriteLine($"Name: {file.Path}, Id: {file.Id}");
+            }
+        }
 
         return spdx22InternalSbomFileInfos.SetEquals(spdx30InternalSbomFileInfos);
     }

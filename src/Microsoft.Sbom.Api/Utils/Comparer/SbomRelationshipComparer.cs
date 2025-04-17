@@ -23,11 +23,6 @@ public class SbomRelationshipComparer : IEqualityComparer<SbomRelationship>
                 relationship1.SourceElementId == relationship2.SourceElementId &&
                 relationship1.TargetElementId == relationship2.TargetElementId;
 
-        if (!equals)
-        {
-            Console.WriteLine($"RelationshipType: {relationship1.RelationshipType} != {relationship2.RelationshipType}");
-        }
-
         return equals;
     }
 

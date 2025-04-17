@@ -151,19 +151,19 @@ public class IntegrationTests
         // Generate SPDX 2.2 manifest
         var spdx22TestFolderPath = CreateTestFolder();
         //GenerateManifestAndValidateSuccess(spdx22TestFolderPath);
-        var spdx22ManifestPath = "C:\\Users\\ppandrate\\source\\repos\\sbom-tool\\TestResults\\test\\_manifest\\spdx_2.2\\manifest.spdx.json";
+        var spdx22ManifestPath = "C:\\Users\\ppandrate\\Documents\\AppInspector22manifest.spdx.json";
         //Path.Combine(AppendFullManifestFolderPath(spdx22TestFolderPath), ManifestFileName);
         var spdx22Json = ReadJsonFile(spdx22ManifestPath);
 
-        if (Directory.Exists(spdx22TestFolderPath))
-        {
-            Directory.Delete(spdx22TestFolderPath, true);
-        }
+        //if (Directory.Exists(spdx22TestFolderPath))
+        //{
+        //    Directory.Delete(spdx22TestFolderPath, true);
+        //}
 
         // Generate SPDX 3.0 manifest
         var spdx30TestFolderPath = CreateTestFolder();
         //GenerateManifestAndValidateSuccess(spdx30TestFolderPath, manifestInfoSpdxVersion: "3.0");
-        var spdx30ManifestPath = "C:\\Users\\ppandrate\\source\\repos\\sbom-tool\\TestResults\\test\\_manifest\\spdx_3.0\\manifest.spdx.json";
+        var spdx30ManifestPath = "C:\\Users\\ppandrate\\Documents\\AppInspector30manifest.spdx.json";
         //Path.Combine(AppendFullManifestFolderPath(spdx30TestFolderPath, "3.0"), ManifestFileName);
         var spdx30Json = ReadJsonFile(spdx30ManifestPath);
 
