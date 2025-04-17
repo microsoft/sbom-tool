@@ -1,14 +1,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
-using System;
 using System.Collections.Generic;
 using System.IO;
-#if NET472
-using System.Linq;
-#endif
 using System.Reflection;
-using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -40,6 +34,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
     private Mock<IBuildEngine> buildEngine;
     private List<BuildErrorEventArgs> errors;
     private List<BuildMessageEventArgs> messages;
+    private List<BuildWarningEventArgs> warnings;
 
     protected static void ClassSetup(string testDirectoryName)
     {
@@ -59,8 +54,10 @@ public abstract class AbstractGenerateSbomTaskInputTests
         this.buildEngine = new Mock<IBuildEngine>();
         this.errors = new List<BuildErrorEventArgs>();
         this.messages = new List<BuildMessageEventArgs>();
+        this.warnings = new List<BuildWarningEventArgs>();
         this.buildEngine.Setup(x => x.LogErrorEvent(It.IsAny<BuildErrorEventArgs>())).Callback<BuildErrorEventArgs>(e => errors.Add(e));
         this.buildEngine.Setup(x => x.LogMessageEvent(It.IsAny<BuildMessageEventArgs>())).Callback<BuildMessageEventArgs>(msg => messages.Add(msg));
+        this.buildEngine.Setup(x => x.LogWarningEvent(It.IsAny<BuildWarningEventArgs>())).Callback<BuildWarningEventArgs>(w => warnings.Add(w));
     }
 
     [TestCleanup]
@@ -241,18 +238,14 @@ public abstract class AbstractGenerateSbomTaskInputTests
     }
 
     /// <summary>
-    /// Test for ensuring GenerateSbom assigns a defualt Verbosity
+    /// Test for ensuring GenerateSbom assigns a default Verbosity
     /// level when null input is provided.
     /// </summary>
     [TestMethod]
     public void Sbom_Generation_Succeeds_For_Null_Verbosity()
     {
         // Arrange
-        // If Verbosity is null, the default value should be Information and is printed in the
-        // tool's standard output.
-        var pattern = new Regex("Verbosity=.*Value=Information");
-        var stringWriter = new StringWriter();
-        Console.SetOut(stringWriter);
+        // If Verbosity is null, the task should assign a default value should be 'Information'
         var task = new GenerateSbom
         {
             BuildDropPath = TestBuildDropPath,
@@ -270,15 +263,10 @@ public abstract class AbstractGenerateSbomTaskInputTests
 
         // Act
         var result = task.Execute();
-        var output = stringWriter.ToString();
 
         // Assert
         Assert.IsTrue(result);
-#if NET472
-        Assert.IsTrue(this.messages.Any(msg => pattern.IsMatch(msg.Message)));
-#else
-        Assert.IsTrue(pattern.IsMatch(output));
-#endif
+        Assert.AreEqual("Information", task.Verbosity);
     }
 
     /// <summary>
@@ -289,11 +277,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
     public void Sbom_Generation_Succeeds_For_Invalid_Verbosity()
     {
         // Arrange
-        // If an invalid Verbosity is specified, the default value should be Information. It is also printed in the
-        // tool's standard output for the MSBuild Core task.
-        var pattern = new Regex("Verbosity=.*Value=Information");
-        var stringWriter = new StringWriter();
-        Console.SetOut(stringWriter);
+        // If an invalid Verbosity is specified, the default value should be Information.
         var task = new GenerateSbom
         {
             BuildDropPath = TestBuildDropPath,
@@ -311,40 +295,26 @@ public abstract class AbstractGenerateSbomTaskInputTests
 
         // Act
         var result = task.Execute();
-        var output = stringWriter.ToString();
 
         // Assert
         Assert.IsTrue(result);
-#if NET472
-        Assert.IsTrue(this.messages.Any(msg => pattern.IsMatch(msg.Message)));
-#else
-        Assert.IsTrue(pattern.IsMatch(output));
-#endif
+        Assert.AreEqual("Information", task.Verbosity);
     }
 
-#if !NET472
     /// <summary>
     /// Test to ensure GenerateSbom correctly parses and provides each EventLevel verbosity
     /// values to the SBOM API.
     /// </summary>
     [TestMethod]
-    [DataRow("FATAL", "Fatal", false)]
-    [DataRow("information", "Information", true)]
-    [DataRow("vErBose", "Verbose", true)]
-    [DataRow("Warning", "Warning", false)]
-    [DataRow("eRRor", "Error", false)]
-    [DataRow("DeBug", "Verbose", true)]
-    public void Sbom_Generation_Assigns_Correct_Verbosity_IgnoreCase(string inputVerbosity, string mappedVerbosity, bool messageShouldBeLogged)
+    [DataRow("FATAL", "Fatal")]
+    [DataRow("information", "Information")]
+    [DataRow("vErBose", "Verbose")]
+    [DataRow("Warning", "Warning")]
+    [DataRow("eRRor", "Error")]
+    [DataRow("DeBug", "Verbose")]
+    public void Sbom_Generation_Assigns_Correct_Verbosity_IgnoreCase(string inputVerbosity, string mappedVerbosity)
     {
-        if (!messageShouldBeLogged)
-        {
-            Assert.Inconclusive("Cases where the input Verbosity is more restrictive than `Information` are failing due to this issue: https://github.com/microsoft/sbom-tool/issues/616");
-        }
-
         // Arrange
-        var pattern = new Regex($"Verbosity=.*Value={mappedVerbosity}");
-        var stringWriter = new StringWriter();
-        Console.SetOut(stringWriter);
         var task = new GenerateSbom
         {
             BuildDropPath = TestBuildDropPath,
@@ -355,56 +325,18 @@ public abstract class AbstractGenerateSbomTaskInputTests
             Verbosity = inputVerbosity,
             ManifestInfo = this.SbomSpecification,
             BuildEngine = this.buildEngine.Object,
-        };
-
-        // Act
-        var result = task.Execute();
-        var output = stringWriter.ToString();
-
-        // Assert
-        Assert.IsTrue(result, $"result: {result} is not set to true");
-        Assert.AreEqual(messageShouldBeLogged, pattern.IsMatch(output));
-    }
-#else
-    /// <summary>
-    /// Test to ensure GenerateSbom correctly parses and provides each verbosity option
-    /// to the SBOM CLI.
-    /// </summary>
-    [TestMethod]
-    [DataRow("FATAL", "Fatal", false)]
-    [DataRow("information", "Information", true)]
-    [DataRow("vErBose", "Verbose", true)]
-    [DataRow("Warning", "Warning", false)]
-    [DataRow("eRRor", "Error", false)]
-    [DataRow("DeBug", "Debug", true)]
-    public void Sbom_Generation_Assigns_Correct_Verbosity_IgnoreCase(string inputVerbosity, string mappedVerbosity, bool messageShouldBeLogged)
-    {
-        // Arrange
-        var pattern = new Regex($"Verbosity=.*Value={mappedVerbosity}");
-        var stringWriter = new StringWriter();
-        Console.SetOut(stringWriter);
-        var task = new GenerateSbom
-        {
-            BuildDropPath = TestBuildDropPath,
-            PackageSupplier = PackageSupplier,
-            PackageName = PackageName,
-            PackageVersion = PackageVersion,
-            NamespaceBaseUri = NamespaceBaseUri,
-            Verbosity = inputVerbosity,
-            ManifestInfo = this.SbomSpecification,
-            BuildEngine = this.buildEngine.Object,
+#if NET472
             SbomToolPath = SbomToolPath,
+#endif
         };
 
         // Act
         var result = task.Execute();
-        var output = stringWriter.ToString();
 
         // Assert
-        Assert.IsTrue(result, $"result: {result} is not set to true");
-        Assert.AreEqual(messageShouldBeLogged, this.messages.Any(msg => pattern.IsMatch(msg.Message)));
+        Assert.IsTrue(result, $"result: {result} is not set to true.");
+        Assert.AreEqual(mappedVerbosity, task.Verbosity);
     }
-#endif
 
     private static void Xcopy(string sourceDir, string targetDir)
     {

@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <PackageReference Include="NuGet.Frameworks" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" />
     <PackageReference Include="System.Linq.Async" />
   </ItemGroup>
 

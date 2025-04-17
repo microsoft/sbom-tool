@@ -27,6 +27,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="Package References">
+    <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" PrivateAssets="all"/>
     <PackageReference Include="MinVer" PrivateAssets="all"/>
     <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all"/>
