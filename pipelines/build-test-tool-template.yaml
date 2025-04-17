@@ -8,7 +8,7 @@ steps:
     displayName: 'Restore solution'
 
   - pwsh: dotnet build --configuration $(BuildConfiguration) --no-restore
-    displayName: Build solution
+    displayName: Build
 
   - pwsh: dotnet test --no-build --configuration $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory) --coverage --coverage-output $(Agent.TempDirectory)/coverage.cobertura.xml --coverage-output-format cobertura
     displayName: Run unit tests (with coverage on Windows)
