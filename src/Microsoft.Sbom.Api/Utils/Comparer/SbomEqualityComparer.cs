@@ -64,11 +64,11 @@ public class SbomEqualityComparer
             return externalDocRefsEqual;
         }
 
-        //var relationshipsEqual = CheckRelationships(spdx22Relationships, spdx30Relationships);
-        //if (!relationshipsEqual)
-        //{
-        //    return relationshipsEqual;
-        //}
+        var relationshipsEqual = CheckRelationships(spdx22Relationships, spdx30Relationships);
+        if (!relationshipsEqual)
+        {
+            return relationshipsEqual;
+        }
 
         var filesEqual = CheckFiles(spdx22Files, spdx30Files, elements, spdx30Relationships);
         if (!filesEqual)
