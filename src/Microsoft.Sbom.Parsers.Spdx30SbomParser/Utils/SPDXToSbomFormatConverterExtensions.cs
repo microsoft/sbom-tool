@@ -92,12 +92,6 @@ public static class SPDXToSbomFormatConverterExtensions
     /// <returns></returns>
     internal static List<SbomChecksum> ToSbomChecksum(this List<PackageVerificationCode> verificationCodes)
     {
-        if (spdxPackageVerificationCode is null)
-        {
-            return null;
-        }
-
-        return new SbomChecksum
         if (verificationCodes is null)
         {
             return null;
