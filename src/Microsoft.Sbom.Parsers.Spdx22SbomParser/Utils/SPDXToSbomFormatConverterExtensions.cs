@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using SbomChecksum = Microsoft.Sbom.Contracts.Checksum;
@@ -95,24 +94,9 @@ public static class SPDXToSbomFormatConverterExtensions
     {
         return new SbomReference
         {
-            Checksum = spdxExternalDocumentReference.Checksum?.ToSbomChecksum(),
+            Checksum = spdxExternalDocumentReference.Checksum.ToSbomChecksum(),
             ExternalDocumentId = spdxExternalDocumentReference.ExternalDocumentId,
             Document = spdxExternalDocumentReference.SpdxDocument,
-        };
-    }
-
-    public static ExternalDocumentReferenceInfo ToExternalDocumentReferenceInfo(this SpdxExternalDocumentReference externalDocumentReference)
-    {
-        if (externalDocumentReference is null)
-        {
-            return null;
-        }
-
-        return new ExternalDocumentReferenceInfo
-        {
-            ExternalDocumentName = externalDocumentReference.ExternalDocumentId,
-            Checksum = new List<SbomChecksum> { externalDocumentReference.Checksum?.ToSbomChecksum() },
-            DocumentNamespace = externalDocumentReference.SpdxDocument,
         };
     }
 
@@ -130,19 +114,14 @@ public static class SPDXToSbomFormatConverterExtensions
     /// <summary>
     /// Convert a <see cref="SPDXChecksum"/> object to a <see cref="SbomChecksum"/> object.
     /// </summary>
-    /// <param name="spdxChecksum"></param>
+    /// <param name="spdxChecksums"></param>
     /// <returns></returns>
-    internal static SbomChecksum ToSbomChecksum(this SPDXChecksum spdxChecksum)
+    internal static SbomChecksum ToSbomChecksum(this SPDXChecksum spdxChecksums)
     {
-        if (spdxChecksum is null)
-        {
-            return null;
-        }
-
         return new SbomChecksum
         {
-            Algorithm = new AlgorithmName(spdxChecksum.Algorithm, null),
-            ChecksumValue = spdxChecksum.ChecksumValue,
+            Algorithm = new AlgorithmName(spdxChecksums.Algorithm, null),
+            ChecksumValue = spdxChecksums.ChecksumValue,
         };
     }
 }
