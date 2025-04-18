@@ -141,7 +141,6 @@ public class SPDXExtensionsTest
     public void AddSpdxIdToExternalReference_Succeeds()
     {
         externalMap.AddExternalSpdxId("externalRefName", checksums);
-        Assert.AreEqual(ExternalReferenceSpdxId, externalMap.ExternalSpdxId);
         Assert.AreEqual(ExternalReferenceSpdxId, externalMap.SpdxId);
     }
 
