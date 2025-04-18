@@ -380,8 +380,8 @@ public class Generator : IManifestGenerator
 
         var (sbomToolName, sbomToolVersion, packageName, packageVersion, documentName, creationInfo) = GetCommonMetadata(internalMetadataProvider);
 
-        var orgName = internalMetadataProvider.GetPackageSupplier();
-        var toolName = sbomToolName + "-" + sbomToolVersion;
+        var orgName = $"Organization: {internalMetadataProvider.GetPackageSupplier()}";
+        var toolName = $"Tool: {sbomToolName}-{sbomToolVersion}";
 
         var spdxOrganization = new Organization
         {
