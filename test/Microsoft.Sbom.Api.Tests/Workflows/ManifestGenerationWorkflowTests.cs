@@ -397,7 +397,7 @@ public class ManifestGenerationWorkflowTests
             Assert.AreEqual(1, creationInfo.Count);
 
             // Test deduplication
-            var noAssertionElements = elements.Where(element => element["spdxId"].ToString() == "SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B").ToList();
+            var noAssertionElements = elements.Where(element => element["spdxId"].ToString() == "SPDXRef-Element-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969").ToList();
             Assert.AreEqual(1, noAssertionElements.Count);
 
             var organizationElements = elements.Where(element => element["type"].ToString() == "Organization").ToList();

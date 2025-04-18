@@ -50,4 +50,12 @@ public class SbomFormatConverterTests
 
         Assert.IsNotNull(sbomPackage);
     }
+
+    [TestMethod]
+    public void ToSbomChecksum_NullChecksum_ReturnsNull()
+    {
+        Checksum spdxChecksum = null;
+        var sbomChecksum = spdxChecksum.ToSbomChecksum();
+        Assert.IsNull(sbomChecksum, "ToSbomChecksum should return null when the input checksum is null.");
+    }
 }
