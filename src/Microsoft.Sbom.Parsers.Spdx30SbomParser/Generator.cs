@@ -295,14 +295,13 @@ public class Generator : IManifestGenerator
         };
 
         spdxExternalMap.AddExternalSpdxId(externalDocumentReferenceInfo.ExternalDocumentName, externalDocumentReferenceInfo.Checksum);
-        var externalDocumentReferenceId = spdxExternalMap.ExternalSpdxId;
 
         return new GenerationResult
         {
             Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxExternalMap, this.serializerOptions)),
             ResultMetadata = new ResultMetadata
             {
-                EntityId = externalDocumentReferenceId
+                EntityId = spdxExternalMap.SpdxId
             }
         };
     }
