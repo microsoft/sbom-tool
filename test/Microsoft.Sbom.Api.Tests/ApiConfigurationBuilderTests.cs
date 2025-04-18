@@ -37,7 +37,8 @@ public class ApiConfigurationBuilderTests
     {
         Verbosity = EventLevel.Verbose,
         WorkflowParallelism = DefaultParallelism,
-        DeleteManifestDirectoryIfPresent = true
+        DeleteManifestDirectoryIfPresent = true,
+        AdditionComponentDetectorArgs = "--key value",
     };
 
     private readonly string manifestDirPath = "manifestDirPath";
@@ -57,6 +58,7 @@ public class ApiConfigurationBuilderTests
             Name = "spdx",
             Version = "2.2"
         };
+        var expectedAdditionalComponentDetectorArgs = "--key value";
 
         var config = ApiConfigurationBuilder.GetConfiguration(RootPath, manifestDirPath, files, packages, metadata, specs, runtime, externalDocumentRefListFile, componentPath);
 
@@ -73,6 +75,7 @@ public class ApiConfigurationBuilderTests
         Assert.AreEqual(externalDocumentRefListFile, config.ExternalDocumentReferenceListFile.Value);
         Assert.AreEqual(1, config.ManifestInfo.Value.Count);
         Assert.IsTrue(config.ManifestInfo.Value[0].Equals(expectedManifestInfo));
+        Assert.AreEqual(expectedAdditionalComponentDetectorArgs, config.AdditionalComponentDetectorArgs.Value);
 
         Assert.AreEqual(SettingSource.SbomApi, config.BuildDropPath.Source);
         Assert.AreEqual(SettingSource.SbomApi, config.BuildComponentPath.Source);
