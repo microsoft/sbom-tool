@@ -44,7 +44,7 @@ public static class SbomFileJsonStrings
               ""SPDXRef-AnyLicenseInfo-3BA3FA6D3D66FE2BA75992BB0850D080F1223256368A76C77BEF8E0F6AC71896""
             ],
             ""creationInfo"": ""_:creationinfo"",
-            ""spdxId"": ""SPDXRef-Relationship-2A69D50DCB6D763C5C4FFCE6A4F6C3166DD8F6DB3F77BDD4B6129C0B33F238DA"",
+            ""spdxId"": ""SPDXRef-Relationship-409BEAA4D9456378E2E96E4EBC047C6477A1FEFEFE37943E61DFBEC103247718"",
             ""type"": ""Relationship""
           },
           {
@@ -54,7 +54,7 @@ public static class SbomFileJsonStrings
               ""SPDXRef-AnyLicenseInfo-3BA3FA6D3D66FE2BA75992BB0850D080F1223256368A76C77BEF8E0F6AC71896""
             ],
             ""creationInfo"": ""_:creationinfo"",
-            ""spdxId"": ""SPDXRef-Relationship-222E099165617B282F2B424519FC133796AA0189D0238FD121CCF3B0340D4301"",
+            ""spdxId"": ""SPDXRef-Relationship-446FA437DDD74F961FED13C826EB9E6139B95162BFB071AC6002038C21C850D1"",
             ""type"": ""Relationship""
           }
         ]";

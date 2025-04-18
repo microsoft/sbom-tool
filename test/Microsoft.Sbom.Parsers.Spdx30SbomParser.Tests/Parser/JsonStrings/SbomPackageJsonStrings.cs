@@ -46,7 +46,7 @@ public static class SbomPackageJsonStrings
             ""SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B""
         ],
         ""creationInfo"": ""_:creationinfo"",
-        ""spdxId"": ""SPDXRef-Relationship-2A69D50DCB6D763C5C4FFCE6A4F6C3166DD8F6DB3F77BDD4B6129C0B33F238DA"",
+        ""spdxId"": ""SPDXRef-Relationship-36F92860EA3E8D16B3D50D1EFA198CA36FAA11BAE47794DB9F11BDC060D4E2E3"",
         ""type"": ""Relationship""
         },
         {
@@ -62,7 +62,7 @@ public static class SbomPackageJsonStrings
             ""SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B""
         ],
         ""creationInfo"": ""_:creationinfo"",
-        ""spdxId"": ""SPDXRef-Relationship-222E099165617B282F2B424519FC133796AA0189D0238FD121CCF3B0340D4301"",
+        ""spdxId"": ""SPDXRef-Relationship-07FF6EFF854E6C320E255986626E6D974E3DB0AC801EBC36C8D7C429430474CC"",
         ""type"": ""Relationship""
         }
     ]";
@@ -117,7 +117,7 @@ public static class SbomPackageJsonStrings
           ""SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B""
         ],
         ""creationInfo"": ""_:creationinfo"",
-        ""spdxId"": ""SPDXRef-Relationship-222E099165617B282F2B424519FC133796AA0189D0238FD121CCF3B0340D4301"",
+        ""spdxId"": ""SPDXRef-Relationship-0D93F951FC11129F23957F564A02B8B839005551CC2928CEF0B84083A64FA2F0"",
         ""type"": ""Relationship""
       },
       {
@@ -127,7 +127,7 @@ public static class SbomPackageJsonStrings
           ""SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B""
         ],
         ""creationInfo"": ""_:creationinfo"",
-        ""spdxId"": ""SPDXRef-Relationship-2A69D50DCB6D763C5C4FFCE6A4F6C3166DD8F6DB3F77BDD4B6129C0B33F238DA"",
+        ""spdxId"": ""SPDXRef-Relationship-9DC56B7C86EFFE6789FB57BDA0A12A17C6F6A1C32387C77DA8B4C7C78A9F67AC"",
         ""type"": ""Relationship""
       }
     ]";
