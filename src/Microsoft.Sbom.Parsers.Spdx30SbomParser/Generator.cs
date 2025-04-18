@@ -160,7 +160,7 @@ public class Generator : IManifestGenerator
         var dependOnId = packageInfo.DependOn;
         if (dependOnId is not null && dependOnId != Constants.RootPackageIdValue)
         {
-            dependOnId = spdxPackage.AddSpdxId(packageInfo);
+            dependOnId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.DependOn);
         }
 
         return new GenerationResult
