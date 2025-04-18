@@ -7,7 +7,7 @@ public class NoAssertionElement : Element
 {
     public NoAssertionElement()
     {
-        Name = "NoAssertion";
+        Name = Constants.NoAssertionValue;
         SpdxId = "SPDXRef-NoAssertion";
         Type = nameof(Element);
     }

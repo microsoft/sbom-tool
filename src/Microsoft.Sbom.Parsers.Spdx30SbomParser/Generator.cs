@@ -525,17 +525,21 @@ public class Generator : IManifestGenerator
         spdxRelationshipLicenseConcludedElement.AddSpdxId();
         spdxRelationshipAndLicenseElementsToAddToSBOM.Add(spdxRelationshipLicenseConcludedElement);
 
-        // If they exist, convert licenseDeclared to SPDX license elements and add Relationship elements for them
-        if (fileInfo.LicenseInfoInFiles == null || !fileInfo.LicenseInfoInFiles.Any())
-        {
-            return spdxRelationshipAndLicenseElementsToAddToSBOM;
-        }
-
         var toRelationships = new List<string>();
+        if (fileInfo.LicenseInfoInFiles == null)
+        {
+            var licenseDeclaredElement = GenerateLicenseElement(null);
+            spdxRelationshipAndLicenseElementsToAddToSBOM.Add(licenseDeclaredElement);
+            toRelationships.Add(licenseDeclaredElement.SpdxId);
+        }
+        else
+        {
         foreach (var licenseInfoInOneFile in fileInfo.LicenseInfoInFiles)
         {
             var licenseDeclaredElement = GenerateLicenseElement(licenseInfoInOneFile);
+                spdxRelationshipAndLicenseElementsToAddToSBOM.Add(licenseDeclaredElement);
             toRelationships.Add(licenseDeclaredElement.SpdxId);
+        }
         }
 
         var spdxRelationshipLicenseDeclaredElement = new SpdxEntities.Relationship
