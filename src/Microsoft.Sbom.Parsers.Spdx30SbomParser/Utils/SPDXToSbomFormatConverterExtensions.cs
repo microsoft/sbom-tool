@@ -41,6 +41,11 @@ public static class SPDXToSbomFormatConverterExtensions
     /// <returns></returns>
     internal static SbomChecksum ToSbomChecksum(this PackageVerificationCode spdxPackageVerificationCode)
     {
+        if (spdxPackageVerificationCode is null)
+        {
+            return null;
+        }
+
         return new SbomChecksum
         {
             Algorithm = AlgorithmName.FromString(spdxPackageVerificationCode.Algorithm.ToString()),
