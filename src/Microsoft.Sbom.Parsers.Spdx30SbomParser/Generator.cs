@@ -9,6 +9,7 @@ using System.Text.Json;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Common.Spdx30Entities.Enums;
+using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
