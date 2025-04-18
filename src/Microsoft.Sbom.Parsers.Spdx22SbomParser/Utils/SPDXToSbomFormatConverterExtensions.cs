@@ -94,7 +94,7 @@ public static class SPDXToSbomFormatConverterExtensions
     {
         return new SbomReference
         {
-            Checksum = spdxExternalDocumentReference.Checksum.ToSbomChecksum(),
+            Checksum = spdxExternalDocumentReference.Checksum?.ToSbomChecksum(),
             ExternalDocumentId = spdxExternalDocumentReference.ExternalDocumentId,
             Document = spdxExternalDocumentReference.SpdxDocument,
         };
@@ -114,14 +114,19 @@ public static class SPDXToSbomFormatConverterExtensions
     /// <summary>
     /// Convert a <see cref="SPDXChecksum"/> object to a <see cref="SbomChecksum"/> object.
     /// </summary>
-    /// <param name="spdxChecksums"></param>
+    /// <param name="spdxChecksum"></param>
     /// <returns></returns>
-    internal static SbomChecksum ToSbomChecksum(this SPDXChecksum spdxChecksums)
+    internal static SbomChecksum ToSbomChecksum(this SPDXChecksum spdxChecksum)
     {
+        if (spdxChecksum is null)
+        {
+            return null;
+        }
+
         return new SbomChecksum
         {
-            Algorithm = new AlgorithmName(spdxChecksums.Algorithm, null),
-            ChecksumValue = spdxChecksums.ChecksumValue,
+            Algorithm = new AlgorithmName(spdxChecksum.Algorithm, null),
+            ChecksumValue = spdxChecksum.ChecksumValue,
         };
     }
 }
