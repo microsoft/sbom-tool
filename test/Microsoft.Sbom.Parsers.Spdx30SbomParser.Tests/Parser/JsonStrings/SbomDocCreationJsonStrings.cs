@@ -10,13 +10,13 @@ public static class SbomDocCreationJsonStrings
     @"[
         {
             ""creationInfo"": ""_:creationinfo"",
-            ""name"": ""the-package-supplier"",
-            ""spdxId"": ""SPDXRef-Organization-4B8D792FFFFCD3AF92D53A739B6DF98DF2B1F367C2745DDC0085B30F51EBBC81"",
+            ""name"": ""Organization: the-package-supplier"",
+            ""spdxId"": ""SPDXRef-Organization-D914F48404CB6C27373666F70709BABF08C6603E1303B97758A20190A050CE16"",
             ""type"": ""Organization""
         },
         {
             ""creationInfo"": ""_:creationinfo"",
-            ""name"": ""Microsoft.SBOMTool-.*"",
+            ""name"": ""Tool: Microsoft.SBOMTool-.*"",
             ""spdxId"": ""SPDXRef-Tool-.*"",
             ""type"": ""Tool""
         },
@@ -24,7 +24,7 @@ public static class SbomDocCreationJsonStrings
             ""@id"": ""_:creationinfo"",
             ""created"": "".*"",
             ""createdBy"": [
-                ""SPDXRef-Organization-4B8D792FFFFCD3AF92D53A739B6DF98DF2B1F367C2745DDC0085B30F51EBBC81""
+                ""SPDXRef-Organization-D914F48404CB6C27373666F70709BABF08C6603E1303B97758A20190A050CE16""
             ],
             ""createdUsing"": [
                 ""SPDXRef-Tool-.*""
