@@ -63,7 +63,7 @@ public static class SbomDocCreationJsonStrings
                 ""SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1""
             ],
             ""creationInfo"": ""_:creationinfo"",
-            ""spdxId"": ""SPDXRef-Relationship-222E099165617B282F2B424519FC133796AA0189D0238FD121CCF3B0340D4301"",
+            ""spdxId"": ""SPDXRef-Relationship-5706D1933D610748E76F18A51E1DA89F7C80399E8526E31EEF5E65658E772003"",
             ""type"": ""Relationship""
         }
     ]";
