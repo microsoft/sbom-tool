@@ -534,12 +534,12 @@ public class Generator : IManifestGenerator
         }
         else
         {
-        foreach (var licenseInfoInOneFile in fileInfo.LicenseInfoInFiles)
-        {
-            var licenseDeclaredElement = GenerateLicenseElement(licenseInfoInOneFile);
+            foreach (var licenseInfoInOneFile in fileInfo.LicenseInfoInFiles)
+            {
+                var licenseDeclaredElement = GenerateLicenseElement(licenseInfoInOneFile);
                 spdxRelationshipAndLicenseElementsToAddToSBOM.Add(licenseDeclaredElement);
-            toRelationships.Add(licenseDeclaredElement.SpdxId);
-        }
+                toRelationships.Add(licenseDeclaredElement.SpdxId);
+            }
         }
 
         var spdxRelationshipLicenseDeclaredElement = new SpdxEntities.Relationship
