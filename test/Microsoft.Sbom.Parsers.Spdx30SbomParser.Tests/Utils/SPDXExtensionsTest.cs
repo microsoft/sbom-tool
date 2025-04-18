@@ -10,6 +10,8 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.Extensions.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Relationship = Microsoft.Sbom.Common.Spdx30Entities.Relationship;
+using RelationshipType = Microsoft.Sbom.Common.Spdx30Entities.Enums.RelationshipType;
 
 namespace Microsoft.Sbom.Utils;
 
@@ -201,5 +203,74 @@ public class SPDXExtensionsTest
         element.AddSpdxId();
         otherElement.AddSpdxId();
         Assert.AreNotEqual(element.SpdxId, otherElement.SpdxId);
+    }
+
+    [TestMethod]
+    public void AddSpdxIdToRelationships_DifferentRelationshipType_HaveUniqueSpdxIds()
+    {
+        var relationship1 = new Relationship
+        {
+            From = "Source1",
+            To = new List<string> { "Target1" },
+            RelationshipType = RelationshipType.DEPENDS_ON
+        };
+
+        var relationship2 = new Relationship
+        {
+            From = "Source1",
+            To = new List<string> { "Target1" },
+            RelationshipType = RelationshipType.CONTAINS
+        };
+
+        relationship1.AddSpdxId();
+        relationship2.AddSpdxId();
+
+        Assert.AreNotEqual(relationship1.SpdxId, relationship2.SpdxId, "SPDX IDs for different relationship types should be unique.");
+    }
+
+    [TestMethod]
+    public void AddSpdxIdToRelationships_DifferentSource_HaveUniqueSpdxIds()
+    {
+        var relationship1 = new Relationship
+        {
+            From = "Source1",
+            To = new List<string> { "Target1" },
+            RelationshipType = RelationshipType.DEPENDS_ON
+        };
+
+        var relationship2 = new Relationship
+        {
+            From = "Source2",
+            To = new List<string> { "Target1" },
+            RelationshipType = RelationshipType.DEPENDS_ON
+        };
+
+        relationship1.AddSpdxId();
+        relationship2.AddSpdxId();
+
+        Assert.AreNotEqual(relationship1.SpdxId, relationship2.SpdxId, "SPDX IDs for relationships with different sources should be unique.");
+    }
+
+    [TestMethod]
+    public void AddSpdxIdToRelationships_SameSourceTargetAndType_HaveSameSpdxId()
+    {
+        var relationship1 = new Relationship
+        {
+            From = "Source1",
+            To = new List<string> { "Target1" },
+            RelationshipType = RelationshipType.DEPENDS_ON
+        };
+
+        var relationship2 = new Relationship
+        {
+            From = "Source1",
+            To = new List<string> { "Target1" },
+            RelationshipType = RelationshipType.DEPENDS_ON
+        };
+
+        relationship1.AddSpdxId();
+        relationship2.AddSpdxId();
+
+        Assert.AreEqual(relationship1.SpdxId, relationship2.SpdxId, "SPDX IDs for relationships with the same source, target, and type should be the same.");
     }
 }
