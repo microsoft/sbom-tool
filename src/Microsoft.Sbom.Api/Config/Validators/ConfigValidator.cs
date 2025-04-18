@@ -74,6 +74,12 @@ public abstract class ConfigValidator
             return;
         }
 
+        // Skip validation of the ComplianceStandard. This case is handled in the ConfigSanitizer.
+        if (propertyName == nameof(IConfiguration.ComplianceStandard))
+        {
+            return;
+        }
+
         switch (propertyValue)
         {
             case null:
