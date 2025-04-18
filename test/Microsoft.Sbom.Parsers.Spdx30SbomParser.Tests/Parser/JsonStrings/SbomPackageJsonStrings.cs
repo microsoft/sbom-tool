@@ -35,15 +35,15 @@ public static class SbomPackageJsonStrings
         },
         {
         ""creationInfo"": ""_:creationinfo"",
-        ""name"": ""NoAssertion"",
-        ""spdxId"": ""SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B"",
+        ""name"": ""NOASSERTION"",
+        ""spdxId"": ""SPDXRef-Element-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969"",
         ""type"": ""Element""
         },
         {
         ""from"": ""SPDXRef-Package-4739C82D88855A138C811B8CE05CC97113BEC7F7C7F66EC7E4C6C176EEA0FECE"",
         ""relationshipType"": ""HAS_CONCLUDED_LICENSE"",
         ""to"": [
-            ""SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B""
+            ""SPDXRef-Element-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969""
         ],
         ""creationInfo"": ""_:creationinfo"",
         ""spdxId"": ""SPDXRef-Relationship-2A69D50DCB6D763C5C4FFCE6A4F6C3166DD8F6DB3F77BDD4B6129C0B33F238DA"",
@@ -51,15 +51,15 @@ public static class SbomPackageJsonStrings
         },
         {
         ""creationInfo"": ""_:creationinfo"",
-        ""name"": ""NoAssertion"",
-        ""spdxId"": ""SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B"",
+        ""name"": ""NOASSERTION"",
+        ""spdxId"": ""SPDXRef-Element-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969"",
         ""type"": ""Element""
         },
         {
         ""from"": ""SPDXRef-Package-4739C82D88855A138C811B8CE05CC97113BEC7F7C7F66EC7E4C6C176EEA0FECE"",
         ""relationshipType"": ""HAS_DECLARED_LICENSE"",
         ""to"": [
-            ""SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B""
+            ""SPDXRef-Element-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969""
         ],
         ""creationInfo"": ""_:creationinfo"",
         ""spdxId"": ""SPDXRef-Relationship-222E099165617B282F2B424519FC133796AA0189D0238FD121CCF3B0340D4301"",
@@ -106,15 +106,15 @@ public static class SbomPackageJsonStrings
       },
       {
         ""creationInfo"": ""_:creationinfo"",
-        ""name"": ""NoAssertion"",
-        ""spdxId"": ""SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B"",
+        ""name"": ""NOASSERTION"",
+        ""spdxId"": ""SPDXRef-Element-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969"",
         ""type"": ""Element""
       },
       {
         ""from"": ""SPDXRef-RootPackage"",
         ""relationshipType"": ""HAS_DECLARED_LICENSE"",
         ""to"": [
-          ""SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B""
+          ""SPDXRef-Element-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969""
         ],
         ""creationInfo"": ""_:creationinfo"",
         ""spdxId"": ""SPDXRef-Relationship-222E099165617B282F2B424519FC133796AA0189D0238FD121CCF3B0340D4301"",
@@ -124,7 +124,7 @@ public static class SbomPackageJsonStrings
         ""from"": ""SPDXRef-RootPackage"",
         ""relationshipType"": ""HAS_CONCLUDED_LICENSE"",
         ""to"": [
-          ""SPDXRef-Element-D6D57C0C9CC2CAC35C83DE0C8E4C8C37B87C0A58DA49BB31EBEBC6E200F54D4B""
+          ""SPDXRef-Element-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969""
         ],
         ""creationInfo"": ""_:creationinfo"",
         ""spdxId"": ""SPDXRef-Relationship-2A69D50DCB6D763C5C4FFCE6A4F6C3166DD8F6DB3F77BDD4B6129C0B33F238DA"",
