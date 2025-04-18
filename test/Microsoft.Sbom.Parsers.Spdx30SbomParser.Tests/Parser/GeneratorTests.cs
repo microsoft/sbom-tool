@@ -86,14 +86,37 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocumentTest_File()
+    public void GenerateJsonDocumentTest_File_WithConcludedAndNoDeclaredLicense()
     {
         var fileInfo = new InternalSbomFileInfo
         {
             Checksum = GetSampleChecksums(),
             FileCopyrightText = "sampleCopyright",
             LicenseConcluded = "sampleLicense1",
-            LicenseInfoInFiles = new List<string> { "sampleLicense1" },
+            LicenseInfoInFiles = null,
+            Path = "./sample/path",
+        };
+
+        var generatorResult = generator.GenerateJsonDocument(fileInfo);
+        var generatedJsonString = generatorResult.Document.RootElement.GetRawText();
+        generatedJsonString = NormalizeString(generatedJsonString);
+
+        var expectedJsonContentAsString = SbomFileJsonStrings.FileWithNoDeclaredLicense;
+        expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
+
+        Assert.IsFalse(generatedJsonString.Contains("null"));
+        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_File_WithConcludedAndDeclaredLicense()
+    {
+        var fileInfo = new InternalSbomFileInfo
+        {
+            Checksum = GetSampleChecksums(),
+            FileCopyrightText = "sampleCopyright",
+            LicenseConcluded = "sampleLicense1",
+            LicenseInfoInFiles = new List<string> { "sampleLicense2" },
             Path = "./sample/path",
         };
 
