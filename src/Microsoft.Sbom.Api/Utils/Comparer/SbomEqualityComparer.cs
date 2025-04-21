@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -16,7 +15,7 @@ using SbomEntities = Microsoft.Sbom.Extensions.Entities;
 namespace Microsoft.Sbom.Api.Utils.Comparer;
 
 /// <summary>
-/// Finds the differences between an SPDX 2.2 document and an SPDX 3.0 document.
+/// Finds the content differences between an SPDX 2.2 document and an SPDX 3.0 document.
 /// </summary>
 public class SbomEqualityComparer
 {
@@ -95,65 +94,6 @@ public class SbomEqualityComparer
         var spdx22InternalSbomFileInfos = ConvertToSbomFiles(spdx22Files);
         var spdx30InternalSbomFileInfos = ConvertToSbomFiles(spdx30Files, spdx30Elements, relationships);
 
-        var onlyInSpdx22 = new List<SbomFile>();
-        foreach (var file22 in spdx22InternalSbomFileInfos)
-        {
-            var foundMatch = false;
-            foreach (var file30 in spdx30InternalSbomFileInfos)
-            {
-                if (file22.Id == file30.Id)
-                {
-                    if (sbomFileComparer.Equals(file22, file30))
-                    {
-                        foundMatch = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!foundMatch)
-            {
-                onlyInSpdx22.Add(file22);
-            }
-        }
-
-        if (onlyInSpdx22.Any())
-        {
-            Console.WriteLine($"Files only in SPDX 2.2 (Count: {onlyInSpdx22.Count}):");
-            foreach (var file in onlyInSpdx22)
-            {
-                Console.WriteLine($"Name: {file.Path}, Id: {file.Id}");
-            }
-        }
-
-        var onlyInSpdx30 = new List<SbomFile>();
-        foreach (var file30 in spdx30InternalSbomFileInfos)
-        {
-            var foundMatch = false;
-            foreach (var file22 in spdx22InternalSbomFileInfos)
-            {
-                if (sbomFileComparer.Equals(file30, file22))
-                {
-                    foundMatch = true;
-                    break;
-                }
-            }
-
-            if (!foundMatch)
-            {
-                onlyInSpdx30.Add(file30);
-            }
-        }
-
-        if (onlyInSpdx30.Any())
-        {
-            Console.WriteLine($"Files only in SPDX 3.0 (Count: {onlyInSpdx30.Count}):");
-            foreach (var file in onlyInSpdx30)
-            {
-                Console.WriteLine($"Name: {file.Path}, Id: {file.Id}");
-            }
-        }
-
         return spdx22InternalSbomFileInfos.SetEquals(spdx30InternalSbomFileInfos);
     }
 
@@ -173,6 +113,7 @@ public class SbomEqualityComparer
     internal bool CheckRelationships(List<SPDXRelationship> spdx22Relationships, List<Relationship> spdx30Relationships)
     {
         // Filtering out relationships that describe license information since SPDX 2.2 does not support these relationship types.
+        // The license relationships are linked to files and packages when comparing the two SBOMs in the CheckFiles and CheckPackages methods.
         var spdx30RelationshipsNotRelatedtoLicenses = spdx30Relationships.Where(
             element => element.RelationshipType != RelationshipType.HAS_CONCLUDED_LICENSE
             && element.RelationshipType != RelationshipType.HAS_DECLARED_LICENSE)
@@ -186,64 +127,7 @@ public class SbomEqualityComparer
         var spdx22InternalRelationships = ConvertToRelationships(spdx22Relationships);
         var spdx30InternalRelationships = ConvertToRelationships(spdx30RelationshipsNotRelatedtoLicenses);
 
-        var setsEqual = spdx22InternalRelationships.SetEquals(spdx30InternalRelationships);
-        var onlyInSpdx22 = new List<SbomRelationship>();
-        foreach (var rel22 in spdx22InternalRelationships)
-        {
-            var foundMatch = false;
-            foreach (var rel30 in spdx30InternalRelationships)
-            {
-                if (sbomRelationshipComparer.Equals(rel22, rel30))
-                {
-                    foundMatch = true;
-                    break;
-                }
-            }
-
-            if (!foundMatch)
-            {
-                onlyInSpdx22.Add(rel22);
-            }
-        }
-
-        if (onlyInSpdx22.Any())
-        {
-            Console.WriteLine($"Relationships only in SPDX 2.2 (Count: {onlyInSpdx22.Count}):");
-            foreach (var rel in onlyInSpdx22)
-            {
-                Console.WriteLine($"Type: {rel.RelationshipType}, Source: {rel.SourceElementId}, Target: {rel.TargetElementId}");
-            }
-        }
-
-        var onlyInSpdx30 = new List<SbomRelationship>();
-        foreach (var rel30 in spdx30InternalRelationships)
-        {
-            var foundMatch = false;
-            foreach (var rel22 in spdx22InternalRelationships)
-            {
-                if (sbomRelationshipComparer.Equals(rel30, rel22))
-                {
-                    foundMatch = true;
-                    break;
-                }
-            }
-
-            if (!foundMatch)
-            {
-                onlyInSpdx30.Add(rel30);
-            }
-        }
-
-        if (onlyInSpdx30.Any())
-        {
-            Console.WriteLine($"Relationships only in SPDX 3.0 (Count: {onlyInSpdx30.Count}):");
-            foreach (var rel in onlyInSpdx30)
-            {
-                Console.WriteLine($"Type: {rel.RelationshipType}, Source: {rel.SourceElementId}, Target: {rel.TargetElementId}");
-            }
-        }
-
-        return setsEqual;
+        return spdx22InternalRelationships.SetEquals(spdx30InternalRelationships);
     }
 
     internal bool CheckExternalDocRefs(List<SpdxExternalDocumentReference> spdx22ExternalDocumentRefs, List<ExternalMap> spdx30ExternalDocumentRefs)
@@ -313,7 +197,7 @@ public class SbomEqualityComparer
 
         foreach (var relationship in relationships)
         {
-            // For these special cases, swap the source and target element IDs and change the relationship type to the logical equivalent.
+            // For these special cases, swap the source and target element IDs and change the 2.2 relationshipType to the logical equivalent in 3.0.
             // This is because SPDX 3.0 does not support the following relationship types.
             if (relationship.RelationshipType == SPDXRelationshipType.PREREQUISITE_FOR.ToString())
             {
@@ -330,13 +214,6 @@ public class SbomEqualityComparer
                 relationship.RelationshipType = RelationshipType.PATCHED_BY.ToString();
                 (relationship.SourceElementId, relationship.TargetElementId) = (relationship.TargetElementId, relationship.SourceElementId);
             }
-
-            //if (relationship.RelationshipType == SbomEntities.RelationshipType.PREREQUISITE_FOR.ToString() ||
-            //relationship.RelationshipType == SbomEntities.RelationshipType.DESCRIBED_BY.ToString() ||
-            //relationship.RelationshipType == SbomEntities.RelationshipType.PATCH_FOR.ToString())
-            //{
-            //    (relationship.SourceElementId, relationship.TargetElementId) = (relationship.TargetElementId, relationship.SourceElementId);
-            //}
 
             sbomRelationships.Add(relationship.ToSbomRelationship());
         }
@@ -411,13 +288,4 @@ public class SbomEqualityComparer
             .Select(element => JsonSerializer.Deserialize<SPDXRelationship>(element.GetRawText()))
             .ToList();
     }
-
-    //private List<Relationship> GetSpdx30Relationships(List<Element> elements)
-    //{
-    //    var relationships = elements.OfType<Relationship>().ToList();
-    //    return relationships
-    //        .Where(element => element.RelationshipType != Common.Spdx30Entities.Enums.RelationshipType.HAS_CONCLUDED_LICENSE &&
-    //                          element.RelationshipType != Common.Spdx30Entities.Enums.RelationshipType.HAS_DECLARED_LICENSE)
-    //        .ToList();
-    //}
 }
