@@ -593,7 +593,7 @@ public class Generator : IManifestGenerator
 
     private Element GenerateLicenseElement(string licenseInfo)
     {
-        if (licenseInfo == null)
+        if (licenseInfo is null)
         {
             return StaticNoAssertionElement;
         }
