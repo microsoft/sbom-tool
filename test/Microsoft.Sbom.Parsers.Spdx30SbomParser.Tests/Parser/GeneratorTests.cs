@@ -97,7 +97,7 @@ public class GeneratorTests
 
         var result = generator.GenerateJsonDocument(packageInfo);
 
-        Assert.IsNull(result.ResultMetadata.DependOn, "DependOnId should be null when DependOn is null.");
+        Assert.IsNull(result.ResultMetadata.DependOn);
     }
 
     [TestMethod]
@@ -111,7 +111,7 @@ public class GeneratorTests
 
         var result = generator.GenerateJsonDocument(packageInfo);
 
-        Assert.AreEqual(Constants.RootPackageIdValue, result.ResultMetadata.DependOn, "DependOnId should equal RootPackageId when DependOn is RootPackageId.");
+        Assert.AreEqual(Constants.RootPackageIdValue, result.ResultMetadata.DependOn);
     }
 
     [TestMethod]
@@ -126,7 +126,7 @@ public class GeneratorTests
         var result = generator.GenerateJsonDocument(packageInfo);
 
         var expectedDependOnId = CommonSPDXUtils.GenerateSpdxPackageId("SomePackageId");
-        Assert.AreEqual(expectedDependOnId, result.ResultMetadata.DependOn, "DependOnId should be correctly generated using CommonSPDXUtils.GenerateSpdxPackageId.");
+        Assert.AreEqual(expectedDependOnId, result.ResultMetadata.DependOn);
     }
 
     [TestMethod]
