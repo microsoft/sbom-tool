@@ -27,6 +27,8 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
 /// </summary>
 public class Generator : IManifestGenerator
 {
+    private static readonly NoAssertionElement StaticNoAssertionElement = CreateStaticNoAssertionElement();
+
     public AlgorithmName[] RequiredHashAlgorithms => new[] { AlgorithmName.SHA256, AlgorithmName.SHA1 };
 
     public string Version { get; set; } = string.Join("-", Constants.SPDXName, Constants.SPDXVersion);
@@ -525,7 +527,7 @@ public class Generator : IManifestGenerator
         spdxRelationshipAndLicenseElementsToAddToSBOM.Add(spdxRelationshipLicenseConcludedElement);
 
         var toRelationships = new List<string>();
-        if (fileInfo.LicenseInfoInFiles == null)
+        if (fileInfo.LicenseInfoInFiles is null)
         {
             var licenseDeclaredElement = GenerateLicenseElement(null);
             spdxRelationshipAndLicenseElementsToAddToSBOM.Add(licenseDeclaredElement);
@@ -591,16 +593,12 @@ public class Generator : IManifestGenerator
 
     private Element GenerateLicenseElement(string licenseInfo)
     {
-        Element licenseElement = null;
         if (licenseInfo == null)
         {
-            licenseElement = new NoAssertionElement();
-        }
-        else
-        {
-            licenseElement = new AnyLicenseInfo { Name = licenseInfo };
+            return StaticNoAssertionElement;
         }
 
+        var licenseElement = new AnyLicenseInfo { Name = licenseInfo };
         licenseElement.AddSpdxId();
         return licenseElement;
     }
@@ -684,5 +682,12 @@ public class Generator : IManifestGenerator
         };
 
         return (sbomToolName, sbomToolVersion, packageName, packageVersion, documentName, creationInfo);
+    }
+
+    private static NoAssertionElement CreateStaticNoAssertionElement()
+    {
+        var noAssertionElement = new NoAssertionElement();
+        noAssertionElement.AddSpdxId();
+        return noAssertionElement;
     }
 }
