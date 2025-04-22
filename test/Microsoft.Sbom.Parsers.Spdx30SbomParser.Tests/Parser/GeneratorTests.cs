@@ -31,8 +31,8 @@ public class GeneratorTests
     private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
     private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>(MockBehavior.Strict);
 
-    private const string sourceElementIdValue = "source-id";
-    private const string targetElementIdValue = "source-id";
+    private const string SourceElementIdValue = "source-id";
+    private const string TargetElementIdValue = "source-id";
 
     [TestMethod]
     public void GenerateJsonDocumentTest_DocumentCreation()
@@ -189,8 +189,8 @@ public class GeneratorTests
     {
         var relationshipInfo = new Relationship
         {
-            SourceElementId = sourceElementIdValue,
-            TargetElementId = targetElementIdValue,
+            SourceElementId = SourceElementIdValue,
+            TargetElementId = TargetElementIdValue,
             RelationshipType = RelationshipType.PREREQUISITE_FOR,
         };
 
@@ -209,8 +209,8 @@ public class GeneratorTests
     {
         var relationshipInfo = new Relationship
         {
-            SourceElementId = sourceElementIdValue,
-            TargetElementId = targetElementIdValue,
+            SourceElementId = SourceElementIdValue,
+            TargetElementId = TargetElementIdValue,
             RelationshipType = RelationshipType.DESCRIBED_BY,
         };
 
@@ -229,8 +229,8 @@ public class GeneratorTests
     {
         var relationshipInfo = new Relationship
         {
-            SourceElementId = sourceElementIdValue,
-            TargetElementId = targetElementIdValue,
+            SourceElementId = SourceElementIdValue,
+            TargetElementId = TargetElementIdValue,
             RelationshipType = RelationshipType.PATCH_FOR,
         };
 
