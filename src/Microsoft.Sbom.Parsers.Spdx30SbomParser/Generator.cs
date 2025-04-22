@@ -9,6 +9,7 @@ using System.Text.Json;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Common.Spdx30Entities.Enums;
+using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
@@ -27,6 +28,8 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
 /// </summary>
 public class Generator : IManifestGenerator
 {
+    private static readonly NoAssertionElement StaticNoAssertionElement = CreateStaticNoAssertionElement();
+
     public AlgorithmName[] RequiredHashAlgorithms => new[] { AlgorithmName.SHA256, AlgorithmName.SHA1 };
 
     public string Version { get; set; } = string.Join("-", Constants.SPDXName, Constants.SPDXVersion);
@@ -160,7 +163,7 @@ public class Generator : IManifestGenerator
         var dependOnId = packageInfo.DependOn;
         if (dependOnId is not null && dependOnId != Constants.RootPackageIdValue)
         {
-            dependOnId = spdxPackage.AddSpdxId(packageInfo);
+            dependOnId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.DependOn);
         }
 
         return new GenerationResult
@@ -524,17 +527,21 @@ public class Generator : IManifestGenerator
         spdxRelationshipLicenseConcludedElement.AddSpdxId();
         spdxRelationshipAndLicenseElementsToAddToSBOM.Add(spdxRelationshipLicenseConcludedElement);
 
-        // If they exist, convert licenseDeclared to SPDX license elements and add Relationship elements for them
-        if (fileInfo.LicenseInfoInFiles == null || !fileInfo.LicenseInfoInFiles.Any())
-        {
-            return spdxRelationshipAndLicenseElementsToAddToSBOM;
-        }
-
         var toRelationships = new List<string>();
-        foreach (var licenseInfoInOneFile in fileInfo.LicenseInfoInFiles)
+        if (fileInfo.LicenseInfoInFiles is null)
         {
-            var licenseDeclaredElement = GenerateLicenseElement(licenseInfoInOneFile);
+            var licenseDeclaredElement = GenerateLicenseElement(null);
+            spdxRelationshipAndLicenseElementsToAddToSBOM.Add(licenseDeclaredElement);
             toRelationships.Add(licenseDeclaredElement.SpdxId);
+        }
+        else
+        {
+            foreach (var licenseInfoInOneFile in fileInfo.LicenseInfoInFiles)
+            {
+                var licenseDeclaredElement = GenerateLicenseElement(licenseInfoInOneFile);
+                spdxRelationshipAndLicenseElementsToAddToSBOM.Add(licenseDeclaredElement);
+                toRelationships.Add(licenseDeclaredElement.SpdxId);
+            }
         }
 
         var spdxRelationshipLicenseDeclaredElement = new SpdxEntities.Relationship
@@ -587,16 +594,12 @@ public class Generator : IManifestGenerator
 
     private Element GenerateLicenseElement(string licenseInfo)
     {
-        Element licenseElement = null;
-        if (licenseInfo == null)
+        if (licenseInfo is null)
         {
-            licenseElement = new NoAssertionElement();
-        }
-        else
-        {
-            licenseElement = new AnyLicenseInfo { Name = licenseInfo };
+            return StaticNoAssertionElement;
         }
 
+        var licenseElement = new AnyLicenseInfo { Name = licenseInfo };
         licenseElement.AddSpdxId();
         return licenseElement;
     }
@@ -680,5 +683,12 @@ public class Generator : IManifestGenerator
         };
 
         return (sbomToolName, sbomToolVersion, packageName, packageVersion, documentName, creationInfo);
+    }
+
+    private static NoAssertionElement CreateStaticNoAssertionElement()
+    {
+        var noAssertionElement = new NoAssertionElement();
+        noAssertionElement.AddSpdxId();
+        return noAssertionElement;
     }
 }
