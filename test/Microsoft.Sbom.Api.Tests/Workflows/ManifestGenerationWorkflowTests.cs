@@ -403,14 +403,12 @@ public class ManifestGenerationWorkflowTests
             var organizationElements = elements.Where(element => element["type"].ToString() == "Organization").ToList();
             Assert.AreEqual(2, organizationElements.Count);
 
-            var organizationElementWithSupplierName = organizationElements.Where(element => element["name"].ToString() == "Organization: testSupplier").ToList();
-            var organizationElementWithNoAssertion = organizationElements.Where(element => element["name"].ToString() == "NOASSERTION").ToList();
-
+            var organizationElementWithSupplierName = organizationElements.Where(element => element["name"].ToString() == "Organization: testPackageSupplier").ToList();
             Assert.AreEqual(1, organizationElementWithSupplierName.Count);
-            Assert.AreEqual(1, organizationElementWithNoAssertion.Count);
 
-            var organizationElement = elements.Where(element => element["spdxId"].ToString() == "SPDXRef-Organization-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969").ToList();
-            Assert.AreEqual(1, organizationElement.Count);
+            var organizationElementWithNoAssertion = organizationElements.Where(element => element["name"].ToString() == "NOASSERTION").ToList();
+            Assert.AreEqual(1, organizationElementWithNoAssertion.Count);
+            Assert.AreEqual("SPDXRef-Organization-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969", organizationElementWithNoAssertion.First()["spdxId"]);
         }
 
         configurationMock.VerifyAll();
