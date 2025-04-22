@@ -9,6 +9,7 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Recorder;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
@@ -83,6 +84,49 @@ public class GeneratorTests
 
         Assert.IsFalse(generatedJsonString.Contains("null"));
         Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocument_DependsOnId_Null_ReturnsNull()
+    {
+        var packageInfo = new SbomPackage
+        {
+            PackageName = "TestPackage",
+            DependOn = null
+        };
+
+        var result = generator.GenerateJsonDocument(packageInfo);
+
+        Assert.IsNull(result.ResultMetadata.DependOn);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocument_DependsOnId_EqualsRootPackageId_ReturnsRootPackageId()
+    {
+        var packageInfo = new SbomPackage
+        {
+            PackageName = "TestPackage",
+            DependOn = Constants.RootPackageIdValue
+        };
+
+        var result = generator.GenerateJsonDocument(packageInfo);
+
+        Assert.AreEqual(Constants.RootPackageIdValue, result.ResultMetadata.DependOn);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocument_DependsOnId_ValidValue_GeneratesSpdxPackageId()
+    {
+        var packageInfo = new SbomPackage
+        {
+            PackageName = "TestPackage",
+            DependOn = "SomePackageId"
+        };
+
+        var result = generator.GenerateJsonDocument(packageInfo);
+
+        var expectedDependOnId = CommonSPDXUtils.GenerateSpdxPackageId("SomePackageId");
+        Assert.AreEqual(expectedDependOnId, result.ResultMetadata.DependOn);
     }
 
     [TestMethod]
