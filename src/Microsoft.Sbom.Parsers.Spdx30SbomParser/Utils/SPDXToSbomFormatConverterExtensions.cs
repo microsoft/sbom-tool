@@ -206,6 +206,6 @@ public static class SPDXToSbomFormatConverterExtensions
 
         var externalIdentifier = (ExternalIdentifier)spdx30Elements
             .FirstOrDefault(element => element is ExternalIdentifier && element.SpdxId == externalIdentifierSpdxId);
-        return externalIdentifier.Identifier;
+        return externalIdentifier?.Identifier;
     }
 }
