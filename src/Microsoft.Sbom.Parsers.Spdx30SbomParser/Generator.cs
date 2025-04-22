@@ -602,7 +602,7 @@ public class Generator : IManifestGenerator
     {
         var spdxRelationshipType = this.GetSPDXRelationshipType(relationshipType);
 
-        // Switch source and target IDs for these specific relationship types
+        // Switch source and target IDs for these specific relationship types to invert directionality.
         if (relationshipType == SbomEntities.RelationshipType.PREREQUISITE_FOR ||
             relationshipType == SbomEntities.RelationshipType.DESCRIBED_BY ||
             relationshipType == SbomEntities.RelationshipType.PATCH_FOR)
@@ -633,6 +633,7 @@ public class Generator : IManifestGenerator
             case SbomEntities.RelationshipType.CONTAINS: return RelationshipType.CONTAINS;
             case SbomEntities.RelationshipType.DEPENDS_ON: return RelationshipType.DEPENDS_ON;
             case SbomEntities.RelationshipType.DESCRIBES: return RelationshipType.DESCRIBES;
+            // These 3 relationships intentionally change the relationship direction to conform with the SPDX 3.0 spec
             case SbomEntities.RelationshipType.PREREQUISITE_FOR: return RelationshipType.HAS_PREREQUISITE;
             case SbomEntities.RelationshipType.DESCRIBED_BY: return RelationshipType.DESCRIBES;
             case SbomEntities.RelationshipType.PATCH_FOR: return RelationshipType.PATCHED_BY;

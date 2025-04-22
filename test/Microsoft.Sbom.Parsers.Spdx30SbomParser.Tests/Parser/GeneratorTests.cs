@@ -33,7 +33,7 @@ public class GeneratorTests
     private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>(MockBehavior.Strict);
 
     private const string SourceElementIdValue = "source-id";
-    private const string TargetElementIdValue = "source-id";
+    private const string TargetElementIdValue = "target-id";
 
     [TestMethod]
     public void GenerateJsonDocumentTest_DocumentCreation()
