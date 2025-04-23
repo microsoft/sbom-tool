@@ -32,6 +32,9 @@ public class GeneratorTests
     private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
     private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>(MockBehavior.Strict);
 
+    private const string SourceElementIdValue = "source-id";
+    private const string TargetElementIdValue = "target-id";
+
     [TestMethod]
     public void GenerateJsonDocumentTest_DocumentCreation()
     {
@@ -245,6 +248,66 @@ public class GeneratorTests
         expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
 
         Assert.IsFalse(generatedJsonString.Contains("null"));
+        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_PrereqFor_Relationship()
+    {
+        var relationshipInfo = new Relationship
+        {
+            SourceElementId = SourceElementIdValue,
+            TargetElementId = TargetElementIdValue,
+            RelationshipType = RelationshipType.PREREQUISITE_FOR,
+        };
+
+        var generatorResult = generator.GenerateJsonDocument(relationshipInfo);
+        var generatedJsonString = generatorResult.Document.RootElement.GetRawText();
+        generatedJsonString = NormalizeString(generatedJsonString);
+
+        var expectedJsonContentAsString = SbomRelationshipJsonStrings.RelationshipPrereqForJsonString;
+        expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
+
+        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_DescribedBy_Relationship()
+    {
+        var relationshipInfo = new Relationship
+        {
+            SourceElementId = SourceElementIdValue,
+            TargetElementId = TargetElementIdValue,
+            RelationshipType = RelationshipType.DESCRIBED_BY,
+        };
+
+        var generatorResult = generator.GenerateJsonDocument(relationshipInfo);
+        var generatedJsonString = generatorResult.Document.RootElement.GetRawText();
+        generatedJsonString = NormalizeString(generatedJsonString);
+
+        var expectedJsonContentAsString = SbomRelationshipJsonStrings.RelationshipDescribedByJsonString;
+        expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
+
+        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_PatchFor_Relationship()
+    {
+        var relationshipInfo = new Relationship
+        {
+            SourceElementId = SourceElementIdValue,
+            TargetElementId = TargetElementIdValue,
+            RelationshipType = RelationshipType.PATCH_FOR,
+        };
+
+        var generatorResult = generator.GenerateJsonDocument(relationshipInfo);
+        var generatedJsonString = generatorResult.Document.RootElement.GetRawText();
+        generatedJsonString = NormalizeString(generatedJsonString);
+
+        var expectedJsonContentAsString = SbomRelationshipJsonStrings.RelationshipPatchForJsonString;
+        expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
+
         Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
     }
 

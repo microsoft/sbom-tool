@@ -329,13 +329,7 @@ public class Generator : IManifestGenerator
             : relationship.TargetElementId;
         var sourceElement = relationship.SourceElementId;
 
-        var spdxRelationship = new SpdxEntities.Relationship
-        {
-            From = sourceElement,
-            RelationshipType = this.GetSPDXRelationshipType(relationship.RelationshipType),
-            To = new List<string> { targetElement },
-        };
-        spdxRelationship.AddSpdxId();
+        var spdxRelationship = GetSpdxRelationship(sourceElement, targetElement, relationship.RelationshipType);
 
         return new GenerationResult
         {
@@ -604,6 +598,28 @@ public class Generator : IManifestGenerator
         return licenseElement;
     }
 
+    private SpdxEntities.Relationship GetSpdxRelationship(string sourceElement, string targetElement, SbomEntities.RelationshipType relationshipType)
+    {
+        var spdxRelationshipType = this.GetSPDXRelationshipType(relationshipType);
+
+        // Switch source and target IDs for these specific relationship types to invert directionality.
+        if (relationshipType == SbomEntities.RelationshipType.PREREQUISITE_FOR ||
+            relationshipType == SbomEntities.RelationshipType.DESCRIBED_BY ||
+            relationshipType == SbomEntities.RelationshipType.PATCH_FOR)
+        {
+            (sourceElement, targetElement) = (targetElement, sourceElement);
+        }
+
+        var spdxRelationship = new SpdxEntities.Relationship
+        {
+            From = sourceElement,
+            RelationshipType = spdxRelationshipType,
+            To = new List<string> { targetElement },
+        };
+        spdxRelationship.AddSpdxId();
+        return spdxRelationship;
+    }
+
     /// <summary>
     /// Convert SbomEntities.RelationshipType to SPDX 3.0 RelationshipType.
     /// </summary>
@@ -617,6 +633,7 @@ public class Generator : IManifestGenerator
             case SbomEntities.RelationshipType.CONTAINS: return RelationshipType.CONTAINS;
             case SbomEntities.RelationshipType.DEPENDS_ON: return RelationshipType.DEPENDS_ON;
             case SbomEntities.RelationshipType.DESCRIBES: return RelationshipType.DESCRIBES;
+            // These 3 relationships intentionally change the relationship direction to conform with the SPDX 3.0 spec
             case SbomEntities.RelationshipType.PREREQUISITE_FOR: return RelationshipType.HAS_PREREQUISITE;
             case SbomEntities.RelationshipType.DESCRIBED_BY: return RelationshipType.DESCRIBES;
             case SbomEntities.RelationshipType.PATCH_FOR: return RelationshipType.PATCHED_BY;
