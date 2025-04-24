@@ -55,7 +55,7 @@ By default, the tool will generate SBOM file in a newly created subfolder called
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -m c:\sboms
 ```
 
-This command will cause the SBOM tool to generate the SBOM inside the `c:\sboms` folder. In this scenario, the tool will create a new `_manifest\spdx_2.2` subfolder for use in storing the SBOM being generated and it will store the SBOM generated in the path `c:\sbommanifest\spdx_2.2\manifest.spdx.json`.
+This command will cause the SBOM tool to generate the SBOM inside the `c:\sboms` folder. In this scenario, the tool will create a new `_manifest\spdx_2.2` subfolder for use in storing the SBOM being generated and it will store the SBOM generated in the path `c:\sboms\_manifest\spdx_2.2\manifest.spdx.json`.
 
 > Please note that the tool will generate the `_manifest` subfolder inside the ManifestDirPath folder.  The command will not need to provide a folder path that ends in `_manifest` for this parameter.
 
@@ -131,7 +131,7 @@ With a SBOM file in hand, use the tool to validate the output file with either c
 
 This sample command provides the minimum mandatory arguments required to validate an SBOM:
      `-b` should be the path same path used to generate the SBOM file.
-     The tool will default to searching for an SBOM at either the `c:\outputDrop\_manifest\spdx_2.2\manifest.spdx.json` path or the `c:\outputDrop\_manifest\spdx_3.0\manifest.spdx.json` path.
+     In this scenario, the tool will default to searching for an SBOM at either the `c:\outputDrop\_manifest\spdx_2.2\manifest.spdx.json` path or the `c:\outputDrop\_manifest\spdx_3.0\manifest.spdx.json` path.
      `-o` is the output path where the tool will write the validation results. This path can be any file path on the system. In this case the tool will look for the validationOutputPath directory, create a file named output.json, and write the validation output.
      `-mi` is the ManifestInfo, which provides the user's desired name and version of the manifest format.
 
