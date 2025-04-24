@@ -59,7 +59,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
     [TestInitialize]
     public void Init()
     {
-        signValidatorMock.Setup(s => s.Validate()).Returns(true);
+        signValidatorMock.Setup(s => s.Validate(It.IsAny<IDictionary<string, string>>())).Returns(true);
         signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
     }
 
