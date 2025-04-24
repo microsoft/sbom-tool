@@ -59,7 +59,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
     [TestInitialize]
     public void Init()
     {
-        signValidatorMock.Setup(s => s.Validate()).Returns(true);
+        signValidatorMock.Setup(s => s.Validate(It.IsAny<IDictionary<string, string>>())).Returns(true);
         signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
     }
 
@@ -227,6 +227,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         signValidatorMock.VerifyAll();
         fileSystemMock.VerifyAll();
         osUtilsMock.VerifyAll();
+        recorder.Verify(r => r.AddResult(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [DataRow(SPDX22ManifestInfoJsonFilePath)]
@@ -234,6 +235,19 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
     [TestMethod]
     public async Task SbomParserBasedValidationWorkflowTests_ReturnsSuccessAndValidationFailures_Succeeds(string manifestInfoJsonFilePath)
     {
+        const string key1 = "key1";
+        const string key2 = "key2";
+        const string value1 = "value1";
+        const string value2 = "value2";
+
+        signValidatorMock
+            .Setup(s => s.Validate(It.IsAny<IDictionary<string, string>>()))
+            .Returns(true)
+            .Callback<IDictionary<string, string>>(additionalTelemetry =>
+            {
+                additionalTelemetry.Add(key1, value1);
+                additionalTelemetry.Add(key2, value2);
+            });
         var manifestInfo = manifestInfoJsonFilePath.Contains("2.2") ? Constants.SPDX22ManifestInfo : Constants.SPDX30ManifestInfo;
 
         var manifestParserProvider = new Mock<IManifestParserProvider>();
@@ -243,8 +257,10 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var sbomConfigs = new Mock<ISbomConfigProvider>();
         var fileSystemMock = GetDefaultFileSystemMock();
         var outputWriterMock = new Mock<IOutputWriter>();
-        var recorder = new Mock<IRecorder>();
         var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
+        var recorder = new Mock<IRecorder>();
+        recorder.Setup(r => r.AddResult(key1, value1));
+        recorder.Setup(r => r.AddResult(key2, value2));
 
         sbomParser.SetupSequence(p => p.Next())
             .Returns(new FilesResult(new ParserStateResult(SPDXParser.FilesProperty, GetSpdxFiles(GetSpdxFilesDictionary()), ExplicitField: true, YieldReturn: true)))
@@ -391,6 +407,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         signValidatorMock.VerifyAll();
         fileSystemMock.VerifyAll();
         osUtilsMock.VerifyAll();
+        recorder.VerifyAll();
     }
 
     [TestMethod]

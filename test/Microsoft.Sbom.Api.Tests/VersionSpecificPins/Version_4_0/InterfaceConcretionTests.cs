@@ -283,8 +283,7 @@ public class InterfaceConcretionTests
     private class PinnedISignValidator : ISignValidator
     {
         public OSPlatform SupportedPlatform => throw new NotImplementedException();
-
-        public bool Validate() => throw new NotImplementedException();
+        public bool Validate(IDictionary<string, string> additionalTelemetry) => throw new NotImplementedException();
     }
 
     private class PinnedISbomParser : ISbomParser
