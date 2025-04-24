@@ -26,7 +26,7 @@ Now the user can generate a SBOM for the above project by running the tool they 
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com
 ```
 
-In this scenario, the user configured the sbom tool to generate an SBOM for all the files in the `c:\outputDrop` folder.  The sbom tool will search the `c:\Users\test\TestProject` path for *.csproj or packages.config files in order to build the list of dependency packages for inclusion in the SBOM file. The -pn and -pv parameters configure the package name and version.  A globally-unique -nsb parameter specifies the namespace base URI for use in documentation of the namespace in the final SPDX 2.2-formatted SBOM file.  If the command fails to provide the -nsb parameter, then the tool will provide a default globally-unique namespace base URI that complies with the SPDX 2.2 specifications.
+In this scenario, the user configured the sbom tool to generate an SBOM for all the files in the `c:\outputDrop` folder.  The sbom tool will search the `c:\Users\test\TestProject` path for *.csproj or packages.config files in order to build the list of dependency packages for inclusion in the SBOM file. The -pn and -pv parameters configure the package name and version.  A globally-unique -nsb parameter specifies the namespace base URI for use in documentation of the namespace in the final SPDX 2.2/3.0 SBOM file.  If the command fails to provide the -nsb parameter, then the tool will provide a default globally-unique namespace base URI that complies with the SPDX 2.2/3.0 specifications.
 
 By default, the tool will place the generated SBOM inside the `_manifest\spdx_2.2\` subfolder under the path which the -b argument specifies. In this example, the SBOM will be located here: `c:\outputDrop\_manifest\spdx_2.2\manifest.spdx.json`
 
@@ -55,7 +55,7 @@ By default, the tool will generate SBOM file in a newly created subfolder called
 ./sbom-tool-win-x64.exe generate -b c:\outputDrop -bc c:\Users\test\TestProject -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -m c:\sboms
 ```
 
-This command will cause the SBOM tool to generate the SBOM inside the `c:\sboms` folder. The tool will create a new `_manifest\spdx_2.2` subfolder for use in storing the SBOM being generated. In this scenario, the tool will store the SBOM generated during this run in the path `c:\sboms\_manifest\spdx_2.2\manifest.spdx.json`.
+This command will cause the SBOM tool to generate the SBOM inside the `c:\sboms` folder. In this scenario, the tool will create a new `_manifest\spdx_2.2` subfolder for use in storing the SBOM being generated and it will store the SBOM generated in the path `c:\sbommanifest\spdx_2.2\manifest.spdx.json`.
 
 > Please note that the tool will generate the `_manifest` subfolder inside the ManifestDirPath folder.  The command will not need to provide a folder path that ends in `_manifest` for this parameter.
 
@@ -87,7 +87,7 @@ The arguments for `-b` and `-bc` will specify the path that the tool will scan. 
 ./sbom-tool-win-x64.exe generate -m c:\outputPath -pn TestProject -pv 1.0.0 -ps MyCompany -nsb http://mycompany.com -di testImage:0.0.1
 ```
 
-`-m` provides the user-defined path for generating the SBOM. The tool will generate a new `_manifest\spdx_2.2` subfolder which will hold the SBOM file created during this run. The files section for these parameters will be empty as this run will only scan for the dependency packages of the image.
+`-m` provides the user-defined path for generating the SBOM. The tool will generate a new `_manifest\spdx_2.2` or `_manifest\spdx_3.0` subfolder which will hold the SBOM file created during this run. The files section for these parameters will be empty as this run will only scan for the dependency packages of the image.
 
 In order to scan a path to populate the files section of the SBOM, the user can run the following command:
 
@@ -120,19 +120,22 @@ By default, users commonly log telemetry to the console output. In order to log 
 
 ## Validating an SBOM
 
-With a SBOM file in hand, use the tool to validate the output file with the command:
+With a SBOM file in hand, use the tool to validate the output file with either command depending on the SPDX version:
 
 ```shell
 ./sbom-tool-win-x64.exe validate -b c:\outputDrop -o c:\validationOutputPath\output.json -mi SPDX:2.2
 ```
+```shell
+./sbom-tool-win-x64.exe validate -b c:\outputDrop -o c:\validationOutputPath\output.json -mi SPDX:3.0
+```
 
 This sample command provides the minimum mandatory arguments required to validate an SBOM:
      `-b` should be the path same path used to generate the SBOM file.
-     In this scenario, the tool will default to searching for an SBOM at the `c:\outputDrop\_manifest\spdx_2.2\manifest.spdx.json` path.
+     The tool will default to searching for an SBOM at either the `c:\outputDrop\_manifest\spdx_2.2\manifest.spdx.json` path or the `c:\outputDrop\_manifest\spdx_3.0\manifest.spdx.json` path.
      `-o` is the output path where the tool will write the validation results. This path can be any file path on the system. In this case the tool will look for the validationOutputPath directory, create a file named output.json, and write the validation output.
      `-mi` is the ManifestInfo, which provides the user's desired name and version of the manifest format.
 
-Currently only SPDX2.2 is supported.
+Currently SPDX 2.2 and SPDX 3.0 are supported.
 
 ## Common scenarios where users can provide additional parameters
 
