@@ -90,7 +90,10 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                     else
                     {
-                        if (!signValidator.Validate())
+                        Dictionary<string, string> additionalTelemetry = new();
+                        var signatureIsValid = signValidator.Validate(additionalTelemetry);
+                        RecordAdditionalTelemetry(additionalTelemetry);
+                        if (!signatureIsValid)
                         {
                             log.Error("Sign validation failed.");
                             validFailures = new List<FileValidationResult> { new FileValidationResult { ErrorType = ErrorType.ManifestFileSigningError } };
@@ -203,6 +206,14 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 LogResultsSummary(validationResultOutput, validFailures);
                 LogIndividualFileResults(validFailures);
             }
+        }
+    }
+
+    private void RecordAdditionalTelemetry(IDictionary<string, string> additionalTelemetry)
+    {
+        foreach (var pair in additionalTelemetry)
+        {
+            recorder.AddResult(pair.Key, pair.Value);
         }
     }
 
