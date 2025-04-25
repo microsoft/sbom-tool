@@ -2,6 +2,10 @@
 
 Users can use the C#-based SBOM API for calling the SBOM tool. This guide is intended to assist users in integrating the SBOM tool API package in a .NET project.
 
+## Migration notes
+
+If you are migrating from version 3 of the API, please refer to the [API Version 4 migration guide](./api-version-4-migration-guide.md) for changes you may need to make in your code
+
 ## Prerequisites
 
 * A .NET project that can ingest packages from nuget.org.
