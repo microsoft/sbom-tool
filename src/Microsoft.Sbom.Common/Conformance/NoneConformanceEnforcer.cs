@@ -6,15 +6,15 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
-namespace Microsoft.Sbom.Common.ComplianceStandard;
+namespace Microsoft.Sbom.Common.Conformance;
 
-public class NoneComplianceStandardEnforcer : IComplianceStandardEnforcer
+public class NoneConformanceEnforcer : IConformanceEnforcer
 {
-    public ComplianceStandardType ComplianceStandard => ComplianceStandardType.None;
+    public ConformanceType Conformance => ConformanceType.None;
 
-    public string GetComplianceStandardEntityType(string entityType)
+    public string GetConformanceEntityType(string entityType)
     {
         return entityType.GetCommonEntityType();
     }

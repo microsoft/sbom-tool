@@ -5,16 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using Microsoft.Sbom.Common.ComplianceStandard.Enums;
+using Microsoft.Sbom.Common.Conformance.Enums;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Common.Spdx30Entities.Enums;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
-namespace Microsoft.Sbom.Common.ComplianceStandard;
+namespace Microsoft.Sbom.Common.Conformance;
 
-public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
+public class NTIAConformanceEnforcer : IConformanceEnforcer
 {
     private static readonly IReadOnlyCollection<string> EntitiesWithDifferentNTIARequirements = new List<string>
     {
@@ -22,9 +22,9 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
         "File",
     };
 
-    public ComplianceStandardType ComplianceStandard => ComplianceStandardType.None;
+    public ConformanceType Conformance => ConformanceType.None;
 
-    public string GetComplianceStandardEntityType(string? entityType)
+    public string GetConformanceEntityType(string? entityType)
     {
         if (EntitiesWithDifferentNTIARequirements.Contains(entityType))
         {
@@ -55,9 +55,9 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
     /// </summary>
     public void AddInvalidElements(ElementsResult elementsResult)
     {
-        ValidateSbomDocCreationForNTIA(elementsResult.SpdxDocuments, elementsResult.CreationInfos, elementsResult.InvalidComplianceStandardElements);
-        ValidateSbomFilesForNTIA(elementsResult.Files, elementsResult.InvalidComplianceStandardElements);
-        ValidateSbomPackagesForNTIA(elementsResult.Packages, elementsResult.InvalidComplianceStandardElements);
+        ValidateSbomDocCreationForNTIA(elementsResult.SpdxDocuments, elementsResult.CreationInfos, elementsResult.InvalidConformanceElements);
+        ValidateSbomFilesForNTIA(elementsResult.Files, elementsResult.InvalidConformanceElements);
+        ValidateSbomPackagesForNTIA(elementsResult.Packages, elementsResult.InvalidConformanceElements);
     }
 
     /// <summary>
@@ -132,7 +132,7 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
         }
     }
 
-    private InvalidElementInfo GetInvalidElementInfo(Element? element, IComplianceStandardErrorType errorType)
+    private InvalidElementInfo GetInvalidElementInfo(Element? element, IConformanceErrorType errorType)
     {
         return new InvalidElementInfo(element?.Name, element?.SpdxId, errorType);
     }

@@ -2,11 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
-namespace Microsoft.Sbom.Common.ComplianceStandard.Enums;
+namespace Microsoft.Sbom.Common.Conformance.Enums;
 
-public class NTIAErrorType : IComplianceStandardErrorType, IEquatable<NTIAErrorType>
+public class NTIAErrorType : IConformanceErrorType, IEquatable<NTIAErrorType>
 {
     public string Name { get; set; }
 

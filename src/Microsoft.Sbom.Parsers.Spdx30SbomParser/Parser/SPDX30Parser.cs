@@ -9,14 +9,14 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.ComplianceStandard;
+using Microsoft.Sbom.Common.Conformance;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 using SPDX30Constants = Microsoft.Sbom.Parsers.Spdx30SbomParser.Constants;
 
 namespace Microsoft.Sbom.Parser;
@@ -43,7 +43,7 @@ public class SPDX30Parser : ISbomParser
     private readonly bool requiredFieldsCheck = true;
     private readonly JsonSerializerOptions jsonSerializerOptions;
     private bool parsingComplete = false;
-    private IComplianceStandardEnforcer complianceStandardEnforcer;
+    private IConformanceEnforcer conformanceEnforcer;
 
     public SPDX30Parser(
         Stream stream,
@@ -74,8 +74,8 @@ public class SPDX30Parser : ISbomParser
             this.parser = new LargeJsonParser(stream, handlers, this.jsonSerializerOptions, bufferSize.Value);
         }
 
-        // Set default to enforce None compliance standard
-        this.complianceStandardEnforcer = new NoneComplianceStandardEnforcer();
+        // Set default to enforce None conformance
+        this.conformanceEnforcer = new NoneConformanceEnforcer();
     }
 
     /// <summary>
@@ -144,9 +144,9 @@ public class SPDX30Parser : ISbomParser
 
     public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { SPDX30Constants.SPDX30ManifestInfo };
 
-    public void EnforceComplianceStandard(ComplianceStandardType complianceStandard)
+    public void EnforceConformance(ConformanceType conformance)
     {
-        this.complianceStandardEnforcer = ComplianceStandardEnforcerFactory.Create(complianceStandard);
+        this.conformanceEnforcer = ConformanceEnforcerFactory.Create(conformance);
     }
 
     private ContextsResult ConvertToContexts(List<object>? jsonList, ParserStateResult? result)
@@ -201,20 +201,20 @@ public class SPDX30Parser : ISbomParser
             }
         }
 
-        complianceStandardEnforcer.AddInvalidElements(elementsResult);
+        conformanceEnforcer.AddInvalidElements(elementsResult);
 
         return elementsResult;
     }
 
-    private Type GetEntityType(JsonObject jsonObject, ComplianceStandardType requiredComplianceStandard)
+    private Type GetEntityType(JsonObject jsonObject, ConformanceType requiredConformance)
     {
         var assembly = typeof(Element).Assembly;
         var typeFromSbom = jsonObject["type"]?.ToString();
         var entityType = typeFromSbom;
 
         // If the entity type is in the list of entities that require different NTIA requirements, then add the NTIA prefix.
-        // This will allow for deserialization based on compliance standard so that we can detect if certain required fields are missing.
-        entityType = complianceStandardEnforcer.GetComplianceStandardEntityType(entityType);
+        // This will allow for deserialization based on conformance so that we can detect if certain required fields are missing.
+        entityType = conformanceEnforcer.GetConformanceEntityType(entityType);
 
         var type = assembly.GetType($"Microsoft.Sbom.Common.Spdx30Entities.{entityType}") ?? throw new ParserException($"Type \"{typeFromSbom} on {jsonObject} is invalid.");
 
@@ -288,7 +288,7 @@ public class SPDX30Parser : ISbomParser
         }
         else
         {
-            var entityType = GetEntityType(jsonObject, complianceStandardEnforcer.ComplianceStandard);
+            var entityType = GetEntityType(jsonObject, conformanceEnforcer.Conformance);
 
             object? deserializedObject = null;
             var jsonObjectAsString = jsonObject.ToString();
@@ -298,7 +298,7 @@ public class SPDX30Parser : ISbomParser
             }
             catch (Exception e)
             {
-                complianceStandardEnforcer.AddInvalidElementsIfDeserializationFails(jsonObjectAsString, jsonSerializerOptions, elementsResult.InvalidComplianceStandardElements, e);
+                conformanceEnforcer.AddInvalidElementsIfDeserializationFails(jsonObjectAsString, jsonSerializerOptions, elementsResult.InvalidConformanceElements, e);
             }
 
             var deserializedElement = (Element?)deserializedObject;

@@ -1,19 +1,19 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Common.ComplianceStandard.Enums;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
+using Microsoft.Sbom.Common.Conformance.Enums;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
-namespace Microsoft.Sbom.Common.ComplianceStandard;
+namespace Microsoft.Sbom.Common.Conformance;
 
 public class InvalidElementInfo
 {
-    public InvalidElementInfo(IComplianceStandardErrorType errorType)
+    public InvalidElementInfo(IConformanceErrorType errorType)
     {
         this.ErrorType = errorType;
     }
 
-    public InvalidElementInfo(string name, string spdxId, IComplianceStandardErrorType errorType)
+    public InvalidElementInfo(string name, string spdxId, IConformanceErrorType errorType)
     {
         this.Name = name;
         this.SpdxId = spdxId;
@@ -27,7 +27,7 @@ public class InvalidElementInfo
     /// <summary>
     /// The type of error that caused this element to be invalid.
     /// </summary>
-    public IComplianceStandardErrorType ErrorType { get; set; }
+    public IConformanceErrorType ErrorType { get; set; }
 
     public override string ToString()
     {

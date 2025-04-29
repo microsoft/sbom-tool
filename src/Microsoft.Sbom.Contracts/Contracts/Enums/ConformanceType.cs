@@ -10,11 +10,11 @@ namespace Microsoft.Sbom.Contracts.Enums;
 /// We map to <see cref="HashAlgorithmName"/> for standard
 /// hash algorithms.
 /// </summary>
-public class ComplianceStandardType : IEquatable<ComplianceStandardType>
+public class ConformanceType : IEquatable<ConformanceType>
 {
     public string Name { get; set; }
 
-    public ComplianceStandardType(string name)
+    public ConformanceType(string name)
     {
         Name = name;
     }
@@ -24,7 +24,7 @@ public class ComplianceStandardType : IEquatable<ComplianceStandardType>
         return Name ?? string.Empty;
     }
 
-    public static ComplianceStandardType FromString(string name)
+    public static ConformanceType FromString(string name)
     {
         if (string.IsNullOrEmpty(name) || string.Equals(name, None.Name, StringComparison.OrdinalIgnoreCase))
         {
@@ -36,15 +36,15 @@ public class ComplianceStandardType : IEquatable<ComplianceStandardType>
             return NTIA;
         }
 
-        throw new ArgumentException($"Unknown Compliance Standard '{name}'.");
+        throw new ArgumentException($"Unknown Conformance '{name}'.");
     }
 
     public override bool Equals(object obj)
     {
-        return Equals(obj as ComplianceStandardType);
+        return Equals(obj as ConformanceType);
     }
 
-    public bool Equals(ComplianceStandardType other)
+    public bool Equals(ConformanceType other)
     {
         if (other == null)
         {
@@ -54,9 +54,9 @@ public class ComplianceStandardType : IEquatable<ComplianceStandardType>
         return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
     }
 
-    public static ComplianceStandardType None => new ComplianceStandardType("None");
+    public static ConformanceType None => new ConformanceType("None");
 
-    public static ComplianceStandardType NTIA => new ComplianceStandardType("NTIA");
+    public static ConformanceType NTIA => new ConformanceType("NTIA");
 
     public override int GetHashCode()
     {
