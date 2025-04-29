@@ -146,7 +146,7 @@ public class SPDX30Parser : ISbomParser
 
     public void EnforceConformance(ConformanceType conformance)
     {
-        this.conformanceEnforcer = ConfornanceEnforcerFactory.Create(conformance);
+        this.conformanceEnforcer = ConformanceEnforcerFactory.Create(conformance);
     }
 
     private ContextsResult ConvertToContexts(List<object>? jsonList, ParserStateResult? result)

@@ -7,7 +7,7 @@ using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
 namespace Microsoft.Sbom.Common.Conformance;
 
-public static class ConfornanceEnforcerFactory
+public static class ConformanceEnforcerFactory
 {
     public static IConformanceEnforcer Create(ConformanceType conformance)
     {
