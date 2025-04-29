@@ -4,7 +4,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using Microsoft.Sbom.Common.ConformanceStandard.Enums;
+using Microsoft.Sbom.Common.Conformance.Enums;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.JsonStrings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

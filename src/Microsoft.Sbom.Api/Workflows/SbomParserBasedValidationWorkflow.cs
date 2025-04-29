@@ -19,7 +19,7 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Common.ConformanceStandard;
+using Microsoft.Sbom.Common.Conformance;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parser;

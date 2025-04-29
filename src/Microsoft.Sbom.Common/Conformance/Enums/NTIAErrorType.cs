@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ConformanceStandard.Interfaces;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
-namespace Microsoft.Sbom.Common.ConformanceStandard.Enums;
+namespace Microsoft.Sbom.Common.Conformance.Enums;
 
 public class NTIAErrorType : IConformanceStandardErrorType, IEquatable<NTIAErrorType>
 {

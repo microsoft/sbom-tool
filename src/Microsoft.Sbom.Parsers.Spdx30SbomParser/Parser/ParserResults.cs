@@ -4,7 +4,7 @@
 namespace Microsoft.Sbom.Parser;
 
 using System.Collections.Generic;
-using Microsoft.Sbom.Common.ConformanceStandard;
+using Microsoft.Sbom.Common.Conformance;
 using Microsoft.Sbom.Common.Spdx30Entities;
 
 public class ParserResults

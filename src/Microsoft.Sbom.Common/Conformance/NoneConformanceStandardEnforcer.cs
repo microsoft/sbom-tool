@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ConformanceStandard.Interfaces;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
-namespace Microsoft.Sbom.Common.ConformanceStandard;
+namespace Microsoft.Sbom.Common.Conformance;
 
 public class NoneConformanceStandardEnforcer : IConformanceStandardEnforcer
 {

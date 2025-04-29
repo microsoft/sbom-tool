@@ -5,10 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.ConformanceStandard;
+using Microsoft.Sbom.Common.Conformance;
 using Microsoft.Sbom.Contracts.Enums;
 
-namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.ConformanceStandard.Interfaces;
+namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
 public interface IConformanceStandardEnforcer
 {

@@ -3,9 +3,9 @@
 
 using System;
 using Microsoft.Sbom.Contracts.Enums;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ConformanceStandard.Interfaces;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
-namespace Microsoft.Sbom.Common.ConformanceStandard;
+namespace Microsoft.Sbom.Common.Conformance;
 
 public static class ConfornanceStandardEnforcerFactory
 {

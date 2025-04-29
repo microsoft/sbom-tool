@@ -5,14 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using Microsoft.Sbom.Common.ConformanceStandard.Enums;
+using Microsoft.Sbom.Common.Conformance.Enums;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Common.Spdx30Entities.Enums;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ConformanceStandard.Interfaces;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
-namespace Microsoft.Sbom.Common.ConformanceStandard;
+namespace Microsoft.Sbom.Common.Conformance;
 
 public class NTIAConformanceStandardEnforcer : IConformanceStandardEnforcer
 {

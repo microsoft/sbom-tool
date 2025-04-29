@@ -230,7 +230,7 @@ public class ConfigSanitizer
 
     private ConfigurationSetting<ConformanceStandardType> GetConformanceStandard(IConfiguration configuration)
     {
-        // Convert to ConformanceStandard enum value.
+        // Convert to Conformance enum value.
         var oldValue = configuration.ConformanceStandard;
         var newValue = ConformanceStandardType.FromString(oldValue?.Value?.ToString());
 

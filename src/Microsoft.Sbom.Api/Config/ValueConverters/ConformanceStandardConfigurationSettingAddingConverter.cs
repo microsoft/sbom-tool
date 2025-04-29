@@ -8,7 +8,7 @@ using Microsoft.Sbom.Contracts.Enums;
 namespace Microsoft.Sbom.Api.Config.ValueConverters;
 
 /// <summary>
-/// Converts a ConformanceStandard member to a ConfigurationSetting decorated string member.
+/// Converts a Conformance member to a ConfigurationSetting decorated string member.
 /// </summary>
 internal class ConformanceStandardConfigurationSettingAddingConverter : IValueConverter<ConformanceStandardType?, ConfigurationSetting<ConformanceStandardType>>
 {
