@@ -70,17 +70,17 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.EnforceComplianceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
+        parser.EnforceConformanceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
         var results = this.Parse(parser);
-        Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
+        Assert.AreEqual(2, results.InvalidConformanceStandardElements.Count);
 
-        var invalidElement1 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.SpdxId == "SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
+        var invalidElement1 = results.InvalidConformanceStandardElements.FirstOrDefault(e => e.SpdxId == "SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
         Assert.IsNotNull(invalidElement1);
         Assert.AreEqual("SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1", invalidElement1.SpdxId);
         Assert.IsNull(invalidElement1.Name);
         Assert.AreEqual(NTIAErrorType.InvalidNTIAElement, invalidElement1.ErrorType);
 
-        var invalidElement2 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.ErrorType.Equals(NTIAErrorType.MissingValidSpdxDocument));
+        var invalidElement2 = results.InvalidConformanceStandardElements.FirstOrDefault(e => e.ErrorType.Equals(NTIAErrorType.MissingValidSpdxDocument));
         Assert.IsNotNull(invalidElement2);
         Assert.AreEqual(NTIAErrorType.MissingValidSpdxDocument, invalidElement2.ErrorType);
     }
@@ -106,17 +106,17 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.EnforceComplianceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
+        parser.EnforceConformanceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
         var results = this.Parse(parser);
-        Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
+        Assert.AreEqual(2, results.InvalidConformanceStandardElements.Count);
 
-        var invalidElement1 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.SpdxId == "SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
+        var invalidElement1 = results.InvalidConformanceStandardElements.FirstOrDefault(e => e.SpdxId == "SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
         Assert.IsNotNull(invalidElement1);
         Assert.AreEqual("SPDXRef-SpdxDocument-B93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1", invalidElement1.SpdxId);
         Assert.AreEqual("spdx-doc1-name", invalidElement1.Name);
         Assert.AreEqual(NTIAErrorType.AdditionalSpdxDocument, invalidElement1.ErrorType);
 
-        var invalidElement2 = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.SpdxId == "SPDXRef-SpdxDocument-A93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
+        var invalidElement2 = results.InvalidConformanceStandardElements.FirstOrDefault(e => e.SpdxId == "SPDXRef-SpdxDocument-A93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1");
         Assert.IsNotNull(invalidElement2);
         Assert.AreEqual("SPDXRef-SpdxDocument-A93EED20C16A89A887B753958D42B794DD3C6570D3C2725B56B43477B38E05A1", invalidElement2.SpdxId);
         Assert.AreEqual("spdx-doc2-name", invalidElement2.Name);
@@ -146,11 +146,11 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.EnforceComplianceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
+        parser.EnforceConformanceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
         var results = this.Parse(parser);
-        Assert.AreEqual(1, results.InvalidComplianceStandardElements.Count);
+        Assert.AreEqual(1, results.InvalidConformanceStandardElements.Count);
 
-        var invalidElement = results.InvalidComplianceStandardElements.FirstOrDefault(e => e.ErrorType.Equals(NTIAErrorType.MissingValidCreationInfo));
+        var invalidElement = results.InvalidConformanceStandardElements.FirstOrDefault(e => e.ErrorType.Equals(NTIAErrorType.MissingValidCreationInfo));
         Assert.IsNotNull(invalidElement);
         Assert.AreEqual(NTIAErrorType.MissingValidCreationInfo, invalidElement.ErrorType);
     }

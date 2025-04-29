@@ -53,8 +53,8 @@ public class FileValidationResult
                 errorType = EntityErrorType.PackageError;
                 entityType = EntityType.Package;
                 break;
-            case ErrorType.ComplianceStandardError:
-                errorType = EntityErrorType.ComplianceStandardError;
+            case ErrorType.ConformanceStandardError:
+                errorType = EntityErrorType.ConformanceStandardError;
                 break;
             case ErrorType.Other:
                 errorType = EntityErrorType.Other;

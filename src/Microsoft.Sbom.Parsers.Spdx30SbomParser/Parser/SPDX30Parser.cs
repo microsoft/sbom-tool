@@ -16,7 +16,7 @@ using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ConformanceStandard.Interfaces;
 using SPDX30Constants = Microsoft.Sbom.Parsers.Spdx30SbomParser.Constants;
 
 namespace Microsoft.Sbom.Parser;
@@ -144,7 +144,7 @@ public class SPDX30Parser : ISbomParser
 
     public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { SPDX30Constants.SPDX30ManifestInfo };
 
-    public void EnforceComplianceStandard(ConformanceStandardType complianceStandard)
+    public void EnforceConformanceStandard(ConformanceStandardType complianceStandard)
     {
         this.complianceStandardEnforcer = ConfornanceStandardEnforcerFactory.Create(complianceStandard);
     }
@@ -206,7 +206,7 @@ public class SPDX30Parser : ISbomParser
         return elementsResult;
     }
 
-    private Type GetEntityType(JsonObject jsonObject, ConformanceStandardType requiredComplianceStandard)
+    private Type GetEntityType(JsonObject jsonObject, ConformanceStandardType requiredConformanceStandard)
     {
         var assembly = typeof(Element).Assembly;
         var typeFromSbom = jsonObject["type"]?.ToString();
@@ -214,7 +214,7 @@ public class SPDX30Parser : ISbomParser
 
         // If the entity type is in the list of entities that require different NTIA requirements, then add the NTIA prefix.
         // This will allow for deserialization based on compliance standard so that we can detect if certain required fields are missing.
-        entityType = complianceStandardEnforcer.GetComplianceStandardEntityType(entityType);
+        entityType = complianceStandardEnforcer.GetConformanceStandardEntityType(entityType);
 
         var type = assembly.GetType($"Microsoft.Sbom.Common.Spdx30Entities.{entityType}") ?? throw new ParserException($"Type \"{typeFromSbom} on {jsonObject} is invalid.");
 
@@ -288,7 +288,7 @@ public class SPDX30Parser : ISbomParser
         }
         else
         {
-            var entityType = GetEntityType(jsonObject, complianceStandardEnforcer.ComplianceStandard);
+            var entityType = GetEntityType(jsonObject, complianceStandardEnforcer.ConformanceStandard);
 
             object? deserializedObject = null;
             var jsonObjectAsString = jsonObject.ToString();
@@ -298,7 +298,7 @@ public class SPDX30Parser : ISbomParser
             }
             catch (Exception e)
             {
-                complianceStandardEnforcer.AddInvalidElementsIfDeserializationFails(jsonObjectAsString, jsonSerializerOptions, elementsResult.InvalidComplianceStandardElements, e);
+                complianceStandardEnforcer.AddInvalidElementsIfDeserializationFails(jsonObjectAsString, jsonSerializerOptions, elementsResult.InvalidConformanceStandardElements, e);
             }
 
             var deserializedElement = (Element?)deserializedObject;

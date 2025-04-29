@@ -47,7 +47,7 @@ public static class Constants
         SPDX30ManifestInfo
     };
 
-    public static Collection<ConformanceStandardType> SupportedComplianceStandards = new()
+    public static Collection<ConformanceStandardType> SupportedConformanceStandards = new()
     {
         ConformanceStandardType.NTIA,
         ConformanceStandardType.None

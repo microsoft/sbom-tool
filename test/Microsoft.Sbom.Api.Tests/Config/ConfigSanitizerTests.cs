@@ -88,7 +88,7 @@ public class ConfigSanitizerTests
                 Source = SettingSource.Default,
                 Value = Serilog.Events.LogEventLevel.Information
             },
-            ComplianceStandard = new ConfigurationSetting<ConformanceStandardType>
+            ConformanceStandard = new ConfigurationSetting<ConformanceStandardType>
             {
                 Source = SettingSource.Default,
                 Value = ConformanceStandardType.None,
@@ -117,43 +117,43 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
-    public void SetValueForComplianceStandardWithValidManifestInfoForValidation_Succeeds()
+    public void SetValueForConformanceStandardWithValidManifestInfoForValidation_Succeeds()
     {
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
         config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX30ManifestInfo };
-        config.ComplianceStandard = new ConfigurationSetting<ConformanceStandardType>
+        config.ConformanceStandard = new ConfigurationSetting<ConformanceStandardType>
         {
             Source = SettingSource.CommandLine,
             Value = ConformanceStandardType.NTIA
         };
 
         configSanitizer.SanitizeConfig(config);
-        Assert.AreEqual(ConformanceStandardType.NTIA, config.ComplianceStandard.Value);
+        Assert.AreEqual(ConformanceStandardType.NTIA, config.ConformanceStandard.Value);
     }
 
     [TestMethod]
-    public void SetNoneValueForComplianceStandardWithValidManifestInfoForValidation_Succeeds()
+    public void SetNoneValueForConformanceStandardWithValidManifestInfoForValidation_Succeeds()
     {
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
         config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX30ManifestInfo };
-        config.ComplianceStandard = new ConfigurationSetting<ConformanceStandardType>
+        config.ConformanceStandard = new ConfigurationSetting<ConformanceStandardType>
         {
             Source = SettingSource.CommandLine,
             Value = ConformanceStandardType.None
         };
 
         configSanitizer.SanitizeConfig(config);
-        Assert.AreEqual(ConformanceStandardType.None, config.ComplianceStandard.Value);
+        Assert.AreEqual(ConformanceStandardType.None, config.ConformanceStandard.Value);
     }
 
     [TestMethod]
-    public void SetValueForComplianceStandardWithInvalidManifestInfoForValidation_Throws()
+    public void SetValueForConformanceStandardWithInvalidManifestInfoForValidation_Throws()
     {
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
-        config.ComplianceStandard = new ConfigurationSetting<ConformanceStandardType>
+        config.ConformanceStandard = new ConfigurationSetting<ConformanceStandardType>
         {
             Source = SettingSource.CommandLine,
             Value = ConformanceStandardType.NTIA
@@ -164,27 +164,27 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
-    public void NoValueForComplianceStandardWithValidManifestInfoForValidation_Succeeds()
+    public void NoValueForConformanceStandardWithValidManifestInfoForValidation_Succeeds()
     {
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
         config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX30ManifestInfo };
-        config.ComplianceStandard.Value = null;
+        config.ConformanceStandard.Value = null;
 
         configSanitizer.SanitizeConfig(config);
-        Assert.AreEqual(ConformanceStandardType.None, config.ComplianceStandard.Value);
+        Assert.AreEqual(ConformanceStandardType.None, config.ConformanceStandard.Value);
     }
 
     [TestMethod]
-    public void NoValueForComplianceStandardWithInvalidManifestInfoForValidation_Succeeds()
+    public void NoValueForConformanceStandardWithInvalidManifestInfoForValidation_Succeeds()
     {
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
         config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX22ManifestInfo };
-        config.ComplianceStandard.Value = null;
+        config.ConformanceStandard.Value = null;
 
         configSanitizer.SanitizeConfig(config);
-        Assert.AreEqual(ConformanceStandardType.None, config.ComplianceStandard.Value);
+        Assert.AreEqual(ConformanceStandardType.None, config.ConformanceStandard.Value);
     }
 
     [TestMethod]

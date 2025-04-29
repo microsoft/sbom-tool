@@ -36,7 +36,7 @@ public class ConformanceStandardType : IEquatable<ConformanceStandardType>
             return NTIA;
         }
 
-        throw new ArgumentException($"Unknown Compliance Standard '{name}'.");
+        throw new ArgumentException($"Unknown Conformance Standard '{name}'.");
     }
 
     public override bool Equals(object obj)

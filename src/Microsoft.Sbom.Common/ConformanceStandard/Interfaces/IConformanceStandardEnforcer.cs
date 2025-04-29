@@ -8,13 +8,13 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.ConformanceStandard;
 using Microsoft.Sbom.Contracts.Enums;
 
-namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
+namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.ConformanceStandard.Interfaces;
 
 public interface IConformanceStandardEnforcer
 {
-    public ConformanceStandardType ComplianceStandard { get; }
+    public ConformanceStandardType ConformanceStandard { get; }
 
-    public string GetComplianceStandardEntityType(string entityType);
+    public string GetConformanceStandardEntityType(string entityType);
 
     public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, HashSet<InvalidElementInfo> invalidElements, Exception e);
 

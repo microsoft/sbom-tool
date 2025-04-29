@@ -82,7 +82,7 @@ public class ConfigSanitizer
         // Set default package supplier if not provided in configuration.
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
 
-        configuration.ComplianceStandard = GetComplianceStandard(configuration);
+        configuration.ConformanceStandard = GetConformanceStandard(configuration);
 
         // Prevent null value for LicenseInformationTimeoutInSeconds.
         // Values of (0, Constants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
@@ -228,16 +228,16 @@ public class ConfigSanitizer
         };
     }
 
-    private ConfigurationSetting<ConformanceStandardType> GetComplianceStandard(IConfiguration configuration)
+    private ConfigurationSetting<ConformanceStandardType> GetConformanceStandard(IConfiguration configuration)
     {
         // Convert to ConformanceStandard enum value.
-        var oldValue = configuration.ComplianceStandard;
+        var oldValue = configuration.ConformanceStandard;
         var newValue = ConformanceStandardType.FromString(oldValue?.Value?.ToString());
 
-        // Compliance standard is only supported for ManifestInfo value of SPDX 3.0 and above.
+        // Conformance standard is only supported for ManifestInfo value of SPDX 3.0 and above.
         if (!newValue.Equals(ConformanceStandardType.None) && !configuration.ManifestInfo.Value.Any(mi => mi.Equals(Constants.SPDX30ManifestInfo)))
         {
-            throw new ValidationArgException($"Compliance standard {newValue.Name} is not supported with ManifestInfo value of {configuration.ManifestInfo.Value.First()}." +
+            throw new ValidationArgException($"Conformance standard {newValue.Name} is not supported with ManifestInfo value of {configuration.ManifestInfo.Value.First()}." +
                 $"Please use a supported combination.");
         }
         else

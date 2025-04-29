@@ -33,10 +33,10 @@ public class SbomFileParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(jsonString);
         using var stream = new MemoryStream(bytes);
         var parser = new SPDX30Parser(stream);
-        parser.EnforceComplianceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
+        parser.EnforceConformanceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
         var result = this.Parse(parser);
 
-        var invalidElement = result.InvalidComplianceStandardElements.First();
+        var invalidElement = result.InvalidConformanceStandardElements.First();
         Assert.AreEqual("SPDXRef-software_File-B4A9F99A3A03B9273AE34753D96564CB4F2B0FAD885BBD36B0DD619E9E8AC967", invalidElement.SpdxId);
         Assert.AreEqual("./sample/path", invalidElement.Name);
         Assert.AreEqual(NTIAErrorType.InvalidNTIAElement, invalidElement.ErrorType);

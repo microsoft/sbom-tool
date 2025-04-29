@@ -185,5 +185,5 @@ public class ConfigFile
     /// <summary>
     /// The compliance standard to validate against
     /// </summary>
-    public ConformanceStandardType ComplianceStandard { get; set; }
+    public ConformanceStandardType ConformanceStandard { get; set; }
 }

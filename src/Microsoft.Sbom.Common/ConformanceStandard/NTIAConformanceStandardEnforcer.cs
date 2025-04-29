@@ -10,7 +10,7 @@ using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Common.Spdx30Entities.Enums;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ConformanceStandard.Interfaces;
 
 namespace Microsoft.Sbom.Common.ConformanceStandard;
 
@@ -22,9 +22,9 @@ public class NTIAConformanceStandardEnforcer : IConformanceStandardEnforcer
         "File",
     };
 
-    public ConformanceStandardType ComplianceStandard => ConformanceStandardType.None;
+    public ConformanceStandardType ConformanceStandard => ConformanceStandardType.None;
 
-    public string GetComplianceStandardEntityType(string? entityType)
+    public string GetConformanceStandardEntityType(string? entityType)
     {
         if (EntitiesWithDifferentNTIARequirements.Contains(entityType))
         {
@@ -55,9 +55,9 @@ public class NTIAConformanceStandardEnforcer : IConformanceStandardEnforcer
     /// </summary>
     public void AddInvalidElements(ElementsResult elementsResult)
     {
-        ValidateSbomDocCreationForNTIA(elementsResult.SpdxDocuments, elementsResult.CreationInfos, elementsResult.InvalidComplianceStandardElements);
-        ValidateSbomFilesForNTIA(elementsResult.Files, elementsResult.InvalidComplianceStandardElements);
-        ValidateSbomPackagesForNTIA(elementsResult.Packages, elementsResult.InvalidComplianceStandardElements);
+        ValidateSbomDocCreationForNTIA(elementsResult.SpdxDocuments, elementsResult.CreationInfos, elementsResult.InvalidConformanceStandardElements);
+        ValidateSbomFilesForNTIA(elementsResult.Files, elementsResult.InvalidConformanceStandardElements);
+        ValidateSbomPackagesForNTIA(elementsResult.Packages, elementsResult.InvalidConformanceStandardElements);
     }
 
     /// <summary>

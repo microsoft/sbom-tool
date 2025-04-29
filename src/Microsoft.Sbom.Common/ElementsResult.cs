@@ -18,7 +18,7 @@ public record ElementsResult : ParserStateResult
         this.Packages = new List<Package>();
         this.SpdxDocuments = new List<SpdxDocument>();
         this.CreationInfos = new List<CreationInfo>();
-        this.InvalidComplianceStandardElements = new HashSet<InvalidElementInfo>();
+        this.InvalidConformanceStandardElements = new HashSet<InvalidElementInfo>();
         this.ElementsSpdxIdList = new HashSet<string>();
 
         this.FilesCount = 0;
@@ -40,7 +40,7 @@ public record ElementsResult : ParserStateResult
     /// <summary>
     /// Invalid elements that don't comply with the given compliance standard.
     /// </summary>
-    public HashSet<InvalidElementInfo> InvalidComplianceStandardElements { get; set; }
+    public HashSet<InvalidElementInfo> InvalidConformanceStandardElements { get; set; }
 
     /// <summary>
     /// SPDX ID's of elements used for deduplication when parsing an SBOM.

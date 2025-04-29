@@ -438,7 +438,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         {
             Value = new List<ManifestInfo>() { manifestInfo }
         });
-        configurationMock.SetupGet(c => c.ComplianceStandard).Returns(new ConfigurationSetting<ConformanceStandardType> { Value = ConformanceStandardType.NTIA });
+        configurationMock.SetupGet(c => c.ConformanceStandard).Returns(new ConfigurationSetting<ConformanceStandardType> { Value = ConformanceStandardType.NTIA });
 
         ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
@@ -460,10 +460,10 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         var elementsResult = new ElementsResult(new ParserStateResult(Constants.SPDXGraphHeaderName, null, ExplicitField: true, YieldReturn: true));
 
-        elementsResult.InvalidComplianceStandardElements.Add(new InvalidElementInfo(NTIAErrorType.MissingValidSpdxDocument));
-        elementsResult.InvalidComplianceStandardElements.Add(new InvalidElementInfo("spdxDocElementName", "spdxDocElementSpdxId", NTIAErrorType.AdditionalSpdxDocument));
-        elementsResult.InvalidComplianceStandardElements.Add(new InvalidElementInfo(NTIAErrorType.MissingValidCreationInfo));
-        elementsResult.InvalidComplianceStandardElements.Add(new InvalidElementInfo("elementName", "elementSpdxId", NTIAErrorType.InvalidNTIAElement));
+        elementsResult.InvalidConformanceStandardElements.Add(new InvalidElementInfo(NTIAErrorType.MissingValidSpdxDocument));
+        elementsResult.InvalidConformanceStandardElements.Add(new InvalidElementInfo("spdxDocElementName", "spdxDocElementSpdxId", NTIAErrorType.AdditionalSpdxDocument));
+        elementsResult.InvalidConformanceStandardElements.Add(new InvalidElementInfo(NTIAErrorType.MissingValidCreationInfo));
+        elementsResult.InvalidConformanceStandardElements.Add(new InvalidElementInfo("elementName", "elementSpdxId", NTIAErrorType.InvalidNTIAElement));
 
         sbomParser.SetupSequence(p => p.Next()).Returns(elementsResult);
 
@@ -494,7 +494,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
-        var ntiaErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.ComplianceStandardError).ToList();
+        var ntiaErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.ConformanceStandardError).ToList();
         Assert.AreEqual(4, ntiaErrors.Count);
 
         Assert.AreEqual("MissingValidSpdxDocument", ntiaErrors.First().Path);

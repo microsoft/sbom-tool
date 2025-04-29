@@ -226,7 +226,7 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void E2E_Validate_WithBadComplianceStandard_SupportedManifestInfo_ReturnsNonZeroExitCode()
+    public void E2E_Validate_WithBadConformanceStandard_SupportedManifestInfo_ReturnsNonZeroExitCode()
     {
         if (!IsWindows)
         {
@@ -242,12 +242,12 @@ public class IntegrationTests
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
-        Assert.IsTrue(stdout.Contains("Unknown Compliance Standard 'aeg12'. Options are NTIA"));
+        Assert.IsTrue(stdout.Contains("Unknown Conformance Standard 'aeg12'. Options are NTIA"));
         Assert.AreEqual(1, exitCode.Value);
     }
 
     [TestMethod]
-    public void E2E_Validate_WithValidComplianceStandard_UnsupportedManifestInfo_ReturnsNonZeroExitCode()
+    public void E2E_Validate_WithValidConformanceStandard_UnsupportedManifestInfo_ReturnsNonZeroExitCode()
     {
         if (!IsWindows)
         {
@@ -268,7 +268,7 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void E2E_Validate_WithNoneComplianceStandard_SupportedManifestInfo_StdOutDoesNotHaveComplianceStandardErrors()
+    public void E2E_Validate_WithNoneConformanceStandard_SupportedManifestInfo_StdOutDoesNotHaveConformanceStandardErrors()
     {
         if (!IsWindows)
         {
@@ -289,7 +289,7 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void E2E_Validate_WithValidComplianceStandard_SupportedManifestInfo_StdOutContainsNTIAErrors()
+    public void E2E_Validate_WithValidConformanceStandard_SupportedManifestInfo_StdOutContainsNTIAErrors()
     {
         if (!IsWindows)
         {

@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.ConformanceStandard.Interfaces;
 
 namespace Microsoft.Sbom.Common.ConformanceStandard.Enums;
 

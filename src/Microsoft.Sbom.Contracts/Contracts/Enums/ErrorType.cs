@@ -49,8 +49,8 @@ public enum ErrorType
     /// <summary>
     /// Element does not meet compliance standard.
     /// </summary>
-    [EnumMember(Value = "Compliance standard validation error")]
-    ComplianceStandardError = 6,
+    [EnumMember(Value = "Conformance standard validation error")]
+    ConformanceStandardError = 6,
 
     /// <summary>
     /// An unknown error occured.
