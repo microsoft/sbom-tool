@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Sbom.Common.ComplianceStandard.Enums;
+using Microsoft.Sbom.Common.ConformanceStandard.Enums;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
 
-namespace Microsoft.Sbom.Common.ComplianceStandard;
+namespace Microsoft.Sbom.Common.ConformanceStandard;
 
 public class InvalidElementInfo
 {

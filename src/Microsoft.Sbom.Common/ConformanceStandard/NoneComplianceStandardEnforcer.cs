@@ -8,7 +8,7 @@ using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
 
-namespace Microsoft.Sbom.Common.ComplianceStandard;
+namespace Microsoft.Sbom.Common.ConformanceStandard;
 
 public class NoneComplianceStandardEnforcer : IComplianceStandardEnforcer
 {

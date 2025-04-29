@@ -9,7 +9,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.ComplianceStandard;
+using Microsoft.Sbom.Common.ConformanceStandard;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;

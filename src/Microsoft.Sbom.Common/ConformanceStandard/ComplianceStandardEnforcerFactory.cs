@@ -5,7 +5,7 @@ using System;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
 
-namespace Microsoft.Sbom.Common.ComplianceStandard;
+namespace Microsoft.Sbom.Common.ConformanceStandard;
 
 public static class ComplianceStandardEnforcerFactory
 {
