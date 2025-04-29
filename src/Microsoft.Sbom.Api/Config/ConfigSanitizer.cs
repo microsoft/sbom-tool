@@ -228,21 +228,21 @@ public class ConfigSanitizer
         };
     }
 
-    private ConfigurationSetting<ComplianceStandardType> GetComplianceStandard(IConfiguration configuration)
+    private ConfigurationSetting<ConformanceStandardType> GetComplianceStandard(IConfiguration configuration)
     {
         // Convert to ConformanceStandard enum value.
         var oldValue = configuration.ComplianceStandard;
-        var newValue = ComplianceStandardType.FromString(oldValue?.Value?.ToString());
+        var newValue = ConformanceStandardType.FromString(oldValue?.Value?.ToString());
 
         // Compliance standard is only supported for ManifestInfo value of SPDX 3.0 and above.
-        if (!newValue.Equals(ComplianceStandardType.None) && !configuration.ManifestInfo.Value.Any(mi => mi.Equals(Constants.SPDX30ManifestInfo)))
+        if (!newValue.Equals(ConformanceStandardType.None) && !configuration.ManifestInfo.Value.Any(mi => mi.Equals(Constants.SPDX30ManifestInfo)))
         {
             throw new ValidationArgException($"Compliance standard {newValue.Name} is not supported with ManifestInfo value of {configuration.ManifestInfo.Value.First()}." +
                 $"Please use a supported combination.");
         }
         else
         {
-            return new ConfigurationSetting<ComplianceStandardType>
+            return new ConfigurationSetting<ConformanceStandardType>
             {
                 Source = oldValue != null ? oldValue.Source : SettingSource.Default,
                 Value = newValue

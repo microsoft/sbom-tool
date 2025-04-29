@@ -57,14 +57,14 @@ public class ArgRevivers
     }
 
     /// <summary>
-    /// Creates an <see cref="ComplianceStandardType"/> object from a string value.
+    /// Creates an <see cref="ConformanceStandardType"/> object from a string value.
     /// </summary>
     [ArgReviver]
-    public static ComplianceStandardType ReviveComplianceStandard(string _, string value)
+    public static ConformanceStandardType ReviveComplianceStandard(string _, string value)
     {
         try
         {
-            return ComplianceStandardType.FromString(value);
+            return ConformanceStandardType.FromString(value);
         }
         catch (ArgumentException)
         {

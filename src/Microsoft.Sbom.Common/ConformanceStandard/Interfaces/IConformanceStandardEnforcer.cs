@@ -10,9 +10,9 @@ using Microsoft.Sbom.Contracts.Enums;
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
 
-public interface IComplianceStandardEnforcer
+public interface IConformanceStandardEnforcer
 {
-    public ComplianceStandardType ComplianceStandard { get; }
+    public ConformanceStandardType ComplianceStandard { get; }
 
     public string GetComplianceStandardEntityType(string entityType);
 

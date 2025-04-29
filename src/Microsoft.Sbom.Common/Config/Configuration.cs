@@ -54,7 +54,7 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<LogEventLevel>> verbosity = new();
     private static readonly AsyncLocal<ConfigurationSetting<string>> sbomPath = new();
     private static readonly AsyncLocal<ConfigurationSetting<string>> sbomDir = new();
-    private static readonly AsyncLocal<ConfigurationSetting<ComplianceStandardType>> complianceStandard = new();
+    private static readonly AsyncLocal<ConfigurationSetting<ConformanceStandardType>> complianceStandard = new();
 
     /// <inheritdoc cref="IConfiguration.BuildDropPath" />
     [DirectoryExists]
@@ -343,7 +343,7 @@ public class Configuration : IConfiguration
     }
 
     /// <inheritdoc cref="IConfiguration.ComplianceStandard" />
-    public ConfigurationSetting<ComplianceStandardType> ComplianceStandard
+    public ConfigurationSetting<ConformanceStandardType> ComplianceStandard
     {
         get => complianceStandard.Value;
         set => complianceStandard.Value = value;

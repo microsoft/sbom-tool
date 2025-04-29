@@ -3,7 +3,7 @@
 
 namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
 
-public interface IComplianceStandardErrorType
+public interface IConformanceStandardErrorType
 {
     public string Name { get; set; }
 }

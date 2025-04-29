@@ -8,12 +8,12 @@ namespace Microsoft.Sbom.Common.ConformanceStandard;
 
 public class InvalidElementInfo
 {
-    public InvalidElementInfo(IComplianceStandardErrorType errorType)
+    public InvalidElementInfo(IConformanceStandardErrorType errorType)
     {
         this.ErrorType = errorType;
     }
 
-    public InvalidElementInfo(string name, string spdxId, IComplianceStandardErrorType errorType)
+    public InvalidElementInfo(string name, string spdxId, IConformanceStandardErrorType errorType)
     {
         this.Name = name;
         this.SpdxId = spdxId;
@@ -27,7 +27,7 @@ public class InvalidElementInfo
     /// <summary>
     /// The type of error that caused this element to be invalid.
     /// </summary>
-    public IComplianceStandardErrorType ErrorType { get; set; }
+    public IConformanceStandardErrorType ErrorType { get; set; }
 
     public override string ToString()
     {

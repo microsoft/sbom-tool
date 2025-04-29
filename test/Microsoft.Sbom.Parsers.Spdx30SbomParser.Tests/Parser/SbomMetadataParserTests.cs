@@ -70,7 +70,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        parser.EnforceComplianceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
 
@@ -106,7 +106,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        parser.EnforceComplianceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(2, results.InvalidComplianceStandardElements.Count);
 
@@ -146,7 +146,7 @@ public class SbomMetadataParserTests : SbomParserTestsBase
         using var stream = new MemoryStream(bytes);
 
         var parser = new SPDX30Parser(stream);
-        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        parser.EnforceComplianceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
         var results = this.Parse(parser);
         Assert.AreEqual(1, results.InvalidComplianceStandardElements.Count);
 

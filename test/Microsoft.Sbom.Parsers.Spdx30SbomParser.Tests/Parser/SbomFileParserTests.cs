@@ -33,7 +33,7 @@ public class SbomFileParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(jsonString);
         using var stream = new MemoryStream(bytes);
         var parser = new SPDX30Parser(stream);
-        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        parser.EnforceComplianceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
         var result = this.Parse(parser);
 
         var invalidElement = result.InvalidComplianceStandardElements.First();

@@ -47,10 +47,10 @@ public static class Constants
         SPDX30ManifestInfo
     };
 
-    public static Collection<ComplianceStandardType> SupportedComplianceStandards = new()
+    public static Collection<ConformanceStandardType> SupportedComplianceStandards = new()
     {
-        ComplianceStandardType.NTIA,
-        ComplianceStandardType.None
+        ConformanceStandardType.NTIA,
+        ConformanceStandardType.None
     };
 
     public static List<Entities.ErrorType> SkipFailureReportingForErrors = new()

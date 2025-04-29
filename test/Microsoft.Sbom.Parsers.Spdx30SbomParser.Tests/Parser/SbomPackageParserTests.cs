@@ -46,7 +46,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithPackagesStrings.SbomPackageWithMissingVerificationJsonString);
         using var stream = new MemoryStream(bytes);
         var parser = new SPDX30Parser(stream);
-        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        parser.EnforceComplianceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
         var result = this.Parse(parser);
 
         Assert.AreEqual(1, result.InvalidComplianceStandardElements.Count);
@@ -73,7 +73,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithPackagesStrings.SbomNTIAValidPackageJsonString);
         using var stream = new MemoryStream(bytes);
         var parser = new SPDX30Parser(stream);
-        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        parser.EnforceComplianceStandard(Contracts.Enums.ConformanceStandardType.NTIA);
         var result = this.Parse(parser);
         Assert.AreEqual(1, result.PackagesCount);
     }

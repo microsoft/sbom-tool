@@ -6,7 +6,7 @@ using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
 
 namespace Microsoft.Sbom.Common.ConformanceStandard.Enums;
 
-public class NTIAErrorType : IComplianceStandardErrorType, IEquatable<NTIAErrorType>
+public class NTIAErrorType : IConformanceStandardErrorType, IEquatable<NTIAErrorType>
 {
     public string Name { get; set; }
 

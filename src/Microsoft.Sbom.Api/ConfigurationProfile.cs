@@ -168,8 +168,8 @@ public class ConfigurationProfile : Profile
             p => p.SourceType == typeof(AlgorithmName),
             (c, memberOptions) => memberOptions.ConvertUsing(new HashAlgorithmNameConfigurationSettingAddingConverter(GetSettingSourceFor(c.SourceMember.ReflectedType))));
         ForAllPropertyMaps(
-            p => p.SourceType == typeof(ComplianceStandardType),
-            (c, memberOptions) => memberOptions.ConvertUsing(new ComplianceStandardConfigurationSettingAddingConverter(GetSettingSourceFor(c.SourceMember.ReflectedType))));
+            p => p.SourceType == typeof(ConformanceStandardType),
+            (c, memberOptions) => memberOptions.ConvertUsing(new ConformanceStandardConfigurationSettingAddingConverter(GetSettingSourceFor(c.SourceMember.ReflectedType))));
     }
 
     // Based on the type of source, return the settings type.

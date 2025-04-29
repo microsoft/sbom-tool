@@ -14,7 +14,7 @@ using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
 
 namespace Microsoft.Sbom.Common.ConformanceStandard;
 
-public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
+public class NTIAConformanceStandardEnforcer : IConformanceStandardEnforcer
 {
     private static readonly IReadOnlyCollection<string> EntitiesWithDifferentNTIARequirements = new List<string>
     {
@@ -22,7 +22,7 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
         "File",
     };
 
-    public ComplianceStandardType ComplianceStandard => ComplianceStandardType.None;
+    public ConformanceStandardType ComplianceStandard => ConformanceStandardType.None;
 
     public string GetComplianceStandardEntityType(string? entityType)
     {
@@ -132,7 +132,7 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
         }
     }
 
-    private InvalidElementInfo GetInvalidElementInfo(Element? element, IComplianceStandardErrorType errorType)
+    private InvalidElementInfo GetInvalidElementInfo(Element? element, IConformanceStandardErrorType errorType)
     {
         return new InvalidElementInfo(element?.Name, element?.SpdxId, errorType);
     }
