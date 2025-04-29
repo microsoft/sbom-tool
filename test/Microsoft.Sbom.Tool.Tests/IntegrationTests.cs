@@ -238,7 +238,7 @@ public class IntegrationTests
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
         // Add the conformance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceStandardValue: "aeg12");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceValue: "aeg12");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -259,7 +259,7 @@ public class IntegrationTests
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "2.2");
 
         // Add the conformance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "2.2", conformanceStandardValue: "NTIA");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "2.2", conformanceValue: "NTIA");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -280,7 +280,7 @@ public class IntegrationTests
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
         // Add the conformance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceStandardValue: "none");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceValue: "none");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -301,7 +301,7 @@ public class IntegrationTests
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
         // Add the conformance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceStandardValue: "NTIA");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceValue: "NTIA");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -478,13 +478,13 @@ public class IntegrationTests
         Assert.AreEqual(0, exitCode.Value, $"Unexpected failure. stdout = {stdout}");
     }
 
-    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoSpdxVersion = "2.2", string conformanceStandardValue = "")
+    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoSpdxVersion = "2.2", string conformanceValue = "")
     {
         var outputFile = Path.Combine(TestContext.TestRunDirectory, TestContext.TestName, "validation.json");
         var manifestRootFolderName = Path.Combine(testFolderPath, ManifestRootFolderName);
         var manifestInfoArg = string.IsNullOrEmpty(manifestInfoSpdxVersion) ? string.Empty : $" -mi SPDX:{manifestInfoSpdxVersion}";
-        var conformanceStandardArg = string.IsNullOrEmpty(conformanceStandardValue) ? string.Empty : $" -cs {conformanceStandardValue}";
-        var arguments = $"validate -m \"{manifestRootFolderName}\" -b \"{testDropDirectory}\" -o \"{outputFile}\" {manifestInfoArg} {conformanceStandardArg}";
+        var conformanceArg = string.IsNullOrEmpty(conformanceValue) ? string.Empty : $" -cs {conformanceValue}";
+        var arguments = $"validate -m \"{manifestRootFolderName}\" -b \"{testDropDirectory}\" -o \"{outputFile}\" {manifestInfoArg} {conformanceArg}";
         return (arguments, outputFile);
     }
 

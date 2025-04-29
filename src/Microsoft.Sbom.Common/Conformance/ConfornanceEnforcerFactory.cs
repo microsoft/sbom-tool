@@ -9,13 +9,13 @@ namespace Microsoft.Sbom.Common.Conformance;
 
 public static class ConfornanceEnforcerFactory
 {
-    public static IConformanceEnforcer Create(ConformanceType conformanceStandard)
+    public static IConformanceEnforcer Create(ConformanceType conformance)
     {
-        return conformanceStandard.Name switch
+        return conformance.Name switch
         {
             "NTIA" => new NTIAConformanceEnforcer(),
             "None" => new NoneConformanceEnforcer(),
-            _ => throw new ArgumentException($"Unsupported conformance standard: {conformanceStandard.Name}")
+            _ => throw new ArgumentException($"Unsupported conformance standard: {conformance.Name}")
         };
     }
 }

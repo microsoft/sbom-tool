@@ -43,7 +43,7 @@ public class SPDX30Parser : ISbomParser
     private readonly bool requiredFieldsCheck = true;
     private readonly JsonSerializerOptions jsonSerializerOptions;
     private bool parsingComplete = false;
-    private IConformanceEnforcer conformanceStandardEnforcer;
+    private IConformanceEnforcer conformanceEnforcer;
 
     public SPDX30Parser(
         Stream stream,
@@ -75,7 +75,7 @@ public class SPDX30Parser : ISbomParser
         }
 
         // Set default to enforce None conformance standard
-        this.conformanceStandardEnforcer = new NoneConformanceEnforcer();
+        this.conformanceEnforcer = new NoneConformanceEnforcer();
     }
 
     /// <summary>
@@ -144,9 +144,9 @@ public class SPDX30Parser : ISbomParser
 
     public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { SPDX30Constants.SPDX30ManifestInfo };
 
-    public void EnforceConformance(ConformanceType conformanceStandard)
+    public void EnforceConformance(ConformanceType conformance)
     {
-        this.conformanceStandardEnforcer = ConfornanceEnforcerFactory.Create(conformanceStandard);
+        this.conformanceEnforcer = ConfornanceEnforcerFactory.Create(conformance);
     }
 
     private ContextsResult ConvertToContexts(List<object>? jsonList, ParserStateResult? result)
@@ -201,7 +201,7 @@ public class SPDX30Parser : ISbomParser
             }
         }
 
-        conformanceStandardEnforcer.AddInvalidElements(elementsResult);
+        conformanceEnforcer.AddInvalidElements(elementsResult);
 
         return elementsResult;
     }
@@ -214,7 +214,7 @@ public class SPDX30Parser : ISbomParser
 
         // If the entity type is in the list of entities that require different NTIA requirements, then add the NTIA prefix.
         // This will allow for deserialization based on conformance standard so that we can detect if certain required fields are missing.
-        entityType = conformanceStandardEnforcer.GetConformanceEntityType(entityType);
+        entityType = conformanceEnforcer.GetConformanceEntityType(entityType);
 
         var type = assembly.GetType($"Microsoft.Sbom.Common.Spdx30Entities.{entityType}") ?? throw new ParserException($"Type \"{typeFromSbom} on {jsonObject} is invalid.");
 
@@ -288,7 +288,7 @@ public class SPDX30Parser : ISbomParser
         }
         else
         {
-            var entityType = GetEntityType(jsonObject, conformanceStandardEnforcer.Conformance);
+            var entityType = GetEntityType(jsonObject, conformanceEnforcer.Conformance);
 
             object? deserializedObject = null;
             var jsonObjectAsString = jsonObject.ToString();
@@ -298,7 +298,7 @@ public class SPDX30Parser : ISbomParser
             }
             catch (Exception e)
             {
-                conformanceStandardEnforcer.AddInvalidElementsIfDeserializationFails(jsonObjectAsString, jsonSerializerOptions, elementsResult.InvalidConformanceElements, e);
+                conformanceEnforcer.AddInvalidElementsIfDeserializationFails(jsonObjectAsString, jsonSerializerOptions, elementsResult.InvalidConformanceElements, e);
             }
 
             var deserializedElement = (Element?)deserializedObject;
