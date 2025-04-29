@@ -3,7 +3,7 @@
 
 namespace Microsoft.Sbom.Common.Conformance;
 
-internal static class ConformanceeExtensions
+internal static class ConformanceExtensions
 {
     /// <summary>
     /// Gets the common entity type that is used by the parser.
