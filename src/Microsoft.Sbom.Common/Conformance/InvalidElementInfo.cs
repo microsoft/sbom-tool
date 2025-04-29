@@ -31,15 +31,15 @@ public class InvalidElementInfo
 
     public override string ToString()
     {
-        if (this.ErrorType.Equals(NTIAErrorType.MissingValidCreationInfo))
+        if (this.ErrorType.Equals(NTIAMinErrorType.MissingValidCreationInfo))
         {
-            return NTIAErrorType.MissingValidCreationInfo.ToString();
+            return NTIAMinErrorType.MissingValidCreationInfo.ToString();
         }
-        else if (this.ErrorType.Equals(NTIAErrorType.MissingValidSpdxDocument))
+        else if (this.ErrorType.Equals(NTIAMinErrorType.MissingValidSpdxDocument))
         {
-            return NTIAErrorType.MissingValidSpdxDocument.ToString();
+            return NTIAMinErrorType.MissingValidSpdxDocument.ToString();
         }
-        else if (this.ErrorType.Equals(NTIAErrorType.AdditionalSpdxDocument))
+        else if (this.ErrorType.Equals(NTIAMinErrorType.AdditionalSpdxDocument))
         {
             return $"AdditionalSpdxDocument. SpdxId: {this.SpdxId}. Name: {this.Name}";
         }

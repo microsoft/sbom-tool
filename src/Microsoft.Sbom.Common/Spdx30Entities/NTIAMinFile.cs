@@ -10,11 +10,11 @@ namespace Microsoft.Sbom.Common.Spdx30Entities;
 /// Refers to any object that stores content on a computer.
 /// The type of content can optionally be provided in the contentType property.
 /// https://spdx.github.io/spdx-spec/v3.0.1/model/Software/Classes/File/
-/// An NTIA file specifically describes a file compliant with the NTIA SBOM standard.
+/// An NTIAMin file specifically describes a file compliant with the NTIAMin SBOM standard.
 /// </summary>
-public class NTIAFile : File
+public class NTIAMinFile : File
 {
-    public NTIAFile()
+    public NTIAMinFile()
     {
         Type = "software_File";
     }

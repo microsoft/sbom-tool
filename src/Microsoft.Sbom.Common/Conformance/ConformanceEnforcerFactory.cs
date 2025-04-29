@@ -13,7 +13,7 @@ public static class ConformanceEnforcerFactory
     {
         return conformance.Name switch
         {
-            "NTIA" => new NTIAConformanceEnforcer(),
+            "NTIAMin" => new NTIAMinConformanceEnforcer(),
             "None" => new NoneConformanceEnforcer(),
             _ => throw new ArgumentException($"Unsupported conformance: {conformance.Name}")
         };

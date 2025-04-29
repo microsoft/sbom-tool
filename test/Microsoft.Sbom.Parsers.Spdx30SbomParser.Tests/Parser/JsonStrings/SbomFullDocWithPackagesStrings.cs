@@ -225,7 +225,7 @@ public static class SbomFullDocWithPackagesStrings
     ";
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "JSON002:Probable JSON string detected", Justification = "Need to use JSON string")]
-    public const string SbomNTIAValidPackageJsonString =
+    public const string SbomNTIAMinValidPackageJsonString =
     @"
     {
         ""@context"": [
