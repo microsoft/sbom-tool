@@ -352,8 +352,8 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         }
     }
 
-    private bool NoOpConformanceStandard(ConfigurationSetting<Contracts.Enums.ConformanceStandardType> complianceStandard)
+    private bool NoOpConformanceStandard(ConfigurationSetting<Contracts.Enums.ConformanceStandardType> conformanceStandard)
     {
-        return complianceStandard?.Value?.Name == "None";
+        return conformanceStandard?.Value?.Name == "None";
     }
 }

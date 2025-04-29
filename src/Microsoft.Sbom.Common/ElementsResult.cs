@@ -38,7 +38,7 @@ public record ElementsResult : ParserStateResult
     public List<CreationInfo> CreationInfos { get; set; }
 
     /// <summary>
-    /// Invalid elements that don't comply with the given compliance standard.
+    /// Invalid elements that don't comply with the given conformance standard.
     /// </summary>
     public HashSet<InvalidElementInfo> InvalidConformanceStandardElements { get; set; }
 

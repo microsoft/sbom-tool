@@ -217,7 +217,7 @@ var file = new SbomFile
 };
 ```
 
-The API looks for a relative path starting with a period `.`.  All path separators should include forward slashes `/` in compliance with the SPDX version 2.2 specification.
+The API looks for a relative path starting with a period `.`.  All path separators should include forward slashes `/` in conformance with the SPDX version 2.2 specification.
 
 ### SbomPackage
 

@@ -237,8 +237,8 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
-        // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", complianceStandardValue: "aeg12");
+        // Add the conformance standard
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceStandardValue: "aeg12");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -258,8 +258,8 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "2.2");
 
-        // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "2.2", complianceStandardValue: "NTIA");
+        // Add the conformance standard
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "2.2", conformanceStandardValue: "NTIA");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -279,8 +279,8 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
-        // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", complianceStandardValue: "none");
+        // Add the conformance standard
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceStandardValue: "none");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -300,8 +300,8 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
-        // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", complianceStandardValue: "NTIA");
+        // Add the conformance standard
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceStandardValue: "NTIA");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -478,13 +478,13 @@ public class IntegrationTests
         Assert.AreEqual(0, exitCode.Value, $"Unexpected failure. stdout = {stdout}");
     }
 
-    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoSpdxVersion = "2.2", string complianceStandardValue = "")
+    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoSpdxVersion = "2.2", string conformanceStandardValue = "")
     {
         var outputFile = Path.Combine(TestContext.TestRunDirectory, TestContext.TestName, "validation.json");
         var manifestRootFolderName = Path.Combine(testFolderPath, ManifestRootFolderName);
         var manifestInfoArg = string.IsNullOrEmpty(manifestInfoSpdxVersion) ? string.Empty : $" -mi SPDX:{manifestInfoSpdxVersion}";
-        var complianceStandardArg = string.IsNullOrEmpty(complianceStandardValue) ? string.Empty : $" -cs {complianceStandardValue}";
-        var arguments = $"validate -m \"{manifestRootFolderName}\" -b \"{testDropDirectory}\" -o \"{outputFile}\" {manifestInfoArg} {complianceStandardArg}";
+        var conformanceStandardArg = string.IsNullOrEmpty(conformanceStandardValue) ? string.Empty : $" -cs {conformanceStandardValue}";
+        var arguments = $"validate -m \"{manifestRootFolderName}\" -b \"{testDropDirectory}\" -o \"{outputFile}\" {manifestInfoArg} {conformanceStandardArg}";
         return (arguments, outputFile);
     }
 

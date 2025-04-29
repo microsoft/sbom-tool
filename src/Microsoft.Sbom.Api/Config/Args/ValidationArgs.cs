@@ -83,9 +83,9 @@ public class ValidationArgs : GenerationAndValidationCommonArgs
     public AlgorithmName HashAlgorithm { get; set; }
 
     /// <summary>
-    /// The compliance standard to validate against.
+    /// The conformance standard to validate against.
     /// </summary>
-    [ArgDescription("The compliance standard to validate against")]
+    [ArgDescription("The conformance standard to validate against")]
     [ArgShortcut("cs")]
     public ConformanceStandardType ConformanceStandard { get; set; }
 }

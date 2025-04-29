@@ -47,7 +47,7 @@ public enum ErrorType
     JsonSerializationError = 5,
 
     /// <summary>
-    /// Element does not meet compliance standard.
+    /// Element does not meet conformance standard.
     /// </summary>
     [EnumMember(Value = "Conformance standard validation error")]
     ConformanceStandardError = 6,

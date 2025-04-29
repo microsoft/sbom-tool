@@ -183,7 +183,7 @@ public class ConfigFile
     public bool? EnablePackageMetadataParsing { get; set; }
 
     /// <summary>
-    /// The compliance standard to validate against
+    /// The conformance standard to validate against
     /// </summary>
     public ConformanceStandardType ConformanceStandard { get; set; }
 }
