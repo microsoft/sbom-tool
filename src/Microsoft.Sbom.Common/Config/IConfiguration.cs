@@ -209,7 +209,7 @@ public interface IConfiguration
     public ConfigurationSetting<string> SbomDir { get; set; }
 
     /// <summary>
-    /// The conformance standard to validate against.
+    /// The conformance to validate against.
     /// </summary>
     public ConfigurationSetting<ConformanceType> Conformance { get; set; }
 

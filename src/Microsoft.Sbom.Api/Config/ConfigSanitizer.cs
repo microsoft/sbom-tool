@@ -234,10 +234,10 @@ public class ConfigSanitizer
         var oldValue = configuration.Conformance;
         var newValue = ConformanceType.FromString(oldValue?.Value?.ToString());
 
-        // Conformance standard is only supported for ManifestInfo value of SPDX 3.0 and above.
+        // Conformance is only supported for ManifestInfo value of SPDX 3.0 and above.
         if (!newValue.Equals(ConformanceType.None) && !configuration.ManifestInfo.Value.Any(mi => mi.Equals(Constants.SPDX30ManifestInfo)))
         {
-            throw new ValidationArgException($"Conformance standard {newValue.Name} is not supported with ManifestInfo value of {configuration.ManifestInfo.Value.First()}." +
+            throw new ValidationArgException($"Conformance {newValue.Name} is not supported with ManifestInfo value of {configuration.ManifestInfo.Value.First()}." +
                 $"Please use a supported combination.");
         }
         else

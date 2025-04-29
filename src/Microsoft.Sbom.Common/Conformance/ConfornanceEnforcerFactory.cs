@@ -15,7 +15,7 @@ public static class ConfornanceEnforcerFactory
         {
             "NTIA" => new NTIAConformanceEnforcer(),
             "None" => new NoneConformanceEnforcer(),
-            _ => throw new ArgumentException($"Unsupported conformance standard: {conformance.Name}")
+            _ => throw new ArgumentException($"Unsupported conformance: {conformance.Name}")
         };
     }
 }

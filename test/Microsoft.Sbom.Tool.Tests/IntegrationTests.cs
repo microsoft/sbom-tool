@@ -237,12 +237,12 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
-        // Add the conformance standard
+        // Add the conformance
         var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceValue: "aeg12");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
-        Assert.IsTrue(stdout.Contains("Unknown Conformance Standard 'aeg12'. Options are NTIA"));
+        Assert.IsTrue(stdout.Contains("Unknown Conformance 'aeg12'. Options are NTIA"));
         Assert.AreEqual(1, exitCode.Value);
     }
 
@@ -258,7 +258,7 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "2.2");
 
-        // Add the conformance standard
+        // Add the conformance
         var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "2.2", conformanceValue: "NTIA");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
@@ -279,7 +279,7 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
-        // Add the conformance standard
+        // Add the conformance
         var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceValue: "none");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
@@ -300,7 +300,7 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
-        // Add the conformance standard
+        // Add the conformance
         var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceValue: "NTIA");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);

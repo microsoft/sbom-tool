@@ -218,7 +218,7 @@ public class SPDXParser : ISbomParser
 
     public void EnforceConformance(ConformanceType conformance)
     {
-        // No-op, SPDX 2.2 does not support validation based on conformance standards.
+        // No-op, SPDX 2.2 does not support validation based on conformances.
         return;
     }
 

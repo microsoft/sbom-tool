@@ -69,7 +69,7 @@ public class ArgRevivers
         catch (ArgumentException)
         {
             var supportedConformances = string.Join(", ", Constants.SupportedConformances);
-            throw new ValidationArgException($"Unknown Conformance Standard '{value}'. Options are {supportedConformances}.");
+            throw new ValidationArgException($"Unknown Conformance '{value}'. Options are {supportedConformances}.");
         }
     }
 }

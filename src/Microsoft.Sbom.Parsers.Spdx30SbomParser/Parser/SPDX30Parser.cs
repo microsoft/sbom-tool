@@ -74,7 +74,7 @@ public class SPDX30Parser : ISbomParser
             this.parser = new LargeJsonParser(stream, handlers, this.jsonSerializerOptions, bufferSize.Value);
         }
 
-        // Set default to enforce None conformance standard
+        // Set default to enforce None conformance
         this.conformanceEnforcer = new NoneConformanceEnforcer();
     }
 
@@ -213,7 +213,7 @@ public class SPDX30Parser : ISbomParser
         var entityType = typeFromSbom;
 
         // If the entity type is in the list of entities that require different NTIA requirements, then add the NTIA prefix.
-        // This will allow for deserialization based on conformance standard so that we can detect if certain required fields are missing.
+        // This will allow for deserialization based on conformance so that we can detect if certain required fields are missing.
         entityType = conformanceEnforcer.GetConformanceEntityType(entityType);
 
         var type = assembly.GetType($"Microsoft.Sbom.Common.Spdx30Entities.{entityType}") ?? throw new ParserException($"Type \"{typeFromSbom} on {jsonObject} is invalid.");
