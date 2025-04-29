@@ -10,9 +10,9 @@ using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
 namespace Microsoft.Sbom.Common.Conformance;
 
-public class NoneConformanceStandardEnforcer : IConformanceStandardEnforcer
+public class NoneConformanceEnforcer : IConformanceEnforcer
 {
-    public ConformanceStandardType ConformanceStandard => ConformanceStandardType.None;
+    public ConformanceType ConformanceStandard => ConformanceType.None;
 
     public string GetConformanceStandardEntityType(string entityType)
     {

@@ -438,7 +438,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         {
             Value = new List<ManifestInfo>() { manifestInfo }
         });
-        configurationMock.SetupGet(c => c.ConformanceStandard).Returns(new ConfigurationSetting<ConformanceStandardType> { Value = ConformanceStandardType.NTIA });
+        configurationMock.SetupGet(c => c.ConformanceStandard).Returns(new ConfigurationSetting<ConformanceType> { Value = ConformanceType.NTIA });
 
         ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {

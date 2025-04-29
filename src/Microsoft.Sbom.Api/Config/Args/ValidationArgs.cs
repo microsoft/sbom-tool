@@ -87,5 +87,5 @@ public class ValidationArgs : GenerationAndValidationCommonArgs
     /// </summary>
     [ArgDescription("The conformance standard to validate against")]
     [ArgShortcut("cs")]
-    public ConformanceStandardType ConformanceStandard { get; set; }
+    public ConformanceType ConformanceStandard { get; set; }
 }

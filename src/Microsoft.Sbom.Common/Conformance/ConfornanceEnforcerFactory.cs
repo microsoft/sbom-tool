@@ -7,14 +7,14 @@ using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
 namespace Microsoft.Sbom.Common.Conformance;
 
-public static class ConfornanceStandardEnforcerFactory
+public static class ConfornanceEnforcerFactory
 {
-    public static IConformanceStandardEnforcer Create(ConformanceStandardType conformanceStandard)
+    public static IConformanceEnforcer Create(ConformanceType conformanceStandard)
     {
         return conformanceStandard.Name switch
         {
-            "NTIA" => new NTIAConformanceStandardEnforcer(),
-            "None" => new NoneConformanceStandardEnforcer(),
+            "NTIA" => new NTIAConformanceEnforcer(),
+            "None" => new NoneConformanceEnforcer(),
             _ => throw new ArgumentException($"Unsupported conformance standard: {conformanceStandard.Name}")
         };
     }

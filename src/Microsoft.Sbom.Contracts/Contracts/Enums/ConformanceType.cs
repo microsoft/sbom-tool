@@ -10,11 +10,11 @@ namespace Microsoft.Sbom.Contracts.Enums;
 /// We map to <see cref="HashAlgorithmName"/> for standard
 /// hash algorithms.
 /// </summary>
-public class ConformanceStandardType : IEquatable<ConformanceStandardType>
+public class ConformanceType : IEquatable<ConformanceType>
 {
     public string Name { get; set; }
 
-    public ConformanceStandardType(string name)
+    public ConformanceType(string name)
     {
         Name = name;
     }
@@ -24,7 +24,7 @@ public class ConformanceStandardType : IEquatable<ConformanceStandardType>
         return Name ?? string.Empty;
     }
 
-    public static ConformanceStandardType FromString(string name)
+    public static ConformanceType FromString(string name)
     {
         if (string.IsNullOrEmpty(name) || string.Equals(name, None.Name, StringComparison.OrdinalIgnoreCase))
         {
@@ -41,10 +41,10 @@ public class ConformanceStandardType : IEquatable<ConformanceStandardType>
 
     public override bool Equals(object obj)
     {
-        return Equals(obj as ConformanceStandardType);
+        return Equals(obj as ConformanceType);
     }
 
-    public bool Equals(ConformanceStandardType other)
+    public bool Equals(ConformanceType other)
     {
         if (other == null)
         {
@@ -54,9 +54,9 @@ public class ConformanceStandardType : IEquatable<ConformanceStandardType>
         return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
     }
 
-    public static ConformanceStandardType None => new ConformanceStandardType("None");
+    public static ConformanceType None => new ConformanceType("None");
 
-    public static ConformanceStandardType NTIA => new ConformanceStandardType("NTIA");
+    public static ConformanceType NTIA => new ConformanceType("NTIA");
 
     public override int GetHashCode()
     {

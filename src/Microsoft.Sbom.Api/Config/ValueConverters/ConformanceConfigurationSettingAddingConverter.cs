@@ -10,26 +10,26 @@ namespace Microsoft.Sbom.Api.Config.ValueConverters;
 /// <summary>
 /// Converts a Conformance member to a ConfigurationSetting decorated string member.
 /// </summary>
-internal class ConformanceStandardConfigurationSettingAddingConverter : IValueConverter<ConformanceStandardType?, ConfigurationSetting<ConformanceStandardType>>
+internal class ConformanceConfigurationSettingAddingConverter : IValueConverter<ConformanceType?, ConfigurationSetting<ConformanceType>>
 {
     private SettingSource settingSource;
 
-    public ConformanceStandardConfigurationSettingAddingConverter(SettingSource settingSource)
+    public ConformanceConfigurationSettingAddingConverter(SettingSource settingSource)
     {
         this.settingSource = settingSource;
     }
 
-    public ConfigurationSetting<ConformanceStandardType> Convert(ConformanceStandardType? sourceMember, ResolutionContext context)
+    public ConfigurationSetting<ConformanceType> Convert(ConformanceType? sourceMember, ResolutionContext context)
     {
         if (sourceMember == null)
         {
             settingSource = SettingSource.Default;
         }
 
-        return new ConfigurationSetting<ConformanceStandardType>
+        return new ConfigurationSetting<ConformanceType>
         {
             Source = settingSource,
-            Value = sourceMember ?? ConformanceStandardType.None
+            Value = sourceMember ?? ConformanceType.None
         };
     }
 }

@@ -43,7 +43,7 @@ public class SPDX30Parser : ISbomParser
     private readonly bool requiredFieldsCheck = true;
     private readonly JsonSerializerOptions jsonSerializerOptions;
     private bool parsingComplete = false;
-    private IConformanceStandardEnforcer conformanceStandardEnforcer;
+    private IConformanceEnforcer conformanceStandardEnforcer;
 
     public SPDX30Parser(
         Stream stream,
@@ -75,7 +75,7 @@ public class SPDX30Parser : ISbomParser
         }
 
         // Set default to enforce None conformance standard
-        this.conformanceStandardEnforcer = new NoneConformanceStandardEnforcer();
+        this.conformanceStandardEnforcer = new NoneConformanceEnforcer();
     }
 
     /// <summary>
@@ -144,9 +144,9 @@ public class SPDX30Parser : ISbomParser
 
     public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { SPDX30Constants.SPDX30ManifestInfo };
 
-    public void EnforceConformanceStandard(ConformanceStandardType conformanceStandard)
+    public void EnforceConformanceStandard(ConformanceType conformanceStandard)
     {
-        this.conformanceStandardEnforcer = ConfornanceStandardEnforcerFactory.Create(conformanceStandard);
+        this.conformanceStandardEnforcer = ConfornanceEnforcerFactory.Create(conformanceStandard);
     }
 
     private ContextsResult ConvertToContexts(List<object>? jsonList, ParserStateResult? result)
@@ -206,7 +206,7 @@ public class SPDX30Parser : ISbomParser
         return elementsResult;
     }
 
-    private Type GetEntityType(JsonObject jsonObject, ConformanceStandardType requiredConformanceStandard)
+    private Type GetEntityType(JsonObject jsonObject, ConformanceType requiredConformanceStandard)
     {
         var assembly = typeof(Element).Assembly;
         var typeFromSbom = jsonObject["type"]?.ToString();

@@ -88,10 +88,10 @@ public class ConfigSanitizerTests
                 Source = SettingSource.Default,
                 Value = Serilog.Events.LogEventLevel.Information
             },
-            ConformanceStandard = new ConfigurationSetting<ConformanceStandardType>
+            ConformanceStandard = new ConfigurationSetting<ConformanceType>
             {
                 Source = SettingSource.Default,
-                Value = ConformanceStandardType.None,
+                Value = ConformanceType.None,
             },
         };
     }
@@ -122,14 +122,14 @@ public class ConfigSanitizerTests
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
         config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX30ManifestInfo };
-        config.ConformanceStandard = new ConfigurationSetting<ConformanceStandardType>
+        config.ConformanceStandard = new ConfigurationSetting<ConformanceType>
         {
             Source = SettingSource.CommandLine,
-            Value = ConformanceStandardType.NTIA
+            Value = ConformanceType.NTIA
         };
 
         configSanitizer.SanitizeConfig(config);
-        Assert.AreEqual(ConformanceStandardType.NTIA, config.ConformanceStandard.Value);
+        Assert.AreEqual(ConformanceType.NTIA, config.ConformanceStandard.Value);
     }
 
     [TestMethod]
@@ -138,14 +138,14 @@ public class ConfigSanitizerTests
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
         config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX30ManifestInfo };
-        config.ConformanceStandard = new ConfigurationSetting<ConformanceStandardType>
+        config.ConformanceStandard = new ConfigurationSetting<ConformanceType>
         {
             Source = SettingSource.CommandLine,
-            Value = ConformanceStandardType.None
+            Value = ConformanceType.None
         };
 
         configSanitizer.SanitizeConfig(config);
-        Assert.AreEqual(ConformanceStandardType.None, config.ConformanceStandard.Value);
+        Assert.AreEqual(ConformanceType.None, config.ConformanceStandard.Value);
     }
 
     [TestMethod]
@@ -153,10 +153,10 @@ public class ConfigSanitizerTests
     {
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
-        config.ConformanceStandard = new ConfigurationSetting<ConformanceStandardType>
+        config.ConformanceStandard = new ConfigurationSetting<ConformanceType>
         {
             Source = SettingSource.CommandLine,
-            Value = ConformanceStandardType.NTIA
+            Value = ConformanceType.NTIA
         };
 
         var exception = Assert.ThrowsException<ValidationArgException>(() => configSanitizer.SanitizeConfig(config));
@@ -172,7 +172,7 @@ public class ConfigSanitizerTests
         config.ConformanceStandard.Value = null;
 
         configSanitizer.SanitizeConfig(config);
-        Assert.AreEqual(ConformanceStandardType.None, config.ConformanceStandard.Value);
+        Assert.AreEqual(ConformanceType.None, config.ConformanceStandard.Value);
     }
 
     [TestMethod]
@@ -184,7 +184,7 @@ public class ConfigSanitizerTests
         config.ConformanceStandard.Value = null;
 
         configSanitizer.SanitizeConfig(config);
-        Assert.AreEqual(ConformanceStandardType.None, config.ConformanceStandard.Value);
+        Assert.AreEqual(ConformanceType.None, config.ConformanceStandard.Value);
     }
 
     [TestMethod]
