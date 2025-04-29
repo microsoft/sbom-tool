@@ -12,9 +12,9 @@ namespace Microsoft.Sbom.Common.Conformance;
 
 public class NoneConformanceEnforcer : IConformanceEnforcer
 {
-    public ConformanceType ConformanceStandard => ConformanceType.None;
+    public ConformanceType Conformance => ConformanceType.None;
 
-    public string GetConformanceStandardEntityType(string entityType)
+    public string GetConformanceEntityType(string entityType)
     {
         return entityType.GetCommonEntityType();
     }

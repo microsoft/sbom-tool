@@ -22,9 +22,9 @@ public class NTIAConformanceEnforcer : IConformanceEnforcer
         "File",
     };
 
-    public ConformanceType ConformanceStandard => ConformanceType.None;
+    public ConformanceType Conformance => ConformanceType.None;
 
-    public string GetConformanceStandardEntityType(string? entityType)
+    public string GetConformanceEntityType(string? entityType)
     {
         if (EntitiesWithDifferentNTIARequirements.Contains(entityType))
         {
@@ -55,9 +55,9 @@ public class NTIAConformanceEnforcer : IConformanceEnforcer
     /// </summary>
     public void AddInvalidElements(ElementsResult elementsResult)
     {
-        ValidateSbomDocCreationForNTIA(elementsResult.SpdxDocuments, elementsResult.CreationInfos, elementsResult.InvalidConformanceStandardElements);
-        ValidateSbomFilesForNTIA(elementsResult.Files, elementsResult.InvalidConformanceStandardElements);
-        ValidateSbomPackagesForNTIA(elementsResult.Packages, elementsResult.InvalidConformanceStandardElements);
+        ValidateSbomDocCreationForNTIA(elementsResult.SpdxDocuments, elementsResult.CreationInfos, elementsResult.InvalidConformanceElements);
+        ValidateSbomFilesForNTIA(elementsResult.Files, elementsResult.InvalidConformanceElements);
+        ValidateSbomPackagesForNTIA(elementsResult.Packages, elementsResult.InvalidConformanceElements);
     }
 
     /// <summary>

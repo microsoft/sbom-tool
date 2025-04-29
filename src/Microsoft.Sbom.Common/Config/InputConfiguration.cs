@@ -158,6 +158,6 @@ public class InputConfiguration : IConfiguration
     [Path]
     public ConfigurationSetting<string> SbomPath { get; set; }
 
-    /// <inheritdoc cref="IConfiguration.ConformanceStandard" />
-    public ConfigurationSetting<ConformanceType> ConformanceStandard { get; set; }
+    /// <inheritdoc cref="IConfiguration.Conformance" />
+    public ConfigurationSetting<ConformanceType> Conformance { get; set; }
 }

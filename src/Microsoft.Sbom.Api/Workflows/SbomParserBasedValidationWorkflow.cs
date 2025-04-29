@@ -77,7 +77,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 using var stream = fileSystemUtils.OpenRead(sbomConfig.ManifestJsonFilePath);
                 var manifestInterface = manifestParserProvider.Get(sbomConfig.ManifestInfo);
                 var sbomParser = manifestInterface.CreateParser(stream);
-                sbomParser.EnforceConformanceStandard(configuration.ConformanceStandard?.Value);
+                sbomParser.EnforceConformance(configuration.Conformance?.Value);
 
                 // Validate signature
                 if (configuration.ValidateSignature != null && configuration.ValidateSignature.Value)
@@ -135,7 +135,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                                 totalNumberOfPackages = elementsResult.PackagesCount;
 
                                 (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(elementsResult.Files);
-                                AddInvalidConformanceStandardElementsToFailures(fileValidationFailures, elementsResult.InvalidConformanceStandardElements);
+                                AddInvalidConformanceElementsToFailures(fileValidationFailures, elementsResult.InvalidConformanceElements);
                                 ThrowOnInvalidInputFiles(fileValidationFailures);
                                 break;
                             default:
@@ -252,11 +252,11 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => Console.WriteLine(f.Path));
         Console.WriteLine("------------------------------------------------------------");
 
-        if (!NoOpConformanceStandard(configuration.ConformanceStandard))
+        if (!NoOpConformance(configuration.Conformance))
         {
-            Console.WriteLine($"Elements in the manifest that are non-compliant with {configuration.ConformanceStandard}:");
+            Console.WriteLine($"Elements in the manifest that are non-compliant with {configuration.Conformance}:");
             Console.WriteLine(string.Empty);
-            validFailures.Where(vf => vf.ErrorType == ErrorType.ConformanceStandardError).ForEach(f => Console.WriteLine(f.Path));
+            validFailures.Where(vf => vf.ErrorType == ErrorType.ConformanceError).ForEach(f => Console.WriteLine(f.Path));
             Console.WriteLine("------------------------------------------------------------");
         }
 
@@ -298,10 +298,10 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         Console.WriteLine($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
         Console.WriteLine($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
         Console.WriteLine($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
-        if (!NoOpConformanceStandard(configuration.ConformanceStandard))
+        if (!NoOpConformance(configuration.Conformance))
         {
-            Console.WriteLine($"Elements in the manifest that are non-compliant with {configuration.ConformanceStandard} . . . " +
-            $"{validFailures.Count(v => v.ErrorType == ErrorType.ConformanceStandardError)}");
+            Console.WriteLine($"Elements in the manifest that are non-compliant with {configuration.Conformance} . . . " +
+            $"{validFailures.Count(v => v.ErrorType == ErrorType.ConformanceError)}");
         }
 
         if (validFailures.Any(vf => vf.ErrorType == ErrorType.NoPackagesFound))
@@ -321,14 +321,14 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         }
     }
 
-    private void AddInvalidConformanceStandardElementsToFailures(List<FileValidationResult> fileValidationFailures, HashSet<InvalidElementInfo> invalidElements)
+    private void AddInvalidConformanceElementsToFailures(List<FileValidationResult> fileValidationFailures, HashSet<InvalidElementInfo> invalidElements)
     {
         if (invalidElements == null || !invalidElements.Any())
         {
             return;
         }
 
-        switch (configuration.ConformanceStandard?.Value?.Name)
+        switch (configuration.Conformance?.Value?.Name)
         {
             case "NTIA":
                 AddInvalidNTIAElementsToFailures(fileValidationFailures, invalidElements);
@@ -347,12 +347,12 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
             fileValidationFailures.Add(new FileValidationResult
             {
                 Path = invalidElementInfo.ToString(),
-                ErrorType = ErrorType.ConformanceStandardError,
+                ErrorType = ErrorType.ConformanceError,
             });
         }
     }
 
-    private bool NoOpConformanceStandard(ConfigurationSetting<Contracts.Enums.ConformanceType> conformanceStandard)
+    private bool NoOpConformance(ConfigurationSetting<Contracts.Enums.ConformanceType> conformanceStandard)
     {
         return conformanceStandard?.Value?.Name == "None";
     }

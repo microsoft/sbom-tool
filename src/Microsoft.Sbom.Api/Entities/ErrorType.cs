@@ -53,5 +53,5 @@ public enum ErrorType
     InvalidInputFile = 13,
 
     [EnumMember(Value = "Conformance standard error")]
-    ConformanceStandardError = 14,
+    ConformanceError = 14,
 }

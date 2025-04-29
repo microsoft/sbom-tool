@@ -82,7 +82,7 @@ public class ConfigSanitizer
         // Set default package supplier if not provided in configuration.
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
 
-        configuration.ConformanceStandard = GetConformanceStandard(configuration);
+        configuration.Conformance = GetConformance(configuration);
 
         // Prevent null value for LicenseInformationTimeoutInSeconds.
         // Values of (0, Constants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
@@ -228,10 +228,10 @@ public class ConfigSanitizer
         };
     }
 
-    private ConfigurationSetting<ConformanceType> GetConformanceStandard(IConfiguration configuration)
+    private ConfigurationSetting<ConformanceType> GetConformance(IConfiguration configuration)
     {
         // Convert to Conformance enum value.
-        var oldValue = configuration.ConformanceStandard;
+        var oldValue = configuration.Conformance;
         var newValue = ConformanceType.FromString(oldValue?.Value?.ToString());
 
         // Conformance standard is only supported for ManifestInfo value of SPDX 3.0 and above.

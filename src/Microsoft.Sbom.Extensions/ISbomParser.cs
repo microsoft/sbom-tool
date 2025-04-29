@@ -43,5 +43,5 @@ public interface ISbomParser
     /// Returns the conformance standard set by the user, if it is valid.
     /// </summary>
     /// <param name="spdxVersion"></param>
-    public void EnforceConformanceStandard(ConformanceType conformanceStandard);
+    public void EnforceConformance(ConformanceType conformanceStandard);
 }

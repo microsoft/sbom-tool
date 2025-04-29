@@ -12,9 +12,9 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
 public interface IConformanceEnforcer
 {
-    public ConformanceType ConformanceStandard { get; }
+    public ConformanceType Conformance { get; }
 
-    public string GetConformanceStandardEntityType(string entityType);
+    public string GetConformanceEntityType(string entityType);
 
     public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, HashSet<InvalidElementInfo> invalidElements, Exception e);
 

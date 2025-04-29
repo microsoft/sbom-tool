@@ -50,7 +50,7 @@ public abstract class SbomParserTestsBase
                         results.PackagesCount = elementsResult.PackagesCount;
                         results.RelationshipsCount = elementsResult.RelationshipsCount;
                         results.ReferencesCount = elementsResult.ReferencesCount;
-                        results.InvalidConformanceStandardElements = elementsResult.InvalidConformanceStandardElements;
+                        results.InvalidConformanceElements = elementsResult.InvalidConformanceElements;
                         break;
                     default:
                         Console.WriteLine($"Unrecognized FieldName: {result.FieldName}");

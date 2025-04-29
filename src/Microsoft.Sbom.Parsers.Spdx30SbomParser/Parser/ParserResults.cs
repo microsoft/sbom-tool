@@ -11,7 +11,7 @@ public class ParserResults
 {
     public FormatEnforcedSPDX30 FormatEnforcedSPDX3Result { get; set; }
 
-    public HashSet<InvalidElementInfo> InvalidConformanceStandardElements { get; set; } = [];
+    public HashSet<InvalidElementInfo> InvalidConformanceElements { get; set; } = [];
 
     public int FilesCount = 0;
     public int PackagesCount = 0;

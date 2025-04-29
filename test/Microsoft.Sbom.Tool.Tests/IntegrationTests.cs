@@ -226,7 +226,7 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void E2E_Validate_WithBadConformanceStandard_SupportedManifestInfo_ReturnsNonZeroExitCode()
+    public void E2E_Validate_WithBadConformance_SupportedManifestInfo_ReturnsNonZeroExitCode()
     {
         if (!IsWindows)
         {
@@ -247,7 +247,7 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void E2E_Validate_WithValidConformanceStandard_UnsupportedManifestInfo_ReturnsNonZeroExitCode()
+    public void E2E_Validate_WithValidConformance_UnsupportedManifestInfo_ReturnsNonZeroExitCode()
     {
         if (!IsWindows)
         {
@@ -268,7 +268,7 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void E2E_Validate_WithNoneConformanceStandard_SupportedManifestInfo_StdOutDoesNotHaveConformanceStandardErrors()
+    public void E2E_Validate_WithNoneConformance_SupportedManifestInfo_StdOutDoesNotHaveConformanceErrors()
     {
         if (!IsWindows)
         {
@@ -289,7 +289,7 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void E2E_Validate_WithValidConformanceStandard_SupportedManifestInfo_StdOutContainsNTIAErrors()
+    public void E2E_Validate_WithValidConformance_SupportedManifestInfo_StdOutContainsNTIAErrors()
     {
         if (!IsWindows)
         {

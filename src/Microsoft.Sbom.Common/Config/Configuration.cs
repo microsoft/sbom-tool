@@ -342,8 +342,8 @@ public class Configuration : IConfiguration
         set => sbomDir.Value = value;
     }
 
-    /// <inheritdoc cref="IConfiguration.ConformanceStandard" />
-    public ConfigurationSetting<ConformanceType> ConformanceStandard
+    /// <inheritdoc cref="IConfiguration.Conformance" />
+    public ConfigurationSetting<ConformanceType> Conformance
     {
         get => conformanceStandard.Value;
         set => conformanceStandard.Value = value;

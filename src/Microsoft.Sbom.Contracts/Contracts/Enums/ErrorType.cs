@@ -50,7 +50,7 @@ public enum ErrorType
     /// Element does not meet conformance standard.
     /// </summary>
     [EnumMember(Value = "Conformance standard validation error")]
-    ConformanceStandardError = 6,
+    ConformanceError = 6,
 
     /// <summary>
     /// An unknown error occured.
