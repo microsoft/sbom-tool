@@ -6,11 +6,11 @@ using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
 namespace Microsoft.Sbom.Common.Conformance.Enums;
 
-public class NTIAErrorType : IConformanceErrorType, IEquatable<NTIAErrorType>
+public class NTIAMinErrorType : IConformanceErrorType, IEquatable<NTIAMinErrorType>
 {
     public string Name { get; set; }
 
-    public NTIAErrorType(string name)
+    public NTIAMinErrorType(string name)
     {
         Name = name;
     }
@@ -22,10 +22,10 @@ public class NTIAErrorType : IConformanceErrorType, IEquatable<NTIAErrorType>
 
     public override bool Equals(object obj)
     {
-        return Equals(obj as NTIAErrorType);
+        return Equals(obj as NTIAMinErrorType);
     }
 
-    public bool Equals(NTIAErrorType other)
+    public bool Equals(NTIAMinErrorType other)
     {
         if (other == null)
         {
@@ -35,13 +35,13 @@ public class NTIAErrorType : IConformanceErrorType, IEquatable<NTIAErrorType>
         return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
     }
 
-    public static NTIAErrorType InvalidNTIAElement => new NTIAErrorType("InvalidNTIAElement");
+    public static NTIAMinErrorType InvalidNTIAMinElement => new NTIAMinErrorType("InvalidNTIAMinElement");
 
-    public static NTIAErrorType MissingValidSpdxDocument => new NTIAErrorType("MissingValidSpdxDocument");
+    public static NTIAMinErrorType MissingValidSpdxDocument => new NTIAMinErrorType("MissingValidSpdxDocument");
 
-    public static NTIAErrorType AdditionalSpdxDocument => new NTIAErrorType("AdditionalSpdxDocument");
+    public static NTIAMinErrorType AdditionalSpdxDocument => new NTIAMinErrorType("AdditionalSpdxDocument");
 
-    public static NTIAErrorType MissingValidCreationInfo => new NTIAErrorType("MissingValidCreationInfo");
+    public static NTIAMinErrorType MissingValidCreationInfo => new NTIAMinErrorType("MissingValidCreationInfo");
 
     public override int GetHashCode()
     {

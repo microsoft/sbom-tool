@@ -31,9 +31,9 @@ public class ConformanceType : IEquatable<ConformanceType>
             return None;
         }
 
-        if (string.Equals(name, NTIA.Name, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(name, NTIAMin.Name, StringComparison.OrdinalIgnoreCase))
         {
-            return NTIA;
+            return NTIAMin;
         }
 
         throw new ArgumentException($"Unknown Conformance '{name}'.");
@@ -56,7 +56,7 @@ public class ConformanceType : IEquatable<ConformanceType>
 
     public static ConformanceType None => new ConformanceType("None");
 
-    public static ConformanceType NTIA => new ConformanceType("NTIA");
+    public static ConformanceType NTIAMin => new ConformanceType("NTIAMin");
 
     public override int GetHashCode()
     {

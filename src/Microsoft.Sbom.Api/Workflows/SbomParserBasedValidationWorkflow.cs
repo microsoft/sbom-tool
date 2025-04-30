@@ -330,8 +330,8 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
         switch (configuration.Conformance?.Value?.Name)
         {
-            case "NTIA":
-                AddInvalidNTIAElementsToFailures(fileValidationFailures, invalidElements);
+            case "NTIAMin":
+                AddInvalidNTIAMinElementsToFailures(fileValidationFailures, invalidElements);
                 break;
             case "None":
                 break;
@@ -340,7 +340,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         }
     }
 
-    private void AddInvalidNTIAElementsToFailures(List<FileValidationResult> fileValidationFailures, HashSet<InvalidElementInfo> invalidElements)
+    private void AddInvalidNTIAMinElementsToFailures(List<FileValidationResult> fileValidationFailures, HashSet<InvalidElementInfo> invalidElements)
     {
         foreach (var invalidElementInfo in invalidElements)
         {

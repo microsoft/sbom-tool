@@ -125,11 +125,11 @@ public class ConfigSanitizerTests
         config.Conformance = new ConfigurationSetting<ConformanceType>
         {
             Source = SettingSource.CommandLine,
-            Value = ConformanceType.NTIA
+            Value = ConformanceType.NTIAMin
         };
 
         configSanitizer.SanitizeConfig(config);
-        Assert.AreEqual(ConformanceType.NTIA, config.Conformance.Value);
+        Assert.AreEqual(ConformanceType.NTIAMin, config.Conformance.Value);
     }
 
     [TestMethod]
@@ -156,7 +156,7 @@ public class ConfigSanitizerTests
         config.Conformance = new ConfigurationSetting<ConformanceType>
         {
             Source = SettingSource.CommandLine,
-            Value = ConformanceType.NTIA
+            Value = ConformanceType.NTIAMin
         };
 
         var exception = Assert.ThrowsException<ValidationArgException>(() => configSanitizer.SanitizeConfig(config));

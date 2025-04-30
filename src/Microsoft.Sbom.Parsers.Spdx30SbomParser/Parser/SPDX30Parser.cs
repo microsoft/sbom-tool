@@ -212,7 +212,7 @@ public class SPDX30Parser : ISbomParser
         var typeFromSbom = jsonObject["type"]?.ToString();
         var entityType = typeFromSbom;
 
-        // If the entity type is in the list of entities that require different NTIA requirements, then add the NTIA prefix.
+        // If the entity type is in the list of entities that require different NTIAMin requirements, then add the NTIAMin prefix.
         // This will allow for deserialization based on conformance so that we can detect if certain required fields are missing.
         entityType = conformanceEnforcer.GetConformanceEntityType(entityType);
 

@@ -411,7 +411,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
     }
 
     [TestMethod]
-    public async Task SbomParserBasedValidationWorkflowTests_ReturnsNTIAValidationFailures_Succeeds()
+    public async Task SbomParserBasedValidationWorkflowTests_ReturnsNTIAMinValidationFailures_Succeeds()
     {
         var manifestInfo = Constants.SPDX30ManifestInfo;
         var manifestParserProvider = new Mock<IManifestParserProvider>();
@@ -438,7 +438,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         {
             Value = new List<ManifestInfo>() { manifestInfo }
         });
-        configurationMock.SetupGet(c => c.Conformance).Returns(new ConfigurationSetting<ConformanceType> { Value = ConformanceType.NTIA });
+        configurationMock.SetupGet(c => c.Conformance).Returns(new ConfigurationSetting<ConformanceType> { Value = ConformanceType.NTIAMin });
 
         ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
@@ -460,10 +460,10 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         var elementsResult = new ElementsResult(new ParserStateResult(Constants.SPDXGraphHeaderName, null, ExplicitField: true, YieldReturn: true));
 
-        elementsResult.InvalidConformanceElements.Add(new InvalidElementInfo(NTIAErrorType.MissingValidSpdxDocument));
-        elementsResult.InvalidConformanceElements.Add(new InvalidElementInfo("spdxDocElementName", "spdxDocElementSpdxId", NTIAErrorType.AdditionalSpdxDocument));
-        elementsResult.InvalidConformanceElements.Add(new InvalidElementInfo(NTIAErrorType.MissingValidCreationInfo));
-        elementsResult.InvalidConformanceElements.Add(new InvalidElementInfo("elementName", "elementSpdxId", NTIAErrorType.InvalidNTIAElement));
+        elementsResult.InvalidConformanceElements.Add(new InvalidElementInfo(NTIAMinErrorType.MissingValidSpdxDocument));
+        elementsResult.InvalidConformanceElements.Add(new InvalidElementInfo("spdxDocElementName", "spdxDocElementSpdxId", NTIAMinErrorType.AdditionalSpdxDocument));
+        elementsResult.InvalidConformanceElements.Add(new InvalidElementInfo(NTIAMinErrorType.MissingValidCreationInfo));
+        elementsResult.InvalidConformanceElements.Add(new InvalidElementInfo("elementName", "elementSpdxId", NTIAMinErrorType.InvalidNTIAMinElement));
 
         sbomParser.SetupSequence(p => p.Next()).Returns(elementsResult);
 
@@ -502,7 +502,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         Assert.AreEqual("MissingValidCreationInfo", ntiaErrors[2].Path);
         Assert.AreEqual("SpdxId: elementSpdxId. Name: elementName", ntiaErrors[3].Path);
 
-        Assert.IsTrue(cc.CapturedStdOut.Contains("Elements in the manifest that are non-compliant with NTIA . . . 4"), "Number of invalid NTIA elements is incorrect in stdout");
+        Assert.IsTrue(cc.CapturedStdOut.Contains("Elements in the manifest that are non-compliant with NTIAMin . . . 4"), "Number of invalid NTIAMin elements is incorrect in stdout");
         Assert.IsTrue(cc.CapturedStdOut.Contains("MissingValidSpdxDocument"));
         Assert.IsTrue(cc.CapturedStdOut.Contains("AdditionalSpdxDocument. SpdxId: spdxDocElementSpdxId. Name: spdxDocElementName"));
         Assert.IsTrue(cc.CapturedStdOut.Contains("MissingValidCreationInfo"));

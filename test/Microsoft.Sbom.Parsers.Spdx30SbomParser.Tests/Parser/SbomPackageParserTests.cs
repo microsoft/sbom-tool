@@ -41,12 +41,12 @@ public class SbomPackageParserTests : SbomParserTestsBase
     [DataRow(SbomFullDocWithPackagesStrings.SbomPackageWithMissingVerificationJsonString)]
     [DataRow(SbomFullDocWithPackagesStrings.SbomPackageWithMissingSHA256JsonString)]
     [TestMethod]
-    public void MissingPropertiesTest_NTIA_VerificationCode_Throws(string json)
+    public void MissingPropertiesTest_NTIAMin_VerificationCode_Throws(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithPackagesStrings.SbomPackageWithMissingVerificationJsonString);
         using var stream = new MemoryStream(bytes);
         var parser = new SPDX30Parser(stream);
-        parser.EnforceConformance(Contracts.Enums.ConformanceType.NTIA);
+        parser.EnforceConformance(Contracts.Enums.ConformanceType.NTIAMin);
         var result = this.Parse(parser);
 
         Assert.AreEqual(1, result.InvalidConformanceElements.Count);
@@ -54,7 +54,7 @@ public class SbomPackageParserTests : SbomParserTestsBase
         var invalidElement = result.InvalidConformanceElements.First();
         Assert.AreEqual("SPDXRef-software_Package-4739C82D88855A138C811B8CE05CC97113BEC7F7C7F66EC7E4C6C176EEA0FECE", invalidElement.SpdxId);
         Assert.AreEqual("test", invalidElement.Name);
-        Assert.AreEqual(NTIAErrorType.InvalidNTIAElement, invalidElement.ErrorType);
+        Assert.AreEqual(NTIAMinErrorType.InvalidNTIAMinElement, invalidElement.ErrorType);
     }
 
     [TestMethod]
@@ -68,12 +68,12 @@ public class SbomPackageParserTests : SbomParserTestsBase
     }
 
     [TestMethod]
-    public void ValidNTIA_Succeeds()
+    public void ValidNTIAMin_Succeeds()
     {
-        var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithPackagesStrings.SbomNTIAValidPackageJsonString);
+        var bytes = Encoding.UTF8.GetBytes(SbomFullDocWithPackagesStrings.SbomNTIAMinValidPackageJsonString);
         using var stream = new MemoryStream(bytes);
         var parser = new SPDX30Parser(stream);
-        parser.EnforceConformance(Contracts.Enums.ConformanceType.NTIA);
+        parser.EnforceConformance(Contracts.Enums.ConformanceType.NTIAMin);
         var result = this.Parse(parser);
         Assert.AreEqual(1, result.PackagesCount);
     }

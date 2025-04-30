@@ -242,7 +242,7 @@ public class IntegrationTests
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
-        Assert.IsTrue(stdout.Contains("Unknown Conformance 'aeg12'. Options are NTIA"));
+        Assert.IsTrue(stdout.Contains("Unknown Conformance 'aeg12'. Options are NTIAMin"));
         Assert.AreEqual(1, exitCode.Value);
     }
 
@@ -259,7 +259,7 @@ public class IntegrationTests
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "2.2");
 
         // Add the conformance
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "2.2", conformanceValue: "NTIA");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "2.2", conformanceValue: "NTIAMin");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -289,7 +289,7 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void E2E_Validate_WithValidConformance_SupportedManifestInfo_StdOutContainsNTIAErrors()
+    public void E2E_Validate_WithValidConformance_SupportedManifestInfo_StdOutContainsNTIAMinErrors()
     {
         if (!IsWindows)
         {
@@ -301,12 +301,12 @@ public class IntegrationTests
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
         // Add the conformance
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceValue: "NTIA");
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceValue: "NTIAMin");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
         // Assert that the validation failures show up
-        Assert.IsFalse(stdout.Contains("Elements in the manifest that are non-compliant with NTIA . . . 0"));
+        Assert.IsFalse(stdout.Contains("Elements in the manifest that are non-compliant with NTIAMin . . . 0"));
         Assert.IsTrue(stdout.Contains("SPDXRef-Package"));
     }
 

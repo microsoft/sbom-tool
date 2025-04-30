@@ -49,7 +49,7 @@ public static class Constants
 
     public static Collection<ConformanceType> SupportedConformances = new()
     {
-        ConformanceType.NTIA,
+        ConformanceType.NTIAMin,
         ConformanceType.None
     };
 
