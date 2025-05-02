@@ -323,6 +323,6 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         };
 
         var exception = await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
-        Assert.IsTrue(exception.Message.Contains("Please provide a valid value for the ManifestInfo"));
+        Assert.IsTrue(exception.Message.Contains("contains no values supported by the ManifestInfo (-mi) parameter. Please provide supported values."));
     }
 }
