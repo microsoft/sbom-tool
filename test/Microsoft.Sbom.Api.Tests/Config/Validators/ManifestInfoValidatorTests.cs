@@ -72,6 +72,6 @@ public class ManifestInfoValidatorTests
     public void Constructor_AvailableManifestInfosIsNull_ThrowsException()
     {
         var e = Assert.ThrowsException<ArgumentNullException>(() => new ManifestInfoValidator(mockAssemblyConfig.Object, null as HashSet<ManifestInfo>));
-        Assert.AreEqual("supportedManifestInfosForTesting", e.ParamName);
+        Assert.AreEqual("supportedManifestInfos", e.ParamName);
     }
 }
