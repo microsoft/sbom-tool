@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -453,7 +454,7 @@ public class ManifestGenerationWorkflowTests
         using var manifestStream = new MemoryStream();
 
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-        var sbomConfig = new SbomConfig(fileSystemMock.Object)
+        ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
             ManifestInfo = Constants.TestManifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
@@ -482,7 +483,52 @@ public class ManifestGenerationWorkflowTests
         externalDocumentReferenceGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
 
         var sbomConfigsMock = new Mock<ISbomConfigProvider>();
-        sbomConfigsMock.Setup(f => f.Get(It.IsAny<ManifestInfo>())).Returns(sbomConfig);
+        sbomConfigsMock.Setup(f => f.TryGet(It.IsAny<ManifestInfo>(), out sbomConfig)).Returns(true);
+
+        var workflow = new SbomGenerationWorkflow(
+            configurationMock.Object,
+            fileSystemMock.Object,
+            mockLogger.Object,
+            fileArrayGeneratorMock.Object,
+            packageArrayGeneratorMock.Object,
+            relationshipsArrayGeneratorMock.Object,
+            externalDocumentReferenceGeneratorMock.Object,
+            sbomConfigsMock.Object,
+            mockOSUtils.Object,
+            recorderMock.Object);
+
+        var result = await workflow.RunAsync();
+
+        Assert.IsFalse(result);
+        fileArrayGeneratorMock.VerifyAll();
+        packageArrayGeneratorMock.VerifyAll();
+        relationshipsArrayGeneratorMock.VerifyAll();
+        externalDocumentReferenceGeneratorMock.VerifyAll();
+        fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Once);
+    }
+
+    [TestMethod]
+    public async Task ManifestGenerationWorkflowTests_UnknownManifestType_LogsExpectedWarning()
+    {
+        ISbomConfig sbomConfig = null;
+
+        IList<ManifestInfo> testManifestInfo = new List<ManifestInfo> { Constants.TestManifestInfo };
+        configurationMock.SetupGet(x => x.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.CommandLine });
+        configurationMock.SetupGet(x => x.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>> { Value = testManifestInfo, Source = SettingSource.CommandLine });
+        fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+        fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
+
+        var warnings = new List<string>();
+        mockLogger.Setup(l => l.Warning(It.IsAny<string>()))
+            .Callback<string>(warnings.Add);
+
+        var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>(MockBehavior.Strict);
+        var packageArrayGeneratorMock = new Mock<IJsonArrayGenerator<PackageArrayGenerator>>(MockBehavior.Strict);
+        var relationshipsArrayGeneratorMock = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>(MockBehavior.Strict);
+        var externalDocumentReferenceGeneratorMock = new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>(MockBehavior.Strict);
+
+        var sbomConfigsMock = new Mock<ISbomConfigProvider>(MockBehavior.Strict);
+        sbomConfigsMock.Setup(f => f.TryGet(It.IsAny<ManifestInfo>(), out sbomConfig)).Returns(false);
 
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,
@@ -502,7 +548,11 @@ public class ManifestGenerationWorkflowTests
         packageArrayGeneratorMock.VerifyAll();
         relationshipsArrayGeneratorMock.VerifyAll();
         externalDocumentReferenceGeneratorMock.VerifyAll();
+        sbomConfigsMock.VerifyAll();
         fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Once);
         Assert.IsFalse(result);
+
+        Assert.AreEqual(1, warnings.Count);
+        Assert.IsTrue(warnings[0].StartsWith("Ignoring unregistered manifest type: ", StringComparison.Ordinal), $"Unexpected warning: {warnings[0]}");
     }
 }

@@ -76,6 +76,8 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         IList<FileValidationResult> validErrors = new List<FileValidationResult>();
         string sbomDir = null;
         var deleteSbomDir = false;
+        var triedToGenerateAtLeastOneManifest = false;
+
         using (recorder.TraceEvent(Events.SbomGenerationWorkflow))
         {
             try
@@ -99,34 +101,41 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 // Use the WriteJsonObjectsToSbomAsync method based on the SPDX version in manifest info
                 foreach (var manifestInfo in manifestInfos)
                 {
-                    var config = sbomConfigs.Get(manifestInfo);
-                    await using (sbomConfigs.StartJsonSerializationAsync(config))
+                    if (sbomConfigs.TryGet(manifestInfo, out var config))
                     {
-                        config.JsonSerializer?.StartJsonObject();
+                        triedToGenerateAtLeastOneManifest = true;
+                        await using (sbomConfigs.StartJsonSerializationAsync(config))
+                        {
+                            config.JsonSerializer?.StartJsonObject();
 
-                        // Get the appropriate strategy
-                        var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(manifestInfo.Version);
-                        validErrors = await serializationStrategy.WriteJsonObjectsToSbomAsync(
-                            config,
-                            manifestInfo.Version,
-                            fileArrayGenerator,
-                            packageArrayGenerator,
-                            relationshipsArrayGenerator,
-                            externalDocumentReferenceGenerator).
-                            ConfigureAwait(false);
+                            // Get the appropriate strategy
+                            var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(manifestInfo.Version);
+                            validErrors = await serializationStrategy.WriteJsonObjectsToSbomAsync(
+                                config,
+                                manifestInfo.Version,
+                                fileArrayGenerator,
+                                packageArrayGenerator,
+                                relationshipsArrayGenerator,
+                                externalDocumentReferenceGenerator).
+                                ConfigureAwait(false);
 
-                        // Write headers
-                        serializationStrategy.AddHeadersToSbom(sbomConfigs, config);
+                            // Write headers
+                            serializationStrategy.AddHeadersToSbom(sbomConfigs, config);
 
-                        // Finalize JSON
-                        config.JsonSerializer?.FinalizeJsonObject();
+                            // Finalize JSON
+                            config.JsonSerializer?.FinalizeJsonObject();
+                        }
+
+                        // Generate SHA256 for manifest json
+                        GenerateHashForManifestJson(config.ManifestJsonFilePath);
                     }
-
-                    // Generate SHA256 for manifest json
-                    GenerateHashForManifestJson(config.ManifestJsonFilePath);
+                    else
+                    {
+                        log.Warning($"Ignoring unregistered manifest type: {manifestInfo}");
+                    }
                 }
 
-                return !validErrors.Any();
+                return triedToGenerateAtLeastOneManifest && !validErrors.Any();
             }
             catch (Exception e)
             {
