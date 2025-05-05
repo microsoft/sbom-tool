@@ -42,8 +42,8 @@ public class ManifestInfoValidator : ConfigValidator
         if (paramValue is not null && paramValue is List<ManifestInfo> listOfManifestInfos && !supportedManifestInfos.Any(listOfManifestInfos.Contains))
         {
             var providedValues = string.Join(", ", listOfManifestInfos);
-            var validManifestInfoa = string.Join(", ", supportedManifestInfos.Select(m => m.ToString()));
-            throw new ValidationArgException($"The value '{providedValues}' contains no values supported by the ManifestInfo (-mi) parameter. Please provide supported values. Supported values include: {validManifestInfoa}. The values are case-insensitive.");
+            var validManifestInfos = string.Join(", ", supportedManifestInfos.Select(m => m.ToString()));
+            throw new ValidationArgException($"The value '{providedValues}' contains no values supported by the ManifestInfo (-mi) parameter. Please provide supported values. Supported values include: {validManifestInfos}. The values are case-insensitive.");
         }
     }
 
