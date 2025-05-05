@@ -499,6 +499,7 @@ public class ManifestGenerationWorkflowTests
 
         var result = await workflow.RunAsync();
 
+        Assert.IsFalse(result);
         fileArrayGeneratorMock.VerifyAll();
         packageArrayGeneratorMock.VerifyAll();
         relationshipsArrayGeneratorMock.VerifyAll();
