@@ -75,6 +75,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
     public virtual async Task<bool> RunAsync()
     {
         IEnumerable<FileValidationResult> validErrors = new List<FileValidationResult>();
+        var elementsSpdxIdList = new HashSet<string>();
         string sbomDir = null;
         var deleteSbomDir = false;
         using (recorder.TraceEvent(Events.SbomGenerationWorkflow))
@@ -109,13 +110,13 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     });
 
                     // Write all the JSON documents from the generationResults to the manifest based on the manifestInfo.
-                    var fileGenerationResult = await fileArrayGenerator.GenerateAsync(manifestInfosFromConfig);
+                    var fileGenerationResult = await fileArrayGenerator.GenerateAsync(manifestInfosFromConfig, elementsSpdxIdList);
 
-                    var packageGenerationResult = await packageArrayGenerator.GenerateAsync(manifestInfosFromConfig);
+                    var packageGenerationResult = await packageArrayGenerator.GenerateAsync(manifestInfosFromConfig, elementsSpdxIdList);
 
-                    var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync(manifestInfosFromConfig);
+                    var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync(manifestInfosFromConfig, elementsSpdxIdList);
 
-                    var relationshipGenerationResult = await relationshipsArrayGenerator.GenerateAsync(manifestInfosFromConfig);
+                    var relationshipGenerationResult = await relationshipsArrayGenerator.GenerateAsync(manifestInfosFromConfig, elementsSpdxIdList);
 
                     // Concatenate all the errors from the generationResults.
                     validErrors = validErrors.Concat(fileGenerationResult.Errors);

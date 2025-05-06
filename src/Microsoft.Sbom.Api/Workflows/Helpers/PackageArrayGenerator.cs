@@ -40,7 +40,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
     }
 
-    public async Task<GenerationResult> GenerateAsync(IList<ManifestInfo> manifestInfosFromConfig)
+    public async Task<GenerationResult> GenerateAsync(IList<ManifestInfo> manifestInfosFromConfig, HashSet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.PackagesGeneration))
         {
@@ -108,7 +108,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
             {
                 var config = sbomConfigs.Get(manifestInfo);
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
-                serializationStrategy.WriteJsonObjectsToManifest(generationResult);
+                serializationStrategy.WriteJsonObjectsToManifest(generationResult, elementsSpdxIdList);
             }
 
             return generationResult;

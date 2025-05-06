@@ -74,7 +74,12 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
         // Not supported for SPDX 2.2, only supported for SPDX 3.0 and above.
     }
 
-    public void WriteJsonObjectsToManifest(GenerationResult generationResult)
+    /// <summary>
+    /// Writes the json objects to the manifest in SPDX 2.2 format.
+    /// </summary>
+    /// <param name="generationResult"></param>
+    /// <param name="elementsSpdxIdList">Not used for deduplication. Only used for >= SPDX 3.0.</param>
+    public void WriteJsonObjectsToManifest(GenerationResult generationResult, HashSet<string> elementsSpdxIdList)
     {
         foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
         {

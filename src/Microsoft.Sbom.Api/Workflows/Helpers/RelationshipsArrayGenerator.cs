@@ -30,8 +30,6 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
 
     private readonly ISbomConfigProvider sbomConfigs;
 
-    public string SpdxManifestVersion { get; set; }
-
     public RelationshipsArrayGenerator(
         RelationshipGenerator generator,
         ChannelUtils channelUtils,
@@ -46,7 +44,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
         this.recorder = recorder;
     }
 
-    public async Task<GenerationResult> GenerateAsync(IList<ManifestInfo> manifestInfosFromConfig)
+    public async Task<GenerationResult> GenerateAsync(IList<ManifestInfo> manifestInfosFromConfig, HashSet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.RelationshipsGeneration))
         {
@@ -120,7 +118,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
             {
                 var config = sbomConfigs.Get(manifestInfo);
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
-                serializationStrategy.WriteJsonObjectsToManifest(generationResult);
+                serializationStrategy.WriteJsonObjectsToManifest(generationResult, elementsSpdxIdList);
             }
 
             return generationResult;

@@ -14,8 +14,6 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
 {
-    private readonly HashSet<string> elementsSpdxIdList = new HashSet<string>();
-
     /// <summary>
     /// Adds the config to the list of configs that support files.
     /// </summary>
@@ -100,7 +98,12 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
         }
     }
 
-    public void WriteJsonObjectsToManifest(GenerationResult generationResult)
+    /// <summary>
+    /// Writes the JSON objects in >=SPDX 3.0 format.
+    /// </summary>
+    /// <param name="generationResult"></param>
+    /// <param name="elementsSpdxIdList">Only used for SPDX 3.0 and above for deduplication. SPDX 2.2 handles deduplication differently.</param>
+    public void WriteJsonObjectsToManifest(GenerationResult generationResult, HashSet<string> elementsSpdxIdList)
     {
         foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
         {

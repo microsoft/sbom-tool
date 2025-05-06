@@ -23,5 +23,5 @@ internal interface IJsonSerializationStrategy
 
     public void EndGraphArray(IList<ManifestInfo> manifestInfosFromConfig, ISbomConfigProvider sbomConfigs);
 
-    public void WriteJsonObjectsToManifest(GenerationResult generationResult);
+    public void WriteJsonObjectsToManifest(GenerationResult generationResult, HashSet<string> elementsSpdxIdList);
 }

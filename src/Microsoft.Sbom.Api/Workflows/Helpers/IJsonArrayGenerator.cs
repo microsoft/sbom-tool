@@ -17,5 +17,5 @@ public interface IJsonArrayGenerator<T>
     /// Generates all the JSON objects that need to be written to the SBOM.
     /// </summary>
     /// <returns>GenerationResult with objects to write to the SBOM and failures.</returns>
-    public Task<GenerationResult> GenerateAsync(IList<ManifestInfo> manifestInfosFromConfig);
+    public Task<GenerationResult> GenerateAsync(IList<ManifestInfo> manifestInfosFromConfig, HashSet<string> elementsSpdxIdList);
 }
