@@ -10,6 +10,7 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -25,41 +26,48 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
 
     private readonly IRecorder recorder;
 
-    public ISbomConfig SbomConfig { get; set; }
-
-    public string SpdxManifestVersion { get; set; }
+    private readonly ISbomConfigProvider sbomConfigs;
 
     public ExternalDocumentReferenceGenerator(
         ILogger log,
+        ISbomConfigProvider sbomConfigs,
         IEnumerable<ISourcesProvider> sourcesProviders,
         IRecorder recorder)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
+        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
         this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
     }
 
-    public async Task<GenerationResult> GenerateAsync()
+    public async Task<GenerationResult> GenerateAsync(IList<ManifestInfo> manifestInfosFromConfig)
     {
         using (recorder.TraceEvent(Events.ExternalDocumentReferenceGeneration))
         {
             var totalErrors = new List<FileValidationResult>();
             var jsonDocumentCollection = new JsonDocumentCollection<IManifestToolJsonSerializer>();
+            var jsonArrayStartedForConfig = new Dictionary<ISbomConfig, bool>();
 
-            var sourcesProviders = this.sourcesProviders
+            var externalDocumentReferenceSourcesProvider = this.sourcesProviders
                 .Where(s => s.IsSupported(ProviderType.ExternalDocumentReference));
-            if (!sourcesProviders.Any())
+
+            if (!externalDocumentReferenceSourcesProvider.Any())
             {
                 log.Debug($"No source providers found for {ProviderType.ExternalDocumentReference}");
-                return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStarted: false);
+                return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
             }
 
             // Write the start of the array, if supported.
             IList<ISbomConfig> externalRefArraySupportingConfigs = new List<ISbomConfig>();
-            var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
-            var jsonArrayStarted = serializationStrategy.AddToExternalDocRefsSupportingConfig(externalRefArraySupportingConfigs, this.SbomConfig);
+            foreach (var manifestInfo in manifestInfosFromConfig)
+            {
+                var config = sbomConfigs.Get(manifestInfo);
+                var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
+                var jsonArrayStarted = serializationStrategy.AddToExternalDocRefsSupportingConfig(externalRefArraySupportingConfigs, config);
+                jsonArrayStartedForConfig[config] = jsonArrayStarted;
+            }
 
-            foreach (var sourcesProvider in sourcesProviders)
+            foreach (var sourcesProvider in externalDocumentReferenceSourcesProvider)
             {
                 var (jsonDocResults, errors) = sourcesProvider.Get(externalRefArraySupportingConfigs);
 
@@ -80,7 +88,15 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
                 }
             }
 
-            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStarted);
+            var generationResult = new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
+            foreach (var manifestInfo in manifestInfosFromConfig)
+            {
+                var config = sbomConfigs.Get(manifestInfo);
+                var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
+                serializationStrategy.WriteJsonObjectsToManifest(generationResult);
+            }
+
+            return generationResult;
         }
     }
 }

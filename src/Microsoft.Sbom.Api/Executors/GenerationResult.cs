@@ -17,18 +17,18 @@ public class GenerationResult
 
     public Dictionary<IManifestToolJsonSerializer, List<JsonDocument>> SerializerToJsonDocuments { get; }
 
-    public bool JsonArrayStarted { get; }
+    public Dictionary<ISbomConfig, bool> JsonArrayStartedForConfig { get; }
 
     /// <summary>
     /// Result from generators. This result is used to write to the SBOM manifest file.
     /// </summary>
     /// <param name="errors">List of FileValidationResult errors.</param>
     /// <param name="serializerToJsonDocuments">Dictionary to map serializer to the JSON document that should be written to it.</param>
-    /// <param name="jsonArrayStarted">This value determines whether a JSON array for a section is started. This is only used for SPDX 2.2 SBOM generation.</param>
-    public GenerationResult(List<FileValidationResult> errors, Dictionary<IManifestToolJsonSerializer, List<JsonDocument>> serializerToJsonDocuments, bool jsonArrayStarted)
+    /// <param name="jsonArrayStartedForConfig">This value determines whether a JSON array for a section is started for the specified config. This is only used for SPDX 2.2 SBOM generation.</param>
+    public GenerationResult(List<FileValidationResult> errors, Dictionary<IManifestToolJsonSerializer, List<JsonDocument>> serializerToJsonDocuments, Dictionary<ISbomConfig, bool> jsonArrayStartedForConfig)
     {
         Errors = errors;
         SerializerToJsonDocuments = serializerToJsonDocuments;
-        JsonArrayStarted = jsonArrayStarted;
+        JsonArrayStartedForConfig = jsonArrayStartedForConfig;
     }
 }

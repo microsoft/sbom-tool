@@ -59,10 +59,7 @@ public sealed class ManifestToolJsonSerializer : IManifestToolJsonSerializer
             return;
         }
 
-        using (jsonDocument)
-        {
-            jsonDocument.WriteTo(jsonWriter);
-        }
+        jsonDocument.WriteTo(jsonWriter);
 
         // If the pending buffer size is greater than a megabyte, flush the stream.
         if (jsonWriter.BytesPending > 1_000_000)

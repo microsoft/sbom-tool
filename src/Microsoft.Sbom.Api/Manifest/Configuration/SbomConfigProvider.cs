@@ -118,15 +118,22 @@ public class SbomConfigProvider : ISbomConfigProvider
         return this;
     }
 
-    public IAsyncDisposable StartJsonSerializationAsync()
+    /// <summary>
+    /// Starts asynchronous JSON serialization of supported ISbomConfig objects from IConfiguration.
+    /// </summary>
+    /// <param name="manifestInfosFromConfig"></param>
+    /// <returns></returns>
+    public IAsyncDisposable StartJsonSerializationAsync(IList<ManifestInfo> manifestInfosFromConfig)
     {
-        ApplyToEachConfig(c => c.StartJsonSerialization());
-        return this;
-    }
+        foreach (var manifestInfo in manifestInfosFromConfig)
+        {
+            var supportedManifestInfo = this.TryGet(manifestInfo, out var config);
+            if (supportedManifestInfo)
+            {
+                config.StartJsonSerialization();
+            }
+        }
 
-    public IAsyncDisposable StartJsonSerializationAsync(ISbomConfig configuration)
-    {
-        configuration.StartJsonSerialization();
         return this;
     }
 

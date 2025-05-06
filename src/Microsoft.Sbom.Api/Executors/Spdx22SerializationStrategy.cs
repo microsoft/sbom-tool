@@ -2,9 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
@@ -60,91 +59,22 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
         return false;
     }
 
-    public void AddHeadersToSbom(ISbomConfigProvider sbomConfigs, ISbomConfig config)
+    public void AddMetadataToSbom(ISbomConfigProvider sbomConfigs, ISbomConfig config)
     {
         config.JsonSerializer?.WriteJsonString(config.MetadataBuilder.GetHeaderJsonString(sbomConfigs));
     }
 
-    public async Task<List<FileValidationResult>> WriteJsonObjectsToSbomAsync(
-        ISbomConfig sbomConfig,
-        string spdxManifestVersion,
-        IJsonArrayGenerator<FileArrayGenerator> fileArrayGenerator,
-        IJsonArrayGenerator<PackageArrayGenerator> packageArrayGenerator,
-        IJsonArrayGenerator<RelationshipsArrayGenerator> relationshipsArrayGenerator,
-        IJsonArrayGenerator<ExternalDocumentReferenceGenerator> externalDocumentReferenceGenerator)
+    public void StartGraphArray(IList<ManifestInfo> manifestInfosFromConfig, ISbomConfigProvider sbomConfigs)
     {
-        fileArrayGenerator.SbomConfig = sbomConfig;
-        packageArrayGenerator.SbomConfig = sbomConfig;
-        relationshipsArrayGenerator.SbomConfig = sbomConfig;
-        externalDocumentReferenceGenerator.SbomConfig = sbomConfig;
-
-        fileArrayGenerator.SpdxManifestVersion = spdxManifestVersion;
-        packageArrayGenerator.SpdxManifestVersion = spdxManifestVersion;
-        relationshipsArrayGenerator.SpdxManifestVersion = spdxManifestVersion;
-        externalDocumentReferenceGenerator.SpdxManifestVersion = spdxManifestVersion;
-
-        var errors = new List<FileValidationResult>();
-
-        await WriteFiles(fileArrayGenerator, errors);
-
-        await WritePackages(packageArrayGenerator, errors);
-
-        await WriteExternalDocRefs(externalDocumentReferenceGenerator, errors);
-
-        await WriteRelationships(relationshipsArrayGenerator, errors);
-
-        return errors;
+        // Not supported for SPDX 2.2, only supported for SPDX 3.0 and above.
     }
 
-    /// <summary>
-    /// Write to Files section
-    /// </summary>
-    /// <param name="fileArrayGenerator"></param>
-    /// <returns></returns>
-    private async Task WriteFiles(IJsonArrayGenerator<FileArrayGenerator> fileArrayGenerator, List<FileValidationResult> errors)
+    public void EndGraphArray(IList<ManifestInfo> manifestInfosFromConfig, ISbomConfigProvider sbomConfigs)
     {
-        var filesGenerationResult = await fileArrayGenerator.GenerateAsync();
-        errors.AddRange(filesGenerationResult.Errors);
-        WriteJsonObjectsFromGenerationResult(filesGenerationResult, fileArrayGenerator.SbomConfig);
+        // Not supported for SPDX 2.2, only supported for SPDX 3.0 and above.
     }
 
-    /// <summary>
-    /// Write to Packages section
-    /// </summary>
-    /// <param name="packageArrayGenerator"></param>
-    /// <returns></returns>
-    private async Task WritePackages(IJsonArrayGenerator<PackageArrayGenerator> packageArrayGenerator, List<FileValidationResult> errors)
-    {
-        var packagesGenerationResult = await packageArrayGenerator.GenerateAsync();
-        errors.AddRange(packagesGenerationResult.Errors);
-        WriteJsonObjectsFromGenerationResult(packagesGenerationResult, packageArrayGenerator.SbomConfig);
-    }
-
-    /// <summary>
-    /// Write to External Document Reference section
-    /// </summary>
-    /// <param name="externalDocumentReferenceGenerator"></param>
-    /// <returns></returns>
-    private async Task WriteExternalDocRefs(IJsonArrayGenerator<ExternalDocumentReferenceGenerator> externalDocumentReferenceGenerator, List<FileValidationResult> errors)
-    {
-        var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync();
-        errors.AddRange(externalDocumentReferenceGenerationResult.Errors);
-        WriteJsonObjectsFromGenerationResult(externalDocumentReferenceGenerationResult, externalDocumentReferenceGenerator.SbomConfig);
-    }
-
-    /// <summary>
-    /// Write to Relationships section
-    /// </summary>
-    /// <param name="relationshipsArrayGenerator"></param>
-    /// <returns></returns>
-    private async Task WriteRelationships(IJsonArrayGenerator<RelationshipsArrayGenerator> relationshipsArrayGenerator, List<FileValidationResult> errors)
-    {
-        var relationshipGenerationResult = await relationshipsArrayGenerator.GenerateAsync();
-        errors.AddRange(relationshipGenerationResult.Errors);
-        WriteJsonObjectsFromGenerationResult(relationshipGenerationResult, relationshipsArrayGenerator.SbomConfig);
-   }
-
-    private void WriteJsonObjectsFromGenerationResult(GenerationResult generationResult, ISbomConfig sbomConfig)
+    public void WriteJsonObjectsToManifest(GenerationResult generationResult)
     {
         foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
         {
@@ -158,9 +88,12 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
             }
         }
 
-        if (generationResult.JsonArrayStarted)
+        foreach (var sbomConfig in generationResult.JsonArrayStartedForConfig)
         {
-            sbomConfig.JsonSerializer.EndJsonArray();
+            if (sbomConfig.Value)
+            {
+                sbomConfig.Key.JsonSerializer.EndJsonArray();
+            }
         }
     }
 }

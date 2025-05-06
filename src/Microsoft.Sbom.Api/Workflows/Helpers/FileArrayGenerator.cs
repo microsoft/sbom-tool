@@ -10,6 +10,7 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -25,15 +26,15 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
 
     private readonly ILogger logger;
 
-    public ISbomConfig SbomConfig { get; set; }
-
-    public string SpdxManifestVersion { get; set; }
+    private readonly ISbomConfigProvider sbomConfigs;
 
     public FileArrayGenerator(
+        ISbomConfigProvider sbomConfigs,
         IEnumerable<ISourcesProvider> sourcesProviders,
         IRecorder recorder,
         ILogger logger)
     {
+        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
         this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -47,24 +48,29 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
     /// <param name="jsonSerializer">The serializer used to write the SBOM.</param>
     /// <param name="headerName">The header key for the file array object.</param>
     /// <returns></returns>
-    public async Task<GenerationResult> GenerateAsync()
+    public async Task<GenerationResult> GenerateAsync(IList<ManifestInfo> manifestInfosFromConfig)
     {
         using (recorder.TraceEvent(Events.FilesGeneration))
         {
             var totalErrors = new List<FileValidationResult>();
 
-            var sourcesProviders = this.sourcesProviders
-                .Where(s => s.IsSupported(ProviderType.Files));
-
             // Write the start of the array, if supported.
             IList<ISbomConfig> filesArraySupportingSboms = new List<ISbomConfig>();
-            var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
-            var jsonArrayStarted = serializationStrategy.AddToFilesSupportingConfig(filesArraySupportingSboms, this.SbomConfig);
+            var jsonArrayStartedForConfig = new Dictionary<ISbomConfig, bool>();
+            var filesSourcesProviders = this.sourcesProviders
+               .Where(s => s.IsSupported(ProviderType.Files));
 
-            this.logger.Verbose("Started writing files array for {configFile}.", this.SbomConfig.ManifestJsonFilePath);
+            foreach (var manifestInfo in manifestInfosFromConfig)
+            {
+                var config = sbomConfigs.Get(manifestInfo);
+                var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
+                var jsonArrayStarted = serializationStrategy.AddToFilesSupportingConfig(filesArraySupportingSboms, config);
+                jsonArrayStartedForConfig[config] = jsonArrayStarted;
+                this.logger.Verbose("Started writing files for {configFile}.", config.ManifestJsonFilePath);
+            }
 
             var jsonDocumentCollection = new JsonDocumentCollection<IManifestToolJsonSerializer>();
-            foreach (var sourcesProvider in sourcesProviders)
+            foreach (var sourcesProvider in filesSourcesProviders)
             {
                 var (jsondDocResults, errors) = sourcesProvider.Get(filesArraySupportingSboms);
 
@@ -83,7 +89,16 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
                 }
             }
 
-            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStarted);
+            var generationResult = new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
+
+            foreach (var manifestInfo in manifestInfosFromConfig)
+            {
+                var config = sbomConfigs.Get(manifestInfo);
+                var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
+                serializationStrategy.WriteJsonObjectsToManifest(generationResult);
+            }
+
+            return generationResult;
         }
     }
 }

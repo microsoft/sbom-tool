@@ -26,4 +26,6 @@ public class JsonDocumentCollection<T>
             SerializersToJson.Add(key, new List<JsonDocument> { document });
         }
     }
+
+    // TODO: cleanup doc
 }

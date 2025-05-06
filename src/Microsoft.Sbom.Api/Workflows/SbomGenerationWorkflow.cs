@@ -15,6 +15,7 @@ using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
 using Serilog;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
@@ -73,7 +74,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
 
     public virtual async Task<bool> RunAsync()
     {
-        IList<FileValidationResult> validErrors = new List<FileValidationResult>();
+        IEnumerable<FileValidationResult> validErrors = new List<FileValidationResult>();
         string sbomDir = null;
         var deleteSbomDir = false;
         using (recorder.TraceEvent(Events.SbomGenerationWorkflow))
@@ -94,37 +95,53 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     log.Information("Manifest directory path was explicitly defined. Will not attempt to delete any existing _manifest directory.");
                 }
 
-                var manifestInfos = configuration.ManifestInfo.Value;
+                // Write manifests based on manifestInfo values in the configuration.
+                var manifestInfosFromConfig = configuration.ManifestInfo.Value;
 
-                // Use the WriteJsonObjectsToSbomAsync method based on the SPDX version in manifest info
-                foreach (var manifestInfo in manifestInfos)
+                await using (sbomConfigs.StartJsonSerializationAsync(manifestInfosFromConfig))
                 {
-                    var config = sbomConfigs.Get(manifestInfo);
-                    await using (sbomConfigs.StartJsonSerializationAsync(config))
+                    ForEachManifestFromConfig(manifestInfosFromConfig, config => config.JsonSerializer.StartJsonObject());
+
+                    ForEachManifestFromConfig(manifestInfosFromConfig, config =>
                     {
-                        config.JsonSerializer?.StartJsonObject();
+                        var strategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
+                        strategy.StartGraphArray(manifestInfosFromConfig, sbomConfigs);
+                    });
 
-                        // Get the appropriate strategy
-                        var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(manifestInfo.Version);
-                        validErrors = await serializationStrategy.WriteJsonObjectsToSbomAsync(
-                            config,
-                            manifestInfo.Version,
-                            fileArrayGenerator,
-                            packageArrayGenerator,
-                            relationshipsArrayGenerator,
-                            externalDocumentReferenceGenerator).
-                            ConfigureAwait(false);
+                    // Write all the JSON documents from the generationResults to the manifest based on the manifestInfo.
+                    var fileGenerationResult = await fileArrayGenerator.GenerateAsync(manifestInfosFromConfig);
 
-                        // Write headers
-                        serializationStrategy.AddHeadersToSbom(sbomConfigs, config);
+                    var packageGenerationResult = await packageArrayGenerator.GenerateAsync(manifestInfosFromConfig);
 
-                        // Finalize JSON
-                        config.JsonSerializer?.FinalizeJsonObject();
-                    }
+                    var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync(manifestInfosFromConfig);
 
-                    // Generate SHA256 for manifest json
-                    GenerateHashForManifestJson(config.ManifestJsonFilePath);
+                    var relationshipGenerationResult = await relationshipsArrayGenerator.GenerateAsync(manifestInfosFromConfig);
+
+                    // Concatenate all the errors from the generationResults.
+                    validErrors = validErrors.Concat(fileGenerationResult.Errors);
+                    validErrors = validErrors.Concat(packageGenerationResult.Errors);
+                    validErrors = validErrors.Concat(externalDocumentReferenceGenerationResult.Errors);
+                    validErrors = validErrors.Concat(relationshipGenerationResult.Errors);
+
+                    // Write metadata dictionary to SBOM. This is a no-op for SPDX 3.0 and above.
+                    ForEachManifestFromConfig(manifestInfosFromConfig, config =>
+                    {
+                        var strategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
+                        strategy.AddMetadataToSbom(sbomConfigs, config);
+                    });
+
+                    ForEachManifestFromConfig(manifestInfosFromConfig, config =>
+                    {
+                        var strategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
+                        strategy.EndGraphArray(manifestInfosFromConfig, sbomConfigs);
+                    });
+
+                    // Finalize JSON
+                    ForEachManifestFromConfig(manifestInfosFromConfig, config => config.JsonSerializer.FinalizeJsonObject());
                 }
+
+                // Generate SHA256 for manifest json
+                ForEachManifestFromConfig(manifestInfosFromConfig, config => GenerateHashForManifestJson(config.ManifestJsonFilePath));
 
                 return !validErrors.Any();
             }
@@ -146,7 +163,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
             {
                 if (validErrors != null)
                 {
-                    recorder.RecordTotalErrors(validErrors);
+                    recorder.RecordTotalErrors(validErrors.ToList());
                 }
 
                // Delete the generated _manifest folder if generation failed.
@@ -167,6 +184,23 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 {
                     log.Warning($"Unable to delete the temp directory {fileSystemUtils.GetSbomToolTempPath()}", e);
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// For each manifestInfo in the configuration, execute the provided action if it is a supported manifestInfo.
+    /// </summary>
+    /// <param name="manifestInfosFromConfig">Derived from either the -manifestInfo CLI parameter or manifestInfo value in the configuration file.</param>
+    /// <param name="action">Action to perform on each config.</param>
+    public void ForEachManifestFromConfig(IList<ManifestInfo> manifestInfosFromConfig, Action<ISbomConfig> action)
+    {
+        foreach (var manifestInfo in manifestInfosFromConfig)
+        {
+            var supportedManifestInfo = sbomConfigs.TryGet(manifestInfo, out var config);
+            if (supportedManifestInfo)
+            {
+                action(config);
             }
         }
     }

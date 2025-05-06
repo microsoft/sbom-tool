@@ -47,14 +47,7 @@ public interface ISbomConfigProvider : IDisposable, IAsyncDisposable, IInternalM
     /// This returns a <see cref="IAsyncDisposable"/> object that is used to clean up the JSON streams.
     /// </summary>
     /// <returns></returns>
-    public IAsyncDisposable StartJsonSerializationAsync();
-
-    /// <summary>
-    /// Starts the JSON serialization of the specified ISbomConfig object asynchronously.
-    /// This returns a <see cref="IAsyncDisposable"/> object that is used to clean up the JSON streams.
-    /// </summary>
-    /// <returns></returns>
-    public IAsyncDisposable StartJsonSerializationAsync(ISbomConfig configuration);
+    public IAsyncDisposable StartJsonSerializationAsync(IList<ManifestInfo> manifestInfosFromConfig);
 
     /// <summary>
     /// Helper method to operate an action on each included configs.
