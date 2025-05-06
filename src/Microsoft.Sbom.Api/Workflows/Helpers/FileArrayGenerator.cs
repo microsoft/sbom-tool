@@ -98,6 +98,8 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
                 serializationStrategy.WriteJsonObjectsToManifest(generationResult, elementsSpdxIdList);
             }
 
+            jsonDocumentCollection.DisposeAllJsonDocuments();
+
             return generationResult;
         }
     }

@@ -96,6 +96,8 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
                 serializationStrategy.WriteJsonObjectsToManifest(generationResult, elementsSpdxIdList);
             }
 
+            jsonDocumentCollection.DisposeAllJsonDocuments();
+
             return generationResult;
         }
     }

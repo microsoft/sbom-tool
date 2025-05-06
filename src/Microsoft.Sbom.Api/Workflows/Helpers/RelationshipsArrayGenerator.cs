@@ -121,6 +121,8 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                 serializationStrategy.WriteJsonObjectsToManifest(generationResult, elementsSpdxIdList);
             }
 
+            jsonDocumentCollection.DisposeAllJsonDocuments();
+
             return generationResult;
         }
     }

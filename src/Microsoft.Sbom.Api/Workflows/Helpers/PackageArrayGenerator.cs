@@ -111,6 +111,8 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
                 serializationStrategy.WriteJsonObjectsToManifest(generationResult, elementsSpdxIdList);
             }
 
+            jsonDocumentCollection.DisposeAllJsonDocuments();
+
             return generationResult;
         }
     }
