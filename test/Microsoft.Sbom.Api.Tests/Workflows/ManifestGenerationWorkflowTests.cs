@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
@@ -339,15 +341,16 @@ public class ManifestGenerationWorkflowTests
             { externalDocumentReferenceProvider }
         };
 
-        var fileArrayGenerator = new FileArrayGenerator(sourcesProvider, recorderMock.Object, mockLogger.Object);
+        var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object, mockLogger.Object);
 
         var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sourcesProvider, recorderMock.Object, sbomConfigs);
 
-        var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sourcesProvider, recorderMock.Object);
+        var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
-        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>(), false);
+        var elementsSpdxIdList = new HashSet<string>();
+        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
         relationshipArrayGenerator
-            .Setup(r => r.GenerateAsync())
+            .Setup(r => r.GenerateAsync(It.IsAny<IList<ManifestInfo>>(), It.IsAny<HashSet<string>>()))
             .ReturnsAsync(generationResult);
 
         var workflow = new SbomGenerationWorkflow(
@@ -466,20 +469,26 @@ public class ManifestGenerationWorkflowTests
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
 
-        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>(), false);
-        var generationResultWithFailure = new GenerationResult(new List<FileValidationResult> { new FileValidationResult() }, new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>(), false);
+        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
+        var generationResultWithFailure = new GenerationResult(new List<FileValidationResult> { new FileValidationResult() }, new Dictionary<IManifestToolJsonSerializer, List<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
+
+        var sourcesProviders = new List<ISourcesProvider>
+        {
+        };
+
+        var elementsSpdxIdList = new HashSet<string>();
 
         var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
-        fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResultWithFailure);
+        fileArrayGeneratorMock.Setup(f => f.GenerateAsync(new List<ManifestInfo> { Constants.TestManifestInfo }, elementsSpdxIdList)).ReturnsAsync(generationResultWithFailure);
 
         var packageArrayGeneratorMock = new Mock<IJsonArrayGenerator<PackageArrayGenerator>>();
-        packageArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
+        packageArrayGeneratorMock.Setup(f => f.GenerateAsync(new List<ManifestInfo> { Constants.TestManifestInfo }, elementsSpdxIdList)).ReturnsAsync(generationResult);
 
         var relationshipsArrayGeneratorMock = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>();
-        relationshipsArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
+        relationshipsArrayGeneratorMock.Setup(f => f.GenerateAsync(new List<ManifestInfo> { Constants.TestManifestInfo }, elementsSpdxIdList)).ReturnsAsync(generationResult);
 
         var externalDocumentReferenceGeneratorMock = new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>();
-        externalDocumentReferenceGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
+        externalDocumentReferenceGeneratorMock.Setup(f => f.GenerateAsync(new List<ManifestInfo> { Constants.TestManifestInfo }, elementsSpdxIdList)).ReturnsAsync(generationResult);
 
         var sbomConfigsMock = new Mock<ISbomConfigProvider>();
         sbomConfigsMock.Setup(f => f.Get(It.IsAny<ManifestInfo>())).Returns(sbomConfig);
