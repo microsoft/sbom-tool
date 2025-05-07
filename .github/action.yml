@@ -1,0 +1,2 @@
+- name: SPDX Dependency Submission Action
+  uses: advanced-security/spdx-dependency-submission-action@v0.1.1
