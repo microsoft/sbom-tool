@@ -15,7 +15,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
 {
     /// <summary>
-    /// Adds the config to the list of configs that support files.
+    /// inheritdoc
     /// </summary>
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
@@ -28,7 +28,7 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     }
 
     /// <summary>
-    /// Adds the config to the list of configs that support packages.
+    /// inheritdoc
     /// </summary>
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
@@ -41,7 +41,7 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     }
 
     /// <summary>
-    /// Adds the config to the list of configs that support relationships.
+    /// inheritdoc
     /// </summary>
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
@@ -53,7 +53,7 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     }
 
     /// <summary>
-    /// Adds the config to the list of configs that support external document references.
+    /// inheritdoc
     /// </summary>
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
@@ -68,7 +68,7 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     public void AddMetadataToSbom(ISbomConfigProvider sbomConfigs, ISbomConfig config)
     {
         // Not supported for SPDX 3.0 and above, only supported for SPDX 2.2.
-        // Metadata is written differently for SPDX 3.0 and above.
+        // For SPDX 3.0 and above, the metadata is added as part of the SpdxDocument and CreationInfo elements.
     }
 
     public void StartGraphArray(IList<ManifestInfo> manifestInfosFromConfig, ISbomConfigProvider sbomConfigs)

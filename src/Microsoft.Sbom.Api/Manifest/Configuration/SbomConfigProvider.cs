@@ -127,8 +127,7 @@ public class SbomConfigProvider : ISbomConfigProvider
     {
         foreach (var manifestInfo in manifestInfosFromConfig)
         {
-            var supportedManifestInfo = this.TryGet(manifestInfo, out var config);
-            if (supportedManifestInfo)
+            if (this.TryGet(manifestInfo, out var config))
             {
                 config.StartJsonSerialization();
             }

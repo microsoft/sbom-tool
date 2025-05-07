@@ -198,8 +198,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
     {
         foreach (var manifestInfo in manifestInfosFromConfig)
         {
-            var supportedManifestInfo = sbomConfigs.TryGet(manifestInfo, out var config);
-            if (supportedManifestInfo)
+            if (sbomConfigs.TryGet(manifestInfo, out var config))
             {
                 action(config);
             }
