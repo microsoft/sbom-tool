@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
@@ -53,17 +52,15 @@ internal interface IJsonSerializationStrategy
     /// Starts an array with a graph header that is only used in SPDX 3.0 and above.
     /// This does not apply to SPDX 2.2 SBOM generation.
     /// </summary>
-    /// <param name="manifestInfosFromConfig"></param>
-    /// <param name="sbomConfigs"></param>
-    public void StartGraphArray(IList<ManifestInfo> manifestInfosFromConfig, ISbomConfigProvider sbomConfigs);
+    /// <param name="sbomConfig"></param>
+    public void StartGraphArray(ISbomConfig sbomConfig);
 
     /// <summary>
     /// Ends an array with a graph header that is only used in SPDX 3.0 and above.
     /// This does not apply to SPDX 2.2 SBOM generation.
     /// </summary>
-    /// <param name="manifestInfosFromConfig"></param>
-    /// <param name="sbomConfigs"></param>
-    public void EndGraphArray(IList<ManifestInfo> manifestInfosFromConfig, ISbomConfigProvider sbomConfigs);
+    /// <param name="sbomConfig"></param>
+    public void EndGraphArray(ISbomConfig sbomConfig);
 
-    public void WriteJsonObjectsToManifest(GenerationResult generationResult, HashSet<string> elementsSpdxIdList);
+    public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, HashSet<string> elementsSpdxIdList);
 }

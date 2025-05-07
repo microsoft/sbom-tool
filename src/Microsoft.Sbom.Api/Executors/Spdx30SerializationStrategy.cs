@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
@@ -45,11 +44,10 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// </summary>
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
-    /// <returns>Always returns false since we do not want to write a separate relationships array in SPDX 3.0.
-    /// A separate relationships array is only supported for SPDX 2.2.</returns>
+    /// <returns>Always returns true since relationships are generated regardless of the config.</returns>
     public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
-        return false;
+        return true;
     }
 
     /// <summary>
@@ -71,30 +69,22 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
         // For SPDX 3.0 and above, the metadata is added as part of the SpdxDocument and CreationInfo elements.
     }
 
-    public void StartGraphArray(IList<ManifestInfo> manifestInfosFromConfig, ISbomConfigProvider sbomConfigs)
+    public void StartGraphArray(ISbomConfig sbomConfig)
     {
-        foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
+        if (sbomConfig.ManifestInfo.Name == Constants.SPDX30ManifestInfo.Name &&
+                sbomConfig.ManifestInfo.Version == Constants.SPDX30ManifestInfo.Version)
         {
-            if (manifestInfo.Name == Constants.SPDX30ManifestInfo.Name &&
-                manifestInfo.Version == Constants.SPDX30ManifestInfo.Version)
-            {
-                var sbomConfig = sbomConfigs.Get(manifestInfo);
-                WriteContext(sbomConfig);
-                sbomConfig.JsonSerializer.StartJsonArray(Constants.SPDXGraphHeaderName);
-            }
+            WriteContext(sbomConfig);
+            sbomConfig.JsonSerializer.StartJsonArray(Constants.SPDXGraphHeaderName);
         }
     }
 
-    public void EndGraphArray(IList<ManifestInfo> manifestInfosFromConfig, ISbomConfigProvider sbomConfigs)
+    public void EndGraphArray(ISbomConfig sbomConfig)
     {
-        foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
+        if (sbomConfig.ManifestInfo.Name == Constants.SPDX30ManifestInfo.Name &&
+                sbomConfig.ManifestInfo.Version == Constants.SPDX30ManifestInfo.Version)
         {
-            if (manifestInfo.Name == Constants.SPDX30ManifestInfo.Name &&
-                manifestInfo.Version == Constants.SPDX30ManifestInfo.Version)
-            {
-                var sbomConfig = sbomConfigs.Get(manifestInfo);
-                sbomConfig.JsonSerializer.EndJsonArray();
-            }
+            sbomConfig.JsonSerializer.EndJsonArray();
         }
     }
 
@@ -102,12 +92,14 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// Writes the JSON objects in >=SPDX 3.0 format.
     /// </summary>
     /// <param name="generationResult"></param>
+    /// <param name="config"></param>
     /// <param name="elementsSpdxIdList">Only used for SPDX 3.0 and above for deduplication. SPDX 2.2 handles deduplication differently.</param>
-    public void WriteJsonObjectsToManifest(GenerationResult generationResult, HashSet<string> elementsSpdxIdList)
+    public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, HashSet<string> elementsSpdxIdList)
     {
-        foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
+        var serializer = config.JsonSerializer;
+
+        if (generationResult.SerializerToJsonDocuments.TryGetValue(serializer, out var jsonDocuments))
         {
-            var jsonDocuments = generationResult.SerializerToJsonDocuments[serializer];
             foreach (var jsonDocument in jsonDocuments)
             {
                 if (jsonDocument.RootElement.ValueKind == JsonValueKind.Object)

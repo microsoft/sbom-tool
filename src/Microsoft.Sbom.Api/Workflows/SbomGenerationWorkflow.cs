@@ -106,7 +106,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     ForEachManifestFromConfig(manifestInfosFromConfig, config =>
                     {
                         var strategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
-                        strategy.StartGraphArray(manifestInfosFromConfig, sbomConfigs);
+                        strategy.StartGraphArray(config);
                     });
 
                     // Write all the JSON documents from the generationResults to the manifest based on the manifestInfo.
@@ -134,7 +134,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     ForEachManifestFromConfig(manifestInfosFromConfig, config =>
                     {
                         var strategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
-                        strategy.EndGraphArray(manifestInfosFromConfig, sbomConfigs);
+                        strategy.EndGraphArray(config);
                     });
 
                     // Finalize JSON

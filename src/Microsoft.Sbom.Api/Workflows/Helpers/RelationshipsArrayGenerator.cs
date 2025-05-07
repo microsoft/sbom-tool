@@ -118,7 +118,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
             {
                 var config = sbomConfigs.Get(manifestInfo);
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
-                serializationStrategy.WriteJsonObjectsToManifest(generationResult, elementsSpdxIdList);
+                serializationStrategy.WriteJsonObjectsToManifest(generationResult, config, elementsSpdxIdList);
             }
 
             jsonDocumentCollection.DisposeAllJsonDocuments();

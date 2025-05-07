@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
@@ -64,12 +63,12 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
         config.JsonSerializer?.WriteJsonString(config.MetadataBuilder.GetHeaderJsonString(sbomConfigs));
     }
 
-    public void StartGraphArray(IList<ManifestInfo> manifestInfosFromConfig, ISbomConfigProvider sbomConfigs)
+    public void StartGraphArray(ISbomConfig sbomConfig)
     {
         // Not supported for SPDX 2.2, only supported for SPDX 3.0 and above.
     }
 
-    public void EndGraphArray(IList<ManifestInfo> manifestInfosFromConfig, ISbomConfigProvider sbomConfigs)
+    public void EndGraphArray(ISbomConfig sbomConfig)
     {
         // Not supported for SPDX 2.2, only supported for SPDX 3.0 and above.
     }
@@ -78,12 +77,14 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
     /// Writes the json objects to the manifest in SPDX 2.2 format.
     /// </summary>
     /// <param name="generationResult"></param>
+    /// <param name="config"></param>
     /// <param name="elementsSpdxIdList">Not used for deduplication. Only used for >= SPDX 3.0.</param>
-    public void WriteJsonObjectsToManifest(GenerationResult generationResult, HashSet<string> elementsSpdxIdList)
+    public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, HashSet<string> elementsSpdxIdList)
     {
-        foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
+        var serializer = config.JsonSerializer;
+
+        if (generationResult.SerializerToJsonDocuments.TryGetValue(serializer, out var jsonDocuments))
         {
-            var jsonDocuments = generationResult.SerializerToJsonDocuments[serializer];
             if (jsonDocuments.Count > 0)
             {
                 foreach (var jsonDocument in jsonDocuments)
@@ -93,12 +94,10 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
             }
         }
 
-        foreach (var sbomConfig in generationResult.JsonArrayStartedForConfig)
+        var jsonArrayStarted = generationResult.JsonArrayStartedForConfig[config];
+        if (jsonArrayStarted)
         {
-            if (sbomConfig.Value)
-            {
-                sbomConfig.Key.JsonSerializer.EndJsonArray();
-            }
+            config.JsonSerializer.EndJsonArray();
         }
     }
 }
