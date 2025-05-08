@@ -348,7 +348,7 @@ public class ManifestGenerationWorkflowTests
         var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
         var elementsSpdxIdList = new HashSet<string>();
-        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
+        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, IList<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
         relationshipArrayGenerator
             .Setup(r => r.GenerateAsync(It.IsAny<IList<ManifestInfo>>(), It.IsAny<HashSet<string>>()))
             .ReturnsAsync(generationResult);
@@ -469,8 +469,8 @@ public class ManifestGenerationWorkflowTests
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
 
-        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
-        var generationResultWithFailure = new GenerationResult(new List<FileValidationResult> { new FileValidationResult() }, new Dictionary<IManifestToolJsonSerializer, List<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
+        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, IList<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
+        var generationResultWithFailure = new GenerationResult(new List<FileValidationResult> { new FileValidationResult() }, new Dictionary<IManifestToolJsonSerializer, IList<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
 
         var sourcesProviders = new List<ISourcesProvider>
         {

@@ -13,9 +13,9 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 public class GenerationResult
 {
-    public List<FileValidationResult> Errors { get; }
+    public IList<FileValidationResult> Errors { get; }
 
-    public IReadOnlyDictionary<IManifestToolJsonSerializer, List<JsonDocument>> SerializerToJsonDocuments { get; }
+    public IReadOnlyDictionary<IManifestToolJsonSerializer, IList<JsonDocument>> SerializerToJsonDocuments { get; }
 
     public IReadOnlyDictionary<ISbomConfig, bool> JsonArrayStartedForConfig { get; }
 
@@ -25,7 +25,7 @@ public class GenerationResult
     /// <param name="errors">List of FileValidationResult errors.</param>
     /// <param name="serializerToJsonDocuments">Dictionary to map serializer to the JSON document that should be written to it.</param>
     /// <param name="jsonArrayStartedForConfig">This value determines whether a JSON array for a section is started for the specified config. This is only used for SPDX 2.2 SBOM generation.</param>
-    public GenerationResult(List<FileValidationResult> errors, IReadOnlyDictionary<IManifestToolJsonSerializer, List<JsonDocument>> serializerToJsonDocuments, IReadOnlyDictionary<ISbomConfig, bool> jsonArrayStartedForConfig)
+    public GenerationResult(IList<FileValidationResult> errors, IReadOnlyDictionary<IManifestToolJsonSerializer, IList<JsonDocument>> serializerToJsonDocuments, IReadOnlyDictionary<ISbomConfig, bool> jsonArrayStartedForConfig)
     {
         Errors = errors;
         SerializerToJsonDocuments = serializerToJsonDocuments;
