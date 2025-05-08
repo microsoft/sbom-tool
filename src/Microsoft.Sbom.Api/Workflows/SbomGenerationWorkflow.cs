@@ -78,6 +78,8 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         var elementsSpdxIdList = new HashSet<string>();
         string sbomDir = null;
         var deleteSbomDir = false;
+        var triedToGenerateAtLeastOneManifest = false;
+
         using (recorder.TraceEvent(Events.SbomGenerationWorkflow))
         {
             try
@@ -97,26 +99,28 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 }
 
                 // Write manifests based on manifestInfo values in the configuration.
-                var manifestInfosFromConfig = configuration.ManifestInfo.Value;
+                var manifestInfosFromConfiguration = configuration.ManifestInfo.Value;
+                var supportedConfigs = GetSupportedConfigs(manifestInfosFromConfiguration);
+                triedToGenerateAtLeastOneManifest = supportedConfigs.Any();
 
-                await using (sbomConfigs.StartJsonSerializationAsync(manifestInfosFromConfig))
+                await using (sbomConfigs.StartJsonSerializationAsync(manifestInfosFromConfiguration))
                 {
-                    ForEachManifestFromConfig(manifestInfosFromConfig, config => config.JsonSerializer.StartJsonObject());
+                    ForEachConfig(supportedConfigs, config => config.JsonSerializer.StartJsonObject());
 
-                    ForEachManifestFromConfig(manifestInfosFromConfig, config =>
+                    ForEachConfig(supportedConfigs, config =>
                     {
                         var strategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
                         strategy.StartGraphArray(config);
                     });
 
                     // Write all the JSON documents from the generationResults to the manifest based on the manifestInfo.
-                    var fileGenerationResult = await fileArrayGenerator.GenerateAsync(manifestInfosFromConfig, elementsSpdxIdList);
+                    var fileGenerationResult = await fileArrayGenerator.GenerateAsync(manifestInfosFromConfiguration, elementsSpdxIdList);
 
-                    var packageGenerationResult = await packageArrayGenerator.GenerateAsync(manifestInfosFromConfig, elementsSpdxIdList);
+                    var packageGenerationResult = await packageArrayGenerator.GenerateAsync(manifestInfosFromConfiguration, elementsSpdxIdList);
 
-                    var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync(manifestInfosFromConfig, elementsSpdxIdList);
+                    var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync(manifestInfosFromConfiguration, elementsSpdxIdList);
 
-                    var relationshipGenerationResult = await relationshipsArrayGenerator.GenerateAsync(manifestInfosFromConfig, elementsSpdxIdList);
+                    var relationshipGenerationResult = await relationshipsArrayGenerator.GenerateAsync(manifestInfosFromConfiguration, elementsSpdxIdList);
 
                     // Concatenate all the errors from the generationResults.
                     validErrors = validErrors.Concat(fileGenerationResult.Errors);
@@ -125,26 +129,26 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     validErrors = validErrors.Concat(relationshipGenerationResult.Errors);
 
                     // Write metadata dictionary to SBOM. This is a no-op for SPDX 3.0 and above.
-                    ForEachManifestFromConfig(manifestInfosFromConfig, config =>
+                    ForEachConfig(supportedConfigs, config =>
                     {
                         var strategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
                         strategy.AddMetadataToSbom(sbomConfigs, config);
                     });
 
-                    ForEachManifestFromConfig(manifestInfosFromConfig, config =>
+                    ForEachConfig(supportedConfigs, config =>
                     {
                         var strategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
                         strategy.EndGraphArray(config);
                     });
 
                     // Finalize JSON
-                    ForEachManifestFromConfig(manifestInfosFromConfig, config => config.JsonSerializer.FinalizeJsonObject());
+                    ForEachConfig(supportedConfigs, config => config.JsonSerializer.FinalizeJsonObject());
                 }
 
                 // Generate SHA256 for manifest json
-                ForEachManifestFromConfig(manifestInfosFromConfig, config => GenerateHashForManifestJson(config.ManifestJsonFilePath));
+                ForEachConfig(supportedConfigs, config => GenerateHashForManifestJson(config.ManifestJsonFilePath));
 
-                return !validErrors.Any();
+                return triedToGenerateAtLeastOneManifest && !validErrors.Any();
             }
             catch (Exception e)
             {
@@ -189,19 +193,34 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         }
     }
 
-    /// <summary>
-    /// For each manifestInfo in the configuration, execute the provided action if it is a supported manifestInfo.
-    /// </summary>
-    /// <param name="manifestInfosFromConfig">Derived from either the -manifestInfo CLI parameter or manifestInfo value in the configuration file.</param>
-    /// <param name="action">Action to perform on each config.</param>
-    public void ForEachManifestFromConfig(IList<ManifestInfo> manifestInfosFromConfig, Action<ISbomConfig> action)
+    public IEnumerable<ISbomConfig> GetSupportedConfigs(IEnumerable<ManifestInfo> manifestInfosFromConfiguration)
     {
-        foreach (var manifestInfo in manifestInfosFromConfig)
+        var configs = new List<ISbomConfig>();
+        foreach (var manifestInfo in manifestInfosFromConfiguration)
         {
             if (sbomConfigs.TryGet(manifestInfo, out var config))
             {
-                action(config);
+                configs.Add(config);
             }
+            else
+            {
+                log.Warning($"Ignoring unregistered manifest type: {manifestInfo}");
+            }
+        }
+
+        return configs;
+    }
+
+    /// <summary>
+    /// For each supported config in the configuration, execute the provided action.
+    /// </summary>
+    /// <param name="supportedConfigs">List of supported configs.</param>
+    /// <param name="action">Action to perform on each config.</param>
+    public void ForEachConfig(IEnumerable<ISbomConfig> supportedConfigs, Action<ISbomConfig> action)
+    {
+        foreach (var config in supportedConfigs)
+        {
+            action(config);
         }
     }
 
