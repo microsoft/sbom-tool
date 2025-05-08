@@ -33,7 +33,7 @@ public class JsonDocumentCollection<T>
         {
             foreach (var document in jsonDocuments)
             {
-                document.Dispose();
+                document?.Dispose();
             }
         }
 
