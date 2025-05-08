@@ -16,7 +16,7 @@ public interface IConformanceEnforcer
 
     public string GetConformanceEntityType(string entityType);
 
-    public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, HashSet<InvalidElementInfo> invalidElements, Exception e);
+    public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, ISet<InvalidElementInfo> invalidElements, Exception e);
 
     public void AddInvalidElements(ElementsResult elementsResult);
 }

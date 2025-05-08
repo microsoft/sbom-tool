@@ -19,7 +19,7 @@ public class NoneConformanceEnforcer : IConformanceEnforcer
         return entityType.GetCommonEntityType();
     }
 
-    public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, HashSet<InvalidElementInfo> invalidElements, Exception e)
+    public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, ISet<InvalidElementInfo> invalidElements, Exception e)
     {
         throw new ParserException(e.Message);
     }

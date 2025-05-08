@@ -36,7 +36,7 @@ public class NTIAMinConformanceEnforcer : IConformanceEnforcer
         }
     }
 
-    public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, HashSet<InvalidElementInfo> invalidElements, Exception e)
+    public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, ISet<InvalidElementInfo> invalidElements, Exception e)
     {
         try
         {
