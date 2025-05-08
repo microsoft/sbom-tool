@@ -18,8 +18,7 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// </summary>
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
-    /// <returns>Always returns false since we do not want to write a separate files array in SPDX 3.0.
-    /// A separate files array is only supported for SPDX 2.2.</returns>
+    /// <returns>Always returns false since we do not want to write a separate files array in SPDX 3.0.</returns>
     public bool AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         elementsSupportingConfigs.Add(config);
@@ -31,8 +30,7 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// </summary>
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
-    /// <returns>Always returns false since we do not want to write a separate packages array in SPDX 3.0.
-    /// A separate packages array is only supported for SPDX 2.2.</returns>
+    /// <returns>Always returns false since we do not want to write a separate packages array in SPDX 3.0.</returns>
     public bool AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         elementsSupportingConfigs.Add(config);
@@ -55,8 +53,7 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// </summary>
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
-    /// <returns>Always returns false since we do not want to write a separate external document references array in SPDX 3.0.
-    /// A separate external document references array is only supported for SPDX 2.2.</returns>
+    /// <returns>Always returns false since we do not want to write a separate external document references array in SPDX 3.0.</returns>
     public bool AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         elementsSupportingConfigs.Add(config);
@@ -65,8 +62,7 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
 
     public void AddMetadataToSbom(ISbomConfigProvider sbomConfigs, ISbomConfig config)
     {
-        // Not supported for SPDX 3.0 and above, only supported for SPDX 2.2.
-        // For SPDX 3.0 and above, the metadata is added as part of the SpdxDocument and CreationInfo elements.
+        // Not supported for SPDX 3.0.
     }
 
     public void StartGraphArray(ISbomConfig sbomConfig)
@@ -89,11 +85,11 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     }
 
     /// <summary>
-    /// Writes the JSON objects in >=SPDX 3.0 format.
+    /// Writes the JSON objects in SPDX 3.0 format.
     /// </summary>
     /// <param name="generationResult"></param>
     /// <param name="config"></param>
-    /// <param name="elementsSpdxIdList">Only used for SPDX 3.0 and above for deduplication. SPDX 2.2 handles deduplication differently.</param>
+    /// <param name="elementsSpdxIdList">Hashes for deduplication in SPDX 3.0.</param>
     public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, HashSet<string> elementsSpdxIdList)
     {
         var serializer = config.JsonSerializer;

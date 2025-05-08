@@ -41,23 +41,20 @@ internal interface IJsonSerializationStrategy
     public bool AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
 
     /// <summary>
-    /// Adds a metadata dictionary as a JSON element to the SBOM.
-    /// This is only used for SPDX 2.2 SBOM generation, metadata is added differently for SPDX 3.0 and above.
+    /// Adds a metadata dictionary as a JSON element to the SBOM, if required by this format.
     /// </summary>
     /// <param name="sbomConfigs"></param>
     /// <param name="config"></param>
     public void AddMetadataToSbom(ISbomConfigProvider sbomConfigs, ISbomConfig config);
 
     /// <summary>
-    /// Starts an array with a graph header that is only used in SPDX 3.0 and above.
-    /// This does not apply to SPDX 2.2 SBOM generation.
+    /// Starts an array with a graph header, if required by this format.
     /// </summary>
     /// <param name="sbomConfig"></param>
     public void StartGraphArray(ISbomConfig sbomConfig);
 
     /// <summary>
-    /// Ends an array with a graph header that is only used in SPDX 3.0 and above.
-    /// This does not apply to SPDX 2.2 SBOM generation.
+    /// Ends an array with a graph header, if required by this format.
     /// </summary>
     /// <param name="sbomConfig"></param>
     public void EndGraphArray(ISbomConfig sbomConfig);

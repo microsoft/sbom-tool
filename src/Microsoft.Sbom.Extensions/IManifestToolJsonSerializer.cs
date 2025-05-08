@@ -39,14 +39,14 @@ public interface IManifestToolJsonSerializer : IAsyncDisposable, IDisposable
 
     /// <summary>
     /// This writes a json document to the underlying stream.
-    /// Disposal is taken care of in implementations of IJsonArrayGenerator after writing.
+    /// Do not dispose jsonDocument in this method.
     /// </summary>
     /// <param name="jsonDocument">The json document.</param>
     public void Write(JsonDocument jsonDocument);
 
     /// <summary>
     /// This writes a json element to the underlying stream.
-    /// Disposal is taken care of in implementations of IJsonArrayGenerator after writing.
+    /// Do not dispose jsonDocument in this method.
     /// </summary>
     /// <param name="jsonDocument">The json document.</param>
     public void Write(JsonElement jsonElement);

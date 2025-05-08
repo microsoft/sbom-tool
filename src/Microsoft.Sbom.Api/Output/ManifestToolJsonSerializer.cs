@@ -49,7 +49,7 @@ public sealed class ManifestToolJsonSerializer : IManifestToolJsonSerializer
 
     /// <summary>
     /// This writes a json document to the underlying stream.
-    /// Disposal is taken care of in implementations of IJsonArrayGenerator after writing.
+    /// The jsonDocument object gets cleaned up by the caller, not here.
     /// </summary>
     /// <param name="jsonDocument">The json document.</param>
     public void Write(JsonDocument jsonDocument)

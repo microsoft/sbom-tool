@@ -65,12 +65,12 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
 
     public void StartGraphArray(ISbomConfig sbomConfig)
     {
-        // Not supported for SPDX 2.2, only supported for SPDX 3.0 and above.
+        // Not supported for SPDX 2.2.
     }
 
     public void EndGraphArray(ISbomConfig sbomConfig)
     {
-        // Not supported for SPDX 2.2, only supported for SPDX 3.0 and above.
+        // Not supported for SPDX 2.2.
     }
 
     /// <summary>
