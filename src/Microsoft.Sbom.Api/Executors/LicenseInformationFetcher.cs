@@ -28,7 +28,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
         this.licenseInformationService = licenseInformationService ?? throw new ArgumentNullException(nameof(licenseInformationService));
     }
 
-    public List<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents)
+    public IList<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents)
     {
         var listOfComponentsForApi = new List<string>();
 
@@ -82,7 +82,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
         return listOfComponentsForApi;
     }
 
-    public async Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi, int timeoutInSeconds)
+    public async Task<IList<string>> FetchLicenseInformationAsync(IList<string> listOfComponentsForApi, int timeoutInSeconds)
     {
         return await licenseInformationService.FetchLicenseInformationFromAPI(listOfComponentsForApi, timeoutInSeconds);
     }
