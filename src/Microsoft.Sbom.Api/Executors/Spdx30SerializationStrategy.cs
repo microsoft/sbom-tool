@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
@@ -19,9 +20,9 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
     /// <returns>Always returns false since we do not want to write a separate files array in SPDX 3.0.</returns>
-    public bool AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToFilesSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
-        elementsSupportingConfigs.Add(config);
+        elementsSupportingConfigs = elementsSupportingConfigs.Append(config);
         return false;
     }
 
@@ -31,9 +32,9 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
     /// <returns>Always returns false since we do not want to write a separate packages array in SPDX 3.0.</returns>
-    public bool AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToPackagesSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
-        elementsSupportingConfigs.Add(config);
+        elementsSupportingConfigs = elementsSupportingConfigs.Append(config);
         return false;
     }
 
@@ -43,7 +44,7 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
     /// <returns>Always returns true since relationships are generated regardless of the config.</returns>
-    public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToRelationshipsSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         return true;
     }
@@ -54,9 +55,9 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
     /// <returns>Always returns false since we do not want to write a separate external document references array in SPDX 3.0.</returns>
-    public bool AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToExternalDocRefsSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
-        elementsSupportingConfigs.Add(config);
+        elementsSupportingConfigs = elementsSupportingConfigs.Append(config);
         return false;
     }
 
@@ -90,7 +91,7 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// <param name="generationResult"></param>
     /// <param name="config"></param>
     /// <param name="elementsSpdxIdList">Hashes for deduplication in SPDX 3.0.</param>
-    public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, HashSet<string> elementsSpdxIdList)
+    public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, ISet<string> elementsSpdxIdList)
     {
         var serializer = config.JsonSerializer;
 
@@ -121,13 +122,13 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
         sbomConfig.JsonSerializer.EndJsonArray();
     }
 
-    private void WriteElement(IManifestToolJsonSerializer serializer, JsonElement element, HashSet<string> elementsSpdxIdList)
+    private void WriteElement(IManifestToolJsonSerializer serializer, JsonElement element, ISet<string> elementsSpdxIdList)
     {
         if (element.TryGetProperty("spdxId", out var spdxIdField))
         {
             var spdxId = spdxIdField.GetString();
 
-            if (elementsSpdxIdList.TryGetValue(spdxId, out _))
+            if (elementsSpdxIdList.Contains(spdxId))
             {
                 return;
             }

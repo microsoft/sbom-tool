@@ -48,7 +48,7 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
     /// <param name="jsonSerializer">The serializer used to write the SBOM.</param>
     /// <param name="headerName">The header key for the file array object.</param>
     /// <returns></returns>
-    public async Task<GenerationResult> GenerateAsync(IList<ManifestInfo> manifestInfosFromConfig, HashSet<string> elementsSpdxIdList)
+    public async Task<GenerationResult> GenerateAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig, HashSet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.FilesGeneration))
         {

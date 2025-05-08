@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -11,31 +12,31 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
 {
-    public bool AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToFilesSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetFilesArrayHeaderName(out var headerName))
         {
             config.JsonSerializer.StartJsonArray(headerName);
-            elementsSupportingConfigs.Add(config);
+            elementsSupportingConfigs = elementsSupportingConfigs.Append(config);
             return true;
         }
 
         return false;
     }
 
-    public bool AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToPackagesSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetPackageArrayHeaderName(out var headerName))
         {
             config.JsonSerializer.StartJsonArray(headerName);
-            elementsSupportingConfigs.Add(config);
+            elementsSupportingConfigs = elementsSupportingConfigs.Append(config);
             return true;
         }
 
         return false;
     }
 
-    public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToRelationshipsSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetRelationshipsHeaderName(out var headerName))
         {
@@ -46,12 +47,12 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
         return false;
     }
 
-    public bool AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToExternalDocRefsSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetExternalRefArrayHeaderName(out var headerName))
         {
             config.JsonSerializer.StartJsonArray(headerName);
-            elementsSupportingConfigs.Add(config);
+            elementsSupportingConfigs = elementsSupportingConfigs.Append(config);
             return true;
         }
 
@@ -79,7 +80,7 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
     /// <param name="generationResult"></param>
     /// <param name="config"></param>
     /// <param name="elementsSpdxIdList">Not used for deduplication. Only used for >= SPDX 3.0.</param>
-    public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, HashSet<string> elementsSpdxIdList)
+    public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, ISet<string> elementsSpdxIdList)
     {
         var serializer = config.JsonSerializer;
 

@@ -40,7 +40,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
     }
 
-    public async Task<GenerationResult> GenerateAsync(IList<ManifestInfo> manifestInfosFromConfig, HashSet<string> elementsSpdxIdList)
+    public async Task<GenerationResult> GenerateAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig, HashSet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.ExternalDocumentReferenceGeneration))
         {

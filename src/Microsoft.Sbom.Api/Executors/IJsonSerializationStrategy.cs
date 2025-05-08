@@ -14,7 +14,7 @@ internal interface IJsonSerializationStrategy
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public bool AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
+    public bool AddToFilesSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
 
     /// <summary>
     /// Adds the config to the list of configs that support packages.
@@ -22,7 +22,7 @@ internal interface IJsonSerializationStrategy
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public bool AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
+    public bool AddToPackagesSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
 
     /// <summary>
     /// Adds the config to the list of configs that support relationships.
@@ -30,7 +30,7 @@ internal interface IJsonSerializationStrategy
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
+    public bool AddToRelationshipsSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
 
     /// <summary>
     /// Adds the config to the list of configs that support external document references.
@@ -38,7 +38,7 @@ internal interface IJsonSerializationStrategy
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public bool AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
+    public bool AddToExternalDocRefsSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
 
     /// <summary>
     /// Adds a metadata dictionary as a JSON element to the SBOM, if required by this format.
@@ -59,5 +59,5 @@ internal interface IJsonSerializationStrategy
     /// <param name="sbomConfig"></param>
     public void EndGraphArray(ISbomConfig sbomConfig);
 
-    public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, HashSet<string> elementsSpdxIdList);
+    public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, ISet<string> elementsSpdxIdList);
 }

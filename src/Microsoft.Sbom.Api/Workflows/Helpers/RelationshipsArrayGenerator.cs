@@ -44,7 +44,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
         this.recorder = recorder;
     }
 
-    public async Task<GenerationResult> GenerateAsync(IList<ManifestInfo> manifestInfosFromConfig, HashSet<string> elementsSpdxIdList)
+    public async Task<GenerationResult> GenerateAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig, HashSet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.RelationshipsGeneration))
         {
