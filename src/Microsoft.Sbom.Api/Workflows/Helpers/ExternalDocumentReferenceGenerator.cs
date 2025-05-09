@@ -10,7 +10,6 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -26,8 +25,6 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
 
     private readonly IRecorder recorder;
 
-    private readonly ISbomConfigProvider sbomConfigs;
-
     public ExternalDocumentReferenceGenerator(
         ILogger log,
         ISbomConfigProvider sbomConfigs,
@@ -35,12 +32,11 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
         IRecorder recorder)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
-        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
         this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
     }
 
-    public async Task<GenerationResult> GenerateAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig, ISet<string> elementsSpdxIdList)
+    public async Task<GenerationResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.ExternalDocumentReferenceGeneration))
         {
@@ -59,9 +55,8 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
 
             // Write the start of the array, if supported.
             IList<ISbomConfig> externalRefArraySupportingConfigs = new List<ISbomConfig>();
-            foreach (var manifestInfo in manifestInfosFromConfig)
+            foreach (var config in targetConfigs)
             {
-                var config = sbomConfigs.Get(manifestInfo);
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
                 var jsonArrayStarted = serializationStrategy.AddToExternalDocRefsSupportingConfig(externalRefArraySupportingConfigs, config);
                 jsonArrayStartedForConfig[config] = jsonArrayStarted;
@@ -89,9 +84,8 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
             }
 
             var generationResult = new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
-            foreach (var manifestInfo in manifestInfosFromConfig)
+            foreach (var config in targetConfigs)
             {
-                var config = sbomConfigs.Get(manifestInfo);
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
                 serializationStrategy.WriteJsonObjectsToManifest(generationResult, config, elementsSpdxIdList);
             }

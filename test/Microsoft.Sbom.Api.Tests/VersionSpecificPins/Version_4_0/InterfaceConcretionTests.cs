@@ -190,7 +190,7 @@ public class InterfaceConcretionTests
 
     private class PinnedIJsonArrayGenerator : IJsonArrayGenerator<PinnedIJsonArrayGenerator>
     {
-        public Task<Api.Workflows.Helpers.GenerationResult> GenerateAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig, ISet<string> elementsSpdxIdList) => throw new NotImplementedException();
+        public Task<Api.Workflows.Helpers.GenerationResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList) => throw new NotImplementedException();
     }
 
     private class PinnedISbomRedactor : ISbomRedactor

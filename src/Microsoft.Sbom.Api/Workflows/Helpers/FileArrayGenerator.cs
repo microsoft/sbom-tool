@@ -10,7 +10,6 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -26,15 +25,11 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
 
     private readonly ILogger logger;
 
-    private readonly ISbomConfigProvider sbomConfigs;
-
     public FileArrayGenerator(
-        ISbomConfigProvider sbomConfigs,
         IEnumerable<ISourcesProvider> sourcesProviders,
         IRecorder recorder,
         ILogger logger)
     {
-        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
         this.sourcesProviders = sourcesProviders ?? throw new ArgumentNullException(nameof(sourcesProviders));
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -42,13 +37,11 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
 
     /// <summary>
     /// Traverses all the files inside the buildDropPath, and serializes the SBOM using the JSON serializer creating
-    /// an array object whose key is defined by <paramref name="headerName"/>. Upon failure, returns a list of
-    /// <see cref="FileValidationResult"/> objects that can be used to trace the error.
+    /// an array object. Upon failure, returns a list of
+    /// <see cref="GenerationResult"/> objects that can be used to trace the error.
     /// </summary>
-    /// <param name="jsonSerializer">The serializer used to write the SBOM.</param>
-    /// <param name="headerName">The header key for the file array object.</param>
     /// <returns></returns>
-    public async Task<GenerationResult> GenerateAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig, ISet<string> elementsSpdxIdList)
+    public async Task<GenerationResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.FilesGeneration))
         {
@@ -60,9 +53,8 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
             var filesSourcesProviders = this.sourcesProviders
                .Where(s => s.IsSupported(ProviderType.Files));
 
-            foreach (var manifestInfo in manifestInfosFromConfig)
+            foreach (var config in targetConfigs)
             {
-                var config = sbomConfigs.Get(manifestInfo);
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
                 var jsonArrayStarted = serializationStrategy.AddToFilesSupportingConfig(filesArraySupportingSboms, config);
                 jsonArrayStartedForConfig[config] = jsonArrayStarted;
@@ -91,9 +83,8 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
 
             var generationResult = new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
 
-            foreach (var manifestInfo in manifestInfosFromConfig)
+            foreach (var config in targetConfigs)
             {
-                var config = sbomConfigs.Get(manifestInfo);
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
                 serializationStrategy.WriteJsonObjectsToManifest(generationResult, config, elementsSpdxIdList);
             }

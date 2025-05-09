@@ -28,23 +28,19 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
 
     private readonly IRecorder recorder;
 
-    private readonly ISbomConfigProvider sbomConfigs;
-
     public RelationshipsArrayGenerator(
         RelationshipGenerator generator,
         ChannelUtils channelUtils,
         ILogger log,
-        ISbomConfigProvider sbomConfigs,
         IRecorder recorder)
     {
         this.generator = generator;
         this.channelUtils = channelUtils;
         this.log = log;
-        this.sbomConfigs = sbomConfigs;
         this.recorder = recorder;
     }
 
-    public async Task<GenerationResult> GenerateAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig, ISet<string> elementsSpdxIdList)
+    public async Task<GenerationResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.RelationshipsGeneration))
         {
@@ -55,9 +51,8 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
             var jsonArrayStartedForConfig = new Dictionary<ISbomConfig, bool>();
 
             // Write the relationship array only if supported
-            foreach (var manifestInfo in manifestInfosFromConfig)
+            foreach (var sbomConfig in targetConfigs)
             {
-                var sbomConfig = sbomConfigs.Get(manifestInfo);
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(sbomConfig.ManifestInfo.Version);
                 var jsonArrayStarted = serializationStrategy.AddToRelationshipsSupportingConfig(relationshipsArraySupportingConfigs, sbomConfig);
                 jsonArrayStartedForConfig[sbomConfig] = jsonArrayStarted;
@@ -114,9 +109,8 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
             }
 
             var generationResult = new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
-            foreach (var manifestInfo in manifestInfosFromConfig)
+            foreach (var config in targetConfigs)
             {
-                var config = sbomConfigs.Get(manifestInfo);
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
                 serializationStrategy.WriteJsonObjectsToManifest(generationResult, config, elementsSpdxIdList);
             }

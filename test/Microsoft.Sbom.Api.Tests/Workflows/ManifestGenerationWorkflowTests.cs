@@ -341,7 +341,7 @@ public class ManifestGenerationWorkflowTests
             { externalDocumentReferenceProvider }
         };
 
-        var fileArrayGenerator = new FileArrayGenerator(sbomConfigs, sourcesProvider, recorderMock.Object, mockLogger.Object);
+        var fileArrayGenerator = new FileArrayGenerator(sourcesProvider, recorderMock.Object, mockLogger.Object);
 
         var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sourcesProvider, recorderMock.Object, sbomConfigs);
 
@@ -350,7 +350,7 @@ public class ManifestGenerationWorkflowTests
         var elementsSpdxIdList = new HashSet<string>();
         var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
         relationshipArrayGenerator
-            .Setup(r => r.GenerateAsync(It.IsAny<IList<ManifestInfo>>(), It.IsAny<HashSet<string>>()))
+            .Setup(r => r.GenerateAsync(It.IsAny<IList<ISbomConfig>>(), It.IsAny<HashSet<string>>()))
             .ReturnsAsync(generationResult);
 
         var workflow = new SbomGenerationWorkflow(

@@ -10,7 +10,6 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -40,7 +39,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
     }
 
-    public async Task<GenerationResult> GenerateAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig, ISet<string> elementsSpdxIdList)
+    public async Task<GenerationResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.PackagesGeneration))
         {
@@ -52,9 +51,8 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
             var sourcesProvider = this.sourcesProviders
                 .FirstOrDefault(s => s.IsSupported(ProviderType.Packages));
 
-            foreach (var manifestInfo in manifestInfosFromConfig)
+            foreach (var sbomConfig in targetConfigs)
             {
-                var sbomConfig = sbomConfigs.Get(manifestInfo);
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(sbomConfig.ManifestInfo.Version);
                 var jsonArrayStarted = serializationStrategy.AddToPackagesSupportingConfig(packagesArraySupportingConfigs, sbomConfig);
                 jsonArrayStartedForConfig[sbomConfig] = jsonArrayStarted;
@@ -104,9 +102,8 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
             }
 
             var generationResult = new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
-            foreach (var manifestInfo in manifestInfosFromConfig)
+            foreach (var config in targetConfigs)
             {
-                var config = sbomConfigs.Get(manifestInfo);
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
                 serializationStrategy.WriteJsonObjectsToManifest(generationResult, config, elementsSpdxIdList);
             }
