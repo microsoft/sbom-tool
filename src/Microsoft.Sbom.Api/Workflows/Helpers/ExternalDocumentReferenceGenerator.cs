@@ -36,7 +36,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
     }
 
-    public async Task<GenerationResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList)
+    public async Task<GeneratorResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.ExternalDocumentReferenceGeneration))
         {
@@ -50,7 +50,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
             if (!externalDocumentReferenceSourcesProvider.Any())
             {
                 log.Debug($"No source providers found for {ProviderType.ExternalDocumentReference}");
-                return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
+                return new GeneratorResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
             }
 
             // Write the start of the array, if supported.
@@ -83,16 +83,16 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
                 }
             }
 
-            var generationResult = new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
+            var generatorResult = new GeneratorResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
             foreach (var config in targetConfigs)
             {
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
-                serializationStrategy.WriteJsonObjectsToManifest(generationResult, config, elementsSpdxIdList);
+                serializationStrategy.WriteJsonObjectsToManifest(generatorResult, config, elementsSpdxIdList);
             }
 
             jsonDocumentCollection.DisposeAllJsonDocuments();
 
-            return generationResult;
+            return generatorResult;
         }
     }
 }

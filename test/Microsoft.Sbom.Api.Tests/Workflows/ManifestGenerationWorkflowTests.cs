@@ -44,7 +44,6 @@ using Moq;
 using Newtonsoft.Json.Linq;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
-using GenerationResult = Microsoft.Sbom.Api.Workflows.Helpers.GenerationResult;
 using Generator30 = Microsoft.Sbom.Parsers.Spdx30SbomParser.Generator;
 using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
 using ILogger = Serilog.ILogger;
@@ -348,10 +347,10 @@ public class ManifestGenerationWorkflowTests
         var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
         var elementsSpdxIdList = new HashSet<string>();
-        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, IList<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
+        var generatorResult = new GeneratorResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, IList<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
         relationshipArrayGenerator
             .Setup(r => r.GenerateAsync(It.IsAny<IList<ISbomConfig>>(), It.IsAny<HashSet<string>>()))
-            .ReturnsAsync(generationResult);
+            .ReturnsAsync(generatorResult);
 
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,
@@ -469,8 +468,8 @@ public class ManifestGenerationWorkflowTests
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
 
-        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, IList<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
-        var generationResultWithFailure = new GenerationResult(new List<FileValidationResult> { new FileValidationResult() }, new Dictionary<IManifestToolJsonSerializer, IList<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
+        var generatorResult = new GeneratorResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, IList<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
+        var generatorResultWithFailure = new GeneratorResult(new List<FileValidationResult> { new FileValidationResult() }, new Dictionary<IManifestToolJsonSerializer, IList<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
 
         var sourcesProviders = new List<ISourcesProvider>
         {

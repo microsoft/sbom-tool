@@ -16,6 +16,6 @@ public interface IJsonArrayGenerator<T>
     /// <summary>
     /// Generates all the JSON objects that need to be written to the SBOM.
     /// </summary>
-    /// <returns>GenerationResult with objects to write to the SBOM and failures.</returns>
-    public Task<GenerationResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList);
+    /// <returns>GeneratorResult with objects to write to the SBOM and failures.</returns>
+    public Task<GeneratorResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList);
 }
