@@ -44,7 +44,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
         this.recorder = recorder;
     }
 
-    public async Task<GenerationResult> GenerateAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig, ISet<string> elementsSpdxIdList)
+    public async Task<GeneratorResult> GenerateAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig, ISet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.RelationshipsGeneration))
         {
@@ -113,17 +113,17 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                 }
             }
 
-            var generationResult = new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
+            var generatorResult = new GeneratorResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
             foreach (var manifestInfo in manifestInfosFromConfig)
             {
                 var config = sbomConfigs.Get(manifestInfo);
                 var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
-                serializationStrategy.WriteJsonObjectsToManifest(generationResult, config, elementsSpdxIdList);
+                serializationStrategy.WriteJsonObjectsToManifest(generatorResult, config, elementsSpdxIdList);
             }
 
             jsonDocumentCollection.DisposeAllJsonDocuments();
 
-            return generationResult;
+            return generatorResult;
         }
     }
 

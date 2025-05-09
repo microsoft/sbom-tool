@@ -87,14 +87,14 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// <summary>
     /// Writes the JSON objects in SPDX 3.0 format.
     /// </summary>
-    /// <param name="generationResult"></param>
+    /// <param name="generatorResult"></param>
     /// <param name="config"></param>
     /// <param name="elementsSpdxIdList">Hashes for deduplication in SPDX 3.0.</param>
-    public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, ISet<string> elementsSpdxIdList)
+    public void WriteJsonObjectsToManifest(GeneratorResult generatorResult, ISbomConfig config, ISet<string> elementsSpdxIdList)
     {
         var serializer = config.JsonSerializer;
 
-        if (generationResult.SerializerToJsonDocuments.TryGetValue(serializer, out var jsonDocuments))
+        if (generatorResult.SerializerToJsonDocuments.TryGetValue(serializer, out var jsonDocuments))
         {
             foreach (var jsonDocument in jsonDocuments)
             {
