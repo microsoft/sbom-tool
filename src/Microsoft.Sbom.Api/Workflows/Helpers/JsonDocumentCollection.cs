@@ -26,4 +26,17 @@ public class JsonDocumentCollection<T>
             SerializersToJson.Add(key, new List<JsonDocument> { document });
         }
     }
+
+    public void DisposeAllJsonDocuments()
+    {
+        foreach (var jsonDocuments in SerializersToJson.Values)
+        {
+            foreach (var document in jsonDocuments)
+            {
+                document?.Dispose();
+            }
+        }
+
+        SerializersToJson.Clear();
+    }
 }
