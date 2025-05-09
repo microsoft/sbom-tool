@@ -72,8 +72,8 @@ public class InterfaceConcretionTests
 
     private class PinnedILicenseInformationFetcher : ILicenseInformationFetcher
     {
-        public void AppendLicensesToDictionary(Dictionary<string, string> partialLicenseDictionary) => throw new NotImplementedException();
-        public Dictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent) => throw new NotImplementedException();
+        public void AppendLicensesToDictionary(IDictionary<string, string> partialLicenseDictionary) => throw new NotImplementedException();
+        public IDictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent) => throw new NotImplementedException();
         public IList<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents) => throw new NotImplementedException();
         public Task<IList<string>> FetchLicenseInformationAsync(IList<string> listOfComponentsForApi, int timeoutInSeconds) => throw new NotImplementedException();
         public string GetFromLicenseDictionary(string key) => throw new NotImplementedException();
