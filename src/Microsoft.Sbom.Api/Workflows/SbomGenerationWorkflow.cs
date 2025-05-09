@@ -99,8 +99,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 }
 
                 // Write manifests based on manifestInfo values in the configuration.
-                var manifestInfosFromConfiguration = configuration.ManifestInfo.Value;
-                var targetConfigs = GetTargetConfigs(manifestInfosFromConfiguration);
+                var targetConfigs = GetTargetConfigs(configuration.ManifestInfo.Value);
                 triedToGenerateAtLeastOneManifest = targetConfigs.Any();
 
                 await using (sbomConfigs.StartJsonSerializationAsync(targetConfigs))
@@ -193,7 +192,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         }
     }
 
-    public IEnumerable<ISbomConfig> GetTargetConfigs(IEnumerable<ManifestInfo> manifestInfosFromConfiguration)
+    private IEnumerable<ISbomConfig> GetTargetConfigs(IEnumerable<ManifestInfo> manifestInfosFromConfiguration)
     {
         var configs = new List<ISbomConfig>();
         foreach (var manifestInfo in manifestInfosFromConfiguration)
@@ -216,7 +215,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
     /// </summary>
     /// <param name="targetConfigs">List of supported configs.</param>
     /// <param name="action">Action to perform on each config.</param>
-    public void ForEachConfig(IEnumerable<ISbomConfig> targetConfigs, Action<ISbomConfig> action)
+    private void ForEachConfig(IEnumerable<ISbomConfig> targetConfigs, Action<ISbomConfig> action)
     {
         foreach (var config in targetConfigs)
         {
