@@ -36,14 +36,14 @@ public interface ILicenseInformationFetcher
     /// </summary>
     /// <param name="httpResponse"> The response from a ClearlyDefined API request.</param>
     /// <returns></returns>
-    public Dictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent);
+    public IDictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent);
 
     /// <summary>
     /// Appends the licenses from the partialLicenseDictionary to the licenseDictionary.
     /// We only request license information for 400 components at a time so we can end up with multiple responses. This function is used to combine the responses into a single dictionary.
     /// </summary>
     /// <param name="partialLicenseDictionary"> A dictionary of licenses and component names in the {name@version, license} format</param>
-    public void AppendLicensesToDictionary(Dictionary<string, string> partialLicenseDictionary);
+    public void AppendLicensesToDictionary(IDictionary<string, string> partialLicenseDictionary);
 
     /// <summary>
     /// Gets the license from the licenseDictionary.

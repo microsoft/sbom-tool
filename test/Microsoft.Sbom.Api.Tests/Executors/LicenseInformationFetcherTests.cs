@@ -146,7 +146,8 @@ public class LicenseInformationFetcherTests
         var expectedValue = "MIT";
         var licenseInformationFetcher = new LicenseInformationFetcher(mockLogger.Object, mockRecorder.Object, mockLicenseInformationService.Object);
 
-        var licensesDictionary = licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(HttpRequestUtils.GoodClearlyDefinedAPIResponse);
+        var licensesDictionary = new Dictionary<string, string>(
+            licenseInformationFetcher.ConvertClearlyDefinedApiResponseToList(HttpRequestUtils.GoodClearlyDefinedAPIResponse));
 
         CollectionAssert.Contains(licensesDictionary, new KeyValuePair<string, string>(expectedKey, expectedValue));
     }
