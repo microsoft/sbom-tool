@@ -123,7 +123,7 @@ public class SbomConfigProvider : ISbomConfigProvider
     /// </summary>
     /// <param name="manifestInfosFromConfig"></param>
     /// <returns></returns>
-    public IAsyncDisposable StartJsonSerializationAsync(IList<ManifestInfo> manifestInfosFromConfig)
+    public IAsyncDisposable StartJsonSerializationAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig)
     {
         foreach (var manifestInfo in manifestInfosFromConfig)
         {

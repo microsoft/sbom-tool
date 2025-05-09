@@ -40,7 +40,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
     }
 
-    public async Task<GenerationResult> GenerateAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig, HashSet<string> elementsSpdxIdList)
+    public async Task<GenerationResult> GenerateAsync(IEnumerable<ManifestInfo> manifestInfosFromConfig, ISet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.PackagesGeneration))
         {

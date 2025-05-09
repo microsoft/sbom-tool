@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
@@ -20,9 +19,9 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
     /// <returns>Always returns false since we do not want to write a separate files array in SPDX 3.0.</returns>
-    public bool AddToFilesSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
-        elementsSupportingConfigs = elementsSupportingConfigs.Append(config);
+        elementsSupportingConfigs.Add(config);
         return false;
     }
 
@@ -32,9 +31,9 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
     /// <returns>Always returns false since we do not want to write a separate packages array in SPDX 3.0.</returns>
-    public bool AddToPackagesSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
-        elementsSupportingConfigs = elementsSupportingConfigs.Append(config);
+        elementsSupportingConfigs.Add(config);
         return false;
     }
 
@@ -44,7 +43,7 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
     /// <returns>Always returns true since relationships are generated regardless of the config.</returns>
-    public bool AddToRelationshipsSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         return true;
     }
@@ -55,9 +54,9 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
     /// <returns>Always returns false since we do not want to write a separate external document references array in SPDX 3.0.</returns>
-    public bool AddToExternalDocRefsSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
-        elementsSupportingConfigs = elementsSupportingConfigs.Append(config);
+        elementsSupportingConfigs.Add(config);
         return false;
     }
 

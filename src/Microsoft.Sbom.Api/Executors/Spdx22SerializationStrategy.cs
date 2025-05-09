@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -12,31 +11,31 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
 {
-    public bool AddToFilesSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetFilesArrayHeaderName(out var headerName))
         {
             config.JsonSerializer.StartJsonArray(headerName);
-            elementsSupportingConfigs = elementsSupportingConfigs.Append(config);
+            elementsSupportingConfigs.Add(config);
             return true;
         }
 
         return false;
     }
 
-    public bool AddToPackagesSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetPackageArrayHeaderName(out var headerName))
         {
             config.JsonSerializer.StartJsonArray(headerName);
-            elementsSupportingConfigs = elementsSupportingConfigs.Append(config);
+            elementsSupportingConfigs.Add(config);
             return true;
         }
 
         return false;
     }
 
-    public bool AddToRelationshipsSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetRelationshipsHeaderName(out var headerName))
         {
@@ -47,12 +46,12 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
         return false;
     }
 
-    public bool AddToExternalDocRefsSupportingConfig(IEnumerable<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetExternalRefArrayHeaderName(out var headerName))
         {
             config.JsonSerializer.StartJsonArray(headerName);
-            elementsSupportingConfigs = elementsSupportingConfigs.Append(config);
+            elementsSupportingConfigs.Add(config);
             return true;
         }
 
