@@ -479,16 +479,12 @@ public class ManifestGenerationWorkflowTests
         var elementsSpdxIdList = new HashSet<string>();
 
         var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
-        fileArrayGeneratorMock.Setup(f => f.GenerateAsync(new List<ManifestInfo> { Constants.TestManifestInfo }, elementsSpdxIdList)).ReturnsAsync(generationResultWithFailure);
 
         var packageArrayGeneratorMock = new Mock<IJsonArrayGenerator<PackageArrayGenerator>>();
-        packageArrayGeneratorMock.Setup(f => f.GenerateAsync(new List<ManifestInfo> { Constants.TestManifestInfo }, elementsSpdxIdList)).ReturnsAsync(generationResult);
 
         var relationshipsArrayGeneratorMock = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>();
-        relationshipsArrayGeneratorMock.Setup(f => f.GenerateAsync(new List<ManifestInfo> { Constants.TestManifestInfo }, elementsSpdxIdList)).ReturnsAsync(generationResult);
 
         var externalDocumentReferenceGeneratorMock = new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>();
-        externalDocumentReferenceGeneratorMock.Setup(f => f.GenerateAsync(new List<ManifestInfo> { Constants.TestManifestInfo }, elementsSpdxIdList)).ReturnsAsync(generationResult);
 
         var sbomConfigsMock = new Mock<ISbomConfigProvider>();
         sbomConfigsMock.Setup(f => f.TryGet(It.IsAny<ManifestInfo>(), out sbomConfig)).Returns(true);
@@ -525,6 +521,7 @@ public class ManifestGenerationWorkflowTests
         configurationMock.SetupGet(x => x.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>> { Value = testManifestInfo, Source = SettingSource.CommandLine });
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
+        fileSystemMock.Setup(f => f.IsDirectoryEmpty(It.IsAny<string>())).Returns(true);
 
         var warnings = new List<string>();
         mockLogger.Setup(l => l.Warning(It.IsAny<string>()))
