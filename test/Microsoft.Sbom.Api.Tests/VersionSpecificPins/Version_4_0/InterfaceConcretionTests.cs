@@ -72,17 +72,17 @@ public class InterfaceConcretionTests
 
     private class PinnedILicenseInformationFetcher : ILicenseInformationFetcher
     {
-        public void AppendLicensesToDictionary(Dictionary<string, string> partialLicenseDictionary) => throw new NotImplementedException();
-        public Dictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent) => throw new NotImplementedException();
-        public List<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents) => throw new NotImplementedException();
-        public Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi, int timeoutInSeconds) => throw new NotImplementedException();
+        public void AppendLicensesToDictionary(IDictionary<string, string> partialLicenseDictionary) => throw new NotImplementedException();
+        public IDictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent) => throw new NotImplementedException();
+        public IList<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents) => throw new NotImplementedException();
+        public Task<IList<string>> FetchLicenseInformationAsync(IList<string> listOfComponentsForApi, int timeoutInSeconds) => throw new NotImplementedException();
         public string GetFromLicenseDictionary(string key) => throw new NotImplementedException();
         public ConcurrentDictionary<string, string> GetLicenseDictionary() => throw new NotImplementedException();
     }
 
     private class PinnedILicenstInformationService : ILicenseInformationService
     {
-        public Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi, int timeoutInSeconds) => throw new NotImplementedException();
+        public Task<IList<string>> FetchLicenseInformationFromAPI(IList<string> listOfComponentsForApi, int timeoutInSeconds) => throw new NotImplementedException();
     }
 
     private class Pinned_SBOMReaderForExternalDocumentReference : ISbomReaderForExternalDocumentReference
@@ -190,7 +190,7 @@ public class InterfaceConcretionTests
 
     private class PinnedIJsonArrayGenerator : IJsonArrayGenerator<PinnedIJsonArrayGenerator>
     {
-        public Task<Api.Workflows.Helpers.GenerationResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList) => throw new NotImplementedException();
+        public Task<GeneratorResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList) => throw new NotImplementedException();
     }
 
     private class PinnedISbomRedactor : ISbomRedactor
@@ -234,12 +234,12 @@ public class InterfaceConcretionTests
     private class PinnedIMetadataBuilder : IMetadataBuilder
     {
         public string GetHeaderJsonString(IInternalMetadataProvider internalMetadataProvider) => throw new NotImplementedException();
-        public bool TryGetCreationInfoJson(IInternalMetadataProvider internalMetadataProvider, out Extensions.Entities.GenerationResult generationResult) => throw new NotImplementedException();
+        public bool TryGetCreationInfoJson(IInternalMetadataProvider internalMetadataProvider, out GenerationResult generationResult) => throw new NotImplementedException();
         public bool TryGetExternalRefArrayHeaderName(out string headerName) => throw new NotImplementedException();
         public bool TryGetFilesArrayHeaderName(out string headerName) => throw new NotImplementedException();
         public bool TryGetPackageArrayHeaderName(out string headerName) => throw new NotImplementedException();
         public bool TryGetRelationshipsHeaderName(out string headerName) => throw new NotImplementedException();
-        public bool TryGetRootPackageJson(IInternalMetadataProvider internalMetadataProvider, out Extensions.Entities.GenerationResult generationResult) => throw new NotImplementedException();
+        public bool TryGetRootPackageJson(IInternalMetadataProvider internalMetadataProvider, out GenerationResult generationResult) => throw new NotImplementedException();
     }
 
     private class PinnedIManifestToolJsonSerializer : IManifestToolJsonSerializer
@@ -353,7 +353,7 @@ public class InterfaceConcretionTests
     // FormatEnforcedSPDX2
     // FormatValidationResults
     // GenerationData
-    // GenerationResult
+    // GeneratorResult
     // InputConfiguration
     // JsonDocument
     // JsonDocWithSerializer

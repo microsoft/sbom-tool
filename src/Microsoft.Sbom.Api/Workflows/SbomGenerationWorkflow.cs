@@ -113,19 +113,19 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     });
 
                     // Write all the JSON documents from the generationResults to the manifest based on the manifestInfo.
-                    var fileGenerationResult = await fileArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+                    var fileGeneratorResult = await fileArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
-                    var packageGenerationResult = await packageArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+                    var packageGeneratorResult = await packageArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
-                    var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+                    var externalDocumentReferenceGeneratorResult = await externalDocumentReferenceGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
-                    var relationshipGenerationResult = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+                    var relationshipGeneratorResult = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
                     // Concatenate all the errors from the generationResults.
-                    validErrors = validErrors.Concat(fileGenerationResult.Errors);
-                    validErrors = validErrors.Concat(packageGenerationResult.Errors);
-                    validErrors = validErrors.Concat(externalDocumentReferenceGenerationResult.Errors);
-                    validErrors = validErrors.Concat(relationshipGenerationResult.Errors);
+                    validErrors = validErrors.Concat(fileGeneratorResult.Errors);
+                    validErrors = validErrors.Concat(packageGeneratorResult.Errors);
+                    validErrors = validErrors.Concat(externalDocumentReferenceGeneratorResult.Errors);
+                    validErrors = validErrors.Concat(relationshipGeneratorResult.Errors);
 
                     // Write metadata dictionary to SBOM. This is a no-op for SPDX 3.0 and above.
                     ForEachConfig(targetConfigs, config =>

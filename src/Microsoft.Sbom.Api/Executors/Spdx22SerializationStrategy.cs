@@ -76,14 +76,14 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
     /// <summary>
     /// Writes the json objects to the manifest in SPDX 2.2 format.
     /// </summary>
-    /// <param name="generationResult"></param>
+    /// <param name="generatorResult"></param>
     /// <param name="config"></param>
     /// <param name="elementsSpdxIdList">Not used for deduplication. Only used for >= SPDX 3.0.</param>
-    public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, ISet<string> elementsSpdxIdList)
+    public void WriteJsonObjectsToManifest(GeneratorResult generatorResult, ISbomConfig config, ISet<string> elementsSpdxIdList)
     {
         var serializer = config.JsonSerializer;
 
-        if (generationResult.SerializerToJsonDocuments.TryGetValue(serializer, out var jsonDocuments))
+        if (generatorResult.SerializerToJsonDocuments.TryGetValue(serializer, out var jsonDocuments))
         {
             if (jsonDocuments.Count > 0)
             {
@@ -94,7 +94,7 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
             }
         }
 
-        var jsonArrayStarted = generationResult.JsonArrayStartedForConfig[config];
+        var jsonArrayStarted = generatorResult.JsonArrayStartedForConfig[config];
         if (jsonArrayStarted)
         {
             config.JsonSerializer.EndJsonArray();

@@ -59,5 +59,5 @@ internal interface IJsonSerializationStrategy
     /// <param name="sbomConfig"></param>
     public void EndGraphArray(ISbomConfig sbomConfig);
 
-    public void WriteJsonObjectsToManifest(GenerationResult generationResult, ISbomConfig config, ISet<string> elementsSpdxIdList);
+    public void WriteJsonObjectsToManifest(GeneratorResult generatorResult, ISbomConfig config, ISet<string> elementsSpdxIdList);
 }
