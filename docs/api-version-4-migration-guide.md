@@ -1,10 +1,6 @@
 # Migrating to the version 4 API from the version 3 API
 
-This release includes breaking changes to the API. Most API consumers will be impacted by the [casing changes](#casing-changes). Only a few customers are likely to be impacted by either the [potential ambiguities](#potential-ambiguities) or the [functional changes](#functional-changes).
-
-## Potential ambiguities
-
-We added `Microsoft.Sbom.Api.Workfows.Helpers.GenerationResult`, which created a potential ambiguity between `Microsoft.Sbom.Extensions.Entities.GenerationResult`. If any ambiguity errors occur, `Microsoft.Sbom.Extensions.Entities.GenerationResult` is the one that existed in the previous interface.
+This release includes breaking changes to the API. Most API consumers will be impacted by the [casing changes](#casing-changes). Only a few customers are likely to be impacted by the [functional changes](#functional-changes).
 
 ## Casing changes
 
@@ -77,13 +73,19 @@ If you use the Workflows that are documented [here](sbom-tool-cli-reference.md),
 
 Scope | Type of change | Detail
 --- | --- | ---
-`ILicenseInformationFetcher.GetLicenseInformationAsync` | New parameter |  `int timeoutInSeconds`
-`ILicenseInformationService.GetchLicenseInformationFromAPI` | New parameter |  `int timeoutInSeconds`
+`ILicenseInformationFetcher.FetchLicenseInformationAsync` | New parameter | `int timeoutInSeconds`
+`ILicenseInformationFetcher.AppendLicensesToDictionary` | Generic Type | `IDictionary` instead of `Dictionary` for `partialLicenseDictionary`
+`ILicenseInformationFetcher.ConvertClearlyDefinedApiResposeToList` | Generic Type | Returns `IDictionary` instead of `Dictionary`
+`ILicenseInformationFetcher.ConvertComponentsToListForApi` | Generic Type | Returns `IList` instead of `List`
+`ILicenseInformationFetcher.FetchLicenseInformationAsync` | Generic Type | Returns `IList` instead of `List`
+`ILicenseInformationService.FetchLicenseInformationFromAPI` | New parameter | `int timeoutInSeconds`
+`ILicenseInformationService.FetchLicenseInformationFromAPI` | Generic Type | `IList` instead of `List` for `listofComponetsForApi`
+`ILicenseInformationService.FetchLicenseInformationFromAPI` | Generic Type | Returns `IList` instead of `List`
 `IRecorder` | New method |  `void AddResult(string propertyName, string propertyValue)`
 `IAssemblyConfig` | New property | `ManifestInfo DefaultManifestInfoForGenerationAction` 
-`IJsonArrayGenerator` | New property | `ISbomConfig SbomConfig`
-`IJsonArrayGenerator` | New property | `string SpdxManifestVersion`
-`IMetadataBuilder` | New method | `TryGetCreationInfoJson(IInternalMetadataProvider internalMetadataProvider, out Extensions.Entities.GenerationResult generationResult)`
+`IJsonArrayGenerator.GenerateAsync` | Generic Type | `IList` instead of `List` for `listOfComponenentsForApi`
+`IJsonArrayGenerator.GenerateAsync` | Generic Type | Returns `IList` instead of `List`
+`IMetadataBuilder` | New method | `TryGetCreationInfoJson(IInternalMetadataProvider internalMetadataProvider, out GeneratorResult generatorResult)`
 `IManifestToolJsonSerializer` | New method | `void Write(JsonElement jsonElement)`
 `ISignedValidator.Validate` | New parameter | `IDictionary<string, string> additionalTelemetry`
 `ISbomParser.GetMetadata()` | Return type | `SpdxMetadata` instead of `Spdx22Metadata`
