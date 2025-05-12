@@ -10,7 +10,6 @@ The cases used in the 3.0 API were very inconsistent. The interfaces and classes
 
 Old name (all caps) | New name (Pascal case)
 --- | ---
-`InternalSBOMFileInfoDeduplicator` | `InternalSbomFileInfoDeduplicator`
 `ISBOMGenerator` | `ISbomGenerator`
 `ISBOMReaderForExternalDocumentReference` | `ISbomReaderForExternalDocumentReference`
 `ISBOMValidator` | `ISbomValidator`
@@ -21,6 +20,7 @@ Old name (all caps) | New name (Pascal case)
 Old name (all caps) | New name (Pascal case)
 --- | ---
 `ComponentDetectionToSBOMPackageAdapter` | `ComponentDetectionToSbomPackageAdapter`
+`InternalSBOMFileInfoDeduplicator` | `InternalSbomFileInfoDeduplicator`
 `SBOMApiMetadataProvider` | `SbomApiMetadataProvider`
 `SBOMComponentsWalker` | `SbomComponentsWalker`
 `SBOMFile` | `SbomFile`
