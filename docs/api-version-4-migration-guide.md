@@ -69,7 +69,7 @@ We discussed making a similar change with "SPDX", but ultimately decided to leav
 
 ## Functional changes
 
-If you use the Workflows that are documented [here](sbom-tool-cli-reference.md), then you will not be impacted by most of the functional changes. You will get the default implementations of the classes, which implement the current API. If, however, you create your own implementations or wrappers based on any of the interfaces exposed in our API, then you may need to make corresponding changes in your code. This table summarizes the changes:
+If you use the Workflows that are documented [here](sbom-tool-api-reference.md), then you will not be impacted by most of the functional changes. You will get the default implementations of the classes, which implement the current API. If, however, you create your own implementations or wrappers based on any of the interfaces exposed in our API, then you may need to make corresponding changes in your code. This table summarizes the changes:
 
 Scope | Type of change | Detail
 --- | --- | ---
