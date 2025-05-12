@@ -39,9 +39,9 @@ public interface ISbomParser
     public ManifestInfo[] RegisterManifest();
 
     /// <summary>
-    /// Set compliance standard for SPDX 3.0 parsers and above.
-    /// Returns the compliance standard set by the user, if it is valid.
+    /// Set conformance for SPDX 3.0 parsers and above.
+    /// Returns the conformance set by the user, if it is valid.
     /// </summary>
     /// <param name="spdxVersion"></param>
-    public void EnforceComplianceStandard(ComplianceStandardType complianceStandard);
+    public void EnforceConformance(ConformanceType conformance);
 }
