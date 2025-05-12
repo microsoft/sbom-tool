@@ -5,30 +5,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using Microsoft.Sbom.Common.ComplianceStandard.Enums;
+using Microsoft.Sbom.Common.Conformance.Enums;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Common.Spdx30Entities.Enums;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
-using Microsoft.Sbom.Parsers.Spdx30SbomParser.ComplianceStandard.Interfaces;
+using Microsoft.Sbom.Parsers.Spdx30SbomParser.Conformance.Interfaces;
 
-namespace Microsoft.Sbom.Common.ComplianceStandard;
+namespace Microsoft.Sbom.Common.Conformance;
 
-public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
+public class NTIAMinConformanceEnforcer : IConformanceEnforcer
 {
-    private static readonly IReadOnlyCollection<string> EntitiesWithDifferentNTIARequirements = new List<string>
+    private static readonly IReadOnlyCollection<string> EntitiesWithDifferentNTIAMinRequirements = new List<string>
     {
         "SpdxDocument",
         "File",
     };
 
-    public ComplianceStandardType ComplianceStandard => ComplianceStandardType.None;
+    public ConformanceType Conformance => ConformanceType.None;
 
-    public string GetComplianceStandardEntityType(string? entityType)
+    public string GetConformanceEntityType(string? entityType)
     {
-        if (EntitiesWithDifferentNTIARequirements.Contains(entityType))
+        if (EntitiesWithDifferentNTIAMinRequirements.Contains(entityType))
         {
-            return string.IsNullOrEmpty(entityType) ? string.Empty : "NTIA" + entityType.GetCommonEntityType();
+            return string.IsNullOrEmpty(entityType) ? string.Empty : "NTIAMin" + entityType.GetCommonEntityType();
         }
         else
         {
@@ -36,12 +36,12 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
         }
     }
 
-    public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, HashSet<InvalidElementInfo> invalidElements, Exception e)
+    public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, ISet<InvalidElementInfo> invalidElements, Exception e)
     {
         try
         {
             var deserializedAsElement = JsonSerializer.Deserialize(jsonObjectAsString, typeof(Element), jsonSerializerOptions) as Element;
-            var invalidElementInfo = GetInvalidElementInfo(deserializedAsElement, errorType: NTIAErrorType.InvalidNTIAElement);
+            var invalidElementInfo = GetInvalidElementInfo(deserializedAsElement, errorType: NTIAMinErrorType.InvalidNTIAMinElement);
             invalidElements.Add(invalidElementInfo);
         }
         catch
@@ -51,13 +51,13 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
     }
 
     /// <summary>
-    /// Add invalid NTIA elements to the list of invalid elements after deserialization.
+    /// Add invalid NTIAMin elements to the list of invalid elements after deserialization.
     /// </summary>
     public void AddInvalidElements(ElementsResult elementsResult)
     {
-        ValidateSbomDocCreationForNTIA(elementsResult.SpdxDocuments, elementsResult.CreationInfos, elementsResult.InvalidComplianceStandardElements);
-        ValidateSbomFilesForNTIA(elementsResult.Files, elementsResult.InvalidComplianceStandardElements);
-        ValidateSbomPackagesForNTIA(elementsResult.Packages, elementsResult.InvalidComplianceStandardElements);
+        ValidateSbomDocCreationForNTIAMin(elementsResult.SpdxDocuments, elementsResult.CreationInfos, elementsResult.InvalidConformanceElements);
+        ValidateSbomFilesForNTIAMin(elementsResult.Files, elementsResult.InvalidConformanceElements);
+        ValidateSbomPackagesForNTIAMin(elementsResult.Packages, elementsResult.InvalidConformanceElements);
     }
 
     /// <summary>
@@ -65,17 +65,17 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
     /// </summary>
     /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
-    private void ValidateSbomDocCreationForNTIA(List<SpdxDocument> spdxDocuments, List<CreationInfo> creationInfos, HashSet<InvalidElementInfo> invalidElements)
+    private void ValidateSbomDocCreationForNTIAMin(List<SpdxDocument> spdxDocuments, List<CreationInfo> creationInfos, HashSet<InvalidElementInfo> invalidElements)
     {
         // There should only be one SPDX document element in the SBOM.
         if (spdxDocuments.Count == 0)
         {
-            invalidElements.Add(GetInvalidElementInfo(null, errorType: NTIAErrorType.MissingValidSpdxDocument));
+            invalidElements.Add(GetInvalidElementInfo(null, errorType: NTIAMinErrorType.MissingValidSpdxDocument));
         }
         else if (spdxDocuments.Count > 1)
         {
             invalidElements.UnionWith(spdxDocuments.Select(
-                spdxDocument => GetInvalidElementInfo(spdxDocument, errorType: NTIAErrorType.AdditionalSpdxDocument)));
+                spdxDocument => GetInvalidElementInfo(spdxDocument, errorType: NTIAMinErrorType.AdditionalSpdxDocument)));
         }
         else
         {
@@ -85,7 +85,7 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
 
             if (spdxCreationInfoElement is null)
             {
-                invalidElements.Add(GetInvalidElementInfo(null, errorType: NTIAErrorType.MissingValidCreationInfo));
+                invalidElements.Add(GetInvalidElementInfo(null, errorType: NTIAMinErrorType.MissingValidCreationInfo));
             }
         }
     }
@@ -95,7 +95,7 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
     /// </summary>
     /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
-    private void ValidateSbomFilesForNTIA(List<File> files, HashSet<InvalidElementInfo> invalidElements)
+    private void ValidateSbomFilesForNTIAMin(List<File> files, HashSet<InvalidElementInfo> invalidElements)
     {
         foreach (var file in files)
         {
@@ -106,7 +106,7 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
 
             if (fileHasSha256Hash is null || fileHasSha256Hash == false)
             {
-                invalidElements.Add(GetInvalidElementInfo(file, errorType: NTIAErrorType.InvalidNTIAElement));
+                invalidElements.Add(GetInvalidElementInfo(file, errorType: NTIAMinErrorType.InvalidNTIAMinElement));
             }
         }
     }
@@ -116,7 +116,7 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
     /// </summary>
     /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
-    private void ValidateSbomPackagesForNTIA(List<Package> packages, HashSet<InvalidElementInfo> invalidElements)
+    private void ValidateSbomPackagesForNTIAMin(List<Package> packages, HashSet<InvalidElementInfo> invalidElements)
     {
         foreach (var package in packages)
         {
@@ -127,12 +127,12 @@ public class NTIAComplianceStandardEnforcer : IComplianceStandardEnforcer
 
             if (packageHasSha256Hash is null || packageHasSha256Hash == false)
             {
-                invalidElements.Add(GetInvalidElementInfo(package, errorType: NTIAErrorType.InvalidNTIAElement));
+                invalidElements.Add(GetInvalidElementInfo(package, errorType: NTIAMinErrorType.InvalidNTIAMinElement));
             }
         }
     }
 
-    private InvalidElementInfo GetInvalidElementInfo(Element? element, IComplianceStandardErrorType errorType)
+    private InvalidElementInfo GetInvalidElementInfo(Element? element, IConformanceErrorType errorType)
     {
         return new InvalidElementInfo(element?.Name, element?.SpdxId, errorType);
     }

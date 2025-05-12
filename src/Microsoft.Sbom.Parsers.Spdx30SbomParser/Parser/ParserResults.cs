@@ -4,14 +4,14 @@
 namespace Microsoft.Sbom.Parser;
 
 using System.Collections.Generic;
-using Microsoft.Sbom.Common.ComplianceStandard;
+using Microsoft.Sbom.Common.Conformance;
 using Microsoft.Sbom.Common.Spdx30Entities;
 
 public class ParserResults
 {
     public FormatEnforcedSPDX30 FormatEnforcedSPDX3Result { get; set; }
 
-    public HashSet<InvalidElementInfo> InvalidComplianceStandardElements { get; set; } = [];
+    public HashSet<InvalidElementInfo> InvalidConformanceElements { get; set; } = [];
 
     public int FilesCount = 0;
     public int PackagesCount = 0;

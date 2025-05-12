@@ -37,7 +37,9 @@ public class RelationshipsArrayGeneratorTest
     private ISbomPackageDetailsRecorder recorder;
     private IMetadataBuilder metadataBuilder;
     private ISbomConfig sbomConfig;
-    private readonly ManifestInfo manifestInfo = new ManifestInfo();
+    private readonly ManifestInfo manifestInfo = Constants.TestManifestInfo;
+    private IList<ISbomConfig> targetConfigs;
+    private HashSet<string> elementsSpdxIdList = new HashSet<string>();
 
     private const string DocumentId = "documentId";
     private const string RootPackageId = "rootPackageId";
@@ -68,6 +70,8 @@ public class RelationshipsArrayGeneratorTest
             Recorder = recorder,
         };
 
+        targetConfigs = new List<ISbomConfig> { sbomConfig };
+
         relationships = new List<Relationship>();
         relationshipGeneratorMock.Setup(r => r.Run(It.IsAny<IEnumerator<Relationship>>(), It.IsAny<ManifestInfo>()))
             .Callback<IEnumerator<Relationship>, ManifestInfo>((relationship, manifestInfo) =>
@@ -78,10 +82,7 @@ public class RelationshipsArrayGeneratorTest
                 }
             });
         relationshipGeneratorMock.CallBase = true;
-        relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), loggerMock.Object, recorderMock.Object)
-        {
-            SbomConfig = sbomConfig
-        };
+        relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), loggerMock.Object, recorderMock.Object);
         manifestGeneratorProvider.Init();
 
         fileSystemUtilsMock.Setup(f => f.CreateDirectory(ManifestJsonDirPath));
@@ -99,7 +100,7 @@ public class RelationshipsArrayGeneratorTest
     {
         recorder.RecordDocumentId(DocumentId);
         recorder.RecordRootPackageId(RootPackageId);
-        var results = await relationshipsArrayGenerator.GenerateAsync();
+        var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
         Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(1, relationships.Count);
@@ -119,7 +120,7 @@ public class RelationshipsArrayGeneratorTest
         recorder.RecordFileId(FileId1);
         recorder.RecordFileId(FileId2);
         recorder.RecordSPDXFileId(FileId1);
-        var results = await relationshipsArrayGenerator.GenerateAsync();
+        var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
         Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(2, relationships.Count);
@@ -137,7 +138,7 @@ public class RelationshipsArrayGeneratorTest
         recorder.RecordDocumentId(DocumentId);
         recorder.RecordRootPackageId(RootPackageId);
         recorder.RecordExternalDocumentReferenceIdAndRootElement(ExternalDocRefId1, RootPackageId);
-        var results = await relationshipsArrayGenerator.GenerateAsync();
+        var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
         Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(2, relationships.Count);
@@ -156,7 +157,7 @@ public class RelationshipsArrayGeneratorTest
         recorder.RecordDocumentId(DocumentId);
         recorder.RecordRootPackageId(RootPackageId);
         recorder.RecordPackageId(PackageId1, RootPackageId);
-        var results = await relationshipsArrayGenerator.GenerateAsync();
+        var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
         Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(2, relationships.Count);
@@ -171,7 +172,7 @@ public class RelationshipsArrayGeneratorTest
     [TestMethod]
     public async Task When_NoGenerationDataExist_NoRelationshipsAreGenerated()
     {
-        var results = await relationshipsArrayGenerator.GenerateAsync();
+        var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
         Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(0, relationships.Count);
