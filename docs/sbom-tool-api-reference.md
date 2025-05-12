@@ -101,24 +101,27 @@ Below are 2 additional helper methods.
 
 ### `GetSupportedSbomSpecifications`
 
-The `SbomSpecification` object represents a SBOM format. Each `SbomSpecification` contains a `name` and a `version`. This structure defines a single format of SBOM.  Sample SPDX version 2.2 format representations include:
+The `SbomSpecification` object represents a SBOM format. Each `SbomSpecification` contains a `name` and a `version`. This structure defines a single format of SBOM.  Sample SPDX version 2.2 and SPDX version 3.0 format representations include:
 
 ```C#
 using Microsoft.Sbom.Contracts;
 
 var spdx22Specification = new SbomSpecification("SPDX", "2.2");
+var spdx30Specification = new SbomSpecification("SPDX", "3.0");
 ```
 
-While this API supports the creation of a SBOM output file in multiple formats, it currently only supports the SPDX version 2.2 architecture. Users looking to implement other SBOM architectures can use this API call, which provides the full list of all supported formats.
+While this API supports the creation of a SBOM output file in multiple formats, it currently only supports the SPDX version 2.2 and SPDX version 3.0 architectures. Users looking to implement other SBOM architectures can use this API call, which provides the full list of all supported formats.
 
 ```C#
 using Xunit;
 
 var specifications = generator.GetSupportedSbomSpecifications();
 
-Assert.True(specifications.Count() == 1);
+Assert.True(specifications.Count() == 2);
 Assert.Equal("SPDX", specifications.First().Name);
 Assert.Equal("2.2", specifications.First().Version);
+Assert.Equal("SPDX", specifications.Last().Name);
+Assert.Equal("3.0", specifications.Last().Version);
 ```
 
 ### GetRequiredAlgorithms
@@ -217,7 +220,7 @@ var file = new SbomFile
 };
 ```
 
-The API looks for a relative path starting with a period `.`.  All path separators should include forward slashes `/` in conformance with the SPDX version 2.2 specification.
+The API looks for a relative path starting with a period `.`.  All path separators should include forward slashes `/` in compliance with the SPDX version 2.2 and 3.0 specifications.
 
 ### SbomPackage
 
@@ -277,7 +280,7 @@ class Program
 ```
 
 After the Host is set up, you can inject the `ISbomValidator` interface into your service and use it to validate the SBOM file. Here is an example:
-Note that the only arguments required are the `buildDropPath`,  the `outputPath`, and the `SbomSpecification`. The `buildDropPath` is the path to the directory containing the _manifest directory. The `outPath` is the path to the file where the validation output will be written. The only `SbomSpecification` currently supported is `SPDX 2.2`.
+Note that the only arguments required are the `buildDropPath`,  the `outputPath`, and the `SbomSpecification`. The `buildDropPath` is the path to the directory containing the _manifest directory. The `outPath` is the path to the file where the validation output will be written. The only `SbomSpecification` values that are currently supported are `SPDX 2.2` and `SPDX 3.0`.
 All other arguments are optional.
 
 ```C#
