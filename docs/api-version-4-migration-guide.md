@@ -89,8 +89,8 @@ Scope | Type of change | Detail
 `IManifestToolJsonSerializer` | New method | `void Write(JsonElement jsonElement)`
 `ISignedValidator.Validate` | New parameter | `IDictionary<string, string> additionalTelemetry`
 `ISbomParser.GetMetadata()` | Return type | `SpdxMetadata` instead of `Spdx22Metadata`
-`ISbomParser` | New method | `void EnforceComplianceStandard(ComplianceStandardType complianceStandard)`
-`IConfiguration` | New property | `ConfigurationSetting<ComplianceStandardType> ComplianceStandard`
+`ISbomParser` | New method | `void EnforceConformanceStandard(ConformanceStandardType conformanceStandard)`
+`IConfiguration` | New property | `ConfigurationSetting<ConformanceStandardType> ConformanceStandard`
 `IConfiguration` | New property | `ConfigurationSetting<int> LicenseInformationTimeoutInSeconds`
 
 
