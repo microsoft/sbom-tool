@@ -28,7 +28,7 @@ public class LicenseInformationService : ILicenseInformationService
         this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     }
 
-    public async Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi, int timeoutInSeconds)
+    public async Task<IList<string>> FetchLicenseInformationFromAPI(IList<string> listOfComponentsForApi, int timeoutInSeconds)
     {
         var batchSize = 500;
         var responses = new List<HttpResponseMessage>();

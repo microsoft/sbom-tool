@@ -216,9 +216,9 @@ public class SPDXParser : ISbomParser
 
     public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { this.spdxManifestInfo };
 
-    public void EnforceComplianceStandard(ComplianceStandardType complianceStandard)
+    public void EnforceConformance(ConformanceType conformance)
     {
-        // No-op, SPDX 2.2 does not support validation based on compliance standards.
+        // No-op, SPDX 2.2 does not support validation based on conformances.
         return;
     }
 
