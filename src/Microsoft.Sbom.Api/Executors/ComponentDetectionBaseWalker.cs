@@ -78,6 +78,7 @@ public abstract class ComponentDetectionBaseWalker
         // Enable SPDX22 and ConanLock detector which is disabled by default.
         cliArgumentBuilder.AddDetectorArg("SPDX22SBOM", "EnableIfDefaultOff");
         cliArgumentBuilder.AddDetectorArg("ConanLock", "EnableIfDefaultOff");
+        cliArgumentBuilder.AddDetectorArg("RustCli", "EnableIfDefaultOff");
 
         // Iterate over all supported SPDX manifests and apply the necessary logic
         foreach (var supportedSpdxManifest in Constants.SupportedSpdxManifests)
