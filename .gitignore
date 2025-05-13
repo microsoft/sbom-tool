@@ -357,3 +357,6 @@ MigrationBackup/
 
 # Visual Studio solution launchsettings.json
 launchSettings.json
+
+# Rider + ReSharper temp
+/.idea
