@@ -186,9 +186,9 @@ public class ComponentDetectionCliArgumentBuilder
         }
 
         // Check if a key already exists for the --DirectoryExclusionList, if so, check that the value isn't a duplicate. If these conditions are true then append the new value delimited by a semicolon.
-        if (keyValueArgs.ContainsKey(name) && !keyValueArgs.ContainsValue(value) && name.Equals(DirectoryExclusionListParamName, StringComparison.OrdinalIgnoreCase))
+        if (keyValueArgs.TryGetValue(name, out var argValue) && !keyValueArgs.ContainsValue(value) && name.Equals(DirectoryExclusionListParamName, StringComparison.OrdinalIgnoreCase))
         {
-            keyValueArgs[name] = $"{keyValueArgs[name]};{value}";
+            keyValueArgs[name] = $"{argValue};{value}";
             return this;
         }
 
