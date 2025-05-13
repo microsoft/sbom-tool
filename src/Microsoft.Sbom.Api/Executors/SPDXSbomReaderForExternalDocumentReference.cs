@@ -83,7 +83,7 @@ public class SPDXSbomReaderForExternalDocumentReference : ISbomReaderForExternal
             {
                 if (!file.EndsWith(Constants.SPDXFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    log.Warning($"The file {file} is not an spdx document.");
+                    log.Warning("The file {File} is not an spdx document.", file);
                 }
                 else
                 {
@@ -97,7 +97,7 @@ public class SPDXSbomReaderForExternalDocumentReference : ISbomReaderForExternal
                     }
                     catch (JsonException e)
                     {
-                        log.Error($"Encountered an error while parsing the external SBOM file {file}: {e.Message}");
+                        log.Error("Encountered an error while parsing the external SBOM file {File}: {Message}", file, e.Message);
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
                             ErrorType = ErrorType.Other,
@@ -106,7 +106,7 @@ public class SPDXSbomReaderForExternalDocumentReference : ISbomReaderForExternal
                     }
                     catch (HashGenerationException e)
                     {
-                        log.Warning($"Encountered an error while generating hash for file {file}: {e.Message}");
+                        log.Warning("Encountered an error while generating hash for file {File}: {Message}", file, e.Message);
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
                             ErrorType = ErrorType.Other,
@@ -115,7 +115,7 @@ public class SPDXSbomReaderForExternalDocumentReference : ISbomReaderForExternal
                     }
                     catch (Exception e)
                     {
-                        log.Warning($"Encountered an error while generating externalDocumentReferenceInfo from file {file}: {e.Message}");
+                        log.Warning("Encountered an error while generating externalDocumentReferenceInfo from file {File}: {Message}", file, e.Message);
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
                             ErrorType = ErrorType.Other,

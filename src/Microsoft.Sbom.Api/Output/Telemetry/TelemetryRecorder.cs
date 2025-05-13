@@ -115,7 +115,7 @@ public class TelemetryRecorder : IRecorder
         {
             // We shouldn't fail the main workflow due to some failure on the telemetry generation.
             // Just log the result and return silently.
-            logger.Warning($"Failed to log telemetry. Exception: {e.Message}");
+            logger.Warning("Failed to log telemetry. Exception: {Message}", e.Message);
         }
     }
 
@@ -329,7 +329,7 @@ public class TelemetryRecorder : IRecorder
             };
 
             // Log to logger.
-            Log.Debug($"Wrote telemetry object to path {Configuration.TelemetryFilePath?.Value}");
+            Log.Debug("Wrote telemetry object to path {Value}", this.Configuration.TelemetryFilePath?.Value);
 
             if (Configuration.ManifestToolAction == ManifestToolActions.Generate && Configuration.BuildComponentPath?.Value != null && this.totalNumberOfPackages == 0)
             {
@@ -344,7 +344,7 @@ public class TelemetryRecorder : IRecorder
         {
             // We should'nt fail the main workflow due to some failure on the telemetry generation.
             // Just log the result and return silently.
-            Log.Warning($"Failed to log telemetry. Exception: {ex.Message}");
+            Log.Warning("Failed to log telemetry. Exception: {Message}", ex.Message);
         }
     }
 

@@ -69,7 +69,7 @@ public class ManifestFileFilterer
                 }
                 catch (Exception e)
                 {
-                    log.Warning($"Encountered an error while filtering file {manifestFile} from the manifest: {e.Message}");
+                    log.Warning("Encountered an error while filtering file {File} from the manifest: {Message}", manifestFile, e.Message);
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
                         ErrorType = ErrorType.Other,

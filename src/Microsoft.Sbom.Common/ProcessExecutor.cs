@@ -43,14 +43,14 @@ public class ProcessExecutor : IProcessExecutor
         // Check if process was successful or not.
         if (process.ExitCode != 0)
         {
-            logger.Error($"The process {fileName} with the arguments {arguments} exited with code {process.ExitCode}. StdErr: {process.StandardError.ReadToEnd()}");
+            logger.Error("The process {FileName} with the arguments {Arguments} exited with code {ExitCode}. StdErr: {Error}", fileName, arguments, process.ExitCode, process.StandardError.ReadToEnd());
             return null;
         }
 
         if (!processExited)
         {
             process.Kill(); // If the process exceeds the timeout, kill it
-            logger.Error($"The process {fileName} with the arguments {arguments} timed out.");
+            logger.Error("The process {File} with the arguments {Arguments} timed out.", fileName, arguments);
             return null;
         }
 

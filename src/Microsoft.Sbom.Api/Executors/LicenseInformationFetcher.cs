@@ -73,7 +73,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
                         break;
 
                     default:
-                        log.Debug($"License retrieval for component type {componentType} is not supported yet.");
+                        log.Debug("License retrieval for component type {Type} is not supported yet.", componentType);
                         break;
                 }
             }

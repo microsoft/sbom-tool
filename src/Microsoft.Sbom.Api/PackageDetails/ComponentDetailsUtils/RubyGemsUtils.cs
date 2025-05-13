@@ -79,7 +79,7 @@ public class RubyGemsUtils : IPackageManagerUtils<RubyGemsUtils>
                 }
             }
 
-            logger.Verbose($"Could not find gemspec file for {gemspecFileName}");
+            logger.Verbose("Could not find gemspec file for {File}", gemspecFileName);
         }
 
         return null;

@@ -105,7 +105,7 @@ public class PackageDetailsFactory : IPackageDetailsFactory
 
                         break;
                     default:
-                        log.Verbose($"File extension {Path.GetExtension(path)} is not supported for extracting supplier info.");
+                        log.Verbose("File extension {Extension} is not supported for extracting supplier info.", Path.GetExtension(path));
                         break;
                 }
             }
@@ -113,7 +113,7 @@ public class PackageDetailsFactory : IPackageDetailsFactory
 
         if (packageDetailsPaths.Count > 0)
         {
-            log.Information($"Found additional information for {packageDetailsDictionary.Count} components out of {packageDetailsPaths.Count} supported components.");
+            log.Information("Found additional information for {PackageCount} components out of {PathCount} supported components.", packageDetailsDictionary.Count, packageDetailsPaths.Count);
         }
 
         recorder.AddToTotalNumberOfPackageDetailsEntries(packageDetailsDictionary.Count);

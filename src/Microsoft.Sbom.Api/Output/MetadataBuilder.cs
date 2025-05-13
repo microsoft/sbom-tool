@@ -47,7 +47,7 @@ public class MetadataBuilder : IMetadataBuilder
         if (manifestGenerator.Version.Contains(Constants.SPDX30ManifestInfo.Name)
             && manifestGenerator.Version.Contains(Constants.SPDX30ManifestInfo.Version))
         {
-            logger.Debug($"The SBOM format '{Constants.SPDX30ManifestInfo}' does not support writing a metadata dictionary.");
+            logger.Debug("The SBOM format '{Info}' does not support writing a metadata dictionary.", Constants.SPDX30ManifestInfo);
         }
 
         using (recorder.TraceEvent(string.Format(Events.MetadataBuilder, manifestInfo)))
