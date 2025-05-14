@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
@@ -157,6 +158,7 @@ public static class InternalMetadataProviderIdentityExtensions
             return generationTimestamp as string;
         }
 
-        return DateTimeOffset.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
+        // Use InvariantCulture to ensure Gregorian calendar is always used
+        return DateTimeOffset.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
     }
 }
