@@ -153,6 +153,39 @@ public class SbomFormatConverterTests
     }
 
     [TestMethod]
+    public void ToSbomPackage_RootPackage_ReturnsExpectedSupplier()
+    {
+        var rootPackage = new Package
+        {
+            SpdxId = Parsers.Spdx30SbomParser.Constants.RootPackageIdValue,
+            Name = "Package1"
+        };
+
+        var creationInfo = new CreationInfo
+        {
+            SpdxId = "CreationInfoId",
+            CreatedBy = new List<string> { "SPDXRef-Organization" }
+        };
+
+        var organization = new Organization
+        {
+            SpdxId = "SPDXRef-Organization",
+            Name = "Microsoft"
+        };
+
+        var spdx30Elements = new List<Element>
+        {
+            rootPackage,
+            creationInfo,
+            organization
+        };
+
+        var sbomPackage = rootPackage.ToSbomPackage(spdx30Elements, new List<Relationship>());
+
+        Assert.AreEqual("Microsoft", sbomPackage.Supplier, "The supplier for the root package should be derived from the CreatedBy field.");
+    }
+
+    [TestMethod]
     public void ToSbomRelationship_SimpleConversion_ReturnsExpectedRelationships()
     {
         var spdxRelationship = new Relationship
