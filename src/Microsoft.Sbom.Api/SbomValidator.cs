@@ -59,8 +59,6 @@ public class SbomValidator : ISbomValidator
         var isSuccess = await sbomParserBasedValidationWorkflow.RunAsync();
         await recorder.FinalizeAndLogTelemetryAsync();
 
-        var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
-
         return isSuccess;
     }
 
@@ -97,13 +95,12 @@ public class SbomValidator : ISbomValidator
         inputConfig.ToConfiguration();
 
         var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo.Value.FirstOrDefault());
-        var path = sbomConfig.ManifestJsonFilePath;
         if (!fileSystemUtils.FileExists(sbomConfig.ManifestJsonFilePath))
         {
             throw new FileNotFoundException($"Manifest not found in specified location: {sbomConfig.ManifestJsonFilePath}");
         }
 
-        var isSuccess = await sbomParserBasedValidationWorkflow.RunAsync();
+        await sbomParserBasedValidationWorkflow.RunAsync();
         await recorder.FinalizeAndLogTelemetryAsync();
 
         var errors = recorder.Errors.Select(error => error.ToEntityError()).ToList();

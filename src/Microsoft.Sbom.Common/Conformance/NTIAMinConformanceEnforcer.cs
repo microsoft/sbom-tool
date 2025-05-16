@@ -36,7 +36,7 @@ public class NTIAMinConformanceEnforcer : IConformanceEnforcer
         }
     }
 
-    public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, HashSet<InvalidElementInfo> invalidElements, Exception e)
+    public void AddInvalidElementsIfDeserializationFails(string jsonObjectAsString, JsonSerializerOptions jsonSerializerOptions, ISet<InvalidElementInfo> invalidElements, Exception e)
     {
         try
         {
@@ -99,8 +99,6 @@ public class NTIAMinConformanceEnforcer : IConformanceEnforcer
     {
         foreach (var file in files)
         {
-            var fileSpdxId = file.SpdxId;
-
             var fileHasSha256Hash = file.VerifiedUsing?.
                 Any(packageVerificationCode => packageVerificationCode.Algorithm == HashAlgorithm.sha256);
 

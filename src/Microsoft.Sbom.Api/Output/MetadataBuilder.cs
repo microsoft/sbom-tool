@@ -42,6 +42,14 @@ public class MetadataBuilder : IMetadataBuilder
     /// <returns></returns>
     public string GetHeaderJsonString(IInternalMetadataProvider internalMetadataProvider)
     {
+        // SPDX 3.0 and above handles writing the info in metadata dictionary differently.
+        // Note: manifestGenerator.Version is a string that is formatted as <manifestInfoName>-<manifestInfoVersion>.
+        if (manifestGenerator.Version.Contains(Constants.SPDX30ManifestInfo.Name)
+            && manifestGenerator.Version.Contains(Constants.SPDX30ManifestInfo.Version))
+        {
+            logger.Debug($"The SBOM format '{Constants.SPDX30ManifestInfo}' does not support writing a metadata dictionary.");
+        }
+
         using (recorder.TraceEvent(string.Format(Events.MetadataBuilder, manifestInfo)))
         {
             logger.Debug("Building the header object.");
