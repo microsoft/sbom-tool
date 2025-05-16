@@ -10,9 +10,6 @@ namespace Microsoft.Sbom.Api.Utils;
 /// </summary>
 public class InternalSbomFileInfoDeduplicator : ChannelDeduplicator<InternalSbomFileInfo>
 {
-    public InternalSbomFileInfoDeduplicator()
-        : base() { }
-
     public override string GetKey(InternalSbomFileInfo obj)
     {
         return obj?.Path;
