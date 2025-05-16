@@ -99,8 +99,6 @@ public class NTIAMinConformanceEnforcer : IConformanceEnforcer
     {
         foreach (var file in files)
         {
-            var fileSpdxId = file.SpdxId;
-
             var fileHasSha256Hash = file.VerifiedUsing?.
                 Any(packageVerificationCode => packageVerificationCode.Algorithm == HashAlgorithm.sha256);
 

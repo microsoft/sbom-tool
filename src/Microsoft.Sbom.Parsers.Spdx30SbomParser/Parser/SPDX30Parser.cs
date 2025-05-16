@@ -179,7 +179,6 @@ public class SPDX30Parser : ISbomParser
     private ElementsResult ConvertToElements(List<object>? jsonList, ParserStateResult? result)
     {
         var elementsResult = new ElementsResult(result);
-        var elementsSpdxIdList = new HashSet<string>();
 
         if (jsonList is null)
         {
