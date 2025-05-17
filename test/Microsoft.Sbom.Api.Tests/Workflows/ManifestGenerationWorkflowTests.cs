@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Combinatorial.MSTest;
 using Microsoft.ComponentDetection.Contracts;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
@@ -79,15 +80,11 @@ public class ManifestGenerationWorkflowTests
     }
 
     [TestMethod]
-    [DataRow("test", true, true)]
-    [DataRow("test", false, false)]
-    [DataRow("test", true, false)]
-    [DataRow("test", false, true)]
-    [DataRow("3.0", true, true)]
-    [DataRow("3.0", false, false)]
-    [DataRow("3.0", true, false)]
-    [DataRow("3.0", false, true)]
-    public async Task ManifestGenerationWorkflowTests_Succeeds(string spdxVersionForGenerator, bool deleteExistingManifestDir, bool isDefaultSourceManifestDirPath)
+    [CombinatorialData]
+    public async Task ManifestGenerationWorkflowTests_Succeeds(
+        [CombinatorialValues("test", "3.0")] string spdxVersionForGenerator,
+        bool deleteExistingManifestDir,
+        bool isDefaultSourceManifestDirPath)
     {
         var manifestInfoPerSpdxVersion = new Dictionary<string, ManifestInfo>
         {
