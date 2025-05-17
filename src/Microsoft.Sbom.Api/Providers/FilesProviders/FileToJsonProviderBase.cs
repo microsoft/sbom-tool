@@ -42,7 +42,7 @@ public abstract class FileToJsonProviderBase<T> : ISourcesProvider
         var (files, dirErrors) = GetFilesChannel();
         errors.Add(dirErrors);
 
-        log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
+        log.Debug("Splitting the workflow into {Parallelism} threads.", this.configuration.Parallelism.Value);
         var splitFilesChannels = channelUtils.Split(files, configuration.Parallelism.Value);
 
         log.Debug("Running the files generation workflow ...");
