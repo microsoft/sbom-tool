@@ -5,6 +5,7 @@
     <EnableMSTestRunner>true</EnableMSTestRunner>
     <TestingPlatformDotNetTestSupport>true</TestingPlatformDotNetTestSupport>
     <TestingPlatformCaptureOutput>false</TestingPlatformCaptureOutput>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Label="Build">
