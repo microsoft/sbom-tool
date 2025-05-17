@@ -152,14 +152,12 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
 
     public string GetFromLicenseDictionary(string key)
     {
-        var value = string.Empty;
-
-        if (licenseDictionary.ContainsKey(key))
+        if (licenseDictionary.TryGetValue(key, out var value))
         {
-            licenseDictionary.TryGetValue(key, out value);
+            return value;
         }
 
-        return value;
+        return string.Empty;
     }
 
     private bool IsUndefinedLicense(string license)

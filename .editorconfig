@@ -836,7 +836,7 @@ dotnet_diagnostic.CA1852.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1854
 # CA1854: Prefer 'TryGetValue' over 'ContainsKey' and 'Item' when accessing dictionary items
-dotnet_diagnostic.CA1854.severity = suggestion
+dotnet_diagnostic.CA1854.severity = error
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1860
 # CA1860: Avoid using 'Enumerable.Any()' extension method.
