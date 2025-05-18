@@ -47,6 +47,6 @@ public class GeneratorTests
         var propertyExists = result.Document.RootElement.TryGetProperty("licenseInfoFromFiles", out var property);
 
         Assert.IsTrue(propertyExists);
-        Assert.AreEqual(expected.ToString(), property.ToString());
+        Assert.AreEqual(expected, property.ToString());
     }
 }
