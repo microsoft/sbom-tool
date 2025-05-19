@@ -38,9 +38,9 @@ public static class DictionaryExtensions
 
         // Check if the value is not null, and if the dictionary already
         // contains a value for the key.
-        if (value != null)
+        if (value != null && !dictionary.ContainsKey(key))
         {
-            dictionary.TryAdd(key, value);
+            dictionary.Add(key, value);
         }
     }
 }
