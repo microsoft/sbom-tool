@@ -117,7 +117,7 @@ public static class SPDXExtensions
 
     public static void AddSpdxId(this ExternalIdentifier externalIdentifier)
     {
-        externalIdentifier.SpdxId = GenerateSpdxIdBasedOnElement(externalIdentifier, externalIdentifier.Identifier.ToString());
+        externalIdentifier.SpdxId = GenerateSpdxIdBasedOnElement(externalIdentifier, externalIdentifier.Identifier);
     }
 
     public static void AddSpdxId(this PackageVerificationCode packageVerificationCode)

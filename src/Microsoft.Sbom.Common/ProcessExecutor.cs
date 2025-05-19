@@ -54,6 +54,6 @@ public class ProcessExecutor : IProcessExecutor
             return null;
         }
 
-        return process.StandardOutput.ReadToEnd()?.Trim().ToString();
+        return process.StandardOutput.ReadToEnd()?.Trim();
     }
 }
