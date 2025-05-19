@@ -35,7 +35,7 @@ public class OSUtils : IOSUtils
 
         foreach (DictionaryEntry de in this.environment.GetEnvironmentVariables())
         {
-            environmentVariables.Add(de.Key.ToString(), de.Value.ToString());
+            environmentVariables.Add((string)de.Key, (string)de.Value);
         }
 
         foreach (var os in oSPlatforms)
