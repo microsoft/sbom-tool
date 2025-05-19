@@ -48,8 +48,8 @@ public class SbomApiMetadataProvider : IMetadataProvider
     public string GetDocumentNamespaceUri()
     {
         var nsUniquePart = Uri.EscapeDataString(configuration.NamespaceUriUniquePart?.Value ?? IdentifierUtils.GetShortGuid(Guid.NewGuid()));
-        var packageName = Uri.EscapeDataString(MetadataDictionary[MetadataKey.PackageName] as string);
-        var packageVersion = Uri.EscapeDataString(MetadataDictionary[MetadataKey.PackageVersion] as string);
+        var packageName = Uri.EscapeDataString((string)MetadataDictionary[MetadataKey.PackageName]);
+        var packageVersion = Uri.EscapeDataString((string)MetadataDictionary[MetadataKey.PackageVersion]);
 
         return string.Join("/", configuration.NamespaceUriBase.Value, packageName, packageVersion, nsUniquePart);
     }
