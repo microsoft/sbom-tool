@@ -80,12 +80,12 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
         if (configuration.RootPathFilter != null && !string.IsNullOrWhiteSpace(configuration.RootPathFilter.Value))
         {
             skipValidation = false;
-            validPaths = new HashSet<string>();
             var relativeRootPaths = configuration.RootPathFilter.Value.Split(';');
 
-            validPaths.UnionWith(relativeRootPaths.Select(r =>
+            validPaths = relativeRootPaths.Select(r =>
                 new FileInfo(fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, r))
-                    .FullName));
+                    .FullName)
+                .ToHashSet();
 
             foreach (var validPath in validPaths)
             {
