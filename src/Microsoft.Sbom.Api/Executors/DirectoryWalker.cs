@@ -43,7 +43,7 @@ public class DirectoryWalker
 
     public (ChannelReader<string> file, ChannelReader<FileValidationResult> errors) GetFilesRecursively(string root)
     {
-        log.Debug($"Enumerating files under the root path {root}.");
+        log.Debug("Enumerating files under the root path {Root}.", root);
 
         if (!fileSystemUtils.DirectoryExists(root))
         {
@@ -69,7 +69,7 @@ public class DirectoryWalker
             }
             catch (Exception e)
             {
-                log.Warning($"Encountered an unknown error for {path}: {e.Message}");
+                log.Warning("Encountered an unknown error for {Path}: {Message}", path, e.Message);
                 await errors.Writer.WriteAsync(new FileValidationResult
                 {
                     ErrorType = ErrorType.Other,
