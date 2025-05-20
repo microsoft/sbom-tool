@@ -56,13 +56,13 @@ public class ComponentDetectionCliArgumentBuilder
                 .Select(x => new List<string>() { $"--{x.Key}", AsArgumentValue(x.Value) })
                 .SelectMany(x => x)
                 .ToList();
-            var argsCommand = string.Join(" ", argsList);
+            var argsCommand = string.Join(' ', argsList);
             command += $" {argsCommand}";
         }
 
         if (keyArgs.Any())
         {
-            var keyArgsCommand = string.Join(" ", keyArgs.Select(this.AsArgumentValue));
+            var keyArgsCommand = string.Join(' ', keyArgs.Select(this.AsArgumentValue));
             command += $" {keyArgsCommand}";
         }
 
@@ -111,7 +111,7 @@ public class ComponentDetectionCliArgumentBuilder
 
                     break;
                 case "--DetectorCategories":
-                    scanSettings.DetectorCategories = argumentValue.Split(",");
+                    scanSettings.DetectorCategories = argumentValue.Split(',');
                     break;
                 case "--ManifestFile":
                     scanSettings.ManifestFile = new FileInfo(argumentValue);
@@ -120,7 +120,7 @@ public class ComponentDetectionCliArgumentBuilder
                     scanSettings.PrintManifest = bool.Parse(argumentValue);
                     break;
                 case "--DockerImagesToScan":
-                    scanSettings.DockerImagesToScan = argumentValue.Split(",");
+                    scanSettings.DockerImagesToScan = argumentValue.Split(',');
                     break;
             }
         }
@@ -166,7 +166,7 @@ public class ComponentDetectionCliArgumentBuilder
 
         if (name.Equals(DetectorArgsParamName, StringComparison.OrdinalIgnoreCase))
         {
-            var detectorArgs = value.Split(",").Select(arg => arg.Trim()).Select(arg => arg.Split("="));
+            var detectorArgs = value.Split(',').Select(arg => arg.Trim()).Select(arg => arg.Split('='));
             if (detectorArgs.Any())
             {
                 foreach (var arg in detectorArgs)
