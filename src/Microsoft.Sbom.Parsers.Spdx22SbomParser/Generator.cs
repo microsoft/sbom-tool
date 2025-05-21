@@ -47,7 +47,7 @@ public class Generator : IManifestGenerator
         var spdxFileElement = ConvertSbomFileToSpdxFile(fileInfo);
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxFileElement)),
+            Document = JsonSerializer.SerializeToDocument(spdxFileElement),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = spdxFileElement.SPDXId
@@ -167,7 +167,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxPackage)),
+            Document = JsonSerializer.SerializeToDocument(spdxPackage),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = packageId,
@@ -212,7 +212,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxPackage)),
+            Document = JsonSerializer.SerializeToDocument(spdxPackage),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = Constants.RootPackageIdValue,
@@ -243,7 +243,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxRelationship)),
+            Document = JsonSerializer.SerializeToDocument(spdxRelationship),
         };
     }
 
@@ -306,7 +306,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(externalDocumentReferenceElement)),
+            Document = JsonSerializer.SerializeToDocument(externalDocumentReferenceElement),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = externalDocumentReferenceId
