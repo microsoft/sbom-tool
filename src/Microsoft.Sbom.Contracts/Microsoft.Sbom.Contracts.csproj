@@ -4,7 +4,5 @@
     <AssemblyName>Microsoft.Sbom.Contracts</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>Contracts and interfaces for SBOM API</Description>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 </Project>
