@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
@@ -46,7 +47,7 @@ public class Generator : IManifestGenerator
         var spdxFileElement = ConvertSbomFileToSpdxFile(fileInfo);
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxFileElement)),
+            Document = JsonSerializer.SerializeToDocument(spdxFileElement),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = spdxFileElement.SPDXId
@@ -161,12 +162,12 @@ public class Generator : IManifestGenerator
         var dependOnId = packageInfo.DependOn;
         if (dependOnId is not null && dependOnId != Constants.RootPackageIdValue)
         {
-            dependOnId = SPDXExtensions.GenerateSpdxPackageId(packageInfo.DependOn);
+            dependOnId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.DependOn);
         }
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxPackage)),
+            Document = JsonSerializer.SerializeToDocument(spdxPackage),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = packageId,
@@ -211,7 +212,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxPackage)),
+            Document = JsonSerializer.SerializeToDocument(spdxPackage),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = Constants.RootPackageIdValue,
@@ -242,7 +243,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxRelationship)),
+            Document = JsonSerializer.SerializeToDocument(spdxRelationship),
         };
     }
 
@@ -305,7 +306,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(externalDocumentReferenceElement)),
+            Document = JsonSerializer.SerializeToDocument(externalDocumentReferenceElement),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = externalDocumentReferenceId

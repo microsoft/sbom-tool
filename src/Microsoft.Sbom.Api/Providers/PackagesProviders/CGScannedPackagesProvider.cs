@@ -24,8 +24,6 @@ public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent
 
     private readonly PackagesWalker packagesWalker;
 
-    private ILicenseInformationFetcher licenseInformationFetcher;
-
     public CGScannedPackagesProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
@@ -40,7 +38,6 @@ public class CGScannedPackagesProvider : CommonPackagesProvider<ScannedComponent
     {
         this.packageInfoConverter = packageInfoConverter ?? throw new ArgumentNullException(nameof(packageInfoConverter));
         this.packagesWalker = packagesWalker ?? throw new ArgumentNullException(nameof(packagesWalker));
-        this.licenseInformationFetcher = licenseInformationFetcher ?? throw new ArgumentNullException(nameof(licenseInformationFetcher));
     }
 
     public override bool IsSupported(ProviderType providerType)

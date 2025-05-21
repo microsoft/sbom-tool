@@ -53,11 +53,11 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
             try
             {
                 log.Information($"Validating SBOM {sbomPath}");
-                validatedSbom = validatedSbomFactory.CreateValidatedSBOM(sbomPath);
+                validatedSbom = validatedSbomFactory.CreateValidatedSbom(sbomPath);
                 var validationDetails = await validatedSbom.GetValidationResults();
                 if (validationDetails.Status != FormatValidationStatus.Valid)
                 {
-                    throw new InvalidDataException($"Failed to validate {sbomPath}:\n{string.Join('\n', validationDetails.Errors)}");
+                    throw new InvalidDataException($"Failed to validate {sbomPath}:\n{string.Join('\n', validationDetails.Errors)} Redaction is only supported for SPDX 2.2 currently. Please provide a valid SPDX 2.2 SBOM.");
                 }
                 else
                 {

@@ -9,6 +9,7 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Recorder;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
@@ -30,6 +31,9 @@ public class GeneratorTests
     private readonly Mock<ILogger> mockLogger = new Mock<ILogger>(MockBehavior.Strict);
     private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
     private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>(MockBehavior.Strict);
+
+    private const string SourceElementIdValue = "source-id";
+    private const string TargetElementIdValue = "target-id";
 
     [TestMethod]
     public void GenerateJsonDocumentTest_DocumentCreation()
@@ -61,7 +65,7 @@ public class GeneratorTests
         var regexPattern = ConvertJsonToRegex(expectedJsonContentAsString);
 
         Assert.IsFalse(generatedJsonString.Contains("null"));
-        Assert.IsTrue(Regex.IsMatch(generatedJsonString, regexPattern));
+        Assert.IsTrue(Regex.IsMatch(generatedJsonString, regexPattern), $"Unexpected output: {generatedJsonString}");
     }
 
     [TestMethod]
@@ -86,15 +90,81 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocumentTest_File()
+    public void GenerateJsonDocument_DependsOnId_Null_ReturnsNull()
+    {
+        var packageInfo = new SbomPackage
+        {
+            PackageName = "TestPackage",
+            DependOn = null
+        };
+
+        var result = generator.GenerateJsonDocument(packageInfo);
+
+        Assert.IsNull(result.ResultMetadata.DependOn);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocument_DependsOnId_EqualsRootPackageId_ReturnsRootPackageId()
+    {
+        var packageInfo = new SbomPackage
+        {
+            PackageName = "TestPackage",
+            DependOn = Constants.RootPackageIdValue
+        };
+
+        var result = generator.GenerateJsonDocument(packageInfo);
+
+        Assert.AreEqual(Constants.RootPackageIdValue, result.ResultMetadata.DependOn);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocument_DependsOnId_ValidValue_GeneratesSpdxPackageId()
+    {
+        var packageInfo = new SbomPackage
+        {
+            PackageName = "TestPackage",
+            DependOn = "SomePackageId"
+        };
+
+        var result = generator.GenerateJsonDocument(packageInfo);
+
+        var expectedDependOnId = CommonSPDXUtils.GenerateSpdxPackageId("SomePackageId");
+        Assert.AreEqual(expectedDependOnId, result.ResultMetadata.DependOn);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_File_WithConcludedAndNoDeclaredLicense()
     {
         var fileInfo = new InternalSbomFileInfo
         {
             Checksum = GetSampleChecksums(),
             FileCopyrightText = "sampleCopyright",
             LicenseConcluded = "sampleLicense1",
-            LicenseInfoInFiles = new List<string> { "sampleLicense1" },
-            Path = "/sample/path",
+            LicenseInfoInFiles = null,
+            Path = "./sample/path",
+        };
+
+        var generatorResult = generator.GenerateJsonDocument(fileInfo);
+        var generatedJsonString = generatorResult.Document.RootElement.GetRawText();
+        generatedJsonString = NormalizeString(generatedJsonString);
+
+        var expectedJsonContentAsString = SbomFileJsonStrings.FileWithNoDeclaredLicense;
+        expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
+
+        Assert.IsFalse(generatedJsonString.Contains("null"));
+        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_File_WithConcludedAndDeclaredLicense()
+    {
+        var fileInfo = new InternalSbomFileInfo
+        {
+            Checksum = GetSampleChecksums(),
+            FileCopyrightText = "sampleCopyright",
+            LicenseConcluded = "sampleLicense1",
+            LicenseInfoInFiles = new List<string> { "sampleLicense2" },
+            Path = "./sample/path",
         };
 
         var generatorResult = generator.GenerateJsonDocument(fileInfo);
@@ -106,6 +176,37 @@ public class GeneratorTests
 
         Assert.IsFalse(generatedJsonString.Contains("null"));
         Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_FilesWithDifferingChecksums_CreatesDifferentSpdxFiles()
+    {
+        var fileInfo1 = new InternalSbomFileInfo
+        {
+            Checksum = GetSampleChecksums(),
+            FileCopyrightText = "sampleCopyright",
+            LicenseConcluded = "sampleLicense1",
+            LicenseInfoInFiles = new List<string> { "sampleLicense1" },
+            Path = "/sample/path",
+        };
+
+        var fileInfo2 = new InternalSbomFileInfo
+        {
+            Checksum = GetDifferentSampleChecksums(),
+            FileCopyrightText = "sampleCopyright",
+            LicenseConcluded = "sampleLicense1",
+            LicenseInfoInFiles = new List<string> { "sampleLicense1" },
+            Path = "/sample/path",
+        };
+
+        var generatorResultFile1 = generator.GenerateJsonDocument(fileInfo1);
+        var generatorResultFile2 = generator.GenerateJsonDocument(fileInfo2);
+
+        // Compare entity IDs which is the same as the SPDX ID for each file.
+        Assert.AreNotEqual(generatorResultFile1.ResultMetadata.EntityId, generatorResultFile2.ResultMetadata.EntityId);
+        Assert.IsTrue(generatorResultFile1.ResultMetadata.EntityId.Contains("sha1Value"));
+        Assert.IsTrue(generatorResultFile2.ResultMetadata.EntityId.Contains("DIFFsha1Value"));
+        Assert.AreNotEqual(generatorResultFile1, generatorResultFile2);
     }
 
     [TestMethod]
@@ -150,6 +251,66 @@ public class GeneratorTests
         Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
     }
 
+    [TestMethod]
+    public void GenerateJsonDocumentTest_PrereqFor_Relationship()
+    {
+        var relationshipInfo = new Relationship
+        {
+            SourceElementId = SourceElementIdValue,
+            TargetElementId = TargetElementIdValue,
+            RelationshipType = RelationshipType.PREREQUISITE_FOR,
+        };
+
+        var generatorResult = generator.GenerateJsonDocument(relationshipInfo);
+        var generatedJsonString = generatorResult.Document.RootElement.GetRawText();
+        generatedJsonString = NormalizeString(generatedJsonString);
+
+        var expectedJsonContentAsString = SbomRelationshipJsonStrings.RelationshipPrereqForJsonString;
+        expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
+
+        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_DescribedBy_Relationship()
+    {
+        var relationshipInfo = new Relationship
+        {
+            SourceElementId = SourceElementIdValue,
+            TargetElementId = TargetElementIdValue,
+            RelationshipType = RelationshipType.DESCRIBED_BY,
+        };
+
+        var generatorResult = generator.GenerateJsonDocument(relationshipInfo);
+        var generatedJsonString = generatorResult.Document.RootElement.GetRawText();
+        generatedJsonString = NormalizeString(generatedJsonString);
+
+        var expectedJsonContentAsString = SbomRelationshipJsonStrings.RelationshipDescribedByJsonString;
+        expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
+
+        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_PatchFor_Relationship()
+    {
+        var relationshipInfo = new Relationship
+        {
+            SourceElementId = SourceElementIdValue,
+            TargetElementId = TargetElementIdValue,
+            RelationshipType = RelationshipType.PATCH_FOR,
+        };
+
+        var generatorResult = generator.GenerateJsonDocument(relationshipInfo);
+        var generatedJsonString = generatorResult.Document.RootElement.GetRawText();
+        generatedJsonString = NormalizeString(generatedJsonString);
+
+        var expectedJsonContentAsString = SbomRelationshipJsonStrings.RelationshipPatchForJsonString;
+        expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
+
+        Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
+    }
+
     [TestCleanup]
     public void Cleanup()
     {
@@ -187,6 +348,22 @@ public class GeneratorTests
           {
             Algorithm = AlgorithmName.SHA256,
             ChecksumValue = "sha256Value"
+          },
+        };
+    }
+
+    private List<Checksum> GetDifferentSampleChecksums()
+    {
+        return new List<Checksum>
+        {
+          new Checksum
+          {
+            Algorithm = AlgorithmName.SHA1,
+            ChecksumValue = "DIFFsha1Value"
+          },  new Checksum
+          {
+            Algorithm = AlgorithmName.SHA256,
+            ChecksumValue = "DIFFsha256Value"
           },
         };
     }

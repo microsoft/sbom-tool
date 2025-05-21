@@ -87,7 +87,12 @@ public class ConfigSanitizerTests
             {
                 Source = SettingSource.Default,
                 Value = Serilog.Events.LogEventLevel.Information
-            }
+            },
+            Conformance = new ConfigurationSetting<ConformanceType>
+            {
+                Source = SettingSource.Default,
+                Value = ConformanceType.None,
+            },
         };
     }
 
@@ -109,6 +114,98 @@ public class ConfigSanitizerTests
         config.ManifestInfo.Value.Clear();
 
         Assert.ThrowsException<ValidationArgException>(() => configSanitizer.SanitizeConfig(config));
+    }
+
+    [TestMethod]
+    public void SetValueForConformanceWithValidManifestInfoForValidation_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX30ManifestInfo };
+        config.Conformance = new ConfigurationSetting<ConformanceType>
+        {
+            Source = SettingSource.CommandLine,
+            Value = ConformanceType.NTIAMin
+        };
+
+        configSanitizer.SanitizeConfig(config);
+        Assert.AreEqual(ConformanceType.NTIAMin, config.Conformance.Value);
+    }
+
+    [TestMethod]
+    public void SetNoneValueForConformanceWithValidManifestInfoForValidation_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX30ManifestInfo };
+        config.Conformance = new ConfigurationSetting<ConformanceType>
+        {
+            Source = SettingSource.CommandLine,
+            Value = ConformanceType.None
+        };
+
+        configSanitizer.SanitizeConfig(config);
+        Assert.AreEqual(ConformanceType.None, config.Conformance.Value);
+    }
+
+    [TestMethod]
+    public void SetValueForConformanceWithInvalidManifestInfoForValidation_Throws()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.Conformance = new ConfigurationSetting<ConformanceType>
+        {
+            Source = SettingSource.CommandLine,
+            Value = ConformanceType.NTIAMin
+        };
+
+        var exception = Assert.ThrowsException<ValidationArgException>(() => configSanitizer.SanitizeConfig(config));
+        Assert.IsTrue(exception.Message.Contains("Please use a supported combination."));
+    }
+
+    [TestMethod]
+    public void NoValueForConformanceWithValidManifestInfoForValidation_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX30ManifestInfo };
+        config.Conformance.Value = null;
+
+        configSanitizer.SanitizeConfig(config);
+        Assert.AreEqual(ConformanceType.None, config.Conformance.Value);
+    }
+
+    [TestMethod]
+    public void NoValueForConformanceWithInvalidManifestInfoForValidation_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX22ManifestInfo };
+        config.Conformance.Value = null;
+
+        configSanitizer.SanitizeConfig(config);
+        Assert.AreEqual(ConformanceType.None, config.Conformance.Value);
+    }
+
+    [TestMethod]
+    public void SetValueForManifestInfoForGeneration_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        configSanitizer.SanitizeConfig(config);
+
+        mockAssemblyConfig.Verify();
+    }
+
+    [TestMethod]
+    public void NoValueForManifestInfoForGeneration_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        config.ManifestInfo.Value.Clear();
+        configSanitizer.SanitizeConfig(config);
+
+        mockAssemblyConfig.Verify();
     }
 
     [TestMethod]
@@ -161,6 +258,23 @@ public class ConfigSanitizerTests
         Assert.AreEqual(Constants.TestManifestInfo, sanitizedConfig.ManifestInfo.Value.First());
 
         mockAssemblyConfig.VerifyGet(a => a.DefaultManifestInfoForValidationAction);
+    }
+
+    [TestMethod]
+    public void NoValueForManifestInfoForGeneration_SetsDefaultValue()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        config.ManifestInfo.Value.Clear();
+        mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForGenerationAction).Returns(Constants.TestManifestInfo);
+
+        var sanitizedConfig = configSanitizer.SanitizeConfig(config);
+
+        Assert.IsNotNull(sanitizedConfig.ManifestInfo.Value);
+        Assert.AreEqual(1, sanitizedConfig.ManifestInfo.Value.Count);
+        Assert.AreEqual(Constants.TestManifestInfo, sanitizedConfig.ManifestInfo.Value.First());
+
+        mockAssemblyConfig.VerifyGet(a => a.DefaultManifestInfoForGenerationAction);
     }
 
     [TestMethod]

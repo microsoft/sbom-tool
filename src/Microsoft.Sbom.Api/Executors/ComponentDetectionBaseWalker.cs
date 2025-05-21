@@ -90,8 +90,6 @@ public abstract class ComponentDetectionBaseWalker
                 {
                     cliArgumentBuilder.AddArg("DirectoryExclusionList", directory);
                 }
-
-                break;
             }
         }
 
@@ -143,7 +141,7 @@ public abstract class ComponentDetectionBaseWalker
                 {
                     licenseInformationRetrieved = true;
 
-                    List<string> apiResponses;
+                    IList<string> apiResponses;
 
                     apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi, configuration.LicenseInformationTimeoutInSeconds.Value);
 

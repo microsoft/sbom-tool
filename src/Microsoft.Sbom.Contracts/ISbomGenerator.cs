@@ -26,7 +26,7 @@ public interface ISbomGenerator
     /// <param name="manifestDirPath">Output directory. If null defaults to rootPath.</param>
     /// <returns>The result object that indicates if the generation succeeded, and a list of
     /// errors if it failed along with telemetry.</returns>
-    Task<SbomGenerationResult> GenerateSbomAsync(
+    public Task<SbomGenerationResult> GenerateSbomAsync(
         string rootPath,
         IEnumerable<SbomFile> files,
         IEnumerable<SbomPackage> packages,
@@ -48,7 +48,7 @@ public interface ISbomGenerator
     /// <param name="manifestDirPath">Output directory. If null defaults to rootPath joined to _manifest.</param>
     /// <returns>The result object that indicates if the generation succeeded, and a list of
     /// errors if it failed along with telemetry.</returns>
-    Task<SbomGenerationResult> GenerateSbomAsync(
+    public Task<SbomGenerationResult> GenerateSbomAsync(
         string rootPath,
         string componentPath,
         SbomMetadata metadata,
@@ -64,11 +64,11 @@ public interface ISbomGenerator
     /// </summary>
     /// <param name="specification">The SBOM specification.</param>
     /// <returns>A list of <see cref="HashAlgorithmName"/>.</returns>
-    IEnumerable<AlgorithmName> GetRequiredAlgorithms(SbomSpecification specification);
+    public IEnumerable<AlgorithmName> GetRequiredAlgorithms(SbomSpecification specification);
 
     /// <summary>
     /// Gets a list of <see cref="SbomSpecification"/> this SBOM generator supports.
     /// </summary>
     /// <returns>A list of <see cref="SbomSpecification"/>.</returns>
-    IEnumerable<SbomSpecification> GetSupportedSbomSpecifications();
+    public IEnumerable<SbomSpecification> GetSupportedSbomSpecifications();
 }

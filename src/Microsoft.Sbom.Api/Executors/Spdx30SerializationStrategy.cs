@@ -3,8 +3,6 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.Sbom.Api.Entities;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
 
@@ -15,81 +13,89 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
 {
-    public void AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    /// <summary>
+    /// inheritdoc
+    /// </summary>
+    /// <param name="elementsSupportingConfigs"></param>
+    /// <param name="config"></param>
+    /// <returns>Always returns false since we do not want to write a separate files array in SPDX 3.0.</returns>
+    public bool AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         elementsSupportingConfigs.Add(config);
+        return false;
     }
 
-    public void AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    /// <summary>
+    /// inheritdoc
+    /// </summary>
+    /// <param name="elementsSupportingConfigs"></param>
+    /// <param name="config"></param>
+    /// <returns>Always returns false since we do not want to write a separate packages array in SPDX 3.0.</returns>
+    public bool AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         elementsSupportingConfigs.Add(config);
+        return false;
     }
 
+    /// <summary>
+    /// inheritdoc
+    /// </summary>
+    /// <param name="elementsSupportingConfigs"></param>
+    /// <param name="config"></param>
+    /// <returns>Always returns true since relationships are generated regardless of the config.</returns>
     public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         return true;
     }
 
-    public void AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    /// <summary>
+    /// inheritdoc
+    /// </summary>
+    /// <param name="elementsSupportingConfigs"></param>
+    /// <param name="config"></param>
+    /// <returns>Always returns false since we do not want to write a separate external document references array in SPDX 3.0.</returns>
+    public bool AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         elementsSupportingConfigs.Add(config);
+        return false;
     }
 
-    public async Task<List<FileValidationResult>> WriteJsonObjectsToSbomAsync(
-        ISbomConfig sbomConfig,
-        string spdxManifestVersion,
-        IJsonArrayGenerator<FileArrayGenerator> fileArrayGenerator,
-        IJsonArrayGenerator<PackageArrayGenerator> packageArrayGenerator,
-        IJsonArrayGenerator<RelationshipsArrayGenerator> relationshipsArrayGenerator,
-        IJsonArrayGenerator<ExternalDocumentReferenceGenerator> externalDocumentReferenceGenerator)
+    public void AddMetadataToSbom(ISbomConfigProvider sbomConfigs, ISbomConfig config)
     {
-        fileArrayGenerator.SbomConfig = sbomConfig;
-        packageArrayGenerator.SbomConfig = sbomConfig;
-        relationshipsArrayGenerator.SbomConfig = sbomConfig;
-        externalDocumentReferenceGenerator.SbomConfig = sbomConfig;
-
-        fileArrayGenerator.SpdxManifestVersion = spdxManifestVersion;
-        packageArrayGenerator.SpdxManifestVersion = spdxManifestVersion;
-        relationshipsArrayGenerator.SpdxManifestVersion = spdxManifestVersion;
-        externalDocumentReferenceGenerator.SpdxManifestVersion = spdxManifestVersion;
-
-        // Holds the SPDX IDs of all the elements that have been written to the SBOM. Used for deduplication.
-        var elementsSpdxIdList = new HashSet<string>();
-
-        WriteContext(sbomConfig);
-
-        sbomConfig.JsonSerializer.StartJsonArray(Constants.SPDXGraphHeaderName);
-
-        // Files section
-        var generationResult = await fileArrayGenerator.GenerateAsync();
-        WriteElementsToSbom(generationResult, elementsSpdxIdList);
-
-        // Packages section
-        var packagesGenerationResult = await packageArrayGenerator.GenerateAsync();
-        generationResult.Errors.AddRange(packagesGenerationResult.Errors);
-        WriteElementsToSbom(packagesGenerationResult, elementsSpdxIdList);
-
-        // External Document Reference section
-        var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync();
-        generationResult.Errors.AddRange(externalDocumentReferenceGenerationResult.Errors);
-        WriteElementsToSbom(externalDocumentReferenceGenerationResult, elementsSpdxIdList);
-
-        // Relationships section
-        var relationshipGenerationResult = await relationshipsArrayGenerator.GenerateAsync();
-        generationResult.Errors.AddRange(relationshipGenerationResult.Errors);
-        WriteElementsToSbom(relationshipGenerationResult, elementsSpdxIdList);
-
-        sbomConfig.JsonSerializer.EndJsonArray();
-
-        return generationResult.Errors;
+        // Not supported for SPDX 3.0.
     }
 
-    private void WriteElementsToSbom(GenerationResult generationResult, HashSet<string> elementsSpdxIdList)
+    public void StartGraphArray(ISbomConfig sbomConfig)
     {
-        // Write the JSON objects to the SBOM
-        foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
+        if (sbomConfig.ManifestInfo.Name == Constants.SPDX30ManifestInfo.Name &&
+                sbomConfig.ManifestInfo.Version == Constants.SPDX30ManifestInfo.Version)
         {
-            var jsonDocuments = generationResult.SerializerToJsonDocuments[serializer];
+            WriteContext(sbomConfig);
+            sbomConfig.JsonSerializer.StartJsonArray(Constants.SPDXGraphHeaderName);
+        }
+    }
+
+    public void EndGraphArray(ISbomConfig sbomConfig)
+    {
+        if (sbomConfig.ManifestInfo.Name == Constants.SPDX30ManifestInfo.Name &&
+                sbomConfig.ManifestInfo.Version == Constants.SPDX30ManifestInfo.Version)
+        {
+            sbomConfig.JsonSerializer.EndJsonArray();
+        }
+    }
+
+    /// <summary>
+    /// Writes the JSON objects in SPDX 3.0 format.
+    /// </summary>
+    /// <param name="generatorResult"></param>
+    /// <param name="config"></param>
+    /// <param name="elementsSpdxIdList">Hashes for deduplication in SPDX 3.0.</param>
+    public void WriteJsonObjectsToManifest(GeneratorResult generatorResult, ISbomConfig config, ISet<string> elementsSpdxIdList)
+    {
+        var serializer = config.JsonSerializer;
+
+        if (generatorResult.SerializerToJsonDocuments.TryGetValue(serializer, out var jsonDocuments))
+        {
             foreach (var jsonDocument in jsonDocuments)
             {
                 if (jsonDocument.RootElement.ValueKind == JsonValueKind.Object)
@@ -115,13 +121,13 @@ internal class Spdx30SerializationStrategy : IJsonSerializationStrategy
         sbomConfig.JsonSerializer.EndJsonArray();
     }
 
-    private void WriteElement(IManifestToolJsonSerializer serializer, JsonElement element, HashSet<string> elementsSpdxIdList)
+    private void WriteElement(IManifestToolJsonSerializer serializer, JsonElement element, ISet<string> elementsSpdxIdList)
     {
         if (element.TryGetProperty("spdxId", out var spdxIdField))
         {
             var spdxId = spdxIdField.GetString();
 
-            if (elementsSpdxIdList.TryGetValue(spdxId, out _))
+            if (elementsSpdxIdList.Contains(spdxId))
             {
                 return;
             }

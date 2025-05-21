@@ -2,6 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Common.Config.Validators;
@@ -15,21 +18,38 @@ namespace Microsoft.Sbom.Api.Config.Validators;
 /// </summary>
 public class ManifestInfoValidator : ConfigValidator
 {
-    public ManifestInfoValidator(IAssemblyConfig assemblyConfig)
-        : base(typeof(ValidUriAttribute), assemblyConfig)
+    private readonly HashSet<ManifestInfo> supportedManifestInfos;
+
+    /// <summary>
+    /// Production constructor (satisfied by dependency injection)
+    /// </summary>
+    public ManifestInfoValidator(IAssemblyConfig assemblyConfig, ManifestGeneratorProvider manifestGeneratorProvider)
+        : this(assemblyConfig, GetAvailableManifestInfos(manifestGeneratorProvider))
     {
     }
 
-    public ManifestInfoValidator(Type supportedAttribute, IAssemblyConfig assemblyConfig)
-        : base(supportedAttribute, assemblyConfig)
+    /// <summary>
+    /// Test constructor
+    /// </summary>
+    public ManifestInfoValidator(IAssemblyConfig assemblyConfig, HashSet<ManifestInfo> supportedManifestInfos)
+    : base(typeof(ValidManifestInfoAttribute), assemblyConfig)
     {
+        this.supportedManifestInfos = supportedManifestInfos ?? throw new ArgumentNullException(nameof(supportedManifestInfos));
     }
 
     public override void ValidateInternal(string paramName, object paramValue, Attribute attribute)
     {
-        if (paramValue is not null && paramValue is ManifestInfo manifestInfo && !Constants.SupportedSpdxManifests.Contains(paramValue as ManifestInfo))
+        if (paramValue is not null && paramValue is List<ManifestInfo> listOfManifestInfos && !supportedManifestInfos.Any(listOfManifestInfos.Contains))
         {
-            throw new ValidationArgException($"The value of {paramName} must be a valid ManifestInfo. Supported SPDX versions include 2.2 and 3.0.");
+            var providedValues = string.Join(", ", listOfManifestInfos);
+            var validManifestInfos = string.Join(", ", supportedManifestInfos.Select(m => m.ToString()));
+            throw new ValidationArgException($"The value '{providedValues}' contains no values supported by the ManifestInfo (-mi) parameter. Please provide supported values. Supported values include: {validManifestInfos}. The values are case-insensitive.");
         }
+    }
+
+    private static HashSet<ManifestInfo> GetAvailableManifestInfos(ManifestGeneratorProvider manifestGeneratorProvider)
+    {
+        ArgumentNullException.ThrowIfNull(manifestGeneratorProvider, nameof(manifestGeneratorProvider));
+        return [.. manifestGeneratorProvider.GetSupportedManifestInfos()];
     }
 }

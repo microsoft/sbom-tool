@@ -19,6 +19,7 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Conformance;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parser;
@@ -76,7 +77,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                 using var stream = fileSystemUtils.OpenRead(sbomConfig.ManifestJsonFilePath);
                 var manifestInterface = manifestParserProvider.Get(sbomConfig.ManifestInfo);
                 var sbomParser = manifestInterface.CreateParser(stream);
-                sbomParser.SetComplianceStandard(configuration.ComplianceStandard?.Value);
+                sbomParser.EnforceConformance(configuration.Conformance?.Value);
 
                 // Validate signature
                 if (configuration.ValidateSignature != null && configuration.ValidateSignature.Value)
@@ -89,7 +90,10 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                     }
                     else
                     {
-                        if (!signValidator.Validate())
+                        Dictionary<string, string> additionalTelemetry = new();
+                        var signatureIsValid = signValidator.Validate(additionalTelemetry);
+                        RecordAdditionalTelemetry(additionalTelemetry);
+                        if (!signatureIsValid)
                         {
                             log.Error("Sign validation failed.");
                             validFailures = new List<FileValidationResult> { new FileValidationResult { ErrorType = ErrorType.ManifestFileSigningError } };
@@ -131,6 +135,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
                                 totalNumberOfPackages = elementsResult.PackagesCount;
 
                                 (successfullyValidatedFiles, fileValidationFailures) = await filesValidator.Validate(elementsResult.Files);
+                                AddInvalidConformanceElementsToFailures(fileValidationFailures, elementsResult.InvalidConformanceElements);
                                 ThrowOnInvalidInputFiles(fileValidationFailures);
                                 break;
                             default:
@@ -204,6 +209,14 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         }
     }
 
+    private void RecordAdditionalTelemetry(IDictionary<string, string> additionalTelemetry)
+    {
+        foreach (var pair in additionalTelemetry)
+        {
+            recorder.AddResult(pair.Key, pair.Value);
+        }
+    }
+
     private void LogIndividualFileResults(IEnumerable<FileValidationResult> validFailures)
     {
         if (validFailures == null || validFailures.Any(v => v.ErrorType == ErrorType.ManifestFileSigningError))
@@ -238,6 +251,15 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         Console.WriteLine(string.Empty);
         validFailures.Where(vf => vf.ErrorType == ErrorType.MissingFile).ForEach(f => Console.WriteLine(f.Path));
         Console.WriteLine("------------------------------------------------------------");
+
+        if (!NoOpConformance(configuration.Conformance))
+        {
+            Console.WriteLine($"Elements in the manifest that are non-compliant with {configuration.Conformance}:");
+            Console.WriteLine(string.Empty);
+            validFailures.Where(vf => vf.ErrorType == ErrorType.ConformanceError).ForEach(f => Console.WriteLine(f.Path));
+            Console.WriteLine("------------------------------------------------------------");
+        }
+
         Console.WriteLine("Unknown file failures:");
         Console.WriteLine(string.Empty);
         validFailures.Where(vf => vf.ErrorType == ErrorType.Other).ForEach(f => Console.WriteLine(f.Path));
@@ -276,6 +298,11 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         Console.WriteLine($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
         Console.WriteLine($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
         Console.WriteLine($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
+        if (!NoOpConformance(configuration.Conformance))
+        {
+            Console.WriteLine($"Elements in the manifest that are non-compliant with {configuration.Conformance} . . . " +
+            $"{validFailures.Count(v => v.ErrorType == ErrorType.ConformanceError)}");
+        }
 
         if (validFailures.Any(vf => vf.ErrorType == ErrorType.NoPackagesFound))
         {
@@ -292,5 +319,41 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         {
             throw new InvalidDataException($"Your manifest file is malformed. {invalidInputFiles.First().Path}");
         }
+    }
+
+    private void AddInvalidConformanceElementsToFailures(List<FileValidationResult> fileValidationFailures, HashSet<InvalidElementInfo> invalidElements)
+    {
+        if (invalidElements == null || !invalidElements.Any())
+        {
+            return;
+        }
+
+        switch (configuration.Conformance?.Value?.Name)
+        {
+            case "NTIAMin":
+                AddInvalidNTIAMinElementsToFailures(fileValidationFailures, invalidElements);
+                break;
+            case "None":
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void AddInvalidNTIAMinElementsToFailures(List<FileValidationResult> fileValidationFailures, HashSet<InvalidElementInfo> invalidElements)
+    {
+        foreach (var invalidElementInfo in invalidElements)
+        {
+            fileValidationFailures.Add(new FileValidationResult
+            {
+                Path = invalidElementInfo.ToString(),
+                ErrorType = ErrorType.ConformanceError,
+            });
+        }
+    }
+
+    private bool NoOpConformance(ConfigurationSetting<Contracts.Enums.ConformanceType> conformance)
+    {
+        return conformance?.Value?.Name == "None";
     }
 }

@@ -8,5 +8,5 @@ namespace Microsoft.Sbom.Api.Utils;
 
 public interface IFileTypeUtils
 {
-    List<FileType> GetFileTypesBy(string fileName);
+    public List<FileType> GetFileTypesBy(string fileName);
 }

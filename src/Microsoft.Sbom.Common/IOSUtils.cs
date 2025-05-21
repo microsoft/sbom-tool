@@ -8,13 +8,13 @@ namespace Microsoft.Sbom.Common;
 
 public interface IOSUtils
 {
-    OSPlatform GetCurrentOSPlatform();
+    public OSPlatform GetCurrentOSPlatform();
 
-    string GetEnvironmentVariable(string variableName);
+    public string GetEnvironmentVariable(string variableName);
 
-    StringComparer GetFileSystemStringComparer();
+    public StringComparer GetFileSystemStringComparer();
 
-    StringComparison GetFileSystemStringComparisonType();
+    public StringComparison GetFileSystemStringComparisonType();
 
-    bool IsCaseSensitiveOS();
+    public bool IsCaseSensitiveOS();
 }

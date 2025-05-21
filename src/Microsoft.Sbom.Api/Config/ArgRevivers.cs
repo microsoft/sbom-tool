@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using PowerArgs;
@@ -52,6 +53,23 @@ public class ArgRevivers
         catch (Exception e)
         {
             throw new ValidationArgException($"Unable to parse algorithm name: {value}. Error: {e.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Creates an <see cref="ConformanceType"/> object from a string value.
+    /// </summary>
+    [ArgReviver]
+    public static ConformanceType ReviveConformance(string _, string value)
+    {
+        try
+        {
+            return ConformanceType.FromString(value);
+        }
+        catch (ArgumentException)
+        {
+            var supportedConformances = string.Join(", ", Constants.SupportedConformances);
+            throw new ValidationArgException($"Unknown Conformance '{value}'. Options are {supportedConformances}.");
         }
     }
 }

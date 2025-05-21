@@ -47,8 +47,14 @@ public enum ErrorType
     JsonSerializationError = 5,
 
     /// <summary>
+    /// Element does not meet conformance.
+    /// </summary>
+    [EnumMember(Value = "Conformance validation error")]
+    ConformanceError = 6,
+
+    /// <summary>
     /// An unknown error occured.
     /// </summary>
     [EnumMember(Value = "Other")]
-    Other = 6,
+    Other = 255,
 }

@@ -25,12 +25,9 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
 
     private readonly IRecorder recorder;
 
-    public ISbomConfig SbomConfig { get; set; }
-
-    public string SpdxManifestVersion { get; set; }
-
     public ExternalDocumentReferenceGenerator(
         ILogger log,
+        ISbomConfigProvider sbomConfigs,
         IEnumerable<ISourcesProvider> sourcesProviders,
         IRecorder recorder)
     {
@@ -39,27 +36,33 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
     }
 
-    public async Task<GenerationResult> GenerateAsync()
+    public async Task<GeneratorResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.ExternalDocumentReferenceGeneration))
         {
             var totalErrors = new List<FileValidationResult>();
             var jsonDocumentCollection = new JsonDocumentCollection<IManifestToolJsonSerializer>();
+            var jsonArrayStartedForConfig = new Dictionary<ISbomConfig, bool>();
 
-            var sourcesProviders = this.sourcesProviders
+            var externalDocumentReferenceSourcesProvider = this.sourcesProviders
                 .Where(s => s.IsSupported(ProviderType.ExternalDocumentReference));
-            if (!sourcesProviders.Any())
+
+            if (!externalDocumentReferenceSourcesProvider.Any())
             {
                 log.Debug($"No source providers found for {ProviderType.ExternalDocumentReference}");
-                return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson);
+                return new GeneratorResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
             }
 
             // Write the start of the array, if supported.
             IList<ISbomConfig> externalRefArraySupportingConfigs = new List<ISbomConfig>();
-            var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(SpdxManifestVersion);
-            serializationStrategy.AddToExternalDocRefsSupportingConfig(externalRefArraySupportingConfigs, this.SbomConfig);
+            foreach (var config in targetConfigs)
+            {
+                var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
+                var jsonArrayStarted = serializationStrategy.AddToExternalDocRefsSupportingConfig(externalRefArraySupportingConfigs, config);
+                jsonArrayStartedForConfig[config] = jsonArrayStarted;
+            }
 
-            foreach (var sourcesProvider in sourcesProviders)
+            foreach (var sourcesProvider in externalDocumentReferenceSourcesProvider)
             {
                 var (jsonDocResults, errors) = sourcesProvider.Get(externalRefArraySupportingConfigs);
 
@@ -80,7 +83,16 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
                 }
             }
 
-            return new GenerationResult(totalErrors, jsonDocumentCollection.SerializersToJson, sourcesProviders);
+            var generatorResult = new GeneratorResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
+            foreach (var config in targetConfigs)
+            {
+                var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
+                serializationStrategy.WriteJsonObjectsToManifest(generatorResult, config, elementsSpdxIdList);
+            }
+
+            jsonDocumentCollection.DisposeAllJsonDocuments();
+
+            return generatorResult;
         }
     }
 }

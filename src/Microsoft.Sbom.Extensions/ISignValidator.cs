@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Sbom.Extensions;
@@ -18,6 +19,7 @@ public interface ISignValidator
     /// <summary>
     /// Validates the given manifest.json using the platform specific sign verification mechanism.
     /// </summary>
+    /// <param name="additionalTelemetry">Property bag where the validation can add additional telemetry info</param>
     /// <returns>true if valid, false otherwise.</returns>
-    bool Validate();
+    public bool Validate(IDictionary<string, string> additionalTelemetry);
 }

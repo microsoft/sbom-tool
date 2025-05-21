@@ -17,4 +17,14 @@ public static class Constants
     public const int MaxLicenseFetchTimeoutInSeconds = 86400;
 
     public const LogEventLevel DefaultLogLevel = LogEventLevel.Warning;
+
+    public const string DefaultManifestInfoName = "SPDX";
+    public const string DefaultManifestInfoVersion = "2.2";
+
+    public const string SPDXContextHeaderName = "@context";
+    public const string SPDXGraphHeaderName = "@graph";
+    public const string SPDXRefFile = "SPDXRef-File";
+    public const string SPDXRefPackage = "SPDXRef-Package";
+    public const string SPDXRefExternalDocument = "DocumentRef";
+    public const string NoAssertionValue = "NOASSERTION";
 }

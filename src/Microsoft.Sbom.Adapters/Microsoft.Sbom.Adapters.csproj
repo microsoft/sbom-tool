@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Sbom.Common\Microsoft.Sbom.Common.csproj" />
     <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
   </ItemGroup>
 

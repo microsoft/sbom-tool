@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
@@ -72,11 +73,16 @@ public class ConfigSanitizer
             configuration.NamespaceUriBase = GetNamespaceBaseUri(configuration, logger);
         }
 
+        // Set default ManifestInfo for generation in case user doesn't provide a value.
+        configuration.ManifestInfo = GetDefaultManifestInfoForGenerationAction(configuration);
+
         // Set default ManifestInfo for validation in case user doesn't provide a value.
         configuration.ManifestInfo = GetDefaultManifestInfoForValidationAction(configuration);
 
         // Set default package supplier if not provided in configuration.
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
+
+        configuration.Conformance = GetConformance(configuration);
 
         // Prevent null value for LicenseInformationTimeoutInSeconds.
         // Values of (0, Constants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
@@ -138,14 +144,35 @@ public class ConfigSanitizer
         }
 
         return new ConfigurationSetting<IList<ManifestInfo>>
+        {
+            Source = SettingSource.Default,
+            Value = new List<ManifestInfo>()
             {
-                Source = SettingSource.Default,
-                Value = new List<ManifestInfo>()
-                {
-                    defaultManifestInfo
-                }
-            };
+                defaultManifestInfo
+            }
+        };
+    }
+
+    private ConfigurationSetting<IList<ManifestInfo>> GetDefaultManifestInfoForGenerationAction(IConfiguration configuration)
+    {
+        if (configuration.ManifestToolAction != ManifestToolActions.Generate)
+        {
+            return configuration.ManifestInfo;
         }
+
+        if (configuration.ManifestInfo?.Value != null && configuration.ManifestInfo.Value.Count != 0)
+        {
+            return configuration.ManifestInfo;
+        }
+
+        // Use default ManifestInfo for generation if none is given.
+        var defaultManifestInfo = assemblyConfig.DefaultManifestInfoForGenerationAction;
+        return new ConfigurationSetting<IList<ManifestInfo>>
+        {
+            Source = SettingSource.Default,
+            Value = new List<ManifestInfo> { defaultManifestInfo }
+        };
+    }
 
     private void ValidateBuildDropPathConfiguration(IConfiguration configuration)
     {
@@ -199,6 +226,28 @@ public class ConfigSanitizer
             Source = oldValue.Source,
             Value = newValue
         };
+    }
+
+    private ConfigurationSetting<ConformanceType> GetConformance(IConfiguration configuration)
+    {
+        // Convert to Conformance enum value.
+        var oldValue = configuration.Conformance;
+        var newValue = ConformanceType.FromString(oldValue?.Value?.ToString());
+
+        // Conformance is only supported for ManifestInfo value of SPDX 3.0 and above.
+        if (!newValue.Equals(ConformanceType.None) && !configuration.ManifestInfo.Value.Any(mi => mi.Equals(Constants.SPDX30ManifestInfo)))
+        {
+            throw new ValidationArgException($"Conformance {newValue.Name} is not supported with ManifestInfo value of {configuration.ManifestInfo.Value.First()}." +
+                $"Please use a supported combination.");
+        }
+        else
+        {
+            return new ConfigurationSetting<ConformanceType>
+            {
+                Source = oldValue != null ? oldValue.Source : SettingSource.Default,
+                Value = newValue
+            };
+        }
     }
 
     private ConfigurationSetting<string> GetNamespaceBaseUri(IConfiguration configuration, ILogger logger)

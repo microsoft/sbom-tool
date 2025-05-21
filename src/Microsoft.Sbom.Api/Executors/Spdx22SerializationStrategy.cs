@@ -2,9 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Sbom.Api.Entities;
-using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Extensions;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -14,22 +11,28 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// </summary>
 internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
 {
-    public void AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetFilesArrayHeaderName(out var headerName))
         {
             config.JsonSerializer.StartJsonArray(headerName);
             elementsSupportingConfigs.Add(config);
+            return true;
         }
+
+        return false;
     }
 
-    public void AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetPackageArrayHeaderName(out var headerName))
         {
             config.JsonSerializer.StartJsonArray(headerName);
             elementsSupportingConfigs.Add(config);
+            return true;
         }
+
+        return false;
     }
 
     public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
@@ -41,108 +44,47 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
         }
 
         return false;
-        }
+    }
 
-    public void AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
+    public bool AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config)
     {
         if (config.MetadataBuilder.TryGetExternalRefArrayHeaderName(out var headerName))
         {
             config.JsonSerializer.StartJsonArray(headerName);
             elementsSupportingConfigs.Add(config);
+            return true;
         }
+
+        return false;
     }
 
-    public void AddHeadersToSbom(ISbomConfigProvider sbomConfigs)
+    public void AddMetadataToSbom(ISbomConfigProvider sbomConfigs, ISbomConfig config)
     {
-        sbomConfigs.ApplyToEachConfig(config =>
-            config.JsonSerializer.WriteJsonString(
-                config.MetadataBuilder.GetHeaderJsonString(sbomConfigs)));
+        config.JsonSerializer?.WriteJsonString(config.MetadataBuilder.GetHeaderJsonString(sbomConfigs));
     }
 
-    public async Task<List<FileValidationResult>> WriteJsonObjectsToSbomAsync(
-        ISbomConfig sbomConfig,
-        string spdxManifestVersion,
-        IJsonArrayGenerator<FileArrayGenerator> fileArrayGenerator,
-        IJsonArrayGenerator<PackageArrayGenerator> packageArrayGenerator,
-        IJsonArrayGenerator<RelationshipsArrayGenerator> relationshipsArrayGenerator,
-        IJsonArrayGenerator<ExternalDocumentReferenceGenerator> externalDocumentReferenceGenerator)
+    public void StartGraphArray(ISbomConfig sbomConfig)
     {
-        fileArrayGenerator.SbomConfig = sbomConfig;
-        packageArrayGenerator.SbomConfig = sbomConfig;
-        relationshipsArrayGenerator.SbomConfig = sbomConfig;
-        externalDocumentReferenceGenerator.SbomConfig = sbomConfig;
+        // Not supported for SPDX 2.2.
+    }
 
-        fileArrayGenerator.SpdxManifestVersion = spdxManifestVersion;
-        packageArrayGenerator.SpdxManifestVersion = spdxManifestVersion;
-        relationshipsArrayGenerator.SpdxManifestVersion = spdxManifestVersion;
-        externalDocumentReferenceGenerator.SpdxManifestVersion = spdxManifestVersion;
-
-        var errors = new List<FileValidationResult>();
-
-        await WriteFiles(fileArrayGenerator, errors);
-
-        await WritePackages(packageArrayGenerator, errors);
-
-        await WriteExternalDocRefs(externalDocumentReferenceGenerator, errors);
-
-        await WriteRelationships(relationshipsArrayGenerator, errors);
-
-        return errors;
+    public void EndGraphArray(ISbomConfig sbomConfig)
+    {
+        // Not supported for SPDX 2.2.
     }
 
     /// <summary>
-    /// Write to Files section
+    /// Writes the json objects to the manifest in SPDX 2.2 format.
     /// </summary>
-    /// <param name="fileArrayGenerator"></param>
-    /// <returns></returns>
-    private async Task WriteFiles(IJsonArrayGenerator<FileArrayGenerator> fileArrayGenerator, List<FileValidationResult> errors)
+    /// <param name="generatorResult"></param>
+    /// <param name="config"></param>
+    /// <param name="elementsSpdxIdList">Not used for deduplication. Only used for >= SPDX 3.0.</param>
+    public void WriteJsonObjectsToManifest(GeneratorResult generatorResult, ISbomConfig config, ISet<string> elementsSpdxIdList)
     {
-        var filesGenerationResult = await fileArrayGenerator.GenerateAsync();
-        errors.AddRange(filesGenerationResult.Errors);
-        WriteJsonObjectsFromGenerationResult(filesGenerationResult, fileArrayGenerator.SbomConfig);
-    }
+        var serializer = config.JsonSerializer;
 
-    /// <summary>
-    /// Write to Packages section
-    /// </summary>
-    /// <param name="packageArrayGenerator"></param>
-    /// <returns></returns>
-    private async Task WritePackages(IJsonArrayGenerator<PackageArrayGenerator> packageArrayGenerator, List<FileValidationResult> errors)
-    {
-        var packagesGenerationResult = await packageArrayGenerator.GenerateAsync();
-        errors.AddRange(packagesGenerationResult.Errors);
-        WriteJsonObjectsFromGenerationResult(packagesGenerationResult, packageArrayGenerator.SbomConfig);
-    }
-
-    /// <summary>
-    /// Write to External Document Reference section
-    /// </summary>
-    /// <param name="externalDocumentReferenceGenerator"></param>
-    /// <returns></returns>
-    private async Task WriteExternalDocRefs(IJsonArrayGenerator<ExternalDocumentReferenceGenerator> externalDocumentReferenceGenerator, List<FileValidationResult> errors)
-    {
-        var externalDocumentReferenceGenerationResult = await externalDocumentReferenceGenerator.GenerateAsync();
-        errors.AddRange(externalDocumentReferenceGenerationResult.Errors);
-        WriteJsonObjectsFromGenerationResult(externalDocumentReferenceGenerationResult, externalDocumentReferenceGenerator.SbomConfig, externalDocumentReferenceGenerationResult.SourcesProviders);
-    }
-
-    /// <summary>
-    /// Write to Relationships section
-    /// </summary>
-    /// <param name="relationshipsArrayGenerator"></param>
-    /// <returns></returns>
-    private async Task WriteRelationships(IJsonArrayGenerator<RelationshipsArrayGenerator> relationshipsArrayGenerator, List<FileValidationResult> errors)
-    {
-        var relationshipGenerationResult = await relationshipsArrayGenerator.GenerateAsync();
-        errors.AddRange(relationshipGenerationResult.Errors);
-        WriteJsonObjectsFromGenerationResult(relationshipGenerationResult, relationshipsArrayGenerator.SbomConfig);
-   }
-
-    private void WriteJsonObjectsFromGenerationResult(GenerationResult generationResult, ISbomConfig sbomConfig, IEnumerable<ISourcesProvider> sourcesProviders = null)
-    {
-        foreach (var serializer in generationResult.SerializerToJsonDocuments.Keys)
+        if (generatorResult.SerializerToJsonDocuments.TryGetValue(serializer, out var jsonDocuments))
         {
-            var jsonDocuments = generationResult.SerializerToJsonDocuments[serializer];
             if (jsonDocuments.Count > 0)
             {
                 foreach (var jsonDocument in jsonDocuments)
@@ -150,13 +92,12 @@ internal class Spdx22SerializationStrategy : IJsonSerializationStrategy
                     serializer.Write(jsonDocument);
                 }
             }
-
-            serializer.EndJsonArray();
         }
 
-        if (sourcesProviders is not null)
+        var jsonArrayStarted = generatorResult.JsonArrayStartedForConfig[config];
+        if (jsonArrayStarted)
         {
-            sbomConfig.JsonSerializer.EndJsonArray();
+            config.JsonSerializer.EndJsonArray();
         }
     }
 }

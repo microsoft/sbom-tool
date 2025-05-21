@@ -52,6 +52,6 @@ public enum ErrorType
     [EnumMember(Value = "Invalid input file")]
     InvalidInputFile = 13,
 
-    [EnumMember(Value = "Invalid manifest SPDX version")]
-    InvalidManifestVersion = 14
+    [EnumMember(Value = "Conformance error")]
+    ConformanceError = 14,
 }

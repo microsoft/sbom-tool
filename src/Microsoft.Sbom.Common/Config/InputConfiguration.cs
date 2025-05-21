@@ -60,6 +60,7 @@ public class InputConfiguration : IConfiguration
     public ConfigurationSetting<string> ConfigFilePath { get; set; }
 
     /// <inheritdoc cref="IConfiguration.ManifestInfo" />
+    [ValidManifestInfo]
     public ConfigurationSetting<IList<ManifestInfo>> ManifestInfo { get; set; }
 
     /// <inheritdoc cref="IConfiguration.HashAlgorithm" />
@@ -157,6 +158,6 @@ public class InputConfiguration : IConfiguration
     [Path]
     public ConfigurationSetting<string> SbomPath { get; set; }
 
-    /// <inheritdoc cref="IConfiguration.ComplianceStandard" />
-    public ConfigurationSetting<string> ComplianceStandard { get; set; }
+    /// <inheritdoc cref="IConfiguration.Conformance" />
+    public ConfigurationSetting<ConformanceType> Conformance { get; set; }
 }

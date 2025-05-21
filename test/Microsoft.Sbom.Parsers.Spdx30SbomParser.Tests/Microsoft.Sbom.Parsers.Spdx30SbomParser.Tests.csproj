@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\src\Microsoft.Sbom.Api\Microsoft.Sbom.Api.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Sbom.Parsers.Spdx30SbomParser\Microsoft.Sbom.Parsers.Spdx30SbomParser.csproj" />
     <ProjectReference Include="..\Microsoft.Sbom.Api.Tests\Microsoft.Sbom.Api.Tests.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.Sbom.Common\Microsoft.Sbom.Common.csproj" />
   </ItemGroup>
 
 </Project>

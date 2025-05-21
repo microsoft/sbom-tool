@@ -7,5 +7,5 @@ namespace Microsoft.Sbom.Api.Hashing;
 
 public interface IHashAlgorithmProvider
 {
-    AlgorithmName Get(string algorithmName);
+    public AlgorithmName Get(string algorithmName);
 }
