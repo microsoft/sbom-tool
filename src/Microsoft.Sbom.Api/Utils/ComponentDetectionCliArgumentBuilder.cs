@@ -29,10 +29,6 @@ public class ComponentDetectionCliArgumentBuilder
     private const string TimeoutArgsParamName = "Timeout";
     private const int TimeoutDefaultSeconds = 15 * 60; // 15 minutes
 
-    public ComponentDetectionCliArgumentBuilder()
-    {
-    }
-
     private void Validate()
     {
         if (string.IsNullOrEmpty(sourceDirectory))

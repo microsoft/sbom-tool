@@ -26,13 +26,13 @@ internal static class NpmComponentExtensions
         PackageUrl = npmComponent.PackageUrl?.ToString(),
         PackageName = npmComponent.Name,
         PackageVersion = npmComponent.Version,
-        Checksum = new[]
-        {
+        Checksum =
+        [
             new Checksum
             {
                 ChecksumValue = npmComponent.Hash,
-            },
-        },
+            }
+        ],
         Supplier = npmComponent.Author?.AsSupplier(),
         LicenseInfo = string.IsNullOrWhiteSpace(component.LicenseConcluded) ? null : new LicenseInfo
         {
