@@ -88,7 +88,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxFileAndRelationshipElements, this.serializerOptions)),
+            Document = JsonSerializer.SerializeToDocument(spdxFileAndRelationshipElements, this.serializerOptions),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = spdxFileAndRelationshipElements.First().SpdxId,
@@ -168,7 +168,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxElementsRelatedToPackageInfo, this.serializerOptions)),
+            Document = JsonSerializer.SerializeToDocument(spdxElementsRelatedToPackageInfo, this.serializerOptions),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = spdxPackage.SpdxId,
@@ -248,7 +248,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxElementsRelatedToRootPackage, this.serializerOptions)),
+            Document = JsonSerializer.SerializeToDocument(spdxElementsRelatedToRootPackage, this.serializerOptions),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = Constants.RootPackageIdValue,
@@ -301,7 +301,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxExternalMap, this.serializerOptions)),
+            Document = JsonSerializer.SerializeToDocument(spdxExternalMap, this.serializerOptions),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = spdxExternalMap.SpdxId
@@ -333,7 +333,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxRelationship, this.serializerOptions)),
+            Document = JsonSerializer.SerializeToDocument(spdxRelationship, this.serializerOptions),
         };
     }
 
@@ -435,7 +435,7 @@ public class Generator : IManifestGenerator
         var spdxElementsRelatedToDocCreation = new List<Element> { spdxOrganization, spdxTool, spdxCreationInfo, spdxDataLicense, spdxDocument, spdxRelationship };
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxElementsRelatedToDocCreation, this.serializerOptions)),
+            Document = JsonSerializer.SerializeToDocument(spdxElementsRelatedToDocCreation, this.serializerOptions),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = spdxDocument.SpdxId,
@@ -662,7 +662,7 @@ public class Generator : IManifestGenerator
                 .FirstOrDefault());
         }
 
-        var packageChecksumString = string.Join(string.Empty, sha1Checksums.OrderBy(s => s));
+        var packageChecksumString = string.Concat(sha1Checksums.OrderBy(s => s));
 #pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
         var sha1Hasher = SHA1.Create();
 #pragma warning restore CA5350

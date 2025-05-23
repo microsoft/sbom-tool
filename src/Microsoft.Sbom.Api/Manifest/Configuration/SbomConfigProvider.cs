@@ -158,14 +158,12 @@ public class SbomConfigProvider : ISbomConfigProvider
 
     public bool TryGetMetadata(MetadataKey key, out object value)
     {
-        if (MetadataDictionary.ContainsKey(key))
+        if (MetadataDictionary.TryGetValue(key, out value))
         {
             logger.Debug($"Found value for header {key} in internal metadata.");
-            value = MetadataDictionary[key];
             return true;
         }
 
-        value = null;
         return false;
     }
 
