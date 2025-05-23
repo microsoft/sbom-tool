@@ -45,7 +45,7 @@ public class LocalMetadataProvider : IMetadataProvider, IDefaultMetadataProvider
                 { MetadataKey.SbomToolName, ProductName },
 
                 // TODO get tool version from dll manifest.
-                { MetadataKey.SbomToolVersion, Version.Value }
+                { MetadataKey.SbomToolVersion, Version }
             };
 
             // Add the package name if available.
