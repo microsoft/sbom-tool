@@ -44,7 +44,6 @@ public class ConfigurationBuilderTestsBase
         };
 
         var hashAlgorithmProvider = new HashAlgorithmProvider(new IAlgorithmNames[] { new AlgorithmNames() });
-        hashAlgorithmProvider.Init();
 
         var configSanitizer = new ConfigSanitizer(hashAlgorithmProvider, fileSystemUtilsMock.Object, mockAssemblyConfig.Object);
         object Ctor(Type type)
