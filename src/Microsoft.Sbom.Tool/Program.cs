@@ -24,12 +24,12 @@ internal class Program
 
     private static readonly Lazy<string> NameValue = new Lazy<string>(() =>
     {
-        return typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product ?? "sbomtool";
+        return typeof(Program).Assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product ?? "sbomtool";
     });
 
     private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
     {
-        return typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
+        return typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
     });
 
     public static async Task Main(string[] args)

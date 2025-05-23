@@ -75,7 +75,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                         GetRelationships(
                             RelationshipType.DESCRIBES,
                             generationData.DocumentId,
-                            new string[] { generationData.RootPackageId }),
+                            [generationData.RootPackageId]),
                         sbomConfig.ManifestInfo),
 
                     // External reference relationship
