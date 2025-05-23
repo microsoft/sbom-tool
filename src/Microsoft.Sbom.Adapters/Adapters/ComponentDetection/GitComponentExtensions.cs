@@ -23,13 +23,13 @@ internal static class GitComponentExtensions
         PackageName = gitComponent.Id,
         PackageUrl = gitComponent.PackageUrl?.ToString(),
         PackageSource = gitComponent.RepositoryUrl?.ToString(),
-        Checksum = new[]
-        {
+        Checksum =
+        [
             new Checksum
             {
                 Algorithm = AlgorithmName.SHA1, ChecksumValue = gitComponent.CommitHash,
-            },
-        },
+            }
+        ],
         FilesAnalyzed = false,
         Type = "git-package",
     };

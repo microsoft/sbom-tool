@@ -41,7 +41,7 @@ public class ConfigurationCLITests
 
         var commandLineParams = config.ToComponentDetectorCommandLineParams(argBuilder);
 
-        Assert.AreEqual("--SourceDirectory X:/ --DetectorArgs Timeout=900 --defaultArg1 val1 --defaultArg2 val2 --DockerImagesToScan the_docker_image --arg1 val1 --arg2 val2", string.Join(" ", commandLineParams));
+        Assert.AreEqual("--SourceDirectory X:/ --DetectorArgs Timeout=900 --defaultArg1 val1 --defaultArg2 val2 --DockerImagesToScan the_docker_image --arg1 val1 --arg2 val2", string.Join(' ', commandLineParams));
     }
 
     [TestMethod]
@@ -56,6 +56,6 @@ public class ConfigurationCLITests
 
         var commandLineParams = config.ToComponentDetectorCommandLineParams(argBuilder);
 
-        Assert.AreEqual("--SourceDirectory X:/ --DetectorArgs Timeout=900 --defaultArg1 val1 --defaultArg2 val2", string.Join(" ", commandLineParams));
+        Assert.AreEqual("--SourceDirectory X:/ --DetectorArgs Timeout=900 --defaultArg1 val1 --defaultArg2 val2", string.Join(' ', commandLineParams));
     }
 }
