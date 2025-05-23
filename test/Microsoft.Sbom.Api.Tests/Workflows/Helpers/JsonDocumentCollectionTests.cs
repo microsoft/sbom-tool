@@ -24,16 +24,8 @@ public class JsonDocumentCollectionTests
 
         jsonDocumentCollection.DisposeAllJsonDocuments();
 
-        using var stream2 = new MemoryStream();
-        using var utfJsonWriter = new Utf8JsonWriter(stream2);
-        try
-        {
-            jsonDoc.WriteTo(utfJsonWriter);
-            Assert.Fail("Json document was not disposed by the serializer");
-        }
-        catch (Exception e)
-        {
-            Assert.AreEqual(typeof(ObjectDisposedException), e.GetType());
-        }
+        using var stream = new MemoryStream();
+        using var utfJsonWriter = new Utf8JsonWriter(stream);
+        Assert.ThrowsException<ObjectDisposedException>(() => jsonDoc.WriteTo(utfJsonWriter));
     }
 }
