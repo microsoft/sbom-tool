@@ -81,10 +81,10 @@ dotnet_analyzer_diagnostic.severity = warning
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/language-rules#net-style-rules
 [*.{cs,csx,cake,vb,vbx}]
 # "this." and "Me." qualifiers
-dotnet_style_qualification_for_field = true
-dotnet_style_qualification_for_property = true
-dotnet_style_qualification_for_method = true
-dotnet_style_qualification_for_event = true:warning
+dotnet_style_qualification_for_field = false
+dotnet_style_qualification_for_property = false
+dotnet_style_qualification_for_method = false
+dotnet_style_qualification_for_event = false
 # Language keywords instead of framework type names for type references
 dotnet_style_predefined_type_for_locals_parameters_members = true:warning
 dotnet_style_predefined_type_for_member_access = true:warning
