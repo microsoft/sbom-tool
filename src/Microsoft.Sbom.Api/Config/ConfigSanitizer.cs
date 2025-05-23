@@ -28,9 +28,7 @@ public class ConfigSanitizer
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IAssemblyConfig assemblyConfig;
 
-    internal static string SbomToolVersion => VersionValue.Value;
-
-    private static readonly Lazy<string> VersionValue = new Lazy<string>(() => typeof(SbomToolCmdRunner).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty);
+    internal static string SbomToolVersion { get; } = typeof(SbomToolCmdRunner).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
 
     public ConfigSanitizer(IHashAlgorithmProvider hashAlgorithmProvider, IFileSystemUtils fileSystemUtils, IAssemblyConfig assemblyConfig)
     {

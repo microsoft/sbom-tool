@@ -14,12 +14,7 @@ namespace Microsoft.Sbom.Api.Config;
 [ArgProductName("sbom-tool")]
 public class SbomToolCmdRunner
 {
-    internal static string SbomToolVersion => VersionValue.Value;
-
-    private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
-    {
-        return typeof(SbomToolCmdRunner).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
-    });
+    internal static string SbomToolVersion { get; } = typeof(SbomToolCmdRunner).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
 
     /// <summary>
     /// Gets or sets a value indicating whether displays help info.

@@ -20,10 +20,7 @@ public class LocalMetadataProvider : IMetadataProvider, IDefaultMetadataProvider
     private const string ProductName = "Microsoft.SBOMTool";
     private const string BuildEnvironmentNameValue = "local";
 
-    private static readonly Lazy<string> Version = new Lazy<string>(() =>
-    {
-        return typeof(LocalMetadataProvider).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
-    });
+    private static readonly string Version = typeof(LocalMetadataProvider).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
 
     public string BuildEnvironmentName => BuildEnvironmentNameValue;
 
