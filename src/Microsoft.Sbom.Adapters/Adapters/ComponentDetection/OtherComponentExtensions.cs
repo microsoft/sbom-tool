@@ -23,13 +23,13 @@ internal static class OtherComponentExtensions
         PackageName = otherComponent.Name,
         PackageVersion = otherComponent.Version,
         PackageSource = otherComponent.DownloadUrl?.ToString(),
-        Checksum = new[]
-        {
+        Checksum =
+        [
             new Checksum
             {
                 ChecksumValue = otherComponent.Hash,
-            },
-        },
+            }
+        ],
         FilesAnalyzed = false,
         Type = "other",
     };

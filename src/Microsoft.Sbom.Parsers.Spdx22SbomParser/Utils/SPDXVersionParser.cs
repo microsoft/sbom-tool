@@ -24,7 +24,7 @@ public static class SPDXVersionParser
 
         start += spdxTag.Length;
 
-        var end = spdxVersionString.IndexOf(".", start, StringComparison.InvariantCulture);
+        var end = spdxVersionString.IndexOf('.', start);
         if (!int.TryParse(spdxVersionString[start..end], out var majorVersion))
         {
             return false;
