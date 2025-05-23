@@ -18,7 +18,7 @@ public class SbomToolCmdRunner
 
     private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
     {
-        return typeof(SbomToolCmdRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
+        return typeof(SbomToolCmdRunner).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
     });
 
     /// <summary>

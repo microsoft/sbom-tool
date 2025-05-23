@@ -22,13 +22,13 @@ internal static class DockerImageComponentExtensions
         Id = dockerImageComponent.Id,
         PackageUrl = dockerImageComponent.PackageUrl?.ToString(),
         PackageName = dockerImageComponent.Name,
-        Checksum = new[]
-        {
+        Checksum =
+        [
             new Checksum
             {
                 Algorithm = AlgorithmName.SHA256, ChecksumValue = dockerImageComponent.Digest,
-            },
-        },
+            }
+        ],
         FilesAnalyzed = false,
         Type = "docker",
     };
