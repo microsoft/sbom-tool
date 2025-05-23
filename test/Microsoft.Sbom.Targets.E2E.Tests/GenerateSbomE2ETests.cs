@@ -137,13 +137,11 @@ public class GenerateSbomE2ETests
             .Replace(backSlash, forwardSlash);
 
         // Check the content of the NuGet package
-        using (var archive = ZipFile.Open(nupkgFile, ZipArchiveMode.Read))
-        {
-            Assert.IsTrue(archive.Entries.Count() > 0);
-            // Nuget's zip code expects forward slashes as path separators.
-            Assert.IsTrue(archive.Entries.All(entry => !entry.FullName.Contains(backSlash)));
-            Assert.AreEqual(isManifestPathGenerated, archive.Entries.Any(entry => entry.FullName.Equals(manifestRelativePath)));
-        }
+        using var archive = ZipFile.Open(nupkgFile, ZipArchiveMode.Read);
+        Assert.IsTrue(archive.Entries.Count() > 0);
+        // Nuget's zip code expects forward slashes as path separators.
+        Assert.IsTrue(archive.Entries.All(entry => !entry.FullName.Contains(backSlash)));
+        Assert.AreEqual(isManifestPathGenerated, archive.Entries.Any(entry => entry.FullName.Equals(manifestRelativePath)));
     }
 
     [TestMethod]

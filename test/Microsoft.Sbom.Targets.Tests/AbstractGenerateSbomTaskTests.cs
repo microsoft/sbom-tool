@@ -469,14 +469,12 @@ public abstract class AbstractGenerateSbomTaskTests
         Directory.CreateDirectory(Path.GetDirectoryName(ManifestPath));
         File.WriteAllText(ManifestPath, jsonContent);
         // Open a handle to the manifest file to simulate it being in use
-        using (var fileStream = File.Open(this.ManifestPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-        {
-            // Act
-            var result = task.Execute();
+        using var fileStream = File.Open(this.ManifestPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        // Act
+        var result = task.Execute();
 
-            // Assert
-            Assert.IsFalse(result);
-        }
+        // Assert
+        Assert.IsFalse(result);
     }
 
     private static void Xcopy(string sourceDir, string targetDir)

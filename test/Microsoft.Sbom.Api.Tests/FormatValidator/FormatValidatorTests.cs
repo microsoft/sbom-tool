@@ -18,23 +18,21 @@ public class FormatValidatorTests
     [TestMethod]
     public async Task FormatValidator_CanReadValidSbom()
     {
-        using (var sbomStream = CreateStream(FormatValidatorTestStrings.JsonSuitableForRedaction))
-        {
-            var sbom = new ValidatedSbom(sbomStream);
-            var rawspdx = await sbom.GetRawSPDXDocument();
-            var details = await sbom.GetValidationResults();
+        using var sbomStream = this.CreateStream(FormatValidatorTestStrings.JsonSuitableForRedaction);
+        var sbom = new ValidatedSbom(sbomStream);
+        var rawspdx = await sbom.GetRawSPDXDocument();
+        var details = await sbom.GetValidationResults();
 
-            Assert.AreEqual(FormatValidationStatus.Valid, details.Status);
-            Assert.AreEqual(0, details.Errors.Count);
-            Assert.IsNotNull(rawspdx);
-            Assert.AreEqual("SPDX-2.2", rawspdx.Version);
-            Assert.AreEqual("CC0-1.0", rawspdx.DataLicense);
-            Assert.AreEqual("sbom-tool 1.0.0", rawspdx.Name);
-            Assert.AreEqual("https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g", rawspdx.DocumentNamespace);
-            Assert.AreEqual("2024-05-08T15:58:25Z", rawspdx.CreationInfo.Created);
-            Assert.IsNotNull(rawspdx.CreationInfo.Creators);
-            Assert.IsNotNull(rawspdx.DocumentDescribes);
-        }
+        Assert.AreEqual(FormatValidationStatus.Valid, details.Status);
+        Assert.AreEqual(0, details.Errors.Count);
+        Assert.IsNotNull(rawspdx);
+        Assert.AreEqual("SPDX-2.2", rawspdx.Version);
+        Assert.AreEqual("CC0-1.0", rawspdx.DataLicense);
+        Assert.AreEqual("sbom-tool 1.0.0", rawspdx.Name);
+        Assert.AreEqual("https://microsoft.com/sbom-tool/test/sbom-tool/1.0.0/cuK7iCCPVEuSmgBfeFPc-g", rawspdx.DocumentNamespace);
+        Assert.AreEqual("2024-05-08T15:58:25Z", rawspdx.CreationInfo.Created);
+        Assert.IsNotNull(rawspdx.CreationInfo.Creators);
+        Assert.IsNotNull(rawspdx.DocumentDescribes);
     }
 
     [TestMethod]
@@ -47,19 +45,17 @@ public class FormatValidatorTests
     [DataRow(FormatValidatorTestStrings.JsonMissingSpdxCreationInfo, "creationInfo")]
     public async Task FormatValidator_FailsIfRequiredAttributeMissing(string json, string attribute)
     {
-        using (var sbomStream = CreateStream(json))
-        {
-            var sbom = new ValidatedSbom(sbomStream);
-            var rawspdx = await sbom.GetRawSPDXDocument();
-            var details = await sbom.GetValidationResults();
+        using var sbomStream = this.CreateStream(json);
+        var sbom = new ValidatedSbom(sbomStream);
+        var rawspdx = await sbom.GetRawSPDXDocument();
+        var details = await sbom.GetValidationResults();
 
-            Assert.AreEqual(FormatValidationStatus.NotValid, details.Status);
-            Assert.IsTrue(details.Errors.Count > 0);
+        Assert.AreEqual(FormatValidationStatus.NotValid, details.Status);
+        Assert.IsTrue(details.Errors.Count > 0);
 
-            // We want the error message to clearly signal the missing element.
-            Assert.IsTrue(ErrorContains(details.Errors, attribute));
-            Assert.IsTrue(ErrorContains(details.Errors, "missing required properties"));
-        }
+        // We want the error message to clearly signal the missing element.
+        Assert.IsTrue(this.ErrorContains(details.Errors, attribute));
+        Assert.IsTrue(this.ErrorContains(details.Errors, "missing required properties"));
     }
 
     [TestMethod]
@@ -68,18 +64,16 @@ public class FormatValidatorTests
         // In the real world this is an unlikely scenario; SPDX v3 is so different from v2 that an attempt
         // to deserialize using a v2 model will fail. So this is more likely to catch some scenario where
         // the document was 2.x but the version was improperly serialized.
-        using (var sbomStream = CreateStream(FormatValidatorTestStrings.JsonUnsupportedSpdxVersion))
-        {
-            var sbom = new ValidatedSbom(sbomStream);
-            var rawspdx = await sbom.GetRawSPDXDocument();
-            var details = await sbom.GetValidationResults();
+        using var sbomStream = this.CreateStream(FormatValidatorTestStrings.JsonUnsupportedSpdxVersion);
+        var sbom = new ValidatedSbom(sbomStream);
+        var rawspdx = await sbom.GetRawSPDXDocument();
+        var details = await sbom.GetValidationResults();
 
-            Assert.AreEqual(FormatValidationStatus.NotValid, details.Status);
-            Assert.IsTrue(details.Errors.Count > 0);
+        Assert.AreEqual(FormatValidationStatus.NotValid, details.Status);
+        Assert.IsTrue(details.Errors.Count > 0);
 
-            // We want the error message to clearly signal the erroring element.
-            Assert.IsTrue(ErrorContains(details.Errors, "SPDX-3.2 is not recognized"));
-        }
+        // We want the error message to clearly signal the erroring element.
+        Assert.IsTrue(this.ErrorContains(details.Errors, "SPDX-3.2 is not recognized"));
     }
 
     [TestMethod]
@@ -104,21 +98,19 @@ public class FormatValidatorTests
     [TestMethod]
     public async Task FormatValidator_CanDeserializeAllSpdx23Attributes()
     {
-        using (var sbomStream = CreateStream(SpdxExemplars.JsonSpdx23Exemplar))
-        {
-            var sbom = new ValidatedSbom(sbomStream);
-            var rawspdx = await sbom.GetRawSPDXDocument();
-            var details = await sbom.GetValidationResults();
+        using var sbomStream = this.CreateStream(SpdxExemplars.JsonSpdx23Exemplar);
+        var sbom = new ValidatedSbom(sbomStream);
+        var rawspdx = await sbom.GetRawSPDXDocument();
+        var details = await sbom.GetValidationResults();
 
-            Assert.AreEqual(FormatValidationStatus.Valid, details.Status);
-            Assert.AreEqual("SPDXRef-DOCUMENT", rawspdx.SPDXID);
-            Assert.AreEqual("SPDX-2.3", rawspdx.Version);
-            Assert.AreEqual("CC0-1.0", rawspdx.DataLicense);
-            Assert.AreEqual(5, rawspdx.ExtractedLicensingInfos.ToList().Count);
-            Assert.AreEqual(1, rawspdx.ExternalDocumentReferences.ToList().Count);
-            Assert.AreEqual(3, rawspdx.Annotations.ToList().Count);
-            Assert.AreEqual(1, rawspdx.Snippets.ToList().Count);
-        }
+        Assert.AreEqual(FormatValidationStatus.Valid, details.Status);
+        Assert.AreEqual("SPDXRef-DOCUMENT", rawspdx.SPDXID);
+        Assert.AreEqual("SPDX-2.3", rawspdx.Version);
+        Assert.AreEqual("CC0-1.0", rawspdx.DataLicense);
+        Assert.AreEqual(5, rawspdx.ExtractedLicensingInfos.ToList().Count);
+        Assert.AreEqual(1, rawspdx.ExternalDocumentReferences.ToList().Count);
+        Assert.AreEqual(3, rawspdx.Annotations.ToList().Count);
+        Assert.AreEqual(1, rawspdx.Snippets.ToList().Count);
     }
 
     [TestMethod]

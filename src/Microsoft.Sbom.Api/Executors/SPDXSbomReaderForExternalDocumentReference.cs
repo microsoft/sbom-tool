@@ -142,64 +142,62 @@ public class SPDXSbomReaderForExternalDocumentReference : ISbomReaderForExternal
         Checksum[] checksums;
         checksums = hashCodeGenerator.GenerateHashes(file, HashAlgorithmNames);
 
-        using (var openStream = fileSystemUtils.OpenRead(file))
-        using (var doc = JsonDocument.Parse(openStream))
+        using var openStream = this.fileSystemUtils.OpenRead(file);
+        using var doc = JsonDocument.Parse(openStream);
+        var root = doc.RootElement;
+        string nameValue;
+        string documentNamespaceValue;
+        string versionValue;
+        string rootElementValue;
+
+        if (root.TryGetProperty(Constants.SpdxVersionString, out var version))
         {
-            var root = doc.RootElement;
-            string nameValue;
-            string documentNamespaceValue;
-            string versionValue;
-            string rootElementValue;
-
-            if (root.TryGetProperty(Constants.SpdxVersionString, out var version))
-            {
-                versionValue = version.GetString();
-            }
-            else
-            {
-                throw new Exception($"{Constants.SpdxVersionString} property could not be parsed from referenced SPDX Document '{file}', this is not a valid SPDX-2.2 Document.");
-            }
-
-            if (!IsSPDXVersionSupported(versionValue))
-            {
-                throw new Exception($"The SPDX version ${versionValue} is not valid format in the referenced SBOM, we currently only support SPDX-2.2 SBOM format.");
-            }
-
-            if (root.TryGetProperty(Constants.NameString, out var name))
-            {
-                nameValue = name.GetString();
-            }
-            else
-            {
-                throw new Exception($"{Constants.NameString} property could not be parsed from referenced SPDX Document '{file}'.");
-            }
-
-            if (root.TryGetProperty(Constants.DocumentNamespaceString, out var documentNamespace))
-            {
-                documentNamespaceValue = documentNamespace.GetString();
-            }
-            else
-            {
-                throw new Exception($"{Constants.DocumentNamespaceString} property could not be parsed from referenced SPDX Document '{file}'.");
-            }
-
-            if (root.TryGetProperty(Constants.DocumentDescribesString, out var rootElements))
-            {
-                rootElementValue = rootElements.EnumerateArray().FirstOrDefault().ToString() ?? Constants.DefaultRootElement;
-            }
-            else
-            {
-                throw new Exception($"{Constants.DocumentDescribesString} property could not be parsed from referenced SPDX Document '{file}'.");
-            }
-
-            return new ExternalDocumentReferenceInfo
-            {
-                DocumentNamespace = documentNamespaceValue,
-                ExternalDocumentName = nameValue,
-                Checksum = checksums,
-                DescribedElementID = rootElementValue
-            };
+            versionValue = version.GetString();
         }
+        else
+        {
+            throw new Exception($"{Constants.SpdxVersionString} property could not be parsed from referenced SPDX Document '{file}', this is not a valid SPDX-2.2 Document.");
+        }
+
+        if (!this.IsSPDXVersionSupported(versionValue))
+        {
+            throw new Exception($"The SPDX version ${versionValue} is not valid format in the referenced SBOM, we currently only support SPDX-2.2 SBOM format.");
+        }
+
+        if (root.TryGetProperty(Constants.NameString, out var name))
+        {
+            nameValue = name.GetString();
+        }
+        else
+        {
+            throw new Exception($"{Constants.NameString} property could not be parsed from referenced SPDX Document '{file}'.");
+        }
+
+        if (root.TryGetProperty(Constants.DocumentNamespaceString, out var documentNamespace))
+        {
+            documentNamespaceValue = documentNamespace.GetString();
+        }
+        else
+        {
+            throw new Exception($"{Constants.DocumentNamespaceString} property could not be parsed from referenced SPDX Document '{file}'.");
+        }
+
+        if (root.TryGetProperty(Constants.DocumentDescribesString, out var rootElements))
+        {
+            rootElementValue = rootElements.EnumerateArray().FirstOrDefault().ToString() ?? Constants.DefaultRootElement;
+        }
+        else
+        {
+            throw new Exception($"{Constants.DocumentDescribesString} property could not be parsed from referenced SPDX Document '{file}'.");
+        }
+
+        return new ExternalDocumentReferenceInfo
+        {
+            DocumentNamespace = documentNamespaceValue,
+            ExternalDocumentName = nameValue,
+            Checksum = checksums,
+            DescribedElementID = rootElementValue
+        };
     }
 
     private bool IsSPDXVersionSupported(string version) => supportedSPDXVersions.Contains(version);

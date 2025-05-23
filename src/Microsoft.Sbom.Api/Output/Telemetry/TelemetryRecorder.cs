@@ -174,17 +174,15 @@ public class TelemetryRecorder : IRecorder
         // Write to file.
         if (!string.IsNullOrWhiteSpace(telemetryFilePath))
         {
-            using (var fileStream = FileSystemUtils.OpenWrite(telemetryFilePath))
+            using var fileStream = this.FileSystemUtils.OpenWrite(telemetryFilePath);
+            var options = new JsonSerializerOptions
             {
-                var options = new JsonSerializerOptions
+                Converters =
                 {
-                    Converters =
-                    {
-                            new JsonStringEnumConverter()
-                    }
-                };
-                await JsonSerializer.SerializeAsync(fileStream, telemetry, options);
-            }
+                    new JsonStringEnumConverter()
+                }
+            };
+            await JsonSerializer.SerializeAsync(fileStream, telemetry, options);
         }
     }
 
