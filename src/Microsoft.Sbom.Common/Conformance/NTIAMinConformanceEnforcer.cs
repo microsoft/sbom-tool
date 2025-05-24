@@ -118,8 +118,6 @@ public class NTIAMinConformanceEnforcer : IConformanceEnforcer
     {
         foreach (var package in packages)
         {
-            var packageSpdxId = package.SpdxId;
-
             var packageHasSha256Hash = package.VerifiedUsing?.
                 Any(packageVerificationCode => packageVerificationCode.Algorithm == HashAlgorithm.sha256);
 
