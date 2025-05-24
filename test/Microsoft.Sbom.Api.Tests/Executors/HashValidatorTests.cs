@@ -32,7 +32,7 @@ public class HashValidatorTests
         var hashDict = new Dictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
         foreach (var file in fileList)
         {
-            hashDict[file.ToLower()] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hash" } };
+            hashDict[file] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hash" } };
         }
 
         var configuration = new Mock<IConfiguration>();
@@ -71,7 +71,7 @@ public class HashValidatorTests
         var hashDict = new Dictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
         foreach (var file in fileList)
         {
-            hashDict[file.ToLower()] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hashInvalid" } };
+            hashDict[file] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hashInvalid" } };
         }
 
         var configuration = new Mock<IConfiguration>();
@@ -115,7 +115,7 @@ public class HashValidatorTests
         var hashDict = new Dictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
         foreach (var file in fileList)
         {
-            hashDict[file.ToLower()] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hash" } };
+            hashDict[file] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hash" } };
         }
 
         var configuration = new Mock<IConfiguration>();
