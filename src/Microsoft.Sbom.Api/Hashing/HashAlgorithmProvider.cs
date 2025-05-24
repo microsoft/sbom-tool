@@ -9,27 +9,27 @@ using Microsoft.Sbom.Contracts.Interfaces;
 
 namespace Microsoft.Sbom.Api.Hashing;
 
+using System.Linq;
+
 public class HashAlgorithmProvider : IHashAlgorithmProvider
 {
-    private readonly IEnumerable<IAlgorithmNames> algorithmNamesList;
     private readonly Dictionary<string, AlgorithmName> algorithmNameMap;
 
     public HashAlgorithmProvider(IEnumerable<IAlgorithmNames> algorithmNamesList)
     {
-        this.algorithmNamesList = algorithmNamesList ?? throw new ArgumentNullException(nameof(algorithmNamesList));
-        algorithmNameMap = new Dictionary<string, AlgorithmName>();
-        Init();
+        if (algorithmNamesList is null)
+        {
+            throw new ArgumentNullException(nameof(algorithmNamesList));
+        }
+
+        algorithmNameMap = algorithmNamesList
+            .SelectMany(_ => _.GetAlgorithmNames())
+            .ToDictionary(_ => _.Name, _ => _, StringComparer.InvariantCultureIgnoreCase);
     }
 
+    [Obsolete("No longer required. Functionality moved to constructor.")]
     public void Init()
     {
-        foreach (var algorithmNames in algorithmNamesList)
-        {
-            foreach (var algorithmName in algorithmNames.GetAlgorithmNames())
-            {
-                algorithmNameMap[algorithmName.Name.ToLowerInvariant()] = algorithmName;
-            }
-        }
     }
 
     public AlgorithmName Get(string algorithmName)
@@ -39,7 +39,7 @@ public class HashAlgorithmProvider : IHashAlgorithmProvider
             throw new ArgumentException($"'{nameof(algorithmName)}' cannot be null or whitespace.", nameof(algorithmName));
         }
 
-        if (algorithmNameMap.TryGetValue(algorithmName.ToLowerInvariant(), out var value))
+        if (algorithmNameMap.TryGetValue(algorithmName, out var value))
         {
             return value;
         }
