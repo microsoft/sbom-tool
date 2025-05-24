@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +14,7 @@ using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Manifest.Configuration;
+using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Recorder;
@@ -30,7 +33,6 @@ using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parser;
-using Microsoft.Sbom.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
@@ -56,17 +58,14 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
     private const string SPDX22ManifestInfoJsonFilePath = "/root/_manifest/spdx_2.2/manifest.spdx.json";
     private const string SPDX30ManifestInfoJsonFilePath = "/root/_manifest/spdx_3.0/manifest.spdx.json";
 
+    private static FileHashesDictionary BuildFileHash()
+        => new(new ConcurrentDictionary<string, FileHashes>(StringComparer.InvariantCultureIgnoreCase));
+
     [TestInitialize]
     public void Init()
     {
         signValidatorMock.Setup(s => s.Validate(It.IsAny<IDictionary<string, string>>())).Returns(true);
         signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
-    }
-
-    [TestCleanup]
-    public void Reset()
-    {
-        FileHashesDictionarySingleton.Reset();
     }
 
     [DataRow(SPDX22ManifestInfoJsonFilePath)]
@@ -164,7 +163,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         var osUtilsMock = new Mock<IOSUtils>(MockBehavior.Strict);
 
-        var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
+        var fileHash = BuildFileHash();
+        var hashValidator = new ConcurrentSha256HashValidator(fileHash);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
         var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
@@ -178,7 +178,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             hashValidator,
             enumeratorChannel,
             fileConverter,
-            FileHashesDictionarySingleton.Instance,
+            fileHash,
             spdxFileFilterer);
 
         var validator = new SbomParserBasedValidationWorkflow(
@@ -341,7 +341,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var osUtilsMock = new Mock<IOSUtils>(MockBehavior.Strict);
         osUtilsMock.Setup(x => x.IsCaseSensitiveOS()).Returns(false);
 
-        var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
+        var fileHash = BuildFileHash();
+        var hashValidator = new ConcurrentSha256HashValidator(fileHash);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
         var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
@@ -355,7 +356,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             hashValidator,
             enumeratorChannel,
             fileConverter,
-            FileHashesDictionarySingleton.Instance,
+            fileHash,
             spdxFileFilterer);
 
         var validator = new SbomParserBasedValidationWorkflow(
@@ -533,7 +534,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
         rootFileFilterMock.Init();
 
-        var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
+        var fileHash = BuildFileHash();
+        var hashValidator = new ConcurrentSha256HashValidator(fileHash);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
         var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
@@ -547,7 +549,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             hashValidator,
             enumeratorChannel,
             fileConverter,
-            FileHashesDictionarySingleton.Instance,
+            fileHash,
             spdxFileFilterer);
 
         return filesValidator;
