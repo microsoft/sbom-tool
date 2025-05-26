@@ -83,7 +83,6 @@ public class SbomFileParserTests : SbomParserTestsBase
     {
         using var stream = new MemoryStream();
         stream.Read(new byte[Constants.ReadBufferSize]);
-        var buffer = new byte[Constants.ReadBufferSize];
 
         Assert.ThrowsException<EndOfStreamException>(() => new SPDXParser(stream));
     }
