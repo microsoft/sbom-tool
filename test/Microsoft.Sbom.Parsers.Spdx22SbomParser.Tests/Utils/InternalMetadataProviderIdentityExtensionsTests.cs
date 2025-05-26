@@ -93,15 +93,7 @@ public class InternalMetadataProviderIdentityExtensionsTests
         mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.Build_BuildId, out buildId))
             .Returns(buildIdExist);
 
-        try
-        {
-            var actualPackageVersion = mdProviderMock.Object.GetPackageVersion();
-            Assert.Fail();
-        }
-        catch (Exception e)
-        {
-            Assert.AreEqual(typeof(ArgumentException), e.GetType());
-        }
+        Assert.ThrowsException<ArgumentException>(mdProviderMock.Object.GetPackageVersion);
     }
 
     [TestMethod]
@@ -151,15 +143,7 @@ public class InternalMetadataProviderIdentityExtensionsTests
         mdProviderMock.Setup(m => m.TryGetMetadata(MetadataKey.Build_BuildId, out buildDef))
             .Returns(buildDefExist);
 
-        try
-        {
-            var actualPackageVersion = mdProviderMock.Object.GetPackageName();
-            Assert.Fail();
-        }
-        catch (Exception e)
-        {
-            Assert.AreEqual(typeof(ArgumentException), e.GetType());
-        }
+        Assert.ThrowsException<ArgumentException>(mdProviderMock.Object.GetPackageName);
     }
 
     [TestMethod]

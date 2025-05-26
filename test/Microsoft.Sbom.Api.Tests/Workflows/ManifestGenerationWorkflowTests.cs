@@ -468,15 +468,6 @@ public class ManifestGenerationWorkflowTests
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
 
-        var generatorResult = new GeneratorResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, IList<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
-        var generatorResultWithFailure = new GeneratorResult(new List<FileValidationResult> { new FileValidationResult() }, new Dictionary<IManifestToolJsonSerializer, IList<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
-
-        var sourcesProviders = new List<ISourcesProvider>
-        {
-        };
-
-        var elementsSpdxIdList = new HashSet<string>();
-
         var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
 
         var packageArrayGeneratorMock = new Mock<IJsonArrayGenerator<PackageArrayGenerator>>();
