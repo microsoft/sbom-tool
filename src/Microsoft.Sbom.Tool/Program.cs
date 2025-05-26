@@ -33,10 +33,10 @@ internal class Program
                 {
                     services = result.ActionArgs switch
                     {
-                        ValidationArgs v => services.AddHostedService<ValidationService>(),
-                        GenerationArgs g => services.AddHostedService<GenerationService>(),
-                        RedactArgs r => services.AddHostedService<RedactService>(),
-                        FormatValidationArgs f => services.AddHostedService<FormatValidationService>(),
+                        ValidationArgs => services.AddHostedService<ValidationService>(),
+                        GenerationArgs => services.AddHostedService<GenerationService>(),
+                        RedactArgs => services.AddHostedService<RedactService>(),
+                        FormatValidationArgs => services.AddHostedService<FormatValidationService>(),
                         _ => services
                     };
 
