@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,20 +17,6 @@ namespace Microsoft.Sbom.Tool;
 
 internal class Program
 {
-    internal static string Name => NameValue.Value;
-
-    internal static string Version => VersionValue.Value;
-
-    private static readonly Lazy<string> NameValue = new Lazy<string>(() =>
-    {
-        return typeof(Program).Assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product ?? "sbomtool";
-    });
-
-    private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
-    {
-        return typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
-    });
-
     public static async Task Main(string[] args)
     {
         var result = await Args.InvokeActionAsync<SbomToolCmdRunner>(args);
