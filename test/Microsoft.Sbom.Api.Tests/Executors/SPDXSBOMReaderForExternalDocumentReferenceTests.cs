@@ -35,7 +35,20 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
     private const string JsonMissingNamespace = "{\"name\": \"docname\",\"spdxVersion\": \"SPDX-2.2\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
     private const string JsonMissingVersion = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\",\"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
     private const string JsonInvalidVersion = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-2.1\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
-    private const string JsonSpdx30Version = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-3.0\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
+    private const string JsonSpdx30Version = @"{
+        ""@context"": [""https://spdx.org/rdf/3.0.1/spdx-context.jsonld""],
+        ""@graph"": [{
+            ""type"": ""SpdxDocument"",
+            ""spdxId"": ""SPDXRef-DOCUMENT"",
+            ""name"": ""docname"",
+            ""namespaceMap"": {""sbom"": ""namespace""},
+            ""rootElement"": [""SPDXRef-RootPackage""],
+            ""creationInfo"": {
+                ""specVersion"": ""3.0""
+            }
+        }]
+    }";
+
     private const string JsonMissingDocumentDescribe = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-2.2\"}";
 
     public SPDXSBOMReaderForExternalDocumentReferenceTests()
