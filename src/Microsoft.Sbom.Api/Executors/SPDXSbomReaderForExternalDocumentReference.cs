@@ -34,7 +34,7 @@ public class SPDXSbomReaderForExternalDocumentReference : ISbomReaderForExternal
     private AlgorithmName[] hashAlgorithmNames;
     private readonly IFileSystemUtils fileSystemUtils;
 
-    private readonly IEnumerable<string> supportedSPDXVersions = new List<string> { "SPDX-2.2" };
+    private readonly IEnumerable<string> supportedSPDXVersions = new List<string> { "SPDX-2.2", "SPDX-3.0" };
 
     private AlgorithmName[] HashAlgorithmNames
     {

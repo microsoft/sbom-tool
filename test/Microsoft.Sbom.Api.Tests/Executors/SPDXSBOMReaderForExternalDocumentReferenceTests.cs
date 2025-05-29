@@ -35,6 +35,7 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
     private const string JsonMissingNamespace = "{\"name\": \"docname\",\"spdxVersion\": \"SPDX-2.2\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
     private const string JsonMissingVersion = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\",\"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
     private const string JsonInvalidVersion = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-2.1\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
+    private const string JsonSpdx30Version = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-3.0\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
     private const string JsonMissingDocumentDescribe = "{\"name\": \"docname\",\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-2.2\"}";
 
     public SPDXSBOMReaderForExternalDocumentReferenceTests()
@@ -190,5 +191,44 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
 
         Assert.IsTrue(await errors.ReadAllAsync().AnyAsync());
         Assert.IsFalse(await output.ReadAllAsync().AnyAsync());
+    }
+
+    [TestMethod]
+    public async Task When_ParseSBOMFile_WithValidSPDX30Json_ThenTestPass()
+    {
+        mockHashGenerator.Setup(h => h.GenerateHashes(It.IsAny<string>(), It.IsAny<AlgorithmName[]>()))
+            .Returns((string fileName, AlgorithmName[] algos) =>
+                algos.Select(a =>
+                        new Checksum
+                        {
+                            ChecksumValue = "hash",
+                            Algorithm = a
+                        })
+                    .ToArray());
+
+        fileSystemMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JsonSpdx30Version));
+
+        var sbomLocations = new List<string>
+        {
+            @"d:\directorya\directoryb\file1.spdx.json"
+        };
+
+        var sbomLocationChannel = Channel.CreateUnbounded<string>();
+        foreach (var sbomLocation in sbomLocations)
+        {
+            await sbomLocationChannel.Writer.WriteAsync(sbomLocation);
+        }
+
+        sbomLocationChannel.Writer.Complete();
+
+        var spdxSBOMReaderForExternalDocumentReference = new SPDXSbomReaderForExternalDocumentReference(mockHashGenerator.Object, mockLogger.Object, sbomConfigs, manifestGeneratorProvider, fileSystemMock.Object);
+        var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSbomFile(sbomLocationChannel);
+        await foreach (var externalDocumentReferenceInfo in output.ReadAllAsync())
+        {
+            Assert.AreEqual("namespace", externalDocumentReferenceInfo.DocumentNamespace);
+            Assert.AreEqual("docname", externalDocumentReferenceInfo.ExternalDocumentName);
+        }
+
+        Assert.IsFalse(await errors.ReadAllAsync().AnyAsync());
     }
 }
