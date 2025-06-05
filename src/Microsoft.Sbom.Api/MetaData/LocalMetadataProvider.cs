@@ -22,7 +22,7 @@ public class LocalMetadataProvider : IMetadataProvider, IDefaultMetadataProvider
 
     private static readonly Lazy<string> Version = new Lazy<string>(() =>
     {
-        return typeof(LocalMetadataProvider).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
+        return typeof(LocalMetadataProvider).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
     });
 
     public string BuildEnvironmentName => BuildEnvironmentNameValue;

@@ -109,7 +109,7 @@ public static class SPDXExtensions
         var relationshipToString = string.Empty;
         if (relationship?.To is not null && relationship.To.Any())
         {
-            relationshipToString = string.Join(string.Empty, relationship.To);
+            relationshipToString = string.Concat(relationship.To);
         }
 
         relationship.SpdxId = GenerateSpdxIdBasedOnElement(relationship, relationship.From + relationshipToString + relationship.RelationshipType.ToString());
