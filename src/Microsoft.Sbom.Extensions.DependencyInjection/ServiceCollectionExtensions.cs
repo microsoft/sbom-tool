@@ -113,6 +113,24 @@ public static class ServiceCollectionExtensions
             .AddTransient<ISbomReaderForExternalDocumentReference, SPDXSbomReaderForExternalDocumentReference>()
             .AddTransient<SbomMetadata>()
             .AddTransient<ILicenseInformationService, LicenseInformationService>()
+            .AddTransient<ISbomReferenceDescriber>(sp =>
+            {
+                var hashCodeGenerator = sp.GetRequiredService<IHashCodeGenerator>();
+                var fileSystemUtils = sp.GetRequiredService<IFileSystemUtils>();
+                var sbomConfigs = sp.GetRequiredService<ISbomConfigProvider>();
+                var manifestGeneratorProvider = sp.GetRequiredService<ManifestGeneratorProvider>();
+
+                var hashAlgorithmNames = sbomConfigs.GetManifestInfos()
+                    .Select(config => manifestGeneratorProvider
+                        .Get(config)
+                        .RequiredHashAlgorithms)
+                    .SelectMany(h => h)
+                    .Distinct()
+                    .ToArray();
+
+                return new Spdx22SbomReference(hashCodeGenerator, fileSystemUtils, hashAlgorithmNames);
+            })
+            .AddSingleton<ISbomReferenceFactory, SbomReferenceFactory>()
             .AddSingleton<IPackageDetailsFactory, PackageDetailsFactory>()
             .AddSingleton<IPackageManagerUtils<NugetUtils>, NugetUtils>()
             .AddSingleton<IPackageManagerUtils<MavenUtils>, MavenUtils>()
