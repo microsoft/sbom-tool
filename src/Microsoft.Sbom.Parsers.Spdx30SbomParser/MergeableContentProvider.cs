@@ -1,0 +1,116 @@
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.IO;
+using System.Linq;
+using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.JsonAsynchronousNodeKit;
+using Microsoft.Sbom.Parser;
+
+namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
+
+/// <summary>
+/// Implements <see cref="IMergeableContentProviderInternal"/> for SPDX 3.0 files.
+/// </summary>
+internal class MergeableContentProvider : IMergeableContentProviderInternal
+{
+    /// <summary>
+    /// Implements <see cref="IMergeableContentProvider.TryGetContent(string, out MergeableContent)"/>.
+    /// </summary>
+    public bool TryGetContent(string filePath, out MergeableContent mergeableContent)
+    {
+        if (filePath is null)
+        {
+            throw new ArgumentNullException(nameof(filePath));
+        }
+
+        if (!File.Exists(filePath))
+        {
+            mergeableContent = null;
+            return false;
+        }
+
+        using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        return TryGetContent(stream, out mergeableContent);
+    }
+
+    /// <summary>
+    /// Implements <see cref="IMergeableContentProviderInternal.TryGetContent(Stream, out MergeableContent)"/>.
+    /// </summary>
+    public bool TryGetContent(Stream stream, out MergeableContent mergeableContent)
+    {
+        if (stream == null)
+        {
+            throw new ArgumentNullException(nameof(stream));
+        }
+
+        try
+        {
+            return GetMergeableContent(stream, out mergeableContent);
+        }
+        catch (Exception)
+        {
+            mergeableContent = null;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Core engine for converting the stream to the content.
+    /// </summary>
+    private bool GetMergeableContent(Stream stream, out MergeableContent mergeableContent)
+    {
+        var parser = new SPDX30Parser(stream);
+        var packages = Enumerable.Empty<SbomPackage>();
+        var relationships = Enumerable.Empty<SbomRelationship>();
+
+        ParserStateResult result = null;
+        do
+        {
+            result = parser.Next();
+            if (result is not null)
+            {
+                switch (result)
+                {
+                    //case PackagesResult packagesResult:
+                    //    packages = ProcessPackages(packagesResult.Packages);
+                    //    break;
+                    default:
+                        break;
+                }
+            }
+        }
+        while (result is not null);
+
+        mergeableContent = new MergeableContent(packages, relationships);
+        return true;
+    }
+
+    ///// <summary>
+    ///// Process packages and return the collection of <see cref="SbomPackage"/> objects.
+    ///// </summary>
+    //private IEnumerable<SbomPackage> ProcessPackages(IEnumerable<SPDXPackage> spdxPackages)
+    //{
+    //    var packages = new List<SbomPackage>();
+    //    foreach (var spdxPackage in spdxPackages)
+    //    {
+    //        var sbomPackage = new SbomPackage
+    //        {
+    //            PackageName = spdxPackage.Name,
+    //            PackageVersion = spdxPackage.VersionInfo,
+    //            Id = spdxPackage.SpdxId,
+    //            FilesAnalyzed = spdxPackage.FilesAnalyzed,
+    //            LicenseInfo = new LicenseInfo
+    //            {
+    //                Concluded = spdxPackage.LicenseConcluded,
+    //                Declared = spdxPackage.LicenseDeclared
+    //            },
+    //        };
+    //        packages.Add(sbomPackage);
+    //    }
+
+    //    return packages;
+    //}
+}

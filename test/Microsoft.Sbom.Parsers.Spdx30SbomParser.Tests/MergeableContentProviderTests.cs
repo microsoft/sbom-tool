@@ -8,7 +8,7 @@ using System.Reflection;
 using Microsoft.Sbom.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests;
+namespace Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests;
 
 [TestClass]
 public class MergeableContentProviderTests
@@ -40,7 +40,7 @@ public class MergeableContentProviderTests
     public void TryGetContent_FilePath_FileIsValid_ReturnsExpectedContent()
     {
         var filePath = Path.GetFullPath(Path.Combine(
-            Assembly.GetExecutingAssembly().Location, "..", "..", "..", "..", "..", "..", "samples", "spdx_2.2", "manifest.spdx.json"));
+            Assembly.GetExecutingAssembly().Location, "..", "..", "..", "..", "..", "..", "samples", "manifest.spdx.json"));
         var result = provider.TryGetContent(filePath, out var mergeableContent);
 
         Assert.IsTrue(result);
