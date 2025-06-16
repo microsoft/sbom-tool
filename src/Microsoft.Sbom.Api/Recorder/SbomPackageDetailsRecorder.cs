@@ -61,6 +61,11 @@ public class SbomPackageDetailsRecorder : ISbomPackageDetailsRecorder
             throw new ArgumentException($"'{nameof(packageId)}' cannot be null or empty.", nameof(packageId));
         }
 
+        if (dependOn is null || dependOn.Count == 0)
+        {
+            return;
+        }
+
         foreach (var dep in dependOn)
         {
             packageDependOnIdPairs.Add(new KeyValuePair<string, string>(packageId, dep));
