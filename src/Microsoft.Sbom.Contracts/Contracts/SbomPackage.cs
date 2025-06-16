@@ -68,7 +68,7 @@ public class SbomPackage
     public string Type { get; set; }
 
     /// <summary>
-    /// Get or set unique identifier (Id) of DependOn package
+    /// Gets or sets unique identifiers (Id) of DependOn packages
     /// </summary>
     public List<string> DependOn { get; set; }
 }
