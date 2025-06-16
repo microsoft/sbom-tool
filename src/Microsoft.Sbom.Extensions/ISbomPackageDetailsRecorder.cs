@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions.Entities;
 
@@ -27,7 +28,7 @@ public interface ISbomPackageDetailsRecorder
     /// </summary>
     /// <param name="packageId"></param>
     /// <param name="dependOn"></param>
-    public void RecordPackageId(string packageId, string dependOn);
+    public void RecordPackageId(string packageId, List<string> dependOn);
 
     /// <summary>
     /// Record a externalDocumentReference Id that is included in this SBOM.

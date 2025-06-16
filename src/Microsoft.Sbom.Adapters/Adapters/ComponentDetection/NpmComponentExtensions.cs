@@ -40,7 +40,7 @@ internal static class NpmComponentExtensions
         },
         FilesAnalyzed = false,
         Type = "npm",
-        DependOn = component.AncestralReferrers?.FirstOrDefault()?.Id,
+        DependOn = component.AncestralReferrers?.Select(r => r.Id).ToList(),
     };
 
     /// <summary>

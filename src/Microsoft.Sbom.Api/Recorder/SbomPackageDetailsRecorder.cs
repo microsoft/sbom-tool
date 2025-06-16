@@ -54,14 +54,17 @@ public class SbomPackageDetailsRecorder : ISbomPackageDetailsRecorder
     /// </summary>
     /// <param name="packageId"></param>
     /// <param name="dependOn"></param>
-    public void RecordPackageId(string packageId, string dependOn)
+    public void RecordPackageId(string packageId, List<string> dependOn)
     {
         if (string.IsNullOrEmpty(packageId))
         {
             throw new ArgumentException($"'{nameof(packageId)}' cannot be null or empty.", nameof(packageId));
         }
 
-        packageDependOnIdPairs.Add(new KeyValuePair<string, string>(packageId, dependOn));
+        foreach (var dep in dependOn)
+        {
+            packageDependOnIdPairs.Add(new KeyValuePair<string, string>(packageId, dep));
+        }
     }
 
     /// <summary>

@@ -262,7 +262,7 @@ public class InterfaceConcretionTests
         public void RecordDocumentId(string documentId) => throw new NotImplementedException();
         public void RecordExternalDocumentReferenceIdAndRootElement(string externalDocumentReferenceId, string rootElement) => throw new NotImplementedException();
         public void RecordFileId(string fileId) => throw new NotImplementedException();
-        public void RecordPackageId(string packageId, string dependOn) => throw new NotImplementedException();
+        public void RecordPackageId(string packageId, List<string> dependOn) => throw new NotImplementedException();
         public void RecordRootPackageId(string rootPackageId) => throw new NotImplementedException();
         public void RecordSPDXFileId(string spdxFileId) => throw new NotImplementedException();
     }
