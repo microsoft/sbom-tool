@@ -152,7 +152,7 @@ public class RelationshipsArrayGeneratorTest
     }
 
     [TestMethod]
-    public async Task When_PackageGenerationDataExist_DependOnRelationshipsAreGenerated()
+    public async Task When_PackageGenerationDataExist_RootPackageDependOnRelationshipsAreGenerated()
     {
         recorder.RecordDocumentId(DocumentId);
         recorder.RecordRootPackageId(RootPackageId);
@@ -167,6 +167,29 @@ public class RelationshipsArrayGeneratorTest
         var dependsOnRelationship = dependsOnRelationships.First();
         Assert.AreEqual(PackageId1, dependsOnRelationship.TargetElementId);
         Assert.AreEqual(RootPackageId, dependsOnRelationship.SourceElementId);
+    }
+
+    [TestMethod]
+    public async Task When_PackageGenerationDataExist_MultipleDependOnRelationshipsAreGenerated()
+    {
+        recorder.RecordDocumentId(DocumentId);
+        recorder.RecordRootPackageId(RootPackageId);
+        recorder.RecordPackageId(PackageId1, RootPackageId);
+        recorder.RecordPackageId(PackageId1, "PackageId0");
+        var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+
+        Assert.AreEqual(0, results.Errors.Count);
+        Assert.AreEqual(3, relationships.Count);
+
+        var dependsOnRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.DEPENDS_ON);
+        Assert.AreEqual(2, dependsOnRelationships.Count());
+        var dependsOnRelationship1 = dependsOnRelationships.Last();
+        Assert.AreEqual(PackageId1, dependsOnRelationship1.TargetElementId);
+        Assert.AreEqual(RootPackageId, dependsOnRelationship1.SourceElementId);
+
+        var dependsOnRelationship2 = dependsOnRelationships.First();
+        Assert.AreEqual(PackageId1, dependsOnRelationship2.TargetElementId);
+        Assert.AreEqual("PackageId0", dependsOnRelationship2.SourceElementId);
     }
 
     [TestMethod]

@@ -30,6 +30,6 @@ internal static class PipComponentExtensions
         },
         FilesAnalyzed = false,
         Type = "python",
-        DependOn = component.AncestralReferrers?.FirstOrDefault()?.Id,
+        DependOn = component.AncestralReferrers?.Select(r => r.Id).ToList(),
     };
 }

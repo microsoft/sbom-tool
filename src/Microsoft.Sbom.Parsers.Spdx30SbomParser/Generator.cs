@@ -160,11 +160,10 @@ public class Generator : IManifestGenerator
 
         spdxElementsRelatedToPackageInfo.AddRange(spdxRelationshipAndLicensesFromSbomPackage);
 
-        var dependOnId = packageInfo.DependOn;
-        if (dependOnId is not null && dependOnId != Constants.RootPackageIdValue)
-        {
-            dependOnId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.DependOn);
-        }
+        var dependOnIds = (packageInfo.DependOn ?? Enumerable.Empty<string>())
+                            .Where(id => id is not null)
+                            .Select(id => id == Constants.RootPackageIdValue ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
+                            .ToList();
 
         return new GenerationResult
         {
@@ -172,7 +171,7 @@ public class Generator : IManifestGenerator
             ResultMetadata = new ResultMetadata
             {
                 EntityId = spdxPackage.SpdxId,
-                DependOn = dependOnId
+                DependOn = dependOnIds
             }
         };
     }
