@@ -67,9 +67,12 @@ public class PackageInfoJsonWriter
                 var generationResult =
                     manifestGeneratorProvider.Get(sbomConfig.ManifestInfo).GenerateJsonDocument(packageInfo);
 
-                foreach (var dependency in generationResult?.ResultMetadata?.DependOn)
+                if (generationResult?.ResultMetadata?.DependOn != null)
                 {
-                    sbomConfig.Recorder.RecordPackageId(generationResult?.ResultMetadata?.EntityId, dependency);
+                    foreach (var dependency in generationResult?.ResultMetadata?.DependOn)
+                    {
+                        sbomConfig.Recorder.RecordPackageId(generationResult?.ResultMetadata?.EntityId, dependency);
+                    }
                 }
 
                 await result.Writer.WriteAsync((generationResult?.Document, sbomConfig.JsonSerializer));
