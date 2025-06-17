@@ -66,7 +66,13 @@ public class PackageInfoJsonWriter
             {
                 var generationResult =
                     manifestGeneratorProvider.Get(sbomConfig.ManifestInfo).GenerateJsonDocument(packageInfo);
-                sbomConfig.Recorder.RecordPackageId(generationResult?.ResultMetadata?.EntityId, generationResult?.ResultMetadata?.DependOn);
+
+                // todo: move the inner for loop to here, that way you can pass in just a string instead of a list of strings for the second param
+                foreach (var dependency in generationResult?.ResultMetadata?.DependOn)
+                {
+                    sbomConfig.Recorder.RecordPackageId(generationResult?.ResultMetadata?.EntityId, dependency);
+                }
+
                 await result.Writer.WriteAsync((generationResult?.Document, sbomConfig.JsonSerializer));
             }
         }

@@ -156,7 +156,7 @@ public class RelationshipsArrayGeneratorTest
     {
         recorder.RecordDocumentId(DocumentId);
         recorder.RecordRootPackageId(RootPackageId);
-        recorder.RecordPackageId(PackageId1, new List<string> { RootPackageId });
+        recorder.RecordPackageId(PackageId1, RootPackageId);
         var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
         Assert.AreEqual(0, results.Errors.Count);
@@ -174,7 +174,8 @@ public class RelationshipsArrayGeneratorTest
     {
         recorder.RecordDocumentId(DocumentId);
         recorder.RecordRootPackageId(RootPackageId);
-        recorder.RecordPackageId(PackageId1, new List<string> { RootPackageId, "PackageId0" });
+        recorder.RecordPackageId(PackageId1, RootPackageId);
+        recorder.RecordPackageId(PackageId1, "PackageId0");
         var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
         Assert.AreEqual(0, results.Errors.Count);
