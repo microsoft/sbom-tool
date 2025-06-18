@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +14,7 @@ using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Manifest.Configuration;
+using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Recorder;
@@ -21,16 +24,15 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
-using Microsoft.Sbom.Common.ComplianceStandard;
-using Microsoft.Sbom.Common.ComplianceStandard.Enums;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Common.Conformance;
+using Microsoft.Sbom.Common.Conformance.Enums;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parser;
-using Microsoft.Sbom.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
@@ -56,17 +58,14 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
     private const string SPDX22ManifestInfoJsonFilePath = "/root/_manifest/spdx_2.2/manifest.spdx.json";
     private const string SPDX30ManifestInfoJsonFilePath = "/root/_manifest/spdx_3.0/manifest.spdx.json";
 
+    private static FileHashesDictionary BuildFileHash()
+        => new(new ConcurrentDictionary<string, FileHashes>(StringComparer.InvariantCultureIgnoreCase));
+
     [TestInitialize]
     public void Init()
     {
-        signValidatorMock.Setup(s => s.Validate()).Returns(true);
+        signValidatorMock.Setup(s => s.Validate(It.IsAny<IDictionary<string, string>>())).Returns(true);
         signValidationProviderMock.Setup(s => s.Get()).Returns(signValidatorMock.Object);
-    }
-
-    [TestCleanup]
-    public void Reset()
-    {
-        FileHashesDictionarySingleton.Reset();
     }
 
     [DataRow(SPDX22ManifestInfoJsonFilePath)]
@@ -164,7 +163,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         var osUtilsMock = new Mock<IOSUtils>(MockBehavior.Strict);
 
-        var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
+        var fileHash = BuildFileHash();
+        var hashValidator = new ConcurrentSha256HashValidator(fileHash);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
         var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
@@ -178,7 +178,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             hashValidator,
             enumeratorChannel,
             fileConverter,
-            FileHashesDictionarySingleton.Instance,
+            fileHash,
             spdxFileFilterer);
 
         var validator = new SbomParserBasedValidationWorkflow(
@@ -227,6 +227,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         signValidatorMock.VerifyAll();
         fileSystemMock.VerifyAll();
         osUtilsMock.VerifyAll();
+        recorder.Verify(r => r.AddResult(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [DataRow(SPDX22ManifestInfoJsonFilePath)]
@@ -234,6 +235,19 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
     [TestMethod]
     public async Task SbomParserBasedValidationWorkflowTests_ReturnsSuccessAndValidationFailures_Succeeds(string manifestInfoJsonFilePath)
     {
+        const string key1 = "key1";
+        const string key2 = "key2";
+        const string value1 = "value1";
+        const string value2 = "value2";
+
+        signValidatorMock
+            .Setup(s => s.Validate(It.IsAny<IDictionary<string, string>>()))
+            .Returns(true)
+            .Callback<IDictionary<string, string>>(additionalTelemetry =>
+            {
+                additionalTelemetry.Add(key1, value1);
+                additionalTelemetry.Add(key2, value2);
+            });
         var manifestInfo = manifestInfoJsonFilePath.Contains("2.2") ? Constants.SPDX22ManifestInfo : Constants.SPDX30ManifestInfo;
 
         var manifestParserProvider = new Mock<IManifestParserProvider>();
@@ -243,8 +257,10 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var sbomConfigs = new Mock<ISbomConfigProvider>();
         var fileSystemMock = GetDefaultFileSystemMock();
         var outputWriterMock = new Mock<IOutputWriter>();
-        var recorder = new Mock<IRecorder>();
         var hashCodeGeneratorMock = new Mock<IHashCodeGenerator>();
+        var recorder = new Mock<IRecorder>();
+        recorder.Setup(r => r.AddResult(key1, value1));
+        recorder.Setup(r => r.AddResult(key2, value2));
 
         sbomParser.SetupSequence(p => p.Next())
             .Returns(new FilesResult(new ParserStateResult(SPDXParser.FilesProperty, GetSpdxFiles(GetSpdxFilesDictionary()), ExplicitField: true, YieldReturn: true)))
@@ -325,7 +341,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var osUtilsMock = new Mock<IOSUtils>(MockBehavior.Strict);
         osUtilsMock.Setup(x => x.IsCaseSensitiveOS()).Returns(false);
 
-        var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
+        var fileHash = BuildFileHash();
+        var hashValidator = new ConcurrentSha256HashValidator(fileHash);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
         var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
@@ -339,7 +356,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             hashValidator,
             enumeratorChannel,
             fileConverter,
-            FileHashesDictionarySingleton.Instance,
+            fileHash,
             spdxFileFilterer);
 
         var validator = new SbomParserBasedValidationWorkflow(
@@ -391,10 +408,11 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         signValidatorMock.VerifyAll();
         fileSystemMock.VerifyAll();
         osUtilsMock.VerifyAll();
+        recorder.VerifyAll();
     }
 
     [TestMethod]
-    public async Task SbomParserBasedValidationWorkflowTests_ReturnsNTIAValidationFailures_Succeeds()
+    public async Task SbomParserBasedValidationWorkflowTests_ReturnsNTIAMinValidationFailures_Succeeds()
     {
         var manifestInfo = Constants.SPDX30ManifestInfo;
         var manifestParserProvider = new Mock<IManifestParserProvider>();
@@ -421,7 +439,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         {
             Value = new List<ManifestInfo>() { manifestInfo }
         });
-        configurationMock.SetupGet(c => c.ComplianceStandard).Returns(new ConfigurationSetting<ComplianceStandardType> { Value = ComplianceStandardType.NTIA });
+        configurationMock.SetupGet(c => c.Conformance).Returns(new ConfigurationSetting<ConformanceType> { Value = ConformanceType.NTIAMin });
 
         ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
@@ -443,10 +461,10 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         var elementsResult = new ElementsResult(new ParserStateResult(Constants.SPDXGraphHeaderName, null, ExplicitField: true, YieldReturn: true));
 
-        elementsResult.InvalidComplianceStandardElements.Add(new InvalidElementInfo(NTIAErrorType.MissingValidSpdxDocument));
-        elementsResult.InvalidComplianceStandardElements.Add(new InvalidElementInfo("spdxDocElementName", "spdxDocElementSpdxId", NTIAErrorType.AdditionalSpdxDocument));
-        elementsResult.InvalidComplianceStandardElements.Add(new InvalidElementInfo(NTIAErrorType.MissingValidCreationInfo));
-        elementsResult.InvalidComplianceStandardElements.Add(new InvalidElementInfo("elementName", "elementSpdxId", NTIAErrorType.InvalidNTIAElement));
+        elementsResult.InvalidConformanceElements.Add(new InvalidElementInfo(NTIAMinErrorType.MissingValidSpdxDocument));
+        elementsResult.InvalidConformanceElements.Add(new InvalidElementInfo("spdxDocElementName", "spdxDocElementSpdxId", NTIAMinErrorType.AdditionalSpdxDocument));
+        elementsResult.InvalidConformanceElements.Add(new InvalidElementInfo(NTIAMinErrorType.MissingValidCreationInfo));
+        elementsResult.InvalidConformanceElements.Add(new InvalidElementInfo("elementName", "elementSpdxId", NTIAMinErrorType.InvalidNTIAMinElement));
 
         sbomParser.SetupSequence(p => p.Next()).Returns(elementsResult);
 
@@ -477,7 +495,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
 
         var nodeValidationResults = validationResultGenerator.NodeValidationResults;
 
-        var ntiaErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.ComplianceStandardError).ToList();
+        var ntiaErrors = nodeValidationResults.Where(a => a.ErrorType == ErrorType.ConformanceError).ToList();
         Assert.AreEqual(4, ntiaErrors.Count);
 
         Assert.AreEqual("MissingValidSpdxDocument", ntiaErrors.First().Path);
@@ -485,7 +503,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         Assert.AreEqual("MissingValidCreationInfo", ntiaErrors[2].Path);
         Assert.AreEqual("SpdxId: elementSpdxId. Name: elementName", ntiaErrors[3].Path);
 
-        Assert.IsTrue(cc.CapturedStdOut.Contains("Elements in the manifest that are non-compliant with NTIA . . . 4"), "Number of invalid NTIA elements is incorrect in stdout");
+        Assert.IsTrue(cc.CapturedStdOut.Contains("Elements in the manifest that are non-compliant with NTIAMin . . . 4"), "Number of invalid NTIAMin elements is incorrect in stdout");
         Assert.IsTrue(cc.CapturedStdOut.Contains("MissingValidSpdxDocument"));
         Assert.IsTrue(cc.CapturedStdOut.Contains("AdditionalSpdxDocument. SpdxId: spdxDocElementSpdxId. Name: spdxDocElementName"));
         Assert.IsTrue(cc.CapturedStdOut.Contains("MissingValidCreationInfo"));
@@ -516,7 +534,8 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var rootFileFilterMock = new DownloadedRootPathFilter(configurationMock.Object, fileSystemMock.Object, mockLogger.Object);
         rootFileFilterMock.Init();
 
-        var hashValidator = new ConcurrentSha256HashValidator(FileHashesDictionarySingleton.Instance);
+        var fileHash = BuildFileHash();
+        var hashValidator = new ConcurrentSha256HashValidator(fileHash);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
         var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
@@ -530,7 +549,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
             hashValidator,
             enumeratorChannel,
             fileConverter,
-            FileHashesDictionarySingleton.Instance,
+            fileHash,
             spdxFileFilterer);
 
         return filesValidator;

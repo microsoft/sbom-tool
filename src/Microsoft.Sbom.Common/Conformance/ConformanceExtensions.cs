@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.Sbom.Common.ComplianceStandard;
+namespace Microsoft.Sbom.Common.Conformance;
 
-internal static class ComplianceExtensions
+internal static class ConformanceExtensions
 {
     /// <summary>
     /// Gets the common entity type that is used by the parser.

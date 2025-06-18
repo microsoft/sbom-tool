@@ -239,7 +239,7 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         var arguments = $"generate -ps IntegrationTests -pn IntegrationTests -pv 1.2.3 -m \"{testFolderPath}\" -b \"{testDropDirectory}\" -bc \"{GetSolutionFolderPath()}\" -mi randomName:randomVersion";
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
-        Assert.AreEqual("Please provide a valid value for the ManifestInfo (-mi) parameter. Supported values include: SPDX:2.2, SPDX:3.0. The values are case-insensitive.\r\n", stderr);
+        Assert.AreEqual("The value 'randomName:randomVersion' contains no values supported by the ManifestInfo (-mi) parameter. Please provide supported values. Supported values include: SPDX:2.2, SPDX:3.0. The values are case-insensitive.\r\n", stderr);
         Assert.AreNotEqual(0, exitCode.Value);
     }
 
@@ -258,12 +258,12 @@ public class IntegrationTests
         var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, "randomVersion");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
-        Assert.AreEqual("Please provide a valid value for the ManifestInfo (-mi) parameter. Supported values include: SPDX:2.2, SPDX:3.0. The values are case-insensitive.\r\n", stderr);
+        Assert.AreEqual("The value 'SPDX:randomVersion' contains no values supported by the ManifestInfo (-mi) parameter. Please provide supported values. Supported values include: SPDX:2.2, SPDX:3.0. The values are case-insensitive.\r\n", stderr);
         Assert.AreNotEqual(0, exitCode.Value);
     }
 
     [TestMethod]
-    public void E2E_Validate_WithBadComplianceStandard_SupportedManifestInfo_ReturnsNonZeroExitCode()
+    public void E2E_Validate_WithBadConformance_SupportedManifestInfo_ReturnsNonZeroExitCode()
     {
         if (!IsWindows)
         {
@@ -274,17 +274,17 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
-        // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", complianceStandardValue: "aeg12");
+        // Add the conformance
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceValue: "aeg12");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
-        Assert.IsTrue(stdout.Contains("Unknown Compliance Standard 'aeg12'. Options are NTIA"));
+        Assert.IsTrue(stdout.Contains("Unknown Conformance 'aeg12'. Options are NTIAMin"));
         Assert.AreEqual(1, exitCode.Value);
     }
 
     [TestMethod]
-    public void E2E_Validate_WithValidComplianceStandard_UnsupportedManifestInfo_ReturnsNonZeroExitCode()
+    public void E2E_Validate_WithValidConformance_UnsupportedManifestInfo_ReturnsNonZeroExitCode()
     {
         if (!IsWindows)
         {
@@ -295,8 +295,8 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "2.2");
 
-        // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "2.2", complianceStandardValue: "NTIA");
+        // Add the conformance
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "2.2", conformanceValue: "NTIAMin");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -305,7 +305,7 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void E2E_Validate_WithNoneComplianceStandard_SupportedManifestInfo_StdOutDoesNotHaveComplianceStandardErrors()
+    public void E2E_Validate_WithNoneConformance_SupportedManifestInfo_StdOutDoesNotHaveConformanceErrors()
     {
         if (!IsWindows)
         {
@@ -316,8 +316,8 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
-        // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", complianceStandardValue: "none");
+        // Add the conformance
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceValue: "none");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
@@ -326,7 +326,7 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void E2E_Validate_WithValidComplianceStandard_SupportedManifestInfo_StdOutContainsNTIAErrors()
+    public void E2E_Validate_WithValidConformance_SupportedManifestInfo_StdOutContainsNTIAMinErrors()
     {
         if (!IsWindows)
         {
@@ -337,13 +337,13 @@ public class IntegrationTests
         var testFolderPath = CreateTestFolder();
         GenerateManifestAndValidateSuccess(testFolderPath, manifestInfoSpdxVersion: "3.0");
 
-        // Add the compliance standard
-        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", complianceStandardValue: "NTIA");
+        // Add the conformance
+        var (arguments, outputFile) = GetValidateManifestArguments(testFolderPath, manifestInfoSpdxVersion: "3.0", conformanceValue: "NTIAMin");
 
         var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
 
         // Assert that the validation failures show up
-        Assert.IsFalse(stdout.Contains("Elements in the manifest that are non-compliant with NTIA . . . 0"));
+        Assert.IsFalse(stdout.Contains("Elements in the manifest that are non-compliant with NTIAMin . . . 0"));
         Assert.IsTrue(stdout.Contains("SPDXRef-Package"));
     }
 
@@ -515,13 +515,13 @@ public class IntegrationTests
         Assert.AreEqual(0, exitCode.Value, $"Unexpected failure. stdout = {stdout}");
     }
 
-    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoSpdxVersion = "2.2", string complianceStandardValue = "")
+    private (string arguments, string outputFile) GetValidateManifestArguments(string testFolderPath, string manifestInfoSpdxVersion = "2.2", string conformanceValue = "")
     {
         var outputFile = Path.Combine(TestContext.TestRunDirectory, TestContext.TestName, "validation.json");
         var manifestRootFolderName = Path.Combine(testFolderPath, ManifestRootFolderName);
         var manifestInfoArg = string.IsNullOrEmpty(manifestInfoSpdxVersion) ? string.Empty : $" -mi SPDX:{manifestInfoSpdxVersion}";
-        var complianceStandardArg = string.IsNullOrEmpty(complianceStandardValue) ? string.Empty : $" -cs {complianceStandardValue}";
-        var arguments = $"validate -m \"{manifestRootFolderName}\" -b \"{testDropDirectory}\" -o \"{outputFile}\" {manifestInfoArg} {complianceStandardArg}";
+        var conformanceArg = string.IsNullOrEmpty(conformanceValue) ? string.Empty : $" -cs {conformanceValue}";
+        var arguments = $"validate -m \"{manifestRootFolderName}\" -b \"{testDropDirectory}\" -o \"{outputFile}\" {manifestInfoArg} {conformanceArg}";
         return (arguments, outputFile);
     }
 

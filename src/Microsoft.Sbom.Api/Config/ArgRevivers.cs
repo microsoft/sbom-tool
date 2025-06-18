@@ -57,19 +57,19 @@ public class ArgRevivers
     }
 
     /// <summary>
-    /// Creates an <see cref="ComplianceStandardType"/> object from a string value.
+    /// Creates an <see cref="ConformanceType"/> object from a string value.
     /// </summary>
     [ArgReviver]
-    public static ComplianceStandardType ReviveComplianceStandard(string _, string value)
+    public static ConformanceType ReviveConformance(string _, string value)
     {
         try
         {
-            return ComplianceStandardType.FromString(value);
+            return ConformanceType.FromString(value);
         }
         catch (ArgumentException)
         {
-            var supportedComplianceStandards = string.Join(", ", Constants.SupportedComplianceStandards);
-            throw new ValidationArgException($"Unknown Compliance Standard '{value}'. Options are {supportedComplianceStandards}.");
+            var supportedConformances = string.Join(", ", Constants.SupportedConformances);
+            throw new ValidationArgException($"Unknown Conformance '{value}'. Options are {supportedConformances}.");
         }
     }
 }

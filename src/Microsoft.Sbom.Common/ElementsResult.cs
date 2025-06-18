@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using Microsoft.Sbom.Common.ComplianceStandard;
+using Microsoft.Sbom.Common.Conformance;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 
@@ -18,7 +18,7 @@ public record ElementsResult : ParserStateResult
         this.Packages = new List<Package>();
         this.SpdxDocuments = new List<SpdxDocument>();
         this.CreationInfos = new List<CreationInfo>();
-        this.InvalidComplianceStandardElements = new HashSet<InvalidElementInfo>();
+        this.InvalidConformanceElements = new HashSet<InvalidElementInfo>();
         this.ElementsSpdxIdList = new HashSet<string>();
 
         this.FilesCount = 0;
@@ -38,9 +38,9 @@ public record ElementsResult : ParserStateResult
     public List<CreationInfo> CreationInfos { get; set; }
 
     /// <summary>
-    /// Invalid elements that don't comply with the given compliance standard.
+    /// Invalid elements that don't comply with the given conformance.
     /// </summary>
-    public HashSet<InvalidElementInfo> InvalidComplianceStandardElements { get; set; }
+    public HashSet<InvalidElementInfo> InvalidConformanceElements { get; set; }
 
     /// <summary>
     /// SPDX ID's of elements used for deduplication when parsing an SBOM.

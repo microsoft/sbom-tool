@@ -25,12 +25,12 @@ public class ManifestFolderFilter : IFilter<ManifestFolderFilter>
 
     public bool IsValid(string filePath)
     {
-        var manifestFolderPath = new FileInfo(configuration.ManifestDirPath.Value).FullName;
-
         if (string.IsNullOrEmpty(filePath))
         {
             return false;
         }
+
+        var manifestFolderPath = new FileInfo(configuration.ManifestDirPath.Value).FullName;
 
         var normalizedPath = new FileInfo(filePath).FullName;
 

@@ -120,7 +120,23 @@ public static class SbomFileJsonStrings
               ""SPDXRef-Element-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969""
             ],
             ""creationInfo"": ""_:creationinfo"",
-            ""spdxId"": ""SPDXRef-Relationship-222E099165617B282F2B424519FC133796AA0189D0238FD121CCF3B0340D4301"",
+            ""spdxId"": ""SPDXRef-Relationship-409BEAA4D9456378E2E96E4EBC047C6477A1FEFEFE37943E61DFBEC103247718"",
+            ""type"": ""Relationship""
+          },
+          {
+            ""creationInfo"": ""_:creationinfo"",
+            ""name"": ""NOASSERTION"",
+            ""spdxId"": ""SPDXRef-Element-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969"",
+            ""type"": ""Element""
+          },
+          {
+            ""from"": ""SPDXRef-File-.-sample-path-sha1Value"",
+            ""relationshipType"": ""HAS_DECLARED_LICENSE"",
+            ""to"": [
+              ""SPDXRef-Element-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969""
+            ],
+            ""creationInfo"": ""_:creationinfo"",
+            ""spdxId"": ""SPDXRef-Relationship-00736708C7FE91009D51BF522C9C797626D02764C64A2753D0EF405DC39A6466"",
             ""type"": ""Relationship""
           }
     ]";

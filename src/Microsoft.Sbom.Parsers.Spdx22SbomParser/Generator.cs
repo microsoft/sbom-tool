@@ -47,7 +47,7 @@ public class Generator : IManifestGenerator
         var spdxFileElement = ConvertSbomFileToSpdxFile(fileInfo);
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxFileElement)),
+            Document = JsonSerializer.SerializeToDocument(spdxFileElement),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = spdxFileElement.SPDXId
@@ -159,19 +159,18 @@ public class Generator : IManifestGenerator
         var packageId = spdxPackage.AddSpdxId(packageInfo);
         spdxPackage.AddPackageUrls(packageInfo);
 
-        var dependOnId = packageInfo.DependOn;
-        if (dependOnId is not null && dependOnId != Constants.RootPackageIdValue)
-        {
-            dependOnId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.DependOn);
-        }
+        var dependOnIds = (packageInfo.DependOn ?? Enumerable.Empty<string>())
+                            .Where(id => id is not null)
+                            .Select(id => id == Constants.RootPackageIdValue ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
+                            .ToList();
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxPackage)),
+            Document = JsonSerializer.SerializeToDocument(spdxPackage),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = packageId,
-                DependOn = dependOnId
+                DependOn = dependOnIds,
             }
         };
     }
@@ -212,7 +211,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxPackage)),
+            Document = JsonSerializer.SerializeToDocument(spdxPackage),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = Constants.RootPackageIdValue,
@@ -243,7 +242,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxRelationship)),
+            Document = JsonSerializer.SerializeToDocument(spdxRelationship),
         };
     }
 
@@ -306,7 +305,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(externalDocumentReferenceElement)),
+            Document = JsonSerializer.SerializeToDocument(externalDocumentReferenceElement),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = externalDocumentReferenceId
@@ -338,7 +337,7 @@ public class Generator : IManifestGenerator
                 .FirstOrDefault());
         }
 
-        var packageChecksumString = string.Join(string.Empty, sha1Checksums.OrderBy(s => s));
+        var packageChecksumString = string.Concat(sha1Checksums.OrderBy(s => s));
 #pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
         var sha1Hasher = SHA1.Create();
 #pragma warning restore CA5350

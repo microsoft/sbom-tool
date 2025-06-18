@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using AutoMapper;
 using Microsoft.Sbom.Api.Config.Validators;
 using Microsoft.Sbom.Api.Hashing;
@@ -10,6 +11,7 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config.Validators;
 using Microsoft.Sbom.Contracts.Entities;
 using Microsoft.Sbom.Contracts.Interfaces;
+using Microsoft.Sbom.Extensions.Entities;
 using Moq;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
@@ -38,7 +40,7 @@ public class ConfigurationBuilderTestsBase
             new DirectoryExistsValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object),
             new DirectoryPathIsWritableValidator(fileSystemUtilsMock.Object, mockAssemblyConfig.Object),
             new UriValidator(mockAssemblyConfig.Object),
-            new ManifestInfoValidator(mockAssemblyConfig.Object)
+            new ManifestInfoValidator(mockAssemblyConfig.Object, new HashSet<ManifestInfo> { Constants.SPDX22ManifestInfo }) // We only need 1 for testing
         };
 
         var hashAlgorithmProvider = new HashAlgorithmProvider(new IAlgorithmNames[] { new AlgorithmNames() });

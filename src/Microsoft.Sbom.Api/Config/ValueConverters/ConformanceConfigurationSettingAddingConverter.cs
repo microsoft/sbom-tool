@@ -8,28 +8,28 @@ using Microsoft.Sbom.Contracts.Enums;
 namespace Microsoft.Sbom.Api.Config.ValueConverters;
 
 /// <summary>
-/// Converts a ComplianceStandard member to a ConfigurationSetting decorated string member.
+/// Converts a Conformance member to a ConfigurationSetting decorated string member.
 /// </summary>
-internal class ComplianceStandardConfigurationSettingAddingConverter : IValueConverter<ComplianceStandardType?, ConfigurationSetting<ComplianceStandardType>>
+internal class ConformanceConfigurationSettingAddingConverter : IValueConverter<ConformanceType?, ConfigurationSetting<ConformanceType>>
 {
     private SettingSource settingSource;
 
-    public ComplianceStandardConfigurationSettingAddingConverter(SettingSource settingSource)
+    public ConformanceConfigurationSettingAddingConverter(SettingSource settingSource)
     {
         this.settingSource = settingSource;
     }
 
-    public ConfigurationSetting<ComplianceStandardType> Convert(ComplianceStandardType? sourceMember, ResolutionContext context)
+    public ConfigurationSetting<ConformanceType> Convert(ConformanceType? sourceMember, ResolutionContext context)
     {
         if (sourceMember == null)
         {
             settingSource = SettingSource.Default;
         }
 
-        return new ConfigurationSetting<ComplianceStandardType>
+        return new ConfigurationSetting<ConformanceType>
         {
             Source = settingSource,
-            Value = sourceMember ?? ComplianceStandardType.None
+            Value = sourceMember ?? ConformanceType.None
         };
     }
 }

@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts;
@@ -42,7 +44,6 @@ using Moq;
 using Newtonsoft.Json.Linq;
 using Checksum = Microsoft.Sbom.Contracts.Checksum;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
-using GenerationResult = Microsoft.Sbom.Api.Workflows.Helpers.GenerationResult;
 using Generator30 = Microsoft.Sbom.Parsers.Spdx30SbomParser.Generator;
 using IComponentDetector = Microsoft.Sbom.Api.Utils.IComponentDetector;
 using ILogger = Serilog.ILogger;
@@ -343,12 +344,13 @@ public class ManifestGenerationWorkflowTests
 
         var packageArrayGenerator = new PackageArrayGenerator(mockLogger.Object, sourcesProvider, recorderMock.Object, sbomConfigs);
 
-        var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sourcesProvider, recorderMock.Object);
+        var externalDocumentReferenceGenerator = new ExternalDocumentReferenceGenerator(mockLogger.Object, sbomConfigs, sourcesProvider, recorderMock.Object);
 
-        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>(), false);
+        var elementsSpdxIdList = new HashSet<string>();
+        var generatorResult = new GeneratorResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, IList<JsonDocument>>(), new Dictionary<ISbomConfig, bool>());
         relationshipArrayGenerator
-            .Setup(r => r.GenerateAsync())
-            .ReturnsAsync(generationResult);
+            .Setup(r => r.GenerateAsync(It.IsAny<IList<ISbomConfig>>(), It.IsAny<HashSet<string>>()))
+            .ReturnsAsync(generatorResult);
 
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,
@@ -401,10 +403,14 @@ public class ManifestGenerationWorkflowTests
             Assert.AreEqual(1, noAssertionElements.Count);
 
             var organizationElements = elements.Where(element => element["type"].ToString() == "Organization").ToList();
-            Assert.AreEqual(3, organizationElements.Count);
+            Assert.AreEqual(2, organizationElements.Count);
 
-            var organizationElement = elements.Where(element => element["spdxId"].ToString() == "SPDXRef-Organization-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969").ToList();
-            Assert.AreEqual(1, organizationElement.Count);
+            var organizationElementWithSupplierName = organizationElements.Where(element => element["name"].ToString() == "Organization: testPackageSupplier").ToList();
+            Assert.AreEqual(1, organizationElementWithSupplierName.Count);
+
+            var organizationElementWithNoAssertion = organizationElements.Where(element => element["name"].ToString() == "NOASSERTION").ToList();
+            Assert.AreEqual(1, organizationElementWithNoAssertion.Count);
+            Assert.AreEqual("SPDXRef-Organization-8560FC6692684D8DF52223FF78E30B9630A1CF5A6FA371AAE24FCA896AE20969", organizationElementWithNoAssertion.First()["spdxId"]);
         }
 
         configurationMock.VerifyAll();
@@ -449,7 +455,7 @@ public class ManifestGenerationWorkflowTests
         using var manifestStream = new MemoryStream();
 
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
-        var sbomConfig = new SbomConfig(fileSystemMock.Object)
+        ISbomConfig sbomConfig = new SbomConfig(fileSystemMock.Object)
         {
             ManifestInfo = Constants.TestManifestInfo,
             ManifestJsonDirPath = "/root/_manifest",
@@ -462,23 +468,62 @@ public class ManifestGenerationWorkflowTests
         fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
 
-        var generationResult = new GenerationResult(new List<FileValidationResult>(), new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>(), false);
-        var generationResultWithFailure = new GenerationResult(new List<FileValidationResult> { new FileValidationResult() }, new Dictionary<IManifestToolJsonSerializer, List<System.Text.Json.JsonDocument>>(), false);
-
         var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>();
-        fileArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResultWithFailure);
 
         var packageArrayGeneratorMock = new Mock<IJsonArrayGenerator<PackageArrayGenerator>>();
-        packageArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
 
         var relationshipsArrayGeneratorMock = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>();
-        relationshipsArrayGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
 
         var externalDocumentReferenceGeneratorMock = new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>();
-        externalDocumentReferenceGeneratorMock.Setup(f => f.GenerateAsync()).ReturnsAsync(generationResult);
 
         var sbomConfigsMock = new Mock<ISbomConfigProvider>();
-        sbomConfigsMock.Setup(f => f.Get(It.IsAny<ManifestInfo>())).Returns(sbomConfig);
+        sbomConfigsMock.Setup(f => f.TryGet(It.IsAny<ManifestInfo>(), out sbomConfig)).Returns(true);
+
+        var workflow = new SbomGenerationWorkflow(
+            configurationMock.Object,
+            fileSystemMock.Object,
+            mockLogger.Object,
+            fileArrayGeneratorMock.Object,
+            packageArrayGeneratorMock.Object,
+            relationshipsArrayGeneratorMock.Object,
+            externalDocumentReferenceGeneratorMock.Object,
+            sbomConfigsMock.Object,
+            mockOSUtils.Object,
+            recorderMock.Object);
+
+        var result = await workflow.RunAsync();
+
+        Assert.IsFalse(result);
+        fileArrayGeneratorMock.VerifyAll();
+        packageArrayGeneratorMock.VerifyAll();
+        relationshipsArrayGeneratorMock.VerifyAll();
+        externalDocumentReferenceGeneratorMock.VerifyAll();
+        fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Once);
+    }
+
+    [TestMethod]
+    public async Task ManifestGenerationWorkflowTests_UnknownManifestType_LogsExpectedWarning()
+    {
+        ISbomConfig sbomConfig = null;
+
+        IList<ManifestInfo> testManifestInfo = new List<ManifestInfo> { Constants.TestManifestInfo };
+        configurationMock.SetupGet(x => x.ManifestDirPath).Returns(new ConfigurationSetting<string> { Value = PathUtils.Join("/root", "_manifest"), Source = SettingSource.CommandLine });
+        configurationMock.SetupGet(x => x.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>> { Value = testManifestInfo, Source = SettingSource.CommandLine });
+        fileSystemMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+        fileSystemMock.Setup(f => f.DeleteDir(It.IsAny<string>(), true)).Verifiable();
+        fileSystemMock.Setup(f => f.IsDirectoryEmpty(It.IsAny<string>())).Returns(true);
+
+        var warnings = new List<string>();
+        mockLogger.Setup(l => l.Warning(It.IsAny<string>()))
+            .Callback<string>(warnings.Add);
+
+        var fileArrayGeneratorMock = new Mock<IJsonArrayGenerator<FileArrayGenerator>>(MockBehavior.Strict);
+        var packageArrayGeneratorMock = new Mock<IJsonArrayGenerator<PackageArrayGenerator>>(MockBehavior.Strict);
+        var relationshipsArrayGeneratorMock = new Mock<IJsonArrayGenerator<RelationshipsArrayGenerator>>(MockBehavior.Strict);
+        var externalDocumentReferenceGeneratorMock = new Mock<IJsonArrayGenerator<ExternalDocumentReferenceGenerator>>(MockBehavior.Strict);
+
+        var sbomConfigsMock = new Mock<ISbomConfigProvider>(MockBehavior.Strict);
+        sbomConfigsMock.Setup(f => f.TryGet(It.IsAny<ManifestInfo>(), out sbomConfig)).Returns(false);
 
         var workflow = new SbomGenerationWorkflow(
             configurationMock.Object,
@@ -498,7 +543,11 @@ public class ManifestGenerationWorkflowTests
         packageArrayGeneratorMock.VerifyAll();
         relationshipsArrayGeneratorMock.VerifyAll();
         externalDocumentReferenceGeneratorMock.VerifyAll();
+        sbomConfigsMock.VerifyAll();
         fileSystemMock.Verify(f => f.DeleteDir(It.IsAny<string>(), true), Times.Once);
         Assert.IsFalse(result);
+
+        Assert.AreEqual(1, warnings.Count);
+        Assert.IsTrue(warnings[0].StartsWith("Ignoring unregistered manifest type: ", StringComparison.Ordinal), $"Unexpected warning: {warnings[0]}");
     }
 }

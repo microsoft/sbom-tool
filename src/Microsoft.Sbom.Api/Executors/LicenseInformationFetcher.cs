@@ -28,7 +28,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
         this.licenseInformationService = licenseInformationService ?? throw new ArgumentNullException(nameof(licenseInformationService));
     }
 
-    public List<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents)
+    public IList<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents)
     {
         var listOfComponentsForApi = new List<string>();
 
@@ -82,13 +82,13 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
         return listOfComponentsForApi;
     }
 
-    public async Task<List<string>> FetchLicenseInformationAsync(List<string> listOfComponentsForApi, int timeoutInSeconds)
+    public async Task<IList<string>> FetchLicenseInformationAsync(IList<string> listOfComponentsForApi, int timeoutInSeconds)
     {
         return await licenseInformationService.FetchLicenseInformationFromAPI(listOfComponentsForApi, timeoutInSeconds);
     }
 
     // Will attempt to extract license information from a clearlyDefined batch API response. Will always return a dictionary which may be empty depending on the response.
-    public Dictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent)
+    public IDictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent)
     {
         var extractedLicenses = new Dictionary<string, string>();
 
@@ -142,7 +142,7 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
         return licenseDictionary;
     }
 
-    public void AppendLicensesToDictionary(Dictionary<string, string> partialLicenseDictionary)
+    public void AppendLicensesToDictionary(IDictionary<string, string> partialLicenseDictionary)
     {
         foreach (var kvp in partialLicenseDictionary)
         {
@@ -152,14 +152,12 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
 
     public string GetFromLicenseDictionary(string key)
     {
-        var value = string.Empty;
-
-        if (licenseDictionary.ContainsKey(key))
+        if (licenseDictionary.TryGetValue(key, out var value))
         {
-            licenseDictionary.TryGetValue(key, out value);
+            return value;
         }
 
-        return value;
+        return string.Empty;
     }
 
     private bool IsUndefinedLicense(string license)

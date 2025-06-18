@@ -106,18 +106,18 @@ public static class SPDXExtensions
 
     public static void AddSpdxId(this Common.Spdx30Entities.Relationship relationship)
     {
-        var relationsipToString = string.Empty;
-        if (relationship?.To != null && relationship.To.Any())
+        var relationshipToString = string.Empty;
+        if (relationship?.To is not null && relationship.To.Any())
         {
-            relationsipToString = string.Join(string.Empty, relationship.To);
+            relationshipToString = string.Concat(relationship.To);
         }
 
-        relationship.SpdxId = GenerateSpdxIdBasedOnElement(relationship, relationship.From + relationsipToString + relationship.RelationshipType.ToString());
+        relationship.SpdxId = GenerateSpdxIdBasedOnElement(relationship, relationship.From + relationshipToString + relationship.RelationshipType.ToString());
     }
 
     public static void AddSpdxId(this ExternalIdentifier externalIdentifier)
     {
-        externalIdentifier.SpdxId = GenerateSpdxIdBasedOnElement(externalIdentifier, externalIdentifier.Identifier.ToString());
+        externalIdentifier.SpdxId = GenerateSpdxIdBasedOnElement(externalIdentifier, externalIdentifier.Identifier);
     }
 
     public static void AddSpdxId(this PackageVerificationCode packageVerificationCode)

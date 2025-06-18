@@ -32,6 +32,9 @@ public class GeneratorTests
     private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
     private readonly Mock<IManifestConfigHandler> mockConfigHandler = new Mock<IManifestConfigHandler>(MockBehavior.Strict);
 
+    private const string SourceElementIdValue = "source-id";
+    private const string TargetElementIdValue = "target-id";
+
     [TestMethod]
     public void GenerateJsonDocumentTest_DocumentCreation()
     {
@@ -87,7 +90,7 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocument_DependsOnId_Null_ReturnsNull()
+    public void GenerateJsonDocument_DependsOnId_Null_ReturnsEmptyList()
     {
         var packageInfo = new SbomPackage
         {
@@ -97,7 +100,7 @@ public class GeneratorTests
 
         var result = generator.GenerateJsonDocument(packageInfo);
 
-        Assert.IsNull(result.ResultMetadata.DependOn, "DependOnId should be null when DependOn is null.");
+        Assert.AreEqual(0, result.ResultMetadata.DependOn.Count);
     }
 
     [TestMethod]
@@ -106,12 +109,12 @@ public class GeneratorTests
         var packageInfo = new SbomPackage
         {
             PackageName = "TestPackage",
-            DependOn = Constants.RootPackageIdValue
+            DependOn = new List<string> { Constants.RootPackageIdValue }
         };
 
         var result = generator.GenerateJsonDocument(packageInfo);
 
-        Assert.AreEqual(Constants.RootPackageIdValue, result.ResultMetadata.DependOn, "DependOnId should equal RootPackageId when DependOn is RootPackageId.");
+        Assert.IsTrue(result.ResultMetadata.DependOn.Contains(Constants.RootPackageIdValue));
     }
 
     [TestMethod]
@@ -120,17 +123,35 @@ public class GeneratorTests
         var packageInfo = new SbomPackage
         {
             PackageName = "TestPackage",
-            DependOn = "SomePackageId"
+            DependOn = new List<string> { "SomePackageId" }
         };
 
         var result = generator.GenerateJsonDocument(packageInfo);
 
         var expectedDependOnId = CommonSPDXUtils.GenerateSpdxPackageId("SomePackageId");
-        Assert.AreEqual(expectedDependOnId, result.ResultMetadata.DependOn, "DependOnId should be correctly generated using CommonSPDXUtils.GenerateSpdxPackageId.");
+        Assert.IsTrue(result.ResultMetadata.DependOn.Contains(expectedDependOnId));
     }
 
     [TestMethod]
-    public void GenerateJsonDocumentTest_File()
+    public void GenerateJsonDocument_DependsOnId_ValidListOfValues_GeneratesSpdxPackageId()
+    {
+        var packageInfo = new SbomPackage
+        {
+            PackageName = "TestPackage",
+            DependOn = new List<string> { "SomePackageId", "AnotherPackageId" }
+        };
+
+        var result = generator.GenerateJsonDocument(packageInfo);
+
+        var expectedDependOnId1 = CommonSPDXUtils.GenerateSpdxPackageId("SomePackageId");
+        var expectedDependOnId2 = CommonSPDXUtils.GenerateSpdxPackageId("AnotherPackageId");
+        Assert.IsTrue(result.ResultMetadata.DependOn.Contains(expectedDependOnId1));
+        Assert.IsTrue(result.ResultMetadata.DependOn.Contains(expectedDependOnId2));
+        Assert.AreEqual(2, result.ResultMetadata.DependOn.Count);
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocumentTest_File_WithConcludedAndNoDeclaredLicense()
     {
         var fileInfo = new InternalSbomFileInfo
         {
@@ -253,8 +274,8 @@ public class GeneratorTests
     {
         var relationshipInfo = new Relationship
         {
-            SourceElementId = "source-id",
-            TargetElementId = "target-id",
+            SourceElementId = SourceElementIdValue,
+            TargetElementId = TargetElementIdValue,
             RelationshipType = RelationshipType.PREREQUISITE_FOR,
         };
 
@@ -265,7 +286,6 @@ public class GeneratorTests
         var expectedJsonContentAsString = SbomRelationshipJsonStrings.RelationshipPrereqForJsonString;
         expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
 
-        Assert.IsFalse(generatedJsonString.Contains("null"));
         Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
     }
 
@@ -274,8 +294,8 @@ public class GeneratorTests
     {
         var relationshipInfo = new Relationship
         {
-            SourceElementId = "source-id",
-            TargetElementId = "target-id",
+            SourceElementId = SourceElementIdValue,
+            TargetElementId = TargetElementIdValue,
             RelationshipType = RelationshipType.DESCRIBED_BY,
         };
 
@@ -286,7 +306,6 @@ public class GeneratorTests
         var expectedJsonContentAsString = SbomRelationshipJsonStrings.RelationshipDescribedByJsonString;
         expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
 
-        Assert.IsFalse(generatedJsonString.Contains("null"));
         Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
     }
 
@@ -295,8 +314,8 @@ public class GeneratorTests
     {
         var relationshipInfo = new Relationship
         {
-            SourceElementId = "source-id",
-            TargetElementId = "target-id",
+            SourceElementId = SourceElementIdValue,
+            TargetElementId = TargetElementIdValue,
             RelationshipType = RelationshipType.PATCH_FOR,
         };
 
@@ -307,7 +326,6 @@ public class GeneratorTests
         var expectedJsonContentAsString = SbomRelationshipJsonStrings.RelationshipPatchForJsonString;
         expectedJsonContentAsString = NormalizeString(expectedJsonContentAsString);
 
-        Assert.IsFalse(generatedJsonString.Contains("null"));
         Assert.AreEqual(expectedJsonContentAsString, generatedJsonString);
     }
 

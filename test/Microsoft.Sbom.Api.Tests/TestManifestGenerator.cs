@@ -87,7 +87,7 @@ internal class TestManifestGenerator : IManifestGenerator
     {
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(relationship))
+            Document = JsonSerializer.SerializeToDocument(relationship)
         };
     }
 

@@ -31,6 +31,6 @@ internal static class MavenComponentExtensions
             Declared = component.LicenseDeclared,
         },
         Type = "maven",
-        DependOn = component.AncestralReferrers?.FirstOrDefault()?.Id,
+        DependOn = component.AncestralReferrers?.Select(r => r.Id).ToList(),
     };
 }

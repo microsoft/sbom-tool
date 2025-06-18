@@ -28,7 +28,7 @@ public class GeneratorUtils
 
     public static string EnsureRelativePathStartsWithDot(string path)
     {
-        if (!path.StartsWith(".", StringComparison.Ordinal))
+        if (!path.StartsWith('.'))
         {
             return "." + path;
         }

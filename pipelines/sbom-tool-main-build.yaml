@@ -43,6 +43,9 @@ extends:
           templateContext:
             outputs:
             - output: pipelineArtifact
+              targetPath: $(Build.ArtifactStagingDirectory)\GitHub
+              artifactName: '$(OutputArtifactName)-GitHub'
+            - output: pipelineArtifact
               targetPath: $(Build.ArtifactStagingDirectory)
               artifactName: '$(OutputArtifactName)'
           pool:
@@ -200,10 +203,18 @@ extends:
               Remove-Item $(Build.ArtifactStagingDirectory)\win -Recurse
             displayName: 'Restructure Artifact'
 
+          - powershell: |
+              New-Item $(Build.ArtifactStagingDirectory)\GitHub -ItemType Directory
+              Copy-Item -Path $(Build.ArtifactStagingDirectory)\bin\$(BinaryNameWindows) -Destination $(Build.ArtifactStagingDirectory)\GitHub\$(BinaryNameWindows)
+            displayName: 'Copy Artifact for GitHub release'
+
         - job: Job_2
           displayName: 'Build (Linux)'
           templateContext:
             outputs:
+            - output: pipelineArtifact
+              targetPath: $(Build.ArtifactStagingDirectory)/GitHub
+              artifactName: '$(OutputArtifactName)-GitHub-linux'
             - output: pipelineArtifact
               targetPath: $(Build.ArtifactStagingDirectory)
               artifactName: '$(OutputArtifactName)-linux'
@@ -233,10 +244,18 @@ extends:
               Remove-Item $(Build.ArtifactStagingDirectory)/linux -Recurse
             displayName: 'Restructure Artifact'
 
+          - powershell: |
+              New-Item $(Build.ArtifactStagingDirectory)/GitHub -ItemType Directory
+              Copy-Item -Path $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameLinux) -Destination $(Build.ArtifactStagingDirectory)/GitHub/$(BinaryNameLinux)
+            displayName: 'Copy Artifact for GitHub release'
+
         - job: Job_3
           displayName: 'Build (macOS)'
           templateContext:
             outputs:
+            - output: pipelineArtifact
+              targetPath: $(Build.ArtifactStagingDirectory)/GitHub
+              artifactName: '$(OutputArtifactName)-GitHub-macOS'
             - output: pipelineArtifact
               targetPath: $(Build.ArtifactStagingDirectory)
               artifactName: '$(OutputArtifactName)-macOS'
@@ -267,10 +286,18 @@ extends:
               Remove-Item $(Build.ArtifactStagingDirectory)/osx -Recurse
             displayName: 'Restructure Artifact'
 
+          - powershell: |
+              New-Item $(Build.ArtifactStagingDirectory)/GitHub -ItemType Directory
+              Copy-Item -Path $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameMacOS) -Destination $(Build.ArtifactStagingDirectory)/GitHub/$(BinaryNameMacOS)
+            displayName: 'Copy Artifact for GitHub release'
+
         - job: Job_4
           displayName: 'Build (macOS-arm64)'
           templateContext:
             outputs:
+            - output: pipelineArtifact
+              targetPath: $(Build.ArtifactStagingDirectory)/GitHub
+              artifactName: '$(OutputArtifactName)-GitHub-macOS-arm64'
             - output: pipelineArtifact
               targetPath: $(Build.ArtifactStagingDirectory)
               artifactName: '$(OutputArtifactName)-macOS-arm64'
@@ -300,3 +327,8 @@ extends:
               Move-Item -Path $(Build.ArtifactStagingDirectory)/osx-arm64/$(BinaryNameMacOSArm64) -Destination $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameMacOSArm64)
               Remove-Item $(Build.ArtifactStagingDirectory)/osx-arm64 -Recurse
             displayName: 'Restructure Artifact'
+
+          - powershell: |
+              New-Item $(Build.ArtifactStagingDirectory)/GitHub -ItemType Directory
+              Copy-Item -Path $(Build.ArtifactStagingDirectory)/bin/$(BinaryNameMacOSArm64) -Destination $(Build.ArtifactStagingDirectory)/GitHub/$(BinaryNameMacOSArm64)
+            displayName: 'Copy Artifact for GitHub release'
