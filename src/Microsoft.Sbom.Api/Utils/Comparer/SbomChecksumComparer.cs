@@ -14,12 +14,12 @@ public class SbomChecksumComparer : IEqualityComparer<Checksum>
 {
     public bool Equals(Checksum checksum1, Checksum checksum2)
     {
-        if (checksum1 == null && checksum2 == null)
+        if (checksum1 is null && checksum2 is null)
         {
             return true;
         }
 
-        if (checksum1 == null || checksum2 == null)
+        if (checksum1 is null || checksum2 is null)
         {
             return false;
         }
@@ -31,7 +31,7 @@ public class SbomChecksumComparer : IEqualityComparer<Checksum>
 
     public int GetHashCode(Checksum obj)
     {
-        if (obj == null)
+        if (obj is null)
         {
             return 0;
         }

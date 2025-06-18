@@ -14,7 +14,7 @@ public class SbomRelationshipComparer : IEqualityComparer<SbomRelationship>
 {
     public bool Equals(SbomRelationship relationship1, SbomRelationship relationship2)
     {
-        if (relationship1 == null || relationship2 == null)
+        if (relationship1 is null || relationship2 is null)
         {
             return false;
         }
@@ -28,7 +28,7 @@ public class SbomRelationshipComparer : IEqualityComparer<SbomRelationship>
 
     public int GetHashCode(SbomRelationship obj)
     {
-        if (obj == null)
+        if (obj is null)
         {
             return 0;
         }

@@ -15,12 +15,12 @@ public class SbomReferenceComparer : IEqualityComparer<SbomReference>
 
     public bool Equals(SbomReference reference1, SbomReference reference2)
     {
-        if (reference1 == null && reference2 == null)
+        if (reference1 is null && reference2 is null)
         {
             return true;
         }
 
-        if (reference1 == null || reference2 == null)
+        if (reference1 is null || reference2 is null)
         {
             return false;
         }
@@ -33,7 +33,7 @@ public class SbomReferenceComparer : IEqualityComparer<SbomReference>
 
     public int GetHashCode(SbomReference obj)
     {
-        if (obj == null)
+        if (obj is null)
         {
             return 0;
         }

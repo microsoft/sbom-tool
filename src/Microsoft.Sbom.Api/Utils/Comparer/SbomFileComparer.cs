@@ -14,15 +14,15 @@ public class SbomFileComparer : IEqualityComparer<SbomFile>
 
     public bool Equals(SbomFile file1, SbomFile file2)
     {
-        if (file1 == null || file2 == null)
+        if (file1 is null || file2 is null)
         {
             return false;
         }
 
-        var licenseInfosEqual = (file1.LicenseInfoInFiles == null && file2.LicenseInfoInFiles == null) ||
+        var licenseInfosEqual = (file1.LicenseInfoInFiles is null && file2.LicenseInfoInFiles is null) ||
                         file1.LicenseInfoInFiles?.SequenceEqual(file2.LicenseInfoInFiles ?? Enumerable.Empty<string>()) == true;
-        var checksumsEqual = (file1.Checksum == null && file2.Checksum == null) ||
-                         file1.Checksum?.SequenceEqual(file2.Checksum ?? Enumerable.Empty<Checksum>(), ChecksumComparer) == true;
+        var checksumsEqual = (file1.Checksum is null && file2.Checksum is null) ||
+                         file1.Checksum?.SequenceEqual(file2.Checksum ?? Enumerable.Empty<Checksum>(), ChecksumComparer) is true;
 
         // Compare relevant fields
         return file1.Id == file2.Id &&
@@ -35,7 +35,7 @@ public class SbomFileComparer : IEqualityComparer<SbomFile>
 
     public int GetHashCode(SbomFile obj)
     {
-        if (obj == null)
+        if (obj is null)
         {
             return 0;
         }

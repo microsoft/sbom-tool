@@ -14,7 +14,7 @@ public class SbomPackageComparer : IEqualityComparer<SbomPackage>
 
     public bool Equals(SbomPackage package1, SbomPackage package2)
     {
-        if (package1 == null || package2 == null)
+        if (package1 is null || package2 is null)
         {
             return false;
         }
@@ -30,8 +30,8 @@ public class SbomPackageComparer : IEqualityComparer<SbomPackage>
             package2.Checksum = null;
         }
 
-        var checksumsEqual = (package1.Checksum == null && package2.Checksum == null) ||
-                         package1.Checksum?.SequenceEqual(package2.Checksum ?? Enumerable.Empty<Checksum>(), ChecksumComparer) == true;
+        var checksumsEqual = (package1.Checksum is null && package2.Checksum is null) ||
+                         package1.Checksum?.SequenceEqual(package2.Checksum ?? Enumerable.Empty<Checksum>(), ChecksumComparer) is true;
 
         // Compare relevant fields.
         // Note: FilesAnalyzed is not compared as it is not relevant for equality since it's not a valid field in SPDX 3.0.
@@ -51,7 +51,7 @@ public class SbomPackageComparer : IEqualityComparer<SbomPackage>
 
     public int GetHashCode(SbomPackage obj)
     {
-        if (obj == null)
+        if (obj is null)
         {
             return 0;
         }
