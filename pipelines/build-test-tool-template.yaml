@@ -1,8 +1,6 @@
 steps:
-  - name: Display Environment Variables
-    shell: pwsh
-    run: |
-      Get-ChildItem Env: | Sort
+  - pwsh: Get-ChildItem Env: | Sort
+    displayName: 'Display Environment Variables'
 
   - task: UseDotNet@2
     displayName: 'Use .NET Core'
