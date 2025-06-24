@@ -22,7 +22,7 @@ public class ConfigFileParserTests
     [TestInitialize]
     public void Initialize()
     {
-        mockFileSystemUtils = new Mock<IFileSystemUtils>();
+        mockFileSystemUtils = new Mock<IFileSystemUtils>(MockBehavior.Strict);
         mockFileSystemUtils
             .Setup(f => f.ReadAllTextAsync(filePathStub))
             .ReturnsAsync(() => contentStub)
@@ -42,6 +42,25 @@ public class ConfigFileParserTests
             var result = await testSubject.ParseFromJsonFile(filePathStub);
             Assert.AreEqual("TestSupplier", result.PackageSupplier);
             Assert.AreEqual(envVarValue, result.BuildDropPath);
+            mockFileSystemUtils.Verify();
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(envVarName, oldEnvVarVal);
+        }
+    }
+
+    [TestMethod]
+    public async Task ParseFromJsonFile_ExpandsEnvVars_ReturnsEmptyStringAsync()
+    {
+        var oldEnvVarVal = Environment.GetEnvironmentVariable(envVarName);
+        try
+        {
+            Environment.SetEnvironmentVariable(envVarName, null);
+
+            var result = await testSubject.ParseFromJsonFile(filePathStub);
+            Assert.AreEqual("TestSupplier", result.PackageSupplier);
+            Assert.AreEqual(string.Empty, result.BuildDropPath);
             mockFileSystemUtils.Verify();
         }
         finally

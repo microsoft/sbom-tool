@@ -41,7 +41,7 @@ public class ConfigFileParser
             var envVarName = match.Groups[1].Value;
             var envVarValue = Environment.GetEnvironmentVariable(envVarName);
 
-            return envVarValue ?? match.Value;
+            return envVarValue;
         });
     }
 }
