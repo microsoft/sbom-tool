@@ -202,7 +202,7 @@ public static class SPDXToSbomFormatConverterExtensions
         if (spdxPackage.SpdxId == Parsers.Spdx30SbomParser.Constants.RootPackageIdValue)
         {
             var creationInfo = spdx30Elements
-            .First(element => element is CreationInfo) as CreationInfo;
+                .First(element => element is CreationInfo) as CreationInfo;
             return creationInfo.CreatedBy.First();
         }
         else

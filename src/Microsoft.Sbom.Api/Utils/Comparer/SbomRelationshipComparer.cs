@@ -19,9 +19,10 @@ public class SbomRelationshipComparer : IEqualityComparer<SbomRelationship>
             return false;
         }
 
-        var equals = relationship1.RelationshipType.ToString().Equals(relationship2.RelationshipType.ToString(), StringComparison.OrdinalIgnoreCase) &&
-                relationship1.SourceElementId == relationship2.SourceElementId &&
-                relationship1.TargetElementId == relationship2.TargetElementId;
+        var equals = relationship1.RelationshipType.ToString()
+            .Equals(relationship2.RelationshipType.ToString(), StringComparison.OrdinalIgnoreCase) &&
+            relationship1.SourceElementId == relationship2.SourceElementId &&
+            relationship1.TargetElementId == relationship2.TargetElementId;
 
         return equals;
     }

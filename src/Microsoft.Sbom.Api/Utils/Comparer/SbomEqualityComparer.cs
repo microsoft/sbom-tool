@@ -60,25 +60,25 @@ public class SbomEqualityComparer
         var externalDocRefsEqual = CheckExternalDocRefs(spdx22ExternalDocumentRefs, spdx30ExternalDocumentRefs);
         if (!externalDocRefsEqual)
         {
-            return externalDocRefsEqual;
+            return false;
         }
 
         var relationshipsEqual = CheckRelationships(spdx22Relationships, spdx30Relationships);
         if (!relationshipsEqual)
         {
-            return relationshipsEqual;
+            return false;
         }
 
         var filesEqual = CheckFiles(spdx22Files, spdx30Files, elements, spdx30Relationships);
         if (!filesEqual)
         {
-            return filesEqual;
+            return false;
         }
 
         var packagesEqual = CheckPackages(spdx22Packages, spdx30Packages, elements, spdx30Relationships);
         if (!packagesEqual)
         {
-            return packagesEqual;
+            return false;
         }
 
         return true;

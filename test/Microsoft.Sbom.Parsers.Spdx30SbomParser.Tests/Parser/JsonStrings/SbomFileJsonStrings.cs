@@ -103,7 +103,7 @@ public static class SbomFileJsonStrings
             ""to"": [
               ""SPDXRef-AnyLicenseInfo-3BA3FA6D3D66FE2BA75992BB0850D080F1223256368A76C77BEF8E0F6AC71896""
             ],
-            ""creationInfo"": ""_:creationinfo"",            
+            ""creationInfo"": ""_:creationinfo"",
             ""spdxId"": ""SPDXRef-Relationship-409BEAA4D9456378E2E96E4EBC047C6477A1FEFEFE37943E61DFBEC103247718"",
             ""type"": ""Relationship""
           },
