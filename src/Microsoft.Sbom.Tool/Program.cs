@@ -47,12 +47,14 @@ internal class Program
                         {
                             var validationConfigurationBuilder = x.GetService<IConfigurationBuilder<ValidationArgs>>();
                             var generationConfigurationBuilder = x.GetService<IConfigurationBuilder<GenerationArgs>>();
+                            var consolidationConfigurationBuilder = x.GetService<IConfigurationBuilder<ConsolidationArgs>>();
                             var redactConfigurationBuilder = x.GetService<IConfigurationBuilder<RedactArgs>>();
                             var formatValidationConfigurationBuilder = x.GetService<IConfigurationBuilder<FormatValidationArgs>>();
                             var inputConfiguration = result.ActionArgs switch
                             {
                                 ValidationArgs v => validationConfigurationBuilder.GetConfiguration(v).GetAwaiter().GetResult(),
                                 GenerationArgs g => generationConfigurationBuilder.GetConfiguration(g).GetAwaiter().GetResult(),
+                                ConsolidationArgs c => consolidationConfigurationBuilder.GetConfiguration(c).GetAwaiter().GetResult(),
                                 RedactArgs r => redactConfigurationBuilder.GetConfiguration(r).GetAwaiter().GetResult(),
                                 FormatValidationArgs f => formatValidationConfigurationBuilder.GetConfiguration(f).GetAwaiter().GetResult(),
                                 _ => default
