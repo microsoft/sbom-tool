@@ -35,6 +35,7 @@ internal class Program
                     {
                         ValidationArgs => services.AddHostedService<ValidationService>(),
                         GenerationArgs => services.AddHostedService<GenerationService>(),
+                        ConsolidationArgs => services.AddHostedService<ConsolidationService>(),
                         RedactArgs => services.AddHostedService<RedactService>(),
                         FormatValidationArgs => services.AddHostedService<FormatValidationService>(),
                         _ => services

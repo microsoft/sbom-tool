@@ -112,6 +112,8 @@ public class ConfigurationProfile : Profile
             .ForMember(c => c.DeleteManifestDirIfPresent, o => o.Ignore())
             .ForMember(c => c.PackageSupplier, o => o.Ignore());
 
+        CreateMap<ConsolidationArgs, InputConfiguration>();
+
         // Create config for the config json file to configuration.
         CreateMap<ConfigFile, InputConfiguration>()
             .ForMember(c => c.PackagesList, o => o.Ignore())
