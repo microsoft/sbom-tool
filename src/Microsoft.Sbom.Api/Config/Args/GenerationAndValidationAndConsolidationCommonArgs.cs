@@ -6,7 +6,7 @@ using PowerArgs;
 namespace Microsoft.Sbom.Api.Config.Args;
 
 /// <summary>
-/// Defines the common arguments used by the validation and generation actions of the ManifestTool.
+/// Defines the common arguments used by the validation, generation, and consolidation actions of the ManifestTool.
 /// </summary>
 public abstract class GenerationAndValidationAndConsolidationCommonArgs : CommonArgs
 {

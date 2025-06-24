@@ -82,6 +82,7 @@ public class SbomToolCmdRunner
     /// Consolidate multiple SBOMs into a single SBOM.
     /// </summary>
     [ArgActionMethod]
+    [ArgDescription("Consolidate multipe SBOMs into a single SBOM.")]
     public ConsolidationArgs Consolidate(ConsolidationArgs consolidationArgs)
     {
         return consolidationArgs;
