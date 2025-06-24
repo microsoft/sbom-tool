@@ -111,7 +111,7 @@ The configuration file provided via the `--ConfigFilePath` argument should be a 
     "PackageSupplier": "PackageSupplier",
     "PackageName": "PackageName",
     "PackageVersion": "1.0.0",
-    "BuildDropPath": "%BUILD_DROP_PATH_ENV_VAR%",
-    "BuildComponentPath": "%BUILD_COMPONENT_PATH_ENV_VAR%"
+    "BuildDropPath": "$(BUILD_DROP_PATH_ENV_VAR)",
+    "BuildComponentPath": "$(BUILD_COMPONENT_PATH_ENV_VAR)"
 }
 ```

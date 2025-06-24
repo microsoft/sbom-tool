@@ -15,7 +15,7 @@ public class ConfigFileParserTests
     private Mock<IFileSystemUtils> mockFileSystemUtils;
     private ConfigFileParser testSubject;
     private readonly string filePathStub = "test-path";
-    private readonly string contentStub = "{\"PackageSupplier\": \"TestSupplier\",\"BuildDropPath\": \"%BuildDropPathEnvVar%\"}";
+    private readonly string contentStub = "{\"PackageSupplier\": \"TestSupplier\",\"BuildDropPath\": \"$(BuildDropPathEnvVar)\"}";
     private readonly string envVarName = "BuildDropPathEnvVar";
     private readonly string envVarValue = "TestPath";
 

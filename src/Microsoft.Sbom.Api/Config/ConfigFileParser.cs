@@ -3,6 +3,7 @@
 
 using System;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Common;
 
@@ -28,7 +29,19 @@ public class ConfigFileParser
         }
 
         var content = await fileSystemUtils.ReadAllTextAsync(filePath);
-        var expandedContent = Environment.ExpandEnvironmentVariables(content);
+        var expandedContent = ExpandEnvironmentVariablesInString(content);
         return JsonSerializer.Deserialize<ConfigFile>(expandedContent);
+    }
+
+    private static string ExpandEnvironmentVariablesInString(string content)
+    {
+        var pattern = @"\$\(([^)]+)\)";
+        return Regex.Replace(content, pattern, match =>
+        {
+            var envVarName = match.Groups[1].Value;
+            var envVarValue = Environment.GetEnvironmentVariable(envVarName);
+
+            return envVarValue ?? match.Value;
+        });
     }
 }
