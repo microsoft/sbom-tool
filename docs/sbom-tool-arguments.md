@@ -101,3 +101,17 @@ Actions
 
   Version  - Displays the version of the tool being used. Can be used as '--version'
 ```
+
+# Configuration Files
+
+The configuration file provided via the `--ConfigFilePath` argument should be a json file with all the relevant arguments. Note that environment variables can be included and will be expanding during the config file parsing. See the following example of config file content for the generate command:
+
+```json
+{
+    "PackageSupplier": "PackageSupplier",
+    "PackageName": "PackageName",
+    "PackageVersion": "1.0.0",
+    "BuildDropPath": "%BUILD_DROP_PATH_ENV_VAR%",
+    "BuildComponentPath": "%BUILD_COMPONENT_PATH_ENV_VAR%"
+}
+```

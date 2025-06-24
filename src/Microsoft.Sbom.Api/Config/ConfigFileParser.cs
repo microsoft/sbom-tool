@@ -27,7 +27,8 @@ public class ConfigFileParser
             throw new ArgumentNullException($"{nameof(filePath)} cannot be emtpy.");
         }
 
-        using var openStream = fileSystemUtils.OpenRead(filePath);
-        return await JsonSerializer.DeserializeAsync<ConfigFile>(openStream);
+        var content = await fileSystemUtils.ReadAllTextAsync(filePath);
+        var expandedContent = Environment.ExpandEnvironmentVariables(content);
+        return JsonSerializer.Deserialize<ConfigFile>(expandedContent);
     }
 }
