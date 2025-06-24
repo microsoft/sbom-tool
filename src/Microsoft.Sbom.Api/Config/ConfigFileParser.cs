@@ -29,6 +29,11 @@ public class ConfigFileParser
         }
 
         var content = await fileSystemUtils.ReadAllTextAsync(filePath);
+        if (string.IsNullOrEmpty(content))
+        {
+            return new ConfigFile();
+        }
+
         var expandedContent = ExpandEnvironmentVariablesInString(content);
         return JsonSerializer.Deserialize<ConfigFile>(expandedContent);
     }
