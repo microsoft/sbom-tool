@@ -186,4 +186,10 @@ public class ConfigFile
     /// The conformance to validate against
     /// </summary>
     public ConformanceType Conformance { get; set; }
+
+    /// <summary>
+    /// Describes the artifacts used for consolidation, as well information specific to each artifact.
+    /// The Key is the location of the artifact, and the value is an <see cref="ArtifactInfo"/> object.
+    /// </summary>
+    public Dictionary<string, ArtifactInfo> ArtifactInfoMap { get; set; }
 }
