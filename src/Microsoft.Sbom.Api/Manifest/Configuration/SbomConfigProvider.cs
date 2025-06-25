@@ -118,15 +118,18 @@ public class SbomConfigProvider : ISbomConfigProvider
         return this;
     }
 
-    public IAsyncDisposable StartJsonSerializationAsync()
+    /// <summary>
+    /// Starts asynchronous JSON serialization of supported ISbomConfig objects from IConfiguration.
+    /// </summary>
+    /// <param name="targetConfigs"></param>
+    /// <returns></returns>
+    public IAsyncDisposable StartJsonSerializationAsync(IEnumerable<ISbomConfig> targetConfigs)
     {
-        ApplyToEachConfig(c => c.StartJsonSerialization());
-        return this;
-    }
+        foreach (var config in targetConfigs)
+        {
+            config.StartJsonSerialization();
+        }
 
-    public IAsyncDisposable StartJsonSerializationAsync(ISbomConfig configuration)
-    {
-        configuration.StartJsonSerialization();
         return this;
     }
 
@@ -155,14 +158,12 @@ public class SbomConfigProvider : ISbomConfigProvider
 
     public bool TryGetMetadata(MetadataKey key, out object value)
     {
-        if (MetadataDictionary.ContainsKey(key))
+        if (MetadataDictionary.TryGetValue(key, out value))
         {
             logger.Debug($"Found value for header {key} in internal metadata.");
-            value = MetadataDictionary[key];
             return true;
         }
 
-        value = null;
         return false;
     }
 

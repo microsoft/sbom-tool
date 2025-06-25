@@ -112,6 +112,8 @@ public class ConfigurationProfile : Profile
             .ForMember(c => c.DeleteManifestDirIfPresent, o => o.Ignore())
             .ForMember(c => c.PackageSupplier, o => o.Ignore());
 
+        CreateMap<ConsolidationArgs, InputConfiguration>();
+
         // Create config for the config json file to configuration.
         CreateMap<ConfigFile, InputConfiguration>()
             .ForMember(c => c.PackagesList, o => o.Ignore())
@@ -168,8 +170,8 @@ public class ConfigurationProfile : Profile
             p => p.SourceType == typeof(AlgorithmName),
             (c, memberOptions) => memberOptions.ConvertUsing(new HashAlgorithmNameConfigurationSettingAddingConverter(GetSettingSourceFor(c.SourceMember.ReflectedType))));
         ForAllPropertyMaps(
-            p => p.SourceType == typeof(ComplianceStandardType),
-            (c, memberOptions) => memberOptions.ConvertUsing(new ComplianceStandardConfigurationSettingAddingConverter(GetSettingSourceFor(c.SourceMember.ReflectedType))));
+            p => p.SourceType == typeof(ConformanceType),
+            (c, memberOptions) => memberOptions.ConvertUsing(new ConformanceConfigurationSettingAddingConverter(GetSettingSourceFor(c.SourceMember.ReflectedType))));
     }
 
     // Based on the type of source, return the settings type.

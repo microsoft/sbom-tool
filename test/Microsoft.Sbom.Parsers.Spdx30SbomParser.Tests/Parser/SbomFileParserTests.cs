@@ -4,7 +4,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using Microsoft.Sbom.Common.ComplianceStandard.Enums;
+using Microsoft.Sbom.Common.Conformance.Enums;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
 using Microsoft.Sbom.Parser.JsonStrings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -28,18 +28,18 @@ public class SbomFileParserTests : SbomParserTestsBase
     [DataRow(SbomFullDocWithFilesStrings.SbomFileWithMissingVerificationJsonString)]
     [DataRow(SbomFullDocWithFilesStrings.SbomFileWithMissingSHA256JsonString)]
     [TestMethod]
-    public void MissingPropertiesTest_NTIA_NoVerificationCode_Throws(string jsonString)
+    public void MissingPropertiesTest_NTIAMin_NoVerificationCode_Throws(string jsonString)
     {
         var bytes = Encoding.UTF8.GetBytes(jsonString);
         using var stream = new MemoryStream(bytes);
         var parser = new SPDX30Parser(stream);
-        parser.EnforceComplianceStandard(Contracts.Enums.ComplianceStandardType.NTIA);
+        parser.EnforceConformance(Contracts.Enums.ConformanceType.NTIAMin);
         var result = this.Parse(parser);
 
-        var invalidElement = result.InvalidComplianceStandardElements.First();
+        var invalidElement = result.InvalidConformanceElements.First();
         Assert.AreEqual("SPDXRef-software_File-B4A9F99A3A03B9273AE34753D96564CB4F2B0FAD885BBD36B0DD619E9E8AC967", invalidElement.SpdxId);
         Assert.AreEqual("./sample/path", invalidElement.Name);
-        Assert.AreEqual(NTIAErrorType.InvalidNTIAElement, invalidElement.ErrorType);
+        Assert.AreEqual(NTIAMinErrorType.InvalidNTIAMinElement, invalidElement.ErrorType);
     }
 
     [DataRow(SbomFullDocWithFilesStrings.SbomFileWithMissingVerificationJsonString)]

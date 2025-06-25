@@ -30,7 +30,7 @@ public class ConfigSanitizer
 
     internal static string SbomToolVersion => VersionValue.Value;
 
-    private static readonly Lazy<string> VersionValue = new Lazy<string>(() => typeof(SbomToolCmdRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty);
+    private static readonly Lazy<string> VersionValue = new Lazy<string>(() => typeof(SbomToolCmdRunner).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty);
 
     public ConfigSanitizer(IHashAlgorithmProvider hashAlgorithmProvider, IFileSystemUtils fileSystemUtils, IAssemblyConfig assemblyConfig)
     {
@@ -82,7 +82,7 @@ public class ConfigSanitizer
         // Set default package supplier if not provided in configuration.
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
 
-        configuration.ComplianceStandard = GetComplianceStandard(configuration);
+        configuration.Conformance = GetConformance(configuration);
 
         // Prevent null value for LicenseInformationTimeoutInSeconds.
         // Values of (0, Constants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
@@ -228,21 +228,21 @@ public class ConfigSanitizer
         };
     }
 
-    private ConfigurationSetting<ComplianceStandardType> GetComplianceStandard(IConfiguration configuration)
+    private ConfigurationSetting<ConformanceType> GetConformance(IConfiguration configuration)
     {
-        // Convert to ComplianceStandard enum value.
-        var oldValue = configuration.ComplianceStandard;
-        var newValue = ComplianceStandardType.FromString(oldValue?.Value?.ToString());
+        // Convert to Conformance enum value.
+        var oldValue = configuration.Conformance;
+        var newValue = ConformanceType.FromString(oldValue?.Value?.ToString());
 
-        // Compliance standard is only supported for ManifestInfo value of SPDX 3.0 and above.
-        if (!newValue.Equals(ComplianceStandardType.None) && !configuration.ManifestInfo.Value.Any(mi => mi.Equals(Constants.SPDX30ManifestInfo)))
+        // Conformance is only supported for ManifestInfo value of SPDX 3.0 and above.
+        if (!newValue.Equals(ConformanceType.None) && !configuration.ManifestInfo.Value.Any(mi => mi.Equals(Constants.SPDX30ManifestInfo)))
         {
-            throw new ValidationArgException($"Compliance standard {newValue.Name} is not supported with ManifestInfo value of {configuration.ManifestInfo.Value.First()}." +
+            throw new ValidationArgException($"Conformance {newValue.Name} is not supported with ManifestInfo value of {configuration.ManifestInfo.Value.First()}." +
                 $"Please use a supported combination.");
         }
         else
         {
-            return new ConfigurationSetting<ComplianceStandardType>
+            return new ConfigurationSetting<ConformanceType>
             {
                 Source = oldValue != null ? oldValue.Source : SettingSource.Default,
                 Value = newValue

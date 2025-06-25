@@ -3,6 +3,8 @@
 
 namespace Microsoft.Sbom.Extensions.Entities;
 
+using System.Collections.Generic;
+
 /// <summary>
 /// A list of metadata about the current entity being serialized. This can be
 /// identifiers generated for the entity or any additional metadata.
@@ -20,7 +22,7 @@ public class ResultMetadata
     public string DocumentId { get; set; }
 
     /// <summary>
-    /// get or set unique identifier (Id) of DependOn package
+    /// get or set list of unique identifiers (Id) of DependOn packages
     /// </summary>
-    public string DependOn { get; set; }
+    public List<string> DependOn { get; set; }
 }

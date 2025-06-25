@@ -32,7 +32,6 @@ public class SbomRelationshipParserTests : SbomParserTestsBase
     {
         using var stream = new MemoryStream();
         stream.Read(new byte[SbomConstants.ReadBufferSize]);
-        var buffer = new byte[SbomConstants.ReadBufferSize];
 
         Assert.ThrowsException<EndOfStreamException>(() => new SPDXParser(stream));
     }

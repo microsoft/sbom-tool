@@ -7,7 +7,7 @@ using System.IO;
 
 public class ValidatedSbomFactory
 {
-    public virtual IValidatedSbom CreateValidatedSBOM(string sbomFilePath)
+    public virtual IValidatedSbom CreateValidatedSbom(string sbomFilePath)
     {
         var sbomStream = new StreamReader(sbomFilePath);
         var validatedSbom = new ValidatedSbom(sbomStream.BaseStream);
