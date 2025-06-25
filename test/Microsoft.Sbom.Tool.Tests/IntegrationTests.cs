@@ -170,7 +170,7 @@ public class IntegrationTests
         var areEqual = comparer.DocumentsEqual();
 
         // Assert that the manifests are equal
-        Assert.IsTrue(areEqual, "The SPDX 2.2 and SPDX 3.0 manifests should be equivalent.");
+        Assert.AreEqual(SbomEqualityComparisonResult.Equal, areEqual, "The SPDX 2.2 and SPDX 3.0 manifests should be equivalent.");
     }
 
     [TestMethod]

@@ -196,7 +196,7 @@ public class SbomEqualityComparerTests
     public void CheckFiles_MatchingFiles_ReturnsTrue()
     {
         var result = comparer.CheckFiles(spdx22Files, spdx30Files, spdx30Elements, relationships);
-        Assert.IsTrue(result, "File contents should be equal");
+        Assert.AreEqual(SbomEqualityComparisonResult.Equal, result, "File contents should be equal");
     }
 
     [TestMethod]
@@ -204,7 +204,7 @@ public class SbomEqualityComparerTests
     {
         spdx22Files.First().FileChecksums[0].ChecksumValue = "differentChecksumValue";
         var result = comparer.CheckFiles(spdx22Files, spdx30Files, spdx30Elements, relationships);
-        Assert.IsFalse(result, "Different file checksum values should result in different file contents");
+        Assert.AreEqual(SbomEqualityComparisonResult.FilesNotEqual, result, "Different file checksum values should result in different file contents");
     }
 
     [TestMethod]
@@ -216,7 +216,7 @@ public class SbomEqualityComparerTests
         spdx30Elements.Add(spdx30Files.FirstOrDefault());
 
         var result = comparer.CheckFiles(spdx22Files, spdx30Files, spdx30Elements, relationships);
-        Assert.IsFalse(result, "Different file checksum values should result in different file contents");
+        Assert.AreEqual(SbomEqualityComparisonResult.FilesNotEqual, result, "Different file checksum values should result in different file contents");
     }
 
     [TestMethod]
@@ -224,7 +224,7 @@ public class SbomEqualityComparerTests
     {
         spdx22Files.First().LicenseConcluded = "differentLicense";
         var result = comparer.CheckFiles(spdx22Files, spdx30Files, spdx30Elements, relationships);
-        Assert.IsFalse(result, "Different file checksum values should result in different file contents");
+        Assert.AreEqual(SbomEqualityComparisonResult.FilesNotEqual, result, "Different file checksum values should result in different file contents");
     }
 
     [TestMethod]
@@ -233,14 +233,14 @@ public class SbomEqualityComparerTests
         ChangeLicense("FileSpdxId", RelationshipType.HAS_DECLARED_LICENSE);
 
         var result = comparer.CheckFiles(spdx22Files, spdx30Files, spdx30Elements, relationships);
-        Assert.IsFalse(result, "Different license info should result in different file contents");
+        Assert.AreEqual(SbomEqualityComparisonResult.FilesNotEqual, result, "Different license info should result in different file contents");
     }
 
     [TestMethod]
     public void CheckPackages_MatchingPackages_ReturnsTrue()
     {
         var result = comparer.CheckPackages(spdx22Packages, spdx30Packages, spdx30Elements, relationships);
-        Assert.IsTrue(result, "Package contents should be equal");
+        Assert.AreEqual(SbomEqualityComparisonResult.Equal, result, "Package contents should be equal");
     }
 
     [TestMethod]
@@ -248,7 +248,7 @@ public class SbomEqualityComparerTests
     {
         spdx22Packages.First().Checksums[0].ChecksumValue = "differentChecksumValue";
         var result = comparer.CheckPackages(spdx22Packages, spdx30Packages, spdx30Elements, relationships);
-        Assert.IsFalse(result, "Different package checksum values should result in different package contents");
+        Assert.AreEqual(SbomEqualityComparisonResult.PackagesNotEqual, result, "Different package checksum values should result in different package contents");
     }
 
     [TestMethod]
@@ -259,7 +259,7 @@ public class SbomEqualityComparerTests
         spdx30Elements.Add(spdx30Packages.FirstOrDefault());
 
         var result = comparer.CheckPackages(spdx22Packages, spdx30Packages, spdx30Elements, relationships);
-        Assert.IsFalse(result, "Different package checksum values should result in different package contents");
+        Assert.AreEqual(SbomEqualityComparisonResult.PackagesNotEqual, result, "Different package checksum values should result in different package contents");
     }
 
     [TestMethod]
@@ -267,7 +267,7 @@ public class SbomEqualityComparerTests
     {
         spdx22Packages.First().LicenseConcluded = "differentLicense";
         var result = comparer.CheckPackages(spdx22Packages, spdx30Packages, spdx30Elements, relationships);
-        Assert.IsFalse(result, "Different package license info should result in different package contents");
+        Assert.AreEqual(SbomEqualityComparisonResult.PackagesNotEqual, result, "Different package license info should result in different package contents");
     }
 
     [TestMethod]
@@ -276,7 +276,7 @@ public class SbomEqualityComparerTests
         ChangeLicense("PackageSpdxId", RelationshipType.HAS_CONCLUDED_LICENSE);
 
         var result = comparer.CheckPackages(spdx22Packages, spdx30Packages, spdx30Elements, relationships);
-        Assert.IsFalse(result, "Different license info should result in different package contents");
+        Assert.AreEqual(SbomEqualityComparisonResult.PackagesNotEqual, result, "Different license info should result in different package contents");
     }
 
     [TestMethod]
@@ -303,7 +303,7 @@ public class SbomEqualityComparerTests
         };
 
         var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
-        Assert.IsTrue(result, "Matching relationships should return true.");
+        Assert.AreEqual(SbomEqualityComparisonResult.Equal, result, "Matching relationships should return true.");
     }
 
     [TestMethod]
@@ -330,7 +330,7 @@ public class SbomEqualityComparerTests
         };
 
         var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
-        Assert.IsTrue(result, "Matching relationships should return true.");
+        Assert.AreEqual(SbomEqualityComparisonResult.Equal, result, "Matching relationships should return true.");
     }
 
     [TestMethod]
@@ -357,7 +357,7 @@ public class SbomEqualityComparerTests
         };
 
         var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
-        Assert.IsTrue(result, "\"SPDXRef-Source DESCRIBED_BY SPDXRef-Target\" and \"SPDXRef-Target DESCRIBES SPDXRef-Source\" should be equivalent.");
+        Assert.AreEqual(SbomEqualityComparisonResult.Equal, result, "\"SPDXRef-Source DESCRIBED_BY SPDXRef-Target\" and \"SPDXRef-Target DESCRIBES SPDXRef-Source\" should be equivalent.");
     }
 
     [TestMethod]
@@ -384,7 +384,7 @@ public class SbomEqualityComparerTests
         };
 
         var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
-        Assert.IsTrue(result, "\"SPDXRef-Source PREREQUISITE_FOR SPDXRef-Target\" and \"SPDXRef-Target HAS_PREREQUISITE SPDXRef-Source\" should be equivalent.");
+        Assert.AreEqual(SbomEqualityComparisonResult.Equal, result, "\"SPDXRef-Source PREREQUISITE_FOR SPDXRef-Target\" and \"SPDXRef-Target HAS_PREREQUISITE SPDXRef-Source\" should be equivalent.");
     }
 
     [TestMethod]
@@ -411,7 +411,7 @@ public class SbomEqualityComparerTests
         };
 
         var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
-        Assert.IsTrue(result, "\"SPDXRef-Source PATCH_FOR SPDXRef-Target\" and \"SPDXRef-Target PATCHED_BY SPDXRef-Source\" should be equivalent.");
+        Assert.AreEqual(SbomEqualityComparisonResult.Equal, result, "\"SPDXRef-Source PATCH_FOR SPDXRef-Target\" and \"SPDXRef-Target PATCHED_BY SPDXRef-Source\" should be equivalent.");
     }
 
     [TestMethod]
@@ -438,7 +438,7 @@ public class SbomEqualityComparerTests
         };
 
         var result = comparer.CheckRelationships(spdx22Relationships, spdx30Relationships);
-        Assert.IsFalse(result, "Non-matching relationships should return false.");
+        Assert.AreEqual(SbomEqualityComparisonResult.RelationshipsNotEqual, result, "Non-matching relationships should return false.");
     }
 
     [TestMethod]
@@ -463,7 +463,7 @@ public class SbomEqualityComparerTests
         };
 
         var result = comparer.CheckExternalDocRefs(spdx22ExternalDocRefs, spdx30ExternalDocRefs);
-        Assert.IsTrue(result, "Matching external document references should return true.");
+        Assert.AreEqual(SbomEqualityComparisonResult.Equal, result, "Matching external document references should return true.");
     }
 
     [TestMethod]
@@ -488,7 +488,7 @@ public class SbomEqualityComparerTests
         };
 
         var result = comparer.CheckExternalDocRefs(spdx22ExternalDocRefs, spdx30ExternalDocRefs);
-        Assert.IsFalse(result, "Non-matching external document references should return false.");
+        Assert.AreEqual(SbomEqualityComparisonResult.ExternalDocumentReferencesNotEqual, result, "Non-matching external document references should return false.");
     }
 
     [TestMethod]
@@ -518,7 +518,7 @@ public class SbomEqualityComparerTests
         };
 
         var result = comparer.CheckExternalDocRefs(spdx22ExternalDocRefs, spdx30ExternalDocRefs);
-        Assert.IsFalse(result, "Non-matching external document references should return false.");
+        Assert.AreEqual(SbomEqualityComparisonResult.ExternalDocumentReferencesNotEqual, result, "Non-matching external document references should return false.");
     }
 
     private void ChangeLicense(string spdxId, RelationshipType relationshipType)

@@ -42,7 +42,7 @@ public class SbomEqualityComparer
         this.sbomReferenceComparer = new SbomReferenceComparer();
     }
 
-    public bool DocumentsEqual()
+    public SbomEqualityComparisonResult DocumentsEqual()
     {
         var spdx22Files = GetSpdx22Files(spdx22Json);
         var spdx22Packages = GetSpdx22Packages(spdx22Json);
@@ -58,59 +58,59 @@ public class SbomEqualityComparer
         var spdx30Relationships = elements.OfType<Relationship>().ToList();
 
         var externalDocRefsEqual = CheckExternalDocRefs(spdx22ExternalDocumentRefs, spdx30ExternalDocumentRefs);
-        if (!externalDocRefsEqual)
+        if (externalDocRefsEqual != SbomEqualityComparisonResult.Equal)
         {
-            return false;
+            return externalDocRefsEqual;
         }
 
         var relationshipsEqual = CheckRelationships(spdx22Relationships, spdx30Relationships);
-        if (!relationshipsEqual)
+        if (relationshipsEqual != SbomEqualityComparisonResult.Equal)
         {
-            return false;
+            return relationshipsEqual;
         }
 
         var filesEqual = CheckFiles(spdx22Files, spdx30Files, elements, spdx30Relationships);
-        if (!filesEqual)
+        if (filesEqual != SbomEqualityComparisonResult.Equal)
         {
-            return false;
+            return filesEqual;
         }
 
         var packagesEqual = CheckPackages(spdx22Packages, spdx30Packages, elements, spdx30Relationships);
-        if (!packagesEqual)
+        if (packagesEqual != SbomEqualityComparisonResult.Equal)
         {
-            return false;
+            return packagesEqual;
         }
 
-        return true;
+        return SbomEqualityComparisonResult.Equal;
     }
 
-    internal bool CheckFiles(List<SPDXFile> spdx22Files, List<File> spdx30Files, List<Element> spdx30Elements, List<Relationship> relationships)
+    internal SbomEqualityComparisonResult CheckFiles(List<SPDXFile> spdx22Files, List<File> spdx30Files, List<Element> spdx30Elements, List<Relationship> relationships)
     {
         if (spdx22Files.Count != spdx30Files.Count)
         {
-            return false;
+            return SbomEqualityComparisonResult.FileCountMismatch;
         }
 
         var spdx22InternalSbomFileInfos = ConvertToSbomFiles(spdx22Files);
         var spdx30InternalSbomFileInfos = ConvertToSbomFiles(spdx30Files, spdx30Elements, relationships);
 
-        return spdx22InternalSbomFileInfos.SetEquals(spdx30InternalSbomFileInfos);
+        return spdx22InternalSbomFileInfos.SetEquals(spdx30InternalSbomFileInfos) ? SbomEqualityComparisonResult.Equal : SbomEqualityComparisonResult.FilesNotEqual;
     }
 
-    internal bool CheckPackages(List<SPDXPackage> spdx22Packages, List<Package> spdx30Packages, List<Element> spdx30Elements, List<Relationship> relationships)
+    internal SbomEqualityComparisonResult CheckPackages(List<SPDXPackage> spdx22Packages, List<Package> spdx30Packages, List<Element> spdx30Elements, List<Relationship> relationships)
     {
         if (spdx22Packages.Count != spdx30Packages.Count)
         {
-            return false;
+            return SbomEqualityComparisonResult.PackageCountMismatch;
         }
 
         var spdx22InternalSbomPackages = ConvertToSbomPackages(spdx22Packages);
         var spdx30InternalSbomPackages = ConvertToSbomPackages(spdx30Packages, spdx30Elements, relationships);
 
-        return spdx22InternalSbomPackages.SetEquals(spdx30InternalSbomPackages);
+        return spdx22InternalSbomPackages.SetEquals(spdx30InternalSbomPackages) ? SbomEqualityComparisonResult.Equal : SbomEqualityComparisonResult.PackagesNotEqual;
     }
 
-    internal bool CheckRelationships(List<SPDXRelationship> spdx22Relationships, List<Relationship> spdx30Relationships)
+    internal SbomEqualityComparisonResult CheckRelationships(List<SPDXRelationship> spdx22Relationships, List<Relationship> spdx30Relationships)
     {
         // Filtering out relationships that describe license information since SPDX 2.2 does not support these relationship types.
         // The license relationships are linked to files and packages when comparing the two SBOMs in the CheckFiles and CheckPackages methods.
@@ -121,26 +121,27 @@ public class SbomEqualityComparer
 
         if (spdx22Relationships.Count != spdx30RelationshipsNotRelatedtoLicenses.Count)
         {
-            return false;
+            return SbomEqualityComparisonResult.RelationshipCountMismatch;
         }
 
         var spdx22InternalRelationships = ConvertToRelationships(spdx22Relationships);
         var spdx30InternalRelationships = ConvertToRelationships(spdx30RelationshipsNotRelatedtoLicenses);
 
-        return spdx22InternalRelationships.SetEquals(spdx30InternalRelationships);
+        return spdx22InternalRelationships.SetEquals(spdx30InternalRelationships) ? SbomEqualityComparisonResult.Equal : SbomEqualityComparisonResult.RelationshipsNotEqual;
     }
 
-    internal bool CheckExternalDocRefs(List<SpdxExternalDocumentReference> spdx22ExternalDocumentRefs, List<ExternalMap> spdx30ExternalDocumentRefs)
+    internal SbomEqualityComparisonResult CheckExternalDocRefs(List<SpdxExternalDocumentReference> spdx22ExternalDocumentRefs, List<ExternalMap> spdx30ExternalDocumentRefs)
     {
         if (spdx22ExternalDocumentRefs.Count != spdx30ExternalDocumentRefs.Count)
         {
-            return false;
+            return SbomEqualityComparisonResult.ExternalDocumentReferenceCountMismatch;
         }
 
         var spdx22InternalExternalDocRefs = ConvertToSbomReferences(spdx22ExternalDocumentRefs);
         var spdx30InternalExternalDocRefs = ConvertToSbomReferences(spdx30ExternalDocumentRefs);
 
-        return spdx22InternalExternalDocRefs.SetEquals(spdx30InternalExternalDocRefs);
+        return spdx22InternalExternalDocRefs.SetEquals(spdx30InternalExternalDocRefs) ?
+            SbomEqualityComparisonResult.Equal : SbomEqualityComparisonResult.ExternalDocumentReferencesNotEqual;
     }
 
     private HashSet<SbomFile> ConvertToSbomFiles(List<SPDXFile> files)
