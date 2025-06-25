@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using Microsoft.Sbom.Api.Utils.Comparer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -136,6 +137,40 @@ public class IntegrationTests
         Assert.AreEqual(0, exitCode.Value, $"Unexpected failure: stdout = {stdout}");
         Assert.IsTrue(File.Exists(outputFile), $"{outputFile} should have been created during validation");
         Assert.IsTrue(File.ReadAllText(outputFile).Contains("\"Result\":\"Success\"", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [TestMethod]
+    public void E2E_CompareSPDX22AndSPDX30Manifests_ComparisonAndDeterminismSucceeds()
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        // Generate SPDX 2.2 manifest
+        var spdx22TestFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(spdx22TestFolderPath);
+        var spdx22ManifestPath = Path.Combine(AppendFullManifestFolderPath(spdx22TestFolderPath), ManifestFileName);
+        var spdx22Json = ReadJsonFile(spdx22ManifestPath);
+
+        if (Directory.Exists(spdx22TestFolderPath))
+        {
+            Directory.Delete(spdx22TestFolderPath, true);
+        }
+
+        // Generate SPDX 3.0 manifest
+        var spdx30TestFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(spdx30TestFolderPath, manifestInfoSpdxVersion: "3.0");
+        var spdx30ManifestPath = Path.Combine(AppendFullManifestFolderPath(spdx30TestFolderPath, "3.0"), ManifestFileName);
+        var spdx30Json = ReadJsonFile(spdx30ManifestPath);
+
+        // Use SbomEqualityComparer to compare the two manifests
+        var comparer = new SbomEqualityComparer(spdx22Json, spdx30Json);
+        var areEqual = comparer.DocumentsEqual();
+
+        // Assert that the manifests are equal
+        Assert.AreEqual(SbomEqualityComparisonResult.Equal, areEqual, "The SPDX 2.2 and SPDX 3.0 manifests should be equivalent.");
     }
 
     [TestMethod]
@@ -634,5 +669,16 @@ public class IntegrationTests
         {
             File.Copy(newPath, newPath.Replace(sourceDir, targetDir), true);
         }
+    }
+
+    private JsonElement ReadJsonFile(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            throw new FileNotFoundException($"The file at path {filePath} does not exist.");
+        }
+
+        var jsonContent = File.ReadAllText(filePath);
+        return JsonDocument.Parse(jsonContent).RootElement;
     }
 }
