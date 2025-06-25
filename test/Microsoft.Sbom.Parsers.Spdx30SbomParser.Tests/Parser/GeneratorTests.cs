@@ -90,7 +90,7 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocument_DependsOnId_Null_ReturnsNull()
+    public void GenerateJsonDocument_DependsOnId_Null_ReturnsEmptyList()
     {
         var packageInfo = new SbomPackage
         {
@@ -100,7 +100,7 @@ public class GeneratorTests
 
         var result = generator.GenerateJsonDocument(packageInfo);
 
-        Assert.IsNull(result.ResultMetadata.DependOn);
+        Assert.AreEqual(0, result.ResultMetadata.DependOn.Count);
     }
 
     [TestMethod]
@@ -109,12 +109,12 @@ public class GeneratorTests
         var packageInfo = new SbomPackage
         {
             PackageName = "TestPackage",
-            DependOn = Constants.RootPackageIdValue
+            DependOn = new List<string> { Constants.RootPackageIdValue }
         };
 
         var result = generator.GenerateJsonDocument(packageInfo);
 
-        Assert.AreEqual(Constants.RootPackageIdValue, result.ResultMetadata.DependOn);
+        Assert.IsTrue(result.ResultMetadata.DependOn.Contains(Constants.RootPackageIdValue));
     }
 
     [TestMethod]
@@ -123,13 +123,31 @@ public class GeneratorTests
         var packageInfo = new SbomPackage
         {
             PackageName = "TestPackage",
-            DependOn = "SomePackageId"
+            DependOn = new List<string> { "SomePackageId" }
         };
 
         var result = generator.GenerateJsonDocument(packageInfo);
 
         var expectedDependOnId = CommonSPDXUtils.GenerateSpdxPackageId("SomePackageId");
-        Assert.AreEqual(expectedDependOnId, result.ResultMetadata.DependOn);
+        Assert.IsTrue(result.ResultMetadata.DependOn.Contains(expectedDependOnId));
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocument_DependsOnId_ValidListOfValues_GeneratesSpdxPackageId()
+    {
+        var packageInfo = new SbomPackage
+        {
+            PackageName = "TestPackage",
+            DependOn = new List<string> { "SomePackageId", "AnotherPackageId" }
+        };
+
+        var result = generator.GenerateJsonDocument(packageInfo);
+
+        var expectedDependOnId1 = CommonSPDXUtils.GenerateSpdxPackageId("SomePackageId");
+        var expectedDependOnId2 = CommonSPDXUtils.GenerateSpdxPackageId("AnotherPackageId");
+        Assert.IsTrue(result.ResultMetadata.DependOn.Contains(expectedDependOnId1));
+        Assert.IsTrue(result.ResultMetadata.DependOn.Contains(expectedDependOnId2));
+        Assert.AreEqual(2, result.ResultMetadata.DependOn.Count);
     }
 
     [TestMethod]
