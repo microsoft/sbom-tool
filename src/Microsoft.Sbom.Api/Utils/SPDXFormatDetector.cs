@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Extensions.Entities;
@@ -15,19 +16,17 @@ namespace Microsoft.Sbom.Api.Utils;
 public class SPDXFormatDetector : ISPDXFormatDetector
 {
     private readonly IFileSystemUtils fileSystemUtils;
-    private readonly IManifestParserProvider manifestParserProvider;
-    private readonly IDictionary<ManifestInfo, Func<ISbomParser, Stream, bool>> supportedManifestInfos;
+    private readonly IDictionary<ManifestInfo, Func<Stream, bool>> supportedManifestInfos;
 
     public SPDXFormatDetector(
         IFileSystemUtils fileSystemUtils,
         IManifestParserProvider manifestParserProvider)
     {
         this.fileSystemUtils = fileSystemUtils;
-        this.manifestParserProvider = manifestParserProvider;
-        supportedManifestInfos = new Dictionary<ManifestInfo, Func<ISbomParser, Stream, bool>>()
+        supportedManifestInfos = new Dictionary<ManifestInfo, Func<Stream, bool>>()
         {
-            { ManifestInfo.Parse("SPDX:2.2"), TryParse22 },
-            { ManifestInfo.Parse("SPDX:3.0"), TryParse30 }
+            { Constants.SPDX22ManifestInfo, TryParse22 },
+            { Constants.SPDX30ManifestInfo, TryParse30 }
         };
     }
 
@@ -41,10 +40,7 @@ public class SPDXFormatDetector : ISPDXFormatDetector
     {
         foreach (var (mi, tryParse) in supportedManifestInfos)
         {
-            var manifestInterface = manifestParserProvider.Get(mi);
-            var sbomParser = manifestInterface.CreateParser(stream);
-
-            if (tryParse(sbomParser, stream))
+            if (tryParse(stream))
             {
                 detectedManifestInfo = mi;
                 return true;
@@ -55,12 +51,12 @@ public class SPDXFormatDetector : ISPDXFormatDetector
         return false;
     }
 
-    private bool TryParse22(ISbomParser parser, Stream stream)
+    private bool TryParse22(Stream stream)
     {
         try
         {
+            var parser = new SPDXParser(stream, new List<string>() { SPDXParser.FilesProperty, SPDXParser.PackagesProperty, SPDXParser.ReferenceProperty, SPDXParser.RelationshipsProperty });
             ParserStateResult? result = null;
-            var requiredFieldsFound = 0;
             do
             {
                 result = parser.Next();
@@ -68,20 +64,14 @@ public class SPDXFormatDetector : ISPDXFormatDetector
                 {
                     switch (result.FieldName)
                     {
-                        case SPDXParser.FilesProperty:
-                        case SPDXParser.PackagesProperty:
-                        case SPDXParser.ReferenceProperty:
-                        case SPDXParser.RelationshipsProperty:
-                            requiredFieldsFound++;
-                            break;
-                        default:
-                            break;
+                        case Constants.SpdxVersionString:
+                            return result.Result.ToString().ToUpperInvariant().Equals("SPDX-2.2");
                     }
                 }
             }
-            while (result is not null && requiredFieldsFound < 4);
+            while (result is not null);
 
-            return requiredFieldsFound == 4;
+            return false;
         }
         catch
         {
@@ -89,12 +79,12 @@ public class SPDXFormatDetector : ISPDXFormatDetector
         }
     }
 
-    private bool TryParse30(ISbomParser parser, Stream stream)
+    private bool TryParse30(Stream stream)
     {
         try
         {
+            var parser = new SPDX30Parser(stream);
             ParserStateResult? result = null;
-            var requiredFieldsFound = 0;
             do
             {
                 result = parser.Next();
@@ -104,17 +94,16 @@ public class SPDXFormatDetector : ISPDXFormatDetector
                     switch (result.FieldName)
                     {
                         case Constants.SPDXContextHeaderName:
-                        case Constants.SPDXGraphHeaderName:
-                            requiredFieldsFound++;
-                            break;
+                            var contextReslt = (result as ContextsResult)?.Contexts.FirstOrDefault();
+                            return contextReslt != null && contextReslt.Contains("3.0");
                         default:
                             break;
                     }
                 }
             }
-            while (result is not null && requiredFieldsFound < 2);
+            while (result is not null);
 
-            return requiredFieldsFound == 2;
+            return false;
         }
         catch
         {
