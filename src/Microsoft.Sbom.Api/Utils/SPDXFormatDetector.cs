@@ -89,13 +89,13 @@ public class SPDXFormatDetector : ISPDXFormatDetector
             {
                 result = parser.Next();
 
-                if (result is not null && result.Result is not null)
+                if (result?.Result is not null)
                 {
                     switch (result.FieldName)
                     {
                         case Constants.SPDXContextHeaderName:
-                            var contextReslt = (result as ContextsResult)?.Contexts.FirstOrDefault();
-                            return contextReslt != null && contextReslt.Contains("3.0");
+                            var contextResult = (result as ContextsResult)?.Contexts.FirstOrDefault();
+                            return contextResult != null && contextResult.Contains("3.0");
                         default:
                             break;
                     }
