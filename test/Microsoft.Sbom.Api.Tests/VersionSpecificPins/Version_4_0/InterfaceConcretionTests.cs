@@ -329,6 +329,7 @@ public class InterfaceConcretionTests
         public ConfigurationSetting<string> SbomDir { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<ConformanceType> Conformance { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
     private class PinnedISettingSourceable : ISettingSourceable

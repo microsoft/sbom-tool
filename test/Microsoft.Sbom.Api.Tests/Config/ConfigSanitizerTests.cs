@@ -507,4 +507,52 @@ public class ConfigSanitizerTests
 
         Assert.AreEqual(SettingSource.Default, config.LicenseInformationTimeoutInSeconds.Source, "The source of LicenseInformationTimeoutInSeconds should be set to Default when null");
     }
+
+    [TestMethod]
+    [DataRow(false, "no artifactInfoMap exists")]
+    [DataRow(true, "empty artifactInfoMap exists")]
+    public void ArtifactMapInfo_InvalidCases_SanitizeThrowsException(bool specifyEmptyArtifactInfoMap, string description)
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Consolidate;
+
+        if (specifyEmptyArtifactInfoMap)
+        {
+            config.ArtifactInfoMap = new ConfigurationSetting<Dictionary<string, ArtifactInfo>>
+            {
+                Source = SettingSource.Default,
+                Value = new Dictionary<string, ArtifactInfo>(),
+            };
+        }
+
+        var e = Assert.ThrowsException<ValidationArgException>(() => configSanitizer.SanitizeConfig(config), $"Sanitizer should throw when {description}");
+        Assert.IsTrue(e.Message.Contains("ArtifactInfoMap"), $"Exception message should mention ArtifactMapInfo when {description}");
+    }
+
+    [TestMethod]
+    public void ArtifactMapInfo_ExistsWithValidData_Consolidate_SanitizeSucceeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Consolidate;
+        var artifactInfoMap = new Dictionary<string, ArtifactInfo>
+        {
+            { "artifact1", new ArtifactInfo
+                {
+                    ExternalManifestDir = "externalManifestDir",
+                    IgnoreMissingFiles = true,
+                    SkipSigningCheck = false,
+                }
+            },
+            { "artifact2", new ArtifactInfo() },
+        };
+        config.ArtifactInfoMap = new ConfigurationSetting<Dictionary<string, ArtifactInfo>>
+        {
+            Source = SettingSource.Default,
+            Value = artifactInfoMap,
+        };
+
+        var sanitizedConfig = configSanitizer.SanitizeConfig(config);
+
+        Assert.AreSame(artifactInfoMap, sanitizedConfig.ArtifactInfoMap.Value, "ArtifactInfoMap should remain the same after sanitization");
+    }
 }

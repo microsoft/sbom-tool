@@ -160,4 +160,7 @@ public class InputConfiguration : IConfiguration
 
     /// <inheritdoc cref="IConfiguration.Conformance" />
     public ConfigurationSetting<ConformanceType> Conformance { get; set; }
+
+    /// <inheritdoc cref="IConfiguration.ArtifactInfoMap" />
+    public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap { get; set; }
 }
