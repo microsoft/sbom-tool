@@ -89,7 +89,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
 
             foreach (var validPath in validPaths)
             {
-                logger.Verbose("Added valid path {Path}", validPath);
+                logger.Verbose("Added valid path {ValidPath}", validPath);
             }
         }
     }
