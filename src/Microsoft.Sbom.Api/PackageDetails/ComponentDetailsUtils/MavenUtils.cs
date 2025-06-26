@@ -75,7 +75,7 @@ public class MavenUtils : IPackageManagerUtils<MavenUtils>
             }
             else
             {
-                log.Verbose("Pom location could not be found at: {Location}", pomLocation);
+                log.Verbose("Pom location could not be found at: {PomLocation}", pomLocation);
             }
         }
 
