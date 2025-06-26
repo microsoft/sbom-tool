@@ -63,7 +63,7 @@ public abstract class ComponentDetectionBaseWalker
     {
         if (fileSystemUtils.FileExists(buildComponentDirPath))
         {
-            log.Debug("Scanning for packages under the root path {Dir}.", buildComponentDirPath);
+            log.Debug("Scanning for packages under the root path {BuildComponentDirPath}.", buildComponentDirPath);
         }
 
         // If the buildComponentDirPath is null or empty, make sure we have a ManifestDirPath and create a new temp directory with a random name.
