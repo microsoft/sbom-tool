@@ -51,7 +51,6 @@ public class OSUtilsTest
         IDictionary d = new Dictionary<string, string>()
         {
             { "Agent", "a" },
-            { Variable, "true" },
             { Variable.ToLower(), "trueLower" },
             { Variable.ToUpper(), "trueUpper" },
         };
@@ -59,9 +58,28 @@ public class OSUtilsTest
         environment.Setup(o => o.GetEnvironmentVariables()).Returns(d);
         osUtils = new OSUtils(logger.Object, environment.Object);
 
+        Assert.AreEqual("trueLower", osUtils.GetEnvironmentVariable(Variable));
+        environment.VerifyAll();
+        logger.Verify(o => o.Warning($"There are duplicate environment variables in different case for {Variable}, the value used is trueLower"), Times.Once());
+    }
+
+    [TestMethod]
+    public void GetEnvironmentVariable_DuplicateEnvVar_MatchingKeyCase()
+    {
+        IDictionary d = new Dictionary<string, string>()
+        {
+            { "Agent", "a" },
+            { Variable.ToLower(), "trueLower" },
+            { Variable.ToUpper(), "trueUpper" },
+            // make Variable the last key so as to ensure the case insensitive+ordered check is not used
+            { Variable, "true" },
+        };
+
+        environment.Setup(o => o.GetEnvironmentVariables()).Returns(d);
+        osUtils = new OSUtils(logger.Object, environment.Object);
+
         Assert.AreEqual("true", osUtils.GetEnvironmentVariable(Variable));
         environment.VerifyAll();
-        logger.Verify(o => o.Warning($"There are duplicate environment variables in different case for {Variable}, the value used is true"), Times.Once());
     }
 
     [TestMethod]

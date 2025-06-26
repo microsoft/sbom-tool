@@ -79,7 +79,7 @@ public static class SPDXToSbomFormatConverterExtensions
     {
         return new SbomRelationship
         {
-            RelationshipType = spdxRelationship.RelationshipType.ToString(),
+            RelationshipType = spdxRelationship.RelationshipType,
             TargetElementId = spdxRelationship.TargetElementId,
             SourceElementId = spdxRelationship.SourceElementId,
         };

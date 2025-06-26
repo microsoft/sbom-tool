@@ -14,7 +14,7 @@
     <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageVersion Include="Microsoft.Build" Version="17.11.4" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="17.11.4" />
-    <PackageVersion Include="Microsoft.Build.Locator" Version="1.7.8" />
+    <PackageVersion Include="Microsoft.Build.Locator" Version="1.9.1" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="17.11.4" />
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="8.0.2" />
@@ -28,7 +28,6 @@
     <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
     <PackageVersion Include="Microsoft.IO.Redist" Version="6.1.0" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.12.19" />
     <PackageVersion Include="MinVer" Version="6.0.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
@@ -38,6 +37,7 @@
     <PackageVersion Include="packageurl-dotnet" Version="1.1.0" />
     <PackageVersion Include="PowerArgs" Version="3.6.0" />
     <PackageVersion Include="Scrutor" Version="6.0.1" />
+    <PackageVersion Include="Serilog" Version="4.3.0" />
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0" />
     <PackageVersion Include="Serilog.Sinks.Async" Version="2.1.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />

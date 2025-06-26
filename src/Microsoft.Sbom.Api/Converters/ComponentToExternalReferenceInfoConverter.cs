@@ -76,7 +76,7 @@ public class ComponentToExternalReferenceInfoConverter
         return new ExternalDocumentReferenceInfo
         {
             ExternalDocumentName = sbomComponent.Name,
-            Checksum = new[] { new Checksum { Algorithm = AlgorithmName.SHA1, ChecksumValue = sbomComponent.Checksum } },
+            Checksum = [new Checksum { Algorithm = AlgorithmName.SHA1, ChecksumValue = sbomComponent.Checksum }],
             Path = sbomComponent.Path,
             DocumentNamespace = sbomComponent.DocumentNamespace.ToString(),
             DescribedElementID = sbomComponent.RootElementId

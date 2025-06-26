@@ -33,6 +33,6 @@ internal static class RubyGemsComponentExtensions
         },
         FilesAnalyzed = false,
         Type = "ruby",
-        DependOn = component.AncestralReferrers?.FirstOrDefault()?.Id,
+        DependOn = component.AncestralReferrers?.Select(r => r.Id).ToList(),
     };
 }

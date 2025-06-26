@@ -5,8 +5,6 @@
         <RootNamespace>Microsoft.Sbom.Api</RootNamespace>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <Description>Highly scalable, extensible and enterprise ready API to create SBOMs for any variety of artifacts.</Description>
-        <SignAssembly>True</SignAssembly>
-        <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,6 +19,7 @@
         <PackageReference Include="NuGet.Configuration" />
         <PackageReference Include="packageurl-dotnet" />
         <PackageReference Include="PowerArgs" />
+        <PackageReference Include="Serilog" />
         <PackageReference Include="Serilog.Extensions.Hosting" />
         <PackageReference Include="Serilog.Sinks.Console" />
         <PackageReference Include="Spectre.Console.Cli" />
