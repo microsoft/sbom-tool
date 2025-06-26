@@ -55,6 +55,7 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<string>> sbomPath = new();
     private static readonly AsyncLocal<ConfigurationSetting<string>> sbomDir = new();
     private static readonly AsyncLocal<ConfigurationSetting<ConformanceType>> conformance = new();
+    private static readonly AsyncLocal<ConfigurationSetting<Dictionary<string, ArtifactInfo>>> artifactInfoMap = new();
 
     /// <inheritdoc cref="IConfiguration.BuildDropPath" />
     [DirectoryExists]
@@ -347,5 +348,12 @@ public class Configuration : IConfiguration
     {
         get => conformance.Value;
         set => conformance.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.ArtifactInfoMap" />
+    public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap
+    {
+        get => artifactInfoMap.Value;
+        set => artifactInfoMap.Value = value;
     }
 }
