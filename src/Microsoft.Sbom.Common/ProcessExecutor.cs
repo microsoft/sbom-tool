@@ -50,7 +50,7 @@ public class ProcessExecutor : IProcessExecutor
         if (!processExited)
         {
             process.Kill(); // If the process exceeds the timeout, kill it
-            logger.Error("The process {File} with the arguments {Arguments} timed out.", fileName, arguments);
+            logger.Error("The process {FileName} with the arguments {Arguments} timed out.", fileName, arguments);
             return null;
         }
 
