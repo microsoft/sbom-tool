@@ -75,7 +75,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
                 log.Warning($"There were no packages detected during the generation workflow.");
             }
 
-            log.Debug("Wrote {Total} package elements in the SBOM.", totalJsonDocumentsWritten);
+            log.Debug("Wrote {TotalJsonDocumentsWritten} package elements in the SBOM.", totalJsonDocumentsWritten);
 
             // +1 is added to the totalJsonDocumentsWritten to account for the root package of the SBOM.
             recorder.RecordTotalNumberOfPackages(totalJsonDocumentsWritten + 1);
