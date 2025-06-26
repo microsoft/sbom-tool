@@ -20,7 +20,7 @@ public class SbomConsolidationWorkflowTests
     [TestInitialize]
     public void BeforeEachTest()
     {
-        loggerMock = new Mock<ILogger>();  // Intentionally not useing Strict to streamline setup
+        loggerMock = new Mock<ILogger>();  // Intentionally not using Strict to streamline setup
         configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
         sbomGenerationWorkflowMock = new Mock<IWorkflow<SbomGenerationWorkflow>>(MockBehavior.Strict);
 
