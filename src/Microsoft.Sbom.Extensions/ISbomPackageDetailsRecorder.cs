@@ -32,7 +32,6 @@ public interface ISbomPackageDetailsRecorder
     /// <summary>
     /// Record a externalDocumentReference Id that is included in this SBOM.
     /// </summary>
-    /// <param name="fileId"></param>
     public void RecordExternalDocumentReferenceIdAndRootElement(string externalDocumentReferenceId, string rootElement);
 
     /// <summary>
@@ -43,7 +42,6 @@ public interface ISbomPackageDetailsRecorder
     /// <summary>
     /// Record the SHA1 hash for the file.
     /// </summary>
-    /// <param name="hash"></param>
     public void RecordChecksumForFile(Checksum[] checksums);
 
     /// <summary>

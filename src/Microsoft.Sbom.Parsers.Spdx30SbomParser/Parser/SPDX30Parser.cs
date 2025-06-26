@@ -310,7 +310,6 @@ public class SPDX30Parser : ISbomParser
     /// Handle deduplication of elements by checking SPDX ID
     /// </summary>
     /// <param name="spdxId"></param>
-    /// <param name="elementsList"></param>
     /// <param name="elementsSpdxIdList"></param>
     /// <returns></returns>
     private bool IsUniqueElement(string spdxId, HashSet<string> elementsSpdxIdList)
