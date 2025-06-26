@@ -15,6 +15,5 @@ public interface IManifestConfigHandler
     /// object and returns true, or else returns false.
     /// </summary>
     /// <param name="manifestConfig"></param>
-    /// <returns></returns>
     public bool TryGetManifestConfig(out ISbomConfig sbomConfig);
 }

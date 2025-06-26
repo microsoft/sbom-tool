@@ -40,7 +40,6 @@ public class FileArrayGenerator : IJsonArrayGenerator<FileArrayGenerator>
     /// an array object. Upon failure, returns a list of
     /// <see cref="GenerationResult"/> objects that can be used to trace the error.
     /// </summary>
-    /// <returns></returns>
     public async Task<GeneratorResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.FilesGeneration))
