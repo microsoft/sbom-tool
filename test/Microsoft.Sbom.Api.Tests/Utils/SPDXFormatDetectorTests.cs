@@ -20,6 +20,7 @@ public class SPDXFormatDetectorTests
     private Mock<IManifestParserProvider> mockManifestParserProvider;
     private Mock<IManifestInterface> mock22ManifestInterface;
     private Mock<IManifestInterface> mock30ManifestInterface;
+    private Mock<ISbomConfigFactory> mockSbomConfigFactory;
     private SPDXFormatDetector testSubject;
 
     private const string FilePathStub = "file-path";
@@ -36,13 +37,14 @@ public class SPDXFormatDetectorTests
         mockManifestParserProvider = new Mock<IManifestParserProvider>(MockBehavior.Strict);
         mock22ManifestInterface = new Mock<IManifestInterface>(MockBehavior.Strict);
         mock30ManifestInterface = new Mock<IManifestInterface>(MockBehavior.Strict);
+        mockSbomConfigFactory = new Mock<ISbomConfigFactory>(MockBehavior.Strict);
 
         mockManifestParserProvider.Setup(m => m.Get(ManifestInfo.Parse(Spdx22VersionStub))).Returns(mock22ManifestInterface.Object);
         mockManifestParserProvider.Setup(m => m.Get(ManifestInfo.Parse(Spdx30VersionStub))).Returns(mock30ManifestInterface.Object);
         mock22ManifestInterface.Setup(m => m.CreateParser(It.IsAny<Stream>())).Returns((Stream stream) => new SPDXParser(stream));
         mock30ManifestInterface.Setup(m => m.CreateParser(It.IsAny<Stream>())).Returns((Stream stream) => new SPDX30Parser(stream));
 
-        testSubject = new SPDXFormatDetector(mockFileSystemUtils.Object, mockManifestParserProvider.Object);
+        testSubject = new SPDXFormatDetector(mockFileSystemUtils.Object, mockManifestParserProvider.Object, mockSbomConfigFactory.Object);
     }
 
     [TestCleanup]

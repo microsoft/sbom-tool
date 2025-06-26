@@ -3,8 +3,6 @@
 
 using System;
 using System.Linq;
-using Microsoft.Sbom.Api.Manifest.Configuration;
-using Microsoft.Sbom.Api.Recorder;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
@@ -18,49 +16,27 @@ namespace Microsoft.Sbom.Api.Manifest.ManifestConfigHandlers;
 /// </summary>
 public abstract class BaseManifestConfigHandler : IManifestConfigHandler
 {
-    protected readonly IMetadataBuilderFactory metadataBuilderFactory;
     protected readonly IConfiguration configuration;
     protected readonly IFileSystemUtils fileSystemUtils;
+    protected readonly ISbomConfigFactory sbomConfigFactory;
 
     protected BaseManifestConfigHandler(
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
-        IMetadataBuilderFactory metadataBuilderFactory)
+        ISbomConfigFactory sbomConfigFactory)
     {
-        this.metadataBuilderFactory = metadataBuilderFactory ?? throw new ArgumentException(nameof(metadataBuilderFactory));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+        this.sbomConfigFactory = sbomConfigFactory ?? throw new ArgumentNullException(nameof(sbomConfigFactory));
     }
 
     protected abstract ManifestInfo ManifestInfo { get; }
 
     protected string ManifestDirPath => configuration.ManifestDirPath?.Value;
 
-    protected string SbomDirPath => fileSystemUtils.JoinPaths(ManifestDirPath, $"{ManifestInfo.Name.ToLower()}_{ManifestInfo.Version.ToLower()}");
-
-    protected string SbomFilePath => fileSystemUtils.JoinPaths(SbomDirPath, $"manifest.{ManifestInfo.Name.ToLower()}.json");
-
-    protected string ManifestJsonSha256FilePath => $"{SbomFilePath}.sha256";
-
-    protected string CatalogFilePath => fileSystemUtils.JoinPaths(SbomDirPath, Constants.CatalogFileName);
-
-    protected string BsiFilePath => fileSystemUtils.JoinPaths(SbomDirPath, Constants.BsiFileName);
-
-    protected IMetadataBuilder MetadataBuilder => metadataBuilderFactory.Get(ManifestInfo);
-
     protected ISbomConfig CreateSbomConfig()
     {
-        return new SbomConfig(fileSystemUtils)
-        {
-            ManifestInfo = ManifestInfo,
-            ManifestJsonDirPath = SbomDirPath,
-            ManifestJsonFilePath = SbomFilePath,
-            CatalogFilePath = CatalogFilePath,
-            BsiFilePath = BsiFilePath,
-            ManifestJsonFileSha256FilePath = ManifestJsonSha256FilePath,
-            MetadataBuilder = MetadataBuilder,
-            Recorder = new SbomPackageDetailsRecorder()
-        };
+        return sbomConfigFactory.Get(ManifestInfo, ManifestDirPath);
     }
 
     public virtual bool TryGetManifestConfig(out ISbomConfig sbomConfig)

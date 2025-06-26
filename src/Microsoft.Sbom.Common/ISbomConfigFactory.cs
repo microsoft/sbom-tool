@@ -23,4 +23,12 @@ public interface ISbomConfigFactory
         string bsiFilePath,
         ISbomPackageDetailsRecorder recorder,
         IMetadataBuilder metadataBuilder);
+
+    public ISbomConfig Get(
+        ManifestInfo manifestInfo,
+        string manifestPath);
+
+    public string GetSbomDirPath(string manifestDirPath, ManifestInfo manifestInfo);
+
+    public string GetSbomFilePath(string manifestDirPath, ManifestInfo manifestInfo);
 }

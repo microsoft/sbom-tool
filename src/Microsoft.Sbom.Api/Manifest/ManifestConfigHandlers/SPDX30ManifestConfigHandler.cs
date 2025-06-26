@@ -16,8 +16,8 @@ public class SPDX30ManifestConfigHandler : BaseManifestConfigHandler
     public SPDX30ManifestConfigHandler(
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
-        IMetadataBuilderFactory metadataBuilderFactory)
-        : base(configuration, fileSystemUtils, metadataBuilderFactory)
+        ISbomConfigFactory sbomConfigFactory)
+        : base(configuration, fileSystemUtils, sbomConfigFactory)
     {
     }
 

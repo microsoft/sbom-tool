@@ -16,8 +16,8 @@ public class SPDX22ManifestConfigHandler : BaseManifestConfigHandler
     public SPDX22ManifestConfigHandler(
         IConfiguration configuration,
         IFileSystemUtils fileSystemUtils,
-        IMetadataBuilderFactory metadataBuilderFactory)
-        : base(configuration, fileSystemUtils, metadataBuilderFactory)
+        ISbomConfigFactory sbomConfigFactory)
+        : base(configuration, fileSystemUtils, sbomConfigFactory)
     {
     }
 
