@@ -56,8 +56,8 @@ public class ConfigSanitizer
         if ((configuration.ManifestToolAction == ManifestToolActions.Validate || configuration.ManifestToolAction == ManifestToolActions.Generate) &&
             (configuration.BuildDropPath?.Value == null || (configuration.DockerImagesToScan?.Value != null && configuration.BuildComponentPath?.Value == null)))
         {
-                ValidateBuildDropPathConfiguration(configuration);
-                configuration.BuildDropPath = GetTempBuildDropPath(configuration);
+            ValidateBuildDropPathConfiguration(configuration);
+            configuration.BuildDropPath = GetTempBuildDropPath(configuration);
         }
 
         CheckValidateFormatConfig(configuration);
@@ -68,7 +68,7 @@ public class ConfigSanitizer
         configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath?.Value, configuration.ManifestToolAction);
 
         // Set namespace value, this handles default values and user provided values.
-        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate || configuration.ManifestToolAction == ManifestToolActions.Consolidate)
         {
             configuration.NamespaceUriBase = GetNamespaceBaseUri(configuration, logger);
         }
@@ -111,6 +111,8 @@ public class ConfigSanitizer
         // Replace backslashes in directory paths with the OS-sepcific directory separator character.
         PathUtils.ConvertToOSSpecificPathSeparators(configuration);
 
+        CheckConsolidationConfig(configuration);
+
         logger.Dispose();
 
         return configuration;
@@ -126,6 +128,19 @@ public class ConfigSanitizer
         if (config.SbomPath?.Value == null)
         {
             throw new ValidationArgException($"Please provide a value for the SbomPath (-sp) parameter to validate the SBOM.");
+        }
+    }
+
+    private void CheckConsolidationConfig(IConfiguration config)
+    {
+        if (config.ManifestToolAction != ManifestToolActions.Consolidate)
+        {
+            return;
+        }
+
+        if (config.ArtifactInfoMap?.Value == null || !config.ArtifactInfoMap.Value.Any())
+        {
+            throw new ValidationArgException($"Please provide a value for the ArtifactInfoMap to consolidate the SBOMs.");
         }
     }
 
