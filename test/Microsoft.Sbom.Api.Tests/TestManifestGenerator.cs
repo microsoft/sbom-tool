@@ -119,11 +119,9 @@ internal class TestManifestGenerator : IManifestGenerator
     public GenerationResult GenerateRootPackage(IInternalMetadataProvider _)
     {
         var jsonString = """
-
                          {{
                              "Name": "rootPackage"
                          }}
-
                          """;
 
         return new GenerationResult
