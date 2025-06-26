@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.IO;
+using System.Linq;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
@@ -20,8 +21,10 @@ public class SPDXFormatDetectorTests
     private Mock<IManifestParserProvider> mockManifestParserProvider;
     private Mock<IManifestInterface> mock22ManifestInterface;
     private Mock<IManifestInterface> mock30ManifestInterface;
+    private Mock<ISbomConfigFactory> mockSbomConfigFactory;
     private SPDXFormatDetector testSubject;
 
+    private const string DirPathStub = "dir-path";
     private const string FilePathStub = "file-path";
     private const string Spdx22VersionStub = "SPDX:2.2";
     private const string Spdx30VersionStub = "SPDX:3.0";
@@ -36,19 +39,124 @@ public class SPDXFormatDetectorTests
         mockManifestParserProvider = new Mock<IManifestParserProvider>(MockBehavior.Strict);
         mock22ManifestInterface = new Mock<IManifestInterface>(MockBehavior.Strict);
         mock30ManifestInterface = new Mock<IManifestInterface>(MockBehavior.Strict);
+        mockSbomConfigFactory = new Mock<ISbomConfigFactory>(MockBehavior.Strict);
 
         mockManifestParserProvider.Setup(m => m.Get(ManifestInfo.Parse(Spdx22VersionStub))).Returns(mock22ManifestInterface.Object);
         mockManifestParserProvider.Setup(m => m.Get(ManifestInfo.Parse(Spdx30VersionStub))).Returns(mock30ManifestInterface.Object);
         mock22ManifestInterface.Setup(m => m.CreateParser(It.IsAny<Stream>())).Returns((Stream stream) => new SPDXParser(stream));
         mock30ManifestInterface.Setup(m => m.CreateParser(It.IsAny<Stream>())).Returns((Stream stream) => new SPDX30Parser(stream));
 
-        testSubject = new SPDXFormatDetector(mockFileSystemUtils.Object, mockManifestParserProvider.Object);
+        testSubject = new SPDXFormatDetector(mockFileSystemUtils.Object, mockManifestParserProvider.Object, mockSbomConfigFactory.Object);
     }
 
     [TestCleanup]
     public void Verify()
     {
         mockFileSystemUtils.VerifyAll();
+        mockSbomConfigFactory.VerifyAll();
+    }
+
+    [TestMethod]
+    [DataRow(Spdx22ContentStub, Spdx22VersionStub)]
+    [DataRow(Spdx30ContentStub, Spdx30VersionStub)]
+    public void TryGetSbomsWithVersion_SingleResult_Success(string testContent, string expectedVersion)
+    {
+        var spdx22FilePathStub = FilePathStub + Spdx22VersionStub;
+        var spdx30FilePathStub = FilePathStub + Spdx30VersionStub;
+        mockSbomConfigFactory
+            .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX22ManifestInfo))
+            .Returns(spdx22FilePathStub)
+            .Verifiable();
+        mockSbomConfigFactory
+            .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX30ManifestInfo))
+            .Returns(spdx30FilePathStub)
+            .Verifiable();
+        mockFileSystemUtils
+            .Setup(m => m.FileExists(It.IsAny<string>()))
+            .Returns(false);
+        mockFileSystemUtils
+            .Setup(m => m.FileExists(FilePathStub + expectedVersion))
+            .Returns(true)
+            .Verifiable();
+        mockFileSystemUtils
+            .Setup(m => m.OpenRead(FilePathStub + expectedVersion))
+            .Returns(TestUtils.GenerateStreamFromString(testContent))
+            .Verifiable();
+
+        var result = testSubject.TryGetSbomsWithVersion(DirPathStub, out var detectedSboms);
+        Assert.IsTrue(result);
+        Assert.IsNotNull(detectedSboms);
+        Assert.AreEqual(1, detectedSboms.Count);
+        Assert.AreEqual(FilePathStub + expectedVersion, detectedSboms.First().Key);
+        Assert.AreEqual(expectedVersion, detectedSboms.First().Value.ToString());
+    }
+
+    [TestMethod]
+    public void TryGetSbomsWithVersion_MultipleResults_Success()
+    {
+        var spdx22FilePathStub = FilePathStub + Spdx22VersionStub;
+        var spdx30FilePathStub = FilePathStub + Spdx30VersionStub;
+        mockSbomConfigFactory
+            .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX22ManifestInfo))
+            .Returns(spdx22FilePathStub)
+            .Verifiable();
+        mockSbomConfigFactory
+            .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX30ManifestInfo))
+            .Returns(spdx30FilePathStub)
+            .Verifiable();
+        mockFileSystemUtils
+            .Setup(m => m.FileExists(FilePathStub + Spdx22VersionStub))
+            .Returns(true)
+            .Verifiable();
+        mockFileSystemUtils
+            .Setup(m => m.FileExists(FilePathStub + Spdx30VersionStub))
+            .Returns(true)
+            .Verifiable();
+        mockFileSystemUtils
+            .Setup(m => m.OpenRead(FilePathStub + Spdx22VersionStub))
+            .Returns(TestUtils.GenerateStreamFromString(Spdx22ContentStub))
+            .Verifiable();
+        mockFileSystemUtils
+            .Setup(m => m.OpenRead(FilePathStub + Spdx30VersionStub))
+            .Returns(TestUtils.GenerateStreamFromString(Spdx30ContentStub))
+            .Verifiable();
+
+        var result = testSubject.TryGetSbomsWithVersion(DirPathStub, out var detectedSboms);
+        Assert.IsTrue(result);
+        Assert.IsNotNull(detectedSboms);
+        Assert.AreEqual(2, detectedSboms.Count);
+        Assert.IsTrue(detectedSboms.ContainsKey(FilePathStub + Spdx22VersionStub));
+        Assert.IsTrue(detectedSboms.ContainsKey(FilePathStub + Spdx30VersionStub));
+        Assert.AreEqual(Spdx22VersionStub, detectedSboms[FilePathStub + Spdx22VersionStub].ToString());
+        Assert.AreEqual(Spdx30VersionStub, detectedSboms[FilePathStub + Spdx30VersionStub].ToString());
+    }
+
+    [TestMethod]
+    public void TryGetSbomsWithVersion_NoResults()
+    {
+        var spdx22FilePathStub = FilePathStub + Spdx22VersionStub;
+        var spdx30FilePathStub = FilePathStub + Spdx30VersionStub;
+        mockSbomConfigFactory
+            .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX22ManifestInfo))
+            .Returns(spdx22FilePathStub)
+            .Verifiable();
+        mockSbomConfigFactory
+            .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX30ManifestInfo))
+            .Returns(spdx30FilePathStub)
+            .Verifiable();
+        mockFileSystemUtils
+            .Setup(m => m.FileExists(FilePathStub + Spdx22VersionStub))
+            .Returns(false)
+            .Verifiable();
+        mockFileSystemUtils
+            .Setup(m => m.FileExists(FilePathStub + Spdx30VersionStub))
+            .Returns(false)
+            .Verifiable();
+
+        var result = testSubject.TryGetSbomsWithVersion(DirPathStub, out var detectedSboms);
+        Assert.IsFalse(result);
+        Assert.IsNotNull(detectedSboms);
+        Assert.IsFalse(detectedSboms.Any());
     }
 
     [TestMethod]
