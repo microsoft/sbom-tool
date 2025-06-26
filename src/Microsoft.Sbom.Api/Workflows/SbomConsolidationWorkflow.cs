@@ -13,36 +13,36 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
 {
     private readonly ILogger logger;
     private readonly IConfiguration configuration;
+    private readonly IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow;
 
 #pragma warning disable IDE0051 // We'll use this soon.
     private IReadOnlyDictionary<string, ArtifactInfo> ArtifactInfoMap => configuration.ArtifactInfoMap.Value;
 #pragma warning restore IDE0051 // We'll use this soon.
 
-    public SbomConsolidationWorkflow(ILogger logger, IConfiguration configuration)
+    public SbomConsolidationWorkflow(ILogger logger, IConfiguration configuration, IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        this.sbomGenerationWorkflow = sbomGenerationWorkflow ?? throw new ArgumentNullException(nameof(sbomGenerationWorkflow));
     }
 
     /// <inheritdoc/>
-#pragma warning disable CS1998 // Placeholder, will use async in the future.
     public virtual async Task<bool> RunAsync()
     {
         logger.Information("Placeholder SBOM consolidation workflow executed.");
 
-        return ValidateSourceSboms() && GeneratedConsolidatedSbom();
+        return ValidateSourceSboms() && await GeneratedConsolidatedSbom();
     }
-#pragma warning restore CS1998 // Placeholder, will use async in the future.
 
     private bool ValidateSourceSboms()
     {
-        // TODO : Implement the source SBOMs.
+        // TODO : Implement the source SBOMs.`
         return true;
     }
 
-    private bool GeneratedConsolidatedSbom()
+    private async Task<bool> GeneratedConsolidatedSbom()
     {
-        // TODO : Generate the consolidated SBOM.
-        return true;
+        // TODO : Incorporate the source SBOMs in the consolidated SBOM generation workflow.
+        return await sbomGenerationWorkflow.RunAsync().ConfigureAwait(false);
     }
 }
