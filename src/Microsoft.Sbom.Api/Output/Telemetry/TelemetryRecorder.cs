@@ -329,7 +329,7 @@ public class TelemetryRecorder : IRecorder
             };
 
             // Log to logger.
-            Log.Debug("Wrote telemetry object to path {Value}", this.Configuration.TelemetryFilePath?.Value);
+            Log.Debug("Wrote telemetry object to path {TelemetryFilePathValue}", this.Configuration.TelemetryFilePath?.Value);
 
             if (Configuration.ManifestToolAction == ManifestToolActions.Generate && Configuration.BuildComponentPath?.Value != null && this.totalNumberOfPackages == 0)
             {
