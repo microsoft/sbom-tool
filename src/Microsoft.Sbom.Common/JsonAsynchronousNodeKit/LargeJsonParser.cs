@@ -289,7 +289,7 @@ public class LargeJsonParser
 
         if (result is null)
         {
-            throw new InvalidOperationException($"Deserialization unexpectedly returned null.");
+            throw new InvalidOperationException("Deserialization unexpectedly returned null.");
         }
 
         return result;
