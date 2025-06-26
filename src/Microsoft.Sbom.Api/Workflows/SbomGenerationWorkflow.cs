@@ -186,7 +186,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 }
                 catch (Exception e)
                 {
-                    log.Warning("Unable to delete the temp directory {Path}", this.fileSystemUtils.GetSbomToolTempPath(), e);
+                    log.Warning("Unable to delete the temp directory {SbomToolTempPath}", this.fileSystemUtils.GetSbomToolTempPath(), e);
                 }
             }
         }
