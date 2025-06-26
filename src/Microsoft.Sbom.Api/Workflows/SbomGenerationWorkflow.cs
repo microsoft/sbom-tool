@@ -203,7 +203,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
             }
             else
             {
-                log.Warning("Ignoring unregistered manifest type: {Manifest}", manifestInfo);
+                log.Warning("Ignoring unregistered manifest type: {ManifestInfo}", manifestInfo);
             }
         }
 
