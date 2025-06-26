@@ -52,7 +52,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
             IValidatedSbom validatedSbom = null;
             try
             {
-                log.Information("Validating SBOM {Path}", sbomPath);
+                log.Information("Validating SBOM {SbomPath}", sbomPath);
                 validatedSbom = validatedSbomFactory.CreateValidatedSbom(sbomPath);
                 var validationDetails = await validatedSbom.GetValidationResults();
                 if (validationDetails.Status != FormatValidationStatus.Valid)
