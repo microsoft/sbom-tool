@@ -80,7 +80,7 @@ public class PackageInfoJsonWriter
         }
         catch (Exception e)
         {
-            log.Warning("Encountered an error while generating json for packageInfo {Package}: {Message}", packageInfo, e.Message);
+            log.Warning("Encountered an error while generating json for packageInfo {PackageInfo}: {Message}", packageInfo, e.Message);
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = ErrorType.JsonSerializationError,
