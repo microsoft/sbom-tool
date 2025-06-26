@@ -53,7 +53,7 @@ public class ExternalReferenceInfoToPathConverter
                 }
                 catch (Exception e)
                 {
-                    log.Warning("Encountered an error while converting external reference {Name} to path: {Message}", externalDocumentRef.ExternalDocumentName, e.Message);
+                    log.Warning("Encountered an error while converting external reference {ExternalDocumentName} to path: {Message}", externalDocumentRef.ExternalDocumentName, e.Message);
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
                         ErrorType = ErrorType.Other,
