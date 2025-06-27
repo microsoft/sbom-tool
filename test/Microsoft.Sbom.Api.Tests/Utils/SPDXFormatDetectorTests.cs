@@ -76,6 +76,9 @@ public class SPDXFormatDetectorTests
             .Setup(m => m.FileExists(FilePathStub + expectedVersion))
             .Returns(true);
         mockFileSystemUtils
+            .Setup(m => m.GetFileSize(FilePathStub + expectedVersion))
+            .Returns(1);
+        mockFileSystemUtils
             .Setup(m => m.OpenRead(FilePathStub + expectedVersion))
             .Returns(TestUtils.GenerateStreamFromString(testContent));
 
@@ -103,6 +106,12 @@ public class SPDXFormatDetectorTests
         mockFileSystemUtils
             .Setup(m => m.FileExists(FilePathStub + Spdx30VersionStub))
             .Returns(true);
+        mockFileSystemUtils
+            .Setup(m => m.GetFileSize(FilePathStub + Spdx22VersionStub))
+            .Returns(1);
+        mockFileSystemUtils
+            .Setup(m => m.GetFileSize(FilePathStub + Spdx30VersionStub))
+            .Returns(1);
         mockFileSystemUtils
             .Setup(m => m.OpenRead(FilePathStub + Spdx22VersionStub))
             .Returns(TestUtils.GenerateStreamFromString(Spdx22ContentStub));
@@ -135,6 +144,36 @@ public class SPDXFormatDetectorTests
         mockFileSystemUtils
             .Setup(m => m.FileExists(FilePathStub + Spdx30VersionStub))
             .Returns(false);
+
+        var result = testSubject.TryGetSbomsWithVersion(DirPathStub, out var detectedSboms);
+        Assert.IsFalse(result);
+        Assert.IsNotNull(detectedSboms);
+        Assert.IsFalse(detectedSboms.Any());
+    }
+
+    [TestMethod]
+    public void TryGetSbomsWithVersion_FilesAreEmpty()
+    {
+        var spdx22FilePathStub = FilePathStub + Spdx22VersionStub;
+        var spdx30FilePathStub = FilePathStub + Spdx30VersionStub;
+        mockSbomConfigFactory
+            .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX22ManifestInfo))
+            .Returns(spdx22FilePathStub);
+        mockSbomConfigFactory
+            .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX30ManifestInfo))
+            .Returns(spdx30FilePathStub);
+        mockFileSystemUtils
+            .Setup(m => m.FileExists(FilePathStub + Spdx22VersionStub))
+            .Returns(true);
+        mockFileSystemUtils
+            .Setup(m => m.FileExists(FilePathStub + Spdx30VersionStub))
+            .Returns(true);
+        mockFileSystemUtils
+            .Setup(m => m.GetFileSize(FilePathStub + Spdx22VersionStub))
+            .Returns(0);
+        mockFileSystemUtils
+            .Setup(m => m.GetFileSize(FilePathStub + Spdx30VersionStub))
+            .Returns(0);
 
         var result = testSubject.TryGetSbomsWithVersion(DirPathStub, out var detectedSboms);
         Assert.IsFalse(result);

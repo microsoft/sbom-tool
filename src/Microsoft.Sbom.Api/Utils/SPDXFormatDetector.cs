@@ -38,7 +38,7 @@ public class SPDXFormatDetector : ISPDXFormatDetector
         detectedSboms = new List<(string, ManifestInfo)>();
         foreach (var mi in supportedManifestInfos.Keys) {
             var filePath = sbomConfigFactory.GetSbomFilePath(manifestDirPath, mi);
-            if (fileSystemUtils.FileExists(filePath))
+            if (fileSystemUtils.FileExists(filePath) && fileSystemUtils.GetFileSize(filePath) > 0)
             {
                 var result = TryDetectFormat(filePath, out var detectedManifestInfo);
                 if (result && mi.Equals(detectedManifestInfo))
