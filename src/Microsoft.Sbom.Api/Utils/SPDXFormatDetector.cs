@@ -17,10 +17,12 @@ public class SPDXFormatDetector : ISPDXFormatDetector
 {
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IDictionary<ManifestInfo, Func<Stream, bool>> supportedManifestInfos;
+    private readonly ISbomConfigFactory sbomConfigFactory;
 
     public SPDXFormatDetector(
         IFileSystemUtils fileSystemUtils,
-        IManifestParserProvider manifestParserProvider)
+        IManifestParserProvider manifestParserProvider,
+        ISbomConfigFactory sbomConfigFactory)
     {
         this.fileSystemUtils = fileSystemUtils;
         supportedManifestInfos = new Dictionary<ManifestInfo, Func<Stream, bool>>()
@@ -28,6 +30,25 @@ public class SPDXFormatDetector : ISPDXFormatDetector
             { Constants.SPDX22ManifestInfo, TryParse22 },
             { Constants.SPDX30ManifestInfo, TryParse30 }
         };
+        this.sbomConfigFactory = sbomConfigFactory;
+    }
+
+    public bool TryGetSbomsWithVersion(string manifestDirPath, out IList<(string sbomFilePath, ManifestInfo manifestInfo)> detectedSboms)
+    {
+        detectedSboms = new List<(string, ManifestInfo)>();
+        foreach (var mi in supportedManifestInfos.Keys) {
+            var filePath = sbomConfigFactory.GetSbomFilePath(manifestDirPath, mi);
+            if (fileSystemUtils.FileExists(filePath) && fileSystemUtils.GetFileSize(filePath) > 0)
+            {
+                var result = TryDetectFormat(filePath, out var detectedManifestInfo);
+                if (result && mi.Equals(detectedManifestInfo))
+                {
+                    detectedSboms.Add((filePath, detectedManifestInfo));
+                }
+            }
+        }
+
+        return detectedSboms.Any();
     }
 
     public bool TryDetectFormat(string filePath, out ManifestInfo detectedManifestInfo)
