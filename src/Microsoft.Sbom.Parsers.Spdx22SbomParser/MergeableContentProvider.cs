@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
@@ -19,6 +20,13 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 /// </summary>
 public class MergeableContentProvider : IMergeableContentProviderInternal
 {
+    private readonly IFileSystemUtils fileSystemUtils;
+
+    public MergeableContentProvider(IFileSystemUtils fileSystemUtils)
+    {
+        this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
+    }
+
     /// <summary>
     /// This provider supports only SPDX 2.2 files.
     /// </summary>
@@ -34,13 +42,20 @@ public class MergeableContentProvider : IMergeableContentProviderInternal
             throw new ArgumentNullException(nameof(filePath));
         }
 
-        if (!File.Exists(filePath))
+        if (!fileSystemUtils.FileExists(filePath))
         {
             mergeableContent = null;
             return false;
         }
 
-        using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using var stream = fileSystemUtils.OpenRead(filePath);
+
+        if (stream == null)
+        {
+            mergeableContent = null;
+            return false;
+        }
+
         return TryGetContent(stream, out mergeableContent);
     }
 

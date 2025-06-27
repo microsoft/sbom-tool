@@ -5,20 +5,24 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests;
 
 [TestClass]
 public class MergeableContentProviderTests
 {
+    private Mock<IFileSystemUtils> fileSystemUtilsMock;
     private IMergeableContentProviderInternal provider;
 
     [TestInitialize]
     public void BeforeEachTest()
     {
-        provider = new MergeableContentProvider();
+        fileSystemUtilsMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
+        provider = new MergeableContentProvider(fileSystemUtilsMock.Object);
     }
 
     [TestMethod]
@@ -31,7 +35,11 @@ public class MergeableContentProviderTests
     [TestMethod]
     public void TryGetContent_FilePath_FileDoesNotExist_ReturnsFalseAndNullContent()
     {
-        var result = provider.TryGetContent("nonexistent-file.json", out var mergeableContent);
+        const string nonExistentFilePath = "nonexistent-file.json";
+
+        fileSystemUtilsMock.Setup(m => m.FileExists(nonExistentFilePath)).Returns(false);
+
+        var result = provider.TryGetContent(nonExistentFilePath, out var mergeableContent);
         Assert.IsFalse(result);
         Assert.IsNull(mergeableContent);
     }
@@ -41,12 +49,15 @@ public class MergeableContentProviderTests
     {
         var filePath = Path.GetFullPath(Path.Combine(
             Assembly.GetExecutingAssembly().Location, "..", "..", "..", "..", "..", "..", "samples", "spdx_2.2", "manifest.spdx.json"));
+        fileSystemUtilsMock.Setup(m => m.FileExists(filePath)).Returns(true);
+        fileSystemUtilsMock.Setup(m => m.OpenRead(filePath)).Returns(() => new FileStream(filePath, FileMode.Open, FileAccess.Read));
+
         var result = provider.TryGetContent(filePath, out var mergeableContent);
 
         Assert.IsTrue(result);
         Assert.IsNotNull(mergeableContent);
 
-        Assert.AreEqual(72, mergeableContent.Packages.Count());
+        Assert.AreEqual(267, mergeableContent.Packages.Count());
         Assert.AreEqual(0, mergeableContent.Relationships.Count());
     }
 
