@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parser;
 
@@ -16,6 +17,11 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
 /// </summary>
 internal class MergeableContentProvider : IMergeableContentProviderInternal
 {
+    /// <summary>
+    /// This provider supports only SPDX 2.2 files.
+    /// </summary>
+    public ManifestInfo ManifestInfo => Constants.SPDX30ManifestInfo;
+
     /// <summary>
     /// Implements <see cref="IMergeableContentProvider.TryGetContent(string, out MergeableContent)"/>.
     /// </summary>
