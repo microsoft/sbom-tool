@@ -48,7 +48,7 @@ public sealed class TimingRecorder : IDisposable
     {
         if (stopWatch.IsRunning)
         {
-            throw new Exception($"Tried to read event details for an executing event.");
+            throw new Exception("Tried to read event details for an executing event.");
         }
 
         return new Timing
