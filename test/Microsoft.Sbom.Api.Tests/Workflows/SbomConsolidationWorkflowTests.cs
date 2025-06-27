@@ -7,10 +7,13 @@ using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
+
+using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows.Tests;
 
@@ -18,7 +21,6 @@ namespace Microsoft.Sbom.Api.Workflows.Tests;
 public class SbomConsolidationWorkflowTests
 {
     private const string SPDX22FilePath = "rootpath/_manifest/spdx_2.2/manifest.spdx.json";
-    private const string SPDX30FilePath = "rootpath/_manifest/spdx_3.0/manifest.spdx.json";
 
     private Mock<ILogger> loggerMock;
     private Mock<IConfiguration> configurationMock;
@@ -98,7 +100,7 @@ public class SbomConsolidationWorkflowTests
             if (artifactInfo.ExternalManifestDir == null)
             {
                 fileSystemUtilsMock
-                    .Setup(m => m.JoinPaths(key, Api.Utils.Constants.ManifestFolder))
+                    .Setup(m => m.JoinPaths(key, Constants.ManifestFolder))
                     .Returns(key);
             }
 
@@ -143,25 +145,25 @@ public class SbomConsolidationWorkflowTests
             if (artifactInfo.ExternalManifestDir == null)
             {
                 fileSystemUtilsMock
-                    .Setup(m => m.JoinPaths(key, Api.Utils.Constants.ManifestFolder))
+                    .Setup(m => m.JoinPaths(key, Constants.ManifestFolder))
                     .Returns(key);
             }
 
             var manifestDirPath = artifactInfo.ExternalManifestDir ?? key;
             IList<(string, ManifestInfo)> res = new List<(string, ManifestInfo)>()
             {
-                (manifestDirPath, Api.Utils.Constants.SPDX22ManifestInfo),
-                (manifestDirPath, Api.Utils.Constants.SPDX30ManifestInfo)
+                (manifestDirPath, Constants.SPDX22ManifestInfo),
+                (manifestDirPath, Constants.SPDX30ManifestInfo)
             };
             sPDXFormatDetectorMock
                 .Setup(m => m.TryGetSbomsWithVersion(manifestDirPath, out res))
                 .Returns(true);
             sbomConfigFactoryMock
-                .Setup(m => m.Get(Api.Utils.Constants.SPDX22ManifestInfo, manifestDirPath, metadataBuilderFactoryMock.Object))
-                .Returns(new SbomConfig(fileSystemUtilsMock.Object) { ManifestInfo = Api.Utils.Constants.SPDX22ManifestInfo, ManifestJsonDirPath = manifestDirPath });
+                .Setup(m => m.Get(Constants.SPDX22ManifestInfo, manifestDirPath, metadataBuilderFactoryMock.Object))
+                .Returns(new SbomConfig(fileSystemUtilsMock.Object) { ManifestInfo = Constants.SPDX22ManifestInfo, ManifestJsonDirPath = manifestDirPath });
             sbomConfigFactoryMock
-                .Setup(m => m.Get(Api.Utils.Constants.SPDX30ManifestInfo, manifestDirPath, metadataBuilderFactoryMock.Object))
-                .Returns(new SbomConfig(fileSystemUtilsMock.Object) { ManifestInfo = Api.Utils.Constants.SPDX30ManifestInfo, ManifestJsonDirPath = manifestDirPath });
+                .Setup(m => m.Get(Constants.SPDX30ManifestInfo, manifestDirPath, metadataBuilderFactoryMock.Object))
+                .Returns(new SbomConfig(fileSystemUtilsMock.Object) { ManifestInfo = Constants.SPDX30ManifestInfo, ManifestJsonDirPath = manifestDirPath });
         }
     }
 }

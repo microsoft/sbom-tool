@@ -28,7 +28,9 @@ public class SPDXFormatDetectorTests
     private const string FilePathStub = "file-path";
     private const string Spdx22VersionStub = "SPDX:2.2";
     private const string Spdx30VersionStub = "SPDX:3.0";
+    // lang=json,strict
     private const string Spdx22ContentStub = @"{""spdxVersion"": ""SPDX-2.2"",""files"":[],""packages"":[],""relationships"":[],""externalDocumentRefs"":[]}";
+    // lang=json,strict
     private const string Spdx30ContentStub = @"{""@context"": [""https://Spdx.org/rdf/3.0.1/Spdx-context.jsonld""],""@graph"": []}";
     private const string InvalidContentStub = "invalid-content";
 

@@ -11,6 +11,7 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
+
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows;
@@ -26,19 +27,17 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     private readonly IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow;
     private readonly IReadOnlyDictionary<ManifestInfo, IMergeableContentProvider> contentProviders;
 
-#pragma warning disable IDE0051 // We'll use this soon.
     private IReadOnlyDictionary<string, ArtifactInfo> ArtifactInfoMap => configuration.ArtifactInfoMap.Value;
-#pragma warning restore IDE0051 // We'll use this soon.
 
     internal IEnumerable<(ManifestInfo, string)> SourceSbomsTemp { get; set; } = Enumerable.Empty<(ManifestInfo, string)>(); // Stub property for testing, will remove soon
 
     public SbomConsolidationWorkflow(
-        ILogger logger, 
-        IConfiguration configuration, 
-        IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow, 
-        ISbomConfigFactory sbomConfigFactory, 
-        ISPDXFormatDetector sPDXFormatDetector, 
-        IFileSystemUtils fileSystemUtils, 
+        ILogger logger,
+        IConfiguration configuration,
+        IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow,
+        ISbomConfigFactory sbomConfigFactory,
+        ISPDXFormatDetector sPDXFormatDetector,
+        IFileSystemUtils fileSystemUtils,
         IMetadataBuilderFactory metadataBuilderFactory,
         IEnumerable<IMergeableContentProvider> mergeableContentProviders)
     {
