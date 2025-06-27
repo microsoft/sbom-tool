@@ -72,7 +72,7 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
 
             if (totalJsonDocumentsWritten == 0)
             {
-                log.Warning($"There were no packages detected during the generation workflow.");
+                log.Warning("There were no packages detected during the generation workflow.");
             }
 
             log.Debug("Wrote {TotalJsonDocumentsWritten} package elements in the SBOM.", totalJsonDocumentsWritten);

@@ -45,8 +45,9 @@ public class ConfigFileParser
         {
             var envVarName = match.Groups[1].Value;
             var envVarValue = Environment.GetEnvironmentVariable(envVarName);
+            var encodedEnvVarValue = string.IsNullOrEmpty(envVarValue) ? envVarValue : JsonEncodedText.Encode(envVarValue).ToString();
 
-            return envVarValue;
+            return encodedEnvVarValue;
         });
     }
 }
