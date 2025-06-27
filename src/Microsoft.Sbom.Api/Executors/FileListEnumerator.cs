@@ -37,7 +37,6 @@ public class FileListEnumerator
     /// exists and adds the file to the output stream.
     /// </summary>
     /// <param name="listFile">Full file path to the list file to read.</param>
-    /// <returns></returns>
     public (ChannelReader<string> file, ChannelReader<FileValidationResult> errors) GetFilesFromList(string listFile)
     {
         if (string.IsNullOrWhiteSpace(listFile))

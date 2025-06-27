@@ -22,7 +22,6 @@ public class ProcessExecutor : IProcessExecutor
     /// <param name="fileName">File/Program to be executed.</param>
     /// <param name="arguments">Arguments to be supplied to the executable.</param>
     /// <param name="timeoutInMilliseconds">Timeout for the process being executed.</param>
-    /// <returns></returns>
     public string? ExecuteCommand(string fileName, string arguments, int timeoutInMilliseconds)
     {
         var processStartInformation = new ProcessStartInfo(fileName, arguments)

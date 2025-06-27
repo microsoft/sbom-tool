@@ -122,7 +122,6 @@ public class SbomConfigProvider : ISbomConfigProvider
     /// Starts asynchronous JSON serialization of supported ISbomConfig objects from IConfiguration.
     /// </summary>
     /// <param name="targetConfigs"></param>
-    /// <returns></returns>
     public IAsyncDisposable StartJsonSerializationAsync(IEnumerable<ISbomConfig> targetConfigs)
     {
         foreach (var config in targetConfigs)

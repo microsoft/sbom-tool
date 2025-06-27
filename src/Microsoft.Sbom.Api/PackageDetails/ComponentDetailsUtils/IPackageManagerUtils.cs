@@ -12,7 +12,6 @@ public interface IPackageManagerUtils<T>
     /// Takes in a ScannedComponent object and attempts to find the corresponding .pom file.
     /// </summary>
     /// <param name="scannedComponent">A single <see cref="ScannedComponent"/> from a component detection scan.</param>
-    /// <returns></returns>
     public string GetMetadataLocation(ScannedComponent scannedComponent);
 
     /// <summary>

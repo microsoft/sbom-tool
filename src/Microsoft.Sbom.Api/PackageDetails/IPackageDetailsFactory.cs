@@ -12,6 +12,5 @@ public interface IPackageDetailsFactory
     /// Takes in a list of ScannedComponents and returns a dictionary where the key is the component name and version and the value is PackageDetails record which is made up of information found in the package files.
     /// </summary>
     /// <param name="scannedComponents">An IEnumerable of ScannedComponents which is the output of a component-detection scan.</param>
-    /// <returns></returns>
     public IDictionary<(string Name, string Version), PackageDetails> GetPackageDetailsDictionary(IEnumerable<ScannedComponent> scannedComponents);
 }

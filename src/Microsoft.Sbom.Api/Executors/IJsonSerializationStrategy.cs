@@ -13,7 +13,6 @@ internal interface IJsonSerializationStrategy
     /// </summary>
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
-    /// <returns></returns>
     public bool AddToFilesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
 
     /// <summary>
@@ -21,7 +20,6 @@ internal interface IJsonSerializationStrategy
     /// </summary>
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
-    /// <returns></returns>
     public bool AddToPackagesSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
 
     /// <summary>
@@ -29,7 +27,6 @@ internal interface IJsonSerializationStrategy
     /// </summary>
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
-    /// <returns></returns>
     public bool AddToRelationshipsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
 
     /// <summary>
@@ -37,7 +34,6 @@ internal interface IJsonSerializationStrategy
     /// </summary>
     /// <param name="elementsSupportingConfigs"></param>
     /// <param name="config"></param>
-    /// <returns></returns>
     public bool AddToExternalDocRefsSupportingConfig(IList<ISbomConfig> elementsSupportingConfigs, ISbomConfig config);
 
     /// <summary>

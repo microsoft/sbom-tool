@@ -19,7 +19,6 @@ public interface ISbomParser
     /// Advance the parser to the next available state.
     /// </summary>
     /// <param name="stream"></param>
-    /// <returns></returns>
     public ParserStateResult? Next();
 
     /// <summary>
@@ -27,7 +26,6 @@ public interface ISbomParser
     /// current SBOM.
     /// </summary>
     /// <param name="stream"></param>
-    /// <returns></returns>
     public SpdxMetadata GetMetadata();
 
     /// <summary>

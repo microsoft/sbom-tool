@@ -17,7 +17,6 @@ public interface IInternalMetadataProvider
     /// Throws an <see cref="System.Exception"/> if the item is not found.
     /// </summary>
     /// <param name="key">The <see cref="MetadataKey"/> for the item.</param>
-    /// <returns></returns>
     public object GetMetadata(MetadataKey key);
 
     /// <summary>
@@ -45,6 +44,5 @@ public interface IInternalMetadataProvider
     /// <summary>
     /// Gets the namespace URI for the SBOM document that is unique within this build environment.
     /// </summary>
-    /// <returns></returns>
     public string GetSbomNamespaceUri();
 }

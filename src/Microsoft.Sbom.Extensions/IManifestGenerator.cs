@@ -41,7 +41,6 @@ public interface IManifestGenerator
     /// in this function.
     /// </summary>
     /// <param name="packageInfo">The current package that needs to be serialized.</param>
-    /// <returns></returns>
     public GenerationResult GenerateJsonDocument(SbomPackage packageInfo);
 
     /// <summary>
@@ -55,7 +54,6 @@ public interface IManifestGenerator
     /// <param name="internalMetadataProvider">The <see cref="IInternalMetadataProvider"/> object provides
     /// internal metadata that was generated for this SBOM run.</param>
     /// <param name="rootPackageId">Return the generated root package id.</param>
-    /// <returns></returns>
     public GenerationResult GenerateRootPackage(IInternalMetadataProvider internalMetadataProvider);
 
     /// <summary>
@@ -66,7 +64,6 @@ public interface IManifestGenerator
     /// in this function.
     /// </summary>
     /// <param name="relationship"></param>
-    /// <returns></returns>
     public GenerationResult GenerateJsonDocument(Relationship relationship);
 
     /// <summary>
@@ -77,7 +74,6 @@ public interface IManifestGenerator
     /// in this function.
     /// </summary>
     /// <param name="externalDocumentReferenceInfo"></param>
-    /// <returns></returns>
     public GenerationResult GenerateJsonDocument(ExternalDocumentReferenceInfo externalDocumentReferenceInfo);
 
     /// <summary>
@@ -90,7 +86,6 @@ public interface IManifestGenerator
     /// </summary>
     /// <param name="internalMetadataProvider">The <see cref="IInternalMetadataProvider"/> object provides
     /// internal metadata that was generated for this SBOM run.</param>
-    /// <returns></returns>
     public GenerationResult GenerateJsonDocument(IInternalMetadataProvider internalMetadataProvider);
 
     /// <summary>
@@ -134,6 +129,5 @@ public interface IManifestGenerator
     /// </summary>
     /// <param name="internalMetadataProvider">The <see cref="IInternalMetadataProvider"/> object provides
     /// internal metadata that was generated for this SBOM run.</param>
-    /// <returns></returns>
     public IDictionary<string, object> GetMetadataDictionary(IInternalMetadataProvider internalMetadataProvider);
 }

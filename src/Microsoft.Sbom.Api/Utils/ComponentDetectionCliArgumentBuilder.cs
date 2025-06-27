@@ -73,7 +73,6 @@ public class ComponentDetectionCliArgumentBuilder
     /// Takes a set of parsed arguments for Component Detection and converts them into a ScanSettings object.
     /// </summary>
     /// <param name="args">Set of arguments in the proper format for component detection.</param>
-    /// <returns></returns>
     public ScanSettings BuildScanSettingsFromParsedArgs(string[] args)
     {
         Validate();

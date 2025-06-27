@@ -45,7 +45,6 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
     ///
     /// </summary>
     /// <param name="filePath">The file path to validate.</param>
-    /// <returns></returns>
     public bool IsValid(string filePath)
     {
         if (skipValidation)

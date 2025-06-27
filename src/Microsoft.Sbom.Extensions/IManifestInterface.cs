@@ -34,7 +34,6 @@ public interface IManifestInterface
     /// Creates a parser object for the given SBOM file stream.
     /// </summary>
     /// <param name="stream">The stream for the SBOM file.</param>
-    /// <returns></returns>
     public ISbomParser CreateParser(Stream stream);
 
     /// <summary>

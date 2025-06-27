@@ -45,7 +45,6 @@ public class ConfigurationSetting<T> : ISettingSourceable
     /// <summary>
     /// Returns the string representation of <see cref="Value"/>.
     /// </summary>
-    /// <returns></returns>
     public override string ToString() => Value?.ToString() ?? base.ToString();
 
     /// <summary>

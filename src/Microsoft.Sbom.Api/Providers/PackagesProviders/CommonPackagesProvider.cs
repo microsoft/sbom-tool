@@ -43,7 +43,6 @@ public abstract class CommonPackagesProvider<T> : EntityToJsonProviderBase<T>
     /// <summary>
     /// Get common packages that are provided by the build engine.
     /// </summary>
-    /// <returns></returns>
     private Channel<SbomPackage> GetCommonPackages()
     {
         var packageInfos = Channel.CreateUnbounded<SbomPackage>();

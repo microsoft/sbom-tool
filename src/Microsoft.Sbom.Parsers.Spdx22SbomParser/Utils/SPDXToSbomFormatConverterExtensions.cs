@@ -22,7 +22,6 @@ public static class SPDXToSbomFormatConverterExtensions
     /// Converts a <see cref="SPDXFile"/> object to a <see cref="SbomFile"/> object.
     /// </summary>
     /// <param name="spdxFile"></param>
-    /// <returns></returns>
     public static SbomFile ToSbomFile(this SPDXFile spdxFile)
     {
         var checksums = spdxFile.FileChecksums?.Select(c => c.ToSbomChecksum());
@@ -42,7 +41,6 @@ public static class SPDXToSbomFormatConverterExtensions
     /// Converts a <see cref="SPDXPackage"/> to a <see cref="SbomPackage"/> object.
     /// </summary>
     /// <param name="spdxPackage"></param>
-    /// <returns></returns>
     public static SbomPackage ToSbomPackage(this SPDXPackage spdxPackage)
     {
         if (spdxPackage.PackageVerificationCode is not null
@@ -74,7 +72,6 @@ public static class SPDXToSbomFormatConverterExtensions
     /// Converts a <see cref="SPDXRelationship"/> object to a <see cref="SbomRelationship"/> object.
     /// </summary>
     /// <param name="spdxRelationship"></param>
-    /// <returns></returns>
     public static SbomRelationship ToSbomRelationship(this SPDXRelationship spdxRelationship)
     {
         return new SbomRelationship
@@ -89,7 +86,6 @@ public static class SPDXToSbomFormatConverterExtensions
     /// Converts a <see cref="SpdxExternalDocumentReference"/> object to a <see cref="SbomReference"/> object.
     /// </summary>
     /// <param name="spdxExternalDocumentReference"></param>
-    /// <returns></returns>
     public static SbomReference ToSbomReference(this SpdxExternalDocumentReference spdxExternalDocumentReference)
     {
         return new SbomReference
@@ -104,7 +100,6 @@ public static class SPDXToSbomFormatConverterExtensions
     /// Gets the PURL from a <see cref="ExternalReference"/> object using the Locator property.
     /// </summary>
     /// <param name="externalReference"></param>
-    /// <returns></returns>
     internal static string ToPurl(this IList<ExternalReference> externalReference)
     {
         var packageManagerReference = externalReference?.Where(e => e.ReferenceCategory.Replace("_", "-", System.StringComparison.Ordinal) == "PACKAGE-MANAGER")?.First();
@@ -115,7 +110,6 @@ public static class SPDXToSbomFormatConverterExtensions
     /// Convert a <see cref="SPDXChecksum"/> object to a <see cref="SbomChecksum"/> object.
     /// </summary>
     /// <param name="spdxChecksum"></param>
-    /// <returns></returns>
     internal static SbomChecksum ToSbomChecksum(this SPDXChecksum spdxChecksum)
     {
         if (spdxChecksum is null)

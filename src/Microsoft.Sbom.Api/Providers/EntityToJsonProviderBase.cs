@@ -42,7 +42,6 @@ public abstract class EntityToJsonProviderBase<T> : ISourcesProvider
     /// Generate a <see cref="JsonDocWithSerializer"/> stream for all the entities for each of the required configuration.
     /// </summary>
     /// <param name="requiredConfigs">The configurations for which to generate serialized Json.</param>
-    /// <returns></returns>
     public (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors) Get(IList<ISbomConfig> requiredConfigs)
     {
         if (requiredConfigs is null)
@@ -89,13 +88,11 @@ public abstract class EntityToJsonProviderBase<T> : ISourcesProvider
     /// Should return true only if the provider type is supported.
     /// </summary>
     /// <param name="providerType"></param>
-    /// <returns></returns>
     public abstract bool IsSupported(ProviderType providerType);
 
     /// <summary>
     /// Get a channel reader for type <see cref="T"/> that will give us a stream of objects to process.
     /// </summary>
-    /// <returns></returns>
     protected abstract (ChannelReader<T> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel();
 
     /// <summary>
@@ -103,7 +100,6 @@ public abstract class EntityToJsonProviderBase<T> : ISourcesProvider
     /// </summary>
     /// <param name="sourceChannel"></param>
     /// <param name="requiredConfigs"></param>
-    /// <returns></returns>
     protected abstract (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors)
         ConvertToJson(ChannelReader<T> sourceChannel, IList<ISbomConfig> requiredConfigs);
 
@@ -111,7 +107,6 @@ public abstract class EntityToJsonProviderBase<T> : ISourcesProvider
     /// Return any additional Json objects for the given entity.
     /// </summary>
     /// <param name="requiredConfigs"></param>
-    /// <returns></returns>
     protected abstract (ChannelReader<JsonDocWithSerializer> results, ChannelReader<FileValidationResult> errors)
         WriteAdditionalItems(IList<ISbomConfig> requiredConfigs);
 }

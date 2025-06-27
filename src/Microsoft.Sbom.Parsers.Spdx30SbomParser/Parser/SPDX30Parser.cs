@@ -175,7 +175,6 @@ public class SPDX30Parser : ISbomParser
     /// Converts JSON objects to SPDX elements.
     /// </summary>
     /// <param name="jsonList"></param>
-    /// <returns></returns>
     private ElementsResult ConvertToElements(List<object>? jsonList, ParserStateResult? result)
     {
         var elementsResult = new ElementsResult(result);
@@ -312,7 +311,6 @@ public class SPDX30Parser : ISbomParser
     /// <param name="spdxId"></param>
     /// <param name="elementsList"></param>
     /// <param name="elementsSpdxIdList"></param>
-    /// <returns></returns>
     private bool IsUniqueElement(string spdxId, HashSet<string> elementsSpdxIdList)
     {
         if (!elementsSpdxIdList.TryGetValue(spdxId, out _))

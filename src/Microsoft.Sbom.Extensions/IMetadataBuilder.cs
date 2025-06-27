@@ -14,7 +14,6 @@ public interface IMetadataBuilder
     /// <summary>
     /// Gets the json string value of the header dictionary.
     /// </summary>
-    /// <returns></returns>
     public string GetHeaderJsonString(IInternalMetadataProvider internalMetadataProvider);
 
     /// <summary>
