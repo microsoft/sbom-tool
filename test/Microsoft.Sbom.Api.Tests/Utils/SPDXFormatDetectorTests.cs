@@ -86,9 +86,8 @@ public class SPDXFormatDetectorTests
         var result = testSubject.TryGetSbomsWithVersion(DirPathStub, out var detectedSboms);
         Assert.IsTrue(result);
         Assert.IsNotNull(detectedSboms);
-        Assert.AreEqual(1, detectedSboms.Count);
-        Assert.AreEqual(FilePathStub + expectedVersion, detectedSboms.First().Key);
-        Assert.AreEqual(expectedVersion, detectedSboms.First().Value.ToString());
+        Assert.AreEqual(1, detectedSboms.Count());
+        Assert.IsTrue(detectedSboms.Any(value => value.manifestInfo.ToString().Equals(expectedVersion) && value.sbomFilePath.Equals(FilePathStub + expectedVersion)));
     }
 
     [TestMethod]
@@ -124,11 +123,9 @@ public class SPDXFormatDetectorTests
         var result = testSubject.TryGetSbomsWithVersion(DirPathStub, out var detectedSboms);
         Assert.IsTrue(result);
         Assert.IsNotNull(detectedSboms);
-        Assert.AreEqual(2, detectedSboms.Count);
-        Assert.IsTrue(detectedSboms.ContainsKey(FilePathStub + Spdx22VersionStub));
-        Assert.IsTrue(detectedSboms.ContainsKey(FilePathStub + Spdx30VersionStub));
-        Assert.AreEqual(Spdx22VersionStub, detectedSboms[FilePathStub + Spdx22VersionStub].ToString());
-        Assert.AreEqual(Spdx30VersionStub, detectedSboms[FilePathStub + Spdx30VersionStub].ToString());
+        Assert.AreEqual(2, detectedSboms.Count());
+        Assert.IsTrue(detectedSboms.Any(value => value.manifestInfo.ToString().Equals(Spdx22VersionStub) && value.sbomFilePath.Equals(FilePathStub + Spdx22VersionStub)));
+        Assert.IsTrue(detectedSboms.Any(value => value.manifestInfo.ToString().Equals(Spdx30VersionStub) && value.sbomFilePath.Equals(FilePathStub + Spdx30VersionStub)));
     }
 
     [TestMethod]

@@ -33,9 +33,9 @@ public class SPDXFormatDetector : ISPDXFormatDetector
         this.sbomConfigFactory = sbomConfigFactory;
     }
 
-    public bool TryGetSbomsWithVersion(string manifestDirPath, out IDictionary<string, ManifestInfo> detectedSboms)
+    public bool TryGetSbomsWithVersion(string manifestDirPath, out IList<(string sbomFilePath, ManifestInfo manifestInfo)> detectedSboms)
     {
-        detectedSboms = new Dictionary<string, ManifestInfo>();
+        detectedSboms = new List<(string, ManifestInfo)>();
         foreach (var mi in supportedManifestInfos.Keys) {
             var filePath = sbomConfigFactory.GetSbomFilePath(manifestDirPath, mi);
             if (fileSystemUtils.FileExists(filePath))
@@ -43,7 +43,7 @@ public class SPDXFormatDetector : ISPDXFormatDetector
                 var result = TryDetectFormat(filePath, out var detectedManifestInfo);
                 if (result && mi.Equals(detectedManifestInfo))
                 {
-                    detectedSboms.Add(filePath, detectedManifestInfo);
+                    detectedSboms.Add((filePath, detectedManifestInfo));
                 }
             }
         }

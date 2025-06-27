@@ -13,5 +13,5 @@ public interface ISPDXFormatDetector
 
     public bool TryDetectFormat(Stream stream, out ManifestInfo detectedManifestInfo);
 
-    public bool TryGetSbomsWithVersion(string manifestDirPath, out IDictionary<string, ManifestInfo> detectedSboms);
+    public bool TryGetSbomsWithVersion(string manifestDirPath, out IList<(string sbomFilePath, ManifestInfo manifestInfo)> detectedSboms);
 }

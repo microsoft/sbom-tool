@@ -21,7 +21,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     private readonly ISbomConfigFactory sbomConfigFactory;
     private readonly ISPDXFormatDetector sPDXFormatDetector;
     private readonly IFileSystemUtils fileSystemUtils;
-    protected readonly IMetadataBuilderFactory metadataBuilderFactory;
+    private readonly IMetadataBuilderFactory metadataBuilderFactory;
     private readonly IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow;
 
 #pragma warning disable IDE0051 // We'll use this soon.
@@ -42,26 +42,16 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     /// <inheritdoc/>
     public virtual async Task<bool> RunAsync()
     {
-        logger.Information("Placeholder SBOM consolidation workflow executed.");
-
-        return await ValidateSourceSboms() && await GeneratedConsolidatedSbom();
-    }
-
-    private async Task<bool> ValidateSourceSbomsAsync()
-    {
         var sbomsToValidate = ArtifactInfoMap.Select(artifact => GetSbomsToValidate(artifact.Key, artifact.Value))
             .Where(l => l != null)
             .SelectMany(l => l);
-        if (!sbomsToValidate.Any())
+        if (sbomsToValidate == null || !sbomsToValidate.Any())
         {
             logger.Information($"No valid SBOMs detected.");
             return false;
         }
 
-        var validationWorkflows = sbomsToValidate
-            .Select(sbom => ValidateSourceSbomAsync(sbom.config, sbom.info));
-        var results = await Task.WhenAll(validationWorkflows);
-        return results.All(b => b);
+        return await ValidateSourceSbomsAsync(sbomsToValidate) && await GeneratedConsolidatedSbom();
     }
 
     private IEnumerable<(ISbomConfig config, ArtifactInfo info)> GetSbomsToValidate(string artifactPath, ArtifactInfo info)
@@ -74,12 +64,15 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             return null;
         }
 
-        return detectedSboms.Select((sbom) => (sbomConfigFactory.Get(sbom.Value, manifestDirPath, metadataBuilderFactory), info));
+        return detectedSboms.Select((sbom) => (sbomConfigFactory.Get(sbom.manifestInfo, manifestDirPath, metadataBuilderFactory), info));
     }
 
-    private async Task<bool> ValidateSourceSbomAsync(ISbomConfig sbomConfig, ArtifactInfo info)
+    private async Task<bool> ValidateSourceSbomsAsync(IEnumerable<(ISbomConfig config, ArtifactInfo info)> sbomsToValidate)
     {
-        return await Task.FromResult(true); // TODO: Run validation workflow
+        var validationWorkflows = sbomsToValidate
+            .Select(async sbom => await Task.FromResult(true)); // TODO: Run validation workflow
+        var results = await Task.WhenAll(validationWorkflows);
+        return results.All(b => b);
     }
 
     private async Task<bool> GeneratedConsolidatedSbom()
