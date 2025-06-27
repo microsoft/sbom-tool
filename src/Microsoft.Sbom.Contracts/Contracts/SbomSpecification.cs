@@ -49,13 +49,13 @@ public class SbomSpecification : IEquatable<SbomSpecification>
     {
         if (string.IsNullOrEmpty(value))
         {
-            throw new ArgumentException($"The SBOM specification string is empty");
+            throw new ArgumentException("The SBOM specification string is empty");
         }
 
         var values = value.Split(':');
         if (values is not { Length: 2 } || values.Any(string.IsNullOrWhiteSpace))
         {
-            throw new ArgumentException($"The SBOM specification string is not formatted correctly. The correct format is <name>:<version>.");
+            throw new ArgumentException("The SBOM specification string is not formatted correctly. The correct format is <name>:<version>.");
         }
 
         return new SbomSpecification(values[0], values[1]);

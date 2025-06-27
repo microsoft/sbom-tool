@@ -46,7 +46,7 @@ public class ValidationService : IHostedService
             }
             else
             {
-                throw new ConfigurationException($"Validation only supports the SPDX2.2 format.");
+                throw new ConfigurationException("Validation only supports the SPDX2.2 format.");
             }
 
             await recorder.FinalizeAndLogTelemetryAsync();

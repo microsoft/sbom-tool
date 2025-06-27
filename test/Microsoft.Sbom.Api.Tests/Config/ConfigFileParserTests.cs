@@ -17,7 +17,7 @@ public class ConfigFileParserTests
     private readonly string filePathStub = "test-path";
     private readonly string contentStub = "{\"PackageSupplier\": \"TestSupplier\",\"BuildDropPath\": \"$(BuildDropPathEnvVar)\"}";
     private readonly string envVarName = "BuildDropPathEnvVar";
-    private readonly string envVarValue = "TestPath";
+    private readonly string envVarValue = @"test\path";
 
     [TestInitialize]
     public void Initialize()
