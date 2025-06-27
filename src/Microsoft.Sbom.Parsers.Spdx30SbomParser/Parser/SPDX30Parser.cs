@@ -167,7 +167,7 @@ public class SPDX30Parser : ISbomParser
     {
         if (result.Contexts == null || !result.Contexts.Any() || result.Contexts.Count() > 1)
         {
-            throw new ParserException($"The context property is invalid. It should only have one string.");
+            throw new ParserException("The context property is invalid. It should only have one string.");
         }
     }
 

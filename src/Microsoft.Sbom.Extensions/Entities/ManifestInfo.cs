@@ -31,13 +31,13 @@ public class ManifestInfo : IEquatable<ManifestInfo>
     {
         if (string.IsNullOrEmpty(value))
         {
-            throw new ArgumentException($"The manifest info string is empty");
+            throw new ArgumentException("The manifest info string is empty");
         }
 
         var values = value.Split(':');
         if (values == null || values.Length != 2)
         {
-            throw new ArgumentException($"The manifest info string is not formatted correctly. The correct format is <name>:<version>.");
+            throw new ArgumentException("The manifest info string is not formatted correctly. The correct format is <name>:<version>.");
         }
 
         return new ManifestInfo

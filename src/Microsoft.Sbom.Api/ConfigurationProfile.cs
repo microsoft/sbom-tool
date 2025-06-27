@@ -135,7 +135,7 @@ public class ConfigurationProfile : Profile
                 {
                     if (srcWithSource.Source != SettingSource.Default && dstWithSource.Source != SettingSource.Default)
                     {
-                        throw new Exception($"Duplicate keys found in config file and command line parameters.");
+                        throw new Exception("Duplicate keys found in config file and command line parameters.");
                     }
 
                     return dstWithSource.Source == SettingSource.Default;

@@ -130,7 +130,7 @@ public class HashValidatorTests
         }
 
         // Additional file.
-        await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = "TEST4", Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"TEST4_hash" } } });
+        await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = "TEST4", Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "TEST4_hash" } } });
 
         files.Writer.Complete();
         errors.Writer.Complete();
