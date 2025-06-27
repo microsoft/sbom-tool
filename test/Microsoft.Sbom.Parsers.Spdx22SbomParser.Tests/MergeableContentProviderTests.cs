@@ -16,7 +16,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests;
 public class MergeableContentProviderTests
 {
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
-    private IMergeableContentProviderInternal provider;
+    private IMergeableContentProvider provider;
 
     [TestInitialize]
     public void BeforeEachTest()
@@ -25,56 +25,61 @@ public class MergeableContentProviderTests
         provider = new MergeableContentProvider(fileSystemUtilsMock.Object);
     }
 
+    [TestCleanup]
+    public void AfterEachTest()
+    {
+        fileSystemUtilsMock.VerifyAll();
+    }
+
     [TestMethod]
-    public void TryGetContent_FilePath_IsNull_ThrowsArgumentNullException()
+    public void TryGetContent_FilePathIsNull_ThrowsArgumentNullException()
     {
         string filePath = null;
         Assert.ThrowsException<ArgumentNullException>(() => provider.TryGetContent(filePath, out _));
     }
 
     [TestMethod]
-    public void TryGetContent_FilePath_FileDoesNotExist_ReturnsFalseAndNullContent()
+    public void TryGetContent_FileDoesNotExist_ReturnsFalseAndNullContent()
     {
-        const string nonExistentFilePath = "nonexistent-file.json";
+        const string filePathFileDoesNotExist = "nonexistent-file.json";
 
-        fileSystemUtilsMock.Setup(m => m.FileExists(nonExistentFilePath)).Returns(false);
+        fileSystemUtilsMock.Setup(m => m.FileExists(filePathFileDoesNotExist)).Returns(false);
 
-        var result = provider.TryGetContent(nonExistentFilePath, out var mergeableContent);
+        var result = provider.TryGetContent(filePathFileDoesNotExist, out var mergeableContent);
         Assert.IsFalse(result);
         Assert.IsNull(mergeableContent);
     }
 
     [TestMethod]
-    public void TryGetContent_FilePath_FileIsValid_ReturnsExpectedContent()
+    public void TryGetContent_FileExistsButIsInvalid_ReturnsFalseAndNullContent()
     {
-        var filePath = Path.GetFullPath(Path.Combine(
-            Assembly.GetExecutingAssembly().Location, "..", "..", "..", "..", "..", "..", "samples", "spdx_2.2", "manifest.spdx.json"));
-        fileSystemUtilsMock.Setup(m => m.FileExists(filePath)).Returns(true);
-        fileSystemUtilsMock.Setup(m => m.OpenRead(filePath)).Returns(() => new FileStream(filePath, FileMode.Open, FileAccess.Read));
+        const string filePathFileExistsButIsNotValid = "existing-but-invalid-manifest-file.json";
 
-        var result = provider.TryGetContent(filePath, out var mergeableContent);
+        fileSystemUtilsMock.Setup(m => m.FileExists(filePathFileExistsButIsNotValid)).Returns(true);
+        fileSystemUtilsMock.Setup(m => m.OpenRead(filePathFileExistsButIsNotValid))
+            .Returns(() => new MemoryStream(System.Text.Encoding.UTF8.GetBytes("This is not a valid manifest")));
+
+        var result = provider.TryGetContent(filePathFileExistsButIsNotValid, out var mergeableContent);
+
+        Assert.IsFalse(result);
+        Assert.IsNull(mergeableContent);
+    }
+
+    [TestMethod]
+    public void TryGetContent_FileExitstAndIsValid_ReturnsExpectedContent()
+    {
+        const string filePathFileExistsAndIsValid = "valid-manifest-file.json";
+
+        fileSystemUtilsMock.Setup(m => m.FileExists(filePathFileExistsAndIsValid)).Returns(true);
+        fileSystemUtilsMock.Setup(m => m.OpenRead(filePathFileExistsAndIsValid))
+            .Returns(() => Assembly.GetExecutingAssembly().GetManifestResourceStream("Microsoft.Sbom.manifest.spdx.json"));
+
+        var result = provider.TryGetContent(filePathFileExistsAndIsValid, out var mergeableContent);
 
         Assert.IsTrue(result);
         Assert.IsNotNull(mergeableContent);
 
         Assert.AreEqual(267, mergeableContent.Packages.Count());
         Assert.AreEqual(0, mergeableContent.Relationships.Count());
-    }
-
-    [TestMethod]
-    public void TryGetContent_Stream_IsNull_ThrowsArgumentNullException()
-    {
-        Stream stream = null;
-        Assert.ThrowsException<ArgumentNullException>(() => provider.TryGetContent(stream, out _));
-    }
-
-    [TestMethod]
-    public void TryGetContent_Stream_IsInvalid_ReturnsFalseAndNullContent()
-    {
-        using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes("This is not a valid manifest"));
-        var result = provider.TryGetContent(stream, out var mergeableContent);
-
-        Assert.IsFalse(result);
-        Assert.IsNull(mergeableContent);
     }
 }

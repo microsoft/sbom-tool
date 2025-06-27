@@ -16,9 +16,9 @@ using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 
 /// <summary>
-/// Implements <see cref="IMergeableContentProviderInternal"/> for SPDX 2.2 files.
+/// Implements <see cref="IMergeableContentProvider"/> for SPDX 2.2 files.
 /// </summary>
-public class MergeableContentProvider : IMergeableContentProviderInternal
+public class MergeableContentProvider : IMergeableContentProvider
 {
     private readonly IFileSystemUtils fileSystemUtils;
 
@@ -54,19 +54,6 @@ public class MergeableContentProvider : IMergeableContentProviderInternal
         {
             mergeableContent = null;
             return false;
-        }
-
-        return TryGetContent(stream, out mergeableContent);
-    }
-
-    /// <summary>
-    /// Implements <see cref="IMergeableContentProviderInternal.TryGetContent(Stream, out MergeableContent)"/>.
-    /// </summary>
-    public bool TryGetContent(Stream stream, out MergeableContent mergeableContent)
-    {
-        if (stream == null)
-        {
-            throw new ArgumentNullException(nameof(stream));
         }
 
         try
