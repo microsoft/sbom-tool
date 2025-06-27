@@ -30,7 +30,6 @@ public static class ApiConfigurationBuilder
     /// <param name="metadata"></param>
     /// <param name="specifications"></param>
     /// <param name="runtimeConfiguration"></param>
-    /// <param name="verbosity"></param>
     /// <returns>A generate configuration.</returns>
     public static InputConfiguration GetConfiguration(
         string rootPath,

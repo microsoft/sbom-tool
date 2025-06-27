@@ -15,7 +15,6 @@ public static class FileSystemUtilsProvider
     /// Checks the OS to provide the correct <see cref="IFileSystemUtils"/>.
     /// This is important due to the different file systems of operating systems.
     /// </summary>
-    /// <param name="context"></param>
     /// <param name="logger">Logger to capture Exceptions</param>
     /// <returns></returns>
     public static IFileSystemUtils CreateInstance(ILogger logger)
