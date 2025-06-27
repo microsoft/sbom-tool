@@ -54,7 +54,6 @@ public interface IManifestGenerator
     /// </summary>
     /// <param name="internalMetadataProvider">The <see cref="IInternalMetadataProvider"/> object provides
     /// internal metadata that was generated for this SBOM run.</param>
-    /// <param name="rootPackageId">Return the generated root package id.</param>
     /// <returns></returns>
     public GenerationResult GenerateRootPackage(IInternalMetadataProvider internalMetadataProvider);
 
