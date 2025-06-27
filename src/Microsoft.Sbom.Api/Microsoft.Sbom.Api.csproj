@@ -23,15 +23,9 @@
         <PackageReference Include="Serilog.Extensions.Hosting" />
         <PackageReference Include="Serilog.Sinks.Console" />
         <PackageReference Include="Spectre.Console.Cli" />
-        <PackageReference Include="System.IO.FileSystem.AccessControl" />
         <PackageReference Include="System.Private.Uri" />
         <PackageReference Include="System.Threading.Channels" />
         <PackageReference Include="System.Threading.Tasks.Extensions" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <!-- Pinned assemblies for transitive dependencies -->
-        <PackageReference Include="System.Net.Http" />                     <!-- Used by ComponentDetection -->
     </ItemGroup>
 
     <ItemGroup>

@@ -4,36 +4,19 @@ steps:
     inputs:
       useGlobalJson: true
 
-  - task: DotNetCoreCLI@2
+  - pwsh: dotnet restore --configfile nuget.config
     displayName: 'Restore solution'
-    inputs:
-      command: restore
-      feedsToUse: config
-      nugetConfigPath: nuget.config
-      verbosityRestore: Normal
 
-  - task: DotNetCoreCLI@2
+  - pwsh: dotnet build --configuration $(BuildConfiguration) --no-restore
     displayName: Build
-    inputs:
-      arguments: '-c $(BuildConfiguration)'
 
-  - task: DotNetCoreCLI@2
+  - pwsh: dotnet test --no-build --configuration $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory) --coverage --coverage-output $(Agent.TempDirectory)/coverage.cobertura.xml --coverage-output-format cobertura
     displayName: Run unit tests (with coverage on Windows)
     condition: eq(variables['Agent.OS'], 'Windows_NT')
-    inputs:
-      command: 'test'
-      nobuild: true
-      configuration: '$(BuildConfiguration)'
-      arguments: '-- --report-trx --results-directory $(Agent.TempDirectory) --coverage --coverage-output $(Agent.TempDirectory)/coverage.cobertura.xml --coverage-output-format cobertura'
 
-  - task: DotNetCoreCLI@2
+  - pwsh: dotnet test --no-build --configuration $(BuildConfiguration) -- --report-trx --results-directory $(Agent.TempDirectory)
     displayName: Run unit tests (without coverage on non-Windows)
     condition: ne(variables['Agent.OS'], 'Windows_NT')
-    inputs:
-      command: 'test'
-      nobuild: true
-      configuration: '$(BuildConfiguration)'
-      arguments: '-- --report-trx --results-directory $(Agent.TempDirectory)'
 
   # While DotNetCoreCLI docs say that it publishes both TRX and coverage, it doesn't actually publish coverage.
   # https://github.com/microsoft/azure-pipelines-tasks/issues/18254

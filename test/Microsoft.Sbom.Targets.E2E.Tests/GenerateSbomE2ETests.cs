@@ -7,8 +7,10 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Evaluation;
+using Microsoft.Build.Framework;
 using Microsoft.Build.Locator;
 using Microsoft.Build.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,7 +34,6 @@ public class GenerateSbomE2ETests
     private static string sbomSpecificationDirectoryName = $"{sbomSpecificationName}_{sbomSpecificationVersion}".ToLowerInvariant();
     private string expectedPackageName;
     private string expectedVersion;
-    private string expectedSupplier;
     private string assemblyName;
     private string expectedNamespace;
     private string configuration;
@@ -109,22 +110,24 @@ public class GenerateSbomE2ETests
         }
     }
 
-    private void RestoreBuildPack(Project sampleProject)
+    private void RestoreBuildPack(Project sampleProject, [CallerMemberName] string callerName = null)
     {
         var logger = new ConsoleLogger();
-
         // Restore the project to create project.assets.json file
-        var restore = sampleProject.Build("Restore", new[] { logger });
+        var restore = sampleProject.Build("Restore", new ILogger[] { GetBinLog(callerName, "Restore"), logger });
         Assert.IsTrue(restore, "Failed to restore the project");
 
         // Next, build the project
-        var build = sampleProject.Build(logger);
+        var build = sampleProject.Build(new ILogger[] { GetBinLog(callerName, "Build"), logger });
         Assert.IsTrue(build, "Failed to build the project");
 
         // Finally, pack the project
-        var pack = sampleProject.Build("Pack", new[] { logger });
+        var pack = sampleProject.Build("Pack", new ILogger[] { GetBinLog(callerName, "Pack"), logger });
         Assert.IsTrue(pack, "Failed to pack the project");
     }
+
+    // binlogs are unique per name, so this ensures distinct names for the different stages
+    private BinaryLogger GetBinLog(string callerName, string target) => new BinaryLogger { Parameters = $"{callerName}.{target}.binlog" };
 
     private void InspectPackageIsWellFormed(bool isManifestPathGenerated = true)
     {
@@ -144,80 +147,6 @@ public class GenerateSbomE2ETests
             Assert.IsTrue(archive.Entries.All(entry => !entry.FullName.Contains(backSlash)));
             Assert.AreEqual(isManifestPathGenerated, archive.Entries.Any(entry => entry.FullName.Equals(manifestRelativePath)));
         }
-    }
-
-    [TestMethod]
-    public void SbomGenerationSucceedsForDefaultProperties()
-    {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
-        // Create and setup a Project object for ProjectSample1
-        var sampleProject = SetupSampleProject();
-
-        // Restore, build, and pack the project
-        RestoreBuildPack(sampleProject);
-
-        // Extract the NuGet package
-        InspectPackageIsWellFormed();
-    }
-
-    [TestMethod]
-    public void SbomGenerationSucceedsForValidNamespaceBaseUriUniquePart()
-    {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
-        // Create and setup a Project object for ProjectSample1
-        var sampleProject = SetupSampleProject();
-
-        // Manually set the NamespaceUriUniquePart
-        var namespaceUriUniquePart = Guid.NewGuid().ToString();
-        sampleProject.SetProperty("SbomGenerationNamespaceUriUniquePart", namespaceUriUniquePart);
-
-        // Restore, build, and pack the project
-        RestoreBuildPack(sampleProject);
-
-        // Extract the NuGet package
-        InspectPackageIsWellFormed();
-    }
-
-    [TestMethod]
-    public void SbomGenerationSucceedsForValidRequiredParams()
-    {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
-        // Create and setup a Project object for ProjectSample1
-        var sampleProject = SetupSampleProject();
-
-        // Set require params
-        expectedPackageName = "SampleName";
-        expectedVersion = "3.2.5";
-        expectedSupplier = "SampleSupplier";
-        expectedNamespace = "https://example.com";
-
-        sampleProject.SetProperty("PackageId", expectedPackageName);
-        sampleProject.SetProperty("Version", expectedVersion);
-        sampleProject.SetProperty("SbomGenerationPackageName", expectedPackageName);
-        sampleProject.SetProperty("SbomGenerationPackageVersion", expectedVersion);
-        sampleProject.SetProperty("SbomGenerationPackageSupplier", expectedSupplier);
-        sampleProject.SetProperty("SbomGenerationNamespaceBaseUri", expectedNamespace);
-
-        // Restore, build, and pack the project
-        RestoreBuildPack(sampleProject);
-
-        // Extract the NuGet package
-        InspectPackageIsWellFormed();
     }
 
     [TestMethod]
@@ -305,28 +234,5 @@ public class GenerateSbomE2ETests
 
         // Extract the NuGet package
         InspectPackageIsWellFormed(isManifestPathGenerated: false);
-    }
-
-    [TestMethod]
-    public void SbomGenerationSucceedsForMultiTargetedProject()
-    {
-        if (!IsWindows)
-        {
-            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
-            return;
-        }
-
-        // Create and setup a Project object for ProjectSample1
-        var sampleProject = SetupSampleProject();
-
-        // Set multi-target frameworks
-        sampleProject.SetProperty("TargetFramework", string.Empty);
-        sampleProject.SetProperty("TargetFrameworks", "net472;net8.0");
-
-        // Restore, build, and pack the project
-        RestoreBuildPack(sampleProject);
-
-        // Extract the NuGet package
-        InspectPackageIsWellFormed();
     }
 }

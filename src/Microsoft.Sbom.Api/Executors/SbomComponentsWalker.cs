@@ -9,6 +9,7 @@ using Microsoft.Sbom.Api.PackageDetails;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
 using ILogger = Serilog.ILogger;
 
@@ -19,8 +20,8 @@ namespace Microsoft.Sbom.Api.Executors;
 /// </summary>
 public class SbomComponentsWalker : ComponentDetectionBaseWalker
 {
-    public SbomComponentsWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils, IPackageDetailsFactory packageDetailsFactory, ILicenseInformationFetcher licenseInformationFetcher)
-        : base(log, componentDetector, configuration, sbomConfigs, fileSystemUtils, packageDetailsFactory, licenseInformationFetcher)
+    public SbomComponentsWalker(ILogger log, ComponentDetectorCachedExecutor componentDetector, IConfiguration configuration, ISbomConfigProvider sbomConfigs, IFileSystemUtils fileSystemUtils, IPackageDetailsFactory packageDetailsFactory, ILicenseInformationFetcher licenseInformationFetcher, RuntimeConfiguration runtimeConfiguration = null)
+        : base(log, componentDetector, configuration, sbomConfigs, fileSystemUtils, packageDetailsFactory, licenseInformationFetcher, runtimeConfiguration)
     {
     }
 
