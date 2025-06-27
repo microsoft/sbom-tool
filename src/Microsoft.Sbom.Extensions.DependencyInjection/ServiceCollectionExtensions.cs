@@ -73,6 +73,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
             .AddTransient<IWorkflow<SbomConsolidationWorkflow>, SbomConsolidationWorkflow>()
             .AddTransient<IWorkflow<SbomRedactionWorkflow>, SbomRedactionWorkflow>()
+            .AddTransient<SbomValidationWorkflowBase, SbomValidationWorkflowBase>()
             .AddTransient<ISbomConfigFactory, SbomConfigFactory>()
             .AddTransient<ISPDXFormatDetector, SPDXFormatDetector>()
             .AddTransient<ISbomRedactor, SbomRedactor>()

@@ -20,6 +20,7 @@ public class SbomConsolidationWorkflowTests
     private Mock<ILogger> loggerMock;
     private Mock<IConfiguration> configurationMock;
     private Mock<IWorkflow<SbomGenerationWorkflow>> sbomGenerationWorkflowMock;
+    private Mock<SbomValidationWorkflowBase> sbomValidationWorkflowBaseMock;
     private Mock<ISbomConfigFactory> sbomConfigFactoryMock;
     private Mock<ISPDXFormatDetector> sPDXFormatDetectorMock;
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
@@ -38,6 +39,7 @@ public class SbomConsolidationWorkflowTests
         loggerMock = new Mock<ILogger>();  // Intentionally not using Strict to streamline setup
         configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
         sbomGenerationWorkflowMock = new Mock<IWorkflow<SbomGenerationWorkflow>>(MockBehavior.Strict);
+        sbomValidationWorkflowBaseMock = new Mock<SbomValidationWorkflowBase>(MockBehavior.Strict);
         sbomConfigFactoryMock = new Mock<ISbomConfigFactory>(MockBehavior.Strict);
         sPDXFormatDetectorMock = new Mock<ISPDXFormatDetector>(MockBehavior.Strict);
         fileSystemUtilsMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
@@ -47,6 +49,7 @@ public class SbomConsolidationWorkflowTests
             loggerMock.Object,
             configurationMock.Object,
             sbomGenerationWorkflowMock.Object,
+            sbomValidationWorkflowBaseMock.Object,
             sbomConfigFactoryMock.Object,
             sPDXFormatDetectorMock.Object,
             fileSystemUtilsMock.Object,
