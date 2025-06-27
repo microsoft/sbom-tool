@@ -4,8 +4,6 @@
     <AssemblyName>Microsoft.Sbom.Parsers.Spdx30SbomParser</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>SPDX3.0 parser for SBOM tool.</Description>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

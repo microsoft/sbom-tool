@@ -112,6 +112,9 @@ public class ConfigurationProfile : Profile
             .ForMember(c => c.DeleteManifestDirIfPresent, o => o.Ignore())
             .ForMember(c => c.PackageSupplier, o => o.Ignore());
 
+        // See Issue #1107 for details on why this map doesn't have a bunch of .ForMember calls to ignore properties.
+        CreateMap<ConsolidationArgs, InputConfiguration>();
+
         // Create config for the config json file to configuration.
         CreateMap<ConfigFile, InputConfiguration>()
             .ForMember(c => c.PackagesList, o => o.Ignore())
@@ -132,7 +135,7 @@ public class ConfigurationProfile : Profile
                 {
                     if (srcWithSource.Source != SettingSource.Default && dstWithSource.Source != SettingSource.Default)
                     {
-                        throw new Exception($"Duplicate keys found in config file and command line parameters.");
+                        throw new Exception("Duplicate keys found in config file and command line parameters.");
                     }
 
                     return dstWithSource.Source == SettingSource.Default;
@@ -168,8 +171,11 @@ public class ConfigurationProfile : Profile
             p => p.SourceType == typeof(AlgorithmName),
             (c, memberOptions) => memberOptions.ConvertUsing(new HashAlgorithmNameConfigurationSettingAddingConverter(GetSettingSourceFor(c.SourceMember.ReflectedType))));
         ForAllPropertyMaps(
-            p => p.SourceType == typeof(ComplianceStandardType),
-            (c, memberOptions) => memberOptions.ConvertUsing(new ComplianceStandardConfigurationSettingAddingConverter(GetSettingSourceFor(c.SourceMember.ReflectedType))));
+            p => p.SourceType == typeof(ConformanceType),
+            (c, memberOptions) => memberOptions.ConvertUsing(new ConformanceConfigurationSettingAddingConverter(GetSettingSourceFor(c.SourceMember.ReflectedType))));
+        ForAllPropertyMaps(
+            p => p.SourceType == typeof(Dictionary<string, ArtifactInfo>),
+            (c, memberOptions) => memberOptions.ConvertUsing(new ArtifactInfoMapSettingAddingConverter(GetSettingSourceFor(c.SourceMember.ReflectedType))));
     }
 
     // Based on the type of source, return the settings type.

@@ -90,9 +90,8 @@ public static class SPDXExtensions
         // Get the SHA1 for this file.
         var sha1Value = sha1checksums.FirstOrDefault().ChecksumValue;
 
-        reference.ExternalSpdxId = CommonSPDXUtils.GenerateSpdxExternalDocumentId(name, sha1Value);
-        reference.SpdxId = reference.ExternalSpdxId;
-        return reference.ExternalSpdxId;
+        reference.SpdxId = CommonSPDXUtils.GenerateSpdxExternalDocumentId(name, sha1Value);
+        return reference.SpdxId;
     }
 
     public static void AddSpdxId(this Element element)
@@ -107,12 +106,18 @@ public static class SPDXExtensions
 
     public static void AddSpdxId(this Common.Spdx30Entities.Relationship relationship)
     {
-        relationship.SpdxId = GenerateSpdxIdBasedOnElement(relationship, relationship.To + relationship.RelationshipType.ToString());
+        var relationshipToString = string.Empty;
+        if (relationship?.To is not null && relationship.To.Any())
+        {
+            relationshipToString = string.Concat(relationship.To);
+        }
+
+        relationship.SpdxId = GenerateSpdxIdBasedOnElement(relationship, relationship.From + relationshipToString + relationship.RelationshipType.ToString());
     }
 
     public static void AddSpdxId(this ExternalIdentifier externalIdentifier)
     {
-        externalIdentifier.SpdxId = GenerateSpdxIdBasedOnElement(externalIdentifier, externalIdentifier.Identifier.ToString());
+        externalIdentifier.SpdxId = GenerateSpdxIdBasedOnElement(externalIdentifier, externalIdentifier.Identifier);
     }
 
     public static void AddSpdxId(this PackageVerificationCode packageVerificationCode)

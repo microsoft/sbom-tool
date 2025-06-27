@@ -209,13 +209,19 @@ public interface IConfiguration
     public ConfigurationSetting<string> SbomDir { get; set; }
 
     /// <summary>
-    /// The compliance standard to validate against.
+    /// The conformance to validate against.
     /// </summary>
-    public ConfigurationSetting<ComplianceStandardType> ComplianceStandard { get; set; }
+    public ConfigurationSetting<ConformanceType> Conformance { get; set; }
 
     /// Specifies the timeout in seconds for fetching the license information. Defaults to <see cref="Constants.DefaultLicenseFetchTimeoutInSeconds"/>.
     /// Has no effect if FetchLicenseInformation (li) argument is false or not provided. Negative values are set to the default and values exceeding the
     /// maximum are truncated to <see cref="Constants.MaxLicenseFetchTimeoutInSeconds"/>
     /// </summary>
     public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get; set; }
+
+    /// <summary>
+    /// Describes the artifacts used for consolidation, as well information specific to each artifact.
+    /// The Key is the location of the artifact, and the value is an <see cref="ArtifactInfo"/> object.
+    /// </summary>
+    public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap { get; set; }
 }

@@ -18,7 +18,7 @@ public class SbomToolCmdRunner
 
     private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
     {
-        return typeof(SbomToolCmdRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
+        return typeof(SbomToolCmdRunner).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
     });
 
     /// <summary>
@@ -76,6 +76,16 @@ public class SbomToolCmdRunner
     public RedactArgs Redact(RedactArgs redactArgs)
     {
         return redactArgs;
+    }
+
+    /// <summary>
+    /// Consolidate multiple SBOMs into a single SBOM.
+    /// </summary>
+    [ArgActionMethod]
+    [ArgDescription("Consolidate multiple SBOMs into a single SBOM.")]
+    public ConsolidationArgs Consolidate(ConsolidationArgs consolidationArgs)
+    {
+        return consolidationArgs;
     }
 
     /// <summary>

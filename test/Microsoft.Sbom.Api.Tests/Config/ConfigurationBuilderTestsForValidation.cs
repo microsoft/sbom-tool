@@ -6,7 +6,6 @@ using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Sbom.Api.Config.Args;
-using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
@@ -32,7 +31,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath)).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.GetDirectoryName(It.IsAny<string>())).Returns("test").Verifiable();
@@ -65,7 +64,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath)).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.GetDirectoryName(It.IsAny<string>())).Returns("test").Verifiable();
@@ -98,7 +97,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath));
+        fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath);
 
         var args = new ValidationArgs
         {
@@ -117,7 +116,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath));
+        fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath);
 
         var args = new ValidationArgs
         {
@@ -191,7 +190,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath)).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.GetDirectoryName(It.IsAny<string>())).Returns("test").Verifiable();
@@ -207,6 +206,8 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
         };
 
         var exception = await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
-        Assert.IsTrue(exception.Message.Contains("Please provide a valid value for the ManifestInfo"));
+        Assert.IsTrue(
+            exception.Message.Contains("contains no values supported by the ManifestInfo (-mi) parameter. Please provide supported values. Supported values include: "),
+            $"Message contents: {exception.Message}");
     }
 }

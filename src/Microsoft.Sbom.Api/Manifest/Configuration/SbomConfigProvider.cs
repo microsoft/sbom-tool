@@ -63,7 +63,7 @@ public class SbomConfigProvider : ISbomConfigProvider
             catch (ArgumentException e)
             {
                 // Sanitize exceptions.
-                throw new Exception($"An error occured while creating metadata entries for the SBOM.", e);
+                throw new Exception("An error occured while creating metadata entries for the SBOM.", e);
             }
         }
     }
@@ -118,15 +118,18 @@ public class SbomConfigProvider : ISbomConfigProvider
         return this;
     }
 
-    public IAsyncDisposable StartJsonSerializationAsync()
+    /// <summary>
+    /// Starts asynchronous JSON serialization of supported ISbomConfig objects from IConfiguration.
+    /// </summary>
+    /// <param name="targetConfigs"></param>
+    /// <returns></returns>
+    public IAsyncDisposable StartJsonSerializationAsync(IEnumerable<ISbomConfig> targetConfigs)
     {
-        ApplyToEachConfig(c => c.StartJsonSerialization());
-        return this;
-    }
+        foreach (var config in targetConfigs)
+        {
+            config.StartJsonSerialization();
+        }
 
-    public IAsyncDisposable StartJsonSerializationAsync(ISbomConfig configuration)
-    {
-        configuration.StartJsonSerialization();
         return this;
     }
 
@@ -155,14 +158,12 @@ public class SbomConfigProvider : ISbomConfigProvider
 
     public bool TryGetMetadata(MetadataKey key, out object value)
     {
-        if (MetadataDictionary.ContainsKey(key))
+        if (MetadataDictionary.TryGetValue(key, out value))
         {
             logger.Debug($"Found value for header {key} in internal metadata.");
-            value = MetadataDictionary[key];
             return true;
         }
 
-        value = null;
         return false;
     }
 
@@ -207,8 +208,8 @@ public class SbomConfigProvider : ISbomConfigProvider
             return provider.GetDocumentNamespaceUri();
         }
 
-        logger.Error($"Unable to find any provider to generate the namespace.");
-        throw new Exception($"Unable to find any provider to generate the namespace.");
+        logger.Error("Unable to find any provider to generate the namespace.");
+        throw new Exception("Unable to find any provider to generate the namespace.");
     }
 
     public void Dispose()

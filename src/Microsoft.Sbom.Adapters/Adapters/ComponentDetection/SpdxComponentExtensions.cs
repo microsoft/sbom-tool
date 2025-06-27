@@ -23,13 +23,13 @@ internal static class SpdxComponentExtensions
         PackageName = spdxComponent.Name,
         PackageUrl = spdxComponent.PackageUrl?.ToString(),
         PackageVersion = spdxComponent.SpdxVersion,
-        Checksum = new[]
-        {
+        Checksum =
+        [
             new Checksum
             {
                 Algorithm = AlgorithmName.SHA1, ChecksumValue = spdxComponent.Checksum,
-            },
-        },
+            }
+        ],
         FilesAnalyzed = false,
         Type = "spdx",
     };

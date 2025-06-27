@@ -9,9 +9,4 @@ namespace Microsoft.Sbom.Common.Config.Attributes;
 /// Validate if the property value is a valid ManifestInfo.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Assembly, Inherited = false, AllowMultiple = false)]
-public sealed class ValidManifestInfoAttribute : Attribute
-{
-    public ValidManifestInfoAttribute()
-    {
-    }
-}
+public sealed class ValidManifestInfoAttribute : Attribute;

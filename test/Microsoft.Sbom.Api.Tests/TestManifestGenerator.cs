@@ -87,7 +87,7 @@ internal class TestManifestGenerator : IManifestGenerator
     {
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(relationship))
+            Document = JsonSerializer.SerializeToDocument(relationship)
         };
     }
 
@@ -118,11 +118,12 @@ internal class TestManifestGenerator : IManifestGenerator
     [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "Discard variable has a _ name")]
     public GenerationResult GenerateRootPackage(IInternalMetadataProvider _)
     {
-        var jsonString = $@"
-{{
-    ""Name"": ""rootPackage""
-}}
-";
+        var jsonString =
+"""
+{
+    "Name": "rootPackage"
+}
+""";
 
         return new GenerationResult
         {

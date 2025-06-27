@@ -149,7 +149,7 @@ public abstract class ComponentDetectionBaseWalker
                 {
                     licenseInformationRetrieved = true;
 
-                    List<string> apiResponses;
+                    IList<string> apiResponses;
 
                     apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi, configuration.LicenseInformationTimeoutInSeconds.Value);
 
@@ -187,15 +187,15 @@ public abstract class ComponentDetectionBaseWalker
                     extendedComponent = new ExtendedScannedComponent(scannedComponent);
                 }
 
-                if (LicenseDictionary != null && LicenseDictionary.ContainsKey($"{componentName}@{componentVersion}"))
+                if (LicenseDictionary != null && LicenseDictionary.TryGetValue($"{componentName}@{componentVersion}", out var licenseConcluded))
                 {
-                    extendedComponent.LicenseConcluded = LicenseDictionary[$"{componentName}@{componentVersion}"];
+                    extendedComponent.LicenseConcluded = licenseConcluded;
                 }
 
-                if (packageDetailsDictionary != null && packageDetailsDictionary.ContainsKey((componentName, componentVersion)))
+                if (packageDetailsDictionary != null && packageDetailsDictionary.TryGetValue((componentName, componentVersion), out var packageDetails))
                 {
-                    extendedComponent.Supplier = string.IsNullOrEmpty(packageDetailsDictionary[(componentName, componentVersion)].Supplier) ? null : packageDetailsDictionary[(componentName, componentVersion)].Supplier;
-                    extendedComponent.LicenseDeclared = string.IsNullOrEmpty(packageDetailsDictionary[(componentName, componentVersion)].License) ? null : packageDetailsDictionary[(componentName, componentVersion)].License;
+                    extendedComponent.Supplier = string.IsNullOrEmpty(packageDetails.Supplier) ? null : packageDetails.Supplier;
+                    extendedComponent.LicenseDeclared = string.IsNullOrEmpty(packageDetails.License) ? null : packageDetails.License;
                 }
 
                 await output.Writer.WriteAsync(extendedComponent);

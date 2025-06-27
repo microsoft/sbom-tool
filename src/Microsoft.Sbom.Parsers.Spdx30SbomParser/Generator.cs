@@ -9,6 +9,7 @@ using System.Text.Json;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Spdx30Entities;
 using Microsoft.Sbom.Common.Spdx30Entities.Enums;
+using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
@@ -27,6 +28,8 @@ namespace Microsoft.Sbom.Parsers.Spdx30SbomParser;
 /// </summary>
 public class Generator : IManifestGenerator
 {
+    private static readonly NoAssertionElement StaticNoAssertionElement = CreateStaticNoAssertionElement();
+
     public AlgorithmName[] RequiredHashAlgorithms => new[] { AlgorithmName.SHA256, AlgorithmName.SHA1 };
 
     public string Version { get; set; } = string.Join("-", Constants.SPDXName, Constants.SPDXVersion);
@@ -85,7 +88,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxFileAndRelationshipElements, this.serializerOptions)),
+            Document = JsonSerializer.SerializeToDocument(spdxFileAndRelationshipElements, this.serializerOptions),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = spdxFileAndRelationshipElements.First().SpdxId,
@@ -157,19 +160,18 @@ public class Generator : IManifestGenerator
 
         spdxElementsRelatedToPackageInfo.AddRange(spdxRelationshipAndLicensesFromSbomPackage);
 
-        var dependOnId = packageInfo.DependOn;
-        if (dependOnId is not null && dependOnId != Constants.RootPackageIdValue)
-        {
-            dependOnId = spdxPackage.AddSpdxId(packageInfo);
-        }
+        var dependOnIds = (packageInfo.DependOn ?? Enumerable.Empty<string>())
+                            .Where(id => id is not null)
+                            .Select(id => id == Constants.RootPackageIdValue ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
+                            .ToList();
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxElementsRelatedToPackageInfo, this.serializerOptions)),
+            Document = JsonSerializer.SerializeToDocument(spdxElementsRelatedToPackageInfo, this.serializerOptions),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = spdxPackage.SpdxId,
-                DependOn = dependOnId
+                DependOn = dependOnIds
             }
         };
     }
@@ -245,7 +247,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxElementsRelatedToRootPackage, this.serializerOptions)),
+            Document = JsonSerializer.SerializeToDocument(spdxElementsRelatedToRootPackage, this.serializerOptions),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = Constants.RootPackageIdValue,
@@ -295,14 +297,13 @@ public class Generator : IManifestGenerator
         };
 
         spdxExternalMap.AddExternalSpdxId(externalDocumentReferenceInfo.ExternalDocumentName, externalDocumentReferenceInfo.Checksum);
-        var externalDocumentReferenceId = spdxExternalMap.ExternalSpdxId;
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxExternalMap, this.serializerOptions)),
+            Document = JsonSerializer.SerializeToDocument(spdxExternalMap, this.serializerOptions),
             ResultMetadata = new ResultMetadata
             {
-                EntityId = externalDocumentReferenceId
+                EntityId = spdxExternalMap.SpdxId
             }
         };
     }
@@ -327,17 +328,11 @@ public class Generator : IManifestGenerator
             : relationship.TargetElementId;
         var sourceElement = relationship.SourceElementId;
 
-        var spdxRelationship = new SpdxEntities.Relationship
-        {
-            From = sourceElement,
-            RelationshipType = this.GetSPDXRelationshipType(relationship.RelationshipType),
-            To = new List<string> { targetElement },
-        };
-        spdxRelationship.AddSpdxId();
+        var spdxRelationship = GetSpdxRelationship(sourceElement, targetElement, relationship.RelationshipType);
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxRelationship, this.serializerOptions)),
+            Document = JsonSerializer.SerializeToDocument(spdxRelationship, this.serializerOptions),
         };
     }
 
@@ -381,8 +376,8 @@ public class Generator : IManifestGenerator
 
         var (sbomToolName, sbomToolVersion, packageName, packageVersion, documentName, creationInfo) = GetCommonMetadata(internalMetadataProvider);
 
-        var orgName = internalMetadataProvider.GetPackageSupplier();
-        var toolName = sbomToolName + "-" + sbomToolVersion;
+        var orgName = $"Organization: {internalMetadataProvider.GetPackageSupplier()}";
+        var toolName = $"Tool: {sbomToolName}-{sbomToolVersion}";
 
         var spdxOrganization = new Organization
         {
@@ -439,7 +434,7 @@ public class Generator : IManifestGenerator
         var spdxElementsRelatedToDocCreation = new List<Element> { spdxOrganization, spdxTool, spdxCreationInfo, spdxDataLicense, spdxDocument, spdxRelationship };
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxElementsRelatedToDocCreation, this.serializerOptions)),
+            Document = JsonSerializer.SerializeToDocument(spdxElementsRelatedToDocCreation, this.serializerOptions),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = spdxDocument.SpdxId,
@@ -525,17 +520,21 @@ public class Generator : IManifestGenerator
         spdxRelationshipLicenseConcludedElement.AddSpdxId();
         spdxRelationshipAndLicenseElementsToAddToSBOM.Add(spdxRelationshipLicenseConcludedElement);
 
-        // If they exist, convert licenseDeclared to SPDX license elements and add Relationship elements for them
-        if (fileInfo.LicenseInfoInFiles == null || !fileInfo.LicenseInfoInFiles.Any())
-        {
-            return spdxRelationshipAndLicenseElementsToAddToSBOM;
-        }
-
         var toRelationships = new List<string>();
-        foreach (var licenseInfoInOneFile in fileInfo.LicenseInfoInFiles)
+        if (fileInfo.LicenseInfoInFiles is null)
         {
-            var licenseDeclaredElement = GenerateLicenseElement(licenseInfoInOneFile);
+            var licenseDeclaredElement = GenerateLicenseElement(null);
+            spdxRelationshipAndLicenseElementsToAddToSBOM.Add(licenseDeclaredElement);
             toRelationships.Add(licenseDeclaredElement.SpdxId);
+        }
+        else
+        {
+            foreach (var licenseInfoInOneFile in fileInfo.LicenseInfoInFiles)
+            {
+                var licenseDeclaredElement = GenerateLicenseElement(licenseInfoInOneFile);
+                spdxRelationshipAndLicenseElementsToAddToSBOM.Add(licenseDeclaredElement);
+                toRelationships.Add(licenseDeclaredElement.SpdxId);
+            }
         }
 
         var spdxRelationshipLicenseDeclaredElement = new SpdxEntities.Relationship
@@ -588,18 +587,36 @@ public class Generator : IManifestGenerator
 
     private Element GenerateLicenseElement(string licenseInfo)
     {
-        Element licenseElement = null;
-        if (licenseInfo == null)
+        if (licenseInfo is null)
         {
-            licenseElement = new NoAssertionElement();
-        }
-        else
-        {
-            licenseElement = new AnyLicenseInfo { Name = licenseInfo };
+            return StaticNoAssertionElement;
         }
 
+        var licenseElement = new AnyLicenseInfo { Name = licenseInfo };
         licenseElement.AddSpdxId();
         return licenseElement;
+    }
+
+    private SpdxEntities.Relationship GetSpdxRelationship(string sourceElement, string targetElement, SbomEntities.RelationshipType relationshipType)
+    {
+        var spdxRelationshipType = this.GetSPDXRelationshipType(relationshipType);
+
+        // Switch source and target IDs for these specific relationship types to invert directionality.
+        if (relationshipType == SbomEntities.RelationshipType.PREREQUISITE_FOR ||
+            relationshipType == SbomEntities.RelationshipType.DESCRIBED_BY ||
+            relationshipType == SbomEntities.RelationshipType.PATCH_FOR)
+        {
+            (sourceElement, targetElement) = (targetElement, sourceElement);
+        }
+
+        var spdxRelationship = new SpdxEntities.Relationship
+        {
+            From = sourceElement,
+            RelationshipType = spdxRelationshipType,
+            To = new List<string> { targetElement },
+        };
+        spdxRelationship.AddSpdxId();
+        return spdxRelationship;
     }
 
     /// <summary>
@@ -615,6 +632,7 @@ public class Generator : IManifestGenerator
             case SbomEntities.RelationshipType.CONTAINS: return RelationshipType.CONTAINS;
             case SbomEntities.RelationshipType.DEPENDS_ON: return RelationshipType.DEPENDS_ON;
             case SbomEntities.RelationshipType.DESCRIBES: return RelationshipType.DESCRIBES;
+            // These 3 relationships intentionally change the relationship direction to conform with the SPDX 3.0 spec
             case SbomEntities.RelationshipType.PREREQUISITE_FOR: return RelationshipType.HAS_PREREQUISITE;
             case SbomEntities.RelationshipType.DESCRIBED_BY: return RelationshipType.DESCRIBES;
             case SbomEntities.RelationshipType.PATCH_FOR: return RelationshipType.PATCHED_BY;
@@ -643,7 +661,7 @@ public class Generator : IManifestGenerator
                 .FirstOrDefault());
         }
 
-        var packageChecksumString = string.Join(string.Empty, sha1Checksums.OrderBy(s => s));
+        var packageChecksumString = string.Concat(sha1Checksums.OrderBy(s => s));
 #pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
         var sha1Hasher = SHA1.Create();
 #pragma warning restore CA5350
@@ -681,5 +699,12 @@ public class Generator : IManifestGenerator
         };
 
         return (sbomToolName, sbomToolVersion, packageName, packageVersion, documentName, creationInfo);
+    }
+
+    private static NoAssertionElement CreateStaticNoAssertionElement()
+    {
+        var noAssertionElement = new NoAssertionElement();
+        noAssertionElement.AddSpdxId();
+        return noAssertionElement;
     }
 }

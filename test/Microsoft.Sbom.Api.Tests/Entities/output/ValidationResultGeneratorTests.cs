@@ -52,6 +52,7 @@ public class ValidationResultGeneratorTests
         Assert.AreEqual(0, validationResultOutput.Summary.ValidationTelemetery.FilesFailedCount);
         Assert.AreEqual(12, validationResultOutput.Summary.ValidationTelemetery.FilesSuccessfulCount);
         Assert.AreEqual(2, validationResultOutput.Summary.ValidationTelemetery.FilesSkippedCount);
+        Assert.AreEqual(12, validationResultOutput.Summary.ValidationTelemetery.FilesValidatedCount);
     }
 
     [TestMethod]
@@ -88,6 +89,7 @@ public class ValidationResultGeneratorTests
         Assert.AreEqual(0, validationResultOutput.Summary.ValidationTelemetery.FilesFailedCount);
         Assert.AreEqual(12, validationResultOutput.Summary.ValidationTelemetery.FilesSuccessfulCount);
         Assert.AreEqual(2, validationResultOutput.Summary.ValidationTelemetery.FilesSkippedCount);
+        Assert.AreEqual(12, validationResultOutput.Summary.ValidationTelemetery.FilesValidatedCount);
     }
 
     [TestMethod]
@@ -130,6 +132,7 @@ public class ValidationResultGeneratorTests
         Assert.AreEqual(1, validationResultOutput.Summary.ValidationTelemetery.FilesFailedCount);
         Assert.AreEqual(11, validationResultOutput.Summary.ValidationTelemetery.FilesSuccessfulCount);
         Assert.AreEqual(2, validationResultOutput.Summary.ValidationTelemetery.FilesSkippedCount);
+        Assert.AreEqual(12, validationResultOutput.Summary.ValidationTelemetery.FilesValidatedCount);
     }
 
     [TestMethod]
@@ -172,6 +175,7 @@ public class ValidationResultGeneratorTests
         Assert.AreEqual(1, validationResultOutput.Summary.ValidationTelemetery.FilesFailedCount);
         Assert.AreEqual(11, validationResultOutput.Summary.ValidationTelemetery.FilesSuccessfulCount);
         Assert.AreEqual(2, validationResultOutput.Summary.ValidationTelemetery.FilesSkippedCount);
+        Assert.AreEqual(12, validationResultOutput.Summary.ValidationTelemetery.FilesValidatedCount);
     }
 
     [TestMethod]
@@ -214,6 +218,7 @@ public class ValidationResultGeneratorTests
         Assert.AreEqual(0, validationResultOutput.Summary.ValidationTelemetery.FilesFailedCount);
         Assert.AreEqual(12, validationResultOutput.Summary.ValidationTelemetery.FilesSuccessfulCount);
         Assert.AreEqual(3, validationResultOutput.Summary.ValidationTelemetery.FilesSkippedCount);
+        Assert.AreEqual(12, validationResultOutput.Summary.ValidationTelemetery.FilesValidatedCount);
     }
 
     [TestMethod]
@@ -262,6 +267,7 @@ public class ValidationResultGeneratorTests
         Assert.AreEqual(1, validationResultOutput.Summary.ValidationTelemetery.FilesFailedCount);
         Assert.AreEqual(11, validationResultOutput.Summary.ValidationTelemetery.FilesSuccessfulCount);
         Assert.AreEqual(3, validationResultOutput.Summary.ValidationTelemetery.FilesSkippedCount);
+        Assert.AreEqual(12, validationResultOutput.Summary.ValidationTelemetery.FilesValidatedCount);
     }
 
     private static Mock<IConfiguration> GetDefaultConfigurationMock(bool ignoreMissing)

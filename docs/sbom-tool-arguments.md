@@ -61,8 +61,7 @@ Actions
     DockerImagesToScan (-di)                  Comma separated list of docker image names or hashes to be scanned for packages, ex: ubuntu:16.04, 56bab49eef2ef07505f6a1b0d5bd3a601dfc3c76ad4460f24c91d6fa298369ab.
     AdditionalComponentDetectorArgs (-cd)     Additional set of arguments for Component Detector.  An appropriate usage of this would be a space-delimited list of `--key value` pairs, representing command-line arguments. See the component-detection repository for a list of valid arguments (https://github.com/microsoft/component-detection/blob/main/docs/detector-arguments.md).
                                               switches.
-    ExternalDocumentReferenceListFile (-er)   The path to a file containing a list of external SBOMs that will be included as external document reference in the output SBOM. SPDX 2.2 is the only supported
-                                              format for now.
+    ExternalDocumentReferenceListFile (-er)   The path to a file containing a list of external SBOMs that will be included as external document reference in the output SBOM. SPDX 2.2 is the only supported format for external SBOMs.
     NamespaceUriUniquePart (-nsu)             A unique valid URI part that will be appended to the SPDX SBOM namespace URI. This value should be globally unique.
     NamespaceUriBase (-nsb)                   The base path of the SBOM namespace URI.
     GenerationTimestamp (-gt)                 A timestamp in the format 'yyyy-MM-ddTHH:mm:ssZ' that will be used as the generated timestamp for the SBOM.
@@ -101,4 +100,18 @@ Actions
                       Fatal
 
   Version  - Displays the version of the tool being used. Can be used as '--version'
+```
+
+# Configuration Files
+
+The configuration file provided via the `--ConfigFilePath` argument should be a json file with all the relevant arguments. Note that environment variables can be included and will be expanding during the config file parsing. See the following example of config file content for the generate command:
+
+```json
+{
+    "PackageSupplier": "PackageSupplier",
+    "PackageName": "PackageName",
+    "PackageVersion": "1.0.0",
+    "BuildDropPath": "$(BUILD_DROP_PATH_ENV_VAR)",
+    "BuildComponentPath": "$(BUILD_COMPONENT_PATH_ENV_VAR)"
+}
 ```

@@ -47,10 +47,10 @@ public static class Constants
         SPDX30ManifestInfo
     };
 
-    public static Collection<ComplianceStandardType> SupportedComplianceStandards = new()
+    public static Collection<ConformanceType> SupportedConformances = new()
     {
-        ComplianceStandardType.NTIA,
-        ComplianceStandardType.None
+        ConformanceType.NTIAMin,
+        ConformanceType.None
     };
 
     public static List<Entities.ErrorType> SkipFailureReportingForErrors = new()
@@ -71,6 +71,7 @@ public static class Constants
     public const string CatalogFileName = "manifest.cat";
     public const string BsiFileName = "bsi.json";
     public const string DeleteManifestDirBoolVariableName = "DeleteManifestDirIfPresent";
+    public const string RootPackageIdValue = "SPDXRef-RootPackage";
 
     public const string SPDXContextHeaderName = "@context";
     public const string SPDXGraphHeaderName = "@graph";

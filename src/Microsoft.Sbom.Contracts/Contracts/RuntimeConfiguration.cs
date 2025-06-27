@@ -54,4 +54,12 @@ public class RuntimeConfiguration
     /// Gets or sets a value indicating whether if set to true, we will not print a summary of the component governance to stdout.
     /// </summary>
     public bool NoComponentGovernanceSummary { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets a value of additional arguments for the component detector.
+    /// <para>
+    /// An appropriate usage of this would be a space-delimited list of `--key value` pairs, representing command-line arguments. See the component-detection repository for a list of valid arguments (https://github.com/microsoft/component-detection/blob/main/docs/detector-arguments.md).
+    /// </para>
+    /// </summary>
+    public string AdditionComponentDetectorArgs { get; set; }
 }

@@ -6,6 +6,7 @@ namespace Microsoft.Sbom.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 /// <summary>
 /// Wrapper around file system functions. Used for unit testing.
@@ -62,6 +63,13 @@ public interface IFileSystemUtils
     /// <param name="filePath">The absolute path of the file.</param>
     /// <returns>The contents of the file.</returns>
     public string ReadAllText(string filePath);
+
+    /// <summary>
+    /// Read all text asynchronously from a file.
+    /// </summary>
+    /// <param name="filePath">The absolute path of the file.</param>
+    /// <returns>The contents of the file.</returns>
+    public Task<string> ReadAllTextAsync(string filePath);
 
     /// <summary>
     /// Write all text to a file.

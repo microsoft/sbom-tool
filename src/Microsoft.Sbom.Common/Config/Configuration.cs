@@ -54,7 +54,8 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<LogEventLevel>> verbosity = new();
     private static readonly AsyncLocal<ConfigurationSetting<string>> sbomPath = new();
     private static readonly AsyncLocal<ConfigurationSetting<string>> sbomDir = new();
-    private static readonly AsyncLocal<ConfigurationSetting<ComplianceStandardType>> complianceStandard = new();
+    private static readonly AsyncLocal<ConfigurationSetting<ConformanceType>> conformance = new();
+    private static readonly AsyncLocal<ConfigurationSetting<Dictionary<string, ArtifactInfo>>> artifactInfoMap = new();
 
     /// <inheritdoc cref="IConfiguration.BuildDropPath" />
     [DirectoryExists]
@@ -342,10 +343,17 @@ public class Configuration : IConfiguration
         set => sbomDir.Value = value;
     }
 
-    /// <inheritdoc cref="IConfiguration.ComplianceStandard" />
-    public ConfigurationSetting<ComplianceStandardType> ComplianceStandard
+    /// <inheritdoc cref="IConfiguration.Conformance" />
+    public ConfigurationSetting<ConformanceType> Conformance
     {
-        get => complianceStandard.Value;
-        set => complianceStandard.Value = value;
+        get => conformance.Value;
+        set => conformance.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.ArtifactInfoMap" />
+    public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap
+    {
+        get => artifactInfoMap.Value;
+        set => artifactInfoMap.Value = value;
     }
 }

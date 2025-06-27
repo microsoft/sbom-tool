@@ -8,11 +8,11 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
 public class JsonDocumentCollection<T>
 {
-    public Dictionary<T, List<JsonDocument>> SerializersToJson { get; }
+    public Dictionary<T, IList<JsonDocument>> SerializersToJson { get; }
 
     public JsonDocumentCollection()
     {
-        SerializersToJson = new Dictionary<T, List<JsonDocument>>();
+        SerializersToJson = new Dictionary<T, IList<JsonDocument>>();
     }
 
     public void AddJsonDocument(T key, JsonDocument document)
@@ -25,5 +25,18 @@ public class JsonDocumentCollection<T>
         {
             SerializersToJson.Add(key, new List<JsonDocument> { document });
         }
+    }
+
+    public void DisposeAllJsonDocuments()
+    {
+        foreach (var jsonDocuments in SerializersToJson.Values)
+        {
+            foreach (var document in jsonDocuments)
+            {
+                document?.Dispose();
+            }
+        }
+
+        SerializersToJson.Clear();
     }
 }

@@ -5,8 +5,6 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>Provides a set of adapters from external component formats to a single SBOM format.</Description>
     <Nullable>enable</Nullable>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

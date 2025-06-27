@@ -313,7 +313,7 @@ internal static class ComponentDetectionCliArgumentBuilderTestsExtensions
         }
         else if (!detectorArgs.Contains("Timeout="))
         {
-            detectorArgs = string.Join(",", defaultTimeoutArg, detectorArgs);
+            detectorArgs = string.Join(',', defaultTimeoutArg, detectorArgs);
         }
 
         return args.WithArgs("--DetectorArgs", detectorArgs);

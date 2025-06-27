@@ -26,4 +26,5 @@ public static class Constants
     public const string SPDXRefFile = "SPDXRef-File";
     public const string SPDXRefPackage = "SPDXRef-Package";
     public const string SPDXRefExternalDocument = "DocumentRef";
+    public const string NoAssertionValue = "NOASSERTION";
 }
