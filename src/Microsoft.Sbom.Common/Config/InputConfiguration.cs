@@ -60,6 +60,7 @@ public class InputConfiguration : IConfiguration
     public ConfigurationSetting<string> ConfigFilePath { get; set; }
 
     /// <inheritdoc cref="IConfiguration.ManifestInfo" />
+    [ValidManifestInfo]
     public ConfigurationSetting<IList<ManifestInfo>> ManifestInfo { get; set; }
 
     /// <inheritdoc cref="IConfiguration.HashAlgorithm" />
@@ -141,6 +142,10 @@ public class InputConfiguration : IConfiguration
     [DefaultValue(false)]
     public ConfigurationSetting<bool> FetchLicenseInformation { get; set; }
 
+    /// <inheritdoc cref="IConfiguration.LicenseInformationTimeoutInSeconds" />
+    [DefaultValue(Constants.DefaultLicenseFetchTimeoutInSeconds)]
+    public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get; set; }
+
     [DefaultValue(false)]
     public ConfigurationSetting<bool> EnablePackageMetadataParsing { get; set; }
 
@@ -152,4 +157,10 @@ public class InputConfiguration : IConfiguration
     /// <inheritdoc cref="IConfiguration.SbomPath" />
     [Path]
     public ConfigurationSetting<string> SbomPath { get; set; }
+
+    /// <inheritdoc cref="IConfiguration.Conformance" />
+    public ConfigurationSetting<ConformanceType> Conformance { get; set; }
+
+    /// <inheritdoc cref="IConfiguration.ArtifactInfoMap" />
+    public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap { get; set; }
 }

@@ -43,17 +43,17 @@ internal class ConsoleCapture
     {
         if (stdOutWriter is not null)
         {
-            CapturedStdOut = stdOutWriter?.ToString() ?? string.Empty;
+            CapturedStdOut = stdOutWriter.ToString() ?? string.Empty;
             Console.SetOut(oldStdOut);
-            stdOutWriter?.Dispose();
+            stdOutWriter.Dispose();
             stdOutWriter = null;
         }
 
         if (stdErrWriter is not null)
         {
-            CapturedStdError = stdErrWriter?.ToString() ?? string.Empty;
+            CapturedStdError = stdErrWriter.ToString() ?? string.Empty;
             Console.SetError(oldStdError);
-            stdErrWriter?.Dispose();
+            stdErrWriter.Dispose();
             stdErrWriter = null;
         }
     }

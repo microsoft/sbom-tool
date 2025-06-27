@@ -6,6 +6,7 @@ namespace Microsoft.Sbom.Common;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 /// <summary>
 /// A wrapper class to make the filesystem methods unit testable.
@@ -49,7 +50,6 @@ public abstract class FileSystemUtils : IFileSystemUtils
         Path.Join(root, relativePath, secondRelativePath);
 
     /// <inheritdoc />
-    /// <inheritdoc />
     public string GetRelativePath(string relativeTo, string path) => Path.GetRelativePath(relativeTo, path);
 
     /// <inheritdoc />
@@ -60,6 +60,9 @@ public abstract class FileSystemUtils : IFileSystemUtils
 
     /// <inheritdoc />
     public string ReadAllText(string filePath) => File.ReadAllText(filePath);
+
+    /// <inheritdoc />
+    public Task<string> ReadAllTextAsync(string filePath) => File.ReadAllTextAsync(filePath);
 
     /// <inheritdoc />
     public void WriteAllText(string filePath, string contents) => File.WriteAllText(filePath, contents);

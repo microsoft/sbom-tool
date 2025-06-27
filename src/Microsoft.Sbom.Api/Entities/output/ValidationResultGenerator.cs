@@ -81,6 +81,8 @@ public class ValidationResultGenerator
             skippedErrors.AddRange(NodeValidationResults.Where(r => r.ErrorType == ErrorType.MissingFile));
         }
 
+        var failedFileCount = validationErrors.Count(r => r.ErrorType != ErrorType.NoPackagesFound);
+
         return new ValidationResult
         {
             Result = validationErrors.Count == 0 ? Result.Success : Result.Failure,
@@ -95,8 +97,8 @@ public class ValidationResultGenerator
                 ValidationTelemetery = new ValidationTelemetry
                 {
                     FilesSuccessfulCount = successCount,
-                    FilesValidatedCount = NodeValidationResults.Count + successCount,
-                    FilesFailedCount = validationErrors.Where(r => r.ErrorType != ErrorType.NoPackagesFound).Count(),
+                    FilesFailedCount = failedFileCount,
+                    FilesValidatedCount = failedFileCount + successCount,
                     FilesSkippedCount = skippedErrors.Count,
                     TotalFilesInManifest = totalFiles,
                     TotalPackagesInManifest = totalPackages

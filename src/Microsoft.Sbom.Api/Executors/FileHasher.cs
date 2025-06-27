@@ -12,7 +12,6 @@ using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Entities;
 using Microsoft.Sbom.Extensions;
@@ -73,16 +72,6 @@ public class FileHasher
         ManifestGeneratorProvider manifestGeneratorProvider,
         IFileTypeUtils fileTypeUtils)
     {
-        if (configuration is null)
-        {
-            throw new ArgumentNullException(nameof(configuration));
-        }
-
-        if (manifestGeneratorProvider is null)
-        {
-            throw new ArgumentNullException(nameof(manifestGeneratorProvider));
-        }
-
         this.hashCodeGenerator = hashCodeGenerator ?? throw new ArgumentNullException(nameof(hashCodeGenerator));
         this.manifestPathConverter = manifestPathConverter ?? throw new ArgumentNullException(nameof(manifestPathConverter));
         this.log = log ?? throw new ArgumentNullException(nameof(log));

@@ -1,17 +1,22 @@
 <Project>
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
+  <PropertyGroup>
+    <EnableMSTestRunner>true</EnableMSTestRunner>
+    <TestingPlatformDotNetTestSupport>true</TestingPlatformDotNetTestSupport>
+    <TestingPlatformCaptureOutput>false</TestingPlatformCaptureOutput>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
 
+  <PropertyGroup Label="Build">
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>  <!-- Required for IDE0005 rule -->
+  </PropertyGroup>
+  
   <ItemGroup Label="Package References">
-    <PackageReference Include="coverlet.collector">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="MSTest.TestAdapter"/>
-    <PackageReference Include="MSTest.TestFramework"/>
-    <PackageReference Include="Moq"/>
-    <PackageReference Include="FluentAssertions"/>
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+    <PackageReference Include="MSTest" />
+    <PackageReference Include="Moq" />
   </ItemGroup>
 
 </Project>

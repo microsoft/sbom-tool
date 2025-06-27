@@ -161,7 +161,6 @@ public class SbomToolManifestPathConverterTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(InvalidPathException))]
     public void SbomToolManifestPathConverterTests_CaseSensitive_OSX_Fails()
     {
         var rootPath = @"C:\Sample\Root";
@@ -169,13 +168,10 @@ public class SbomToolManifestPathConverterTests
         osUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(OSPlatform.OSX);
         fileSystemExtensionUtils.Setup(f => f.IsTargetPathInSource(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
 
-        var (path, isOutsideDropPath) = converter.Convert(@"C:\sample\Root" + @"\hello\World");
-
-        Assert.AreEqual("/hello/World", path);
+        Assert.ThrowsException<InvalidPathException>(() => converter.Convert(@"C:\sample\Root" + @"\hello\World"));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(InvalidPathException))]
     public void SbomToolManifestPathConverterTests_CaseSensitive_Linux_Fails()
     {
         var rootPath = @"C:\Sample\Root";
@@ -183,13 +179,10 @@ public class SbomToolManifestPathConverterTests
         osUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(OSPlatform.Linux);
         fileSystemExtensionUtils.Setup(f => f.IsTargetPathInSource(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
 
-        var (path, isOutsideDropPath) = converter.Convert(@"C:\sample\Root" + @"\hello\World");
-
-        Assert.AreEqual("/hello/World", path);
+        Assert.ThrowsException<InvalidPathException>(() => converter.Convert(@"C:\sample\Root" + @"\hello\World"));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(InvalidPathException))]
     public void SbomToolManifestPathConverterTests_RootPathOutside_Fails()
     {
         var rootPath = @"C:\Sample\Root";
@@ -198,7 +191,7 @@ public class SbomToolManifestPathConverterTests
         osUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(OSPlatform.Windows);
         fileSystemExtensionUtils.Setup(f => f.IsTargetPathInSource(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
 
-        converter.Convert(@"d:\Root\hello\World");
+        Assert.ThrowsException<InvalidPathException>(() => converter.Convert(@"d:\Root\hello\World"));
     }
 
     [TestMethod]
@@ -219,6 +212,7 @@ public class SbomToolManifestPathConverterTests
         Assert.AreEqual(expectedPath, path);
     }
 
+    [TestMethod]
     public void SbomToolManifestPathConverterTests_RootPathOutside_SbomOnSameDrive_Succeeds()
     {
         if (!isWindows)

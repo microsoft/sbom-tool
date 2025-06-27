@@ -26,73 +26,73 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
 
     private readonly ILogger log;
 
-    private readonly ISbomConfigProvider sbomConfigs;
-
     private readonly IRecorder recorder;
 
     public RelationshipsArrayGenerator(
         RelationshipGenerator generator,
         ChannelUtils channelUtils,
         ILogger log,
-        ISbomConfigProvider sbomConfigs,
         IRecorder recorder)
     {
         this.generator = generator;
         this.channelUtils = channelUtils;
         this.log = log;
-        this.sbomConfigs = sbomConfigs;
         this.recorder = recorder;
     }
 
-    public async Task<IList<FileValidationResult>> GenerateAsync()
+    public async Task<GeneratorResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.RelationshipsGeneration))
         {
-            IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
+            var totalErrors = new List<FileValidationResult>();
+            var jsonDocumentCollection = new JsonDocumentCollection<IManifestToolJsonSerializer>();
+
+            IList<ISbomConfig> relationshipsArraySupportingConfigs = new List<ISbomConfig>();
+            var jsonArrayStartedForConfig = new Dictionary<ISbomConfig, bool>();
 
             // Write the relationship array only if supported
-            foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
+            foreach (var sbomConfig in targetConfigs)
             {
-                var sbomConfig = sbomConfigs.Get(manifestInfo);
-                if (sbomConfig.MetadataBuilder.TryGetRelationshipsHeaderName(out var relationshipArrayHeaderName))
-                {
-                    sbomConfig.JsonSerializer.StartJsonArray(relationshipArrayHeaderName);
+                var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(sbomConfig.ManifestInfo.Version);
+                var jsonArrayStarted = serializationStrategy.AddToRelationshipsSupportingConfig(relationshipsArraySupportingConfigs, sbomConfig);
+                jsonArrayStartedForConfig[sbomConfig] = jsonArrayStarted;
 
-                    // Get generation data
-                    var generationData = sbomConfig.Recorder.GetGenerationData();
+                if (jsonArrayStarted)
+                {
+                    var generationData = sbomConfig?.Recorder.GetGenerationData();
 
                     var jsonChannelsArray = new ChannelReader<JsonDocument>[]
                     {
-                        // Packages relationships
-                        generator.Run(
-                            GetRelationships(
-                                RelationshipType.DEPENDS_ON,
-                                generationData),
-                            sbomConfig.ManifestInfo),
+                    // Packages relationships
+                    generator.Run(
+                        GetRelationships(
+                            RelationshipType.DEPENDS_ON,
+                            generationData),
+                        sbomConfig.ManifestInfo),
 
-                        // Root package relationship
-                        generator.Run(
-                            GetRelationships(
-                                RelationshipType.DESCRIBES,
-                                generationData.DocumentId,
-                                new string[] { generationData.RootPackageId }),
-                            sbomConfig.ManifestInfo),
+                    // Root package relationship
+                    generator.Run(
+                        GetRelationships(
+                            RelationshipType.DESCRIBES,
+                            generationData.DocumentId,
+                            [generationData.RootPackageId]),
+                        sbomConfig.ManifestInfo),
 
-                        // External reference relationship
-                        generator.Run(
-                            GetRelationships(
-                                RelationshipType.PREREQUISITE_FOR,
-                                generationData.RootPackageId,
-                                generationData.ExternalDocumentReferenceIDs),
-                            sbomConfig.ManifestInfo),
+                    // External reference relationship
+                    generator.Run(
+                        GetRelationships(
+                            RelationshipType.PREREQUISITE_FOR,
+                            generationData.RootPackageId,
+                            generationData.ExternalDocumentReferenceIDs),
+                        sbomConfig.ManifestInfo),
 
-                        // External reference file relationship
-                        generator.Run(
-                            GetRelationships(
-                                RelationshipType.DESCRIBED_BY,
-                                generationData.SPDXFileIds,
-                                generationData.DocumentId),
-                            sbomConfig.ManifestInfo),
+                    // External reference file relationship
+                    generator.Run(
+                        GetRelationships(
+                            RelationshipType.DESCRIBED_BY,
+                            generationData.SPDXFileIds,
+                            generationData.DocumentId),
+                        sbomConfig.ManifestInfo),
                     };
 
                     // Collect all the json elements and write to the serializer.
@@ -101,17 +101,23 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                     await foreach (var jsonDoc in channelUtils.Merge(jsonChannelsArray).ReadAllAsync())
                     {
                         count++;
-                        sbomConfig.JsonSerializer.Write(jsonDoc);
+                        jsonDocumentCollection.AddJsonDocument(sbomConfig.JsonSerializer, jsonDoc);
                     }
 
                     log.Debug($"Wrote {count} relationship elements in the SBOM.");
-
-                    // Write the end of the array.
-                    sbomConfig.JsonSerializer.EndJsonArray();
                 }
             }
 
-            return totalErrors;
+            var generatorResult = new GeneratorResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
+            foreach (var config in targetConfigs)
+            {
+                var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
+                serializationStrategy.WriteJsonObjectsToManifest(generatorResult, config, elementsSpdxIdList);
+            }
+
+            jsonDocumentCollection.DisposeAllJsonDocuments();
+
+            return generatorResult;
         }
     }
 

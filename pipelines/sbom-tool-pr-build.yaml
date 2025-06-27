@@ -1,0 +1,59 @@
+pr:
+  - main
+
+resources:
+    repositories:
+        - repository: 1esPipelines
+          type: git
+          name: 1ESPipelineTemplates/1ESPipelineTemplates
+          ref: refs/tags/release
+        - repository: self
+
+variables:
+  BuildConfiguration: 'Release'
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
+  parameters:
+    sdl:
+      sourceAnalysisPool:
+        name: sbom-windows-build-pool
+        os: windows
+    settings:
+      skipBuildTagsForGitHubPullRequests: true
+    stages:
+      - stage: stage1
+        jobs:
+        - job: Job_1
+          displayName: Build (Windows)
+          pool:
+            name: sbom-windows-build-pool
+            os: windows
+          steps:
+          - template: pipelines/build-test-tool-template.yaml@self
+
+        - job: Job_2
+          displayName: 'Build (Linux)'
+          pool:
+            name: sbom-linux-build-pool
+            os: linux
+          steps:
+          - template: pipelines/build-test-tool-template.yaml@self
+
+        - job: Job_3
+          displayName: 'Build (macOS)'
+          pool:
+            name: Azure Pipelines
+            image: macos-latest
+            os: macOS
+          steps:
+          - template: pipelines/build-test-tool-template.yaml@self
+
+        - job: Job_4
+          displayName: 'Build (macOS-arm64)'
+          pool:
+            name: Azure Pipelines
+            image: macos-14-arm64
+            os: macOS
+          steps:
+          - template: pipelines/build-test-tool-template.yaml@self

@@ -19,39 +19,39 @@ public interface ISbomConfigProvider : IDisposable, IAsyncDisposable, IInternalM
     /// </summary>
     /// <param name="manifestInfo"></param>
     /// <returns></returns>
-    ISbomConfig Get(ManifestInfo manifestInfo);
+    public ISbomConfig Get(ManifestInfo manifestInfo);
 
     /// <summary>
     /// Get the ISbomConfig object for the given format specificed in manifestInfo.
     /// </summary>
     /// <param name="manifestInfo"></param>
     /// <returns></returns>
-    bool TryGet(ManifestInfo manifestInfo, out ISbomConfig sbomConfig);
+    public bool TryGet(ManifestInfo manifestInfo, out ISbomConfig sbomConfig);
 
     /// <summary>
     /// Gets a list of the <see cref="ManifestInfo"/>s that are included in the
     /// SbomConfigProvider object.
     /// </summary>
     /// <returns></returns>
-    IEnumerable<ManifestInfo> GetManifestInfos();
+    public IEnumerable<ManifestInfo> GetManifestInfos();
 
     /// <summary>
     /// Starts the JSON serialization of all the included ISbomConfig objects. This
     /// returns a <see cref="IDisposable"/> object that is used to clean up the JSON streams.
     /// </summary>
     /// <returns></returns>
-    IDisposable StartJsonSerialization();
+    public IDisposable StartJsonSerialization();
 
     /// <summary>
-    /// Starts the JSON serialization of all the included ISbomConfig objects asynchronously.
+    /// Starts the JSON serialization of target ISbomConfig objects asynchronously.
     /// This returns a <see cref="IAsyncDisposable"/> object that is used to clean up the JSON streams.
     /// </summary>
     /// <returns></returns>
-    IAsyncDisposable StartJsonSerializationAsync();
+    public IAsyncDisposable StartJsonSerializationAsync(IEnumerable<ISbomConfig> targetConfigs);
 
     /// <summary>
     /// Helper method to operate an action on each included configs.
     /// </summary>
     /// <param name="action">The action to perform on the config.</param>
-    void ApplyToEachConfig(Action<ISbomConfig> action);
+    public void ApplyToEachConfig(Action<ISbomConfig> action);
 }

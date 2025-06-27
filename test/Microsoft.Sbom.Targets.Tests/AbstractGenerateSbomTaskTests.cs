@@ -21,16 +21,22 @@ public abstract class AbstractGenerateSbomTaskTests
 
     internal abstract string SbomSpecificationVersion { get; }
 
-    internal static readonly string CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-    internal static readonly string DefaultManifestDirectory = Path.Combine(CurrentDirectory, "_manifest");
-    internal static readonly string TemporaryDirectory = Path.Combine(CurrentDirectory, "_temp");
-    internal static readonly string ExternalDocumentListFile = Path.GetRandomFileName();
-    internal static string SbomToolPath = Path.Combine(Directory.GetCurrentDirectory(), "sbom-tool");
+    internal static string TestBuildDropPath;
+    internal static string DefaultManifestDirectory;
+    internal static string TemporaryDirectory;
+    internal static string SbomToolPath;
+    internal static string ExternalDocumentListFile;
 
     internal const string PackageSupplier = "Test-Microsoft";
     internal const string PackageName = "CoseSignTool";
     internal const string PackageVersion = "0.0.1";
     internal const string NamespaceBaseUri = "https://base0.uri";
+
+#if NET472
+    private const string TargetFramework = "net472";
+#else
+    private const string TargetFramework = "net80";
+#endif
 
     internal Mock<IBuildEngine> BuildEngine;
     internal List<BuildErrorEventArgs> Errors;
@@ -56,6 +62,17 @@ public abstract class AbstractGenerateSbomTaskTests
         }
     }
 
+    protected static void ClassSetup(string testDirectoryName)
+    {
+        var executingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        TestBuildDropPath = Path.GetFullPath(Path.Combine(executingDirectory, "..", $"{testDirectoryName}_{TargetFramework}"));
+        DefaultManifestDirectory = Path.Combine(TestBuildDropPath, "_manifest");
+        TemporaryDirectory = Path.Combine(TestBuildDropPath, "_temp");
+        ExternalDocumentListFile = Path.GetRandomFileName();
+        SbomToolPath = Path.Combine(TestBuildDropPath, "sbom-tool");
+        Xcopy(executingDirectory, TestBuildDropPath);
+    }
+
     [TestInitialize]
     public void Startup()
     {
@@ -79,13 +96,25 @@ public abstract class AbstractGenerateSbomTaskTests
         this.CleanupManifestDirectory();
     }
 
+    protected static void ClassTearDown()
+    {
+        // Clean up the TestBuildDropPath directory
+        if (TestBuildDropPath is not null)
+        {
+            if (Directory.Exists(TestBuildDropPath))
+            {
+                Directory.Delete(TestBuildDropPath, true);
+            }
+        }
+    }
+
     [TestMethod]
     public void Sbom_Is_Successfully_Generated()
     {
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
             PackageVersion = PackageVersion,
@@ -102,7 +131,7 @@ public abstract class AbstractGenerateSbomTaskTests
 
         // Assert
         Assert.IsTrue(result);
-        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, CurrentDirectory, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri);
+        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, TestBuildDropPath, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri);
     }
 
     [TestMethod]
@@ -118,7 +147,7 @@ public abstract class AbstractGenerateSbomTaskTests
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
             PackageVersion = PackageVersion,
@@ -135,7 +164,7 @@ public abstract class AbstractGenerateSbomTaskTests
 
         // Assert
         Assert.IsTrue(result);
-        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, CurrentDirectory, PackageName, PackageVersion, PackageSupplier, namespaceBaseUri);
+        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, TestBuildDropPath, PackageName, PackageVersion, PackageSupplier, namespaceBaseUri);
     }
 
     [TestMethod]
@@ -147,7 +176,7 @@ public abstract class AbstractGenerateSbomTaskTests
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             PackageSupplier = packageSupplier,
             PackageName = packageName,
             PackageVersion = packageVersion,
@@ -164,7 +193,7 @@ public abstract class AbstractGenerateSbomTaskTests
 
         // Assert
         Assert.IsTrue(result);
-        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, CurrentDirectory, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri);
+        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, TestBuildDropPath, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri);
     }
 
     private static IEnumerable<object[]> GetPackageSupplierCases()
@@ -197,7 +226,7 @@ public abstract class AbstractGenerateSbomTaskTests
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             ManifestDirPath = manifestDirPath,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
@@ -217,7 +246,7 @@ public abstract class AbstractGenerateSbomTaskTests
         Assert.IsTrue(result);
 
         this.ManifestPath = Path.Combine(manifestDirPath, "_manifest", this.SbomSpecificationDirectoryName, "manifest.spdx.json");
-        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, CurrentDirectory, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri);
+        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, TestBuildDropPath, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri);
     }
 
     [TestMethod]
@@ -251,7 +280,7 @@ public abstract class AbstractGenerateSbomTaskTests
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             BuildComponentPath = ".\\non-existent\\path",
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
@@ -278,7 +307,7 @@ public abstract class AbstractGenerateSbomTaskTests
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             ExternalDocumentListFile = ".\\non-existent\\path",
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
@@ -305,7 +334,7 @@ public abstract class AbstractGenerateSbomTaskTests
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             ManifestDirPath = ".\\non-existent\\path",
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
@@ -330,12 +359,12 @@ public abstract class AbstractGenerateSbomTaskTests
     public void Sbom_Is_Successfully_Generated_With_Component_Path()
     {
         // Let's generate a SBOM for the current assembly
-        var sourceDirectory = Path.Combine(CurrentDirectory, "..", "..", "..");
+        var sourceDirectory = Path.Combine(TestBuildDropPath, "..", "..", "..");
 
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             BuildComponentPath = sourceDirectory,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
@@ -353,7 +382,7 @@ public abstract class AbstractGenerateSbomTaskTests
 
         // Assert
         Assert.IsTrue(result);
-        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, CurrentDirectory, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri, buildComponentPath: sourceDirectory);
+        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, TestBuildDropPath, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri, buildComponentPath: sourceDirectory);
     }
 
     [TestMethod]
@@ -366,7 +395,7 @@ public abstract class AbstractGenerateSbomTaskTests
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
             PackageVersion = PackageVersion,
@@ -384,7 +413,7 @@ public abstract class AbstractGenerateSbomTaskTests
 
         // Assert
         Assert.IsTrue(result, $"{result} is not set to true.");
-        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, CurrentDirectory, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri, expectedNamespaceUriUniquePart: uniqueNamespacePart);
+        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, TestBuildDropPath, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri, expectedNamespaceUriUniquePart: uniqueNamespacePart);
     }
 
 #if NET472
@@ -394,7 +423,7 @@ public abstract class AbstractGenerateSbomTaskTests
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
             PackageVersion = PackageVersion,
@@ -422,7 +451,7 @@ public abstract class AbstractGenerateSbomTaskTests
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             ManifestDirPath = manifestDirPath,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
@@ -447,6 +476,19 @@ public abstract class AbstractGenerateSbomTaskTests
 
             // Assert
             Assert.IsFalse(result);
+        }
+    }
+
+    private static void Xcopy(string sourceDir, string targetDir)
+    {
+        foreach (var dirPath in Directory.GetDirectories(sourceDir, "*.*", SearchOption.AllDirectories))
+        {
+            Directory.CreateDirectory(dirPath.Replace(sourceDir, targetDir));
+        }
+
+        foreach (var newPath in Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories))
+        {
+            File.Copy(newPath, newPath.Replace(sourceDir, targetDir), true);
         }
     }
 }

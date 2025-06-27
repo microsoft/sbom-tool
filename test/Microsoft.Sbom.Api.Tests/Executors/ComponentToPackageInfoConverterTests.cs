@@ -19,6 +19,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using HashAlgorithmName = Microsoft.Sbom.Contracts.Enums.AlgorithmName;
 using ILogger = Serilog.ILogger;
+using IOSUtils = Microsoft.Sbom.Common.IOSUtils;
 using PackageInfo = Microsoft.Sbom.Contracts.SbomPackage;
 
 namespace Microsoft.Sbom.Api.Executors.Tests;
@@ -30,6 +31,7 @@ public class ComponentToPackageInfoConverterTests
 {
     private readonly Mock<ILogger> mockLogger = new Mock<ILogger>();
     private readonly Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
+    private readonly Mock<IOSUtils> mockOSUtils = new Mock<IOSUtils>();
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;
 
     [TestInitialize]
@@ -83,7 +85,8 @@ public class ComponentToPackageInfoConverterTests
 
         CollectionAssert.AreEquivalent(expectedPackageNames, output.Select(c => c.PackageName).ToList());
 
-        Assert.IsFalse(errors?.Any());
+        Assert.IsNotNull(errors);
+        Assert.IsFalse(errors.Any());
     }
 
     [TestMethod]
@@ -257,7 +260,8 @@ public class ComponentToPackageInfoConverterTests
 
         CollectionAssert.AreEquivalent(expectedPackageNames, output.Select(c => c.PackageName).ToList());
 
-        Assert.IsFalse(errors?.Any());
+        Assert.IsNotNull(errors);
+        Assert.IsFalse(errors.Any());
     }
 
     private async Task<PackageInfo> ConvertScannedComponent(ExtendedScannedComponent scannedComponent)
@@ -265,7 +269,7 @@ public class ComponentToPackageInfoConverterTests
         var componentsChannel = Channel.CreateUnbounded<ScannedComponent>();
         await componentsChannel.Writer.WriteAsync(scannedComponent);
         componentsChannel.Writer.Complete();
-        var packageInfoConverter = new ComponentToPackageInfoConverter(mockLogger.Object);
+        var packageInfoConverter = new ComponentToPackageInfoConverter(mockLogger.Object, mockOSUtils.Object);
         var (output, _) = packageInfoConverter.Convert(componentsChannel);
         var packageInfo = await output.ReadAsync();
         return packageInfo;
@@ -280,7 +284,7 @@ public class ComponentToPackageInfoConverterTests
         }
 
         componentsChannel.Writer.Complete();
-        var packageInfoConverter = new ComponentToPackageInfoConverter(mockLogger.Object);
+        var packageInfoConverter = new ComponentToPackageInfoConverter(mockLogger.Object, mockOSUtils.Object);
         var (output, errors) = packageInfoConverter.Convert(componentsChannel);
         return (await output.ReadAllAsync().ToListAsync(), await errors.ReadAllAsync().ToListAsync());
     }

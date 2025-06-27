@@ -1,0 +1,23 @@
+name: Check for API changes
+
+on:
+  pull_request:
+    paths:
+      - 'src/Microsoft.Sbom.Api/**/*.cs'
+      
+jobs:
+  auto-comment:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: PR Comment
+        run:
+          gh pr comment $PRNUM --body-file .github/workflows/pr-comment-api-change.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PRNUM: ${{ github.event.pull_request.number }}

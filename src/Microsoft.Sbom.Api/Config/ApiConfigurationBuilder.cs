@@ -25,8 +25,8 @@ public static class ApiConfigurationBuilder
     /// </summary>
     /// <param name="rootPath">Path where package exists. If scanning start here.</param>
     /// <param name="manifestDirPath">Output path to where manifest is generated.</param>
-    /// <param name="files">Use null to scan.</param>
-    /// <param name="packages">Use null to scan.</param>
+    /// <param name="files">Use null to scan all files.</param>
+    /// <param name="packages">Use null to scan all packages.</param>
     /// <param name="metadata"></param>
     /// <param name="specifications"></param>
     /// <param name="runtimeConfiguration"></param>
@@ -37,7 +37,7 @@ public static class ApiConfigurationBuilder
         string manifestDirPath,
         IEnumerable<SbomFile> files,
         IEnumerable<SbomPackage> packages,
-        SBOMMetadata metadata,
+        SbomMetadata metadata,
         IList<SbomSpecification> specifications = null,
         RuntimeConfiguration runtimeConfiguration = null,
         string externalDocumentReferenceListFile = null,
@@ -69,6 +69,7 @@ public static class ApiConfigurationBuilder
             NamespaceUriUniquePart = GetConfigurationSetting(sanitizedRuntimeConfiguration.NamespaceUriUniquePart),
             FollowSymlinks = GetConfigurationSetting(sanitizedRuntimeConfiguration.FollowSymlinks),
             DeleteManifestDirIfPresent = GetConfigurationSetting(sanitizedRuntimeConfiguration.DeleteManifestDirectoryIfPresent),
+            AdditionalComponentDetectorArgs = GetConfigurationSetting(sanitizedRuntimeConfiguration.AdditionComponentDetectorArgs),
         };
 
         SetVerbosity(sanitizedRuntimeConfiguration, configuration);
@@ -123,9 +124,10 @@ public static class ApiConfigurationBuilder
             throw new ArgumentException($"'{nameof(outputPath)}' cannot be null or whitespace.", nameof(outputPath));
         }
 
+        // TODO: update to SPDX 3.0 for default.
         if (specifications is null || specifications.Count == 0)
         {
-            specifications = new List<SbomSpecification>() { ApiConstants.SPDX22Specification };
+            specifications = ApiConstants.SupportedSbomSpecifications;
         }
 
         var sanitizedRuntimeConfiguration = SanitiseRuntimeConfiguration(runtimeConfiguration);
@@ -142,6 +144,7 @@ public static class ApiConfigurationBuilder
             IgnoreMissing = GetConfigurationSetting(ignoreMissing),
             Parallelism = GetConfigurationSetting(sanitizedRuntimeConfiguration.WorkflowParallelism),
             ManifestInfo = ConvertSbomSpecificationToManifestInfo(specifications),
+            AdditionalComponentDetectorArgs = GetConfigurationSetting(sanitizedRuntimeConfiguration.AdditionComponentDetectorArgs),
         };
 
         SetVerbosity(sanitizedRuntimeConfiguration, configuration);
@@ -194,7 +197,7 @@ public static class ApiConfigurationBuilder
         return new ConfigurationSetting<T>
         {
             Value = value,
-            Source = SettingSource.SBOMApi
+            Source = SettingSource.SbomApi
         };
     }
 

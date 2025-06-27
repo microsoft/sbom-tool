@@ -10,7 +10,6 @@ using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Providers;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Extensions;
-using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
 
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
@@ -22,17 +21,17 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
 {
     private readonly ILogger log;
 
-    private readonly ISbomConfigProvider sbomConfigs;
-
     private readonly IEnumerable<ISourcesProvider> sourcesProviders;
 
     private readonly IRecorder recorder;
 
+    private readonly ISbomConfigProvider sbomConfigs;
+
     public PackageArrayGenerator(
         ILogger log,
-        ISbomConfigProvider sbomConfigs,
         IEnumerable<ISourcesProvider> sourcesProviders,
-        IRecorder recorder)
+        IRecorder recorder,
+        ISbomConfigProvider sbomConfigs)
     {
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
@@ -40,41 +39,40 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
     }
 
-    public async Task<IList<FileValidationResult>> GenerateAsync()
+    public async Task<GeneratorResult> GenerateAsync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList)
     {
         using (recorder.TraceEvent(Events.PackagesGeneration))
         {
-            IList<FileValidationResult> totalErrors = new List<FileValidationResult>();
-
-            var sourcesProvider = this.sourcesProviders
-                .FirstOrDefault(s => s.IsSupported(ProviderType.Packages));
+            var totalErrors = new List<FileValidationResult>();
 
             // Write the start of the array, if supported.
             IList<ISbomConfig> packagesArraySupportingConfigs = new List<ISbomConfig>();
-            foreach (var manifestInfo in sbomConfigs.GetManifestInfos())
+            var jsonArrayStartedForConfig = new Dictionary<ISbomConfig, bool>();
+            var sourcesProvider = this.sourcesProviders
+                .FirstOrDefault(s => s.IsSupported(ProviderType.Packages));
+
+            foreach (var sbomConfig in targetConfigs)
             {
-                var config = sbomConfigs.Get(manifestInfo);
-                if (config.MetadataBuilder.TryGetPackageArrayHeaderName(out var packagesArrayHeaderName))
-                {
-                    packagesArraySupportingConfigs.Add(config);
-                    config.JsonSerializer.StartJsonArray(packagesArrayHeaderName);
-                }
+                var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(sbomConfig.ManifestInfo.Version);
+                var jsonArrayStarted = serializationStrategy.AddToPackagesSupportingConfig(packagesArraySupportingConfigs, sbomConfig);
+                jsonArrayStartedForConfig[sbomConfig] = jsonArrayStarted;
             }
 
             var (jsonDocResults, errors) = sourcesProvider.Get(packagesArraySupportingConfigs);
 
-            // 6. Collect all the json elements and write to the serializer.
+            // Collect all the json elements to be written to the serializer.
             var totalJsonDocumentsWritten = 0;
+            var jsonDocumentCollection = new JsonDocumentCollection<IManifestToolJsonSerializer>();
 
             await foreach (var jsonDocResult in jsonDocResults.ReadAllAsync())
             {
-                jsonDocResult.Serializer.Write(jsonDocResult.Document);
+                jsonDocumentCollection.AddJsonDocument(jsonDocResult.Serializer, jsonDocResult.Document);
                 totalJsonDocumentsWritten++;
             }
 
             if (totalJsonDocumentsWritten == 0)
             {
-                log.Warning($"There were no packages detected during the generation workflow.");
+                log.Warning("There were no packages detected during the generation workflow.");
             }
 
             log.Debug($"Wrote {totalJsonDocumentsWritten} package elements in the SBOM.");
@@ -88,19 +86,31 @@ public class PackageArrayGenerator : IJsonArrayGenerator<PackageArrayGenerator>
 
             foreach (var sbomConfig in packagesArraySupportingConfigs)
             {
-                // Write the root package information to the packages array.
-                if (sbomConfig.MetadataBuilder.TryGetRootPackageJson(sbomConfigs, out var generationResult))
+                // Write the root package information to SBOM.
+                if (sbomConfig.MetadataBuilder.TryGetRootPackageJson(sbomConfigs, out var rootPackageGenerationResult))
                 {
-                    sbomConfig.JsonSerializer.Write(generationResult?.Document);
-                    sbomConfig.Recorder.RecordRootPackageId(generationResult?.ResultMetadata?.EntityId);
-                    sbomConfig.Recorder.RecordDocumentId(generationResult?.ResultMetadata?.DocumentId);
+                    jsonDocumentCollection.AddJsonDocument(sbomConfig.JsonSerializer, rootPackageGenerationResult?.Document);
+                    sbomConfig.Recorder.RecordRootPackageId(rootPackageGenerationResult?.ResultMetadata?.EntityId);
+                    sbomConfig.Recorder.RecordDocumentId(rootPackageGenerationResult?.ResultMetadata?.DocumentId);
                 }
 
-                // Write the end of the array.
-                sbomConfig.JsonSerializer.EndJsonArray();
+                // Write creation info to SBOM. Creation info element is only applicable for SPDX 3.0 and above.
+                if (sbomConfig.MetadataBuilder.TryGetCreationInfoJson(sbomConfigs, out rootPackageGenerationResult))
+                {
+                    jsonDocumentCollection.AddJsonDocument(sbomConfig.JsonSerializer, rootPackageGenerationResult?.Document);
+                }
             }
 
-            return totalErrors;
+            var generatorResult = new GeneratorResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
+            foreach (var config in targetConfigs)
+            {
+                var serializationStrategy = JsonSerializationStrategyFactory.GetStrategy(config.ManifestInfo.Version);
+                serializationStrategy.WriteJsonObjectsToManifest(generatorResult, config, elementsSpdxIdList);
+            }
+
+            jsonDocumentCollection.DisposeAllJsonDocuments();
+
+            return generatorResult;
         }
     }
 }

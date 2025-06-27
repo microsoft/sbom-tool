@@ -38,18 +38,6 @@ public class ManifestToolJsonSerializerTests
 
         var expected = JsonSerializer.Serialize(JsonDocument.Parse("{\"Outputs\":[{\"hello\":\"world\"}],\"header\":\"value\"}"), new JsonSerializerOptions { WriteIndented = true });
         Assert.AreEqual(expected, result);
-
-        using var stream2 = new MemoryStream();
-        using var utfJsonWriter = new Utf8JsonWriter(stream2);
-        try
-        {
-            jsonDoc.WriteTo(utfJsonWriter);
-            Assert.Fail("Json document was not disposed by the serializer");
-        }
-        catch (Exception e)
-        {
-            Assert.AreEqual(typeof(ObjectDisposedException), e.GetType());
-        }
     }
 
     [TestMethod]
@@ -76,22 +64,9 @@ public class ManifestToolJsonSerializerTests
 
         var expected = JsonSerializer.Serialize(JsonDocument.Parse("{\"Outputs\":[{\"hello\":\"world\"}],\"header\":\"value\"}"), new JsonSerializerOptions { WriteIndented = true });
         Assert.AreEqual(expected, result);
-
-        using var stream2 = new MemoryStream();
-        using var utfJsonWriter = new Utf8JsonWriter(stream2);
-        try
-        {
-            jsonDoc.WriteTo(utfJsonWriter);
-            Assert.Fail("Json document was not disposed by the serializer");
-        }
-        catch (Exception e)
-        {
-            Assert.AreEqual(typeof(ObjectDisposedException), e.GetType());
-        }
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ObjectDisposedException))]
     public void ManifestToolJsonSerializerTest_WriteDisposedJsonDocument_Fails()
     {
         var jsonDoc = JsonDocument.Parse("{\"hello\":\"world\"}");
@@ -103,7 +78,6 @@ public class ManifestToolJsonSerializerTests
 
         serializer.StartJsonObject();
         serializer.WriteJsonString(metadataString);
-        serializer.Write(jsonDoc);
-        serializer.FinalizeJsonObject();
+        Assert.ThrowsException<ObjectDisposedException>(() => serializer.Write(jsonDoc));
     }
 }

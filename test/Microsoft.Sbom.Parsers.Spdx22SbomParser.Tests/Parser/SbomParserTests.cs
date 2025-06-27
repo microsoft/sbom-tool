@@ -51,19 +51,18 @@ public class SbomParserTests : SbomParserTestsBase
         Assert.AreEqual(0, result.ReferencesCount);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SbomParserStrings.JsonWithMissingFiles)]
     [DataRow(SbomParserStrings.JsonWithMissingPackages)]
     [DataRow(SbomParserStrings.JsonWithMissingRelationships)]
-    [ExpectedException(typeof(ParserException))]
     public void MissingPropertyThrows(string json)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
         using var stream = new MemoryStream(bytes);
-        this.IterateAllPropertiesAsync(stream);
+        Assert.ThrowsException<ParserException>(() => this.IterateAllPropertiesAsync(stream));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SbomParserStrings.MalformedJson)]
     [DataRow(SbomParserStrings.MalformedJsonIncorrectRefsType)]
     [DataRow(SbomParserStrings.MalformedJsonIncorrectFilesType)]
@@ -77,7 +76,7 @@ public class SbomParserTests : SbomParserTestsBase
         Assert.ThrowsException<ParserException>(() => this.IterateAllPropertiesAsync(stream));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SbomParserStrings.MalformedJsonEmptyJsonObject)]
     [DataRow(SbomParserStrings.MalformedJsonEmptyArrayObject)]
     public void MalformedJsonEmptyValuesDoesNotThrow(string json)

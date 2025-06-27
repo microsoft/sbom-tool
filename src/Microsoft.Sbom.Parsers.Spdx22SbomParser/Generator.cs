@@ -4,7 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
+using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions;
@@ -43,7 +47,7 @@ public class Generator : IManifestGenerator
         var spdxFileElement = ConvertSbomFileToSpdxFile(fileInfo);
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxFileElement)),
+            Document = JsonSerializer.SerializeToDocument(spdxFileElement),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = spdxFileElement.SPDXId
@@ -68,7 +72,7 @@ public class Generator : IManifestGenerator
             throw new ArgumentException(nameof(fileInfo.Path));
         }
 
-        EnsureRequiredHashesPresent(fileInfo.Checksum.ToArray());
+        GeneratorUtils.EnsureRequiredHashesPresent(fileInfo.Checksum.ToArray(), RequiredHashAlgorithms);
 
         var spdxFileElement = new SPDXFile
         {
@@ -76,7 +80,7 @@ public class Generator : IManifestGenerator
                 .Where(c => RequiredHashAlgorithms.Contains(c.Algorithm))
                 .Select(fh => new Entities.Checksum { Algorithm = fh.Algorithm.ToString(), ChecksumValue = fh.ChecksumValue.ToLower() })
                 .ToList(),
-            FileName = EnsureRelativePathStartsWithDot(fileInfo.Path),
+            FileName = GeneratorUtils.EnsureRelativePathStartsWithDot(fileInfo.Path),
             FileCopyrightText = fileInfo.FileCopyrightText ?? Constants.NoAssertionValue,
             LicenseConcluded = fileInfo.LicenseConcluded ?? Constants.NoAssertionValue,
             LicenseInfoInFiles = fileInfo.LicenseInfoInFiles ?? Constants.NoAssertionListValue,
@@ -85,18 +89,6 @@ public class Generator : IManifestGenerator
 
         spdxFileElement.AddSpdxId(fileInfo.Path, fileInfo.Checksum);
         return spdxFileElement;
-    }
-
-    // Throws a <see cref="MissingHashValueException"/> if the filehashes are missing
-    // any of the required hashes
-    private void EnsureRequiredHashesPresent(Contracts.Checksum[] fileHashes)
-    {
-        foreach (var hashAlgorithmName in from hashAlgorithmName in RequiredHashAlgorithms
-                 where !fileHashes.Select(fh => fh.Algorithm).Contains(hashAlgorithmName)
-                 select hashAlgorithmName)
-        {
-            throw new MissingHashValueException($"The hash value for algorithm {hashAlgorithmName} is missing from {nameof(fileHashes)}");
-        }
     }
 
     public ManifestInfo RegisterManifest() => Constants.Spdx22ManifestInfo;
@@ -110,8 +102,8 @@ public class Generator : IManifestGenerator
 
         var generationData = internalMetadataProvider.GetGenerationData(Constants.Spdx22ManifestInfo);
 
-        var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolName);
-        var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SBOMToolVersion);
+        var sbomToolName = internalMetadataProvider.GetMetadata(MetadataKey.SbomToolName);
+        var sbomToolVersion = internalMetadataProvider.GetMetadata(MetadataKey.SbomToolVersion);
         var packageName = internalMetadataProvider.GetPackageName();
         var packageVersion = internalMetadataProvider.GetPackageVersion();
 
@@ -167,31 +159,20 @@ public class Generator : IManifestGenerator
         var packageId = spdxPackage.AddSpdxId(packageInfo);
         spdxPackage.AddPackageUrls(packageInfo);
 
-        var dependOnId = packageInfo.DependOn;
-        if (dependOnId is not null && dependOnId != Constants.RootPackageIdValue)
-        {
-            dependOnId = SPDXExtensions.GenerateSpdxPackageId(packageInfo.DependOn);
-        }
+        var dependOnIds = (packageInfo.DependOn ?? Enumerable.Empty<string>())
+                            .Where(id => id is not null)
+                            .Select(id => id == Constants.RootPackageIdValue ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
+                            .ToList();
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxPackage)),
+            Document = JsonSerializer.SerializeToDocument(spdxPackage),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = packageId,
-                DependOn = dependOnId
+                DependOn = dependOnIds,
             }
         };
-    }
-
-    private string EnsureRelativePathStartsWithDot(string path)
-    {
-        if (!path.StartsWith(".", StringComparison.Ordinal))
-        {
-            return "." + path;
-        }
-
-        return path;
     }
 
     public GenerationResult GenerateRootPackage(
@@ -223,14 +204,14 @@ public class Generator : IManifestGenerator
             LicenseDeclared = Constants.NoAssertionValue,
             LicenseInfoFromFiles = Constants.NoAssertionListValue,
             FilesAnalyzed = true,
-            PackageVerificationCode = internalMetadataProvider.GetPackageVerificationCode(),
+            PackageVerificationCode = GetPackageVerificationCode(internalMetadataProvider),
             Supplier = string.Format(Constants.PackageSupplierFormatString, internalMetadataProvider.GetPackageSupplier()),
-            HasFiles = internalMetadataProvider.GetPackageFilesList()
+            HasFiles = internalMetadataProvider.GetPackageFilesList(Constants.Spdx22ManifestInfo)
         };
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxPackage)),
+            Document = JsonSerializer.SerializeToDocument(spdxPackage),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = Constants.RootPackageIdValue,
@@ -261,7 +242,7 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(spdxRelationship)),
+            Document = JsonSerializer.SerializeToDocument(spdxRelationship),
         };
     }
 
@@ -324,11 +305,61 @@ public class Generator : IManifestGenerator
 
         return new GenerationResult
         {
-            Document = JsonDocument.Parse(JsonSerializer.Serialize(externalDocumentReferenceElement)),
+            Document = JsonSerializer.SerializeToDocument(externalDocumentReferenceElement),
             ResultMetadata = new ResultMetadata
             {
                 EntityId = externalDocumentReferenceId
             }
         };
+    }
+
+    /// <summary>
+    /// Generates the package verification code for a given package using the SPDX 2.2 specification.
+    ///
+    /// Algorithm defined here https://spdx.github.io/spdx-spec/v2.2.2/package-information/#79-package-verification-code-field.
+    /// </summary>
+    /// <param name="internalMetadataProvider"></param>
+    /// <returns></returns>
+    private PackageVerificationCode GetPackageVerificationCode(IInternalMetadataProvider internalMetadataProvider)
+    {
+        if (internalMetadataProvider is null)
+        {
+            throw new ArgumentNullException(nameof(internalMetadataProvider));
+        }
+
+        // Get a list of SHA1 checksums
+        IList<string> sha1Checksums = new List<string>();
+        foreach (var checksumArray in internalMetadataProvider.GetGenerationData(Constants.Spdx22ManifestInfo).Checksums)
+        {
+            sha1Checksums.Add(checksumArray
+                .Where(c => c.Algorithm == AlgorithmName.SHA1)
+                .Select(c => c.ChecksumValue)
+                .FirstOrDefault());
+        }
+
+        var packageChecksumString = string.Concat(sha1Checksums.OrderBy(s => s));
+#pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
+        var sha1Hasher = SHA1.Create();
+#pragma warning restore CA5350
+        var hashByteArray = sha1Hasher.ComputeHash(Encoding.Default.GetBytes(packageChecksumString));
+
+        return new PackageVerificationCode
+        {
+            PackageVerificationCodeValue = BitConverter
+                .ToString(hashByteArray)
+                .Replace("-", string.Empty)
+                .ToLowerInvariant(),
+            PackageVerificationCodeExcludedFiles = null // We currently don't ignore any files.
+        };
+    }
+
+    /// <summary>
+    /// Creation info will not be generated in SPDX 2.2 format.
+    /// </summary>
+    /// <param name="internalMetadataProvider"></param>
+    /// <returns></returns>
+    public GenerationResult GenerateJsonDocument(IInternalMetadataProvider internalMetadataProvider)
+    {
+        return null;
     }
 }

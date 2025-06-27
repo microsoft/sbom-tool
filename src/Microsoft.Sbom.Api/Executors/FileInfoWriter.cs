@@ -34,7 +34,7 @@ public class FileInfoWriter
         this.log = log ?? throw new ArgumentNullException(nameof(log));
     }
 
-    public (ChannelReader<JsonDocWithSerializer> result, ChannelReader<FileValidationResult> errors) Write(ChannelReader<InternalSbomFileInfo> fileInfos, IList<ISbomConfig> filesArraySupportingSBOMs)
+    public (ChannelReader<JsonDocWithSerializer> result, ChannelReader<FileValidationResult> errors) Write(ChannelReader<InternalSbomFileInfo> fileInfos, IList<ISbomConfig> filesArraySupportingSboms)
     {
         var errors = Channel.CreateUnbounded<FileValidationResult>();
         var result = Channel.CreateUnbounded<JsonDocWithSerializer>();
@@ -43,7 +43,7 @@ public class FileInfoWriter
         {
             await foreach (var fileInfo in fileInfos.ReadAllAsync())
             {
-                await Generate(filesArraySupportingSBOMs, fileInfo, result, errors);
+                await Generate(filesArraySupportingSboms, fileInfo, result, errors);
             }
 
             errors.Writer.Complete();
@@ -53,11 +53,11 @@ public class FileInfoWriter
         return (result, errors);
     }
 
-    private async Task Generate(IList<ISbomConfig> filesArraySupportingSBOMs, InternalSbomFileInfo sbomFile, Channel<JsonDocWithSerializer> result, Channel<FileValidationResult> errors)
+    private async Task Generate(IList<ISbomConfig> filesArraySupportingSboms, InternalSbomFileInfo sbomFile, Channel<JsonDocWithSerializer> result, Channel<FileValidationResult> errors)
     {
         try
         {
-            foreach (var config in filesArraySupportingSBOMs)
+            foreach (var config in filesArraySupportingSboms)
             {
                 log.Verbose("Generating json for file {file} into {config}", sbomFile.Path, config.ManifestJsonFilePath);
                 var generationResult = manifestGeneratorProvider

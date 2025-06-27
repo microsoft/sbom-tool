@@ -31,15 +31,12 @@ public class SignValidationProviderTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void SignValidationProvider_NullValidators_Throws()
     {
         var mockOSUtils = new Mock<IOSUtils>();
         mockOSUtils.Setup(o => o.GetCurrentOSPlatform()).Returns(OSPlatform.Windows);
 
-        var signValidator = new SignValidationProvider(null, mockOSUtils.Object);
-        signValidator.Init();
-        signValidator.Get();
+        Assert.ThrowsException<ArgumentNullException>(() => new SignValidationProvider(null, mockOSUtils.Object));
     }
 
     [TestMethod]

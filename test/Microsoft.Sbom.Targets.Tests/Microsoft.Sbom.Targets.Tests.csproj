@@ -1,13 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net8.0;net472</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
-    <SignAssembly>True</SignAssembly>
     <RootNamespace>Microsoft.Sbom.Targets.Tests</RootNamespace>
     <SbomCLIToolTargetFramework>net8.0</SbomCLIToolTargetFramework>
     <SBOMCLIToolProjectDir>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Tool\</SBOMCLIToolProjectDir>
+    <NoWarn>CA1515;CA1872;NU1903</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -18,6 +19,11 @@
     <PackageReference Include="Microsoft.Build.Framework" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
     <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Pinned assemblies for transitive dependencies -->
+    <PackageReference Condition="'$(TargetFramework)'=='net472'" Include="Microsoft.IO.Redist" /> <!-- Used by Microsoft.Build -->
   </ItemGroup>
 
   <Target Name="AddSbomToolToPackage" AfterTargets="Build" Condition="$(TargetFramework) == 'net472'">

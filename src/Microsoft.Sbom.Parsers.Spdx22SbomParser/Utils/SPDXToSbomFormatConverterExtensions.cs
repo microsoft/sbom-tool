@@ -26,10 +26,6 @@ public static class SPDXToSbomFormatConverterExtensions
     public static SbomFile ToSbomFile(this SPDXFile spdxFile)
     {
         var checksums = spdxFile.FileChecksums?.Select(c => c.ToSbomChecksum());
-        if (!checksums.Any() || checksums.All(c => c.Algorithm != AlgorithmName.SHA256))
-        {
-            throw new ParserException("File hash is missing a SHA256 value");
-        }
 
         return new SbomFile
         {
@@ -49,12 +45,6 @@ public static class SPDXToSbomFormatConverterExtensions
     /// <returns></returns>
     public static SbomPackage ToSbomPackage(this SPDXPackage spdxPackage)
     {
-        if (spdxPackage.FilesAnalyzed &&
-            (spdxPackage.LicenseInfoFromFiles == null || !spdxPackage.LicenseInfoFromFiles.Any()))
-        {
-            throw new ParserException("Package license list was empty.");
-        }
-
         if (spdxPackage.PackageVerificationCode is not null
             && string.IsNullOrEmpty(spdxPackage.PackageVerificationCode.PackageVerificationCodeValue))
         {
@@ -81,30 +71,30 @@ public static class SPDXToSbomFormatConverterExtensions
     }
 
     /// <summary>
-    /// Converts a <see cref="SPDXRelationship"/> object to a <see cref="SBOMRelationship"/> object.
+    /// Converts a <see cref="SPDXRelationship"/> object to a <see cref="SbomRelationship"/> object.
     /// </summary>
     /// <param name="spdxRelationship"></param>
     /// <returns></returns>
-    public static SBOMRelationship ToSbomRelationship(this SPDXRelationship spdxRelationship)
+    public static SbomRelationship ToSbomRelationship(this SPDXRelationship spdxRelationship)
     {
-        return new SBOMRelationship
+        return new SbomRelationship
         {
-            RelationshipType = spdxRelationship.RelationshipType.ToString(),
+            RelationshipType = spdxRelationship.RelationshipType,
             TargetElementId = spdxRelationship.TargetElementId,
             SourceElementId = spdxRelationship.SourceElementId,
         };
     }
 
     /// <summary>
-    /// Converts a <see cref="SpdxExternalDocumentReference"/> object to a <see cref="SBOMReference"/> object.
+    /// Converts a <see cref="SpdxExternalDocumentReference"/> object to a <see cref="SbomReference"/> object.
     /// </summary>
     /// <param name="spdxExternalDocumentReference"></param>
     /// <returns></returns>
-    public static SBOMReference ToSbomReference(this SpdxExternalDocumentReference spdxExternalDocumentReference)
+    public static SbomReference ToSbomReference(this SpdxExternalDocumentReference spdxExternalDocumentReference)
     {
-        return new SBOMReference
+        return new SbomReference
         {
-            Checksum = spdxExternalDocumentReference.Checksum.ToSbomChecksum(),
+            Checksum = spdxExternalDocumentReference.Checksum?.ToSbomChecksum(),
             ExternalDocumentId = spdxExternalDocumentReference.ExternalDocumentId,
             Document = spdxExternalDocumentReference.SpdxDocument,
         };
@@ -124,14 +114,19 @@ public static class SPDXToSbomFormatConverterExtensions
     /// <summary>
     /// Convert a <see cref="SPDXChecksum"/> object to a <see cref="SbomChecksum"/> object.
     /// </summary>
-    /// <param name="spdxChecksums"></param>
+    /// <param name="spdxChecksum"></param>
     /// <returns></returns>
-    internal static SbomChecksum ToSbomChecksum(this SPDXChecksum spdxChecksums)
+    internal static SbomChecksum ToSbomChecksum(this SPDXChecksum spdxChecksum)
     {
+        if (spdxChecksum is null)
+        {
+            return null;
+        }
+
         return new SbomChecksum
         {
-            Algorithm = new AlgorithmName(spdxChecksums.Algorithm, null),
-            ChecksumValue = spdxChecksums.ChecksumValue,
+            Algorithm = new AlgorithmName(spdxChecksum.Algorithm, null),
+            ChecksumValue = spdxChecksum.ChecksumValue,
         };
     }
 }

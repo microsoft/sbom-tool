@@ -49,7 +49,7 @@ public sealed class ManifestToolJsonSerializer : IManifestToolJsonSerializer
 
     /// <summary>
     /// This writes a json document to the underlying stream.
-    /// We also call dispose on the JsonDocument once we finish writing.
+    /// The jsonDocument object gets cleaned up by the caller, not here.
     /// </summary>
     /// <param name="jsonDocument">The json document.</param>
     public void Write(JsonDocument jsonDocument)
@@ -59,16 +59,18 @@ public sealed class ManifestToolJsonSerializer : IManifestToolJsonSerializer
             return;
         }
 
-        using (jsonDocument)
-        {
-            jsonDocument.WriteTo(jsonWriter);
-        }
+        jsonDocument.WriteTo(jsonWriter);
 
         // If the pending buffer size is greater than a megabyte, flush the stream.
         if (jsonWriter.BytesPending > 1_000_000)
         {
             jsonWriter.Flush();
         }
+    }
+
+    public void Write(JsonElement jsonElement)
+    {
+        jsonElement.WriteTo(jsonWriter);
     }
 
     /// <summary>

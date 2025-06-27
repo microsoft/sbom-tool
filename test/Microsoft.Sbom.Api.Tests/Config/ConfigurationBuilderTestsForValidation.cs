@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Sbom.Api.Config.Args;
-using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PowerArgs;
@@ -30,7 +31,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath)).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.GetDirectoryName(It.IsAny<string>())).Returns("test").Verifiable();
@@ -46,12 +47,12 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
 
         var configuration = await cb.GetConfiguration(args);
 
-        Assert.AreEqual(configuration.BuildDropPath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.ConfigFilePath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.OutputPath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.Parallelism.Source, SettingSource.Default);
-        Assert.AreEqual(configuration.Parallelism.Value, Common.Constants.DefaultParallelism);
-        Assert.AreEqual(configuration.HashAlgorithm.Source, SettingSource.CommandLine);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.BuildDropPath.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.ConfigFilePath.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.OutputPath.Source);
+        Assert.AreEqual(SettingSource.Default, configuration.Parallelism.Source);
+        Assert.AreEqual(Common.Constants.DefaultParallelism, configuration.Parallelism.Value);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.HashAlgorithm.Source);
         Assert.AreEqual(configuration.HashAlgorithm.Value, AlgorithmName.SHA512);
 
         fileSystemUtilsMock.VerifyAll();
@@ -63,7 +64,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath)).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.GetDirectoryName(It.IsAny<string>())).Returns("test").Verifiable();
@@ -80,24 +81,23 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
 
         var configuration = await cb.GetConfiguration(args);
 
-        Assert.AreEqual(configuration.BuildDropPath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.ConfigFilePath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.OutputPath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.Parallelism.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.Verbosity.Value, Serilog.Events.LogEventLevel.Fatal);
-        Assert.AreEqual(configuration.Verbosity.Source, SettingSource.CommandLine);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.BuildDropPath.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.ConfigFilePath.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.OutputPath.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.Parallelism.Source);
+        Assert.AreEqual(Serilog.Events.LogEventLevel.Fatal, configuration.Verbosity.Value);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.Verbosity.Source);
 
         fileSystemUtilsMock.VerifyAll();
     }
 
     [TestMethod]
-    [ExpectedException(typeof(AutoMapperMappingException))]
     public async Task ConfigurationBuilderTest_CombinesConfigs_DuplicateConfig_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath));
+        fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath);
 
         var args = new ValidationArgs
         {
@@ -107,17 +107,16 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
             ManifestDirPath = "ManifestPath"
         };
 
-        var configuration = await cb.GetConfiguration(args);
+        await Assert.ThrowsExceptionAsync<AutoMapperMappingException>(() => cb.GetConfiguration(args));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ValidationArgException))]
     public async Task ConfigurationBuilderTest_CombinesConfigs_NegativeParallism_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
 
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigWithManifestPath));
+        fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath);
 
         var args = new ValidationArgs
         {
@@ -127,7 +126,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
             Parallelism = -1
         };
 
-        var configuration = await cb.GetConfiguration(args);
+        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
     }
 
     [TestMethod]
@@ -180,5 +179,35 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
         Assert.AreEqual("ManifestDirPath", config.ManifestDirPath.Value);
 
         fileSystemUtilsMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [DataRow("SPDX:randomVersion")]
+    [DataRow("randomName:2.2")]
+    [DataRow("randomName:3.0")]
+    public async Task ConfigurationBuilderTest_Validation_BadManifestInfo_Fails(string manifestInfo)
+    {
+        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+        var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
+
+        fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
+        fileSystemUtilsMock.Setup(f => f.GetDirectoryName(It.IsAny<string>())).Returns("test").Verifiable();
+        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
+
+        IList<ManifestInfo> manifestInfos = new List<ManifestInfo> { ManifestInfo.Parse(manifestInfo) };
+        var args = new ValidationArgs
+        {
+            BuildDropPath = "BuildDropPath",
+            ConfigFilePath = "config.json",
+            OutputPath = "Test",
+            ManifestInfo = manifestInfos
+        };
+
+        var exception = await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
+        Assert.IsTrue(
+            exception.Message.Contains("contains no values supported by the ManifestInfo (-mi) parameter. Please provide supported values. Supported values include: "),
+            $"Message contents: {exception.Message}");
     }
 }

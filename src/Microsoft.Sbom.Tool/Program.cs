@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,20 +17,6 @@ namespace Microsoft.Sbom.Tool;
 
 internal class Program
 {
-    internal static string Name => NameValue.Value;
-
-    internal static string Version => VersionValue.Value;
-
-    private static readonly Lazy<string> NameValue = new Lazy<string>(() =>
-    {
-        return typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product ?? "sbomtool";
-    });
-
-    private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
-    {
-        return typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
-    });
-
     public static async Task Main(string[] args)
     {
         var result = await Args.InvokeActionAsync<SbomToolCmdRunner>(args);
@@ -48,10 +33,11 @@ internal class Program
                 {
                     services = result.ActionArgs switch
                     {
-                        ValidationArgs v => services.AddHostedService<ValidationService>(),
-                        GenerationArgs g => services.AddHostedService<GenerationService>(),
-                        RedactArgs r => services.AddHostedService<RedactService>(),
-                        FormatValidationArgs f => services.AddHostedService<FormatValidationService>(),
+                        ValidationArgs => services.AddHostedService<ValidationService>(),
+                        GenerationArgs => services.AddHostedService<GenerationService>(),
+                        ConsolidationArgs => services.AddHostedService<ConsolidationService>(),
+                        RedactArgs => services.AddHostedService<RedactService>(),
+                        FormatValidationArgs => services.AddHostedService<FormatValidationService>(),
                         _ => services
                     };
 
@@ -62,12 +48,14 @@ internal class Program
                         {
                             var validationConfigurationBuilder = x.GetService<IConfigurationBuilder<ValidationArgs>>();
                             var generationConfigurationBuilder = x.GetService<IConfigurationBuilder<GenerationArgs>>();
+                            var consolidationConfigurationBuilder = x.GetService<IConfigurationBuilder<ConsolidationArgs>>();
                             var redactConfigurationBuilder = x.GetService<IConfigurationBuilder<RedactArgs>>();
                             var formatValidationConfigurationBuilder = x.GetService<IConfigurationBuilder<FormatValidationArgs>>();
                             var inputConfiguration = result.ActionArgs switch
                             {
                                 ValidationArgs v => validationConfigurationBuilder.GetConfiguration(v).GetAwaiter().GetResult(),
                                 GenerationArgs g => generationConfigurationBuilder.GetConfiguration(g).GetAwaiter().GetResult(),
+                                ConsolidationArgs c => consolidationConfigurationBuilder.GetConfiguration(c).GetAwaiter().GetResult(),
                                 RedactArgs r => redactConfigurationBuilder.GetConfiguration(r).GetAwaiter().GetResult(),
                                 FormatValidationArgs f => formatValidationConfigurationBuilder.GetConfiguration(f).GetAwaiter().GetResult(),
                                 _ => default

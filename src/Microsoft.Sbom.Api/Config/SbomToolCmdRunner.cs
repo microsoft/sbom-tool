@@ -14,11 +14,11 @@ namespace Microsoft.Sbom.Api.Config;
 [ArgProductName("sbom-tool")]
 public class SbomToolCmdRunner
 {
-    internal static string SBOMToolVersion => VersionValue.Value;
+    internal static string SbomToolVersion => VersionValue.Value;
 
     private static readonly Lazy<string> VersionValue = new Lazy<string>(() =>
     {
-        return typeof(SbomToolCmdRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
+        return typeof(SbomToolCmdRunner).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
     });
 
     /// <summary>
@@ -79,6 +79,16 @@ public class SbomToolCmdRunner
     }
 
     /// <summary>
+    /// Consolidate multiple SBOMs into a single SBOM.
+    /// </summary>
+    [ArgActionMethod]
+    [ArgDescription("Consolidate multiple SBOMs into a single SBOM.")]
+    public ConsolidationArgs Consolidate(ConsolidationArgs consolidationArgs)
+    {
+        return consolidationArgs;
+    }
+
+    /// <summary>
     /// Prints the version of the tool.
     /// </summary>
     [ArgActionMethod]
@@ -86,9 +96,9 @@ public class SbomToolCmdRunner
     [ArgDescription("Displays the version of the tool being used. Can be used as '--version'")]
     public void Version()
     {
-        if (!string.IsNullOrEmpty(SBOMToolVersion))
+        if (!string.IsNullOrEmpty(SbomToolVersion))
         {
-            Console.WriteLine(SBOMToolVersion);
+            Console.WriteLine(SbomToolVersion);
         }
         else
         {

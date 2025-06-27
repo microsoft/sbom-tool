@@ -5,8 +5,6 @@
         <RootNamespace>Microsoft.Sbom.Api</RootNamespace>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <Description>Highly scalable, extensible and enterprise ready API to create SBOMs for any variety of artifacts.</Description>
-        <SignAssembly>True</SignAssembly>
-        <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,6 +19,7 @@
         <PackageReference Include="NuGet.Configuration" />
         <PackageReference Include="packageurl-dotnet" />
         <PackageReference Include="PowerArgs" />
+        <PackageReference Include="Serilog" />
         <PackageReference Include="Serilog.Extensions.Hosting" />
         <PackageReference Include="Serilog.Sinks.Console" />
         <PackageReference Include="Spectre.Console.Cli" />
@@ -32,7 +31,7 @@
 
     <ItemGroup>
         <!-- Pinned assemblies for transitive dependencies -->
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" /> <!-- Used by ComponentDetection -->
+        <PackageReference Include="System.Net.Http" />                     <!-- Used by ComponentDetection -->
     </ItemGroup>
 
     <ItemGroup>
@@ -53,6 +52,7 @@
       <ProjectReference Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
       <ProjectReference Include="..\Microsoft.Sbom.Extensions\Microsoft.Sbom.Extensions.csproj" />
       <ProjectReference Include="..\Microsoft.Sbom.Parsers.Spdx22SbomParser\Microsoft.Sbom.Parsers.Spdx22SbomParser.csproj" />
+      <ProjectReference Include="..\Microsoft.Sbom.Parsers.Spdx30SbomParser\Microsoft.Sbom.Parsers.Spdx30SbomParser.csproj" />
     </ItemGroup>
 
 </Project>

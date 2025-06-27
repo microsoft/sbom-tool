@@ -12,5 +12,5 @@ public interface IOutputWriter
     /// </summary>
     /// <param name="output"></param>
     /// <returns></returns>
-    Task WriteAsync(string output);
+    public Task WriteAsync(string output);
 }

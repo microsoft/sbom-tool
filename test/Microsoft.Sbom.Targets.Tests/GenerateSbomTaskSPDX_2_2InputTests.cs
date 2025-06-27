@@ -12,4 +12,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 public class GenerateSbomTaskSPDX_2_2InputTests : AbstractGenerateSbomTaskInputTests
 {
     internal override string SbomSpecification => "SPDX:2.2";
+
+    [ClassInitialize]
+    public static void Setup(TestContext testContext) => ClassSetup(nameof(GenerateSbomTaskSPDX_2_2InputTests));
+
+    [ClassCleanup(ClassCleanupBehavior.EndOfClass)]
+    public static void TearDown() => ClassTearDown();
 }

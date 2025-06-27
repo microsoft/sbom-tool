@@ -39,7 +39,7 @@ Note: These are not the only entries found in the packages section. To view a fu
 | Cargo | <ul><li>Cargo.lock (v1, v2, v3)</li></ul> | - | ✔ | ✔ (Via RustCli detector) | ✔ |
 | Ruby | <ul><li>gemfile.lock</li></ul> | - | ✔ | ✔ | ✔ |
 | Pip (Python) | <ul><li>setup.py</li><li>requirements.txt</li><li>*setup=distutils.core.run_setup({setup.py}); setup.install_requires*</li><li>dist package METADATA file</li></ul> | <ul><li>Python 2 or Python 3</li><li>Internet connection</li></ul> | ✔ | ✔ | ✔ |
-| Maven | <ul><li>pom.xml</li></ul> | <ul><li>Maven</li></ul> | ✔  | ✔ | ✔ |
+| Maven | <ul><li>pom.xml</li></ul> | <ul><li>Maven</li></ul> | - | - | - |
 | NPM | <ul><li>package.json</li></ul> | - | ✔ | ✔ | ✔ |
 | NuGet | <ul><li>project.assets.json</li><li>*.nupkg</li><li>*.nuspec</li><li>packages.config</li><li>nuget.config</li></ul> | - | ✔ | ✔ | ✔ |
 | Linux (Debian, Alpine, Rhel, Centos, Fedora, Ubuntu)| <ul><li>(via [syft](https://github.com/anchore/syft))</li></ul> | - | ✔ | - | ✔ |

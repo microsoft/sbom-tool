@@ -13,13 +13,19 @@ public interface IAssemblyConfig
     /// <summary>
     /// Gets the namespace base URI as defined in the assembly.
     /// </summary>
-    public string DefaultSBOMNamespaceBaseUri { get; }
+    public string DefaultSbomNamespaceBaseUri { get; }
 
     /// <summary>
     /// Gets the default value to use for ManifestInfo for validation action in case the user doesn't provide a
     /// value.
     /// </summary>
     public ManifestInfo DefaultManifestInfoForValidationAction { get; }
+
+    /// <summary>
+    /// Gets the default value to use for ManifestInfo for generation action in case the user doesn't provide a
+    /// value.
+    /// </summary>
+    public ManifestInfo DefaultManifestInfoForGenerationAction { get; }
 
     /// <summary>
     /// Gets the directory where the current executing assembly is located.

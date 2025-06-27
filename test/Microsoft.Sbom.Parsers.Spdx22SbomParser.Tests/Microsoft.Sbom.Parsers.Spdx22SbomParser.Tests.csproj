@@ -1,11 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <NoWarn>$(NoWarn);NU1605</NoWarn>
     <AssemblyName>Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests</AssemblyName>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(StrongNameSigningKeyFilePath)</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

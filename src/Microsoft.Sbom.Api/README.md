@@ -12,9 +12,9 @@ namespace SBOMApiExample
 {
     public class GenerationService: IHostedService
     {
-        private readonly ISBOMGenerator generator;
+        private readonly ISbomGenerator generator;
         private readonly IHostApplicationLifetime hostApplicationLifetime;
-        public GenerationService(ISBOMGenerator generator, IHostApplicationLifetime hostApplicationLifetime)
+        public GenerationService(ISbomGenerator generator, IHostApplicationLifetime hostApplicationLifetime)
         {
             this.generator = generator;
             this.hostApplicationLifetime = hostApplicationLifetime;
@@ -25,14 +25,15 @@ namespace SBOMApiExample
             string scanPath = @"D:\tmp\SBOM\";
             string outputPath = @"D:\tmp\SBOM\_manifest";
 
-            SBOMMetadata metadata = new SBOMMetadata()
+            SbomMetadata metadata = new SbomMetadata()
             {
                 PackageName = "MyVpack",
-                PackageVersion = "0.0.1"            };
+                PackageVersion = "0.0.1"
+            };
 
-            IList<SBOMSpecification> specifications = new List<SBOMSpecification>()
+            IList<SbomSpecification> specifications = new List<SbomSpecification>()
             {
-                new SBOMSpecification ("SPDX", "2.2")
+                new SbomSpecification ("SPDX", "2.2")
             };
 
             RuntimeConfiguration configuration = new RuntimeConfiguration()
@@ -69,9 +70,9 @@ namespace SBOMApiExample
 {
     public class GenerationService: IHostedService
     {
-        private readonly ISBOMGenerator generator;
+        private readonly ISbomGenerator generator;
         private readonly IHostApplicationLifetime hostApplicationLifetime;
-        public GenerationService(ISBOMGenerator generator, IHostApplicationLifetime hostApplicationLifetime)
+        public GenerationService(ISbomGenerator generator, IHostApplicationLifetime hostApplicationLifetime)
         {
             this.generator = generator;
             this.hostApplicationLifetime = hostApplicationLifetime;
@@ -84,7 +85,7 @@ namespace SBOMApiExample
                                 sbomFiles,
                                 sbomPackages,
                                 metadata,
-                                new List<SBOMSpecification> { new("SPDX", "2.2") },
+                                new List<SbomSpecification> { new("SPDX", "2.2") },
                                 new RuntimeConfiguration { DeleteManifestDirectoryIfPresent = true });
 
             hostApplicationLifetime.StopApplication();

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Api.Converters;
-using Microsoft.Sbom.Api.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Serilog;
@@ -109,7 +108,7 @@ public class ComponentToExternalReferenceInfoConverterTests
         var refs = await results.ReadAllAsync().ToListAsync();
         var errorList = await errors.ReadAllAsync().ToListAsync();
 
-        Assert.IsTrue(errorList.Count == scannedComponents.Where(c => !(c.Component is SpdxComponent)).ToList().Count);
-        Assert.IsTrue(refs.Count == scannedComponents.Where(c => c.Component is SpdxComponent).ToList().Count);
+        Assert.AreEqual(scannedComponents.Where(c => !(c.Component is SpdxComponent)).ToList().Count, errorList.Count);
+        Assert.AreEqual(scannedComponents.Where(c => c.Component is SpdxComponent).ToList().Count, refs.Count);
     }
 }

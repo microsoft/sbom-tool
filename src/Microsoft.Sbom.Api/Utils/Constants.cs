@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
@@ -19,13 +20,37 @@ public static class Constants
         Version = "2.2"
     };
 
-    public static SbomSpecification SPDX22Specification = SPDX22ManifestInfo.ToSBOMSpecification();
+    public static ManifestInfo SPDX30ManifestInfo = new ManifestInfo
+    {
+        Name = "SPDX",
+        Version = "3.0"
+    };
 
     // TODO: move to test csproj
     public static ManifestInfo TestManifestInfo = new ManifestInfo
     {
         Name = "TestManifest",
         Version = "1.0.0"
+    };
+
+    public static SbomSpecification SPDX22Specification = ManifestInfo.ToSbomSpecification(SPDX22ManifestInfo);
+
+    public static Collection<SbomSpecification> SupportedSbomSpecifications = new()
+    {
+        ManifestInfo.ToSbomSpecification(SPDX22ManifestInfo),
+        ManifestInfo.ToSbomSpecification(SPDX30ManifestInfo)
+    };
+
+    public static Collection<ManifestInfo> SupportedSpdxManifests = new()
+    {
+        SPDX22ManifestInfo,
+        SPDX30ManifestInfo
+    };
+
+    public static Collection<ConformanceType> SupportedConformances = new()
+    {
+        ConformanceType.NTIAMin,
+        ConformanceType.None
     };
 
     public static List<Entities.ErrorType> SkipFailureReportingForErrors = new()
@@ -45,6 +70,10 @@ public static class Constants
     public const string DefaultRootElement = "SPDXRef-Document";
     public const string CatalogFileName = "manifest.cat";
     public const string BsiFileName = "bsi.json";
-
     public const string DeleteManifestDirBoolVariableName = "DeleteManifestDirIfPresent";
+    public const string RootPackageIdValue = "SPDXRef-RootPackage";
+
+    public const string SPDXContextHeaderName = "@context";
+    public const string SPDXGraphHeaderName = "@graph";
+    public const string SPDX3ContextValue = "\"https://spdx.org/rdf/3.0.1/spdx-context.json\"";
 }

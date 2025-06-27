@@ -52,7 +52,7 @@ public interface IRecorder
     /// <param name="manifestInfo">The SBOM format as a <see cref="ManifestInfo"/> object.</param>
     /// <param name="sbomFilePath">The path where the generated SBOM is stored.</param>
     /// <exception cref="ArgumentNullException">If the manifestInfo object is null.</exception>
-    public void RecordSBOMFormat(ManifestInfo manifestInfo, string sbomFilePath);
+    public void RecordSbomFormat(ManifestInfo manifestInfo, string sbomFilePath);
 
     /// <summary>
     /// Record a switch that was used during the execution of the SBOM tool.
@@ -88,6 +88,11 @@ public interface IRecorder
     /// Finalize the recorder, and log the telemetry.
     /// </summary>
     public Task FinalizeAndLogTelemetryAsync();
+
+    /// <summary>
+    /// Add an extra result in the form of a key-value pair to the telemetry.
+    /// </summary>
+    public void AddResult(string propertyName, string value);
 
     public IList<FileValidationResult> Errors { get; }
 }

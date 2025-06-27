@@ -3,7 +3,6 @@
 
 namespace Microsoft.Sbom.Targets;
 
-using System;
 using System.IO;
 using Microsoft.Build.Utilities;
 

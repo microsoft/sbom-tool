@@ -37,7 +37,9 @@ public class RelationshipsArrayGeneratorTest
     private ISbomPackageDetailsRecorder recorder;
     private IMetadataBuilder metadataBuilder;
     private ISbomConfig sbomConfig;
-    private readonly ManifestInfo manifestInfo = new ManifestInfo();
+    private readonly ManifestInfo manifestInfo = Constants.TestManifestInfo;
+    private IList<ISbomConfig> targetConfigs;
+    private HashSet<string> elementsSpdxIdList = new HashSet<string>();
 
     private const string DocumentId = "documentId";
     private const string RootPackageId = "rootPackageId";
@@ -53,7 +55,23 @@ public class RelationshipsArrayGeneratorTest
     [TestInitialize]
     public void Setup()
     {
+        metadataBuilder = new MetadataBuilder(
+            mockLogger.Object,
+            manifestGeneratorProvider,
+            Constants.TestManifestInfo,
+            recorderMock.Object);
         recorder = new SbomPackageDetailsRecorder();
+        sbomConfig = new SbomConfig(fileSystemUtilsMock.Object)
+        {
+            ManifestInfo = Constants.TestManifestInfo,
+            ManifestJsonDirPath = ManifestJsonDirPath,
+            ManifestJsonFilePath = JsonFilePath,
+            MetadataBuilder = metadataBuilder,
+            Recorder = recorder,
+        };
+
+        targetConfigs = new List<ISbomConfig> { sbomConfig };
+
         relationships = new List<Relationship>();
         relationshipGeneratorMock.Setup(r => r.Run(It.IsAny<IEnumerator<Relationship>>(), It.IsAny<ManifestInfo>()))
             .Callback<IEnumerator<Relationship>, ManifestInfo>((relationship, manifestInfo) =>
@@ -64,21 +82,9 @@ public class RelationshipsArrayGeneratorTest
                 }
             });
         relationshipGeneratorMock.CallBase = true;
-        relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), loggerMock.Object, sbomConfigsMock.Object, recorderMock.Object);
+        relationshipsArrayGenerator = new RelationshipsArrayGenerator(relationshipGeneratorMock.Object, new ChannelUtils(), loggerMock.Object, recorderMock.Object);
         manifestGeneratorProvider.Init();
-        metadataBuilder = new MetadataBuilder(
-            mockLogger.Object,
-            manifestGeneratorProvider,
-            Constants.TestManifestInfo,
-            recorderMock.Object);
-        sbomConfig = new SbomConfig(fileSystemUtilsMock.Object)
-        {
-            ManifestInfo = Constants.TestManifestInfo,
-            ManifestJsonDirPath = ManifestJsonDirPath,
-            ManifestJsonFilePath = JsonFilePath,
-            MetadataBuilder = metadataBuilder,
-            Recorder = recorder,
-        };
+
         fileSystemUtilsMock.Setup(f => f.CreateDirectory(ManifestJsonDirPath));
         fileSystemUtilsMock.Setup(f => f.OpenWrite(JsonFilePath)).Returns(new MemoryStream());
 
@@ -94,9 +100,9 @@ public class RelationshipsArrayGeneratorTest
     {
         recorder.RecordDocumentId(DocumentId);
         recorder.RecordRootPackageId(RootPackageId);
-        var results = await relationshipsArrayGenerator.GenerateAsync();
+        var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
-        Assert.AreEqual(0, results.Count);
+        Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(1, relationships.Count);
 
         var describesRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.DESCRIBES);
@@ -114,9 +120,9 @@ public class RelationshipsArrayGeneratorTest
         recorder.RecordFileId(FileId1);
         recorder.RecordFileId(FileId2);
         recorder.RecordSPDXFileId(FileId1);
-        var results = await relationshipsArrayGenerator.GenerateAsync();
+        var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
-        Assert.AreEqual(0, results.Count);
+        Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(2, relationships.Count);
 
         var describedByRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.DESCRIBED_BY);
@@ -132,9 +138,9 @@ public class RelationshipsArrayGeneratorTest
         recorder.RecordDocumentId(DocumentId);
         recorder.RecordRootPackageId(RootPackageId);
         recorder.RecordExternalDocumentReferenceIdAndRootElement(ExternalDocRefId1, RootPackageId);
-        var results = await relationshipsArrayGenerator.GenerateAsync();
+        var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
-        Assert.AreEqual(0, results.Count);
+        Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(2, relationships.Count);
 
         var preReqForRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.PREREQUISITE_FOR);
@@ -146,14 +152,14 @@ public class RelationshipsArrayGeneratorTest
     }
 
     [TestMethod]
-    public async Task When_PackageGenerationDataExist_DependOnRelationshipsAreGenerated()
+    public async Task When_PackageGenerationDataExist_RootPackageDependOnRelationshipsAreGenerated()
     {
         recorder.RecordDocumentId(DocumentId);
         recorder.RecordRootPackageId(RootPackageId);
         recorder.RecordPackageId(PackageId1, RootPackageId);
-        var results = await relationshipsArrayGenerator.GenerateAsync();
+        var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
-        Assert.AreEqual(0, results.Count);
+        Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(2, relationships.Count);
 
         var dependsOnRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.DEPENDS_ON);
@@ -164,11 +170,34 @@ public class RelationshipsArrayGeneratorTest
     }
 
     [TestMethod]
+    public async Task When_PackageGenerationDataExist_MultipleDependOnRelationshipsAreGenerated()
+    {
+        recorder.RecordDocumentId(DocumentId);
+        recorder.RecordRootPackageId(RootPackageId);
+        recorder.RecordPackageId(PackageId1, RootPackageId);
+        recorder.RecordPackageId(PackageId1, "PackageId0");
+        var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+
+        Assert.AreEqual(0, results.Errors.Count);
+        Assert.AreEqual(3, relationships.Count);
+
+        var dependsOnRelationships = relationships.Where(r => r.RelationshipType == RelationshipType.DEPENDS_ON);
+        Assert.AreEqual(2, dependsOnRelationships.Count());
+        var dependsOnRelationship1 = dependsOnRelationships.Last();
+        Assert.AreEqual(PackageId1, dependsOnRelationship1.TargetElementId);
+        Assert.AreEqual(RootPackageId, dependsOnRelationship1.SourceElementId);
+
+        var dependsOnRelationship2 = dependsOnRelationships.First();
+        Assert.AreEqual(PackageId1, dependsOnRelationship2.TargetElementId);
+        Assert.AreEqual("PackageId0", dependsOnRelationship2.SourceElementId);
+    }
+
+    [TestMethod]
     public async Task When_NoGenerationDataExist_NoRelationshipsAreGenerated()
     {
-        var results = await relationshipsArrayGenerator.GenerateAsync();
+        var results = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
 
-        Assert.AreEqual(0, results.Count);
+        Assert.AreEqual(0, results.Errors.Count);
         Assert.AreEqual(0, relationships.Count);
     }
 }

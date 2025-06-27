@@ -3,14 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
-using Microsoft.Sbom.Common.Config.Attributes;
 using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
@@ -30,9 +28,9 @@ public class ConfigSanitizer
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IAssemblyConfig assemblyConfig;
 
-    internal static string SBOMToolVersion => VersionValue.Value;
+    internal static string SbomToolVersion => VersionValue.Value;
 
-    private static readonly Lazy<string> VersionValue = new Lazy<string>(() => typeof(SbomToolCmdRunner).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty);
+    private static readonly Lazy<string> VersionValue = new Lazy<string>(() => typeof(SbomToolCmdRunner).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty);
 
     public ConfigSanitizer(IHashAlgorithmProvider hashAlgorithmProvider, IFileSystemUtils fileSystemUtils, IAssemblyConfig assemblyConfig)
     {
@@ -58,8 +56,8 @@ public class ConfigSanitizer
         if ((configuration.ManifestToolAction == ManifestToolActions.Validate || configuration.ManifestToolAction == ManifestToolActions.Generate) &&
             (configuration.BuildDropPath?.Value == null || (configuration.DockerImagesToScan?.Value != null && configuration.BuildComponentPath?.Value == null)))
         {
-                ValidateBuildDropPathConfiguration(configuration);
-                configuration.BuildDropPath = GetTempBuildDropPath(configuration);
+            ValidateBuildDropPathConfiguration(configuration);
+            configuration.BuildDropPath = GetTempBuildDropPath(configuration);
         }
 
         CheckValidateFormatConfig(configuration);
@@ -70,10 +68,13 @@ public class ConfigSanitizer
         configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath?.Value, configuration.ManifestToolAction);
 
         // Set namespace value, this handles default values and user provided values.
-        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate || configuration.ManifestToolAction == ManifestToolActions.Consolidate)
         {
             configuration.NamespaceUriBase = GetNamespaceBaseUri(configuration, logger);
         }
+
+        // Set default ManifestInfo for generation in case user doesn't provide a value.
+        configuration.ManifestInfo = GetDefaultManifestInfoForGenerationAction(configuration);
 
         // Set default ManifestInfo for validation in case user doesn't provide a value.
         configuration.ManifestInfo = GetDefaultManifestInfoForValidationAction(configuration);
@@ -81,8 +82,36 @@ public class ConfigSanitizer
         // Set default package supplier if not provided in configuration.
         configuration.PackageSupplier = GetPackageSupplierFromAssembly(configuration, logger);
 
+        configuration.Conformance = GetConformance(configuration);
+
+        // Prevent null value for LicenseInformationTimeoutInSeconds.
+        // Values of (0, Constants.MaxLicenseFetchTimeoutInSeconds] are allowed. Negative values are replaced with the default, and
+        // the higher values are truncated to the maximum of Common.Constants.MaxLicenseFetchTimeoutInSeconds
+        if (configuration.LicenseInformationTimeoutInSeconds is null)
+        {
+            configuration.LicenseInformationTimeoutInSeconds = new(Common.Constants.DefaultLicenseFetchTimeoutInSeconds, SettingSource.Default);
+        }
+        else if (configuration.LicenseInformationTimeoutInSeconds.Value <= 0)
+        {
+            logger.Warning($"Negative and Zero Values not allowed for timeout. Using the default {Common.Constants.DefaultLicenseFetchTimeoutInSeconds} seconds instead.");
+            configuration.LicenseInformationTimeoutInSeconds.Value = Common.Constants.DefaultLicenseFetchTimeoutInSeconds;
+        }
+        else if (configuration.LicenseInformationTimeoutInSeconds.Value > Common.Constants.MaxLicenseFetchTimeoutInSeconds)
+        {
+            logger.Warning($"Specified timeout exceeds maximum allowed. Truncating the timeout to {Common.Constants.MaxLicenseFetchTimeoutInSeconds} seconds.");
+            configuration.LicenseInformationTimeoutInSeconds.Value = Common.Constants.MaxLicenseFetchTimeoutInSeconds;
+        }
+
+        // Check if arg -lto is specified but -li is not
+        if (configuration.FetchLicenseInformation?.Value != true && !configuration.LicenseInformationTimeoutInSeconds.IsDefaultSource)
+        {
+            logger.Warning("A license fetching timeout is specified (argument -lto), but this has no effect when FetchLicenseInfo is unspecified or false (argument -li)");
+        }
+
         // Replace backslashes in directory paths with the OS-sepcific directory separator character.
         PathUtils.ConvertToOSSpecificPathSeparators(configuration);
+
+        CheckConsolidationConfig(configuration);
 
         logger.Dispose();
 
@@ -98,7 +127,20 @@ public class ConfigSanitizer
 
         if (config.SbomPath?.Value == null)
         {
-            throw new ValidationArgException($"Please provide a value for the SbomPath (-sp) parameter to validate the SBOM.");
+            throw new ValidationArgException("Please provide a value for the SbomPath (-sp) parameter to validate the SBOM.");
+        }
+    }
+
+    private void CheckConsolidationConfig(IConfiguration config)
+    {
+        if (config.ManifestToolAction != ManifestToolActions.Consolidate)
+        {
+            return;
+        }
+
+        if (config.ArtifactInfoMap?.Value == null || !config.ArtifactInfoMap.Value.Any())
+        {
+            throw new ValidationArgException("Please provide a value for the ArtifactInfoMap to consolidate the SBOMs.");
         }
     }
 
@@ -113,18 +155,39 @@ public class ConfigSanitizer
         var defaultManifestInfo = assemblyConfig.DefaultManifestInfoForValidationAction;
         if (defaultManifestInfo == null && (configuration.ManifestInfo.Value == null || configuration.ManifestInfo.Value.Count == 0))
         {
-            throw new ValidationArgException($"Please provide a value for the ManifestInfo (-mi) parameter to validate the SBOM.");
+            throw new ValidationArgException("Please provide a value for the ManifestInfo (-mi) parameter to validate the SBOM.");
         }
 
         return new ConfigurationSetting<IList<ManifestInfo>>
+        {
+            Source = SettingSource.Default,
+            Value = new List<ManifestInfo>()
             {
-                Source = SettingSource.Default,
-                Value = new List<ManifestInfo>()
-                {
-                    defaultManifestInfo
-                }
-            };
+                defaultManifestInfo
+            }
+        };
+    }
+
+    private ConfigurationSetting<IList<ManifestInfo>> GetDefaultManifestInfoForGenerationAction(IConfiguration configuration)
+    {
+        if (configuration.ManifestToolAction != ManifestToolActions.Generate)
+        {
+            return configuration.ManifestInfo;
         }
+
+        if (configuration.ManifestInfo?.Value != null && configuration.ManifestInfo.Value.Count != 0)
+        {
+            return configuration.ManifestInfo;
+        }
+
+        // Use default ManifestInfo for generation if none is given.
+        var defaultManifestInfo = assemblyConfig.DefaultManifestInfoForGenerationAction;
+        return new ConfigurationSetting<IList<ManifestInfo>>
+        {
+            Source = SettingSource.Default,
+            Value = new List<ManifestInfo> { defaultManifestInfo }
+        };
+    }
 
     private void ValidateBuildDropPathConfiguration(IConfiguration configuration)
     {
@@ -136,20 +199,20 @@ public class ConfigSanitizer
             }
             else if (configuration.ManifestDirPath?.Value == null && configuration.BuildComponentPath?.Value == null && configuration.DockerImagesToScan?.Value != null)
             {
-                throw new ValidationArgException($"Please provide a (-m) if you intend to create an SBOM with only the contents of the Docker image or a (-bc) if you intend to include other components in your SBOM.");
+                throw new ValidationArgException("Please provide a (-m) if you intend to create an SBOM with only the contents of the Docker image or a (-bc) if you intend to include other components in your SBOM.");
             }
             else if (configuration.ManifestDirPath?.Value == null && configuration.DockerImagesToScan?.Value != null)
             {
-                throw new ValidationArgException($"Please provide a value for the ManifestDirPath (-m) parameter to generate the SBOM for the specified Docker image.");
+                throw new ValidationArgException("Please provide a value for the ManifestDirPath (-m) parameter to generate the SBOM for the specified Docker image.");
             }
             else
             {
-                throw new ValidationArgException($"Please provide a value for the BuildDropPath (-b) parameter to generate the SBOM.");
+                throw new ValidationArgException("Please provide a value for the BuildDropPath (-b) parameter to generate the SBOM.");
             }
         }
         else
         {
-            throw new ValidationArgException($"Please provide a value for the BuildDropPath (-b) parameter.");
+            throw new ValidationArgException("Please provide a value for the BuildDropPath (-b) parameter.");
         }
     }
 
@@ -180,18 +243,40 @@ public class ConfigSanitizer
         };
     }
 
+    private ConfigurationSetting<ConformanceType> GetConformance(IConfiguration configuration)
+    {
+        // Convert to Conformance enum value.
+        var oldValue = configuration.Conformance;
+        var newValue = ConformanceType.FromString(oldValue?.Value?.ToString());
+
+        // Conformance is only supported for ManifestInfo value of SPDX 3.0 and above.
+        if (!newValue.Equals(ConformanceType.None) && !configuration.ManifestInfo.Value.Any(mi => mi.Equals(Constants.SPDX30ManifestInfo)))
+        {
+            throw new ValidationArgException($"Conformance {newValue.Name} is not supported with ManifestInfo value of {configuration.ManifestInfo.Value.First()}." +
+                $"Please use a supported combination.");
+        }
+        else
+        {
+            return new ConfigurationSetting<ConformanceType>
+            {
+                Source = oldValue != null ? oldValue.Source : SettingSource.Default,
+                Value = newValue
+            };
+        }
+    }
+
     private ConfigurationSetting<string> GetNamespaceBaseUri(IConfiguration configuration, ILogger logger)
     {
         // If assembly name is not defined but a namespace was provided, then return the current value.
-        if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri) && !string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
+        if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSbomNamespaceBaseUri) && !string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
         {
             return configuration.NamespaceUriBase;
         }
 
         // If assembly name is not defined and namespace was not provided then return the default namespace as per spdx spec https://spdx.github.io/spdx-spec/v2.2.2/document-creation-information/#653-examples.
-        if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri) && string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
+        if (string.IsNullOrWhiteSpace(assemblyConfig.DefaultSbomNamespaceBaseUri) && string.IsNullOrEmpty(configuration.NamespaceUriBase?.Value))
         {
-            var defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SBOMToolVersion}-{Guid.NewGuid()}";
+            var defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SbomToolVersion}-{Guid.NewGuid()}";
 
             logger.Information($"No namespace URI base provided, using unique generated default value {defaultNamespaceUriBase}");
 
@@ -206,7 +291,7 @@ public class ConfigSanitizer
         // show a warning on the console.
         if (!string.IsNullOrWhiteSpace(configuration.NamespaceUriBase?.Value))
         {
-            if (!string.IsNullOrWhiteSpace(assemblyConfig.DefaultSBOMNamespaceBaseUri))
+            if (!string.IsNullOrWhiteSpace(assemblyConfig.DefaultSbomNamespaceBaseUri))
             {
                 logger.Information("Custom namespace URI base provided, using provided value instead of default");
             }
@@ -217,7 +302,7 @@ public class ConfigSanitizer
         return new ConfigurationSetting<string>
         {
             Source = SettingSource.Default,
-            Value = assemblyConfig.DefaultSBOMNamespaceBaseUri
+            Value = assemblyConfig.DefaultSbomNamespaceBaseUri
         };
     }
 

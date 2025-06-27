@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using Microsoft.Sbom.Contracts;
 
 namespace Microsoft.Sbom.Extensions.Entities;
 
@@ -32,13 +32,13 @@ public class ManifestInfo : IEquatable<ManifestInfo>
     {
         if (string.IsNullOrEmpty(value))
         {
-            throw new ArgumentException($"The manifest info string is empty");
+            throw new ArgumentException("The manifest info string is empty");
         }
 
         var values = value.Split(':');
         if (values == null || values.Length != 2)
         {
-            throw new ArgumentException($"The manifest info string is not formatted correctly. The correct format is <name>:<version>.");
+            throw new ArgumentException("The manifest info string is not formatted correctly. The correct format is <name>:<version>.");
         }
 
         return new ManifestInfo
@@ -92,5 +92,21 @@ public class ManifestInfo : IEquatable<ManifestInfo>
     public string ToLowerString()
     {
         return $"{Name.ToLowerInvariant()}:{Version.ToUpperInvariant()}";
+    }
+
+    /// <summary>
+    /// Converts a <see cref="ManifestInfo"/> to a <see cref="SbomSpecification"/> object.
+    /// </summary>
+    /// <param name="manifestInfo"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static SbomSpecification ToSbomSpecification(ManifestInfo manifestInfo)
+    {
+        if (manifestInfo is null)
+        {
+            throw new ArgumentNullException(nameof(manifestInfo));
+        }
+
+        return new SbomSpecification(manifestInfo.Name, manifestInfo.Version);
     }
 }

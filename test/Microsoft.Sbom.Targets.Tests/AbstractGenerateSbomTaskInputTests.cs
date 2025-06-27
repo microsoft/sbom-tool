@@ -4,7 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+#if NET472
 using System.Linq;
+#endif
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
@@ -16,21 +18,39 @@ namespace Microsoft.Sbom.Targets.Tests;
 [TestClass]
 public abstract class AbstractGenerateSbomTaskInputTests
 {
-    internal abstract string SbomSpecification { get; }
+    internal virtual string SbomSpecification { get; }
 
-    internal static readonly string CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-    internal static readonly string DefaultManifestDirectory = Path.Combine(CurrentDirectory, "_manifest");
-    internal static readonly string TemporaryDirectory = Path.Combine(CurrentDirectory, "_temporary");
-    internal static readonly string BuildComponentPath = Path.Combine(CurrentDirectory, "..", "..", "..");
-    internal static readonly string ExternalDocumentListFile = Path.GetRandomFileName();
-    internal static string SbomToolPath = Path.Combine(Directory.GetCurrentDirectory(), "sbom-tool");
+    internal static string TestBuildDropPath;
+    internal static string DefaultManifestDirectory;
+    internal static string TemporaryDirectory;
+    internal static string ExternalDocumentListFile;
+    internal static string SbomToolPath;
+
     internal const string PackageSupplier = "Test-Microsoft";
     internal const string PackageName = "CoseSignTool";
     internal const string PackageVersion = "0.0.1";
     internal const string NamespaceBaseUri = "https://base0.uri";
+
+#if NET472
+    private const string TargetFramework = "net472";
+#else
+    private const string TargetFramework = "net80";
+#endif
+
     private Mock<IBuildEngine> buildEngine;
     private List<BuildErrorEventArgs> errors;
     private List<BuildMessageEventArgs> messages;
+
+    protected static void ClassSetup(string testDirectoryName)
+    {
+        var executingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        TestBuildDropPath = Path.GetFullPath(Path.Combine(executingDirectory, "..", $"{testDirectoryName}_{TargetFramework}"));
+        DefaultManifestDirectory = Path.Combine(TestBuildDropPath, "_manifest");
+        TemporaryDirectory = Path.Combine(TestBuildDropPath, "_temp");
+        ExternalDocumentListFile = Path.GetRandomFileName();
+        SbomToolPath = Path.Combine(TestBuildDropPath, "sbom-tool");
+        Xcopy(executingDirectory, TestBuildDropPath);
+    }
 
     [TestInitialize]
     public void Startup()
@@ -44,7 +64,8 @@ public abstract class AbstractGenerateSbomTaskInputTests
     }
 
     [TestCleanup]
-    public void Cleanup() {
+    public void Cleanup()
+    {
         // Clean up the manifest directory
         if (Directory.Exists(DefaultManifestDirectory))
         {
@@ -55,6 +76,18 @@ public abstract class AbstractGenerateSbomTaskInputTests
         if (Directory.Exists(TemporaryDirectory))
         {
             Directory.Delete(TemporaryDirectory, true);
+        }
+    }
+
+    protected static void ClassTearDown()
+    {
+        // Clean up the TestBuildDropPath directory
+        if (TestBuildDropPath is not null)
+        {
+            if (Directory.Exists(TestBuildDropPath))
+            {
+                Directory.Delete(TestBuildDropPath, true);
+            }
         }
     }
 
@@ -100,36 +133,36 @@ public abstract class AbstractGenerateSbomTaskInputTests
     private static IEnumerable<object[]> GetNullRequiredParamsData()
     {
         yield return new object[] { null, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
-        yield return new object[] { CurrentDirectory, null, PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
-        yield return new object[] { CurrentDirectory, PackageSupplier, null, PackageVersion, NamespaceBaseUri, SbomToolPath };
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, null, NamespaceBaseUri, SbomToolPath };
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, null, SbomToolPath };
+        yield return new object[] { TestBuildDropPath, null, PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { TestBuildDropPath, PackageSupplier, null, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { TestBuildDropPath, PackageSupplier, PackageName, null, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { TestBuildDropPath, PackageSupplier, PackageName, PackageVersion, null, SbomToolPath };
 #if NET472
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, null };
+        yield return new object[] { TestBuildDropPath, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, null };
 #endif
     }
 
     private static IEnumerable<object[]> GetEmptyRequiredParamsData()
     {
         yield return new object[] { string.Empty, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
-        yield return new object[] { CurrentDirectory, string.Empty, PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
-        yield return new object[] { CurrentDirectory, PackageSupplier, string.Empty, PackageVersion, NamespaceBaseUri, SbomToolPath };
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, string.Empty, NamespaceBaseUri, SbomToolPath };
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, string.Empty, SbomToolPath };
+        yield return new object[] { TestBuildDropPath, string.Empty, PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { TestBuildDropPath, PackageSupplier, string.Empty, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { TestBuildDropPath, PackageSupplier, PackageName, string.Empty, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { TestBuildDropPath, PackageSupplier, PackageName, PackageVersion, string.Empty, SbomToolPath };
 #if NET472
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, string.Empty };
+        yield return new object[] { TestBuildDropPath, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, string.Empty };
 #endif
     }
 
     private static IEnumerable<object[]> GetWhiteSpace_Tabs_NewLineParamsData()
     {
         yield return new object[] { " ", PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
-        yield return new object[] { CurrentDirectory, "\n", PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
-        yield return new object[] { CurrentDirectory, PackageSupplier, "\t", PackageVersion, NamespaceBaseUri, SbomToolPath };
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, " \n \t \n \t \n    ", NamespaceBaseUri, SbomToolPath };
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, "\t \t \t   ", SbomToolPath };
+        yield return new object[] { TestBuildDropPath, "\n", PackageName, PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { TestBuildDropPath, PackageSupplier, "\t", PackageVersion, NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { TestBuildDropPath, PackageSupplier, PackageName, " \n \t \n \t \n    ", NamespaceBaseUri, SbomToolPath };
+        yield return new object[] { TestBuildDropPath, PackageSupplier, PackageName, PackageVersion, "\t \t \t   ", SbomToolPath };
 #if NET472
-        yield return new object[] { CurrentDirectory, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, "\t \t \t   " };
+        yield return new object[] { TestBuildDropPath, PackageSupplier, PackageName, PackageVersion, NamespaceBaseUri, "\t \t \t   " };
 #endif
     }
 
@@ -149,7 +182,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
             PackageVersion = PackageVersion,
@@ -187,7 +220,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
         // Arrange
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
             PackageVersion = PackageVersion,
@@ -222,7 +255,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
         Console.SetOut(stringWriter);
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
             PackageVersion = PackageVersion,
@@ -263,7 +296,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
         Console.SetOut(stringWriter);
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
             PackageVersion = PackageVersion,
@@ -314,7 +347,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
         Console.SetOut(stringWriter);
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
             PackageVersion = PackageVersion,
@@ -352,7 +385,7 @@ public abstract class AbstractGenerateSbomTaskInputTests
         Console.SetOut(stringWriter);
         var task = new GenerateSbom
         {
-            BuildDropPath = CurrentDirectory,
+            BuildDropPath = TestBuildDropPath,
             PackageSupplier = PackageSupplier,
             PackageName = PackageName,
             PackageVersion = PackageVersion,
@@ -372,4 +405,17 @@ public abstract class AbstractGenerateSbomTaskInputTests
         Assert.AreEqual(messageShouldBeLogged, this.messages.Any(msg => pattern.IsMatch(msg.Message)));
     }
 #endif
+
+    private static void Xcopy(string sourceDir, string targetDir)
+    {
+        foreach (var dirPath in Directory.GetDirectories(sourceDir, "*.*", SearchOption.AllDirectories))
+        {
+            Directory.CreateDirectory(dirPath.Replace(sourceDir, targetDir));
+        }
+
+        foreach (var newPath in Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories))
+        {
+            File.Copy(newPath, newPath.Replace(sourceDir, targetDir), true);
+        }
+    }
 }

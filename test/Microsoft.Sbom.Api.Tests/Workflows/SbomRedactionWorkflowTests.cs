@@ -15,7 +15,6 @@ using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using PowerArgs;
 using Serilog;
 
 namespace Microsoft.Sbom.Workflows;
@@ -28,7 +27,7 @@ public class SbomRedactionWorkflowTests
     private Mock<ILogger> mockLogger;
     private Mock<IConfiguration> configurationMock;
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
-    private Mock<ValidatedSBOMFactory> validatedSBOMFactoryMock;
+    private Mock<ValidatedSbomFactory> validatedSBOMFactoryMock;
     private Mock<ISbomRedactor> sbomRedactorMock;
     private SbomRedactionWorkflow testSubject;
 
@@ -44,7 +43,7 @@ public class SbomRedactionWorkflowTests
         mockLogger = new Mock<ILogger>();
         configurationMock = new Mock<IConfiguration>();
         fileSystemUtilsMock = new Mock<IFileSystemUtils>();
-        validatedSBOMFactoryMock = new Mock<ValidatedSBOMFactory>();
+        validatedSBOMFactoryMock = new Mock<ValidatedSbomFactory>();
         sbomRedactorMock = new Mock<ISbomRedactor>();
         testSubject = new SbomRedactionWorkflow(
             mockLogger.Object,
@@ -65,25 +64,22 @@ public class SbomRedactionWorkflowTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public async Task SbomRedactionWorkflow_FailsOnNoSbomsProvided()
     {
-        var result = await testSubject.RunAsync();
+        await Assert.ThrowsExceptionAsync<ArgumentException>(testSubject.RunAsync);
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public async Task SbomRedactionWorkflow_FailsOnMatchingInputOutputDirs()
     {
         configurationMock.SetupGet(c => c.SbomDir).Returns(new ConfigurationSetting<string> { Value = SbomDirStub });
         configurationMock.SetupGet(c => c.OutputPath).Returns(new ConfigurationSetting<string> { Value = SbomDirStub });
         fileSystemUtilsMock.Setup(m => m.DirectoryExists(SbomDirStub)).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(m => m.GetFullPath(SbomDirStub)).Returns(SbomDirStub).Verifiable();
-        var result = await testSubject.RunAsync();
+        await Assert.ThrowsExceptionAsync<ArgumentException>(testSubject.RunAsync);
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public async Task SbomRedactionWorkflow_FailsOnExistingOutputSbom()
     {
         configurationMock.SetupGet(c => c.SbomPath).Returns(new ConfigurationSetting<string> { Value = SbomPathStub });
@@ -101,24 +97,23 @@ public class SbomRedactionWorkflowTests
         // Output already file exists
         fileSystemUtilsMock.Setup(m => m.FileExists(OutPathStub)).Returns(true).Verifiable();
 
-        var result = await testSubject.RunAsync();
+        await Assert.ThrowsExceptionAsync<ArgumentException>(testSubject.RunAsync);
     }
 
     [TestMethod]
-    [ExpectedException(typeof(InvalidDataException))]
     public async Task SbomRedactionWorkflow_FailsOnInvalidSboms()
     {
         SetUpDirStructure();
 
         fileSystemUtilsMock.Setup(m => m.GetFilesInDirectory(SbomDirStub, true)).Returns(new string[] { SbomPathStub }).Verifiable();
-        var validatedSbomMock = new Mock<IValidatedSBOM>();
-        validatedSBOMFactoryMock.Setup(m => m.CreateValidatedSBOM(SbomPathStub)).Returns(validatedSbomMock.Object).Verifiable();
+        var validatedSbomMock = new Mock<IValidatedSbom>();
+        validatedSBOMFactoryMock.Setup(m => m.CreateValidatedSbom(SbomPathStub)).Returns(validatedSbomMock.Object).Verifiable();
         var validationRes = new FormatValidationResults();
         validationRes.AggregateValidationStatus(FormatValidationStatus.NotValid);
         validatedSbomMock.Setup(m => m.GetValidationResults()).ReturnsAsync(validationRes).Verifiable();
         validatedSbomMock.Setup(m => m.Dispose()).Verifiable();
 
-        var result = await testSubject.RunAsync();
+        await Assert.ThrowsExceptionAsync<InvalidDataException>(testSubject.RunAsync);
     }
 
     [TestMethod]
@@ -127,13 +122,13 @@ public class SbomRedactionWorkflowTests
         SetUpDirStructure();
 
         fileSystemUtilsMock.Setup(m => m.GetFilesInDirectory(SbomDirStub, true)).Returns(new string[] { SbomPathStub }).Verifiable();
-        var validatedSbomMock = new Mock<IValidatedSBOM>();
-        validatedSBOMFactoryMock.Setup(m => m.CreateValidatedSBOM(SbomPathStub)).Returns(validatedSbomMock.Object).Verifiable();
+        var validatedSbomMock = new Mock<IValidatedSbom>();
+        validatedSBOMFactoryMock.Setup(m => m.CreateValidatedSbom(SbomPathStub)).Returns(validatedSbomMock.Object).Verifiable();
         var validationRes = new FormatValidationResults();
         validationRes.AggregateValidationStatus(FormatValidationStatus.Valid);
         validatedSbomMock.Setup(m => m.GetValidationResults()).ReturnsAsync(validationRes).Verifiable();
         var redactedContent = new FormatEnforcedSPDX2() { Name = "redacted" };
-        sbomRedactorMock.Setup(m => m.RedactSBOMAsync(validatedSbomMock.Object)).ReturnsAsync(redactedContent).Verifiable();
+        sbomRedactorMock.Setup(m => m.RedactSbomAsync(validatedSbomMock.Object)).ReturnsAsync(redactedContent).Verifiable();
         var outStream = new MemoryStream();
         fileSystemUtilsMock.Setup(m => m.OpenWrite(OutPathStub)).Returns(outStream).Verifiable();
         validatedSbomMock.Setup(m => m.Dispose()).Verifiable();

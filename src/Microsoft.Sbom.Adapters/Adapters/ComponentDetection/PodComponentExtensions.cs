@@ -31,6 +31,6 @@ internal static class PodComponentExtensions
         },
         FilesAnalyzed = false,
         Type = "pod",
-        DependOn = component.AncestralReferrers?.FirstOrDefault()?.Id,
+        DependOn = component.AncestralReferrers?.Select(r => r.Id).ToList(),
     };
 }

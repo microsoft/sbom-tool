@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Exceptions;
-using Microsoft.Sbom.Api.Tests;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PowerArgs;
@@ -29,7 +30,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigGoodWithManifestInfo));
+        fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigGoodWithManifestInfo);
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
@@ -45,9 +46,9 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
 
         var configuration = await cb.GetConfiguration(args);
 
-        Assert.AreEqual(configuration.BuildDropPath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.ConfigFilePath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.ManifestInfo.Source, SettingSource.JsonConfig);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.BuildDropPath.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.ConfigFilePath.Source);
+        Assert.AreEqual(SettingSource.JsonConfig, configuration.ManifestInfo.Source);
 
         fileSystemUtilsMock.VerifyAll();
     }
@@ -58,7 +59,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        fileSystemUtilsMock.Setup(f => f.OpenRead(It.IsAny<string>())).Returns(TestUtils.GenerateStreamFromString(JSONConfigGoodWithManifestInfo));
+        fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigGoodWithManifestInfo);
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true).Verifiable();
@@ -74,15 +75,14 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
 
         var configuration = await cb.GetConfiguration(args);
 
-        Assert.AreEqual(configuration.BuildDropPath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.ConfigFilePath.Source, SettingSource.CommandLine);
-        Assert.AreEqual(configuration.ManifestInfo.Source, SettingSource.JsonConfig);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.BuildDropPath.Source);
+        Assert.AreEqual(SettingSource.CommandLine, configuration.ConfigFilePath.Source);
+        Assert.AreEqual(SettingSource.JsonConfig, configuration.ManifestInfo.Source);
 
         fileSystemUtilsMock.VerifyAll();
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ValidationArgException))]
     public async Task ConfigurationBuilderTest_Generation_BuildDropPathDoNotExist_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
@@ -97,11 +97,10 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
             PackageSupplier = "Contoso"
         };
 
-        var configuration = await cb.GetConfiguration(args);
+        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(AccessDeniedValidationArgException))]
     public async Task ConfigurationBuilderTest_Generation_BuildDropPathNotWriteAccess_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
@@ -118,7 +117,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
             PackageSupplier = "Contoso"
         };
 
-        var configuration = await cb.GetConfiguration(args);
+        await Assert.ThrowsExceptionAsync<AccessDeniedValidationArgException>(() => cb.GetConfiguration(args));
     }
 
     [TestMethod]
@@ -175,7 +174,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         Assert.IsNotNull(config.ManifestDirPath);
 
         var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
-        Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
+        Assert.AreEqual(Path.GetFullPath(config.ManifestDirPath.Value), Path.GetFullPath(expectedPath));
 
         fileSystemUtilsMock.VerifyAll();
     }
@@ -205,7 +204,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         Assert.IsNotNull(config.ManifestDirPath);
 
         var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
-        Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
+        Assert.AreEqual(Path.GetFullPath(config.ManifestDirPath.Value), Path.GetFullPath(expectedPath));
 
         fileSystemUtilsMock.VerifyAll();
     }
@@ -216,7 +215,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
         var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
 
-        mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns("https://uri");
+        mockAssemblyConfig.SetupGet(a => a.DefaultSbomNamespaceBaseUri).Returns("https://uri");
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
@@ -237,10 +236,10 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         Assert.IsNotNull(config.ManifestDirPath);
 
         var expectedPath = Path.Join("ManifestDirPath", Constants.ManifestFolder);
-        Assert.AreEqual(Path.GetFullPath(expectedPath), Path.GetFullPath(config.ManifestDirPath.Value));
+        Assert.AreEqual(Path.GetFullPath(config.ManifestDirPath.Value), Path.GetFullPath(expectedPath));
 
         fileSystemUtilsMock.VerifyAll();
-        mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
+        mockAssemblyConfig.VerifyGet(a => a.DefaultSbomNamespaceBaseUri);
     }
 
     [TestMethod]
@@ -267,7 +266,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
         Assert.IsNotNull(config);
         Assert.IsNotNull(args.ManifestDirPath);
         Assert.IsNotNull(config.NamespaceUriBase);
-        Assert.AreEqual(Path.Join("ManifestDirPath", Constants.ManifestFolder), config.ManifestDirPath.Value);
+        Assert.AreEqual(config.ManifestDirPath.Value, Path.Join("ManifestDirPath", Constants.ManifestFolder));
 
         fileSystemUtilsMock.VerifyAll();
     }
@@ -277,7 +276,6 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     [DataRow("https://")]
     [DataRow("ww.com")]
     [DataRow("https//test.com")]
-    [ExpectedException(typeof(ValidationArgException), "The value of NamespaceUriBase must be a valid URI.")]
     public async Task ConfigurationBuilderTest_Generation_BadNSBaseUri_Fails(string badNsUri)
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
@@ -296,6 +294,34 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
             PackageSupplier = "Contoso"
         };
 
-        var config = await cb.GetConfiguration(args);
+        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args), "The value of NamespaceUriBase must be a valid URI.");
+    }
+
+    [TestMethod]
+    [DataRow("SPDX:randomVersion")]
+    [DataRow("randomName:2.2")]
+    [DataRow("randomName:3.0")]
+    public async Task ConfigurationBuilderTest_Generation_BadManifestInfo_Fails(string manifestInfo)
+    {
+        var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
+        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+
+        fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+        fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
+        fileSystemUtilsMock.Setup(f => f.DirectoryHasWritePermissions(It.IsAny<string>())).Returns(true);
+        fileSystemUtilsMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string p1, string p2) => Path.Join(p1, p2));
+
+        IList<ManifestInfo> manifestInfos = new List<ManifestInfo> { ManifestInfo.Parse(manifestInfo) };
+        var args = new GenerationArgs
+        {
+            BuildDropPath = "BuildDropPath",
+            ManifestDirPath = "ManifestDirPath",
+            NamespaceUriBase = "https://base.uri",
+            PackageSupplier = "Contoso",
+            ManifestInfo = manifestInfos
+        };
+
+        var exception = await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
+        Assert.IsTrue(exception.Message.Contains("contains no values supported by the ManifestInfo (-mi) parameter. Please provide supported values."));
     }
 }

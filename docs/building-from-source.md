@@ -16,11 +16,11 @@ Users can find source files in the following folder locations:
 * Tests: `test` folder
 * The core engine (generates SBOMs): `Microsoft.Sbom.Api` project
 
-The sbom tool code is designed to be as extensible as possible. All the interfaces for extending the SBOM tool are located in the `Microsoft.Sbom.Extensions` project. Once such extension is the `IManifestGenerator` interface, which the SBOM tool uses to serialize a SBOM to a specific format.  The `Microsoft.Sbom.Parsers.Spdx22SbomParser` project implements this interface, allowing the SBOM tool to serialize a SBOM in accordance with the prescribed SPDX version 2.2 standard format. The extensions project has additional interfaces designed to extend the SBOM tool.
+The sbom tool code is designed to be as extensible as possible. All the interfaces for extending the SBOM tool are located in the `Microsoft.Sbom.Extensions` project. Once such extension is the `IManifestGenerator` interface, which the SBOM tool uses to serialize a SBOM to a specific format.  The `Microsoft.Sbom.Parsers.Spdx22SbomParser` project implements this interface, allowing the SBOM tool to serialize a SBOM in accordance with the prescribed SPDX version 2.2 standard format. The equivalent for SPDX 3.0 is present in `Microsoft.Sbom.Parsers.Spdx30SbomParser`. The extensions project has additional interfaces designed to extend the SBOM tool.
 
 The `Microsoft.Sbom.Common` project contains the base of common code, constants, etc. that all the projects can call.
 
-The `Microsoft.Sbom.Contracts` project defines the interfaces that the tool uses to call the SBOM tool using a C# API. The `ISBOMGenerator` class defines two methods that the tool uses to directly call the SBOM tool from C# code. The `Microsoft.Sbom.Tool` project defines a command line interface (CLI) interface to talk to the SBOM tool.
+The `Microsoft.Sbom.Contracts` project defines the interfaces that the tool uses to call the SBOM tool using a C# API. The `ISbomGenerator` class defines two methods that the tool uses to directly call the SBOM tool from C# code. The `Microsoft.Sbom.Tool` project defines a command line interface (CLI) interface to talk to the SBOM tool.
 
 ## Building on Visual Studio
 

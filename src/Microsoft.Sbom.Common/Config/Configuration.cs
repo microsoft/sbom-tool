@@ -47,12 +47,15 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<string>> generationTimestamp = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> followSymlinks = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> fetchLicenseInformation = new();
+    private static readonly AsyncLocal<ConfigurationSetting<int>> licenseInformationTimeout = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> enablePackageMetadataParsing = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> deleteManifestDirIfPresent = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> failIfNoPackages = new();
     private static readonly AsyncLocal<ConfigurationSetting<LogEventLevel>> verbosity = new();
     private static readonly AsyncLocal<ConfigurationSetting<string>> sbomPath = new();
     private static readonly AsyncLocal<ConfigurationSetting<string>> sbomDir = new();
+    private static readonly AsyncLocal<ConfigurationSetting<ConformanceType>> conformance = new();
+    private static readonly AsyncLocal<ConfigurationSetting<Dictionary<string, ArtifactInfo>>> artifactInfoMap = new();
 
     /// <inheritdoc cref="IConfiguration.BuildDropPath" />
     [DirectoryExists]
@@ -136,6 +139,7 @@ public class Configuration : IConfiguration
     }
 
     /// <inheritdoc cref="IConfiguration.ManifestInfo" />
+    [ValidManifestInfo]
     public ConfigurationSetting<IList<ManifestInfo>> ManifestInfo
     {
         get => manifestInfo.Value;
@@ -309,6 +313,14 @@ public class Configuration : IConfiguration
         set => fetchLicenseInformation.Value = value;
     }
 
+    /// <inheritdoc cref="IConfiguration.LicenseInformationTimeoutInSeconds" />
+    [DefaultValue(Constants.DefaultLicenseFetchTimeoutInSeconds)]
+    public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds
+    {
+        get => licenseInformationTimeout.Value;
+        set => licenseInformationTimeout.Value = value;
+    }
+
     /// <inheritdoc cref="IConfiguration.EnablePackageMetadataParsing" />
     [DefaultValue(false)]
     public ConfigurationSetting<bool> EnablePackageMetadataParsing
@@ -329,5 +341,19 @@ public class Configuration : IConfiguration
     {
         get => sbomDir.Value;
         set => sbomDir.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.Conformance" />
+    public ConfigurationSetting<ConformanceType> Conformance
+    {
+        get => conformance.Value;
+        set => conformance.Value = value;
+    }
+
+    /// <inheritdoc cref="IConfiguration.ArtifactInfoMap" />
+    public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap
+    {
+        get => artifactInfoMap.Value;
+        set => artifactInfoMap.Value = value;
     }
 }

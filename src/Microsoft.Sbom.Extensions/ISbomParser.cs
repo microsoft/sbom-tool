@@ -4,6 +4,7 @@
 #nullable enable
 
 using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 
@@ -19,15 +20,15 @@ public interface ISbomParser
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    ParserStateResult? Next();
+    public ParserStateResult? Next();
 
     /// <summary>
-    /// Returns a <see cref="SBOMMetadata"/> object using the metadata defined in the
+    /// Returns a <see cref="SbomMetadata"/> object using the metadata defined in the
     /// current SBOM.
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    Spdx22Metadata GetMetadata();
+    public SpdxMetadata GetMetadata();
 
     /// <summary>
     /// This function is called by the sbom tool upon initialization to get all the
@@ -35,5 +36,12 @@ public interface ISbomParser
     /// </summary>
     /// <returns>An version sorted array in ascending order of
     /// <see cref="ManifestInfo">manifests</see> this library can parse.</returns>
-    ManifestInfo[] RegisterManifest();
+    public ManifestInfo[] RegisterManifest();
+
+    /// <summary>
+    /// Set conformance for SPDX 3.0 parsers and above.
+    /// Returns the conformance set by the user, if it is valid.
+    /// </summary>
+    /// <param name="spdxVersion"></param>
+    public void EnforceConformance(ConformanceType conformance);
 }

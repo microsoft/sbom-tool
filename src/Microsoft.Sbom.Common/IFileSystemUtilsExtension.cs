@@ -12,5 +12,5 @@ public interface IFileSystemUtilsExtension
     /// <summary>
     /// Determines if the targetPath is a child of the sourcePath.
     /// </summary>
-    bool IsTargetPathInSource(string targetPath, string sourcePath);
+    public bool IsTargetPathInSource(string targetPath, string sourcePath);
 }

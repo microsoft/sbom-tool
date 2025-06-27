@@ -38,7 +38,6 @@ public class HashCodeGeneratorTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(IOException))]
     public void GenerateHashTest_FileReadFails_Throws()
     {
         var hashAlgorithmNames = new AlgorithmName[] { AlgorithmName.SHA256, AlgorithmName.SHA512 };
@@ -52,13 +51,12 @@ public class HashCodeGeneratorTests
         mockFileSystemUtils.Setup(f => f.OpenRead(It.IsAny<string>())).Throws(new IOException());
 
         var hashCodeGenerator = new HashCodeGenerator(mockFileSystemUtils.Object);
-        hashCodeGenerator.GenerateHashes("/tmp/file", hashAlgorithmNames);
+        Assert.ThrowsException<IOException>(() => hashCodeGenerator.GenerateHashes("/tmp/file", hashAlgorithmNames));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void GenerateHashTest_NullFileSystemUtils_Throws()
     {
-        _ = new HashCodeGenerator(null);
+        Assert.ThrowsException<ArgumentNullException>(() => new HashCodeGenerator(null));
     }
 }

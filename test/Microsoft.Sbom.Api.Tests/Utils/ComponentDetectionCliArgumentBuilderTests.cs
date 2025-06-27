@@ -4,11 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PowerArgs;
 using static Microsoft.Sbom.Api.Tests.Utils.ComponentDetectionCliArgumentBuilderTestsExtensions;
 
 namespace Microsoft.Sbom.Api.Tests.Utils;
@@ -146,27 +144,19 @@ public class ComponentDetectionCliArgumentBuilderTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void Build_WithNullValue()
+    public void AddArg_WithNullValue_Throws()
     {
-        var builder = new ComponentDetectionCliArgumentBuilder()
-            .SourceDirectory("X:/")
-            .AddArg("ManifestFile", null)
-            .AddArg("--DirectoryExclusionList", "X:/hello");
+        var builder = new ComponentDetectionCliArgumentBuilder();
 
-        builder.Build();
+        Assert.ThrowsException<ArgumentNullException>(() => builder.AddArg("ManifestFile", null));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void Build_WithInvalidArg()
+    public void AddArg_WithInvalidArg_Throws()
     {
-        var builder = new ComponentDetectionCliArgumentBuilder()
-            .SourceDirectory("X:/")
-            .AddArg("ManifestFile", "value")
-            .AddArg("--", "X:/hello");
+        var builder = new ComponentDetectionCliArgumentBuilder();
 
-        builder.Build();
+        Assert.ThrowsException<ArgumentNullException>(() => builder.AddArg("--", "X:/hello"));
     }
 
     [TestMethod]
@@ -323,7 +313,7 @@ internal static class ComponentDetectionCliArgumentBuilderTestsExtensions
         }
         else if (!detectorArgs.Contains("Timeout="))
         {
-            detectorArgs = string.Join(",", defaultTimeoutArg, detectorArgs);
+            detectorArgs = string.Join(',', defaultTimeoutArg, detectorArgs);
         }
 
         return args.WithArgs("--DetectorArgs", detectorArgs);

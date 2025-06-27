@@ -17,7 +17,7 @@ public class ValidationArgs : GenerationAndValidationCommonArgs
     /// </summary>
     [ArgShortcut("b")]
     [ArgRequired(IfNot = "ConfigFilePath")]
-    [ArgDescription("The root folder of the drop directory to validate.")]
+    [ArgDescription("Specifies the root folder of the drop directory containing the final build artifacts (binaries and executables) for which the SBOM file will be validated. This is the directory where the completed build output is stored.")]
     public string BuildDropPath { get; set; }
 
     /// <summary>
@@ -81,4 +81,11 @@ public class ValidationArgs : GenerationAndValidationCommonArgs
     /// </summary>
     [ArgDescription("The Hash algorithm to use while verifying or generating the hash value of a file")]
     public AlgorithmName HashAlgorithm { get; set; }
+
+    /// <summary>
+    /// The conformance to validate against.
+    /// </summary>
+    [ArgDescription("The conformance to validate against")]
+    [ArgShortcut("cs")]
+    public ConformanceType Conformance { get; set; }
 }

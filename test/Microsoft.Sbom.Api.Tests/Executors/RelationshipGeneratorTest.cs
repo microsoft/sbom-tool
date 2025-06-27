@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Manifest;
 using Microsoft.Sbom.Extensions;
@@ -75,8 +74,8 @@ public class RelationshipGeneratorTest
         mock.Setup(m => m.RegisterManifest()).Returns(mi);
         m.Init();
 
-        var j1 = JsonDocument.Parse(JsonSerializer.Serialize(r));
-        var j2 = JsonDocument.Parse(JsonSerializer.Serialize(r2));
+        var j1 = JsonSerializer.SerializeToDocument(r);
+        var j2 = JsonSerializer.SerializeToDocument(r2);
 
         var g1 = new GenerationResult { Document = j1 };
         var g2 = new GenerationResult { Document = j2 };
@@ -94,7 +93,7 @@ public class RelationshipGeneratorTest
 
         Assert.IsTrue(docs.Contains(j1));
         Assert.IsTrue(docs.Contains(j2));
-        Assert.IsTrue(docs.Count == 2);
+        Assert.AreEqual(2, docs.Count);
     }
 
     [TestMethod]
@@ -124,6 +123,6 @@ public class RelationshipGeneratorTest
             docs.Add(jsonDoc);
         }
 
-        Assert.IsTrue(docs.Count == 0);
+        Assert.AreEqual(0, docs.Count);
     }
 }

@@ -31,6 +31,6 @@ internal static class PipComponentExtensions
         Supplier = pipComponent.Author,
         FilesAnalyzed = false,
         Type = "python",
-        DependOn = component.AncestralReferrers?.FirstOrDefault()?.Id,
+        DependOn = component.AncestralReferrers?.Select(r => r.Id).ToList(),
     };
 }

@@ -4,7 +4,7 @@ Users may use the sample code provided below for integrating the SBOM tool into 
 
 ## Existing setup
 
-In this Github project, the source contains a project called 'Sample'.  The workflow builds the project and saves the generated binaries as pipeline artifacts.
+In this Github project, the source contains a project called `Sample`.  The workflow builds the project and saves the generated binaries as pipeline artifacts.
 
 ```yaml
 name: Sample
@@ -18,9 +18,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
 
@@ -28,7 +28,7 @@ jobs:
       run: dotnet build Sample.sln --output buildOutput
 
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.0
+      uses: actions/upload-artifact@v4
       with:
         path: buildOutput
 ```
@@ -54,9 +54,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
     - name: Build
@@ -69,12 +69,12 @@ jobs:
         $RUNNER_TEMP/sbom-tool generate -b ./buildOutput -bc . -pn Test -pv 1.0.0 -ps MyCompany -nsb https://sbom.mycompany.com -V Verbose
 
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.0
+      uses: actions/upload-artifact@v4
       with:
         path: buildOutput
 ```
 
-The SBOM generation task occurred after the build ran, thus producing artifacts in the `buildOutput` folder.  Since the source folder contains the `Sample.csproj` file that holds the project's dependencies items, the build components path is an important parameter. The package name, version and namespace base URI are static strings in the sbomtool.  The verbosity parameter is set to `Verbose` at this point in order to provide the desired output during the SBOM generation test runs.
+The SBOM generation task occurred after the build ran, thus producing artifacts in the `buildOutput` folder. Since the source folder contains the `Sample.csproj` file that holds the project's dependencies items, the build components path is an important parameter. The package name, version and namespace base URI are static strings in the sbomtool. The verbosity parameter is set to `Verbose` at this point in order to provide the desired output during the SBOM generation test runs.
 
 Since the sbom tool will place the final SBOM file in the build drop folder (`buildOutput` folder in this scenario), the original artifact upload task now also uploads the SBOM to the Actions artifacts as seen below.
 

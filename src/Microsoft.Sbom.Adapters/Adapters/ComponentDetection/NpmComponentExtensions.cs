@@ -26,13 +26,13 @@ internal static class NpmComponentExtensions
         PackageUrl = npmComponent.PackageUrl?.ToString(),
         PackageName = npmComponent.Name,
         PackageVersion = npmComponent.Version,
-        Checksum = new[]
-        {
+        Checksum =
+        [
             new Checksum
             {
                 ChecksumValue = npmComponent.Hash,
-            },
-        },
+            }
+        ],
         Supplier = npmComponent.Author?.AsSupplier(),
         LicenseInfo = string.IsNullOrWhiteSpace(component.LicenseConcluded) ? null : new LicenseInfo
         {
@@ -40,7 +40,7 @@ internal static class NpmComponentExtensions
         },
         FilesAnalyzed = false,
         Type = "npm",
-        DependOn = component.AncestralReferrers?.FirstOrDefault()?.Id,
+        DependOn = component.AncestralReferrers?.Select(r => r.Id).ToList(),
     };
 
     /// <summary>

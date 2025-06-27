@@ -14,14 +14,14 @@ public class GenerationArgs : GenerationAndValidationCommonArgs
     /// Gets or sets the root folder of the drop directory for which the SBOM file will be generated.
     /// </summary>
     [ArgShortcut("b")]
-    [ArgDescription("The root folder of the drop directory for which the SBOM file will be generated.")]
+    [ArgDescription("Specifies the root folder of the drop directory containing the final build artifacts (binaries and executables) for which the SBOM file will be generated. This is the directory where the completed build output is stored.")]
     public string BuildDropPath { get; set; }
 
     /// <summary>
     /// Gets or sets the folder containing the build components and packages.
     /// </summary>
     [ArgShortcut("bc")]
-    [ArgDescription("The folder containing the build components and packages.")]
+    [ArgDescription("Specifies the folder containing the source code and components used to build the binary. This is where the tool will look for the individual components and packages that are part of the build process.")]
     public string BuildComponentPath { get; set; }
 
     /// <summary>
@@ -115,6 +115,16 @@ public class GenerationArgs : GenerationAndValidationCommonArgs
     [ArgShortcut("li")]
     [ArgDescription("If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.")]
     public bool? FetchLicenseInformation { get; set; }
+
+    /// <summary>
+    /// Specifies the timeout in seconds for fetching the license information. Defaults to 30 seconds. Has no effect if
+    /// FetchLicenseInformation (li) argument is false or not provided. A negative value corresponds to an infinite timeout.
+    /// </summary>
+    [ArgShortcut("lto")]
+    [ArgDescription("Specifies the timeout in seconds for fetching the license information. Defaults to 30 seconds. " +
+        "Has no effect if the FetchLicenseInformation (li) argument is false or not provided. A negative value corresponds" +
+        "to an infinite timeout.")]
+    public int? LicenseInformationTimeoutInSeconds { get; set; }
 
     /// <summary>
     /// If set to true, we will attempt to parse license and supplier info from the packages metadata file.

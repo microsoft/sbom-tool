@@ -30,6 +30,6 @@ internal static class CargoComponentExtensions
         },
         FilesAnalyzed = false,
         Type = "cargo",
-        DependOn = component.AncestralReferrers?.FirstOrDefault()?.Id,
+        DependOn = component.AncestralReferrers?.Select(r => r.Id).ToList(),
     };
 }

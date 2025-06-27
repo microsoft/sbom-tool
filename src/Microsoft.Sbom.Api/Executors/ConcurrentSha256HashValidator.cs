@@ -79,7 +79,7 @@ public class ConcurrentSha256HashValidator
         // If we have the files from both locations present in the hash, validate if the hashes match.
         if (newValue?.FileLocation == Sbom.Entities.FileLocation.All)
         {
-            if (string.Equals(newValue.OnDiskHash.ChecksumValue, newValue.SBOMFileHash.ChecksumValue, StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(newValue.OnDiskHash?.ChecksumValue, newValue.SbomFileHash?.ChecksumValue, StringComparison.InvariantCultureIgnoreCase))
             {
                 await output.Writer.WriteAsync(new FileValidationResult { Path = internalFileInfo.Path });
             }

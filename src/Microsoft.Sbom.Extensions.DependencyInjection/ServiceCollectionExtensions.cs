@@ -5,7 +5,6 @@ using System.Collections.Concurrent;
 using Microsoft.ComponentDetection.Orchestrator;
 using Microsoft.ComponentDetection.Orchestrator.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Sbom.Api;
 using Microsoft.Sbom.Api.Config;
@@ -41,7 +40,6 @@ using Serilog.Events;
 using Serilog.Extensions.Logging;
 using Serilog.Filters;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
-using IComponentDetector = Microsoft.ComponentDetection.Contracts.IComponentDetector;
 using ILogger = Serilog.ILogger;
 
 namespace Microsoft.Sbom.Extensions.DependencyInjection;
@@ -73,9 +71,10 @@ public static class ServiceCollectionExtensions
             })
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
+            .AddTransient<IWorkflow<SbomConsolidationWorkflow>, SbomConsolidationWorkflow>()
             .AddTransient<IWorkflow<SbomRedactionWorkflow>, SbomRedactionWorkflow>()
             .AddTransient<ISbomRedactor, SbomRedactor>()
-            .AddTransient<ValidatedSBOMFactory>()
+            .AddTransient<ValidatedSbomFactory>()
             .AddTransient<DirectoryWalker>()
             .AddTransient<IFilter<DownloadedRootPathFilter>, DownloadedRootPathFilter>()
             .AddTransient<IFilter<ManifestFolderFilter>, ManifestFolderFilter>()
@@ -105,15 +104,15 @@ public static class ServiceCollectionExtensions
             .AddTransient<RelationshipGenerator>()
             .AddTransient<ConfigSanitizer>()
             .AddTransient<IProcessExecutor, ProcessExecutor>()
-            .AddTransient<Api.Utils.IComponentDetector, ComponentDetector>()
+            .AddTransient<IComponentDetector, ComponentDetector>()
             .AddTransient<IMetadataBuilderFactory, MetadataBuilderFactory>()
             .AddTransient<FileInfoWriter>()
             .AddTransient<ComponentToExternalReferenceInfoConverter>()
             .AddTransient<ExternalDocumentReferenceWriter>()
-            .AddTransient<SBOMComponentsWalker>()
+            .AddTransient<SbomComponentsWalker>()
             .AddTransient<FileListEnumerator>()
-            .AddTransient<ISBOMReaderForExternalDocumentReference, SPDXSBOMReaderForExternalDocumentReference>()
-            .AddTransient<SBOMMetadata>()
+            .AddTransient<ISbomReaderForExternalDocumentReference, SPDXSbomReaderForExternalDocumentReference>()
+            .AddTransient<SbomMetadata>()
             .AddTransient<ILicenseInformationService, LicenseInformationService>()
             .AddSingleton<IPackageDetailsFactory, PackageDetailsFactory>()
             .AddSingleton<IPackageManagerUtils<NugetUtils>, NugetUtils>()
@@ -136,7 +135,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IAssemblyConfig, AssemblyConfig>()
             .AddSingleton<ComponentDetectorCachedExecutor>()
             .AddSingleton<ILicenseInformationFetcher, LicenseInformationFetcher>()
-            .AddSingleton<InternalSBOMFileInfoDeduplicator>()
+            .AddSingleton<InternalSbomFileInfoDeduplicator>()
             .AddSingleton<ExternalReferenceInfoToPathConverter>()
             .AddSingleton<ExternalReferenceDeduplicator>()
             .AddSingleton<ISbomConfigFactory, SbomConfigFactory>()
@@ -153,8 +152,8 @@ public static class ServiceCollectionExtensions
                     typeof(IMetadataProvider),
                     typeof(IManifestInterface)))
                 .AsImplementedInterfaces())
-            .AddScoped<ISBOMGenerator, SbomGenerator>()
-            .AddScoped<ISBOMValidator, SbomValidator>()
+            .AddScoped<ISbomGenerator, SbomGenerator>()
+            .AddScoped<ISbomValidator, SbomValidator>()
             .AddSingleton(x =>
             {
                 var fileSystemUtils = x.GetRequiredService<IFileSystemUtils>();
@@ -164,7 +163,7 @@ public static class ServiceCollectionExtensions
 
                 var manifestData = new ManifestData();
 
-                if (!configuration.ManifestInfo.Value.Contains(Constants.SPDX22ManifestInfo))
+                if (!configuration.ManifestInfo.Value.Any(manifestInfo => Constants.SupportedSpdxManifests.Contains(manifestInfo)))
                 {
                     var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo?.Value?.FirstOrDefault());
                     var parserProvider = x.GetRequiredService<IManifestParserProvider>();

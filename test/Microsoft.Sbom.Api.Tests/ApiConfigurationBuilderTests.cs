@@ -27,7 +27,7 @@ public class ApiConfigurationBuilderTests
     private const string PackageName = "packageName";
     private const string PackageVersion = "packageVersion";
 
-    private readonly SBOMMetadata metadata = new SBOMMetadata()
+    private readonly SbomMetadata metadata = new SbomMetadata()
     {
         PackageName = PackageName,
         PackageVersion = PackageVersion,
@@ -37,7 +37,8 @@ public class ApiConfigurationBuilderTests
     {
         Verbosity = EventLevel.Verbose,
         WorkflowParallelism = DefaultParallelism,
-        DeleteManifestDirectoryIfPresent = true
+        DeleteManifestDirectoryIfPresent = true,
+        AdditionComponentDetectorArgs = "--key value",
     };
 
     private readonly string manifestDirPath = "manifestDirPath";
@@ -57,6 +58,7 @@ public class ApiConfigurationBuilderTests
             Name = "spdx",
             Version = "2.2"
         };
+        var expectedAdditionalComponentDetectorArgs = "--key value";
 
         var config = ApiConfigurationBuilder.GetConfiguration(RootPath, manifestDirPath, files, packages, metadata, specs, runtime, externalDocumentRefListFile, componentPath);
 
@@ -73,18 +75,19 @@ public class ApiConfigurationBuilderTests
         Assert.AreEqual(externalDocumentRefListFile, config.ExternalDocumentReferenceListFile.Value);
         Assert.AreEqual(1, config.ManifestInfo.Value.Count);
         Assert.IsTrue(config.ManifestInfo.Value[0].Equals(expectedManifestInfo));
+        Assert.AreEqual(expectedAdditionalComponentDetectorArgs, config.AdditionalComponentDetectorArgs.Value);
 
-        Assert.AreEqual(SettingSource.SBOMApi, config.BuildDropPath.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.BuildComponentPath.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.ManifestDirPath.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.PackageName.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.PackageVersion.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.Parallelism.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.Verbosity.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.PackagesList.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.FilesList.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.ExternalDocumentReferenceListFile.Source);
-        Assert.AreEqual(SettingSource.SBOMApi, config.ManifestInfo.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.BuildDropPath.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.BuildComponentPath.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.ManifestDirPath.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.PackageName.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.PackageVersion.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.Parallelism.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.Verbosity.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.PackagesList.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.FilesList.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.ExternalDocumentReferenceListFile.Source);
+        Assert.AreEqual(SettingSource.SbomApi, config.ManifestInfo.Source);
     }
 
     [TestMethod]
@@ -174,23 +177,20 @@ public class ApiConfigurationBuilderTests
     [TestMethod]
     [DataRow(" ")]
     [DataRow(null)]
-    [ExpectedException(typeof(ArgumentException))]
     public void ThrowArgumentExceptionOnRootPathValues(string input)
     {
-        ApiConfigurationBuilder.GetConfiguration(input, null, null, null, null);
+        Assert.ThrowsException<ArgumentException>(() => ApiConfigurationBuilder.GetConfiguration(input, null, null, null, null));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void ThrowArgumentNulExceptionOnNullMetadata()
     {
-        ApiConfigurationBuilder.GetConfiguration("random", null, null, null, null);
+        Assert.ThrowsException<ArgumentNullException>(() => ApiConfigurationBuilder.GetConfiguration("random", null, null, null, null));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public void ThrowArgumentExceptionOnSpecificationZero()
     {
-        ApiConfigurationBuilder.GetConfiguration("random", null, null, null, metadata, new List<SbomSpecification>(), runtime);
+        Assert.ThrowsException<ArgumentException>(() => ApiConfigurationBuilder.GetConfiguration("random", null, null, null, metadata, new List<SbomSpecification>(), runtime));
     }
 }

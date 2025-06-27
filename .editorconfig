@@ -81,10 +81,11 @@ dotnet_analyzer_diagnostic.severity = warning
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/language-rules#net-style-rules
 [*.{cs,csx,cake,vb,vbx}]
 # "this." and "Me." qualifiers
-dotnet_style_qualification_for_field = true
-dotnet_style_qualification_for_property = true
-dotnet_style_qualification_for_method = true
-dotnet_style_qualification_for_event = true:warning
+# we explicitly have no opinion for this 
+# dotnet_style_qualification_for_field = true
+# dotnet_style_qualification_for_property = true
+# dotnet_style_qualification_for_method = true
+# dotnet_style_qualification_for_event = true:warning
 # Language keywords instead of framework type names for type references
 dotnet_style_predefined_type_for_locals_parameters_members = true:warning
 dotnet_style_predefined_type_for_member_access = true:warning
@@ -461,7 +462,7 @@ stylecop.documentation.xmlHeader = false
 
 # SA1623: Property summary documentation must match accessors
 # Justification: It's noise to start a summary with "Gets" or "Sets"
-# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md
+# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1623.md
 dotnet_diagnostic.SA1623.severity = none
 
 # CA1859: Use concrete types when possible
@@ -543,7 +544,7 @@ dotnet_diagnostic.SA1204.severity = suggestion
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1207.md
 # SA1207: Member attributes should follow the order
-dotnet_diagnostic.SA1207.severity = suggestion
+dotnet_diagnostic.SA1207.severity = error
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1214.md
 # SA1214: Readonly fields must appear before non-readonly fields
@@ -615,11 +616,11 @@ dotnet_diagnostic.SA1622.severity = suggestion
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1625.md
 # SA1625: Element documentation should not be copied and pasted
-dotnet_diagnostic.SA1625.severity = suggestion
+dotnet_diagnostic.SA1625.severity = error
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1626.md
 # SA1626: Single-line comments should not use documentation style slashes
-dotnet_diagnostic.SA1626.severity = suggestion
+dotnet_diagnostic.SA1626.severity = error
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1627.md
 # SA1627: Documentation text should not be empty
@@ -631,7 +632,7 @@ dotnet_diagnostic.SA1629.severity = suggestion
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md
 # SA1633: File should have header
-dotnet_diagnostic.SA1633.severity = suggestion
+dotnet_diagnostic.SA1633.severity = error
 
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1642.md
 # SA1642: Constructor summary documentation should begin with standard text
@@ -676,7 +677,7 @@ dotnet_diagnostic.CA1032.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1040
 # CA1040: Avoid empty interfaces
-dotnet_diagnostic.CA1040.severity = suggestion
+dotnet_diagnostic.CA1040.severity = error
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1041
 # CA1041: Provide ObsoleteAttribute message
@@ -752,7 +753,7 @@ dotnet_diagnostic.CA1311.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1508
 # CA1508: Avoid dead conditional code
-dotnet_diagnostic.CA1508.severity = suggestion
+dotnet_diagnostic.CA1508.severity = error
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1510
 # CA1510: Use '...' instead of explicitly throwing a new exception instance
@@ -836,7 +837,7 @@ dotnet_diagnostic.CA1852.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1854
 # CA1854: Prefer 'TryGetValue' over 'ContainsKey' and 'Item' when accessing dictionary items
-dotnet_diagnostic.CA1854.severity = suggestion
+dotnet_diagnostic.CA1854.severity = error
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1860
 # CA1860: Avoid using 'Enumerable.Any()' extension method.
@@ -952,7 +953,7 @@ dotnet_diagnostic.CS8632.severity = suggestion
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0005
 # IDE0005: Using directive is unnecessary
-dotnet_diagnostic.IDE0005.severity = suggestion
+dotnet_diagnostic.IDE0005.severity = error
 
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0009
 # IDE0009: Add 'this' or 'Me' qualification

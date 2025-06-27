@@ -8,5 +8,5 @@ namespace Microsoft.Sbom.Api.Executors;
 
 public interface ILicenseInformationService
 {
-    public Task<List<string>> FetchLicenseInformationFromAPI(List<string> listOfComponentsForApi);
+    public Task<IList<string>> FetchLicenseInformationFromAPI(IList<string> listOfComponentsForApi, int timeoutInSeconds);
 }

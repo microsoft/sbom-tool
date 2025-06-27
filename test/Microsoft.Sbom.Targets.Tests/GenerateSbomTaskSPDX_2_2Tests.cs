@@ -3,11 +3,6 @@
 
 namespace Microsoft.Sbom.Targets.Tests;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 /// <summary>
@@ -19,4 +14,10 @@ public class GenerateSbomTaskSPDX_2_2Tests : AbstractGenerateSbomTaskTests
     internal override string SbomSpecificationName => "SPDX";
 
     internal override string SbomSpecificationVersion => "2.2";
+
+    [ClassInitialize]
+    public static void Setup(TestContext testContext) => ClassSetup(nameof(GenerateSbomTaskSPDX_2_2Tests));
+
+    [ClassCleanup(ClassCleanupBehavior.EndOfClass)]
+    public static void TearDown() => ClassTearDown();
 }

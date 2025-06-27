@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Sbom.Contracts;
+using Microsoft.Sbom.Contracts.Enums;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.JsonAsynchronousNodeKit.Exceptions;
@@ -172,14 +173,14 @@ public class SPDXParser : ISbomParser
         return null;
     }
 
-    public Spdx22Metadata GetMetadata()
+    public SpdxMetadata GetMetadata()
     {
         if (!this.parsingComplete)
         {
             throw new ParserException($"{nameof(this.GetMetadata)} can only be called after Parsing is complete to ensure that a whole object is returned.");
         }
 
-        var spdxMetadata = new Spdx22Metadata();
+        var spdxMetadata = new SpdxMetadata();
         foreach (var kvp in this.metadata)
         {
             switch (kvp.Key)
@@ -214,6 +215,12 @@ public class SPDXParser : ISbomParser
     }
 
     public ManifestInfo[] RegisterManifest() => new ManifestInfo[] { this.spdxManifestInfo };
+
+    public void EnforceConformance(ConformanceType conformance)
+    {
+        // No-op, SPDX 2.2 does not support validation based on conformances.
+        return;
+    }
 
     private T Coerce<T>(string name, object? value)
     {

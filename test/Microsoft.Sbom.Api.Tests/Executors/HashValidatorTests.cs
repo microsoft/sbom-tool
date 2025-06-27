@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -30,7 +29,7 @@ public class HashValidatorTests
             "TEST2",
             "TEST3"
         };
-        var hashDict = new ConcurrentDictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
+        var hashDict = new Dictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
         foreach (var file in fileList)
         {
             hashDict[file.ToLower()] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hash" } };
@@ -56,7 +55,7 @@ public class HashValidatorTests
         }
 
         Assert.AreEqual(0, fileList.Count);
-        Assert.IsTrue(validationResults.errors.Count == 0);
+        Assert.AreEqual(0, validationResults.errors.Count);
     }
 
     [TestMethod]
@@ -69,7 +68,7 @@ public class HashValidatorTests
             "TEST3"
         };
 
-        var hashDict = new ConcurrentDictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
+        var hashDict = new Dictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
         foreach (var file in fileList)
         {
             hashDict[file.ToLower()] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hashInvalid" } };
@@ -113,7 +112,7 @@ public class HashValidatorTests
             "TEST3"
         };
 
-        var hashDict = new ConcurrentDictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
+        var hashDict = new Dictionary<string, Checksum[]>(StringComparer.InvariantCultureIgnoreCase);
         foreach (var file in fileList)
         {
             hashDict[file.ToLower()] = new Checksum[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = $"{file}_hash" } };
@@ -131,7 +130,7 @@ public class HashValidatorTests
         }
 
         // Additional file.
-        await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = "TEST4", Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = $"TEST4_hash" } } });
+        await files.Writer.WriteAsync(new InternalSbomFileInfo { Path = "TEST4", Checksum = new Checksum[] { new Checksum { Algorithm = Constants.DefaultHashAlgorithmName, ChecksumValue = "TEST4_hash" } } });
 
         files.Writer.Complete();
         errors.Writer.Complete();

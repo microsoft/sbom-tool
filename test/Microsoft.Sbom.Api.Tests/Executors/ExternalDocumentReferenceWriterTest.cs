@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Executors;
@@ -77,8 +76,6 @@ public class ExternalDocumentReferenceWriterTest
         await foreach (var result in results.ReadAllAsync())
         {
             var root = result.Document.RootElement;
-
-            Assert.IsNotNull(root);
 
             if (root.TryGetProperty("Document", out var documentNamespace))
             {

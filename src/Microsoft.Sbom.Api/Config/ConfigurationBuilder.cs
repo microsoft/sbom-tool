@@ -45,6 +45,10 @@ public class ConfigurationBuilder<T> : IConfigurationBuilder<T>
                 formatValidationArgs.ManifestToolAction = ManifestToolActions.ValidateFormat;
                 commandLineArgs = mapper.Map<InputConfiguration>(formatValidationArgs);
                 break;
+            case ConsolidationArgs consolidationArgs:
+                consolidationArgs.ManifestToolAction = ManifestToolActions.Consolidate;
+                commandLineArgs = mapper.Map<InputConfiguration>(consolidationArgs);
+                break;
             default:
                 throw new ValidationArgException($"Unsupported configuration type found {typeof(T)}");
         }
@@ -69,5 +73,5 @@ public class ConfigurationBuilder<T> : IConfigurationBuilder<T>
 /// <typeparam name="T">The action args parameter.</typeparam>
 public interface IConfigurationBuilder<T>
 {
-    Task<InputConfiguration> GetConfiguration(T args);
+    public Task<InputConfiguration> GetConfiguration(T args);
 }

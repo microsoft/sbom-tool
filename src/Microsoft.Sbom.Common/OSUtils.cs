@@ -52,6 +52,11 @@ public class OSUtils : IOSUtils
 
     public string GetEnvironmentVariable(string variableName)
     {
+        if (environmentVariables.TryGetValue(variableName, out var value))
+        {
+            return value;
+        }
+
         var variableNameValues = environmentVariables.Where(ev => ev.Key.Equals(variableName, StringComparison.OrdinalIgnoreCase)).Select(ev => ev.Value);
 
         try

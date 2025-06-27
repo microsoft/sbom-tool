@@ -87,7 +87,12 @@ public class ConfigSanitizerTests
             {
                 Source = SettingSource.Default,
                 Value = Serilog.Events.LogEventLevel.Information
-            }
+            },
+            Conformance = new ConfigurationSetting<ConformanceType>
+            {
+                Source = SettingSource.Default,
+                Value = ConformanceType.None,
+            },
         };
     }
 
@@ -102,14 +107,105 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ValidationArgException))]
     public void NoValueForManifestInfoForValidation_Throws()
     {
         var config = GetConfigurationBaseObject();
         config.ManifestToolAction = ManifestToolActions.Validate;
         config.ManifestInfo.Value.Clear();
 
+        Assert.ThrowsException<ValidationArgException>(() => configSanitizer.SanitizeConfig(config));
+    }
+
+    [TestMethod]
+    public void SetValueForConformanceWithValidManifestInfoForValidation_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX30ManifestInfo };
+        config.Conformance = new ConfigurationSetting<ConformanceType>
+        {
+            Source = SettingSource.CommandLine,
+            Value = ConformanceType.NTIAMin
+        };
+
         configSanitizer.SanitizeConfig(config);
+        Assert.AreEqual(ConformanceType.NTIAMin, config.Conformance.Value);
+    }
+
+    [TestMethod]
+    public void SetNoneValueForConformanceWithValidManifestInfoForValidation_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX30ManifestInfo };
+        config.Conformance = new ConfigurationSetting<ConformanceType>
+        {
+            Source = SettingSource.CommandLine,
+            Value = ConformanceType.None
+        };
+
+        configSanitizer.SanitizeConfig(config);
+        Assert.AreEqual(ConformanceType.None, config.Conformance.Value);
+    }
+
+    [TestMethod]
+    public void SetValueForConformanceWithInvalidManifestInfoForValidation_Throws()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.Conformance = new ConfigurationSetting<ConformanceType>
+        {
+            Source = SettingSource.CommandLine,
+            Value = ConformanceType.NTIAMin
+        };
+
+        var exception = Assert.ThrowsException<ValidationArgException>(() => configSanitizer.SanitizeConfig(config));
+        Assert.IsTrue(exception.Message.Contains("Please use a supported combination."));
+    }
+
+    [TestMethod]
+    public void NoValueForConformanceWithValidManifestInfoForValidation_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX30ManifestInfo };
+        config.Conformance.Value = null;
+
+        configSanitizer.SanitizeConfig(config);
+        Assert.AreEqual(ConformanceType.None, config.Conformance.Value);
+    }
+
+    [TestMethod]
+    public void NoValueForConformanceWithInvalidManifestInfoForValidation_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Validate;
+        config.ManifestInfo.Value = new List<ManifestInfo> { Constants.SPDX22ManifestInfo };
+        config.Conformance.Value = null;
+
+        configSanitizer.SanitizeConfig(config);
+        Assert.AreEqual(ConformanceType.None, config.Conformance.Value);
+    }
+
+    [TestMethod]
+    public void SetValueForManifestInfoForGeneration_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        configSanitizer.SanitizeConfig(config);
+
+        mockAssemblyConfig.Verify();
+    }
+
+    [TestMethod]
+    public void NoValueForManifestInfoForGeneration_Succeeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        config.ManifestInfo.Value.Clear();
+        configSanitizer.SanitizeConfig(config);
+
+        mockAssemblyConfig.Verify();
     }
 
     [TestMethod]
@@ -165,6 +261,23 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
+    public void NoValueForManifestInfoForGeneration_SetsDefaultValue()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Generate;
+        config.ManifestInfo.Value.Clear();
+        mockAssemblyConfig.SetupGet(a => a.DefaultManifestInfoForGenerationAction).Returns(Constants.TestManifestInfo);
+
+        var sanitizedConfig = configSanitizer.SanitizeConfig(config);
+
+        Assert.IsNotNull(sanitizedConfig.ManifestInfo.Value);
+        Assert.AreEqual(1, sanitizedConfig.ManifestInfo.Value.Count);
+        Assert.AreEqual(Constants.TestManifestInfo, sanitizedConfig.ManifestInfo.Value.First());
+
+        mockAssemblyConfig.VerifyGet(a => a.DefaultManifestInfoForGenerationAction);
+    }
+
+    [TestMethod]
     public void ForGenerateActionIgnoresEmptyAlgorithmName_Succeeds()
     {
         var config = GetConfigurationBaseObject();
@@ -189,13 +302,12 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(UnsupportedHashAlgorithmException))]
     public void ForValidateBadAlgorithmNameGetsRealAlgorithmName_Throws()
     {
         var config = GetConfigurationBaseObject();
         config.HashAlgorithm.Value = new AlgorithmName("a", null);
         config.ManifestToolAction = ManifestToolActions.Validate;
-        configSanitizer.SanitizeConfig(config);
+        Assert.ThrowsException<UnsupportedHashAlgorithmException>(() => configSanitizer.SanitizeConfig(config));
     }
 
     [TestMethod]
@@ -250,7 +362,7 @@ public class ConfigSanitizerTests
     [TestMethod]
     public void NullDefaultNamespaceUriBaseShouldReturnExistingValue_Succeeds()
     {
-        mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns(string.Empty);
+        mockAssemblyConfig.SetupGet(a => a.DefaultSbomNamespaceBaseUri).Returns(string.Empty);
         var config = GetConfigurationBaseObject();
         config.NamespaceUriBase = new ConfigurationSetting<string>
         {
@@ -263,13 +375,13 @@ public class ConfigSanitizerTests
 
         Assert.AreEqual("http://base.uri", config.NamespaceUriBase.Value);
 
-        mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
+        mockAssemblyConfig.VerifyGet(a => a.DefaultSbomNamespaceBaseUri);
     }
 
     [TestMethod]
     public void UserProviderNamespaceUriBaseShouldReturnProvidedValue_Succeeds()
     {
-        mockAssemblyConfig.SetupGet(a => a.DefaultSBOMNamespaceBaseUri).Returns("http://internal.base.uri");
+        mockAssemblyConfig.SetupGet(a => a.DefaultSbomNamespaceBaseUri).Returns("http://internal.base.uri");
         var providedNamespaceValue = "http://base.uri";
         var config = GetConfigurationBaseObject();
         config.NamespaceUriBase = new ConfigurationSetting<string>
@@ -284,7 +396,7 @@ public class ConfigSanitizerTests
         Assert.AreEqual(providedNamespaceValue, config.NamespaceUriBase.Value);
         Assert.AreEqual(SettingSource.CommandLine, config.NamespaceUriBase.Source);
 
-        mockAssemblyConfig.VerifyGet(a => a.DefaultSBOMNamespaceBaseUri);
+        mockAssemblyConfig.VerifyGet(a => a.DefaultSbomNamespaceBaseUri);
     }
 
     [TestMethod]
@@ -318,7 +430,7 @@ public class ConfigSanitizerTests
         config.ManifestToolAction = ManifestToolActions.Validate;
         configSanitizer.SanitizeConfig(config);
 
-        Assert.AreEqual(actualOrg, config.PackageSupplier.Value);
+        Assert.AreEqual(config.PackageSupplier.Value, actualOrg);
     }
 
     [TestMethod]
@@ -350,5 +462,97 @@ public class ConfigSanitizerTests
             Assert.IsTrue(config.CatalogFilePath.Value.StartsWith($"/{nameof(config.CatalogFilePath)}/", StringComparison.Ordinal));
             Assert.IsTrue(config.TelemetryFilePath.Value.StartsWith($"/{nameof(config.TelemetryFilePath)}/", StringComparison.Ordinal));
         }
+    }
+
+    [TestMethod]
+    [DataRow(1, DisplayName = "Minimum value of 1")]
+    [DataRow(Common.Constants.MaxLicenseFetchTimeoutInSeconds, DisplayName = "Maximum Value of 86400")]
+    public void LicenseInformationTimeoutInSeconds_SanitizeMakesNoChanges(int value)
+    {
+        var config = GetConfigurationBaseObject();
+        config.LicenseInformationTimeoutInSeconds = new(value, SettingSource.CommandLine);
+
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(value, config.LicenseInformationTimeoutInSeconds.Value, "The value of LicenseInformationTimeoutInSeconds should remain the same through the sanitization process");
+    }
+
+    [TestMethod]
+    [DataRow(int.MinValue, Common.Constants.DefaultLicenseFetchTimeoutInSeconds, DisplayName = "Negative Value is changed to Default")]
+    [DataRow(0, Common.Constants.DefaultLicenseFetchTimeoutInSeconds, DisplayName = "Zero is changed to Default")]
+    [DataRow(Common.Constants.MaxLicenseFetchTimeoutInSeconds + 1, Common.Constants.MaxLicenseFetchTimeoutInSeconds, DisplayName = "Max Value + 1 is truncated")]
+    [DataRow(int.MaxValue, Common.Constants.MaxLicenseFetchTimeoutInSeconds, DisplayName = "int.MaxValue is truncated")]
+    public void LicenseInformationTimeoutInSeconds_SanitizeExceedsLimits(int value, int expected)
+    {
+        var config = GetConfigurationBaseObject();
+        config.LicenseInformationTimeoutInSeconds = new(value, SettingSource.CommandLine);
+
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(expected, config.LicenseInformationTimeoutInSeconds.Value, "The value of LicenseInformationTimeoutInSeconds should be sanitized to a valid value");
+    }
+
+    [TestMethod]
+    public void LicenseInformationTimeoutInSeconds_SanitizeNull()
+    {
+        var config = GetConfigurationBaseObject();
+        config.LicenseInformationTimeoutInSeconds = null;
+
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(
+            Common.Constants.DefaultLicenseFetchTimeoutInSeconds,
+            config.LicenseInformationTimeoutInSeconds.Value,
+            $"The value of LicenseInformationTimeoutInSeconds should be set to {Common.Constants.DefaultLicenseFetchTimeoutInSeconds}s when null");
+
+        Assert.AreEqual(SettingSource.Default, config.LicenseInformationTimeoutInSeconds.Source, "The source of LicenseInformationTimeoutInSeconds should be set to Default when null");
+    }
+
+    [TestMethod]
+    [DataRow(false, "no artifactInfoMap exists")]
+    [DataRow(true, "empty artifactInfoMap exists")]
+    public void ArtifactMapInfo_InvalidCases_SanitizeThrowsException(bool specifyEmptyArtifactInfoMap, string description)
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Consolidate;
+
+        if (specifyEmptyArtifactInfoMap)
+        {
+            config.ArtifactInfoMap = new ConfigurationSetting<Dictionary<string, ArtifactInfo>>
+            {
+                Source = SettingSource.Default,
+                Value = new Dictionary<string, ArtifactInfo>(),
+            };
+        }
+
+        var e = Assert.ThrowsException<ValidationArgException>(() => configSanitizer.SanitizeConfig(config), $"Sanitizer should throw when {description}");
+        Assert.IsTrue(e.Message.Contains("ArtifactInfoMap"), $"Exception message should mention ArtifactMapInfo when {description}");
+    }
+
+    [TestMethod]
+    public void ArtifactMapInfo_ExistsWithValidData_Consolidate_SanitizeSucceeds()
+    {
+        var config = GetConfigurationBaseObject();
+        config.ManifestToolAction = ManifestToolActions.Consolidate;
+        var artifactInfoMap = new Dictionary<string, ArtifactInfo>
+        {
+            { "artifact1", new ArtifactInfo
+                {
+                    ExternalManifestDir = "externalManifestDir",
+                    IgnoreMissingFiles = true,
+                    SkipSigningCheck = false,
+                }
+            },
+            { "artifact2", new ArtifactInfo() },
+        };
+        config.ArtifactInfoMap = new ConfigurationSetting<Dictionary<string, ArtifactInfo>>
+        {
+            Source = SettingSource.Default,
+            Value = artifactInfoMap,
+        };
+
+        var sanitizedConfig = configSanitizer.SanitizeConfig(config);
+
+        Assert.AreSame(artifactInfoMap, sanitizedConfig.ArtifactInfoMap.Value, "ArtifactInfoMap should remain the same after sanitization");
     }
 }

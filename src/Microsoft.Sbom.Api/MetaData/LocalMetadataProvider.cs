@@ -22,7 +22,7 @@ public class LocalMetadataProvider : IMetadataProvider, IDefaultMetadataProvider
 
     private static readonly Lazy<string> Version = new Lazy<string>(() =>
     {
-        return typeof(LocalMetadataProvider).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
+        return typeof(LocalMetadataProvider).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
     });
 
     public string BuildEnvironmentName => BuildEnvironmentNameValue;
@@ -45,10 +45,10 @@ public class LocalMetadataProvider : IMetadataProvider, IDefaultMetadataProvider
 
             metadataDictionary = new Dictionary<MetadataKey, object>
             {
-                { MetadataKey.SBOMToolName, ProductName },
+                { MetadataKey.SbomToolName, ProductName },
 
                 // TODO get tool version from dll manifest.
-                { MetadataKey.SBOMToolVersion, Version.Value }
+                { MetadataKey.SbomToolVersion, Version.Value }
             };
 
             // Add the package name if available.

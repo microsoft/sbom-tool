@@ -1,12 +1,11 @@
 # SBOM Tool
 
-[![Build](https://github.com/microsoft/sbom-tool/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/microsoft/sbom-tool/actions/workflows/build.yml)
 ![GitHub all releases](https://img.shields.io/github/downloads/microsoft/sbom-tool/total)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/microsoft/sbom-tool?include_prereleases)
 
 ## Introduction
 
-The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 compatible SBOMs for any variety of artifacts. The tool uses the [Component Detection](https://github.com/microsoft/component-detection) libraries to detect components and the [ClearlyDefined](https://github.com/clearlydefined/clearlydefined) API to populate license information for these components.
+The SBOM tool is a highly scalable and enterprise ready tool to create SPDX 2.2 and SPDX 3.0 compatible SBOMs for any variety of artifacts. The tool uses the [Component Detection](https://github.com/microsoft/component-detection) libraries to detect components and the [ClearlyDefined](https://github.com/clearlydefined/clearlydefined) API to populate license information for these components.
 
 ## Table of Contents
 
@@ -100,25 +99,30 @@ sbom-tool generate -b <drop path> -bc <build components path> -pn <package name>
 
 The drop path is the folder where all the files to be shipped are located. All these files will be hashed and added to the files section of the SBOM. The build components path is usually your source folder, tool will scan this folder to search for project files like *.csproj or package.json to see what components were used to build the package. Tool uses [component-detection](https://github.com/microsoft/component-detection) to scan for components and dependencies, visit its Github page to get more information about supported components. The package name and version represent the package the SBOM is describing.
 
-Each SBOM has a unique namespace that uniquely identifies the SBOM, we generate a unique identifier for the namespace field inside the SBOM, however we need a base URI that would be common for your entire organization. For example, a sample value for the `-nsb` parameter could be `https://companyName.com/teamName`, then the generator will create the namespace that would look like `https://companyName.com/teamName/<packageName>/<packageVersion>/<new-guid>`. Read more about the document namespace field [here](https://spdx.github.io/spdx-spec/v2.2.2/document-creation-information/#65-spdx-document-namespace-field).
+Each SBOM has a unique namespace that uniquely identifies the SBOM, we generate a unique identifier for the namespace field inside the SBOM, however we need a base URI that would be common for your entire organization. For example, a sample value for the `-nsb` parameter could be `https://companyName.com/teamName`, then the generator will create the namespace that would look like `https://companyName.com/teamName/<packageName>/<packageVersion>/<new-guid>`. Read more about the document namespace field [for SPDX 2.2](https://spdx.github.io/spdx-spec/v2.2.2/document-creation-information/#65-spdx-document-namespace-field) and [for SPDX 3.0 where it is part of namespaceMap](https://spdx.github.io/spdx-spec/v3.0.1/model/Core/Classes/SpdxDocument/).
+
+Generation defaults to using SPDX 2.2. However you can modify the command to generate an SPDX 3.0 SBOM by adding the `-mi` argument with the value `SPDX:3.0` like below:
+```
+sbom-tool generate -b <drop path> -bc <build components path> -pn <package name> -pv <package version> -ps <package supplier> -nsb <namespace uri base> -mi SPDX:3.0
+```
 
 A more detailed list of available CLI arguments for the tool can be found [here](docs/sbom-tool-arguments.md)
 
 ### SBOM Validation
 
-With an SBOM file in hand, use the tool to validate the output file with the command:
+With an SBOM file in hand, use the tool to validate the output file with either command depending on the SPDX version:
 
 ```
 sbom-tool validate -b <drop path> -o <output path> -mi SPDX:2.2
+sbom-tool validate -b <drop path> -o <output path> -mi SPDX:3.0
 ```
 
 This sample command provides the minimum mandatory arguments required to validate an SBOM:
-     `-b` should be the path same path used to generate the SBOM file.
-     In this scenario, the tool will default to searching for an SBOM at the `<drop path>\_manifest\spdx_2.2\manifest.spdx.json` path.
+     `-b` should be the same path used to generate the SBOM file.
+     In the first scenario above, the tool will default to searching for an SBOM at the `<drop path>\_manifest\spdx_2.2\manifest.spdx.json` path.
+     In the first scenario above, the tool will default to searching for an SBOM at the `<drop path>\_manifest\spdx_3.0\manifest.spdx.json` path.
      `-o` is the output path, including file name, where the tool should write the results to.
      `-mi` is the ManifestInfo, which provides the user's desired name and version of the manifest format.
-
-Currently only SPDX2.2 is supported.
 
 ### SBOM Redact
 
@@ -133,6 +137,8 @@ sbom-tool redact -sp <path to the SBOM to redact> -o <output path>
 ```
 
 This command will generate a mirrored set of SBOMs in the output directory, but with the file references removed. Note that the SBOM directory and output path arguments can not reference the same directory and the output path should point to an existing, empty directory.
+
+Currently we only support redacting SPDX 2.2 SBOMs.
 
 ## Integrating SBOM tool to your CI/CD pipelines
 

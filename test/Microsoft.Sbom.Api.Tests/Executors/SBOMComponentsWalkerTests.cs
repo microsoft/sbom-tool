@@ -69,7 +69,7 @@ public class SBOMComponentsWalkerTests
         };
 
         mockDetector.Setup(o => o.ScanAsync(It.IsAny<ScanSettings>())).Returns(Task.FromResult(scanResult));
-        var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object, mockPackageDetailsFactory.Object, mockLicenseInformationFetcher.Object);
+        var walker = new SbomComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object, mockPackageDetailsFactory.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
         var discoveredComponents = await packagesChannelReader.output.ReadAllAsync().ToListAsync();
@@ -79,7 +79,7 @@ public class SBOMComponentsWalkerTests
             Assert.Fail($"Caught exception: {error.Message}");
         }
 
-        Assert.IsTrue(scannedComponents.Count == discoveredComponents.Count);
+        Assert.AreEqual(discoveredComponents.Count, scannedComponents.Count);
         mockDetector.VerifyAll();
     }
 
@@ -114,7 +114,7 @@ public class SBOMComponentsWalkerTests
         };
 
         mockDetector.Setup(o => o.ScanAsync(It.IsAny<ScanSettings>())).Returns(Task.FromResult(scanResult));
-        var walker = new SBOMComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object, mockPackageDetailsFactory.Object, mockLicenseInformationFetcher.Object);
+        var walker = new SbomComponentsWalker(mockLogger.Object, mockDetector.Object, mockConfiguration.Object, mockSbomConfigs.Object, mockFileSystem.Object, mockPackageDetailsFactory.Object, mockLicenseInformationFetcher.Object);
         var packagesChannelReader = walker.GetComponents("root");
 
         var discoveredComponents = await packagesChannelReader.output.ReadAllAsync().ToListAsync();
@@ -124,7 +124,7 @@ public class SBOMComponentsWalkerTests
             Assert.Fail($"Caught exception: {error.Message}");
         }
 
-        Assert.IsTrue(scannedComponents.Where(c => c.Component is SpdxComponent).ToList().Count == discoveredComponents.Count);
+        Assert.AreEqual(discoveredComponents.Count, scannedComponents.Where(c => c.Component is SpdxComponent).ToList().Count);
         mockDetector.VerifyAll();
     }
 }

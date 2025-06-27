@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.ComponentDetection.Contracts.BcdeModels;
 using Microsoft.ComponentDetection.Orchestrator.Commands;
 using Serilog;
-using Spectre.Console.Cli;
 
 namespace Microsoft.Sbom.Api.Utils;
 
@@ -43,13 +42,13 @@ public class ComponentDetectorCachedExecutor
 
         var scanSettingsHash = args.ToString().GetHashCode();
 
-        if (results.ContainsKey(scanSettingsHash))
+        if (results.TryGetValue(scanSettingsHash, out var result))
         {
             log.Debug("Using cached CD scan result for the call with the same arguments");
-            return results[scanSettingsHash];
+            return result;
         }
 
-        var result = await detector.ScanAsync(args);
+        result = await detector.ScanAsync(args);
         results.TryAdd(scanSettingsHash, result);
         return result;
     }
