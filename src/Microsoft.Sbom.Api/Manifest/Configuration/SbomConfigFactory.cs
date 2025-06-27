@@ -47,23 +47,34 @@ public class SbomConfigFactory : ISbomConfigFactory
         string manifestPath,
         IMetadataBuilderFactory metadataBuilderFactory)
     {
-        var sbomDirPath = GetSbomDirPath(manifestPath, manifestInfo);
+        var sbomDirPath = GetSpdxDirPath(manifestPath, manifestInfo);
         var sbomFilePath = GetSbomFilePath(manifestPath, manifestInfo);
+        var shaFilePath = $"{sbomFilePath}.sha256";
+        var catFilePath = fileSystemUtils.JoinPaths(sbomDirPath, Constants.CatalogFileName);
+        var bsiFilePath = fileSystemUtils.JoinPaths(sbomDirPath, Constants.BsiFileName);
+        if (!fileSystemUtils.FileExists(shaFilePath) && !fileSystemUtils.FileExists(catFilePath) && !fileSystemUtils.FileExists(bsiFilePath))
+        {
+            // This is likely a CloudBuild SBOM, adjust paths accordingly
+            shaFilePath = null;
+            catFilePath = fileSystemUtils.JoinPaths(manifestPath, Constants.CatalogFileName);
+            bsiFilePath = fileSystemUtils.JoinPaths(manifestPath, Constants.BsiFileName);
+        }
+
         return Get(manifestInfo,
             manifestPath,
             sbomFilePath,
-            $"{sbomFilePath}.sha256",
-            fileSystemUtils.JoinPaths(sbomDirPath, Constants.CatalogFileName),
-            fileSystemUtils.JoinPaths(sbomDirPath, Constants.BsiFileName),
+            shaFilePath,
+            catFilePath,
+            bsiFilePath,
             new SbomPackageDetailsRecorder(),
             metadataBuilderFactory.Get(manifestInfo));
     }
 
-    public string GetSbomDirPath(string manifestDirPath, ManifestInfo manifestInfo) => fileSystemUtils.JoinPaths(
+    public string GetSpdxDirPath(string manifestDirPath, ManifestInfo manifestInfo) => fileSystemUtils.JoinPaths(
         manifestDirPath,
         $"{manifestInfo.Name.ToLower()}_{manifestInfo.Version.ToLower()}");
 
     public string GetSbomFilePath(string manifestDirPath, ManifestInfo manifestInfo) => fileSystemUtils.JoinPaths(
-        GetSbomDirPath(manifestDirPath, manifestInfo),
+        GetSpdxDirPath(manifestDirPath, manifestInfo),
         $"manifest.{manifestInfo.Name.ToLower()}.json");
 }

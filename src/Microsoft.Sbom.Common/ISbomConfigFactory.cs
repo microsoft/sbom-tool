@@ -29,7 +29,7 @@ public interface ISbomConfigFactory
         string manifestPath,
         IMetadataBuilderFactory metadataBuilderFactory);
 
-    public string GetSbomDirPath(string manifestDirPath, ManifestInfo manifestInfo);
+    public string GetSpdxDirPath(string manifestDirPath, ManifestInfo manifestInfo);
 
     public string GetSbomFilePath(string manifestDirPath, ManifestInfo manifestInfo);
 }
