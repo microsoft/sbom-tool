@@ -65,29 +65,25 @@ public class SPDXFormatDetectorTests
         var spdx30FilePathStub = FilePathStub + Spdx30VersionStub;
         mockSbomConfigFactory
             .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX22ManifestInfo))
-            .Returns(spdx22FilePathStub)
-            .Verifiable();
+            .Returns(spdx22FilePathStub);
         mockSbomConfigFactory
             .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX30ManifestInfo))
-            .Returns(spdx30FilePathStub)
-            .Verifiable();
+            .Returns(spdx30FilePathStub);
         mockFileSystemUtils
             .Setup(m => m.FileExists(It.IsAny<string>()))
             .Returns(false);
         mockFileSystemUtils
             .Setup(m => m.FileExists(FilePathStub + expectedVersion))
-            .Returns(true)
-            .Verifiable();
+            .Returns(true);
         mockFileSystemUtils
             .Setup(m => m.OpenRead(FilePathStub + expectedVersion))
-            .Returns(TestUtils.GenerateStreamFromString(testContent))
-            .Verifiable();
+            .Returns(TestUtils.GenerateStreamFromString(testContent));
 
         var result = testSubject.TryGetSbomsWithVersion(DirPathStub, out var detectedSboms);
         Assert.IsTrue(result);
         Assert.IsNotNull(detectedSboms);
         Assert.AreEqual(1, detectedSboms.Count());
-        Assert.IsTrue(detectedSboms.Any(value => value.manifestInfo.ToString().Equals(expectedVersion) && value.sbomFilePath.Equals(FilePathStub + expectedVersion)));
+        Assert.IsTrue(detectedSboms.Any(value => value.manifestInfo.ToString().Equals(expectedVersion) && value.sbomFilePath.Equals(FilePathStub + expectedVersion)), $"Files of format {expectedVersion} should have been detected");
     }
 
     [TestMethod]
@@ -97,35 +93,29 @@ public class SPDXFormatDetectorTests
         var spdx30FilePathStub = FilePathStub + Spdx30VersionStub;
         mockSbomConfigFactory
             .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX22ManifestInfo))
-            .Returns(spdx22FilePathStub)
-            .Verifiable();
+            .Returns(spdx22FilePathStub);
         mockSbomConfigFactory
             .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX30ManifestInfo))
-            .Returns(spdx30FilePathStub)
-            .Verifiable();
+            .Returns(spdx30FilePathStub);
         mockFileSystemUtils
             .Setup(m => m.FileExists(FilePathStub + Spdx22VersionStub))
-            .Returns(true)
-            .Verifiable();
+            .Returns(true);
         mockFileSystemUtils
             .Setup(m => m.FileExists(FilePathStub + Spdx30VersionStub))
-            .Returns(true)
-            .Verifiable();
+            .Returns(true);
         mockFileSystemUtils
             .Setup(m => m.OpenRead(FilePathStub + Spdx22VersionStub))
-            .Returns(TestUtils.GenerateStreamFromString(Spdx22ContentStub))
-            .Verifiable();
+            .Returns(TestUtils.GenerateStreamFromString(Spdx22ContentStub));
         mockFileSystemUtils
             .Setup(m => m.OpenRead(FilePathStub + Spdx30VersionStub))
-            .Returns(TestUtils.GenerateStreamFromString(Spdx30ContentStub))
-            .Verifiable();
+            .Returns(TestUtils.GenerateStreamFromString(Spdx30ContentStub));
 
         var result = testSubject.TryGetSbomsWithVersion(DirPathStub, out var detectedSboms);
         Assert.IsTrue(result);
         Assert.IsNotNull(detectedSboms);
         Assert.AreEqual(2, detectedSboms.Count());
-        Assert.IsTrue(detectedSboms.Any(value => value.manifestInfo.ToString().Equals(Spdx22VersionStub) && value.sbomFilePath.Equals(FilePathStub + Spdx22VersionStub)));
-        Assert.IsTrue(detectedSboms.Any(value => value.manifestInfo.ToString().Equals(Spdx30VersionStub) && value.sbomFilePath.Equals(FilePathStub + Spdx30VersionStub)));
+        Assert.IsTrue(detectedSboms.Any(value => value.manifestInfo.ToString().Equals(Spdx22VersionStub) && value.sbomFilePath.Equals(FilePathStub + Spdx22VersionStub)), "SPDX 2.2 files should have been detected");
+        Assert.IsTrue(detectedSboms.Any(value => value.manifestInfo.ToString().Equals(Spdx30VersionStub) && value.sbomFilePath.Equals(FilePathStub + Spdx30VersionStub)), "SPDX 3.0 files should have been detected");
     }
 
     [TestMethod]
@@ -135,20 +125,16 @@ public class SPDXFormatDetectorTests
         var spdx30FilePathStub = FilePathStub + Spdx30VersionStub;
         mockSbomConfigFactory
             .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX22ManifestInfo))
-            .Returns(spdx22FilePathStub)
-            .Verifiable();
+            .Returns(spdx22FilePathStub);
         mockSbomConfigFactory
             .Setup(m => m.GetSbomFilePath(DirPathStub, Api.Utils.Constants.SPDX30ManifestInfo))
-            .Returns(spdx30FilePathStub)
-            .Verifiable();
+            .Returns(spdx30FilePathStub);
         mockFileSystemUtils
             .Setup(m => m.FileExists(FilePathStub + Spdx22VersionStub))
-            .Returns(false)
-            .Verifiable();
+            .Returns(false);
         mockFileSystemUtils
             .Setup(m => m.FileExists(FilePathStub + Spdx30VersionStub))
-            .Returns(false)
-            .Verifiable();
+            .Returns(false);
 
         var result = testSubject.TryGetSbomsWithVersion(DirPathStub, out var detectedSboms);
         Assert.IsFalse(result);
@@ -163,8 +149,7 @@ public class SPDXFormatDetectorTests
     {
         mockFileSystemUtils
             .Setup(m => m.OpenRead(FilePathStub))
-            .Returns(TestUtils.GenerateStreamFromString(testContent))
-            .Verifiable();
+            .Returns(TestUtils.GenerateStreamFromString(testContent));
 
         var result = testSubject.TryDetectFormat(FilePathStub, out var manifestInfo);
         Assert.IsTrue(result);
@@ -188,8 +173,7 @@ public class SPDXFormatDetectorTests
     {
         mockFileSystemUtils
             .Setup(m => m.OpenRead(FilePathStub))
-            .Returns(TestUtils.GenerateStreamFromString(InvalidContentStub))
-            .Verifiable();
+            .Returns(TestUtils.GenerateStreamFromString(InvalidContentStub));
 
         var result = testSubject.TryDetectFormat(FilePathStub, out var manifestInfo);
         Assert.IsFalse(result);

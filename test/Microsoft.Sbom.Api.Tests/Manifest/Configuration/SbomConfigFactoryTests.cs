@@ -50,8 +50,7 @@ public class SbomConfigFactoryTests
     {
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(manifestDirPathStub, manifestInfoStringStub))
-            .Returns(spdxDirPathStub)
-            .Verifiable();
+            .Returns(spdxDirPathStub);
 
         var result = testSubject.GetSpdxDirPath(manifestDirPathStub, manifestInfoStub);
         Assert.AreEqual(spdxDirPathStub, result);
@@ -62,12 +61,10 @@ public class SbomConfigFactoryTests
     {
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(manifestDirPathStub, manifestInfoStringStub))
-            .Returns(spdxDirPathStub)
-            .Verifiable();
+            .Returns(spdxDirPathStub);
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(spdxDirPathStub, manifestFileNameStub))
-            .Returns(sbomFilePathStub)
-            .Verifiable();
+            .Returns(sbomFilePathStub);
 
         var result = testSubject.GetSbomFilePath(manifestDirPathStub, manifestInfoStub);
         Assert.AreEqual(sbomFilePathStub, result);
@@ -78,25 +75,20 @@ public class SbomConfigFactoryTests
     {
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(manifestDirPathStub, manifestInfoStringStub))
-            .Returns(spdxDirPathStub)
-            .Verifiable();
+            .Returns(spdxDirPathStub);
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(spdxDirPathStub, manifestFileNameStub))
-            .Returns(sbomFilePathStub)
-            .Verifiable();
+            .Returns(sbomFilePathStub);
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(spdxDirPathStub, Api.Utils.Constants.CatalogFileName))
-            .Returns(catFilePathStub)
-            .Verifiable();
+            .Returns(catFilePathStub);
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(spdxDirPathStub, Api.Utils.Constants.BsiFileName))
-            .Returns(bsiFilePathStub)
-            .Verifiable();
+            .Returns(bsiFilePathStub);
         fileSystemUtilsMock
             .Setup(m => m.FileExists($"{sbomFilePathStub}.sha256"))
-            .Returns(true)
-            .Verifiable();
-        metadataBuilderFactoryMock.Setup(m => m.Get(manifestInfoStub)).Returns(metadataBuilderStub).Verifiable();
+            .Returns(true);
+        metadataBuilderFactoryMock.Setup(m => m.Get(manifestInfoStub)).Returns(metadataBuilderStub);
 
         var result = testSubject.Get(manifestInfoStub, manifestDirPathStub, metadataBuilderFactoryMock.Object);
         Assert.AreEqual(manifestInfoStub, result.ManifestInfo);
@@ -112,41 +104,32 @@ public class SbomConfigFactoryTests
     {
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(manifestDirPathStub, manifestInfoStringStub))
-            .Returns(spdxDirPathStub)
-            .Verifiable();
+            .Returns(spdxDirPathStub);
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(spdxDirPathStub, manifestFileNameStub))
-            .Returns(sbomFilePathStub)
-            .Verifiable();
+            .Returns(sbomFilePathStub);
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(spdxDirPathStub, Api.Utils.Constants.CatalogFileName))
-            .Returns(catFilePathStub)
-            .Verifiable();
+            .Returns(catFilePathStub);
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(spdxDirPathStub, Api.Utils.Constants.BsiFileName))
-            .Returns(bsiFilePathStub)
-            .Verifiable();
+            .Returns(bsiFilePathStub);
         fileSystemUtilsMock
             .Setup(m => m.FileExists($"{sbomFilePathStub}.sha256"))
-            .Returns(false)
-            .Verifiable();
+            .Returns(false);
         fileSystemUtilsMock
             .Setup(m => m.FileExists(catFilePathStub))
-            .Returns(false)
-            .Verifiable();
+            .Returns(false);
         fileSystemUtilsMock
             .Setup(m => m.FileExists(bsiFilePathStub))
-            .Returns(false)
-            .Verifiable();
+            .Returns(false);
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(manifestDirPathStub, Api.Utils.Constants.CatalogFileName))
-            .Returns(cbCatFilePathStub)
-            .Verifiable();
+            .Returns(cbCatFilePathStub);
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(manifestDirPathStub, Api.Utils.Constants.BsiFileName))
-            .Returns(cbBsiFilePathStub)
-            .Verifiable();
-        metadataBuilderFactoryMock.Setup(m => m.Get(manifestInfoStub)).Returns(metadataBuilderStub).Verifiable();
+            .Returns(cbBsiFilePathStub);
+        metadataBuilderFactoryMock.Setup(m => m.Get(manifestInfoStub)).Returns(metadataBuilderStub);
 
         var result = testSubject.Get(manifestInfoStub, manifestDirPathStub, metadataBuilderFactoryMock.Object);
         Assert.AreEqual(manifestInfoStub, result.ManifestInfo);

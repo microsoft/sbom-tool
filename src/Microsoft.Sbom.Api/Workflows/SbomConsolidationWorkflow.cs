@@ -42,19 +42,23 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     /// <inheritdoc/>
     public virtual async Task<bool> RunAsync()
     {
-        var sbomsToValidate = ArtifactInfoMap.Select(artifact => GetSbomsToValidate(artifact.Key, artifact.Value))
+        var sbomsToConsolidate = ArtifactInfoMap.Select(artifact => GetSbomsToConsolidate(artifact.Key, artifact.Value))
             .Where(l => l != null)
             .SelectMany(l => l);
-        if (sbomsToValidate == null || !sbomsToValidate.Any())
+        if (sbomsToConsolidate == null || !sbomsToConsolidate.Any())
         {
             logger.Information($"No valid SBOMs detected.");
             return false;
         }
+        else
+        {
+            logger.Information($"Running consolidation on the following SBOMs:\n{string.Join('\n', sbomsToConsolidate.Select(s => s.config.ManifestJsonFilePath))}");
+        }
 
-        return await ValidateSourceSbomsAsync(sbomsToValidate) && await GeneratedConsolidatedSbom();
+        return await ValidateSourceSbomsAsync(sbomsToConsolidate) && await GeneratedConsolidatedSbom();
     }
 
-    private IEnumerable<(ISbomConfig config, ArtifactInfo info)> GetSbomsToValidate(string artifactPath, ArtifactInfo info)
+    private IEnumerable<(ISbomConfig config, ArtifactInfo info)> GetSbomsToConsolidate(string artifactPath, ArtifactInfo info)
     {
         var manifestDirPath = info?.ExternalManifestDir ?? fileSystemUtils.JoinPaths(artifactPath, Constants.ManifestFolder);
         var isValidSpdxFormat = sPDXFormatDetector.TryGetSbomsWithVersion(manifestDirPath, out var detectedSboms);

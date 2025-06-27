@@ -70,8 +70,7 @@ public class SbomConsolidationWorkflowTests
     {
         configurationMock
             .Setup(m => m.ArtifactInfoMap)
-            .Returns(new ConfigurationSetting<Dictionary<string, ArtifactInfo>>(new Dictionary<string, ArtifactInfo>()))
-            .Verifiable();
+            .Returns(new ConfigurationSetting<Dictionary<string, ArtifactInfo>>(new Dictionary<string, ArtifactInfo>()));
 
         var result = await testSubject.RunAsync();
         Assert.IsFalse(result);
@@ -82,23 +81,21 @@ public class SbomConsolidationWorkflowTests
     {
         configurationMock
             .Setup(m => m.ArtifactInfoMap)
-            .Returns(new ConfigurationSetting<Dictionary<string, ArtifactInfo>>(artifactInfoMapStub))
-            .Verifiable();
+            .Returns(new ConfigurationSetting<Dictionary<string, ArtifactInfo>>(artifactInfoMapStub));
+
         foreach (var (key, artifactInfo) in artifactInfoMapStub)
         {
             if (artifactInfo.ExternalManifestDir == null)
             {
                 fileSystemUtilsMock
                     .Setup(m => m.JoinPaths(key, Api.Utils.Constants.ManifestFolder))
-                    .Returns(key)
-                    .Verifiable();
+                    .Returns(key);
             }
 
             IList<(string, ManifestInfo)> detectedSboms;
             sPDXFormatDetectorMock
                 .Setup(m => m.TryGetSbomsWithVersion(artifactInfo.ExternalManifestDir ?? key, out detectedSboms))
-                .Returns(false)
-                .Verifiable();
+                .Returns(false);
         }
 
         var result = await testSubject.RunAsync();
@@ -111,12 +108,9 @@ public class SbomConsolidationWorkflowTests
     public async Task RunAsync_MinimalHappyPath_CallsGenerationWorkflow(bool expectedResult)
     {
         SetUpSbomsToValidate();
-
         sbomGenerationWorkflowMock.Setup(x => x.RunAsync())
             .ReturnsAsync(expectedResult);
-
         var result = await testSubject.RunAsync();
-
         Assert.AreEqual(expectedResult, result);
     }
 
@@ -124,16 +118,15 @@ public class SbomConsolidationWorkflowTests
     {
         configurationMock
             .Setup(m => m.ArtifactInfoMap)
-            .Returns(new ConfigurationSetting<Dictionary<string, ArtifactInfo>>(artifactInfoMapStub))
-            .Verifiable();
+            .Returns(new ConfigurationSetting<Dictionary<string, ArtifactInfo>>(artifactInfoMapStub));
+
         foreach (var (key, artifactInfo) in artifactInfoMapStub)
         {
             if (artifactInfo.ExternalManifestDir == null)
             {
                 fileSystemUtilsMock
                     .Setup(m => m.JoinPaths(key, Api.Utils.Constants.ManifestFolder))
-                    .Returns(key)
-                    .Verifiable();
+                    .Returns(key);
             }
 
             var manifestDirPath = artifactInfo.ExternalManifestDir ?? key;
@@ -144,16 +137,13 @@ public class SbomConsolidationWorkflowTests
             };
             sPDXFormatDetectorMock
                 .Setup(m => m.TryGetSbomsWithVersion(manifestDirPath, out res))
-                .Returns(true)
-                .Verifiable();
+                .Returns(true);
             sbomConfigFactoryMock
                 .Setup(m => m.Get(Api.Utils.Constants.SPDX22ManifestInfo, manifestDirPath, metadataBuilderFactoryMock.Object))
-                .Returns(new SbomConfig(fileSystemUtilsMock.Object) { ManifestInfo = Api.Utils.Constants.SPDX22ManifestInfo, ManifestJsonDirPath = manifestDirPath })
-                .Verifiable();
+                .Returns(new SbomConfig(fileSystemUtilsMock.Object) { ManifestInfo = Api.Utils.Constants.SPDX22ManifestInfo, ManifestJsonDirPath = manifestDirPath });
             sbomConfigFactoryMock
                 .Setup(m => m.Get(Api.Utils.Constants.SPDX30ManifestInfo, manifestDirPath, metadataBuilderFactoryMock.Object))
-                .Returns(new SbomConfig(fileSystemUtilsMock.Object) { ManifestInfo = Api.Utils.Constants.SPDX30ManifestInfo, ManifestJsonDirPath = manifestDirPath })
-                .Verifiable();
+                .Returns(new SbomConfig(fileSystemUtilsMock.Object) { ManifestInfo = Api.Utils.Constants.SPDX30ManifestInfo, ManifestJsonDirPath = manifestDirPath });
         }
     }
 }
