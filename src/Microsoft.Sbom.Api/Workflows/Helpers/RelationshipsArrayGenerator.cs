@@ -104,7 +104,7 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                         jsonDocumentCollection.AddJsonDocument(sbomConfig.JsonSerializer, jsonDoc);
                     }
 
-                    log.Debug($"Wrote {count} relationship elements in the SBOM.");
+                    log.Debug("Wrote {Count} relationship elements in the SBOM.", count);
                 }
             }
 

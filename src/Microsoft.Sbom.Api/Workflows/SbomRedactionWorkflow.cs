@@ -52,7 +52,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
             IValidatedSbom validatedSbom = null;
             try
             {
-                log.Information($"Validating SBOM {sbomPath}");
+                log.Information("Validating SBOM {SbomPath}", sbomPath);
                 validatedSbom = validatedSbomFactory.CreateValidatedSbom(sbomPath);
                 var validationDetails = await validatedSbom.GetValidationResults();
                 if (validationDetails.Status != FormatValidationStatus.Valid)
@@ -61,7 +61,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
                 }
                 else
                 {
-                    log.Information($"Redacting SBOM {sbomPath}");
+                    log.Information("Redacting SBOM {Path}", sbomPath);
                     var outputPath = GetOutputPath(sbomPath);
                     var redactedSpdx = await this.sbomRedactor.RedactSbomAsync(validatedSbom);
                     using (var outStream = fileSystemUtils.OpenWrite(outputPath))
@@ -69,7 +69,7 @@ public class SbomRedactionWorkflow : IWorkflow<SbomRedactionWorkflow>
                         await JsonSerializer.SerializeAsync(outStream, redactedSpdx);
                     }
 
-                    log.Information($"Redacted SBOM {sbomPath} saved to {outputPath}");
+                    log.Information("Redacted SBOM {SbomPath} saved to {OutputPath}", sbomPath, outputPath);
                 }
             }
             finally
