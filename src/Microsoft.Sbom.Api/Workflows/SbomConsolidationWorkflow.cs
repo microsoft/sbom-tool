@@ -121,10 +121,10 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         var contents = new List<MergeableContent>();
 
         // Incorporate the source SBOMs in the consolidated SBOM generation workflow.
-        foreach (var sourceSbom in consolidationSources)
+        foreach (var consolidationSource in consolidationSources)
         {
-            var sbomConfig = sourceSbom.SbomConfig;
-            var sbomPath = sourceSbom.SbomPath;
+            var sbomConfig = consolidationSource.SbomConfig;
+            var sbomPath = consolidationSource.SbomPath;
             if (!contentProviders.TryGetValue(sbomConfig.ManifestInfo, out var contentProvider))
             {
                 logger.Error("No content provider found for manifest info: {ManifestInfo}", sbomConfig.ManifestInfo);
