@@ -24,4 +24,9 @@ internal class ConsolidationSource
         SbomConfig = sbomConfig ?? throw new ArgumentNullException(nameof(sbomConfig));
         SbomPath = sbomPath ?? throw new ArgumentNullException(nameof(sbomPath));
     }
+
+    public override string ToString()
+    {
+        return $"ConsolidationSource: {ArtifactInfo}, ManifestInfo: {SbomConfig.ManifestInfo}, SbomPath: {SbomPath}";
+    }
 }
