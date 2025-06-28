@@ -66,20 +66,20 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     /// <inheritdoc/>
     public virtual async Task<bool> RunAsync()
     {
-        var sbomsToConsolidate = ArtifactInfoMap.Select(artifact => GetSbomsToConsolidate(artifact.Key, artifact.Value))
+        var consolidationSources = ArtifactInfoMap.Select(artifact => GetSbomsToConsolidate(artifact.Key, artifact.Value))
             .Where(l => l != null)
             .SelectMany(l => l);
-        if (sbomsToConsolidate == null || !sbomsToConsolidate.Any())
+        if (consolidationSources == null || !consolidationSources.Any())
         {
             logger.Information($"No valid SBOMs detected.");
             return false;
         }
         else
         {
-            logger.Information($"Running consolidation on the following SBOMs:\n{string.Join('\n', sbomsToConsolidate.Select(s => s.SbomConfig.ManifestJsonFilePath))}");
+            logger.Information($"Running consolidation on the following SBOMs:\n{string.Join('\n', consolidationSources.Select(s => s.SbomConfig.ManifestJsonFilePath))}");
         }
 
-        return await ValidateSourceSbomsAsync(sbomsToConsolidate) && await GenerateConsolidatedSbom(sbomsToConsolidate);
+        return await ValidateSourceSbomsAsync(consolidationSources) && await GenerateConsolidatedSbom(consolidationSources);
     }
 
     private IEnumerable<ConsolidationSource> GetSbomsToConsolidate(string artifactPath, ArtifactInfo info)
@@ -103,9 +103,9 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         return results.All(b => b);
     }
 
-    private async Task<bool> GenerateConsolidatedSbom(IEnumerable<ConsolidationSource> sbomsToValidate)
+    private async Task<bool> GenerateConsolidatedSbom(IEnumerable<ConsolidationSource> consolidationSources)
     {
-        if (!TryGetMergeableContent(sbomsToValidate, out var mergeableContents))
+        if (!TryGetMergeableContent(consolidationSources, out var mergeableContents))
         {
             return false;
         }
@@ -114,14 +114,14 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         return await sbomGenerationWorkflow.RunAsync().ConfigureAwait(false);
     }
 
-    private bool TryGetMergeableContent(IEnumerable<ConsolidationSource> sbomsToValidate, out IEnumerable<MergeableContent> mergeableContents)
+    private bool TryGetMergeableContent(IEnumerable<ConsolidationSource> consolidationSources, out IEnumerable<MergeableContent> mergeableContents)
     {
         mergeableContents = null; // Until proven otherwise
 
         var contents = new List<MergeableContent>();
 
         // Incorporate the source SBOMs in the consolidated SBOM generation workflow.
-        foreach (var sourceSbom in sbomsToValidate)
+        foreach (var sourceSbom in consolidationSources)
         {
             var sbomConfig = sourceSbom.SbomConfig;
             var sbomPath = sourceSbom.SbomPath;
