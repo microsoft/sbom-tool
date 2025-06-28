@@ -127,7 +127,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             var sbomPath = sourceSbom.SbomPath;
             if (!contentProviders.TryGetValue(sbomConfig.ManifestInfo, out var contentProvider))
             {
-                logger.Error("No content provider found for manifest info: {ManifestInfo}", sbomConfig);
+                logger.Error("No content provider found for manifest info: {ManifestInfo}", sbomConfig.ManifestInfo);
                 return false;
             }
 
