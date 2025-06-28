@@ -22,7 +22,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     private readonly ILogger logger;
     private readonly IConfiguration configuration;
     private readonly ISbomConfigFactory sbomConfigFactory;
-    private readonly ISPDXFormatDetector sPDXFormatDetector;
+    private readonly ISPDXFormatDetector spdxFormatDetector;
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IMetadataBuilderFactory metadataBuilderFactory;
     private readonly IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow;
@@ -35,7 +35,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         IConfiguration configuration,
         IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow,
         ISbomConfigFactory sbomConfigFactory,
-        ISPDXFormatDetector sPDXFormatDetector,
+        ISPDXFormatDetector spdxFormatDetector,
         IFileSystemUtils fileSystemUtils,
         IMetadataBuilderFactory metadataBuilderFactory,
         IEnumerable<IMergeableContentProvider> mergeableContentProviders)
@@ -43,7 +43,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.sbomConfigFactory = sbomConfigFactory ?? throw new ArgumentNullException(nameof(sbomConfigFactory));
-        this.sPDXFormatDetector = sPDXFormatDetector ?? throw new ArgumentNullException(nameof(sPDXFormatDetector));
+        this.spdxFormatDetector = spdxFormatDetector ?? throw new ArgumentNullException(nameof(spdxFormatDetector));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         this.metadataBuilderFactory = metadataBuilderFactory ?? throw new ArgumentNullException(nameof(metadataBuilderFactory));
         this.sbomGenerationWorkflow = sbomGenerationWorkflow ?? throw new ArgumentNullException(nameof(sbomGenerationWorkflow));
@@ -85,7 +85,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     private IEnumerable<ConsolidationSource> GetSbomsToConsolidate(string artifactPath, ArtifactInfo info)
     {
         var manifestDirPath = info?.ExternalManifestDir ?? fileSystemUtils.JoinPaths(artifactPath, Constants.ManifestFolder);
-        var isValidSpdxFormat = sPDXFormatDetector.TryGetSbomsWithVersion(manifestDirPath, out var detectedSboms);
+        var isValidSpdxFormat = spdxFormatDetector.TryGetSbomsWithVersion(manifestDirPath, out var detectedSboms);
         if (!isValidSpdxFormat)
         {
             logger.Information($"No SBOMs located in {manifestDirPath} of a recognized SPDX format.");

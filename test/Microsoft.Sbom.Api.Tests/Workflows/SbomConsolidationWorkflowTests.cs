@@ -30,7 +30,7 @@ public class SbomConsolidationWorkflowTests
     private Mock<IMergeableContentProvider> mergeableContent22ProviderMock;
     private Mock<IMergeableContentProvider> mergeableContent30ProviderMock;
     private Mock<ISbomConfigFactory> sbomConfigFactoryMock;
-    private Mock<ISPDXFormatDetector> sPDXFormatDetectorMock;
+    private Mock<ISPDXFormatDetector> spdxFormatDetectorMock;
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
     private Mock<IMetadataBuilderFactory> metadataBuilderFactoryMock;
     private SbomConsolidationWorkflow testSubject;
@@ -48,7 +48,7 @@ public class SbomConsolidationWorkflowTests
         configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
         sbomGenerationWorkflowMock = new Mock<IWorkflow<SbomGenerationWorkflow>>(MockBehavior.Strict);
         sbomConfigFactoryMock = new Mock<ISbomConfigFactory>(MockBehavior.Strict);
-        sPDXFormatDetectorMock = new Mock<ISPDXFormatDetector>(MockBehavior.Strict);
+        spdxFormatDetectorMock = new Mock<ISPDXFormatDetector>(MockBehavior.Strict);
         fileSystemUtilsMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
         metadataBuilderFactoryMock = new Mock<IMetadataBuilderFactory>(MockBehavior.Strict);
         mergeableContent22ProviderMock = new Mock<IMergeableContentProvider>(MockBehavior.Strict);
@@ -64,7 +64,7 @@ public class SbomConsolidationWorkflowTests
             configurationMock.Object,
             sbomGenerationWorkflowMock.Object,
             sbomConfigFactoryMock.Object,
-            sPDXFormatDetectorMock.Object,
+            spdxFormatDetectorMock.Object,
             fileSystemUtilsMock.Object,
             metadataBuilderFactoryMock.Object,
             new[] { mergeableContent22ProviderMock.Object, mergeableContent30ProviderMock.Object });
@@ -77,7 +77,7 @@ public class SbomConsolidationWorkflowTests
         configurationMock.VerifyAll();
         sbomGenerationWorkflowMock.VerifyAll();
         sbomConfigFactoryMock.VerifyAll();
-        sPDXFormatDetectorMock.VerifyAll();
+        spdxFormatDetectorMock.VerifyAll();
         fileSystemUtilsMock.VerifyAll();
         metadataBuilderFactoryMock.VerifyAll();
         mergeableContent22ProviderMock.VerifyAll();
@@ -111,7 +111,7 @@ public class SbomConsolidationWorkflowTests
             }
 
             IList<(string, ManifestInfo)> detectedSboms;
-            sPDXFormatDetectorMock
+            spdxFormatDetectorMock
                 .Setup(m => m.TryGetSbomsWithVersion(artifactInfo.ExternalManifestDir ?? key, out detectedSboms))
                 .Returns(false);
         }
@@ -162,7 +162,7 @@ public class SbomConsolidationWorkflowTests
                 (manifestDirPath, Constants.SPDX22ManifestInfo),
                 (manifestDirPath, Constants.SPDX30ManifestInfo)
             };
-            sPDXFormatDetectorMock
+            spdxFormatDetectorMock
                 .Setup(m => m.TryGetSbomsWithVersion(manifestDirPath, out res))
                 .Returns(true);
             sbomConfigFactoryMock
