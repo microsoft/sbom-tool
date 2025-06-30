@@ -28,7 +28,6 @@ public class EnumeratorChannel
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="enumerator"></param>
-    /// <returns></returns>
     public (ChannelReader<T>, ChannelReader<FileValidationResult>) Enumerate<T>(Func<IEnumerable<T>> enumerator)
     {
         var output = Channel.CreateUnbounded<T>();

@@ -52,7 +52,6 @@ public static class InternalMetadataProviderIdentityExtensions
     /// Gets a list of file ids that are included in this package.
     /// </summary>
     /// <param name="internalMetadataProvider"></param>
-    /// <returns></returns>
     public static List<string> GetPackageFilesList(this IInternalMetadataProvider internalMetadataProvider, ManifestInfo manifestInfo)
     {
         if (internalMetadataProvider is null)

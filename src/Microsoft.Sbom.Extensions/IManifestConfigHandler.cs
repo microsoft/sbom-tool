@@ -14,6 +14,5 @@ public interface IManifestConfigHandler
     /// If the SBOM format is supported by the current implementation, populates the manifestConfig
     /// object and returns true, or else returns false.
     /// </summary>
-    /// <returns></returns>
     public bool TryGetManifestConfig(out ISbomConfig sbomConfig);
 }
