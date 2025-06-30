@@ -18,14 +18,12 @@ public interface ISbomParser
     /// <summary>
     /// Advance the parser to the next available state.
     /// </summary>
-    /// <returns></returns>
     public ParserStateResult? Next();
 
     /// <summary>
     /// Returns a <see cref="SbomMetadata"/> object using the metadata defined in the
     /// current SBOM.
     /// </summary>
-    /// <returns></returns>
     public SpdxMetadata GetMetadata();
 
     /// <summary>

@@ -14,7 +14,6 @@ public interface ILicenseInformationFetcher
     /// Converts the list of scanned components to a list of strings that can be used to call the ClearlyDefined API.
     /// </summary>
     /// <param name="scannedComponents"> An IEnumerable of ScannedComponents given by the Component Detection libraries after a scan is completed.</param>
-    /// <returns></returns>
     public IList<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents);
 
     /// <summary>
@@ -22,20 +21,17 @@ public interface ILicenseInformationFetcher
     /// </summary>
     /// <param name="listOfComponentsForApi"> A list of strings formatted into a list of strings that can be used to call the batch ClearlyDefined API.</param>
     /// <param name="timeoutInSeconds">Timeout in seconds to use when making web requests. Caller owns sanitizing this value</param>
-    /// <returns></returns>
     public Task<IList<string>> FetchLicenseInformationAsync(IList<string> listOfComponentsForApi, int timeoutInSeconds);
 
     /// <summary>
     /// Gets the dictionary of licenses that were fetched from the ClearlyDefined API.
     /// </summary>
-    /// <returns></returns>
     public ConcurrentDictionary<string, string> GetLicenseDictionary();
 
     /// <summary>
     /// Converts the response from the ClearlyDefined API to a dictionary of licenses.
     /// </summary>
     /// <param name="httpResponseContent">The response from a ClearlyDefined API request.</param>
-    /// <returns></returns>
     public IDictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent);
 
     /// <summary>
@@ -49,6 +45,5 @@ public interface ILicenseInformationFetcher
     /// Gets the license from the licenseDictionary.
     /// </summary>
     /// <param name="key">The "name@version" of a component.</param>
-    /// <returns></returns>
     public string GetFromLicenseDictionary(string key);
 }

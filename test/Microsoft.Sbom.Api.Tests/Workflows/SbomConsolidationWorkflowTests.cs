@@ -20,7 +20,15 @@ namespace Microsoft.Sbom.Api.Workflows.Tests;
 [TestClass]
 public class SbomConsolidationWorkflowTests
 {
-    private const string SPDX22FilePath = "rootpath/_manifest/spdx_2.2/manifest.spdx.json";
+    private const string ArtifactKey1 = "sbom-key-1";
+    private const string ArtifactKey2 = "sbom-key-2";
+    private const string ExternalManifestDir2 = "external-manifest-dir-2";
+    private const string RelativePathToSpdx22Manifest = "/spdx_2.2/manifest.json";
+    private const string RelativePathToSpdx30Manifest = "/spdx_3.0/manifest.json";
+    private const string PathToSpdx22ManifestForArtifactKey1 = ArtifactKey1 + RelativePathToSpdx22Manifest;
+    private const string PathToSpdx30ManifestForArtifactKey1 = ArtifactKey1 + RelativePathToSpdx30Manifest;
+    private const string PathToSpdx22ManifestForArtifactKey2 = ExternalManifestDir2 + RelativePathToSpdx22Manifest;
+    private const string PathToSpdx30ManifestForArtifactKey2 = ExternalManifestDir2 + RelativePathToSpdx30Manifest;
 
     private Mock<ILogger> loggerMock;
     private Mock<IConfiguration> configurationMock;
@@ -28,16 +36,17 @@ public class SbomConsolidationWorkflowTests
     private Mock<ISbomValidationWorkflowFactory> sbomValidationWorkflowFactoryMock;
     private Mock<IWorkflow<SbomParserBasedValidationWorkflow>> sbomValidationWorkflowMock;
     private Mock<IMergeableContentProvider> mergeableContent22ProviderMock;
+    private Mock<IMergeableContentProvider> mergeableContent30ProviderMock;
     private Mock<ISbomConfigFactory> sbomConfigFactoryMock;
-    private Mock<ISPDXFormatDetector> sPDXFormatDetectorMock;
+    private Mock<ISPDXFormatDetector> spdxFormatDetectorMock;
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
     private Mock<IMetadataBuilderFactory> metadataBuilderFactoryMock;
     private SbomConsolidationWorkflow testSubject;
 
     private Dictionary<string, ArtifactInfo> artifactInfoMapStub = new Dictionary<string, ArtifactInfo>()
     {
-        { "sbom-key-1", new ArtifactInfo() { } },
-        { "sbom-key-2", new ArtifactInfo() { ExternalManifestDir = "external-manifest-dir-2" } },
+        { ArtifactKey1, new ArtifactInfo() { } },
+        { ArtifactKey2, new ArtifactInfo() { ExternalManifestDir = ExternalManifestDir2 } },
     };
 
     [TestInitialize]
@@ -49,13 +58,16 @@ public class SbomConsolidationWorkflowTests
         sbomValidationWorkflowFactoryMock = new Mock<ISbomValidationWorkflowFactory>(MockBehavior.Strict);
         sbomValidationWorkflowMock = new Mock<IWorkflow<SbomParserBasedValidationWorkflow>>(MockBehavior.Strict);
         sbomConfigFactoryMock = new Mock<ISbomConfigFactory>(MockBehavior.Strict);
-        sPDXFormatDetectorMock = new Mock<ISPDXFormatDetector>(MockBehavior.Strict);
+        spdxFormatDetectorMock = new Mock<ISPDXFormatDetector>(MockBehavior.Strict);
         fileSystemUtilsMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
         metadataBuilderFactoryMock = new Mock<IMetadataBuilderFactory>(MockBehavior.Strict);
         mergeableContent22ProviderMock = new Mock<IMergeableContentProvider>(MockBehavior.Strict);
+        mergeableContent30ProviderMock = new Mock<IMergeableContentProvider>(MockBehavior.Strict);
 
         mergeableContent22ProviderMock.Setup(m => m.ManifestInfo)
             .Returns(Constants.SPDX22ManifestInfo);
+        mergeableContent30ProviderMock.Setup(m => m.ManifestInfo)
+            .Returns(Constants.SPDX30ManifestInfo);
 
         testSubject = new SbomConsolidationWorkflow(
             loggerMock.Object,
@@ -63,10 +75,10 @@ public class SbomConsolidationWorkflowTests
             sbomGenerationWorkflowMock.Object,
             sbomValidationWorkflowFactoryMock.Object,
             sbomConfigFactoryMock.Object,
-            sPDXFormatDetectorMock.Object,
+            spdxFormatDetectorMock.Object,
             fileSystemUtilsMock.Object,
             metadataBuilderFactoryMock.Object,
-            new[] { mergeableContent22ProviderMock.Object });
+            new[] { mergeableContent22ProviderMock.Object, mergeableContent30ProviderMock.Object });
     }
 
     [TestCleanup]
@@ -78,7 +90,7 @@ public class SbomConsolidationWorkflowTests
         sbomValidationWorkflowMock.VerifyAll();
         sbomValidationWorkflowFactoryMock.VerifyAll();
         sbomConfigFactoryMock.VerifyAll();
-        sPDXFormatDetectorMock.VerifyAll();
+        spdxFormatDetectorMock.VerifyAll();
         fileSystemUtilsMock.VerifyAll();
         metadataBuilderFactoryMock.VerifyAll();
         mergeableContent22ProviderMock.VerifyAll();
@@ -112,7 +124,7 @@ public class SbomConsolidationWorkflowTests
             }
 
             IList<(string, ManifestInfo)> detectedSboms;
-            sPDXFormatDetectorMock
+            spdxFormatDetectorMock
                 .Setup(m => m.TryGetSbomsWithVersion(artifactInfo.ExternalManifestDir ?? key, out detectedSboms))
                 .Returns(false);
         }
@@ -142,13 +154,14 @@ public class SbomConsolidationWorkflowTests
         SetUpMinimalValidation();
         sbomGenerationWorkflowMock.Setup(x => x.RunAsync())
             .ReturnsAsync(expectedResult);
-        mergeableContent22ProviderMock.Setup(x => x.TryGetContent(SPDX22FilePath, out It.Ref<MergeableContent>.IsAny))
+        mergeableContent22ProviderMock.Setup(x => x.TryGetContent(PathToSpdx22ManifestForArtifactKey1, out It.Ref<MergeableContent>.IsAny))
             .Returns(true);
-
-        testSubject.SourceSbomsTemp = new List<(ManifestInfo, string)>
-        {
-            (Constants.SPDX22ManifestInfo, SPDX22FilePath),
-        };
+        mergeableContent22ProviderMock.Setup(x => x.TryGetContent(PathToSpdx22ManifestForArtifactKey2, out It.Ref<MergeableContent>.IsAny))
+            .Returns(true);
+        mergeableContent30ProviderMock.Setup(x => x.TryGetContent(PathToSpdx30ManifestForArtifactKey1, out It.Ref<MergeableContent>.IsAny))
+            .Returns(true);
+        mergeableContent30ProviderMock.Setup(x => x.TryGetContent(PathToSpdx30ManifestForArtifactKey2, out It.Ref<MergeableContent>.IsAny))
+            .Returns(true);
 
         var result = await testSubject.RunAsync();
         Assert.AreEqual(expectedResult, result);
@@ -175,15 +188,25 @@ public class SbomConsolidationWorkflowTests
                 (manifestDirPath, Constants.SPDX22ManifestInfo),
                 (manifestDirPath, Constants.SPDX30ManifestInfo)
             };
-            sPDXFormatDetectorMock
+            spdxFormatDetectorMock
                 .Setup(m => m.TryGetSbomsWithVersion(manifestDirPath, out res))
                 .Returns(true);
             sbomConfigFactoryMock
                 .Setup(m => m.Get(Constants.SPDX22ManifestInfo, manifestDirPath, metadataBuilderFactoryMock.Object))
-                .Returns(new SbomConfig(fileSystemUtilsMock.Object) { ManifestInfo = Constants.SPDX22ManifestInfo, ManifestJsonDirPath = manifestDirPath });
+                .Returns(new SbomConfig(fileSystemUtilsMock.Object)
+                {
+                    ManifestInfo = Constants.SPDX22ManifestInfo,
+                    ManifestJsonDirPath = manifestDirPath,
+                    ManifestJsonFilePath = $"{manifestDirPath}{RelativePathToSpdx22Manifest}",
+                });
             sbomConfigFactoryMock
                 .Setup(m => m.Get(Constants.SPDX30ManifestInfo, manifestDirPath, metadataBuilderFactoryMock.Object))
-                .Returns(new SbomConfig(fileSystemUtilsMock.Object) { ManifestInfo = Constants.SPDX30ManifestInfo, ManifestJsonDirPath = manifestDirPath });
+                .Returns(new SbomConfig(fileSystemUtilsMock.Object)
+                {
+                    ManifestInfo = Constants.SPDX30ManifestInfo,
+                    ManifestJsonDirPath = manifestDirPath,
+                    ManifestJsonFilePath = $"{manifestDirPath}{RelativePathToSpdx30Manifest}",
+                });
         }
     }
 

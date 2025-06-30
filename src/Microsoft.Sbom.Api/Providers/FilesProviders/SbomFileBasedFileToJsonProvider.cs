@@ -44,7 +44,6 @@ public class SbomFileBasedFileToJsonProvider : EntityToJsonProviderBase<SbomFile
     /// Returns true only if the fileslist parameter is provided.
     /// </summary>
     /// <param name="providerType"></param>
-    /// <returns></returns>
     public override bool IsSupported(ProviderType providerType)
     {
         if (providerType == ProviderType.Files)

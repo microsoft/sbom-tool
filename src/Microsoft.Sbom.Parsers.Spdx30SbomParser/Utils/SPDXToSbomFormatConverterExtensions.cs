@@ -89,7 +89,6 @@ public static class SPDXToSbomFormatConverterExtensions
     /// <summary>
     /// Convert a list of PackageVerificationCodes to internal Checksums.
     /// </summary>
-    /// <returns></returns>
     internal static List<SbomChecksum> ToSbomChecksum(this List<PackageVerificationCode> verificationCodes)
     {
         if (verificationCodes is null)

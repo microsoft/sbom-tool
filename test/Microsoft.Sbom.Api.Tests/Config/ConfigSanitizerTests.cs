@@ -62,7 +62,6 @@ public class ConfigSanitizerTests
     /// which won't make the test fail. Change one value that you are testing in order to ensure you
     /// are testing the correct config.
     /// </summary>
-    /// <returns></returns>
     private Configuration GetConfigurationBaseObject()
     {
         return new Configuration

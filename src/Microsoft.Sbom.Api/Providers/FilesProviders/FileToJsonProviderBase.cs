@@ -60,7 +60,6 @@ public abstract class FileToJsonProviderBase<T> : ISourcesProvider
     /// <summary>
     /// Get a channel reader for type <see cref="T"/> that will give us a stream of file objects to process.
     /// </summary>
-    /// <returns></returns>
     protected abstract (ChannelReader<T> files, ChannelReader<FileValidationResult> errors) GetFilesChannel();
 
     /// <summary>
@@ -68,7 +67,6 @@ public abstract class FileToJsonProviderBase<T> : ISourcesProvider
     /// </summary>
     /// <param name="files"></param>
     /// <param name="requiredConfigs"></param>
-    /// <returns></returns>
     protected abstract (ChannelReader<JsonDocWithSerializer> files, ChannelReader<FileValidationResult> errors)
         ConvertToJson(ChannelReader<T> files, IList<ISbomConfig> requiredConfigs);
 
@@ -76,6 +74,5 @@ public abstract class FileToJsonProviderBase<T> : ISourcesProvider
     /// Should return true only if the provider type is supported.
     /// </summary>
     /// <param name="providerType"></param>
-    /// <returns></returns>
     public abstract bool IsSupported(ProviderType providerType);
 }

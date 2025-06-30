@@ -11,6 +11,5 @@ public interface IOutputWriter
     /// Writes a string to a file asynchronously.
     /// </summary>
     /// <param name="output"></param>
-    /// <returns></returns>
     public Task WriteAsync(string output);
 }

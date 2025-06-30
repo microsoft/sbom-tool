@@ -16,7 +16,6 @@ public static class FileSystemUtilsProvider
     /// This is important due to the different file systems of operating systems.
     /// </summary>
     /// <param name="logger">Logger to capture Exceptions</param>
-    /// <returns></returns>
     public static IFileSystemUtils CreateInstance(ILogger logger)
     {
         var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
