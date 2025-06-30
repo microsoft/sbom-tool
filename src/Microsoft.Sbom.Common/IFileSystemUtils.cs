@@ -192,4 +192,11 @@ public interface IFileSystemUtils
     /// <param name="path">The absolute relative path of a file.</param>
     /// <returns>Byte array content of the file.</returns>
     public byte[] ReadAllBytes(string path);
+
+    /// <summary>
+    /// Returns the size of the given file
+    /// </summary>
+    /// <param name="path">The absolute relative path of a file.</param>
+    /// <returns>Size of file in bytes.</returns>
+    public long GetFileSize(string path);
 }

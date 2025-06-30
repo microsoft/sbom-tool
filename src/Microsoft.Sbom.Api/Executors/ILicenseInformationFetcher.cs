@@ -31,7 +31,7 @@ public interface ILicenseInformationFetcher
     /// <summary>
     /// Converts the response from the ClearlyDefined API to a dictionary of licenses.
     /// </summary>
-    /// <param name="httpResponse"> The response from a ClearlyDefined API request.</param>
+    /// <param name="httpResponseContent">The response from a ClearlyDefined API request.</param>
     public IDictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent);
 
     /// <summary>

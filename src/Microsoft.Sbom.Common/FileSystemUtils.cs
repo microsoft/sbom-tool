@@ -112,4 +112,7 @@ public abstract class FileSystemUtils : IFileSystemUtils
 
     /// <inheritdoc />
     public byte[] ReadAllBytes(string path) => File.ReadAllBytes(path);
+
+    /// <inheritdoc />
+    public long GetFileSize(string path) => new FileInfo(path).Length;
 }

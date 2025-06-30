@@ -48,7 +48,6 @@ public interface IManifestToolJsonSerializer : IAsyncDisposable, IDisposable
     /// This writes a json element to the underlying stream.
     /// Do not dispose jsonDocument in this method.
     /// </summary>
-    /// <param name="jsonDocument">The json document.</param>
     public void Write(JsonElement jsonElement);
 
     /// <summary>
