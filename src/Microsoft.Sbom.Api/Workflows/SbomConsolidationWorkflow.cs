@@ -104,9 +104,14 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         var result = true;
         foreach (var (sbomConfig, info) in sbomsToValidate)
         {
-            var identifier = string.GetHashCode(sbomConfig.ManifestJsonFilePath).ToString();
+            var identifier = Math.Abs(string.GetHashCode(sbomConfig.ManifestJsonFilePath)).ToString();
             logger.Information($"Running validation for {sbomConfig.ManifestJsonFilePath} with identifier {identifier}");
-            var config = new Configuration() { ValidateSignature = new ConfigurationSetting<bool>(!info.SkipSigningCheck ?? true), IgnoreMissing = new ConfigurationSetting<bool>(info.IgnoreMissingFiles ?? false) };
+            var config = new Configuration()
+            {
+                ValidateSignature = new ConfigurationSetting<bool>(!info.SkipSigningCheck ?? true),
+                IgnoreMissing = new ConfigurationSetting<bool>(info.IgnoreMissingFiles ?? false),
+                BuildDropPath = new ConfigurationSetting<string>(sbomConfig.ManifestJsonDirPath)
+            };
             var workflow = sbomValidationWorkflowFactory.Get(config, sbomConfig, identifier);
             result = result && await workflow.RunAsync();
         }

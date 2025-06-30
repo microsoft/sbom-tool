@@ -47,6 +47,10 @@ public class FileHasher
                 {
                     configuration.HashAlgorithm.Value
                 },
+                ManifestToolActions.Consolidate => new AlgorithmName[]
+                {
+                    configuration.HashAlgorithm.Value
+                },
                 ManifestToolActions.Generate => sbomConfigs.GetManifestInfos()
                     .Select(config => manifestGeneratorProvider
                         .Get(config)

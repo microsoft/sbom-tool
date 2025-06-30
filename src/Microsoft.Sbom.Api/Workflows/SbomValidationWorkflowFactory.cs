@@ -5,7 +5,9 @@ namespace Microsoft.Sbom.Api.Workflows;
 
 using System;
 using Microsoft.Sbom.Api.Entities.Output;
+using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Manifest;
+using Microsoft.Sbom.Api.Manifest.FileHashes;
 using Microsoft.Sbom.Api.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.SignValidator;
@@ -21,36 +23,58 @@ public class SbomValidationWorkflowFactory : ISbomValidationWorkflowFactory
     private readonly ISignValidationProvider signValidationProvider;
     private readonly ILogger log;
     private readonly IManifestParserProvider manifestParserProvider;
-    private readonly FilesValidator filesValidator;
     private readonly ValidationResultGenerator validationResultGenerator;
     private readonly IOutputWriter outputWriter;
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IOSUtils osUtils;
+    private readonly DirectoryWalker directoryWalker;
+    private readonly FileHasher fileHasher;
+    private readonly ManifestFolderFilterer fileFilterer;
+    private readonly ConcurrentSha256HashValidator hashValidator;
+    private readonly EnumeratorChannel enumeratorChannel;
+    private readonly SbomFileToFileInfoConverter fileConverter;
+    private readonly FileHashesDictionary fileHashesDictionary;
+    private readonly FileFilterer spdxFileFilterer;
 
     public SbomValidationWorkflowFactory(
         IRecorder recorder,
         ISignValidationProvider signValidationProvider,
         ILogger log,
         IManifestParserProvider manifestParserProvider,
-        FilesValidator filesValidator,
         ValidationResultGenerator validationResultGenerator,
         IOutputWriter outputWriter,
         IFileSystemUtils fileSystemUtils,
-        IOSUtils osUtils)
+        IOSUtils osUtils,
+        DirectoryWalker directoryWalker,
+        FileHasher fileHasher,
+        ManifestFolderFilterer fileFilterer,
+        ConcurrentSha256HashValidator hashValidator,
+        EnumeratorChannel enumeratorChannel,
+        SbomFileToFileInfoConverter fileConverter,
+        FileHashesDictionary fileHashesDictionary,
+        FileFilterer spdxFileFilterer)
     {
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.signValidationProvider = signValidationProvider ?? throw new ArgumentNullException(nameof(signValidationProvider));
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.manifestParserProvider = manifestParserProvider ?? throw new ArgumentNullException(nameof(manifestParserProvider));
-        this.filesValidator = filesValidator ?? throw new ArgumentNullException(nameof(filesValidator));
         this.validationResultGenerator = validationResultGenerator ?? throw new ArgumentNullException(nameof(validationResultGenerator));
         this.outputWriter = outputWriter ?? throw new ArgumentNullException(nameof(outputWriter));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         this.osUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
+        this.directoryWalker = directoryWalker ?? throw new ArgumentNullException(nameof(directoryWalker));
+        this.fileHasher = fileHasher ?? throw new ArgumentNullException(nameof(fileHasher));
+        this.fileFilterer = fileFilterer ?? throw new ArgumentNullException(nameof(fileFilterer));
+        this.hashValidator = hashValidator ?? throw new ArgumentNullException(nameof(hashValidator));
+        this.enumeratorChannel = enumeratorChannel ?? throw new ArgumentNullException(nameof(enumeratorChannel));
+        this.fileConverter = fileConverter ?? throw new ArgumentNullException(nameof(fileConverter));
+        this.fileHashesDictionary = fileHashesDictionary ?? throw new ArgumentNullException(nameof(fileHashesDictionary));
+        this.spdxFileFilterer = spdxFileFilterer ?? throw new ArgumentNullException(nameof(spdxFileFilterer));
     }
 
     public IWorkflow<SbomParserBasedValidationWorkflow> Get(IConfiguration configuration, ISbomConfig sbomConfig, string eventName)
     {
+        var filesValidator = new FilesValidator(directoryWalker, configuration, log, fileHasher, fileFilterer, hashValidator, enumeratorChannel, fileConverter, fileHashesDictionary, spdxFileFilterer);
         return new SbomParserBasedValidationWorkflow(recorder, signValidationProvider, log, manifestParserProvider, configuration, sbomConfig, filesValidator, validationResultGenerator, outputWriter, fileSystemUtils, osUtils, eventName);
     }
 }
