@@ -92,7 +92,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             return null;
         }
 
-        return detectedSboms.Select((sbom) => new ConsolidationSource(info, sbomConfigFactory.Get(sbom.manifestInfo, manifestDirPath, metadataBuilderFactory), sbom.sbomFilePath));
+        return detectedSboms.Select((sbom) => new ConsolidationSource(info, sbomConfigFactory.Get(sbom.manifestInfo, manifestDirPath, metadataBuilderFactory)));
     }
 
     private async Task<bool> ValidateSourceSbomsAsync(IEnumerable<ConsolidationSource> consolidationSources)
@@ -124,7 +124,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         foreach (var consolidationSource in consolidationSources)
         {
             var sbomConfig = consolidationSource.SbomConfig;
-            var sbomPath = consolidationSource.SbomPath;
+            var sbomPath = consolidationSource.SbomConfig.ManifestJsonFilePath;
             if (!contentProviders.TryGetValue(sbomConfig.ManifestInfo, out var contentProvider))
             {
                 logger.Error("No content provider found for manifest info: {ManifestInfo}", sbomConfig.ManifestInfo);
