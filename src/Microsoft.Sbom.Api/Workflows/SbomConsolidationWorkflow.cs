@@ -23,12 +23,13 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IMetadataBuilderFactory metadataBuilderFactory;
     private readonly IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow;
+    private readonly ISbomValidationWorkflowFactory sbomValidationWorkflowFactory;
 
 #pragma warning disable IDE0051 // We'll use this soon.
     private IReadOnlyDictionary<string, ArtifactInfo> ArtifactInfoMap => configuration.ArtifactInfoMap.Value;
 #pragma warning restore IDE0051 // We'll use this soon.
 
-    public SbomConsolidationWorkflow(ILogger logger, IConfiguration configuration, IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow, ISbomConfigFactory sbomConfigFactory, ISPDXFormatDetector sPDXFormatDetector, IFileSystemUtils fileSystemUtils, IMetadataBuilderFactory metadataBuilderFactory)
+    public SbomConsolidationWorkflow(ILogger logger, IConfiguration configuration, IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow, ISbomValidationWorkflowFactory sbomValidationWorkflowFactory, ISbomConfigFactory sbomConfigFactory, ISPDXFormatDetector sPDXFormatDetector, IFileSystemUtils fileSystemUtils, IMetadataBuilderFactory metadataBuilderFactory)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -37,6 +38,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         this.metadataBuilderFactory = metadataBuilderFactory ?? throw new ArgumentNullException(nameof(metadataBuilderFactory));
         this.sbomGenerationWorkflow = sbomGenerationWorkflow ?? throw new ArgumentNullException(nameof(sbomGenerationWorkflow));
+        this.sbomValidationWorkflowFactory = sbomValidationWorkflowFactory ?? throw new ArgumentNullException(nameof(sbomValidationWorkflowFactory));
     }
 
     /// <inheritdoc/>
@@ -73,10 +75,17 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
 
     private async Task<bool> ValidateSourceSbomsAsync(IEnumerable<(ISbomConfig config, ArtifactInfo info)> sbomsToValidate)
     {
-        var validationWorkflows = sbomsToValidate
-            .Select(async sbom => await Task.FromResult(true)); // TODO: Run validation workflow
-        var results = await Task.WhenAll(validationWorkflows);
-        return results.All(b => b);
+        var result = true;
+        foreach (var (sbomConfig, info) in sbomsToValidate)
+        {
+            var identifier = string.GetHashCode(sbomConfig.ManifestJsonFilePath).ToString();
+            logger.Information($"Running validation for {sbomConfig.ManifestJsonFilePath} with identifier {identifier}");
+            var config = new Configuration() { ValidateSignature = new ConfigurationSetting<bool>(!info.SkipSigningCheck ?? true), IgnoreMissing = new ConfigurationSetting<bool>(info.IgnoreMissingFiles ?? false) };
+            var workflow = sbomValidationWorkflowFactory.Get(config, sbomConfig, identifier);
+            result = result && await workflow.RunAsync();
+        }
+
+        return result;
     }
 
     private async Task<bool> GeneratedConsolidatedSbom()

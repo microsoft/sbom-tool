@@ -20,6 +20,8 @@ public class SbomConsolidationWorkflowTests
     private Mock<ILogger> loggerMock;
     private Mock<IConfiguration> configurationMock;
     private Mock<IWorkflow<SbomGenerationWorkflow>> sbomGenerationWorkflowMock;
+    private Mock<ISbomValidationWorkflowFactory> sbomValidationWorkflowFactoryMock;
+    private Mock<IWorkflow<SbomParserBasedValidationWorkflow>> sbomValidationWorkflowMock;
     private Mock<ISbomConfigFactory> sbomConfigFactoryMock;
     private Mock<ISPDXFormatDetector> sPDXFormatDetectorMock;
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
@@ -38,6 +40,8 @@ public class SbomConsolidationWorkflowTests
         loggerMock = new Mock<ILogger>();  // Intentionally not using Strict to streamline setup
         configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
         sbomGenerationWorkflowMock = new Mock<IWorkflow<SbomGenerationWorkflow>>(MockBehavior.Strict);
+        sbomValidationWorkflowFactoryMock = new Mock<ISbomValidationWorkflowFactory>(MockBehavior.Strict);
+        sbomValidationWorkflowMock = new Mock<IWorkflow<SbomParserBasedValidationWorkflow>>(MockBehavior.Strict);
         sbomConfigFactoryMock = new Mock<ISbomConfigFactory>(MockBehavior.Strict);
         sPDXFormatDetectorMock = new Mock<ISPDXFormatDetector>(MockBehavior.Strict);
         fileSystemUtilsMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
@@ -47,6 +51,7 @@ public class SbomConsolidationWorkflowTests
             loggerMock.Object,
             configurationMock.Object,
             sbomGenerationWorkflowMock.Object,
+            sbomValidationWorkflowFactoryMock.Object,
             sbomConfigFactoryMock.Object,
             sPDXFormatDetectorMock.Object,
             fileSystemUtilsMock.Object,
@@ -59,6 +64,8 @@ public class SbomConsolidationWorkflowTests
         loggerMock.VerifyAll();
         configurationMock.VerifyAll();
         sbomGenerationWorkflowMock.VerifyAll();
+        sbomValidationWorkflowMock.VerifyAll();
+        sbomValidationWorkflowFactoryMock.VerifyAll();
         sbomConfigFactoryMock.VerifyAll();
         sPDXFormatDetectorMock.VerifyAll();
         fileSystemUtilsMock.VerifyAll();
@@ -103,11 +110,24 @@ public class SbomConsolidationWorkflowTests
     }
 
     [TestMethod]
+    public async Task RunAsync_ReturnsFalseOnFailedValidationWorkflow()
+    {
+        SetUpSbomsToValidate();
+        sbomValidationWorkflowFactoryMock
+            .Setup(x => x.Get(It.IsAny<IConfiguration>(), It.IsAny<SbomConfig>(), It.IsAny<string>()))
+            .Returns(sbomValidationWorkflowMock.Object);
+        sbomValidationWorkflowMock.Setup(x => x.RunAsync()).ReturnsAsync(false);
+        var result = await testSubject.RunAsync();
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public async Task RunAsync_MinimalHappyPath_CallsGenerationWorkflow(bool expectedResult)
     {
         SetUpSbomsToValidate();
+        SetUpMinimalValidation();
         sbomGenerationWorkflowMock.Setup(x => x.RunAsync())
             .ReturnsAsync(expectedResult);
         var result = await testSubject.RunAsync();
@@ -145,5 +165,13 @@ public class SbomConsolidationWorkflowTests
                 .Setup(m => m.Get(Api.Utils.Constants.SPDX30ManifestInfo, manifestDirPath, metadataBuilderFactoryMock.Object))
                 .Returns(new SbomConfig(fileSystemUtilsMock.Object) { ManifestInfo = Api.Utils.Constants.SPDX30ManifestInfo, ManifestJsonDirPath = manifestDirPath });
         }
+    }
+
+    private void SetUpMinimalValidation()
+    {
+        sbomValidationWorkflowFactoryMock
+            .Setup(x => x.Get(It.IsAny<IConfiguration>(), It.IsAny<SbomConfig>(), It.IsAny<string>()))
+            .Returns(sbomValidationWorkflowMock.Object);
+        sbomValidationWorkflowMock.Setup(x => x.RunAsync()).ReturnsAsync(true);
     }
 }
