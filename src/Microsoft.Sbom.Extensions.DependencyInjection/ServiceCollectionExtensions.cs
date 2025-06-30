@@ -117,6 +117,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<ISbomReaderForExternalDocumentReference, SPDXSbomReaderForExternalDocumentReference>()
             .AddTransient<SbomMetadata>()
             .AddTransient<ILicenseInformationService, LicenseInformationService>()
+            .AddTransient<IMergeableContentProvider, Parsers.Spdx22SbomParser.MergeableContentProvider>()
             .AddSingleton<IPackageDetailsFactory, PackageDetailsFactory>()
             .AddSingleton<IPackageManagerUtils<NugetUtils>, NugetUtils>()
             .AddSingleton<IPackageManagerUtils<MavenUtils>, MavenUtils>()

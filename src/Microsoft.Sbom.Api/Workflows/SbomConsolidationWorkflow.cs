@@ -9,7 +9,9 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Extensions;
+using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
+
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows;
@@ -24,12 +26,20 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     private readonly IMetadataBuilderFactory metadataBuilderFactory;
     private readonly IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow;
     private readonly ISbomValidationWorkflowFactory sbomValidationWorkflowFactory;
+    private readonly IReadOnlyDictionary<ManifestInfo, IMergeableContentProvider> contentProviders;
 
-#pragma warning disable IDE0051 // We'll use this soon.
     private IReadOnlyDictionary<string, ArtifactInfo> ArtifactInfoMap => configuration.ArtifactInfoMap.Value;
-#pragma warning restore IDE0051 // We'll use this soon.
 
-    public SbomConsolidationWorkflow(ILogger logger, IConfiguration configuration, IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow, ISbomValidationWorkflowFactory sbomValidationWorkflowFactory, ISbomConfigFactory sbomConfigFactory, ISPDXFormatDetector sPDXFormatDetector, IFileSystemUtils fileSystemUtils, IMetadataBuilderFactory metadataBuilderFactory)
+    public SbomConsolidationWorkflow(
+        ILogger logger,
+        IConfiguration configuration,
+        IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow,
+        ISbomValidationWorkflowFactory sbomValidationWorkflowFactory,
+        ISbomConfigFactory sbomConfigFactory,
+        ISPDXFormatDetector sPDXFormatDetector,
+        IFileSystemUtils fileSystemUtils,
+        IMetadataBuilderFactory metadataBuilderFactory,
+        IEnumerable<IMergeableContentProvider> mergeableContentProviders)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -39,6 +49,20 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         this.metadataBuilderFactory = metadataBuilderFactory ?? throw new ArgumentNullException(nameof(metadataBuilderFactory));
         this.sbomGenerationWorkflow = sbomGenerationWorkflow ?? throw new ArgumentNullException(nameof(sbomGenerationWorkflow));
         this.sbomValidationWorkflowFactory = sbomValidationWorkflowFactory ?? throw new ArgumentNullException(nameof(sbomValidationWorkflowFactory));
+
+        ArgumentNullException.ThrowIfNull(mergeableContentProviders, nameof(mergeableContentProviders));
+        if (!mergeableContentProviders.Any())
+        {
+            throw new ArgumentException("The mergeable content providers collection cannot be empty.", nameof(mergeableContentProviders));
+        }
+
+        var providers = new Dictionary<ManifestInfo, IMergeableContentProvider>();
+        foreach (var provider in mergeableContentProviders)
+        {
+            providers.Add(provider.ManifestInfo, provider);
+        }
+
+        contentProviders = providers;
     }
 
     /// <inheritdoc/>
@@ -57,7 +81,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             logger.Information($"Running consolidation on the following SBOMs:\n{string.Join('\n', sbomsToConsolidate.Select(s => s.config.ManifestJsonFilePath))}");
         }
 
-        return await ValidateSourceSbomsAsync(sbomsToConsolidate) && await GeneratedConsolidatedSbom();
+        return await ValidateSourceSbomsAsync(sbomsToConsolidate) && await GenerateConsolidatedSbom();
     }
 
     private IEnumerable<(ISbomConfig config, ArtifactInfo info)> GetSbomsToConsolidate(string artifactPath, ArtifactInfo info)
@@ -88,9 +112,49 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         return result;
     }
 
-    private async Task<bool> GeneratedConsolidatedSbom()
+    private async Task<bool> GenerateConsolidatedSbom()
     {
-        // TODO : Incorporate the source SBOMs in the consolidated SBOM generation workflow.
+        if (!TryGetMergeableContent(out var mergeableContents))
+        {
+            return false;
+        }
+
+        // TODO : How do we pass mergeableContents into the generation workflow?
         return await sbomGenerationWorkflow.RunAsync().ConfigureAwait(false);
+    }
+
+    private bool TryGetMergeableContent(out IEnumerable<MergeableContent> mergeableContents)
+    {
+        mergeableContents = null; // Until proven otherwise
+
+        var contents = new List<MergeableContent>();
+
+        if (!SourceSbomsTemp.Any())
+        {
+            logger.Error("No source SBOMs provided for consolidation.");
+            return false;
+        }
+
+        // Incorporate the source SBOMs in the consolidated SBOM generation workflow.
+        foreach (var sourceSbom in SourceSbomsTemp)
+        {
+            var (manifestInfo, sbomPath) = sourceSbom;
+            if (!contentProviders.TryGetValue(manifestInfo, out var contentProvider))
+            {
+                logger.Error("No content provider found for manifest info: {ManifestInfo}", manifestInfo);
+                return false;
+            }
+
+            if (!contentProvider.TryGetContent(sbomPath, out var mergeableContent))
+            {
+                logger.Error("Failed to get mergeable content from SBOM at path: {SbomPath}", sbomPath);
+                return false;
+            }
+
+            contents.Add(mergeableContent);
+        }
+
+        mergeableContents = contents;
+        return true;
     }
 }
