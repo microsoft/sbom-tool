@@ -30,6 +30,8 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
 
     private IReadOnlyDictionary<string, ArtifactInfo> ArtifactInfoMap => configuration.ArtifactInfoMap.Value;
 
+    internal IEnumerable<(ManifestInfo, string)> SourceSbomsTemp { get; set; } = Enumerable.Empty<(ManifestInfo, string)>(); // Stub property for testing, will remove soon
+
     public SbomConsolidationWorkflow(
         ILogger logger,
         IConfiguration configuration,
