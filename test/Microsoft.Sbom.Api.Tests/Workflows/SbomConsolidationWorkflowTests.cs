@@ -45,7 +45,7 @@ public class SbomConsolidationWorkflowTests
 
     private Dictionary<string, ArtifactInfo> artifactInfoMapStub = new Dictionary<string, ArtifactInfo>()
     {
-        { ArtifactKey1, new ArtifactInfo() { } },
+        { ArtifactKey1, new ArtifactInfo() { IgnoreMissingFiles = true, SkipSigningCheck = true } },
         { ArtifactKey2, new ArtifactInfo() { ExternalManifestDir = ExternalManifestDir2 } },
     };
 
@@ -137,10 +137,33 @@ public class SbomConsolidationWorkflowTests
     public async Task RunAsync_ReturnsFalseOnFailedValidationWorkflow()
     {
         SetUpSbomsToValidate();
+        SetUpMinimalValidation(false);
+        var result = await testSubject.RunAsync();
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
+    public async Task RunAsync_MixOfValidAndInvalidInputSboms()
+    {
+        SetUpSbomsToValidate();
+
+        configurationMock.Setup(m => m.OutputPath).Returns(new ConfigurationSetting<string>("test-out-path"));
+        configurationMock.Setup(m => m.ValidateSignature).Returns(new ConfigurationSetting<bool>());
+        configurationMock.Setup(m => m.IgnoreMissing).Returns(new ConfigurationSetting<bool>());
+        configurationMock.Setup(m => m.BuildDropPath).Returns(new ConfigurationSetting<string>());
+        fileSystemUtilsMock.Setup(m => m.GetTempFile(It.IsAny<string>())).Returns("temp-file");
+
         sbomValidationWorkflowFactoryMock
-            .Setup(x => x.Get(It.IsAny<IConfiguration>(), It.IsAny<SbomConfig>(), It.IsAny<string>()))
+            .Setup(x => x.Get(It.Is<IConfiguration>(c => c.BuildDropPath.Value.Equals(ArtifactKey1) && c.IgnoreMissing.Value.Equals(true) && c.ValidateSignature.Value.Equals(false)), It.IsAny<SbomConfig>(), It.IsAny<string>()))
             .Returns(sbomValidationWorkflowMock.Object);
-        sbomValidationWorkflowMock.Setup(x => x.RunAsync()).ReturnsAsync(false);
+        sbomValidationWorkflowMock.Setup(x => x.RunAsync()).ReturnsAsync(true);
+
+        var sbomValidationWorkflowMock1 = new Mock<IWorkflow<SbomParserBasedValidationWorkflow>>();
+        sbomValidationWorkflowFactoryMock
+            .Setup(x => x.Get(It.Is<IConfiguration>(c => c.BuildDropPath.Value.Equals(ArtifactKey2) && c.IgnoreMissing.Value.Equals(false) && c.ValidateSignature.Value.Equals(true)), It.IsAny<SbomConfig>(), It.IsAny<string>()))
+            .Returns(sbomValidationWorkflowMock1.Object);
+        sbomValidationWorkflowMock1.Setup(x => x.RunAsync()).ReturnsAsync(false);
+
         var result = await testSubject.RunAsync();
         Assert.IsFalse(result);
     }
@@ -210,11 +233,17 @@ public class SbomConsolidationWorkflowTests
         }
     }
 
-    private void SetUpMinimalValidation()
+    private void SetUpMinimalValidation(bool workflowResult = true)
     {
+        configurationMock.Setup(m => m.OutputPath).Returns(new ConfigurationSetting<string>("test-out-path"));
+        configurationMock.Setup(m => m.ValidateSignature).Returns(new ConfigurationSetting<bool>());
+        configurationMock.Setup(m => m.IgnoreMissing).Returns(new ConfigurationSetting<bool>());
+        configurationMock.Setup(m => m.BuildDropPath).Returns(new ConfigurationSetting<string>());
+        fileSystemUtilsMock.Setup(m => m.GetTempFile(It.IsAny<string>())).Returns("temp-file");
+
         sbomValidationWorkflowFactoryMock
             .Setup(x => x.Get(It.IsAny<IConfiguration>(), It.IsAny<SbomConfig>(), It.IsAny<string>()))
             .Returns(sbomValidationWorkflowMock.Object);
-        sbomValidationWorkflowMock.Setup(x => x.RunAsync()).ReturnsAsync(true);
+        sbomValidationWorkflowMock.Setup(x => x.RunAsync()).ReturnsAsync(workflowResult);
     }
 }

@@ -104,14 +104,14 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         foreach (var source in consolidationSources)
         {
             var identifier = Math.Abs(string.GetHashCode(source.SbomConfig.ManifestJsonFilePath)).ToString();
-            var defaultOutputPath = configuration.OutputPath;
+            var defaultOutputPath = configuration.OutputPath.Value;
             var workflowResult = false;
             try
             {
-                configuration.ValidateSignature = new ConfigurationSetting<bool>(!source.ArtifactInfo.SkipSigningCheck ?? true);
-                configuration.IgnoreMissing = new ConfigurationSetting<bool>(source.ArtifactInfo.IgnoreMissingFiles ?? false);
-                configuration.BuildDropPath = new ConfigurationSetting<string>(source.BuildDropPath);
-                configuration.OutputPath = new ConfigurationSetting<string>(fileSystemUtils.GetTempFile($"validation-results-{identifier}.json"));
+                configuration.ValidateSignature.Value = !source.ArtifactInfo.SkipSigningCheck ?? true;
+                configuration.IgnoreMissing.Value = source.ArtifactInfo.IgnoreMissingFiles ?? false;
+                configuration.BuildDropPath.Value = source.BuildDropPath;
+                configuration.OutputPath.Value = fileSystemUtils.GetTempFile($"validation-results-{identifier}.json");
 
                 Console.WriteLine($"Running validation for {source.SbomConfig.ManifestJsonFilePath} with identifier {identifier}. Writing output results to {configuration.OutputPath}.");
                 var workflow = sbomValidationWorkflowFactory.Get(configuration, source.SbomConfig, identifier);
@@ -119,8 +119,8 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             }
             finally
             {
-                configuration.BuildDropPath = null;
-                configuration.OutputPath = defaultOutputPath;
+                configuration.BuildDropPath.Value = null;
+                configuration.OutputPath.Value = defaultOutputPath;
 
                 result = workflowResult && result;
             }
