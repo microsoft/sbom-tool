@@ -149,8 +149,7 @@ public class SPDXFormatDetectorTests
 
         var result = testSubject.TryGetSbomsWithVersion(DirPathStub, out var detectedSboms);
         Assert.IsFalse(result);
-        Assert.IsNotNull(detectedSboms);
-        Assert.IsFalse(detectedSboms.Any());
+        Assert.IsNull(detectedSboms);
     }
 
     [TestMethod]
@@ -179,8 +178,7 @@ public class SPDXFormatDetectorTests
 
         var result = testSubject.TryGetSbomsWithVersion(DirPathStub, out var detectedSboms);
         Assert.IsFalse(result);
-        Assert.IsNotNull(detectedSboms);
-        Assert.IsFalse(detectedSboms.Any());
+        Assert.IsNull(detectedSboms);
     }
 
     [TestMethod]
