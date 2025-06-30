@@ -87,34 +87,34 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
 
     private IEnumerable<ConsolidationSource> GetSbomsToConsolidate(string artifactPath, ArtifactInfo info)
     {
-        var manifestDirPath = info?.ExternalManifestDir ?? fileSystemUtils.JoinPaths(artifactPath, Constants.ManifestFolder); // TODO losing the artifact path in external man dir case
-        var isValidSpdxFormat = sPDXFormatDetector.TryGetSbomsWithVersion(manifestDirPath, out var detectedSboms);
+        var manifestDirPath = info?.ExternalManifestDir ?? fileSystemUtils.JoinPaths(artifactPath, Constants.ManifestFolder);
+        var isValidSpdxFormat = spdxFormatDetector.TryGetSbomsWithVersion(manifestDirPath, out var detectedSboms);
         if (!isValidSpdxFormat)
         {
             logger.Information($"No SBOMs located in {manifestDirPath} of a recognized SPDX format.");
             return null;
         }
 
-        return detectedSboms.Select((sbom) => new ConsolidationSource(info, sbomConfigFactory.Get(sbom.manifestInfo, manifestDirPath, metadataBuilderFactory)));
+        return detectedSboms.Select((sbom) => new ConsolidationSource(info, sbomConfigFactory.Get(sbom.manifestInfo, manifestDirPath, metadataBuilderFactory), artifactPath));
     }
 
     private async Task<bool> ValidateSourceSbomsAsync(IEnumerable<ConsolidationSource> consolidationSources)
     {
         var result = true;
-        foreach (var (sbomConfig, info) in sbomsToValidate)
+        foreach (var source in consolidationSources)
         {
-            var identifier = Math.Abs(string.GetHashCode(sbomConfig.ManifestJsonFilePath)).ToString();
+            var identifier = Math.Abs(string.GetHashCode(source.SbomConfig.ManifestJsonFilePath)).ToString();
             var defaultOutputPath = configuration.OutputPath;
             var workflowResult = false;
             try
             {
-                configuration.ValidateSignature = new ConfigurationSetting<bool>(!info.SkipSigningCheck ?? true);
-                configuration.IgnoreMissing = new ConfigurationSetting<bool>(info.IgnoreMissingFiles ?? false);
-                configuration.BuildDropPath = new ConfigurationSetting<string>(sbomConfig.ManifestJsonDirPath);
+                configuration.ValidateSignature = new ConfigurationSetting<bool>(!source.ArtifactInfo.SkipSigningCheck ?? true);
+                configuration.IgnoreMissing = new ConfigurationSetting<bool>(source.ArtifactInfo.IgnoreMissingFiles ?? false);
+                configuration.BuildDropPath = new ConfigurationSetting<string>(source.BuildDropPath);
                 configuration.OutputPath = new ConfigurationSetting<string>(fileSystemUtils.GetTempFile($"validation-results-{identifier}.json"));
 
-                Console.WriteLine($"Running validation for {sbomConfig.ManifestJsonFilePath} with identifier {identifier}. Writing output results to {configuration.OutputPath}.");
-                var workflow = sbomValidationWorkflowFactory.Get(configuration, sbomConfig, identifier);
+                Console.WriteLine($"Running validation for {source.SbomConfig.ManifestJsonFilePath} with identifier {identifier}. Writing output results to {configuration.OutputPath}.");
+                var workflow = sbomValidationWorkflowFactory.Get(configuration, source.SbomConfig, identifier);
                 workflowResult = await workflow.RunAsync();
             }
             finally

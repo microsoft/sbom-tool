@@ -16,10 +16,13 @@ internal class ConsolidationSource
 
     public ISbomConfig SbomConfig { get; }
 
-    public ConsolidationSource(ArtifactInfo artifactInfo, ISbomConfig sbomConfig)
+    public string BuildDropPath { get; }
+
+    public ConsolidationSource(ArtifactInfo artifactInfo, ISbomConfig sbomConfig, string buildDropPath)
     {
         ArtifactInfo = artifactInfo ?? throw new ArgumentNullException(nameof(artifactInfo));
         SbomConfig = sbomConfig ?? throw new ArgumentNullException(nameof(sbomConfig));
+        BuildDropPath = buildDropPath ?? throw new ArgumentNullException(nameof(buildDropPath));
     }
 
     public override string ToString()
