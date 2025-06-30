@@ -75,7 +75,6 @@ public class Generator : IManifestGenerator
     /// Generates all SPDX elements related to a single file.
     /// </summary>
     /// <param name="fileInfo">SBOM file info that needs to be translated to SPDX elements.</param>
-    /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo)
     {
@@ -100,7 +99,6 @@ public class Generator : IManifestGenerator
     /// Generate all SPDX elements related to a package.
     /// </summary>
     /// <param name="packageInfo">Package info to be translated to SPDX elements.</param>
-    /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public GenerationResult GenerateJsonDocument(SbomPackage packageInfo)
     {
@@ -180,7 +178,6 @@ public class Generator : IManifestGenerator
     /// Generate root package SPDX elements.
     /// </summary>
     /// <param name="internalMetadataProvider">Metadata that includes info about root package.</param>
-    /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public GenerationResult GenerateRootPackage(IInternalMetadataProvider internalMetadataProvider)
     {
@@ -260,7 +257,6 @@ public class Generator : IManifestGenerator
     /// Convert external document reference info to SPDX elements.
     /// </summary>
     /// <param name="externalDocumentReferenceInfo">External document reference info.</param>
-    /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="MissingHashValueException"></exception>
     public GenerationResult GenerateJsonDocument(ExternalDocumentReferenceInfo externalDocumentReferenceInfo)
@@ -312,7 +308,6 @@ public class Generator : IManifestGenerator
     /// Generate SPDX elements related to a relationship.
     /// </summary>
     /// <param name="relationship">Relationship info</param>
-    /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public GenerationResult GenerateJsonDocument(SbomEntities.Relationship relationship)
     {
@@ -363,7 +358,6 @@ public class Generator : IManifestGenerator
     /// Generate all SPDX elements related to document creation.
     /// </summary>
     /// <param name="internalMetadataProvider">Document metadata</param>
-    /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public GenerationResult GenerateJsonDocument(IInternalMetadataProvider internalMetadataProvider)
     {
@@ -448,7 +442,6 @@ public class Generator : IManifestGenerator
     /// Use file info to generate file and relationship spdx elements.
     /// </summary>
     /// <param name="fileInfo">SBOM file info that needs to be translated to SPDX elements.</param>
-    /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentException"></exception>
     private List<Element> ConvertSbomFileToSpdxFileAndRelationships(InternalSbomFileInfo fileInfo)
@@ -623,7 +616,6 @@ public class Generator : IManifestGenerator
     /// Convert SbomEntities.RelationshipType to SPDX 3.0 RelationshipType.
     /// </summary>
     /// <param name="relationshipType"></param>
-    /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     private RelationshipType GetSPDXRelationshipType(SbomEntities.RelationshipType relationshipType)
     {
@@ -648,7 +640,6 @@ public class Generator : IManifestGenerator
     /// Algorithm defined here https://spdx.github.io/spdx-spec/v2.2.2/package-information/#79-package-verification-code-field.
     /// </summary>
     /// <param name="internalMetadataProvider"></param>
-    /// <returns></returns>
     private PackageVerificationCode GetPackageVerificationCode(IInternalMetadataProvider internalMetadataProvider)
     {
         // Get a list of SHA1 checksums
