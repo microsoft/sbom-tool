@@ -30,10 +30,8 @@ public class SbomValidationWorkflowFactory : ISbomValidationWorkflowFactory
     private readonly DirectoryWalker directoryWalker;
     private readonly FileHasher fileHasher;
     private readonly ManifestFolderFilterer fileFilterer;
-    private readonly ConcurrentSha256HashValidator hashValidator;
     private readonly EnumeratorChannel enumeratorChannel;
     private readonly SbomFileToFileInfoConverter fileConverter;
-    private readonly FileHashesDictionary fileHashesDictionary;
     private readonly FileFilterer spdxFileFilterer;
 
     public SbomValidationWorkflowFactory(
@@ -48,10 +46,8 @@ public class SbomValidationWorkflowFactory : ISbomValidationWorkflowFactory
         DirectoryWalker directoryWalker,
         FileHasher fileHasher,
         ManifestFolderFilterer fileFilterer,
-        ConcurrentSha256HashValidator hashValidator,
         EnumeratorChannel enumeratorChannel,
         SbomFileToFileInfoConverter fileConverter,
-        FileHashesDictionary fileHashesDictionary,
         FileFilterer spdxFileFilterer)
     {
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
@@ -65,15 +61,15 @@ public class SbomValidationWorkflowFactory : ISbomValidationWorkflowFactory
         this.directoryWalker = directoryWalker ?? throw new ArgumentNullException(nameof(directoryWalker));
         this.fileHasher = fileHasher ?? throw new ArgumentNullException(nameof(fileHasher));
         this.fileFilterer = fileFilterer ?? throw new ArgumentNullException(nameof(fileFilterer));
-        this.hashValidator = hashValidator ?? throw new ArgumentNullException(nameof(hashValidator));
         this.enumeratorChannel = enumeratorChannel ?? throw new ArgumentNullException(nameof(enumeratorChannel));
         this.fileConverter = fileConverter ?? throw new ArgumentNullException(nameof(fileConverter));
-        this.fileHashesDictionary = fileHashesDictionary ?? throw new ArgumentNullException(nameof(fileHashesDictionary));
         this.spdxFileFilterer = spdxFileFilterer ?? throw new ArgumentNullException(nameof(spdxFileFilterer));
     }
 
     public IWorkflow<SbomParserBasedValidationWorkflow> Get(IConfiguration configuration, ISbomConfig sbomConfig, string eventName)
     {
+        var fileHashesDictionary = new FileHashesDictionary(new System.Collections.Concurrent.ConcurrentDictionary<string, FileHashes>(osUtils.GetFileSystemStringComparer()));
+        var hashValidator = new ConcurrentSha256HashValidator(fileHashesDictionary);
         var filesValidator = new FilesValidator(directoryWalker, configuration, log, fileHasher, fileFilterer, hashValidator, enumeratorChannel, fileConverter, fileHashesDictionary, spdxFileFilterer);
         return new SbomParserBasedValidationWorkflow(recorder, signValidationProvider, log, manifestParserProvider, configuration, sbomConfig, filesValidator, validationResultGenerator, outputWriter, fileSystemUtils, osUtils, eventName);
     }

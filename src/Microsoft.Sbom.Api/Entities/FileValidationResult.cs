@@ -23,6 +23,11 @@ public class FileValidationResult
     [JsonConverter(typeof(StringEnumConverter))]
     public ErrorType ErrorType { get; set; }
 
+    /// <summary>
+    /// Identifier of SBOM associated with this Result.
+    /// </summary>
+    public string? Identifier { get; set; }
+
     // TODO: Deprecate FileValidationResult to use EntityError
     public EntityError ToEntityError()
     {
