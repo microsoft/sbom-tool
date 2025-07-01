@@ -304,6 +304,7 @@ public class InterfaceConcretionTests
         public ConfigurationSetting<IList<ManifestInfo>> ManifestInfo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<AlgorithmName> HashAlgorithm { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<string> RootPathFilter { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ConfigurationSetting<string> RootPathPatterns { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<string> CatalogFilePath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<bool> ValidateSignature { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<bool> IgnoreMissing { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

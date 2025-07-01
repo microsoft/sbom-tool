@@ -21,6 +21,7 @@ public class DownloadedRootPathFilterTests
 
         var configMock = new Mock<IConfiguration>();
         configMock.SetupGet(c => c.RootPathFilter).Returns((ConfigurationSetting<string>)null);
+        configMock.SetupGet(c => c.RootPathPatterns).Returns((ConfigurationSetting<string>)null);
 
         var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
         filter.Init();
@@ -41,6 +42,7 @@ public class DownloadedRootPathFilterTests
         var configMock = new Mock<IConfiguration>();
         configMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "C:/test" });
         configMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "validPath" });
+        configMock.SetupGet(c => c.RootPathPatterns).Returns((ConfigurationSetting<string>)null);
 
         var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
         filter.Init();
@@ -51,6 +53,79 @@ public class DownloadedRootPathFilterTests
         Assert.IsFalse(filter.IsValid(null));
         Assert.IsFalse(filter.IsValid("c:/test/InvalidPath"));
         Assert.IsFalse(filter.IsValid("c:/test/InvalidPath/f"));
+
+        fileSystemMock.VerifyAll();
+        configMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void DownloadedRootPathFilterTest_PatternFiltering_Succeeds()
+    {
+        var fileSystemMock = new Mock<IFileSystemUtils>();
+
+        var configMock = new Mock<IConfiguration>();
+        configMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "C:/test" });
+        configMock.SetupGet(c => c.RootPathFilter).Returns((ConfigurationSetting<string>)null);
+        configMock.SetupGet(c => c.RootPathPatterns).Returns(new ConfigurationSetting<string> { Value = "src/**/*.cs;bin/*.dll" });
+
+        var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
+        filter.Init();
+
+        // Should match pattern src/**/*.cs
+        Assert.IsTrue(filter.IsValid("C:/test/src/component/file.cs"));
+        Assert.IsTrue(filter.IsValid("C:/test/src/deep/nested/component/file.cs"));
+
+        // Should match pattern bin/*.dll
+        Assert.IsTrue(filter.IsValid("C:/test/bin/app.dll"));
+
+        // Should not match patterns
+        Assert.IsFalse(filter.IsValid("C:/test/lib/component.dll"));
+        Assert.IsFalse(filter.IsValid("C:/test/src/component/file.txt"));
+        Assert.IsFalse(filter.IsValid("C:/test/bin/nested/app.dll"));
+        Assert.IsFalse(filter.IsValid(null));
+
+        fileSystemMock.VerifyAll();
+        configMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void DownloadedRootPathFilterTest_PatternTakesPrecedence_Succeeds()
+    {
+        var fileSystemMock = new Mock<IFileSystemUtils>();
+
+        var configMock = new Mock<IConfiguration>();
+        configMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "C:/test" });
+        configMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "oldPath" });
+        configMock.SetupGet(c => c.RootPathPatterns).Returns(new ConfigurationSetting<string> { Value = "src/*.cs" });
+
+        var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
+        filter.Init();
+
+        // Should use pattern matching, not legacy path filtering
+        Assert.IsTrue(filter.IsValid("C:/test/src/file.cs"));
+        Assert.IsFalse(filter.IsValid("C:/test/oldPath/file.txt")); // This would match with RootPathFilter but should be ignored
+        Assert.IsFalse(filter.IsValid("C:/test/src/nested/file.cs")); // Doesn't match the pattern
+
+        fileSystemMock.VerifyAll();
+        configMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void DownloadedRootPathFilterTest_EmptyPattern_SkipsValidation()
+    {
+        var fileSystemMock = new Mock<IFileSystemUtils>();
+
+        var configMock = new Mock<IConfiguration>();
+        configMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "C:/test" });
+        configMock.SetupGet(c => c.RootPathFilter).Returns((ConfigurationSetting<string>)null);
+        configMock.SetupGet(c => c.RootPathPatterns).Returns(new ConfigurationSetting<string> { Value = "   ;  ; " }); // Only whitespace and separators
+
+        var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
+        filter.Init();
+
+        // Should skip validation since no valid patterns are provided
+        Assert.IsTrue(filter.IsValid("any/path/should/pass"));
+        Assert.IsTrue(filter.IsValid(null));
 
         fileSystemMock.VerifyAll();
         configMock.VerifyAll();

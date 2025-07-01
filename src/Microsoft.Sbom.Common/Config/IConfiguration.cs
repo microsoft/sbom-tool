@@ -84,6 +84,13 @@ public interface IConfiguration
     public ConfigurationSetting<string> RootPathFilter { get; set; }
 
     /// <summary>
+    /// Gets or sets file matching patterns (glob-style) for filtering root paths.
+    /// Supports wildcards (* and **) for flexible file path matching.
+    /// Semicolon-separated list of patterns. Takes precedence over RootPathFilter if specified.
+    /// </summary>
+    public ConfigurationSetting<string> RootPathPatterns { get; set; }
+
+    /// <summary>
     /// Gets or sets the path of the signed catalog file used to validate the manifest.json.
     /// </summary>
     public ConfigurationSetting<string> CatalogFilePath { get; set; }
