@@ -29,6 +29,9 @@ public abstract class FileSystemUtils : IFileSystemUtils
     public string GetSbomToolTempPath() => SbomToolTempPath;
 
     /// <inheritdoc />
+    public string CreateTempSubDirectory() => Directory.CreateTempSubdirectory().FullName;
+
+    /// <inheritdoc />
     public IEnumerable<string> GetDirectories(string path, bool followSymlinks = true) => followSymlinks switch
     {
         true => Directory.GetDirectories(path),

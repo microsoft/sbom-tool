@@ -26,6 +26,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IMetadataBuilderFactory metadataBuilderFactory;
     private readonly IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow;
+    private readonly ISbomValidationWorkflowFactory sbomValidationWorkflowFactory;
     private readonly IReadOnlyDictionary<ManifestInfo, IMergeableContentProvider> contentProviders;
 
     private IReadOnlyDictionary<string, ArtifactInfo> ArtifactInfoMap => configuration.ArtifactInfoMap.Value;
@@ -34,6 +35,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         ILogger logger,
         IConfiguration configuration,
         IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow,
+        ISbomValidationWorkflowFactory sbomValidationWorkflowFactory,
         ISbomConfigFactory sbomConfigFactory,
         ISPDXFormatDetector spdxFormatDetector,
         IFileSystemUtils fileSystemUtils,
@@ -47,6 +49,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         this.metadataBuilderFactory = metadataBuilderFactory ?? throw new ArgumentNullException(nameof(metadataBuilderFactory));
         this.sbomGenerationWorkflow = sbomGenerationWorkflow ?? throw new ArgumentNullException(nameof(sbomGenerationWorkflow));
+        this.sbomValidationWorkflowFactory = sbomValidationWorkflowFactory ?? throw new ArgumentNullException(nameof(sbomValidationWorkflowFactory));
 
         ArgumentNullException.ThrowIfNull(mergeableContentProviders, nameof(mergeableContentProviders));
         if (!mergeableContentProviders.Any())
@@ -92,15 +95,44 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             return null;
         }
 
-        return detectedSboms.Select((sbom) => new ConsolidationSource(info, sbomConfigFactory.Get(sbom.manifestInfo, manifestDirPath, metadataBuilderFactory)));
+        return detectedSboms.Select((sbom) => new ConsolidationSource(info, sbomConfigFactory.Get(sbom.manifestInfo, manifestDirPath, metadataBuilderFactory), artifactPath));
     }
 
     private async Task<bool> ValidateSourceSbomsAsync(IEnumerable<ConsolidationSource> consolidationSources)
     {
-        var validationWorkflows = consolidationSources
-            .Select(async sbom => await Task.FromResult(true)); // TODO: Run validation workflow
-        var results = await Task.WhenAll(validationWorkflows);
-        return results.All(b => b);
+        var result = true;
+        var validationOutputDir = fileSystemUtils.CreateTempSubDirectory();
+        foreach (var source in consolidationSources)
+        {
+            var identifier = Math.Abs(string.GetHashCode(source.SbomConfig.ManifestJsonFilePath)).ToString();
+            var defaultOutputPath = configuration.OutputPath.Value;
+            var workflowResult = false;
+            try
+            {
+                configuration.ValidateSignature = new ConfigurationSetting<bool>(!source.ArtifactInfo.SkipSigningCheck ?? true);
+                configuration.IgnoreMissing = new ConfigurationSetting<bool>(source.ArtifactInfo.IgnoreMissingFiles ?? false);
+                configuration.BuildDropPath = new ConfigurationSetting<string>(source.BuildDropPath);
+                configuration.OutputPath = new ConfigurationSetting<string>(fileSystemUtils.JoinPaths(validationOutputDir, $"validation-results-{identifier}.json"));
+
+                Console.WriteLine($"Running validation for {source.SbomConfig.ManifestJsonFilePath} with identifier {identifier}. Writing output results to {configuration.OutputPath.Value}.");
+                if (!configuration.ValidateSignature.Value)
+                {
+                    logger.Warning($"Signature validation disabled for SBOM with path {source.SbomConfig.ManifestJsonFilePath} and identifier {identifier}.");
+                }
+
+                var workflow = sbomValidationWorkflowFactory.Get(configuration, source.SbomConfig, identifier);
+                workflowResult = await workflow.RunAsync();
+            }
+            finally
+            {
+                configuration.BuildDropPath.Value = null;
+                configuration.OutputPath.Value = defaultOutputPath;
+
+                result = workflowResult && result;
+            }
+        }
+
+        return result;
     }
 
     private async Task<bool> GenerateConsolidatedSbom(IEnumerable<ConsolidationSource> consolidationSources)

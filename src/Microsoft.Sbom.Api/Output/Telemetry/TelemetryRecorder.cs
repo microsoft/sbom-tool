@@ -145,7 +145,7 @@ public class TelemetryRecorder : IRecorder
     /// <exception cref="ArgumentNullException">If the errors object is null.</exception>
     public void RecordTotalErrors(IList<FileValidationResult> errors)
     {
-        this.errors = errors ?? throw new ArgumentNullException(nameof(errors));
+        this.errors = this.errors.Concat(errors ?? throw new ArgumentNullException(nameof(errors))).ToList();
     }
 
     /// <inheritdoc/>

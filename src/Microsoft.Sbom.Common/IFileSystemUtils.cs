@@ -199,4 +199,10 @@ public interface IFileSystemUtils
     /// <param name="path">The absolute relative path of a file.</param>
     /// <returns>Size of file in bytes.</returns>
     public long GetFileSize(string path);
+
+    /// <summary>
+    /// Returns the path to a temp dir
+    /// </summary>
+    /// <returns>Path to a temp dir</returns>
+    public string CreateTempSubDirectory();
 }

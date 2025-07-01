@@ -70,6 +70,7 @@ public static class ServiceCollectionExtensions
                 return Log.Logger = CreateLogger(logLevel);
             })
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
+            .AddTransient<ISbomValidationWorkflowFactory, SbomValidationWorkflowFactory>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
             .AddTransient<IWorkflow<SbomConsolidationWorkflow>, SbomConsolidationWorkflow>()
             .AddTransient<IWorkflow<SbomRedactionWorkflow>, SbomRedactionWorkflow>()
