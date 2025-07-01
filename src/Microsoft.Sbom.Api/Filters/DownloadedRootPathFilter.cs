@@ -124,7 +124,6 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
         // Check for new pattern-based configuration first (takes precedence)
         if (configuration.RootPathPatterns != null && !string.IsNullOrWhiteSpace(configuration.RootPathPatterns.Value))
         {
-            skipValidation = false;
             patterns = new List<string>();
             var patternStrings = configuration.RootPathPatterns.Value.Split(';');
 
@@ -136,6 +135,12 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
                     patterns.Add(trimmedPattern);
                     logger.Verbose($"Added pattern {trimmedPattern}");
                 }
+            }
+
+            // Only set skipValidation to false if we actually have patterns
+            if (patterns.Count > 0)
+            {
+                skipValidation = false;
             }
         }
 

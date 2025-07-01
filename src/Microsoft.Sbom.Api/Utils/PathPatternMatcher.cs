@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -29,20 +30,33 @@ public static class PathPatternMatcher
         // Normalize the file path
         var normalizedFilePath = Path.GetFullPath(filePath);
 
-        // If basePath is provided and pattern is relative, create the full pattern
-        string normalizedPattern;
+        // If basePath is provided and pattern is relative, we need to check if the file
+        // is within the base path and then match against the relative portion
+        string patternToMatch;
         if (!string.IsNullOrEmpty(basePath) && !Path.IsPathRooted(pattern))
         {
-            var combinedPath = Path.Combine(basePath, pattern);
-            normalizedPattern = Path.GetFullPath(combinedPath);
+            var normalizedBasePath = Path.GetFullPath(basePath);
+
+            // Check if the file is within the base path
+            if (!normalizedFilePath.StartsWith(normalizedBasePath, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            // Get the relative path from the base path
+            var relativePath = Path.GetRelativePath(normalizedBasePath, normalizedFilePath);
+
+            // Match the relative path against the pattern
+            patternToMatch = pattern;
+            normalizedFilePath = relativePath;
         }
         else
         {
-            normalizedPattern = pattern;
+            patternToMatch = pattern;
         }
 
         // Convert glob pattern to regex
-        var regexPattern = ConvertGlobToRegex(normalizedPattern);
+        var regexPattern = ConvertGlobToRegex(patternToMatch);
 
         // Perform case-insensitive matching for cross-platform compatibility
         var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
@@ -101,7 +115,7 @@ public static class PathPatternMatcher
             }
         }
 
-        // Anchor the pattern to match from the beginning
-        return "^" + regexPattern.ToString() + ".*$";
+        // Don't anchor to end with .* since we want exact path matching
+        return "^" + regexPattern.ToString() + "$";
     }
 }
