@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Utils;
@@ -97,10 +98,17 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         {
             return await ValidateSourceSbomsAsync(consolidationSources) && await GenerateConsolidatedSbom(consolidationSources);
         }
+#if DEBUG
+        catch (Exception)
+        {
+            // This is here to help debug issues during active development. It will be removed before release.
+            System.Diagnostics.Debugger.Break();
+            throw;
+        }
+#endif
         finally
         {
-            configuration.OutputPath.Value = null;
-            fileSystemUtils.DeleteDir(workingDir);
+            fileSystemUtils.DeleteDir(workingDir, true);
         }
     }
 
@@ -159,8 +167,20 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             return false;
         }
 
+        SetConfigurationForConsolidation();
+
         // TODO : How do we pass mergeableContents into the generation workflow?
         return await sbomGenerationWorkflow.RunAsync().ConfigureAwait(false);
+    }
+
+    private void SetConfigurationForConsolidation()
+    {
+        var buildDropPath = Path.Combine(workingDir, "consolidated-build-drop");
+        fileSystemUtils.CreateDirectory(buildDropPath);
+
+        configuration.ManifestInfo = new ConfigurationSetting<IList<ManifestInfo>>(new List<ManifestInfo> { Constants.SPDX22ManifestInfo });
+        configuration.BuildDropPath = new ConfigurationSetting<string>(buildDropPath);
+        configuration.BuildComponentPath = new ConfigurationSetting<string>(buildDropPath);
     }
 
     private bool TryGetMergeableContent(IEnumerable<ConsolidationSource> consolidationSources, out IEnumerable<MergeableContent> mergeableContents)

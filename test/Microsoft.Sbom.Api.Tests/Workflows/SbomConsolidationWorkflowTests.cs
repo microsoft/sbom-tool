@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Utils;
@@ -209,8 +210,8 @@ public class SbomConsolidationWorkflowTests
     {
         SetUpSbomsToValidate();
         SetUpMinimalValidation();
-        sbomGenerationWorkflowMock.Setup(x => x.RunAsync())
-            .ReturnsAsync(expectedResult);
+        SetupMinimalGenerationMocks(expectedResult);
+
         mergeableContent22ProviderMock.Setup(x => x.TryGetContent(PathToSpdx22ManifestForArtifactKey1, out It.Ref<MergeableContent>.IsAny))
             .Returns(true);
         mergeableContent22ProviderMock.Setup(x => x.TryGetContent(PathToSpdx22ManifestForArtifactKey2, out It.Ref<MergeableContent>.IsAny))
@@ -288,6 +289,15 @@ public class SbomConsolidationWorkflowTests
         configurationMock.SetupSet(m => m.OutputPath = It.IsAny<ConfigurationSetting<string>>());
         fileSystemUtilsMock.Setup(m => m.CreateTempSubDirectory()).Returns(TempDirPath);
         fileSystemUtilsMock.Setup(m => m.JoinPaths(TempDirPath, It.IsAny<string>())).Returns(TempDirPath);
-        fileSystemUtilsMock.Setup(m => m.DeleteDir(TempDirPath, false));
+        fileSystemUtilsMock.Setup(m => m.DeleteDir(TempDirPath, true));
+    }
+
+    private void SetupMinimalGenerationMocks(bool expectedResult)
+    {
+        fileSystemUtilsMock.Setup(m => m.CreateDirectory(Path.Join(TempDirPath, "consolidated-build-drop"))).Returns<DirectoryInfo>(null);
+        configurationMock.SetupSet(m => m.ManifestInfo = It.IsAny<ConfigurationSetting<IList<ManifestInfo>>>());
+        configurationMock.SetupSet(m => m.BuildComponentPath = It.IsAny<ConfigurationSetting<string>>());
+        configurationMock.SetupSet(m => m.BuildDropPath = It.IsAny<ConfigurationSetting<string>>());
+        sbomGenerationWorkflowMock.Setup(x => x.RunAsync()).ReturnsAsync(expectedResult);
     }
 }
