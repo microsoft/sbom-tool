@@ -49,7 +49,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
 
             if (!externalDocumentReferenceSourcesProvider.Any())
             {
-                log.Debug($"No source providers found for {ProviderType.ExternalDocumentReference}");
+                log.Debug("No source providers found for {ExternalDocumentReference}", ProviderType.ExternalDocumentReference);
                 return new GeneratorResult(totalErrors, jsonDocumentCollection.SerializersToJson, jsonArrayStartedForConfig);
             }
 
@@ -75,7 +75,7 @@ public class ExternalDocumentReferenceGenerator : IJsonArrayGenerator<ExternalDo
                     totalJsonDocumentsWritten++;
                 }
 
-                log.Debug($"Wrote {totalJsonDocumentsWritten} ExternalDocumentReference elements in the SBOM.");
+                log.Debug("Wrote {TotalJsonDocumentsWritten} ExternalDocumentReference elements in the SBOM.", totalJsonDocumentsWritten);
 
                 await foreach (var error in errors.ReadAllAsync())
                 {

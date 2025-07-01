@@ -96,7 +96,7 @@ public class FileFilterer
         }
         catch (Exception e)
         {
-            log.Warning($"Encountered an error while filtering file {file.Path}: {e.Message}");
+            log.Warning("Encountered an error while filtering file {Path}: {Message}", file.Path, e.Message);
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = ErrorType.Other,
