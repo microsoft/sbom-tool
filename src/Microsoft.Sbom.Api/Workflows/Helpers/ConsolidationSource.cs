@@ -22,7 +22,7 @@ internal class ConsolidationSource
     {
         ArtifactInfo = artifactInfo ?? throw new ArgumentNullException(nameof(artifactInfo));
         SbomConfig = sbomConfig ?? throw new ArgumentNullException(nameof(sbomConfig));
-        BuildDropPath = buildDropPath ?? throw new ArgumentNullException(nameof(buildDropPath));
+        BuildDropPath = string.IsNullOrEmpty(buildDropPath) ? throw new ArgumentNullException(nameof(buildDropPath)) : buildDropPath;
     }
 
     public override string ToString()
