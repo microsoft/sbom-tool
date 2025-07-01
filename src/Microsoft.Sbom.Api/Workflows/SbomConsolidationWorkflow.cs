@@ -69,9 +69,17 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     /// <inheritdoc/>
     public virtual async Task<bool> RunAsync()
     {
-        var consolidationSources = ArtifactInfoMap.Select(artifact => GetSbomsToConsolidate(artifact.Key, artifact.Value))
+        var allVersionConsolidationSources = ArtifactInfoMap.Select(artifact => GetSbomsToConsolidate(artifact.Key, artifact.Value))
             .Where(l => l != null)
             .SelectMany(l => l);
+
+        var consolidationSources = allVersionConsolidationSources.Where(s => s.SbomConfig.ManifestInfo.Equals(Constants.SPDX22ManifestInfo));
+        var non22Sboms = allVersionConsolidationSources.Select(s => s.SbomConfig.ManifestJsonFilePath).Except(consolidationSources.Select(s => s.SbomConfig.ManifestJsonFilePath));
+        if (non22Sboms.Any())
+        {
+            logger.Information($"The consolidate action only supports SPDX 2.2. The following non-SPDX 2.2 SBOMs are being ignored:\n{string.Join('\n', non22Sboms)}");
+        }
+
         if (consolidationSources == null || !consolidationSources.Any())
         {
             logger.Information($"No valid SBOMs detected.");
