@@ -105,7 +105,6 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         foreach (var source in consolidationSources)
         {
             var identifier = Math.Abs(string.GetHashCode(source.SbomConfig.ManifestJsonFilePath)).ToString();
-            var defaultOutputPath = configuration.OutputPath.Value;
             var workflowResult = false;
             try
             {
@@ -126,7 +125,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             finally
             {
                 configuration.BuildDropPath.Value = null;
-                configuration.OutputPath.Value = defaultOutputPath;
+                configuration.OutputPath.Value = null;
 
                 result = workflowResult && result;
             }
