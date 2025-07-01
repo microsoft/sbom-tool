@@ -28,6 +28,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     private readonly IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow;
     private readonly ISbomValidationWorkflowFactory sbomValidationWorkflowFactory;
     private readonly IReadOnlyDictionary<ManifestInfo, IMergeableContentProvider> contentProviders;
+    private string workingDir;
 
     private IReadOnlyDictionary<string, ArtifactInfo> ArtifactInfoMap => configuration.ArtifactInfoMap.Value;
 
@@ -90,7 +91,17 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             logger.Information($"Running consolidation on the following SBOMs:\n{string.Join('\n', consolidationSources.Select(s => s.SbomConfig.ManifestJsonFilePath))}");
         }
 
-        return await ValidateSourceSbomsAsync(consolidationSources) && await GenerateConsolidatedSbom(consolidationSources);
+        workingDir = fileSystemUtils.CreateTempSubDirectory();
+
+        try
+        {
+            return await ValidateSourceSbomsAsync(consolidationSources) && await GenerateConsolidatedSbom(consolidationSources);
+        }
+        finally
+        {
+            configuration.OutputPath.Value = null;
+            fileSystemUtils.DeleteDir(workingDir);
+        }
     }
 
     private IEnumerable<ConsolidationSource> GetSbomsToConsolidate(string artifactPath, ArtifactInfo info)
@@ -109,7 +120,6 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     private async Task<bool> ValidateSourceSbomsAsync(IEnumerable<ConsolidationSource> consolidationSources)
     {
         var result = true;
-        var validationOutputDir = fileSystemUtils.CreateTempSubDirectory();
         foreach (var source in consolidationSources)
         {
             var identifier = Math.Abs(string.GetHashCode(source.SbomConfig.ManifestJsonFilePath)).ToString();
@@ -119,7 +129,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
                 configuration.ValidateSignature = new ConfigurationSetting<bool>(!source.ArtifactInfo.SkipSigningCheck ?? true);
                 configuration.IgnoreMissing = new ConfigurationSetting<bool>(source.ArtifactInfo.IgnoreMissingFiles ?? false);
                 configuration.BuildDropPath = new ConfigurationSetting<string>(source.BuildDropPath);
-                configuration.OutputPath = new ConfigurationSetting<string>(fileSystemUtils.JoinPaths(validationOutputDir, $"validation-results-{identifier}.json"));
+                configuration.OutputPath = new ConfigurationSetting<string>(fileSystemUtils.JoinPaths(workingDir, $"validation-results-{identifier}.json"));
 
                 Console.WriteLine($"Running validation for {source.SbomConfig.ManifestJsonFilePath} with identifier {identifier}. Writing output results to {configuration.OutputPath.Value}.");
                 if (!configuration.ValidateSignature.Value)

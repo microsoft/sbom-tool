@@ -185,16 +185,7 @@ public class SbomConsolidationWorkflowTests
     public async Task RunAsync_MixOfValidAndInvalidInputSboms()
     {
         SetUpSbomsToValidate();
-
-        configurationMock.Setup(m => m.OutputPath).Returns(new ConfigurationSetting<string>());
-        configurationMock.Setup(m => m.ValidateSignature).Returns(new ConfigurationSetting<bool>(true));
-        configurationMock.Setup(m => m.BuildDropPath).Returns(new ConfigurationSetting<string>(ArtifactKey1));
-        configurationMock.SetupSet(m => m.ValidateSignature = It.IsAny<ConfigurationSetting<bool>>());
-        configurationMock.SetupSet(m => m.IgnoreMissing = It.IsAny<ConfigurationSetting<bool>>());
-        configurationMock.SetupSet(m => m.BuildDropPath = It.IsAny<ConfigurationSetting<string>>());
-        configurationMock.SetupSet(m => m.OutputPath = It.IsAny<ConfigurationSetting<string>>());
-        fileSystemUtilsMock.Setup(m => m.CreateTempSubDirectory()).Returns(TempDirPath);
-        fileSystemUtilsMock.Setup(m => m.JoinPaths(TempDirPath, It.IsAny<string>())).Returns(TempDirPath);
+        SetupMinimalValidationMocks();
 
         sbomValidationWorkflowFactoryMock
             .Setup(x => x.Get(It.IsAny<IConfiguration>(), It.Is<SbomConfig>(c => c.ManifestJsonDirPath.Equals(ArtifactKey1)), It.IsAny<string>()))
@@ -278,6 +269,16 @@ public class SbomConsolidationWorkflowTests
 
     private void SetUpMinimalValidation(bool workflowResult = true)
     {
+        SetupMinimalValidationMocks();
+
+        sbomValidationWorkflowFactoryMock
+            .Setup(x => x.Get(It.IsAny<IConfiguration>(), It.IsAny<SbomConfig>(), It.IsAny<string>()))
+            .Returns(sbomValidationWorkflowMock.Object);
+        sbomValidationWorkflowMock.Setup(x => x.RunAsync()).ReturnsAsync(workflowResult);
+    }
+
+    private void SetupMinimalValidationMocks()
+    {
         configurationMock.Setup(m => m.OutputPath).Returns(new ConfigurationSetting<string>());
         configurationMock.Setup(m => m.ValidateSignature).Returns(new ConfigurationSetting<bool>(true));
         configurationMock.Setup(m => m.BuildDropPath).Returns(new ConfigurationSetting<string>());
@@ -287,10 +288,6 @@ public class SbomConsolidationWorkflowTests
         configurationMock.SetupSet(m => m.OutputPath = It.IsAny<ConfigurationSetting<string>>());
         fileSystemUtilsMock.Setup(m => m.CreateTempSubDirectory()).Returns(TempDirPath);
         fileSystemUtilsMock.Setup(m => m.JoinPaths(TempDirPath, It.IsAny<string>())).Returns(TempDirPath);
-
-        sbomValidationWorkflowFactoryMock
-            .Setup(x => x.Get(It.IsAny<IConfiguration>(), It.IsAny<SbomConfig>(), It.IsAny<string>()))
-            .Returns(sbomValidationWorkflowMock.Object);
-        sbomValidationWorkflowMock.Setup(x => x.RunAsync()).ReturnsAsync(workflowResult);
+        fileSystemUtilsMock.Setup(m => m.DeleteDir(TempDirPath, false));
     }
 }
