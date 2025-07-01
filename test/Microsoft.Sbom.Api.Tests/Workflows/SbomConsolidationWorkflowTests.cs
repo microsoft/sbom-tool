@@ -135,6 +135,44 @@ public class SbomConsolidationWorkflowTests
     }
 
     [TestMethod]
+    public async Task RunAsync_ReturnsFalseOnOnlySpdx30SbomsFound()
+    {
+        configurationMock
+            .Setup(m => m.ArtifactInfoMap)
+            .Returns(new ConfigurationSetting<Dictionary<string, ArtifactInfo>>(artifactInfoMapStub));
+
+        foreach (var (key, artifactInfo) in artifactInfoMapStub)
+        {
+            var manifestDirPath = artifactInfo.ExternalManifestDir ?? key;
+            if (artifactInfo.ExternalManifestDir == null)
+            {
+                fileSystemUtilsMock
+                    .Setup(m => m.JoinPaths(key, Constants.ManifestFolder))
+                    .Returns(key);
+            }
+
+            IList<(string, ManifestInfo)> res = new List<(string, ManifestInfo)>()
+            {
+                (manifestDirPath, Constants.SPDX30ManifestInfo)
+            };
+            spdxFormatDetectorMock
+                .Setup(m => m.TryGetSbomsWithVersion(manifestDirPath, out res))
+                .Returns(true);
+            sbomConfigFactoryMock
+                .Setup(m => m.Get(Constants.SPDX30ManifestInfo, manifestDirPath, metadataBuilderFactoryMock.Object))
+                .Returns(new SbomConfig(fileSystemUtilsMock.Object)
+                {
+                    ManifestInfo = Constants.SPDX30ManifestInfo,
+                    ManifestJsonDirPath = manifestDirPath,
+                    ManifestJsonFilePath = $"{manifestDirPath}{RelativePathToSpdx30Manifest}",
+                });
+        }
+
+        var result = await testSubject.RunAsync();
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
     public async Task RunAsync_ReturnsFalseOnFailedValidationWorkflow()
     {
         SetUpSbomsToValidate();
