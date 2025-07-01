@@ -186,7 +186,7 @@ public class SbomConsolidationWorkflowTests
     {
         SetUpSbomsToValidate();
 
-        configurationMock.Setup(m => m.OutputPath).Returns(new ConfigurationSetting<string>("test-out-path"));
+        configurationMock.Setup(m => m.OutputPath).Returns(new ConfigurationSetting<string>());
         configurationMock.Setup(m => m.ValidateSignature).Returns(new ConfigurationSetting<bool>(true));
         configurationMock.Setup(m => m.BuildDropPath).Returns(new ConfigurationSetting<string>(ArtifactKey1));
         configurationMock.SetupSet(m => m.ValidateSignature = It.IsAny<ConfigurationSetting<bool>>());
@@ -278,7 +278,7 @@ public class SbomConsolidationWorkflowTests
 
     private void SetUpMinimalValidation(bool workflowResult = true)
     {
-        configurationMock.Setup(m => m.OutputPath).Returns(new ConfigurationSetting<string>("test-out-path"));
+        configurationMock.Setup(m => m.OutputPath).Returns(new ConfigurationSetting<string>());
         configurationMock.Setup(m => m.ValidateSignature).Returns(new ConfigurationSetting<bool>(true));
         configurationMock.Setup(m => m.BuildDropPath).Returns(new ConfigurationSetting<string>());
         configurationMock.SetupSet(m => m.ValidateSignature = It.IsAny<ConfigurationSetting<bool>>());
