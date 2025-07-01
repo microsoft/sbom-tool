@@ -101,6 +101,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     private async Task<bool> ValidateSourceSbomsAsync(IEnumerable<ConsolidationSource> consolidationSources)
     {
         var result = true;
+        var validationOutputDir = fileSystemUtils.CreateTempSubDirectory();
         foreach (var source in consolidationSources)
         {
             var identifier = Math.Abs(string.GetHashCode(source.SbomConfig.ManifestJsonFilePath)).ToString();
@@ -108,12 +109,17 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             var workflowResult = false;
             try
             {
-                configuration.ValidateSignature.Value = !source.ArtifactInfo.SkipSigningCheck ?? true;
-                configuration.IgnoreMissing.Value = source.ArtifactInfo.IgnoreMissingFiles ?? false;
-                configuration.BuildDropPath.Value = source.BuildDropPath;
-                configuration.OutputPath.Value = fileSystemUtils.GetTempFile($"validation-results-{identifier}.json");
+                configuration.ValidateSignature = new ConfigurationSetting<bool>(!source.ArtifactInfo.SkipSigningCheck ?? true);
+                configuration.IgnoreMissing = new ConfigurationSetting<bool>(source.ArtifactInfo.IgnoreMissingFiles ?? false);
+                configuration.BuildDropPath = new ConfigurationSetting<string>(source.BuildDropPath);
+                configuration.OutputPath = new ConfigurationSetting<string>(fileSystemUtils.JoinPaths(validationOutputDir, $"validation-results-{identifier}.json"));
 
-                Console.WriteLine($"Running validation for {source.SbomConfig.ManifestJsonFilePath} with identifier {identifier}. Writing output results to {configuration.OutputPath}.");
+                Console.WriteLine($"Running validation for {source.SbomConfig.ManifestJsonFilePath} with identifier {identifier}. Writing output results to {configuration.OutputPath.Value}.");
+                if (!configuration.ValidateSignature.Value)
+                {
+                    logger.Warning($"Signature validation disabled for SBOM with path {source.SbomConfig.ManifestJsonFilePath} and identifier {identifier}.");
+                }
+
                 var workflow = sbomValidationWorkflowFactory.Get(configuration, source.SbomConfig, identifier);
                 workflowResult = await workflow.RunAsync();
             }

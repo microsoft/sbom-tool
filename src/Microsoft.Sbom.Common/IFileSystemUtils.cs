@@ -201,9 +201,8 @@ public interface IFileSystemUtils
     public long GetFileSize(string path);
 
     /// <summary>
-    /// Returns the path to a temp file
+    /// Returns the path to a temp dir
     /// </summary>
-    /// <param name="fileName">The naem of the temp file.</param>
-    /// <returns>Path to a temp file</returns>
-    public string GetTempFile(string fileName);
+    /// <returns>Path to a temp dir</returns>
+    public string CreateTempSubDirectory();
 }
