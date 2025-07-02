@@ -10,6 +10,7 @@ using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
@@ -167,13 +168,13 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             return false;
         }
 
-        SetConfigurationForConsolidation();
+        SetConfigurationForConsolidation(mergeableContents);
 
         // TODO : How do we pass mergeableContents into the generation workflow?
         return await sbomGenerationWorkflow.RunAsync().ConfigureAwait(false);
     }
 
-    private void SetConfigurationForConsolidation()
+    private void SetConfigurationForConsolidation(IEnumerable<MergeableContent> mergeableContents)
     {
         var buildDropPath = Path.Combine(workingDir, "consolidated-build-drop");
         fileSystemUtils.CreateDirectory(buildDropPath);
@@ -181,6 +182,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         configuration.ManifestInfo = new ConfigurationSetting<IList<ManifestInfo>>(new List<ManifestInfo> { Constants.SPDX22ManifestInfo });
         configuration.BuildDropPath = new ConfigurationSetting<string>(buildDropPath);
         configuration.BuildComponentPath = new ConfigurationSetting<string>(buildDropPath);
+        configuration.PackagesList = new ConfigurationSetting<IEnumerable<SbomPackage>>(mergeableContents.ToMergedPackages());
     }
 
     private bool TryGetMergeableContent(IEnumerable<ConsolidationSource> consolidationSources, out IEnumerable<MergeableContent> mergeableContents)
