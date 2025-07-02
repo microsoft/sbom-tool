@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.IO;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -65,7 +66,6 @@ public class DownloadedRootPathFilterTests
 
         var configMock = new Mock<IConfiguration>();
         configMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "C:/test" });
-        configMock.SetupGet(c => c.RootPathFilter).Returns((ConfigurationSetting<string>)null);
         configMock.SetupGet(c => c.RootPathPatterns).Returns(new ConfigurationSetting<string> { Value = "src/**/*.cs;bin/*.dll" });
 
         var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
@@ -92,6 +92,8 @@ public class DownloadedRootPathFilterTests
     public void DownloadedRootPathFilterTest_PatternTakesPrecedence_Succeeds()
     {
         var fileSystemMock = new Mock<IFileSystemUtils>();
+        fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>()))
+                     .Returns((string path1, string path2) => Path.Combine(path1, path2));
 
         var configMock = new Mock<IConfiguration>();
         configMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "C:/test" });
@@ -116,14 +118,12 @@ public class DownloadedRootPathFilterTests
         var fileSystemMock = new Mock<IFileSystemUtils>();
 
         var configMock = new Mock<IConfiguration>();
-        configMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "C:/test" });
-        configMock.SetupGet(c => c.RootPathFilter).Returns((ConfigurationSetting<string>)null);
         configMock.SetupGet(c => c.RootPathPatterns).Returns(new ConfigurationSetting<string> { Value = "   ;  ; " }); // Only whitespace and separators
 
         var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
         filter.Init();
 
-        // Should skip validation since no valid patterns are provided
+        // Should skip validation since patterns contain only whitespace and separators
         Assert.IsTrue(filter.IsValid("any/path/should/pass"));
         Assert.IsTrue(filter.IsValid(null));
 

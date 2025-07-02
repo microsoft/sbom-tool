@@ -121,7 +121,24 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
         logger.Verbose("Adding root path filter valid paths");
         skipValidation = true;
 
-        // Check for new pattern-based configuration first (takes precedence)
+        // Start with legacy path prefix configuration (original default path)
+        if (configuration.RootPathFilter != null && !string.IsNullOrWhiteSpace(configuration.RootPathFilter.Value))
+        {
+            skipValidation = false;
+            validPaths = new HashSet<string>();
+            var relativeRootPaths = configuration.RootPathFilter.Value.Split(';');
+
+            validPaths.UnionWith(relativeRootPaths.Select(r =>
+                new FileInfo(fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, r))
+                    .FullName));
+
+            foreach (var validPath in validPaths)
+            {
+                logger.Verbose($"Added valid path {validPath}");
+            }
+        }
+
+        // Check if pattern-based configuration should override (takes precedence when specified)
         if (configuration.RootPathPatterns != null && !string.IsNullOrWhiteSpace(configuration.RootPathPatterns.Value))
         {
             patterns = new List<string>();
@@ -137,27 +154,11 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
                 }
             }
 
-            // Only set skipValidation to false if we actually have patterns
+            // Only override legacy path if we actually have patterns
             if (patterns.Count > 0)
             {
                 skipValidation = false;
-            }
-        }
-
-        // Fall back to legacy path prefix configuration
-        else if (configuration.RootPathFilter != null && !string.IsNullOrWhiteSpace(configuration.RootPathFilter.Value))
-        {
-            skipValidation = false;
-            validPaths = new HashSet<string>();
-            var relativeRootPaths = configuration.RootPathFilter.Value.Split(';');
-
-            validPaths.UnionWith(relativeRootPaths.Select(r =>
-                new FileInfo(fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, r))
-                    .FullName));
-
-            foreach (var validPath in validPaths)
-            {
-                logger.Verbose($"Added valid path {validPath}");
+                validPaths = null; // Clear legacy paths since patterns take precedence
             }
         }
     }
