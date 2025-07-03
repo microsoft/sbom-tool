@@ -3,12 +3,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Serilog;
@@ -19,15 +21,19 @@ namespace Microsoft.Sbom.Api.Workflows;
 
 public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
 {
+    public const string WorkingDirPrefix = "sbom-consolidation-";
+
     private readonly ILogger logger;
     private readonly IConfiguration configuration;
     private readonly ISbomConfigFactory sbomConfigFactory;
+    private readonly ISbomConfigProvider sbomConfigProvider;
     private readonly ISPDXFormatDetector spdxFormatDetector;
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IMetadataBuilderFactory metadataBuilderFactory;
     private readonly IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow;
     private readonly ISbomValidationWorkflowFactory sbomValidationWorkflowFactory;
     private readonly IReadOnlyDictionary<ManifestInfo, IMergeableContentProvider> contentProviders;
+    private string workingDir;
 
     private IReadOnlyDictionary<string, ArtifactInfo> ArtifactInfoMap => configuration.ArtifactInfoMap.Value;
 
@@ -37,6 +43,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow,
         ISbomValidationWorkflowFactory sbomValidationWorkflowFactory,
         ISbomConfigFactory sbomConfigFactory,
+        ISbomConfigProvider sbomConfigProvider,
         ISPDXFormatDetector spdxFormatDetector,
         IFileSystemUtils fileSystemUtils,
         IMetadataBuilderFactory metadataBuilderFactory,
@@ -45,6 +52,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.sbomConfigFactory = sbomConfigFactory ?? throw new ArgumentNullException(nameof(sbomConfigFactory));
+        this.sbomConfigProvider = sbomConfigProvider ?? throw new ArgumentNullException(nameof(sbomConfigProvider));
         this.spdxFormatDetector = spdxFormatDetector ?? throw new ArgumentNullException(nameof(spdxFormatDetector));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         this.metadataBuilderFactory = metadataBuilderFactory ?? throw new ArgumentNullException(nameof(metadataBuilderFactory));
@@ -90,7 +98,20 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             logger.Information($"Running consolidation on the following SBOMs:\n{string.Join('\n', consolidationSources.Select(s => s.SbomConfig.ManifestJsonFilePath))}");
         }
 
-        return await ValidateSourceSbomsAsync(consolidationSources) && await GenerateConsolidatedSbom(consolidationSources);
+        workingDir = fileSystemUtils.CreateTempSubDirectory(WorkingDirPrefix);
+
+        try
+        {
+            return await ValidateSourceSbomsAsync(consolidationSources) && await GenerateConsolidatedSbom(consolidationSources);
+        }
+        catch (Exception)
+        {
+#if DEBUG
+            // This is here to help debug issues during active development. It will be removed before release.
+            System.Diagnostics.Debugger.Break();
+#endif
+            throw;
+        }
     }
 
     private IEnumerable<ConsolidationSource> GetSbomsToConsolidate(string artifactPath, ArtifactInfo info)
@@ -109,17 +130,18 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     private async Task<bool> ValidateSourceSbomsAsync(IEnumerable<ConsolidationSource> consolidationSources)
     {
         var result = true;
-        var validationOutputDir = fileSystemUtils.CreateTempSubDirectory();
         foreach (var source in consolidationSources)
         {
             var identifier = Math.Abs(string.GetHashCode(source.SbomConfig.ManifestJsonFilePath)).ToString();
             var workflowResult = false;
+            var originalManifestDirPath = configuration.ManifestDirPath;
             try
             {
                 configuration.ValidateSignature = new ConfigurationSetting<bool>(!source.ArtifactInfo.SkipSigningCheck ?? true);
                 configuration.IgnoreMissing = new ConfigurationSetting<bool>(source.ArtifactInfo.IgnoreMissingFiles ?? false);
                 configuration.BuildDropPath = new ConfigurationSetting<string>(source.BuildDropPath);
-                configuration.OutputPath = new ConfigurationSetting<string>(fileSystemUtils.JoinPaths(validationOutputDir, $"validation-results-{identifier}.json"));
+                configuration.OutputPath = new ConfigurationSetting<string>(fileSystemUtils.JoinPaths(workingDir, $"validation-results-{identifier}.json"));
+                configuration.ManifestDirPath = BuildManifestDirPathForSource(source);
 
                 Console.WriteLine($"Running validation for {source.SbomConfig.ManifestJsonFilePath} with identifier {identifier}. Writing output results to {configuration.OutputPath.Value}.");
                 if (!configuration.ValidateSignature.Value)
@@ -134,12 +156,31 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             {
                 configuration.BuildDropPath.Value = null;
                 configuration.OutputPath.Value = null;
+                configuration.ManifestDirPath = originalManifestDirPath;
 
                 result = workflowResult && result;
             }
         }
 
         return result;
+    }
+
+    private ConfigurationSetting<string> BuildManifestDirPathForSource(ConsolidationSource source)
+    {
+        if (source.ArtifactInfo.ExternalManifestDir is null)
+        {
+            return new ConfigurationSetting<string>
+            {
+                Value = fileSystemUtils.JoinPaths(source.BuildDropPath, Constants.ManifestFolder),
+                Source = SettingSource.Default
+            };
+        }
+
+        return new ConfigurationSetting<string>
+        {
+            Value = source.ArtifactInfo.ExternalManifestDir,
+            Source = SettingSource.JsonConfig
+        };
     }
 
     private async Task<bool> GenerateConsolidatedSbom(IEnumerable<ConsolidationSource> consolidationSources)
@@ -149,8 +190,23 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             return false;
         }
 
-        // TODO : How do we pass mergeableContents into the generation workflow?
+        SetConfigurationForConsolidation(mergeableContents);
+
+        // The configs contain the input paths. We need to clear them so we write to the correct locations.
+        sbomConfigProvider.ClearCache();
+
         return await sbomGenerationWorkflow.RunAsync().ConfigureAwait(false);
+    }
+
+    private void SetConfigurationForConsolidation(IEnumerable<MergeableContent> mergeableContents)
+    {
+        var buildDropPath = Path.Combine(workingDir, "consolidated-build-drop");
+        fileSystemUtils.CreateDirectory(buildDropPath);
+
+        configuration.ManifestInfo = new ConfigurationSetting<IList<ManifestInfo>>(new List<ManifestInfo> { Constants.SPDX22ManifestInfo });
+        configuration.BuildDropPath = new ConfigurationSetting<string>(buildDropPath);
+        configuration.BuildComponentPath = new ConfigurationSetting<string>(buildDropPath);
+        configuration.PackagesList = new ConfigurationSetting<IEnumerable<SbomPackage>>(mergeableContents.ToMergedPackages());
     }
 
     private bool TryGetMergeableContent(IEnumerable<ConsolidationSource> consolidationSources, out IEnumerable<MergeableContent> mergeableContents)

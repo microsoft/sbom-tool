@@ -203,6 +203,7 @@ public interface IFileSystemUtils
     /// <summary>
     /// Returns the path to a temp dir
     /// </summary>
+    /// <param name="prefix">Optional prefix for the temp directory name.</param>
     /// <returns>Path to a temp dir</returns>
-    public string CreateTempSubDirectory();
+    public string CreateTempSubDirectory(string prefix = default);
 }

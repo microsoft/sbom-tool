@@ -2,11 +2,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Manifest.Configuration;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
+using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -39,6 +41,7 @@ public class SbomConsolidationWorkflowTests
     private Mock<IMergeableContentProvider> mergeableContent22ProviderMock;
     private Mock<IMergeableContentProvider> mergeableContent30ProviderMock;
     private Mock<ISbomConfigFactory> sbomConfigFactoryMock;
+    private Mock<ISbomConfigProvider> sbomConfigProviderMock;
     private Mock<ISPDXFormatDetector> spdxFormatDetectorMock;
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
     private Mock<IMetadataBuilderFactory> metadataBuilderFactoryMock;
@@ -59,6 +62,7 @@ public class SbomConsolidationWorkflowTests
         sbomValidationWorkflowFactoryMock = new Mock<ISbomValidationWorkflowFactory>(MockBehavior.Strict);
         sbomValidationWorkflowMock = new Mock<IWorkflow<SbomParserBasedValidationWorkflow>>(MockBehavior.Strict);
         sbomConfigFactoryMock = new Mock<ISbomConfigFactory>(MockBehavior.Strict);
+        sbomConfigProviderMock = new Mock<ISbomConfigProvider>(MockBehavior.Strict);
         spdxFormatDetectorMock = new Mock<ISPDXFormatDetector>(MockBehavior.Strict);
         fileSystemUtilsMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
         metadataBuilderFactoryMock = new Mock<IMetadataBuilderFactory>(MockBehavior.Strict);
@@ -76,6 +80,7 @@ public class SbomConsolidationWorkflowTests
             sbomGenerationWorkflowMock.Object,
             sbomValidationWorkflowFactoryMock.Object,
             sbomConfigFactoryMock.Object,
+            sbomConfigProviderMock.Object,
             spdxFormatDetectorMock.Object,
             fileSystemUtilsMock.Object,
             metadataBuilderFactoryMock.Object,
@@ -185,16 +190,7 @@ public class SbomConsolidationWorkflowTests
     public async Task RunAsync_MixOfValidAndInvalidInputSboms()
     {
         SetUpSbomsToValidate();
-
-        configurationMock.Setup(m => m.OutputPath).Returns(new ConfigurationSetting<string>());
-        configurationMock.Setup(m => m.ValidateSignature).Returns(new ConfigurationSetting<bool>(true));
-        configurationMock.Setup(m => m.BuildDropPath).Returns(new ConfigurationSetting<string>(ArtifactKey1));
-        configurationMock.SetupSet(m => m.ValidateSignature = It.IsAny<ConfigurationSetting<bool>>());
-        configurationMock.SetupSet(m => m.IgnoreMissing = It.IsAny<ConfigurationSetting<bool>>());
-        configurationMock.SetupSet(m => m.BuildDropPath = It.IsAny<ConfigurationSetting<string>>());
-        configurationMock.SetupSet(m => m.OutputPath = It.IsAny<ConfigurationSetting<string>>());
-        fileSystemUtilsMock.Setup(m => m.CreateTempSubDirectory()).Returns(TempDirPath);
-        fileSystemUtilsMock.Setup(m => m.JoinPaths(TempDirPath, It.IsAny<string>())).Returns(TempDirPath);
+        SetupMinimalValidationMocks();
 
         sbomValidationWorkflowFactoryMock
             .Setup(x => x.Get(It.IsAny<IConfiguration>(), It.Is<SbomConfig>(c => c.ManifestJsonDirPath.Equals(ArtifactKey1)), It.IsAny<string>()))
@@ -218,8 +214,8 @@ public class SbomConsolidationWorkflowTests
     {
         SetUpSbomsToValidate();
         SetUpMinimalValidation();
-        sbomGenerationWorkflowMock.Setup(x => x.RunAsync())
-            .ReturnsAsync(expectedResult);
+        SetupMinimalGenerationMocks(expectedResult);
+
         mergeableContent22ProviderMock.Setup(x => x.TryGetContent(PathToSpdx22ManifestForArtifactKey1, out It.Ref<MergeableContent>.IsAny))
             .Returns(true);
         mergeableContent22ProviderMock.Setup(x => x.TryGetContent(PathToSpdx22ManifestForArtifactKey2, out It.Ref<MergeableContent>.IsAny))
@@ -278,19 +274,43 @@ public class SbomConsolidationWorkflowTests
 
     private void SetUpMinimalValidation(bool workflowResult = true)
     {
-        configurationMock.Setup(m => m.OutputPath).Returns(new ConfigurationSetting<string>());
-        configurationMock.Setup(m => m.ValidateSignature).Returns(new ConfigurationSetting<bool>(true));
-        configurationMock.Setup(m => m.BuildDropPath).Returns(new ConfigurationSetting<string>());
-        configurationMock.SetupSet(m => m.ValidateSignature = It.IsAny<ConfigurationSetting<bool>>());
-        configurationMock.SetupSet(m => m.IgnoreMissing = It.IsAny<ConfigurationSetting<bool>>());
-        configurationMock.SetupSet(m => m.BuildDropPath = It.IsAny<ConfigurationSetting<string>>());
-        configurationMock.SetupSet(m => m.OutputPath = It.IsAny<ConfigurationSetting<string>>());
-        fileSystemUtilsMock.Setup(m => m.CreateTempSubDirectory()).Returns(TempDirPath);
-        fileSystemUtilsMock.Setup(m => m.JoinPaths(TempDirPath, It.IsAny<string>())).Returns(TempDirPath);
+        SetupMinimalValidationMocks();
 
         sbomValidationWorkflowFactoryMock
             .Setup(x => x.Get(It.IsAny<IConfiguration>(), It.IsAny<SbomConfig>(), It.IsAny<string>()))
             .Returns(sbomValidationWorkflowMock.Object);
         sbomValidationWorkflowMock.Setup(x => x.RunAsync()).ReturnsAsync(workflowResult);
+    }
+
+    private void SetupMinimalValidationMocks()
+    {
+        // These are sorted alphabetically, not by the order in which they are invoked
+        configurationMock.Setup(m => m.BuildDropPath).Returns(new ConfigurationSetting<string>());
+        configurationMock.Setup(m => m.ManifestDirPath).Returns(new ConfigurationSetting<string>("original setting"));
+        configurationMock.Setup(m => m.OutputPath).Returns(new ConfigurationSetting<string>());
+        configurationMock.Setup(m => m.ValidateSignature).Returns(new ConfigurationSetting<bool>(true));
+        configurationMock.SetupSet(m => m.BuildDropPath = It.IsAny<ConfigurationSetting<string>>());
+        configurationMock.SetupSet(m => m.IgnoreMissing = It.IsAny<ConfigurationSetting<bool>>());
+        configurationMock.SetupSet(m => m.ManifestDirPath = It.IsAny<ConfigurationSetting<string>>());
+        configurationMock.SetupSet(m => m.OutputPath = It.IsAny<ConfigurationSetting<string>>());
+        configurationMock.SetupSet(m => m.ValidateSignature = It.IsAny<ConfigurationSetting<bool>>());
+
+        fileSystemUtilsMock.Setup(m => m.CreateTempSubDirectory(SbomConsolidationWorkflow.WorkingDirPrefix)).Returns(TempDirPath);
+        fileSystemUtilsMock.Setup(m => m.JoinPaths(TempDirPath, It.IsAny<string>())).Returns(TempDirPath);
+    }
+
+    private void SetupMinimalGenerationMocks(bool expectedResult)
+    {
+        // These are sorted alphabetically, not by the order in which they are invoked
+        configurationMock.SetupSet(m => m.BuildComponentPath = It.IsAny<ConfigurationSetting<string>>());
+        configurationMock.SetupSet(m => m.BuildDropPath = It.IsAny<ConfigurationSetting<string>>());
+        configurationMock.SetupSet(m => m.ManifestInfo = It.IsAny<ConfigurationSetting<IList<ManifestInfo>>>());
+        configurationMock.SetupSet(m => m.PackagesList = It.IsAny<ConfigurationSetting<IEnumerable<SbomPackage>>>());
+
+        fileSystemUtilsMock.Setup(m => m.CreateDirectory(Path.Join(TempDirPath, "consolidated-build-drop"))).Returns<DirectoryInfo>(null);
+
+        sbomConfigProviderMock.Setup(m => m.ClearCache());
+
+        sbomGenerationWorkflowMock.Setup(x => x.RunAsync()).ReturnsAsync(expectedResult);
     }
 }
