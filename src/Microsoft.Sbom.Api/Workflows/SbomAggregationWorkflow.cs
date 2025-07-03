@@ -19,9 +19,9 @@ using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows;
 
-public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
+public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
 {
-    public const string WorkingDirPrefix = "sbom-consolidation-";
+    public const string WorkingDirPrefix = "sbom-aggregation-";
 
     private readonly ILogger logger;
     private readonly IConfiguration configuration;
@@ -37,7 +37,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
 
     private IReadOnlyDictionary<string, ArtifactInfo> ArtifactInfoMap => configuration.ArtifactInfoMap.Value;
 
-    public SbomConsolidationWorkflow(
+    public SbomAggregationWorkflow(
         ILogger logger,
         IConfiguration configuration,
         IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow,
@@ -77,32 +77,32 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
     /// <inheritdoc/>
     public virtual async Task<bool> RunAsync()
     {
-        var allVersionConsolidationSources = ArtifactInfoMap.Select(artifact => GetSbomsToConsolidate(artifact.Key, artifact.Value))
+        var allVersionAggregationSources = ArtifactInfoMap.Select(artifact => GetSbomsToAggregate(artifact.Key, artifact.Value))
             .Where(l => l != null)
             .SelectMany(l => l);
 
-        var consolidationSources = allVersionConsolidationSources.Where(s => s.SbomConfig.ManifestInfo.Equals(Constants.SPDX22ManifestInfo));
-        var non22Sboms = allVersionConsolidationSources.Select(s => s.SbomConfig.ManifestJsonFilePath).Except(consolidationSources.Select(s => s.SbomConfig.ManifestJsonFilePath));
+        var aggregationSources = allVersionAggregationSources.Where(s => s.SbomConfig.ManifestInfo.Equals(Constants.SPDX22ManifestInfo));
+        var non22Sboms = allVersionAggregationSources.Select(s => s.SbomConfig.ManifestJsonFilePath).Except(aggregationSources.Select(s => s.SbomConfig.ManifestJsonFilePath));
         if (non22Sboms.Any())
         {
-            logger.Information($"The consolidate action only supports SPDX 2.2. The following non-SPDX 2.2 SBOMs are being ignored:\n{string.Join('\n', non22Sboms)}");
+            logger.Information($"The aggregate action only supports SPDX 2.2. The following non-SPDX 2.2 SBOMs are being ignored:\n{string.Join('\n', non22Sboms)}");
         }
 
-        if (consolidationSources == null || !consolidationSources.Any())
+        if (aggregationSources == null || !aggregationSources.Any())
         {
             logger.Information($"No valid SBOMs detected.");
             return false;
         }
         else
         {
-            logger.Information($"Running consolidation on the following SBOMs:\n{string.Join('\n', consolidationSources.Select(s => s.SbomConfig.ManifestJsonFilePath))}");
+            logger.Information($"Running aggregation on the following SBOMs:\n{string.Join('\n', aggregationSources.Select(s => s.SbomConfig.ManifestJsonFilePath))}");
         }
 
         workingDir = fileSystemUtils.CreateTempSubDirectory(WorkingDirPrefix);
 
         try
         {
-            return await ValidateSourceSbomsAsync(consolidationSources) && await GenerateConsolidatedSbom(consolidationSources);
+            return await ValidateSourceSbomsAsync(aggregationSources) && await GenerateAggregatedSbom(aggregationSources);
         }
         catch (Exception)
         {
@@ -114,7 +114,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         }
     }
 
-    private IEnumerable<ConsolidationSource> GetSbomsToConsolidate(string artifactPath, ArtifactInfo info)
+    private IEnumerable<AggregationSource> GetSbomsToAggregate(string artifactPath, ArtifactInfo info)
     {
         var manifestDirPath = info?.ExternalManifestDir ?? fileSystemUtils.JoinPaths(artifactPath, Constants.ManifestFolder);
         var isValidSpdxFormat = spdxFormatDetector.TryGetSbomsWithVersion(manifestDirPath, out var detectedSboms);
@@ -124,13 +124,13 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             return null;
         }
 
-        return detectedSboms.Select((sbom) => new ConsolidationSource(info, sbomConfigFactory.Get(sbom.manifestInfo, manifestDirPath, metadataBuilderFactory), artifactPath));
+        return detectedSboms.Select((sbom) => new AggregationSource(info, sbomConfigFactory.Get(sbom.manifestInfo, manifestDirPath, metadataBuilderFactory), artifactPath));
     }
 
-    private async Task<bool> ValidateSourceSbomsAsync(IEnumerable<ConsolidationSource> consolidationSources)
+    private async Task<bool> ValidateSourceSbomsAsync(IEnumerable<AggregationSource> aggregationSources)
     {
         var result = true;
-        foreach (var source in consolidationSources)
+        foreach (var source in aggregationSources)
         {
             var identifier = Math.Abs(string.GetHashCode(source.SbomConfig.ManifestJsonFilePath)).ToString();
             var workflowResult = false;
@@ -165,7 +165,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         return result;
     }
 
-    private ConfigurationSetting<string> BuildManifestDirPathForSource(ConsolidationSource source)
+    private ConfigurationSetting<string> BuildManifestDirPathForSource(AggregationSource source)
     {
         if (source.ArtifactInfo.ExternalManifestDir is null)
         {
@@ -183,14 +183,14 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         };
     }
 
-    private async Task<bool> GenerateConsolidatedSbom(IEnumerable<ConsolidationSource> consolidationSources)
+    private async Task<bool> GenerateAggregatedSbom(IEnumerable<AggregationSource> aggregationSources)
     {
-        if (!TryGetMergeableContent(consolidationSources, out var mergeableContents))
+        if (!TryGetMergeableContent(aggregationSources, out var mergeableContents))
         {
             return false;
         }
 
-        SetConfigurationForConsolidation(mergeableContents);
+        SetConfigurationForAggregation(mergeableContents);
 
         // The configs contain the input paths. We need to clear them so we write to the correct locations.
         sbomConfigProvider.ClearCache();
@@ -198,9 +198,9 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         return await sbomGenerationWorkflow.RunAsync().ConfigureAwait(false);
     }
 
-    private void SetConfigurationForConsolidation(IEnumerable<MergeableContent> mergeableContents)
+    private void SetConfigurationForAggregation(IEnumerable<MergeableContent> mergeableContents)
     {
-        var buildDropPath = Path.Combine(workingDir, "consolidated-build-drop");
+        var buildDropPath = Path.Combine(workingDir, "aggregated-build-drop");
         fileSystemUtils.CreateDirectory(buildDropPath);
 
         configuration.ManifestInfo = new ConfigurationSetting<IList<ManifestInfo>>(new List<ManifestInfo> { Constants.SPDX22ManifestInfo });
@@ -209,17 +209,17 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         configuration.PackagesList = new ConfigurationSetting<IEnumerable<SbomPackage>>(mergeableContents.ToMergedPackages());
     }
 
-    private bool TryGetMergeableContent(IEnumerable<ConsolidationSource> consolidationSources, out IEnumerable<MergeableContent> mergeableContents)
+    private bool TryGetMergeableContent(IEnumerable<AggregationSource> aggregationSources, out IEnumerable<MergeableContent> mergeableContents)
     {
         mergeableContents = null; // Until proven otherwise
 
         var contents = new List<MergeableContent>();
 
-        // Incorporate the source SBOMs in the consolidated SBOM generation workflow.
-        foreach (var consolidationSource in consolidationSources)
+        // Incorporate the source SBOMs in the aggregated SBOM generation workflow.
+        foreach (var aggregationSource in aggregationSources)
         {
-            var sbomConfig = consolidationSource.SbomConfig;
-            var sbomPath = consolidationSource.SbomConfig.ManifestJsonFilePath;
+            var sbomConfig = aggregationSource.SbomConfig;
+            var sbomPath = aggregationSource.SbomConfig.ManifestJsonFilePath;
             if (!contentProviders.TryGetValue(sbomConfig.ManifestInfo, out var contentProvider))
             {
                 logger.Error("No content provider found for manifest info: {ManifestInfo}", sbomConfig.ManifestInfo);

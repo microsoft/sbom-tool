@@ -10,7 +10,7 @@ namespace Microsoft.Sbom.Api.Config.Args;
 /// <summary>
 /// Defines the common arguments used by the validation and generation actions of the ManifestTool.
 /// </summary>
-public abstract class GenerationAndValidationCommonArgs : GenerationAndValidationAndConsolidationCommonArgs
+public abstract class GenerationAndValidationCommonArgs : GenerationAndValidationAndAggregationCommonArgs
 {
     /// <summary>
     /// Gets or sets the number of parallel threads to use for the workflows.

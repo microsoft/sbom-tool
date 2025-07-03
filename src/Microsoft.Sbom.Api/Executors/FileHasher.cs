@@ -47,7 +47,7 @@ public class FileHasher
                 {
                     configuration.HashAlgorithm.Value
                 },
-                ManifestToolActions.Consolidate => new AlgorithmName[]
+                ManifestToolActions.Aggregate => new AlgorithmName[]
                 {
                     configuration.HashAlgorithm.Value
                 },

@@ -8,9 +8,9 @@ using Microsoft.Sbom.Extensions;
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
 /// <summary>
-/// A class that lets us track information about the source artifact that feeds into a consolidated SBOM.
+/// A class that lets us track information about the source artifact that feeds into a aggregated SBOM.
 /// </summary>
-internal class ConsolidationSource
+internal class AggregationSource
 {
     public ArtifactInfo ArtifactInfo { get; }
 
@@ -18,7 +18,7 @@ internal class ConsolidationSource
 
     public string BuildDropPath { get; }
 
-    public ConsolidationSource(ArtifactInfo artifactInfo, ISbomConfig sbomConfig, string buildDropPath)
+    public AggregationSource(ArtifactInfo artifactInfo, ISbomConfig sbomConfig, string buildDropPath)
     {
         ArtifactInfo = artifactInfo ?? throw new ArgumentNullException(nameof(artifactInfo));
         SbomConfig = sbomConfig ?? throw new ArgumentNullException(nameof(sbomConfig));
@@ -27,6 +27,6 @@ internal class ConsolidationSource
 
     public override string ToString()
     {
-        return $"ConsolidationSource: {ArtifactInfo}, ManifestInfo: {SbomConfig.ManifestInfo}";
+        return $"AggregationSource: {ArtifactInfo}, ManifestInfo: {SbomConfig.ManifestInfo}";
     }
 }

@@ -70,7 +70,7 @@ public abstract class BaseManifestConfigHandler : IManifestConfigHandler
         // For generation the default behavior is to return the SPDX 2.2 SBOM.
         // Only override if the -mi argument is specified.
         if (configuration.ManifestToolAction == ManifestToolActions.Generate ||
-            configuration.ManifestToolAction == ManifestToolActions.Consolidate)
+            configuration.ManifestToolAction == ManifestToolActions.Aggregate)
         {
             if (configuration.ManifestInfo?.Value != null
                 && !Constants.SupportedSpdxManifests.Any(configuration.ManifestInfo.Value.Contains))
