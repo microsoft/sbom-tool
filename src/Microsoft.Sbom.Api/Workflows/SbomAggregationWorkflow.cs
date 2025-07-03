@@ -19,7 +19,7 @@ using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 namespace Microsoft.Sbom.Api.Workflows;
 
-public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
+public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
 {
     public const string WorkingDirPrefix = "sbom-consolidation-";
 
@@ -37,7 +37,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
 
     private IReadOnlyDictionary<string, ArtifactInfo> ArtifactInfoMap => configuration.ArtifactInfoMap.Value;
 
-    public SbomConsolidationWorkflow(
+    public SbomAggregationWorkflow(
         ILogger logger,
         IConfiguration configuration,
         IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow,
@@ -114,7 +114,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         }
     }
 
-    private IEnumerable<ConsolidationSource> GetSbomsToConsolidate(string artifactPath, ArtifactInfo info)
+    private IEnumerable<AggregationSource> GetSbomsToConsolidate(string artifactPath, ArtifactInfo info)
     {
         var manifestDirPath = info?.ExternalManifestDir ?? fileSystemUtils.JoinPaths(artifactPath, Constants.ManifestFolder);
         var isValidSpdxFormat = spdxFormatDetector.TryGetSbomsWithVersion(manifestDirPath, out var detectedSboms);
@@ -124,10 +124,10 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             return null;
         }
 
-        return detectedSboms.Select((sbom) => new ConsolidationSource(info, sbomConfigFactory.Get(sbom.manifestInfo, manifestDirPath, metadataBuilderFactory), artifactPath));
+        return detectedSboms.Select((sbom) => new AggregationSource(info, sbomConfigFactory.Get(sbom.manifestInfo, manifestDirPath, metadataBuilderFactory), artifactPath));
     }
 
-    private async Task<bool> ValidateSourceSbomsAsync(IEnumerable<ConsolidationSource> consolidationSources)
+    private async Task<bool> ValidateSourceSbomsAsync(IEnumerable<AggregationSource> consolidationSources)
     {
         var result = true;
         foreach (var source in consolidationSources)
@@ -165,7 +165,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         return result;
     }
 
-    private ConfigurationSetting<string> BuildManifestDirPathForSource(ConsolidationSource source)
+    private ConfigurationSetting<string> BuildManifestDirPathForSource(AggregationSource source)
     {
         if (source.ArtifactInfo.ExternalManifestDir is null)
         {
@@ -183,7 +183,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         };
     }
 
-    private async Task<bool> GenerateConsolidatedSbom(IEnumerable<ConsolidationSource> consolidationSources)
+    private async Task<bool> GenerateConsolidatedSbom(IEnumerable<AggregationSource> consolidationSources)
     {
         if (!TryGetMergeableContent(consolidationSources, out var mergeableContents))
         {
@@ -209,7 +209,7 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
         configuration.PackagesList = new ConfigurationSetting<IEnumerable<SbomPackage>>(mergeableContents.ToMergedPackages());
     }
 
-    private bool TryGetMergeableContent(IEnumerable<ConsolidationSource> consolidationSources, out IEnumerable<MergeableContent> mergeableContents)
+    private bool TryGetMergeableContent(IEnumerable<AggregationSource> consolidationSources, out IEnumerable<MergeableContent> mergeableContents)
     {
         mergeableContents = null; // Until proven otherwise
 

@@ -113,7 +113,7 @@ public class ConfigurationProfile : Profile
             .ForMember(c => c.PackageSupplier, o => o.Ignore());
 
         // See Issue #1107 for details on why this map doesn't have a bunch of .ForMember calls to ignore properties.
-        CreateMap<ConsolidationArgs, InputConfiguration>();
+        CreateMap<AggregationArgs, InputConfiguration>();
 
         // Create config for the config json file to configuration.
         CreateMap<ConfigFile, InputConfiguration>()

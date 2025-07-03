@@ -20,7 +20,7 @@ using Constants = Microsoft.Sbom.Api.Utils.Constants;
 namespace Microsoft.Sbom.Api.Workflows.Tests;
 
 [TestClass]
-public class SbomConsolidationWorkflowTests
+public class SbomAggregationWorkflowTests
 {
     private const string ArtifactKey1 = "sbom-key-1";
     private const string ArtifactKey2 = "sbom-key-2";
@@ -45,7 +45,7 @@ public class SbomConsolidationWorkflowTests
     private Mock<ISPDXFormatDetector> spdxFormatDetectorMock;
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
     private Mock<IMetadataBuilderFactory> metadataBuilderFactoryMock;
-    private SbomConsolidationWorkflow testSubject;
+    private SbomAggregationWorkflow testSubject;
 
     private Dictionary<string, ArtifactInfo> artifactInfoMapStub = new Dictionary<string, ArtifactInfo>()
     {
@@ -74,7 +74,7 @@ public class SbomConsolidationWorkflowTests
         mergeableContent30ProviderMock.Setup(m => m.ManifestInfo)
             .Returns(Constants.SPDX30ManifestInfo);
 
-        testSubject = new SbomConsolidationWorkflow(
+        testSubject = new SbomAggregationWorkflow(
             loggerMock.Object,
             configurationMock.Object,
             sbomGenerationWorkflowMock.Object,
@@ -295,7 +295,7 @@ public class SbomConsolidationWorkflowTests
         configurationMock.SetupSet(m => m.OutputPath = It.IsAny<ConfigurationSetting<string>>());
         configurationMock.SetupSet(m => m.ValidateSignature = It.IsAny<ConfigurationSetting<bool>>());
 
-        fileSystemUtilsMock.Setup(m => m.CreateTempSubDirectory(SbomConsolidationWorkflow.WorkingDirPrefix)).Returns(TempDirPath);
+        fileSystemUtilsMock.Setup(m => m.CreateTempSubDirectory(SbomAggregationWorkflow.WorkingDirPrefix)).Returns(TempDirPath);
         fileSystemUtilsMock.Setup(m => m.JoinPaths(TempDirPath, It.IsAny<string>())).Returns(TempDirPath);
     }
 

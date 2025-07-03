@@ -12,14 +12,14 @@ using Microsoft.Sbom.Api.Workflows;
 
 namespace Microsoft.Sbom.Tool;
 
-public class ConsolidationService : IHostedService
+public class AggregationService : IHostedService
 {
-    private readonly IWorkflow<SbomConsolidationWorkflow> consolidationWorkflow;
+    private readonly IWorkflow<SbomAggregationWorkflow> consolidationWorkflow;
     private readonly IRecorder recorder;
     private readonly IHostApplicationLifetime hostApplicationLifetime;
 
-    public ConsolidationService(
-        IWorkflow<SbomConsolidationWorkflow> consolidationWorkflow,
+    public AggregationService(
+        IWorkflow<SbomAggregationWorkflow> consolidationWorkflow,
         IRecorder recorder,
         IHostApplicationLifetime hostApplicationLifetime)
     {

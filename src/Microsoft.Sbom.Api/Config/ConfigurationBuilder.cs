@@ -45,7 +45,7 @@ public class ConfigurationBuilder<T> : IConfigurationBuilder<T>
                 formatValidationArgs.ManifestToolAction = ManifestToolActions.ValidateFormat;
                 commandLineArgs = mapper.Map<InputConfiguration>(formatValidationArgs);
                 break;
-            case ConsolidationArgs consolidationArgs:
+            case AggregationArgs consolidationArgs:
                 consolidationArgs.ManifestToolAction = ManifestToolActions.Consolidate;
                 commandLineArgs = mapper.Map<InputConfiguration>(consolidationArgs);
                 break;

@@ -10,7 +10,7 @@ namespace Microsoft.Sbom.Api.Workflows.Helpers;
 /// <summary>
 /// A class that lets us track information about the source artifact that feeds into a consolidated SBOM.
 /// </summary>
-internal class ConsolidationSource
+internal class AggregationSource
 {
     public ArtifactInfo ArtifactInfo { get; }
 
@@ -18,7 +18,7 @@ internal class ConsolidationSource
 
     public string BuildDropPath { get; }
 
-    public ConsolidationSource(ArtifactInfo artifactInfo, ISbomConfig sbomConfig, string buildDropPath)
+    public AggregationSource(ArtifactInfo artifactInfo, ISbomConfig sbomConfig, string buildDropPath)
     {
         ArtifactInfo = artifactInfo ?? throw new ArgumentNullException(nameof(artifactInfo));
         SbomConfig = sbomConfig ?? throw new ArgumentNullException(nameof(sbomConfig));

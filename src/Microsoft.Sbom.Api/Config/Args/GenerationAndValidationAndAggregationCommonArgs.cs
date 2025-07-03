@@ -8,7 +8,7 @@ namespace Microsoft.Sbom.Api.Config.Args;
 /// <summary>
 /// Defines the common arguments used by the validation, generation, and consolidation actions of the ManifestTool.
 /// </summary>
-public abstract class GenerationAndValidationAndConsolidationCommonArgs : CommonArgs
+public abstract class GenerationAndValidationAndAggregationCommonArgs : CommonArgs
 {
     /// <summary>
     /// Gets or sets a JSON config file that can be used to specify all the arguments for an action.
