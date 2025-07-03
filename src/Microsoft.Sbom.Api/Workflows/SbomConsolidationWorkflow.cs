@@ -21,6 +21,8 @@ namespace Microsoft.Sbom.Api.Workflows;
 
 public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
 {
+    public const string WorkingDirPrefix = "sbom-consolidation-";
+
     private readonly ILogger logger;
     private readonly IConfiguration configuration;
     private readonly ISbomConfigFactory sbomConfigFactory;
@@ -96,23 +98,19 @@ public class SbomConsolidationWorkflow : IWorkflow<SbomConsolidationWorkflow>
             logger.Information($"Running consolidation on the following SBOMs:\n{string.Join('\n', consolidationSources.Select(s => s.SbomConfig.ManifestJsonFilePath))}");
         }
 
-        workingDir = fileSystemUtils.CreateTempSubDirectory();
+        workingDir = fileSystemUtils.CreateTempSubDirectory(WorkingDirPrefix);
 
         try
         {
             return await ValidateSourceSbomsAsync(consolidationSources) && await GenerateConsolidatedSbom(consolidationSources);
         }
-#if DEBUG
         catch (Exception)
         {
+#if DEBUG
             // This is here to help debug issues during active development. It will be removed before release.
             System.Diagnostics.Debugger.Break();
-            throw;
-        }
 #endif
-        finally
-        {
-            fileSystemUtils.DeleteDir(workingDir, true);
+            throw;
         }
     }
 

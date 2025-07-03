@@ -295,8 +295,7 @@ public class SbomConsolidationWorkflowTests
         configurationMock.SetupSet(m => m.OutputPath = It.IsAny<ConfigurationSetting<string>>());
         configurationMock.SetupSet(m => m.ValidateSignature = It.IsAny<ConfigurationSetting<bool>>());
 
-        fileSystemUtilsMock.Setup(m => m.CreateTempSubDirectory()).Returns(TempDirPath);
-        fileSystemUtilsMock.Setup(m => m.DeleteDir(TempDirPath, true));
+        fileSystemUtilsMock.Setup(m => m.CreateTempSubDirectory(SbomConsolidationWorkflow.WorkingDirPrefix)).Returns(TempDirPath);
         fileSystemUtilsMock.Setup(m => m.JoinPaths(TempDirPath, It.IsAny<string>())).Returns(TempDirPath);
     }
 
