@@ -307,7 +307,7 @@ public class SbomAggregationWorkflowTests
         configurationMock.SetupSet(m => m.ManifestInfo = It.IsAny<ConfigurationSetting<IList<ManifestInfo>>>());
         configurationMock.SetupSet(m => m.PackagesList = It.IsAny<ConfigurationSetting<IEnumerable<SbomPackage>>>());
 
-        fileSystemUtilsMock.Setup(m => m.CreateDirectory(Path.Join(TempDirPath, "consolidated-build-drop"))).Returns<DirectoryInfo>(null);
+        fileSystemUtilsMock.Setup(m => m.CreateDirectory(Path.Join(TempDirPath, "aggregated-build-drop"))).Returns<DirectoryInfo>(null);
 
         sbomConfigProviderMock.Setup(m => m.ClearCache());
 

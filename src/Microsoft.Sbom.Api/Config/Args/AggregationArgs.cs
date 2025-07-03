@@ -4,7 +4,7 @@
 namespace Microsoft.Sbom.Api.Config.Args;
 
 /// <summary>
-/// Arguments used by the ManifestTool for the consolidation action.
+/// Arguments used by the ManifestTool for the aggregation action.
 /// </summary>
 public class AggregationArgs : GenerationAndValidationAndAggregationCommonArgs
 {

@@ -4,7 +4,7 @@
 namespace Microsoft.Sbom.Common.Config;
 
 /// <summary>
-/// Describes a single artifact that is an input to the consolidation workflow.
+/// Describes a single artifact that is an input to the aggregation workflow.
 /// </summary>
 public class ArtifactInfo
 {

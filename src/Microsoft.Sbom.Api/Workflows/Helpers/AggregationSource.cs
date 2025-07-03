@@ -8,7 +8,7 @@ using Microsoft.Sbom.Extensions;
 namespace Microsoft.Sbom.Api.Workflows.Helpers;
 
 /// <summary>
-/// A class that lets us track information about the source artifact that feeds into a consolidated SBOM.
+/// A class that lets us track information about the source artifact that feeds into a aggregated SBOM.
 /// </summary>
 internal class AggregationSource
 {
@@ -27,6 +27,6 @@ internal class AggregationSource
 
     public override string ToString()
     {
-        return $"ConsolidationSource: {ArtifactInfo}, ManifestInfo: {SbomConfig.ManifestInfo}";
+        return $"AggregationSource: {ArtifactInfo}, ManifestInfo: {SbomConfig.ManifestInfo}";
     }
 }

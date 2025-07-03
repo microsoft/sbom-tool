@@ -45,9 +45,9 @@ public class ConfigurationBuilder<T> : IConfigurationBuilder<T>
                 formatValidationArgs.ManifestToolAction = ManifestToolActions.ValidateFormat;
                 commandLineArgs = mapper.Map<InputConfiguration>(formatValidationArgs);
                 break;
-            case AggregationArgs consolidationArgs:
-                consolidationArgs.ManifestToolAction = ManifestToolActions.Consolidate;
-                commandLineArgs = mapper.Map<InputConfiguration>(consolidationArgs);
+            case AggregationArgs aggregationArgs:
+                aggregationArgs.ManifestToolAction = ManifestToolActions.Aggregate;
+                commandLineArgs = mapper.Map<InputConfiguration>(aggregationArgs);
                 break;
             default:
                 throw new ValidationArgException($"Unsupported configuration type found {typeof(T)}");

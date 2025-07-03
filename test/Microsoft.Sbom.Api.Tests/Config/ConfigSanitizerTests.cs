@@ -513,7 +513,7 @@ public class ConfigSanitizerTests
     public void ArtifactMapInfo_InvalidCases_SanitizeThrowsException(bool specifyEmptyArtifactInfoMap, string description)
     {
         var config = GetConfigurationBaseObject();
-        config.ManifestToolAction = ManifestToolActions.Consolidate;
+        config.ManifestToolAction = ManifestToolActions.Aggregate;
 
         if (specifyEmptyArtifactInfoMap)
         {
@@ -529,10 +529,10 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
-    public void ArtifactMapInfo_ExistsWithValidData_Consolidate_SanitizeSucceeds()
+    public void ArtifactMapInfo_ExistsWithValidData_Aggregate_SanitizeSucceeds()
     {
         var config = GetConfigurationBaseObject();
-        config.ManifestToolAction = ManifestToolActions.Consolidate;
+        config.ManifestToolAction = ManifestToolActions.Aggregate;
         var artifactInfoMap = new Dictionary<string, ArtifactInfo>
         {
             { "artifact1", new ArtifactInfo
