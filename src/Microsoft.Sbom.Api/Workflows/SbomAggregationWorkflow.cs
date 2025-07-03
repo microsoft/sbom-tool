@@ -132,7 +132,7 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
         var result = true;
         foreach (var source in aggregationSources)
         {
-            var identifier = Math.Abs(string.GetHashCode(source.SbomConfig.ManifestJsonFilePath)).ToString();
+            var identifier = source.Identifier;
             var workflowResult = false;
             var originalManifestDirPath = configuration.ManifestDirPath;
             try
