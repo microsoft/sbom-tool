@@ -74,7 +74,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
 
     public virtual async Task<bool> RunAsync()
     {
-        IEnumerable<FileValidationResult> validErrors = new List<FileValidationResult>();
+        var validErrors = Enumerable.Empty<FileValidationResult>();
         var elementsSpdxIdList = new HashSet<string>();
         string sbomDir = null;
         var deleteSbomDir = false;
@@ -184,19 +184,28 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         var validErrors = new List<FileValidationResult>();
 
         // Write all the JSON documents from the generationResults to the manifest based on the manifestInfo.
-        var fileGeneratorResult = await fileArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+        // When aggregating, only call the packages generator. A helper method might make this more compact,
+        // but it would be less readable.
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        {
+            var fileGeneratorResult = await fileArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+            validErrors.AddRange(fileGeneratorResult.Errors);
+        }
 
         var packageGeneratorResult = await packageArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
-
-        var externalDocumentReferenceGeneratorResult = await externalDocumentReferenceGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
-
-        var relationshipGeneratorResult = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
-
-        // Concatenate all the errors from the generationResults.
-        validErrors.AddRange(fileGeneratorResult.Errors);
         validErrors.AddRange(packageGeneratorResult.Errors);
-        validErrors.AddRange(externalDocumentReferenceGeneratorResult.Errors);
-        validErrors.AddRange(relationshipGeneratorResult.Errors);
+
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        {
+            var externalDocumentReferenceGeneratorResult = await externalDocumentReferenceGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+            validErrors.AddRange(externalDocumentReferenceGeneratorResult.Errors);
+        }
+
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        {
+            var relationshipGeneratorResult = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+            validErrors.AddRange(relationshipGeneratorResult.Errors);
+        }
 
         return validErrors;
     }
