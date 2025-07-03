@@ -170,7 +170,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     recorder.RecordTotalErrors(validErrors.ToList());
                 }
 
-               // Delete the generated _manifest folder if generation failed.
+                // Delete the generated _manifest folder if generation failed.
                 if (deleteSbomDir || validErrors.Any())
                 {
                     DeleteManifestFolder(sbomDir);
