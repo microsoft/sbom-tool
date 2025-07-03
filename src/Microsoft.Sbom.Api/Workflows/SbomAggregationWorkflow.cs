@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Api.Workflows.Helpers;
 using Microsoft.Sbom.Common;
@@ -24,6 +25,7 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
     public const string WorkingDirPrefix = "sbom-aggregation-";
 
     private readonly ILogger logger;
+    private readonly IRecorder recorder;
     private readonly IConfiguration configuration;
     private readonly ISbomConfigFactory sbomConfigFactory;
     private readonly ISbomConfigProvider sbomConfigProvider;
@@ -39,6 +41,7 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
 
     public SbomAggregationWorkflow(
         ILogger logger,
+        IRecorder recorder,
         IConfiguration configuration,
         IWorkflow<SbomGenerationWorkflow> sbomGenerationWorkflow,
         ISbomValidationWorkflowFactory sbomValidationWorkflowFactory,
@@ -50,6 +53,7 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
         IEnumerable<IMergeableContentProvider> mergeableContentProviders)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         this.sbomConfigFactory = sbomConfigFactory ?? throw new ArgumentNullException(nameof(sbomConfigFactory));
         this.sbomConfigProvider = sbomConfigProvider ?? throw new ArgumentNullException(nameof(sbomConfigProvider));
@@ -77,40 +81,47 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
     /// <inheritdoc/>
     public virtual async Task<bool> RunAsync()
     {
-        var allVersionAggregationSources = ArtifactInfoMap.Select(artifact => GetSbomsToAggregate(artifact.Key, artifact.Value))
-            .Where(l => l != null)
-            .SelectMany(l => l);
+        using (recorder.TraceEvent(Events.SbomAggregationWorkflow))
+        {
+            try
+            {
+                var allVersionAggregationSources = ArtifactInfoMap.Select(artifact => GetSbomsToAggregate(artifact.Key, artifact.Value))
+                .Where(l => l != null)
+                .SelectMany(l => l);
 
-        var aggregationSources = allVersionAggregationSources.Where(s => s.SbomConfig.ManifestInfo.Equals(Constants.SPDX22ManifestInfo));
-        var non22Sboms = allVersionAggregationSources.Select(s => s.SbomConfig.ManifestJsonFilePath).Except(aggregationSources.Select(s => s.SbomConfig.ManifestJsonFilePath));
-        if (non22Sboms.Any())
-        {
-            logger.Information($"The aggregate action only supports SPDX 2.2. The following non-SPDX 2.2 SBOMs are being ignored:\n{string.Join('\n', non22Sboms)}");
-        }
+                var aggregationSources = allVersionAggregationSources.Where(s => s.SbomConfig.ManifestInfo.Equals(Constants.SPDX22ManifestInfo));
+                var non22Sboms = allVersionAggregationSources.Select(s => s.SbomConfig.ManifestJsonFilePath).Except(aggregationSources.Select(s => s.SbomConfig.ManifestJsonFilePath));
+                if (non22Sboms.Any())
+                {
+                    logger.Information($"The aggregate action only supports SPDX 2.2. The following non-SPDX 2.2 SBOMs are being ignored:\n{string.Join('\n', non22Sboms)}");
+                }
 
-        if (aggregationSources == null || !aggregationSources.Any())
-        {
-            logger.Information($"No valid SBOMs detected.");
-            return false;
-        }
-        else
-        {
-            logger.Information($"Running aggregation on the following SBOMs:\n{string.Join('\n', aggregationSources.Select(s => s.SbomConfig.ManifestJsonFilePath))}");
-        }
+                if (aggregationSources == null || !aggregationSources.Any())
+                {
+                    logger.Information($"No valid SBOMs detected.");
+                    return false;
+                }
+                else
+                {
+                    logger.Information($"Running aggregation on the following SBOMs:\n{string.Join('\n', aggregationSources.Select(s => s.SbomConfig.ManifestJsonFilePath))}");
+                }
 
-        workingDir = fileSystemUtils.CreateTempSubDirectory(WorkingDirPrefix);
+                workingDir = fileSystemUtils.CreateTempSubDirectory(WorkingDirPrefix);
 
-        try
-        {
-            return await ValidateSourceSbomsAsync(aggregationSources) && await GenerateAggregatedSbom(aggregationSources);
-        }
-        catch (Exception)
-        {
+                return await ValidateSourceSbomsAsync(aggregationSources) && await GenerateAggregatedSbom(aggregationSources);
+            }
+            catch (Exception e)
+            {
 #if DEBUG
-            // This is here to help debug issues during active development. It will be removed before release.
-            System.Diagnostics.Debugger.Break();
+                // This is here to help debug issues during active development. It will be removed before release.
+                System.Diagnostics.Debugger.Break();
 #endif
-            throw;
+                recorder.RecordException(e);
+                logger.Error("Encountered an error while generating the manifest.");
+                logger.Error($"Error details: {e.Message}");
+
+                return false;
+            }
         }
     }
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Manifest.Configuration;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
@@ -34,6 +35,7 @@ public class SbomAggregationWorkflowTests
     private const string TempDirPath = "temp-dir";
 
     private Mock<ILogger> loggerMock;
+    private Mock<IRecorder> recorderMock;
     private Mock<IConfiguration> configurationMock;
     private Mock<IWorkflow<SbomGenerationWorkflow>> sbomGenerationWorkflowMock;
     private Mock<ISbomValidationWorkflowFactory> sbomValidationWorkflowFactoryMock;
@@ -56,7 +58,8 @@ public class SbomAggregationWorkflowTests
     [TestInitialize]
     public void BeforeEachTest()
     {
-        loggerMock = new Mock<ILogger>();  // Intentionally not using Strict to streamline setup
+        loggerMock = new Mock<ILogger>();      // Intentionally not using Strict to streamline setup
+        recorderMock = new Mock<IRecorder>(MockBehavior.Strict);  // Intentionally not using Strict to streamline setup
         configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
         sbomGenerationWorkflowMock = new Mock<IWorkflow<SbomGenerationWorkflow>>(MockBehavior.Strict);
         sbomValidationWorkflowFactoryMock = new Mock<ISbomValidationWorkflowFactory>(MockBehavior.Strict);
@@ -74,8 +77,11 @@ public class SbomAggregationWorkflowTests
         mergeableContent30ProviderMock.Setup(m => m.ManifestInfo)
             .Returns(Constants.SPDX30ManifestInfo);
 
+        recorderMock.Setup(m => m.TraceEvent(Events.SbomAggregationWorkflow)).Returns(new TimingRecorder(Events.SbomGenerationWorkflow));
+
         testSubject = new SbomAggregationWorkflow(
             loggerMock.Object,
+            recorderMock.Object,
             configurationMock.Object,
             sbomGenerationWorkflowMock.Object,
             sbomValidationWorkflowFactoryMock.Object,
@@ -91,6 +97,7 @@ public class SbomAggregationWorkflowTests
     public void AfterEachTest()
     {
         loggerMock.VerifyAll();
+        recorderMock.VerifyAll();
         configurationMock.VerifyAll();
         sbomGenerationWorkflowMock.VerifyAll();
         sbomValidationWorkflowMock.VerifyAll();
