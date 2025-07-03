@@ -49,4 +49,9 @@ public interface ISbomConfigProvider : IDisposable, IAsyncDisposable, IInternalM
     /// </summary>
     /// <param name="action">The action to perform on the config.</param>
     public void ApplyToEachConfig(Action<ISbomConfig> action);
+
+    /// <summary>
+    /// Clear the cache. Use sparingly, as it will cause perf issues if abused.
+    /// </summary>
+    public void ClearCache();
 }
