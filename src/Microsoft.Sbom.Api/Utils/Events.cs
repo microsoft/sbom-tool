@@ -12,6 +12,7 @@ internal static class Events
     internal const string RelationshipsGeneration = "Relationships generation time";
     internal const string MetadataBuilder = "Metadata build time for {0} format";
     internal const string ExternalDocumentReferenceGeneration = "External document reference generation time";
+    internal const string SbomAggregationWorkflow = "Total aggregation time";
 
     internal const string SbomValidationWorkflow = "Total validation time";
 }
