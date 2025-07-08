@@ -243,6 +243,8 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
                 return false;
             }
 
+            recorder.AddAggregationSourceTelemetry(aggregationSource.Identifier, mergeableContent.Packages.Count(), mergeableContent.Relationships.Count());
+
             contents.Add(mergeableContent);
         }
 
