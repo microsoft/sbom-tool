@@ -36,7 +36,7 @@ public class TelemetryRecorder : IRecorder
     private readonly IList<Exception> apiExceptions = new List<Exception>();
     private readonly IList<Exception> metadataExceptions = new List<Exception>();
     private readonly Dictionary<string, string> additionalResults = new Dictionary<string, string>();
-    private readonly IDictionary<string, AggregationSourceTelemetry> aggregationSourceTelemetry = new Dictionary<string, AggregationSourceTelemetry>();
+    private readonly Dictionary<string, AggregationSourceTelemetry> aggregationSourceTelemetry = new Dictionary<string, AggregationSourceTelemetry>();
     private IList<FileValidationResult> errors = new List<FileValidationResult>();
     private Result result = Result.Success;
 
@@ -327,6 +327,7 @@ public class TelemetryRecorder : IRecorder
                 TotalLicensesDetected = this.totalNumberOfLicenses,
                 PackageDetailsEntries = this.packageDetailsEntries,
                 AdditionalResults = this.additionalResults,
+                AggregationSourceTelemetry = aggregationSourceTelemetry,
             };
 
             // Log to logger.
