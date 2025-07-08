@@ -10,5 +10,5 @@ public class AggregationSourceTelemetry
 {
     public int PackageCount { get; set; }
 
-    public int RelationShipCount { get; set; }
+    public int RelationshipCount { get; set; }
 }

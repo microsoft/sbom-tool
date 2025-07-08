@@ -63,6 +63,6 @@ public class TelemetryRecorderTests
 
         Assert.AreEqual(1, telemetryResults.Count);
         Assert.AreEqual(testPackageCount, telemetryResults[testKey].PackageCount);
-        Assert.AreEqual(testRelationshipCount, telemetryResults[testKey].RelationShipCount);
+        Assert.AreEqual(testRelationshipCount, telemetryResults[testKey].RelationshipCount);
     }
 }

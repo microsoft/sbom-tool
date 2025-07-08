@@ -366,7 +366,7 @@ public class TelemetryRecorder : IRecorder
         aggregationSourceTelemetry.Add(identifier, new AggregationSourceTelemetry
         {
             PackageCount = packageCount,
-            RelationShipCount = relationshipCount
+            RelationshipCount = relationshipCount
         });
     }
 }
