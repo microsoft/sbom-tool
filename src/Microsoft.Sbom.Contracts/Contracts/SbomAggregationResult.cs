@@ -6,7 +6,7 @@ namespace Microsoft.Sbom.Contracts;
 /// <summary>
 /// Represents the result of a SBOM generation action.
 /// </summary>
-public class SbomConsolidationResult
+public class SbomAggregationResult
 {
     /// <summary>
     /// Indicaties whether the SBOM consolidation was successful

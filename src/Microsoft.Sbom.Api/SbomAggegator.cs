@@ -11,13 +11,13 @@ namespace Microsoft.Sbom.Api;
 /// <summary>
 /// Responsible for an API to generate SBOMs.
 /// </summary>
-public class SbomConsolidator : ISbomConsolidator
+public class SbomAggegator : ISbomAggregator
 {
-    private readonly IWorkflow<SbomConsolidationWorkflow> generationWorkflow;
+    private readonly IWorkflow<SbomAggregationWorkflow> generationWorkflow;
     private readonly IRecorder recorder;
 
-    public SbomConsolidator(
-        IWorkflow<SbomConsolidationWorkflow> generationWorkflow,
+    public SbomAggegator(
+        IWorkflow<SbomAggregationWorkflow> generationWorkflow,
         IRecorder recorder)
     {
         this.generationWorkflow = generationWorkflow;
@@ -25,9 +25,9 @@ public class SbomConsolidator : ISbomConsolidator
     }
 
     /// <inheritdoc />
-    public async Task<SbomConsolidationResult> ConsolidateSbomsAsync()
+    public async Task<SbomAggregationResult> ConsolidateSbomsAsync()
     {
-        var result = new SbomConsolidationResult { IsSuccessful = await generationWorkflow.RunAsync() };
+        var result = new SbomAggregationResult { IsSuccessful = await generationWorkflow.RunAsync() };
 
         await recorder.FinalizeAndLogTelemetryAsync();
 

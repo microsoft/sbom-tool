@@ -8,10 +8,10 @@ namespace Microsoft.Sbom.Contracts;
 /// <summary>
 /// Provides an API interface to the SBOM consolidator workflow.
 /// </summary>
-public interface ISbomConsolidator
+public interface ISbomAggregator
 {
     /// <summary>
     /// Consolidate multiple SBOMs into a single SBOM.
     /// </summary>
-    public Task<SbomConsolidationResult> ConsolidateSbomsAsync();
+    public Task<SbomAggregationResult> ConsolidateSbomsAsync();
 }
