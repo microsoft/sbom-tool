@@ -74,7 +74,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
 
     public virtual async Task<bool> RunAsync()
     {
-        IEnumerable<FileValidationResult> validErrors = new List<FileValidationResult>();
+        var validErrors = Enumerable.Empty<FileValidationResult>();
         var elementsSpdxIdList = new HashSet<string>();
         string sbomDir = null;
         var deleteSbomDir = false;
@@ -112,20 +112,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                         strategy.StartGraphArray(config);
                     });
 
-                    // Write all the JSON documents from the generationResults to the manifest based on the manifestInfo.
-                    var fileGeneratorResult = await fileArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
-
-                    var packageGeneratorResult = await packageArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
-
-                    var externalDocumentReferenceGeneratorResult = await externalDocumentReferenceGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
-
-                    var relationshipGeneratorResult = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
-
-                    // Concatenate all the errors from the generationResults.
-                    validErrors = validErrors.Concat(fileGeneratorResult.Errors);
-                    validErrors = validErrors.Concat(packageGeneratorResult.Errors);
-                    validErrors = validErrors.Concat(externalDocumentReferenceGeneratorResult.Errors);
-                    validErrors = validErrors.Concat(relationshipGeneratorResult.Errors);
+                    validErrors = await CallGeneratorsAync(targetConfigs, elementsSpdxIdList);
 
                     // Write metadata dictionary to SBOM. This is a no-op for SPDX 3.0 and above.
                     ForEachConfig(targetConfigs, config =>
@@ -170,7 +157,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                     recorder.RecordTotalErrors(validErrors.ToList());
                 }
 
-               // Delete the generated _manifest folder if generation failed.
+                // Delete the generated _manifest folder if generation failed.
                 if (deleteSbomDir || validErrors.Any())
                 {
                     DeleteManifestFolder(sbomDir);
@@ -190,6 +177,37 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 }
             }
         }
+    }
+
+    private async Task<IEnumerable<FileValidationResult>> CallGeneratorsAync(IEnumerable<ISbomConfig> targetConfigs, ISet<string> elementsSpdxIdList)
+    {
+        var validErrors = new List<FileValidationResult>();
+
+        // Write all the JSON documents from the generationResults to the manifest based on the manifestInfo.
+        // When aggregating, only call the packages generator. A helper method might make this more compact,
+        // but it would be less readable.
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        {
+            var fileGeneratorResult = await fileArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+            validErrors.AddRange(fileGeneratorResult.Errors);
+        }
+
+        var packageGeneratorResult = await packageArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+        validErrors.AddRange(packageGeneratorResult.Errors);
+
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        {
+            var externalDocumentReferenceGeneratorResult = await externalDocumentReferenceGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+            validErrors.AddRange(externalDocumentReferenceGeneratorResult.Errors);
+        }
+
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        {
+            var relationshipGeneratorResult = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+            validErrors.AddRange(relationshipGeneratorResult.Errors);
+        }
+
+        return validErrors;
     }
 
     private IEnumerable<ISbomConfig> GetTargetConfigs(IEnumerable<ManifestInfo> manifestInfosFromConfiguration)
