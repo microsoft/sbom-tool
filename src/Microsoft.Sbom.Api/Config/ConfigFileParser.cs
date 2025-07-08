@@ -3,6 +3,7 @@
 
 using System;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Common;
 
@@ -27,7 +28,26 @@ public class ConfigFileParser
             throw new ArgumentNullException($"{nameof(filePath)} cannot be emtpy.");
         }
 
-        using var openStream = fileSystemUtils.OpenRead(filePath);
-        return await JsonSerializer.DeserializeAsync<ConfigFile>(openStream);
+        var content = await fileSystemUtils.ReadAllTextAsync(filePath);
+        if (string.IsNullOrEmpty(content))
+        {
+            return new ConfigFile();
+        }
+
+        var expandedContent = ExpandEnvironmentVariablesInString(content);
+        return JsonSerializer.Deserialize<ConfigFile>(expandedContent);
+    }
+
+    private static string ExpandEnvironmentVariablesInString(string content)
+    {
+        var pattern = @"\$\(([^)]+)\)";
+        return Regex.Replace(content, pattern, match =>
+        {
+            var envVarName = match.Groups[1].Value;
+            var envVarValue = Environment.GetEnvironmentVariable(envVarName);
+            var encodedEnvVarValue = string.IsNullOrEmpty(envVarValue) ? envVarValue : JsonEncodedText.Encode(envVarValue).ToString();
+
+            return encodedEnvVarValue;
+        });
     }
 }

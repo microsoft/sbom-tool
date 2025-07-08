@@ -67,7 +67,6 @@ public class SbomPackageDetailsRecorder : ISbomPackageDetailsRecorder
     /// <summary>
     /// Record a externalDocumentReference Id that is included in this SBOM.
     /// </summary>
-    /// <param name="fileId"></param>
     public void RecordExternalDocumentReferenceIdAndRootElement(string externalDocumentReferenceId, string rootElement)
     {
         if (string.IsNullOrEmpty(externalDocumentReferenceId))
@@ -95,7 +94,6 @@ public class SbomPackageDetailsRecorder : ISbomPackageDetailsRecorder
     /// <summary>
     /// Record the SHA1 hash for the file.
     /// </summary>
-    /// <param name="hash"></param>
     public void RecordChecksumForFile(Checksum[] checksums)
     {
         if (checksums is null)

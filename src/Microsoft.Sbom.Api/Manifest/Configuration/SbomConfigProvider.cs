@@ -63,7 +63,7 @@ public class SbomConfigProvider : ISbomConfigProvider
             catch (ArgumentException e)
             {
                 // Sanitize exceptions.
-                throw new Exception($"An error occured while creating metadata entries for the SBOM.", e);
+                throw new Exception("An error occured while creating metadata entries for the SBOM.", e);
             }
         }
     }
@@ -122,7 +122,6 @@ public class SbomConfigProvider : ISbomConfigProvider
     /// Starts asynchronous JSON serialization of supported ISbomConfig objects from IConfiguration.
     /// </summary>
     /// <param name="targetConfigs"></param>
-    /// <returns></returns>
     public IAsyncDisposable StartJsonSerializationAsync(IEnumerable<ISbomConfig> targetConfigs)
     {
         foreach (var config in targetConfigs)
@@ -208,8 +207,13 @@ public class SbomConfigProvider : ISbomConfigProvider
             return provider.GetDocumentNamespaceUri();
         }
 
-        logger.Error($"Unable to find any provider to generate the namespace.");
-        throw new Exception($"Unable to find any provider to generate the namespace.");
+        logger.Error("Unable to find any provider to generate the namespace.");
+        throw new Exception("Unable to find any provider to generate the namespace.");
+    }
+
+    public void ClearCache()
+    {
+        configsDictionary = null;
     }
 
     public void Dispose()

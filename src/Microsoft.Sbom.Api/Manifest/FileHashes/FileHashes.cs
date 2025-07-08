@@ -33,7 +33,6 @@ public class FileHashes
     /// Get the hash for the location specified by <paramref name="fileLocation"/>
     /// </summary>
     /// <param name="fileLocation"></param>
-    /// <returns></returns>
     /// <exception cref="Exception"></exception>
     public Checksum GetHash(FileLocation fileLocation) => fileLocation switch
     {

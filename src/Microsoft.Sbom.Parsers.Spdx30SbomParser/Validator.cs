@@ -23,7 +23,7 @@ public class Validator : IManifestInterface
     };
 
     public ManifestData ParseManifest(string manifest)
-        => throw new NotImplementedException($"Currently we don't support parsing complete SPDX 3.0 SBOMs");
+        => throw new NotImplementedException("Currently we don't support parsing complete SPDX 3.0 SBOMs");
 
     public ManifestInfo[] RegisterManifest() => new[] { spdxManifestInfo };
 

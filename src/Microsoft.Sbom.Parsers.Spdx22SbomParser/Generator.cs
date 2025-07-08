@@ -319,7 +319,6 @@ public class Generator : IManifestGenerator
     /// Algorithm defined here https://spdx.github.io/spdx-spec/v2.2.2/package-information/#79-package-verification-code-field.
     /// </summary>
     /// <param name="internalMetadataProvider"></param>
-    /// <returns></returns>
     private PackageVerificationCode GetPackageVerificationCode(IInternalMetadataProvider internalMetadataProvider)
     {
         if (internalMetadataProvider is null)
@@ -357,7 +356,6 @@ public class Generator : IManifestGenerator
     /// Creation info will not be generated in SPDX 2.2 format.
     /// </summary>
     /// <param name="internalMetadataProvider"></param>
-    /// <returns></returns>
     public GenerationResult GenerateJsonDocument(IInternalMetadataProvider internalMetadataProvider)
     {
         return null;

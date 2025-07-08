@@ -253,7 +253,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
     {
         if (!fileSystemUtils.FileExists(manifestJsonFilePath))
         {
-            log.Warning($"Failed to create manifest hash because the manifest json file does not exist.");
+            log.Warning("Failed to create manifest hash because the manifest json file does not exist.");
             return;
         }
 

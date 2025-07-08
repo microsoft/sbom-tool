@@ -39,7 +39,6 @@ public class MetadataBuilder : IMetadataBuilder
     /// <summary>
     /// Gets the json string value of the header dictionary.
     /// </summary>
-    /// <returns></returns>
     public string GetHeaderJsonString(IInternalMetadataProvider internalMetadataProvider)
     {
         // SPDX 3.0 and above handles writing the info in metadata dictionary differently.

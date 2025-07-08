@@ -27,18 +27,17 @@ public class ManifestInfo : IEquatable<ManifestInfo>
     /// The format is <code>&lt;name&gt;:&lt;version&gt;</code>
     /// </summary>
     /// <param name="value"></param>
-    /// <returns></returns>
     public static ManifestInfo Parse(string value)
     {
         if (string.IsNullOrEmpty(value))
         {
-            throw new ArgumentException($"The manifest info string is empty");
+            throw new ArgumentException("The manifest info string is empty");
         }
 
         var values = value.Split(':');
         if (values == null || values.Length != 2)
         {
-            throw new ArgumentException($"The manifest info string is not formatted correctly. The correct format is <name>:<version>.");
+            throw new ArgumentException("The manifest info string is not formatted correctly. The correct format is <name>:<version>.");
         }
 
         return new ManifestInfo
@@ -98,7 +97,6 @@ public class ManifestInfo : IEquatable<ManifestInfo>
     /// Converts a <see cref="ManifestInfo"/> to a <see cref="SbomSpecification"/> object.
     /// </summary>
     /// <param name="manifestInfo"></param>
-    /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static SbomSpecification ToSbomSpecification(ManifestInfo manifestInfo)
     {

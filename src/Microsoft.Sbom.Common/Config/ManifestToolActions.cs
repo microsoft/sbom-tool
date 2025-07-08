@@ -13,5 +13,6 @@ public enum ManifestToolActions
     Generate = 2,
     Redact = 4,
     ValidateFormat = 8,
-    All = Validate | Generate | Redact | ValidateFormat
+    Aggregate = 16,
+    All = Validate | Generate | Redact | ValidateFormat | Aggregate
 }

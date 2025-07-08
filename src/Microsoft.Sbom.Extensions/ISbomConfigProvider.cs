@@ -18,35 +18,30 @@ public interface ISbomConfigProvider : IDisposable, IAsyncDisposable, IInternalM
     /// Throws if the specified format does not exist.
     /// </summary>
     /// <param name="manifestInfo"></param>
-    /// <returns></returns>
     public ISbomConfig Get(ManifestInfo manifestInfo);
 
     /// <summary>
     /// Get the ISbomConfig object for the given format specificed in manifestInfo.
     /// </summary>
     /// <param name="manifestInfo"></param>
-    /// <returns></returns>
     public bool TryGet(ManifestInfo manifestInfo, out ISbomConfig sbomConfig);
 
     /// <summary>
     /// Gets a list of the <see cref="ManifestInfo"/>s that are included in the
     /// SbomConfigProvider object.
     /// </summary>
-    /// <returns></returns>
     public IEnumerable<ManifestInfo> GetManifestInfos();
 
     /// <summary>
     /// Starts the JSON serialization of all the included ISbomConfig objects. This
     /// returns a <see cref="IDisposable"/> object that is used to clean up the JSON streams.
     /// </summary>
-    /// <returns></returns>
     public IDisposable StartJsonSerialization();
 
     /// <summary>
     /// Starts the JSON serialization of target ISbomConfig objects asynchronously.
     /// This returns a <see cref="IAsyncDisposable"/> object that is used to clean up the JSON streams.
     /// </summary>
-    /// <returns></returns>
     public IAsyncDisposable StartJsonSerializationAsync(IEnumerable<ISbomConfig> targetConfigs);
 
     /// <summary>
@@ -54,4 +49,9 @@ public interface ISbomConfigProvider : IDisposable, IAsyncDisposable, IInternalM
     /// </summary>
     /// <param name="action">The action to perform on the config.</param>
     public void ApplyToEachConfig(Action<ISbomConfig> action);
+
+    /// <summary>
+    /// Clear the cache. Use sparingly, as it will cause perf issues if abused.
+    /// </summary>
+    public void ClearCache();
 }

@@ -66,7 +66,6 @@ public class ValidationResultGenerator
     /// <summary>
     /// Finalizes the validation generation and returns a new <see cref="ValidationResult"/> object.
     /// </summary>
-    /// <returns></returns>
     public ValidationResult Build()
     {
         List<FileValidationResult> validationErrors;

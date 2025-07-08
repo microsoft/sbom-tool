@@ -145,7 +145,7 @@ public class TelemetryRecorder : IRecorder
     /// <exception cref="ArgumentNullException">If the errors object is null.</exception>
     public void RecordTotalErrors(IList<FileValidationResult> errors)
     {
-        this.errors = errors ?? throw new ArgumentNullException(nameof(errors));
+        this.errors = this.errors.Concat(errors ?? throw new ArgumentNullException(nameof(errors))).ToList();
     }
 
     /// <inheritdoc/>
@@ -206,7 +206,7 @@ public class TelemetryRecorder : IRecorder
     /// <summary>
     /// Record any exception that was encountered during API calls.
     /// </summary>
-    /// <param name="exception">The exception that was encountered.</param>
+    /// <param name="apiException">The exception that was encountered.</param>
     /// <exception cref="ArgumentNullException">If the exception is null.</exception>
     public void RecordAPIException(Exception apiException)
     {
@@ -221,7 +221,7 @@ public class TelemetryRecorder : IRecorder
     /// <summary>
     /// Record any exception that was encountered during the detection or parsing of individual package metadata files.
     /// </summary>
-    /// <param name="exception">The exception that was encountered.</param>
+    /// <param name="metadataException">The exception that was encountered.</param>
     /// <exception cref="ArgumentNullException">If the exception is null.</exception>
     public void RecordMetadataException(Exception metadataException)
     {

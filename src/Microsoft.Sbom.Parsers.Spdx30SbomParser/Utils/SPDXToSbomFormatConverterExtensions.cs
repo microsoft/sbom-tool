@@ -89,7 +89,6 @@ public static class SPDXToSbomFormatConverterExtensions
     /// <summary>
     /// Convert a list of PackageVerificationCodes to internal Checksums.
     /// </summary>
-    /// <returns></returns>
     internal static List<SbomChecksum> ToSbomChecksum(this List<PackageVerificationCode> verificationCodes)
     {
         if (verificationCodes is null)
@@ -185,15 +184,30 @@ public static class SPDXToSbomFormatConverterExtensions
 
     private static string GetSupplier(this Package spdxPackage, List<Element> spdx30Elements)
     {
-        var organizationSpdxId = spdxPackage.SuppliedBy;
+        var organizationSpdxId = spdxPackage.GetOrganizationSpdxId(spdx30Elements);
         if (organizationSpdxId is null)
         {
             return null;
         }
 
         var organizationElement = spdx30Elements
-            .FirstOrDefault(element => element is Organization && element.SpdxId == organizationSpdxId);
+            .FirstOrDefault(element => element.SpdxId == organizationSpdxId);
         return organizationElement?.Name;
+    }
+
+    private static string GetOrganizationSpdxId(this Package spdxPackage, List<Element> spdx30Elements)
+    {
+        // Handle special case for the root package.
+        if (spdxPackage.SpdxId == Parsers.Spdx30SbomParser.Constants.RootPackageIdValue)
+        {
+            var creationInfo = spdx30Elements
+                .First(element => element is CreationInfo) as CreationInfo;
+            return creationInfo.CreatedBy.First();
+        }
+        else
+        {
+            return spdxPackage.SuppliedBy;
+        }
     }
 
     private static string GetPackageUrl(this Package spdxPackage, List<Element> spdx30Elements)

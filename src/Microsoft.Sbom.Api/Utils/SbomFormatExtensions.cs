@@ -16,7 +16,6 @@ public static class SbomFormatExtensions
     /// Converts a <see cref="SbomSpecification"/> to a <see cref="ManifestInfo"/> object.
     /// </summary>
     /// <param name="specification"></param>
-    /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static ManifestInfo ToManifestInfo(this SbomSpecification specification)
     {

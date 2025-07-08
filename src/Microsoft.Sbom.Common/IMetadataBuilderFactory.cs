@@ -15,6 +15,5 @@ public interface IMetadataBuilderFactory
     /// Get the <see cref="MetadataBuilder"/> object for the given SBOM format.
     /// </summary>
     /// <param name="manifestInfo"></param>
-    /// <returns></returns>
     public IMetadataBuilder Get(ManifestInfo manifestInfo);
 }

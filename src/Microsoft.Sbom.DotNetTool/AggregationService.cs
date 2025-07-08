@@ -12,18 +12,18 @@ using Microsoft.Sbom.Api.Workflows;
 
 namespace Microsoft.Sbom.Tool;
 
-public class ConsolidationService : IHostedService
+public class AggregationService : IHostedService
 {
-    private readonly IWorkflow<SbomConsolidationWorkflow> consolidationWorkflow;
+    private readonly IWorkflow<SbomAggregationWorkflow> aggregationWorkflow;
     private readonly IRecorder recorder;
     private readonly IHostApplicationLifetime hostApplicationLifetime;
 
-    public ConsolidationService(
-        IWorkflow<SbomConsolidationWorkflow> consolidationWorkflow,
+    public AggregationService(
+        IWorkflow<SbomAggregationWorkflow> aggregationWorkflow,
         IRecorder recorder,
         IHostApplicationLifetime hostApplicationLifetime)
     {
-        this.consolidationWorkflow = consolidationWorkflow;
+        this.aggregationWorkflow = aggregationWorkflow;
         this.recorder = recorder;
         this.hostApplicationLifetime = hostApplicationLifetime;
     }
@@ -32,25 +32,24 @@ public class ConsolidationService : IHostedService
     {
         try
         {
-            var result = await consolidationWorkflow.RunAsync();
+            var result = await aggregationWorkflow.RunAsync();
             await recorder.FinalizeAndLogTelemetryAsync();
             Environment.ExitCode = result ? (int)ExitCode.Success : (int)ExitCode.GeneralError;
         }
         catch (AccessDeniedValidationArgException e)
         {
             var message = e.InnerException != null ? e.InnerException.Message : e.Message;
-            Console.WriteLine($"Encountered error while running ManifestTool consolidation workflow. Error: {message}");
+            Console.WriteLine($"Encountered error while running ManifestTool aggregation workflow. Error: {message}");
             Environment.ExitCode = (int)ExitCode.WriteAccessError;
         }
         catch (Exception e)
         {
             var message = e.InnerException != null ? e.InnerException.Message : e.Message;
-            Console.WriteLine($"Encountered error while running ManifestTool consolidation workflow. Error: {message}");
+            Console.WriteLine($"Encountered error while running ManifestTool aggregation workflow. Error: {message}");
             Environment.ExitCode = (int)ExitCode.GeneralError;
         }
 
         hostApplicationLifetime.StopApplication();
-        Environment.Exit(Environment.ExitCode);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

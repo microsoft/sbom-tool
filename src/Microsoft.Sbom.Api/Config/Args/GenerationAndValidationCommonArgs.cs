@@ -10,17 +10,13 @@ namespace Microsoft.Sbom.Api.Config.Args;
 /// <summary>
 /// Defines the common arguments used by the validation and generation actions of the ManifestTool.
 /// </summary>
-public abstract class GenerationAndValidationCommonArgs : GenerationAndValidationAndConsolidationCommonArgs
+public abstract class GenerationAndValidationCommonArgs : GenerationAndValidationAndAggregationCommonArgs
 {
     /// <summary>
     /// Gets or sets the number of parallel threads to use for the workflows.
     /// </summary>
     [ArgDescription("The number of parallel threads to use for the workflows.")]
     public int? Parallelism { get; set; }
-
-    [ArgShortcut("t")]
-    [ArgDescription("Specify a file where we should write detailed telemetry for the workflow.")]
-    public string TelemetryFilePath { get; set; }
 
     /// <summary>
     /// Gets or sets if set to false, we will not follow symlinks while traversing the build drop folder. Default is set to 'true'.
