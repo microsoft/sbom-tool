@@ -10,7 +10,7 @@ using Microsoft.Sbom.Contracts;
 namespace Microsoft.Sbom.Api;
 
 /// <summary>
-/// Responsible for an API to generate SBOMs.
+/// Responsible for an API to aggregate SBOMs.
 /// </summary>
 public class SbomAggegator : ISbomAggregator
 {
@@ -26,7 +26,7 @@ public class SbomAggegator : ISbomAggregator
     }
 
     /// <inheritdoc />
-    public async Task<SbomAggregationResult> ConsolidateSbomsAsync()
+    public async Task<SbomAggregationResult> AggregateSbomsAsync()
     {
         var isSuccessful = await aggregationWorkflow.RunAsync();
 

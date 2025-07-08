@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 namespace Microsoft.Sbom.Contracts;
 
 /// <summary>
-/// Provides an API interface to the SBOM consolidator workflow.
+/// Provides an API interface to the SBOM aggragation workflow.
 /// </summary>
 public interface ISbomAggregator
 {
     /// <summary>
-    /// Consolidate multiple SBOMs into a single SBOM.
+    /// Aggregate multiple SBOMs into a single SBOM.
     /// </summary>
-    public Task<SbomAggregationResult> ConsolidateSbomsAsync();
+    public Task<SbomAggregationResult> AggregateSbomsAsync();
 }
