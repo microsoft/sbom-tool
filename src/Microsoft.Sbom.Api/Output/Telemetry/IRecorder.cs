@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Output.Telemetry.Entities;
 using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Api.Output.Telemetry;
@@ -95,4 +96,9 @@ public interface IRecorder
     public void AddResult(string propertyName, string value);
 
     public IList<FileValidationResult> Errors { get; }
+
+    /// <summary>
+    /// Capture telemetry for an AggregationSource.
+    /// </summary>
+    public void AddAggregationSourceTelemety(string identifier, AggregationSourceTelemetry telemetry);
 }
