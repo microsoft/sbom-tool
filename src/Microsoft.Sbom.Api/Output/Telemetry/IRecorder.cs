@@ -100,5 +100,5 @@ public interface IRecorder
     /// <summary>
     /// Capture telemetry for an AggregationSource.
     /// </summary>
-    public void AddAggregationSourceTelemety(string identifier, AggregationSourceTelemetry telemetry);
+    public void AddAggregationSourceTelemetry(string identifier, AggregationSourceTelemetry telemetry);
 }

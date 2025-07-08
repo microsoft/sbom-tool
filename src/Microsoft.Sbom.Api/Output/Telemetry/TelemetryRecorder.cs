@@ -361,7 +361,7 @@ public class TelemetryRecorder : IRecorder
     /// <inheritdoc/>
     /// </summary>
     /// <param name="identifier"></param>
-    public void AddAggregationSourceTelemety(string identifier, AggregationSourceTelemetry telemetry)
+    public void AddAggregationSourceTelemetry(string identifier, AggregationSourceTelemetry telemetry)
     {
         aggregationSourceTelemetry.Add(identifier, telemetry);
     }

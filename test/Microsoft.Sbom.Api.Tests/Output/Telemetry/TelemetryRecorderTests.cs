@@ -59,7 +59,7 @@ public class TelemetryRecorderTests
             RelationShipCount = 10
         };
 
-        telemetryRecorder.AddAggregationSourceTelemety(testKey, aggregationSourceTelemetry);
+        telemetryRecorder.AddAggregationSourceTelemetry(testKey, aggregationSourceTelemetry);
 
         var telemetryField = typeof(TelemetryRecorder).GetField("aggregationSourceTelemetry", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         var telemetryResults = (Dictionary<string, AggregationSourceTelemetry>)telemetryField.GetValue(telemetryRecorder);
