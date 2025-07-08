@@ -3,8 +3,10 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Manifest.Configuration;
+using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
@@ -34,6 +36,7 @@ public class SbomAggregationWorkflowTests
     private const string TempDirPath = "temp-dir";
 
     private Mock<ILogger> loggerMock;
+    private Mock<IRecorder> recorderMock;
     private Mock<IConfiguration> configurationMock;
     private Mock<IWorkflow<SbomGenerationWorkflow>> sbomGenerationWorkflowMock;
     private Mock<ISbomValidationWorkflowFactory> sbomValidationWorkflowFactoryMock;
@@ -56,7 +59,8 @@ public class SbomAggregationWorkflowTests
     [TestInitialize]
     public void BeforeEachTest()
     {
-        loggerMock = new Mock<ILogger>();  // Intentionally not using Strict to streamline setup
+        loggerMock = new Mock<ILogger>();      // Intentionally not using Strict to streamline setup
+        recorderMock = new Mock<IRecorder>(MockBehavior.Strict);  // Intentionally not using Strict to streamline setup
         configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
         sbomGenerationWorkflowMock = new Mock<IWorkflow<SbomGenerationWorkflow>>(MockBehavior.Strict);
         sbomValidationWorkflowFactoryMock = new Mock<ISbomValidationWorkflowFactory>(MockBehavior.Strict);
@@ -74,8 +78,11 @@ public class SbomAggregationWorkflowTests
         mergeableContent30ProviderMock.Setup(m => m.ManifestInfo)
             .Returns(Constants.SPDX30ManifestInfo);
 
+        recorderMock.Setup(m => m.TraceEvent(Events.SbomAggregationWorkflow)).Returns(new TimingRecorder(Events.SbomGenerationWorkflow));
+
         testSubject = new SbomAggregationWorkflow(
             loggerMock.Object,
+            recorderMock.Object,
             configurationMock.Object,
             sbomGenerationWorkflowMock.Object,
             sbomValidationWorkflowFactoryMock.Object,
@@ -91,6 +98,7 @@ public class SbomAggregationWorkflowTests
     public void AfterEachTest()
     {
         loggerMock.VerifyAll();
+        recorderMock.VerifyAll();
         configurationMock.VerifyAll();
         sbomGenerationWorkflowMock.VerifyAll();
         sbomValidationWorkflowMock.VerifyAll();
@@ -215,18 +223,32 @@ public class SbomAggregationWorkflowTests
         SetUpSbomsToValidate();
         SetUpMinimalValidation();
         SetupMinimalGenerationMocks(expectedResult);
-
-        mergeableContent22ProviderMock.Setup(x => x.TryGetContent(PathToSpdx22ManifestForArtifactKey1, out It.Ref<MergeableContent>.IsAny))
-            .Returns(true);
-        mergeableContent22ProviderMock.Setup(x => x.TryGetContent(PathToSpdx22ManifestForArtifactKey2, out It.Ref<MergeableContent>.IsAny))
-            .Returns(true);
-        mergeableContent30ProviderMock.Setup(x => x.TryGetContent(PathToSpdx30ManifestForArtifactKey1, out It.Ref<MergeableContent>.IsAny))
-            .Returns(true);
-        mergeableContent30ProviderMock.Setup(x => x.TryGetContent(PathToSpdx30ManifestForArtifactKey2, out It.Ref<MergeableContent>.IsAny))
-            .Returns(true);
+        SetupMinimalMergeableContentProviderMocks();
 
         var result = await testSubject.RunAsync();
         Assert.AreEqual(expectedResult, result);
+    }
+
+    private void SetupMinimalMergeableContentProviderMocks()
+    {
+        var minimalMergeableContent = new MergeableContent(
+            new List<SbomPackage> { new SbomPackage() }, Enumerable.Empty<SbomRelationship>());
+
+        mergeableContent22ProviderMock
+            .Setup(m => m.TryGetContent(PathToSpdx22ManifestForArtifactKey1, out minimalMergeableContent))
+            .Returns(true);
+        mergeableContent22ProviderMock
+            .Setup(m => m.TryGetContent(PathToSpdx22ManifestForArtifactKey2, out minimalMergeableContent))
+            .Returns(true);
+        mergeableContent30ProviderMock
+            .Setup(m => m.TryGetContent(PathToSpdx30ManifestForArtifactKey1, out minimalMergeableContent))
+            .Returns(true);
+        mergeableContent30ProviderMock
+            .Setup(m => m.TryGetContent(PathToSpdx30ManifestForArtifactKey2, out minimalMergeableContent))
+            .Returns(true);
+
+        recorderMock.Setup(m => m.RecordAggregationSource(
+            It.IsAny<string>(), 1 /* package count */, 0 /* relationship count */));
     }
 
     private void SetUpSbomsToValidate()
