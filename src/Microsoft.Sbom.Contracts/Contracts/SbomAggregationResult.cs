@@ -3,13 +3,26 @@
 
 namespace Microsoft.Sbom.Contracts;
 
+using System.Collections.Generic;
+
 /// <summary>
-/// Represents the result of a SBOM generation action.
+/// Represents the result of a SBOM aggregation action.
 /// </summary>
 public class SbomAggregationResult
 {
     /// <summary>
-    /// Indicaties whether the SBOM consolidation was successful
+    /// Indicates whether the SBOM aggregation was successful.
     /// </summary>
-    public bool IsSuccessful { get; set; }
+    public bool IsSuccessful { get; }
+
+    /// <summary>
+    /// Gets a list of errors that were encountered during the SBOM aggregation.
+    /// </summary>
+    public IList<EntityError> Errors { get; }
+
+    public SbomAggregationResult(bool isSuccessful, IList<EntityError> errors)
+    {
+        IsSuccessful = isSuccessful;
+        Errors = errors ?? [];
+    }
 }

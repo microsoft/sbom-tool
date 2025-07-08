@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
@@ -13,24 +14,26 @@ namespace Microsoft.Sbom.Api;
 /// </summary>
 public class SbomAggegator : ISbomAggregator
 {
-    private readonly IWorkflow<SbomAggregationWorkflow> generationWorkflow;
+    private readonly IWorkflow<SbomAggregationWorkflow> aggregationWorkflow;
     private readonly IRecorder recorder;
 
     public SbomAggegator(
-        IWorkflow<SbomAggregationWorkflow> generationWorkflow,
+        IWorkflow<SbomAggregationWorkflow> aggregationWorkflow,
         IRecorder recorder)
     {
-        this.generationWorkflow = generationWorkflow;
+        this.aggregationWorkflow = aggregationWorkflow;
         this.recorder = recorder;
     }
 
     /// <inheritdoc />
     public async Task<SbomAggregationResult> ConsolidateSbomsAsync()
     {
-        var result = new SbomAggregationResult { IsSuccessful = await generationWorkflow.RunAsync() };
+        var isSuccessful = await aggregationWorkflow.RunAsync();
 
         await recorder.FinalizeAndLogTelemetryAsync();
 
-        return result;
+        var entityErrors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
+
+        return new SbomAggregationResult(isSuccessful, entityErrors);
     }
 }
