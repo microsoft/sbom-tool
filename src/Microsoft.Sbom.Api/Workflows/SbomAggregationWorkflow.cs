@@ -112,10 +112,6 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
             }
             catch (Exception e)
             {
-#if DEBUG
-                // This is here to help debug issues during active development. It will be removed before release.
-                System.Diagnostics.Debugger.Break();
-#endif
                 recorder.RecordException(e);
                 logger.Error("Encountered an error while generating the manifest.");
                 logger.Error($"Error details: {e.Message}");
