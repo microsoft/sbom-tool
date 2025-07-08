@@ -128,11 +128,11 @@ public class InterfaceConcretionTests
     {
         public IList<FileValidationResult> Errors => throw new NotImplementedException();
 
-        public void RecordAggregationSource(string identifier, int packageCount, int relationshipCount) => throw new NotImplementedException();
         public void AddResult(string propertyName, string value) => throw new NotImplementedException();
         public void AddToTotalCountOfLicenses(int count) => throw new NotImplementedException();
         public void AddToTotalNumberOfPackageDetailsEntries(int count) => throw new NotImplementedException();
         public Task FinalizeAndLogTelemetryAsync() => throw new NotImplementedException();
+        public void RecordAggregationSource(string identifier, int packageCount, int relationshipCount) => throw new NotImplementedException();
         public void RecordAPIException(Exception exception) => throw new NotImplementedException();
         public void RecordException(Exception exception) => throw new NotImplementedException();
         public void RecordMetadataException(Exception exception) => throw new NotImplementedException();
