@@ -15,4 +15,8 @@ public abstract class GenerationAndValidationAndAggregationCommonArgs : CommonAr
     /// </summary>
     [ArgDescription("The json file that contains the configuration for the DropValidator.")]
     public string ConfigFilePath { get; set; }
+
+    [ArgShortcut("t")]
+    [ArgDescription("Specify a file where we should write detailed telemetry for the workflow.")]
+    public string TelemetryFilePath { get; set; }
 }
