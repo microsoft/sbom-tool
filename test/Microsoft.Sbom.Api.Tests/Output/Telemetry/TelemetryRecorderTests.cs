@@ -56,7 +56,7 @@ public class TelemetryRecorderTests
 
         var telemetryRecorder = new TelemetryRecorder(fileSystemUtilsMock.Object, configMock.Object, loggerMock.Object);
 
-        telemetryRecorder.AddAggregationSourceTelemetry(testKey, testPackageCount, testRelationshipCount);
+        telemetryRecorder.RecordAggregationSource(testKey, testPackageCount, testRelationshipCount);
 
         var telemetryField = typeof(TelemetryRecorder).GetField("aggregationSourceTelemetry", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         var telemetryResults = (Dictionary<string, AggregationSourceTelemetry>)telemetryField.GetValue(telemetryRecorder);

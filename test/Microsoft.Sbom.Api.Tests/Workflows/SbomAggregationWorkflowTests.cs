@@ -247,7 +247,7 @@ public class SbomAggregationWorkflowTests
             .Setup(m => m.TryGetContent(PathToSpdx30ManifestForArtifactKey2, out minimalMergeableContent))
             .Returns(true);
 
-        recorderMock.Setup(m => m.AddAggregationSourceTelemetry(
+        recorderMock.Setup(m => m.RecordAggregationSource(
             It.IsAny<string>(), 1 /* package count */, 0 /* relationship count */));
     }
 

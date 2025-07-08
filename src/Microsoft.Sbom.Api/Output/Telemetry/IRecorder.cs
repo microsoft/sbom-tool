@@ -97,7 +97,7 @@ public interface IRecorder
     public IList<FileValidationResult> Errors { get; }
 
     /// <summary>
-    /// Capture telemetry for an AggregationSource.
+    /// Record telemetry for an AggregationSource.
     /// </summary>
-    public void AddAggregationSourceTelemetry(string identifier, int packageCount, int relationshipCount);
+    public void RecordAggregationSource(string identifier, int packageCount, int relationshipCount);
 }

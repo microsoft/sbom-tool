@@ -362,7 +362,7 @@ public class TelemetryRecorder : IRecorder
     /// <inheritdoc/>
     /// </summary>
     /// <param name="identifier"></param>
-    public void AddAggregationSourceTelemetry(string identifier, int packageCount, int relationshipCount)
+    public void RecordAggregationSource(string identifier, int packageCount, int relationshipCount)
     {
         aggregationSourceTelemetry.Add(identifier, new AggregationSourceTelemetry
         {
