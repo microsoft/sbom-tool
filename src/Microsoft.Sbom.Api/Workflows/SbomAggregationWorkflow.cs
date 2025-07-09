@@ -148,6 +148,7 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
                 configuration.IgnoreMissing = new ConfigurationSetting<bool>(source.ArtifactInfo.IgnoreMissingFiles ?? false);
                 configuration.BuildDropPath = new ConfigurationSetting<string>(source.BuildDropPath);
                 configuration.OutputPath = new ConfigurationSetting<string>(fileSystemUtils.JoinPaths(workingDir, $"validation-results-{identifier}.json"));
+                configuration.ManifestInfo = new ConfigurationSetting<IList<ManifestInfo>>(new List<ManifestInfo>() { source.SbomConfig.ManifestInfo });
                 configuration.ManifestDirPath = BuildManifestDirPathForSource(source);
 
                 Console.WriteLine($"Running validation for {source.SbomConfig.ManifestJsonFilePath} with identifier {identifier}. Writing output results to {configuration.OutputPath.Value}.");
