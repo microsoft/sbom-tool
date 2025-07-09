@@ -97,6 +97,11 @@ public interface IRecorder
     public IList<FileValidationResult> Errors { get; }
 
     /// <summary>
+    /// Gets the list of exceptions that were recorded during the execution of the SBOM tool.
+    /// </summary>
+    public IList<Exception> Exceptions { get; }
+
+    /// <summary>
     /// Record telemetry for an AggregationSource.
     /// </summary>
     public void RecordAggregationSource(string identifier, int packageCount, int relationshipCount);

@@ -91,4 +91,35 @@ public class TelemetryRecorderTests
             telemetryRecorder.RecordAggregationSource(testKey, testPackageCount, testRelationshipCount);
         });
     }
+
+    [TestMethod]
+    public void TelemetryRecorder_Exceptions_Property_ReturnsRecordedExceptions()
+    {
+        var telemetryRecorder = new TelemetryRecorder(fileSystemUtilsMock.Object, configMock.Object, loggerMock.Object);
+        var testException1 = new InvalidOperationException("Test exception 1");
+        var testException2 = new ArgumentException("Test exception 2");
+
+        // Initially, no exceptions should be recorded
+        Assert.AreEqual(0, telemetryRecorder.Exceptions.Count);
+
+        // Record some exceptions
+        telemetryRecorder.RecordException(testException1);
+        telemetryRecorder.RecordException(testException2);
+
+        // Verify exceptions are accessible through the property
+        Assert.AreEqual(2, telemetryRecorder.Exceptions.Count);
+        Assert.IsTrue(telemetryRecorder.Exceptions.Contains(testException1));
+        Assert.IsTrue(telemetryRecorder.Exceptions.Contains(testException2));
+    }
+
+    [TestMethod]
+    public void TelemetryRecorder_RecordException_NullException_Throws()
+    {
+        var telemetryRecorder = new TelemetryRecorder(fileSystemUtilsMock.Object, configMock.Object, loggerMock.Object);
+
+        Assert.ThrowsException<ArgumentNullException>(() =>
+        {
+            telemetryRecorder.RecordException(null);
+        });
+    }
 }
