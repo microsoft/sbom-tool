@@ -68,7 +68,7 @@ public class ConfigSanitizer
         configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath?.Value, configuration.ManifestToolAction);
 
         // Set namespace value, this handles default values and user provided values.
-        if (configuration.ManifestToolAction == ManifestToolActions.Generate || configuration.ManifestToolAction == ManifestToolActions.Consolidate)
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate || configuration.ManifestToolAction == ManifestToolActions.Aggregate)
         {
             configuration.NamespaceUriBase = GetNamespaceBaseUri(configuration, logger);
         }
@@ -111,7 +111,7 @@ public class ConfigSanitizer
         // Replace backslashes in directory paths with the OS-sepcific directory separator character.
         PathUtils.ConvertToOSSpecificPathSeparators(configuration);
 
-        CheckConsolidationConfig(configuration);
+        CheckAggregationConfig(configuration);
 
         logger.Dispose();
 
@@ -131,16 +131,16 @@ public class ConfigSanitizer
         }
     }
 
-    private void CheckConsolidationConfig(IConfiguration config)
+    private void CheckAggregationConfig(IConfiguration config)
     {
-        if (config.ManifestToolAction != ManifestToolActions.Consolidate)
+        if (config.ManifestToolAction != ManifestToolActions.Aggregate)
         {
             return;
         }
 
         if (config.ArtifactInfoMap?.Value == null || !config.ArtifactInfoMap.Value.Any())
         {
-            throw new ValidationArgException("Please provide a value for the ArtifactInfoMap to consolidate the SBOMs.");
+            throw new ValidationArgException("Please provide a value for the ArtifactInfoMap to aggregate the SBOMs.");
         }
     }
 

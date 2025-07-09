@@ -80,4 +80,9 @@ public class SbomTelemetry
     /// Gets or sets additional properties, like signature validation results, etc.
     /// </summary>
     public Dictionary<string, string> AdditionalResults { get; set; }
+
+    /// <summary>
+    /// Contains telemetry about each AggregationSource used in aggregation. The key is the identifier of the AggregationSource.
+    /// </summary>
+    public Dictionary<string, AggregationSourceTelemetry> AggregationSourceTelemetry { get; set; }
 }

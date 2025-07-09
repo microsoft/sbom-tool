@@ -188,7 +188,7 @@ public class ConfigFile
     public ConformanceType Conformance { get; set; }
 
     /// <summary>
-    /// Describes the artifacts used for consolidation, as well information specific to each artifact.
+    /// Describes the artifacts used for aggregation, as well information specific to each artifact.
     /// The Key is the location of the artifact, and the value is an <see cref="ArtifactInfo"/> object.
     /// </summary>
     public Dictionary<string, ArtifactInfo> ArtifactInfoMap { get; set; }

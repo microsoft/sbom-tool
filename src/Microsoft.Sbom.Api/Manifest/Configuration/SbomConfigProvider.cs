@@ -211,6 +211,11 @@ public class SbomConfigProvider : ISbomConfigProvider
         throw new Exception("Unable to find any provider to generate the namespace.");
     }
 
+    public void ClearCache()
+    {
+        configsDictionary = null;
+    }
+
     public void Dispose()
     {
         Dispose(disposing: true);
