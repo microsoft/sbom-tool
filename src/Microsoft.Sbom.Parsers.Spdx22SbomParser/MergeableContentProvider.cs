@@ -73,7 +73,7 @@ public class MergeableContentProvider : IMergeableContentProvider
     private bool GetMergeableContent(Stream stream, out MergeableContent mergeableContent)
     {
         // Skip sections that are expensive to parse and would require additional logic to properly ignore.
-        var parser = new SPDXParser(stream, ["files", "externalDocumentRefs", "relationships"]);
+        var parser = new SPDXParser(stream, ["files", "externalDocumentRefs"]);
         var packages = Enumerable.Empty<SbomPackage>();
         var relationships = Enumerable.Empty<SbomRelationship>();
 
@@ -86,7 +86,10 @@ public class MergeableContentProvider : IMergeableContentProvider
                 switch (result)
                 {
                     case PackagesResult packagesResult:
-                        packages = ProcessPackages(packagesResult.Packages);
+                        packages = ProcessPackages(packagesResult.Packages.ToList());  // ToList() ensure correct parsing of the data
+                        break;
+                    case RelationshipsResult relationshipsResult:
+                        relationships = ProcessRelationships(relationshipsResult.Relationships.ToList());  // ToList() ensure correct parsing of the data
                         break;
                     default:
                         break;
@@ -102,7 +105,7 @@ public class MergeableContentProvider : IMergeableContentProvider
     /// <summary>
     /// Process packages and return the collection of <see cref="SbomPackage"/> objects.
     /// </summary>
-    private IEnumerable<SbomPackage> ProcessPackages(IEnumerable<SPDXPackage> spdxPackages)
+    private IEnumerable<SbomPackage> ProcessPackages(IReadOnlyList<SPDXPackage> spdxPackages)
     {
         var packages = new List<SbomPackage>();
         foreach (var spdxPackage in spdxPackages)
@@ -123,5 +126,33 @@ public class MergeableContentProvider : IMergeableContentProvider
         }
 
         return packages;
+    }
+
+    private IEnumerable<SbomRelationship> ProcessRelationships(IReadOnlyList<SPDXRelationship> spdxRelationships)
+    {
+        var relationships = new List<SbomRelationship>();
+
+        foreach (var spdxRelationship in spdxRelationships)
+        {
+            if (IsDependsOnRelationship(spdxRelationship))
+            {
+                var relationship = new SbomRelationship
+                {
+                    SourceElementId = spdxRelationship.SourceElementId,
+                    TargetElementId = spdxRelationship.TargetElementId,
+                    RelationshipType = "DEPENDS_ON" // Force output consistency
+                };
+                relationships.Add(relationship);
+            }
+        }
+
+        return relationships;
+    }
+
+    private static bool IsDependsOnRelationship(SPDXRelationship spdxRelationship)
+    {
+        // Include both "DEPENDS_ON" and "DEPENDSON" to cover variations in SPDX files, and ignore case.
+        return spdxRelationship.RelationshipType.Equals("DEPENDS_ON", StringComparison.InvariantCultureIgnoreCase) ||
+               spdxRelationship.RelationshipType.Equals("DEPENDSON", StringComparison.InvariantCultureIgnoreCase);
     }
 }

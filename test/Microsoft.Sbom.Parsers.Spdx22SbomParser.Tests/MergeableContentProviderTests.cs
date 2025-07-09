@@ -80,6 +80,6 @@ public class MergeableContentProviderTests
         Assert.IsNotNull(mergeableContent);
 
         Assert.AreEqual(267, mergeableContent.Packages.Count());
-        Assert.AreEqual(0, mergeableContent.Relationships.Count());
+        Assert.AreEqual(266, mergeableContent.Relationships.Count());
     }
 }
