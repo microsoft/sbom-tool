@@ -5,6 +5,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.Sbom.Contracts;
 
 namespace Microsoft.Sbom.Common.Utils;
 
@@ -22,6 +23,26 @@ public static class CommonSPDXUtils
     /// Returns the SPDX-compliant package ID.
     /// </summary>
     public static string GenerateSpdxPackageId(string id) => $"{Constants.SPDXRefPackage}-{GetStringHash(id)}";
+
+    /// <summary>
+    /// Returns the SPDX-compliant package ID from an SbomPackage object.
+    /// </summary>
+    public static string GenerateSpdxPackageId(SbomPackage packageInfo)
+    {
+        if (packageInfo is null)
+        {
+            throw new ArgumentNullException(nameof(packageInfo));
+        }
+
+        // Get package identity as package name and package version. If version is empty, just use package name
+        var packageIdentity = $"{packageInfo.Type}-{packageInfo.PackageName}";
+        if (!string.IsNullOrWhiteSpace(packageInfo.PackageVersion))
+        {
+            packageIdentity = string.Join("-", packageInfo.Type, packageInfo.PackageName, packageInfo.PackageVersion);
+        }
+
+        return GenerateSpdxPackageId(packageInfo.Id ?? packageIdentity);
+    }
 
     /// <summary>
     /// Returns the SPDX-compliant file ID.
