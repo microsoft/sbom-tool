@@ -121,22 +121,7 @@ public class MergeableContentProvider : IMergeableContentProvider
         var packages = new List<SbomPackage>();
         foreach (var spdxPackage in spdxPackages)
         {
-            var sbomPackage = new SbomPackage
-            {
-                PackageName = spdxPackage.Name,
-                PackageVersion = spdxPackage.VersionInfo,
-                Id = spdxPackage.SpdxId,
-                FilesAnalyzed = spdxPackage.FilesAnalyzed,
-                LicenseInfo = new LicenseInfo
-                {
-                    Concluded = spdxPackage.LicenseConcluded,
-                    Declared = spdxPackage.LicenseDeclared
-                },
-                PackageUrl = spdxPackage.ExternalReferences?.ToPurl(),
-                PackageSource = spdxPackage.DownloadLocation,
-                CopyrightText = spdxPackage.CopyrightText,
-                Supplier = spdxPackage.Supplier,
-            };
+            var sbomPackage = spdxPackage.ToSbomPackage();
             packages.Add(sbomPackage);
         }
 
