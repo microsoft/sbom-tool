@@ -13,6 +13,7 @@ using Microsoft.Sbom.Extensions.Entities;
 using Microsoft.Sbom.JsonAsynchronousNodeKit;
 using Microsoft.Sbom.Parser;
 using Microsoft.Sbom.Parsers.Spdx22SbomParser.Entities;
+using Microsoft.Sbom.Utils;
 using Serilog;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
@@ -131,6 +132,10 @@ public class MergeableContentProvider : IMergeableContentProvider
                     Concluded = spdxPackage.LicenseConcluded,
                     Declared = spdxPackage.LicenseDeclared
                 },
+                PackageUrl = spdxPackage.ExternalReferences?.ToPurl(),
+                PackageSource = spdxPackage.DownloadLocation,
+                CopyrightText = spdxPackage.CopyrightText,
+                Supplier = spdxPackage.Supplier,
             };
             packages.Add(sbomPackage);
         }

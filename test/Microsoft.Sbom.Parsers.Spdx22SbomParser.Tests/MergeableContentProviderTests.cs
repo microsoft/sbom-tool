@@ -104,5 +104,18 @@ public class MergeableContentProviderTests
         Assert.AreEqual(1, mappedRootDependencies.Count);
         Assert.AreEqual(Constants.RootPackageIdValue, mappedRootDependencies[0].SourceElementId);
         Assert.AreEqual(expectedMappedRootPackageId, mappedRootDependencies[0].TargetElementId);
+
+        // Confirm that we have expected properties in the packages we're returning.
+        var withPackageurlCount = mergeableContent.Packages.Count(p => p.PackageUrl is not null);
+        Assert.AreEqual(expectedPackageCount, withPackageurlCount);
+
+        var withPackageSourceCount = mergeableContent.Packages.Count(p => p.PackageSource is not null);
+        Assert.AreEqual(expectedPackageCount, withPackageSourceCount);
+
+        var withCopyrightTextCount = mergeableContent.Packages.Count(p => p.CopyrightText is not null);
+        Assert.AreEqual(expectedPackageCount, withCopyrightTextCount);
+
+        var withSupplierCount = mergeableContent.Packages.Count(p => p.Supplier is not null);
+        Assert.AreEqual(expectedPackageCount, withSupplierCount);
     }
 }
