@@ -316,6 +316,7 @@ public class SbomAggregationWorkflowTests
         configurationMock.SetupSet(m => m.ManifestDirPath = It.IsAny<ConfigurationSetting<string>>());
         configurationMock.SetupSet(m => m.OutputPath = It.IsAny<ConfigurationSetting<string>>());
         configurationMock.SetupSet(m => m.ValidateSignature = It.IsAny<ConfigurationSetting<bool>>());
+        configurationMock.SetupSet(m => m.ManifestInfo = It.IsAny<ConfigurationSetting<IList<ManifestInfo>>>());
 
         fileSystemUtilsMock.Setup(m => m.CreateTempSubDirectory(SbomAggregationWorkflow.WorkingDirPrefix)).Returns(TempDirPath);
         fileSystemUtilsMock.Setup(m => m.JoinPaths(TempDirPath, It.IsAny<string>())).Returns(TempDirPath);
