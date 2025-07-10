@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Extensions;
 using Microsoft.Sbom.Extensions.Entities;
@@ -20,6 +21,8 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 /// </summary>
 public class MergeableContentProvider : IMergeableContentProvider
 {
+    private const string DependsOn = "DEPENDS_ON";
+
     private readonly IFileSystemUtils fileSystemUtils;
 
     public MergeableContentProvider(IFileSystemUtils fileSystemUtils)
@@ -73,9 +76,9 @@ public class MergeableContentProvider : IMergeableContentProvider
     private bool GetMergeableContent(Stream stream, out MergeableContent mergeableContent)
     {
         // Skip sections that are expensive to parse and would require additional logic to properly ignore.
-        var parser = new SPDXParser(stream, ["files", "externalDocumentRefs"]);
-        var packages = Enumerable.Empty<SbomPackage>();
-        var relationships = Enumerable.Empty<SbomRelationship>();
+        var parser = new SPDXParser(stream, new[] { "files", "externalDocumentRefs" });
+        IList<SbomPackage> packages = new List<SbomPackage>();
+        IList<SbomRelationship> relationships = new List<SbomRelationship>();
 
         ParserStateResult result = null;
         do
@@ -98,14 +101,14 @@ public class MergeableContentProvider : IMergeableContentProvider
         }
         while (result is not null);
 
-        mergeableContent = new MergeableContent(packages, relationships);
+        mergeableContent = CreateRemappedMergeableContent(packages, relationships);
         return true;
     }
 
     /// <summary>
     /// Process packages and return the collection of <see cref="SbomPackage"/> objects.
     /// </summary>
-    private IEnumerable<SbomPackage> ProcessPackages(IReadOnlyList<SPDXPackage> spdxPackages)
+    private IList<SbomPackage> ProcessPackages(IReadOnlyList<SPDXPackage> spdxPackages)
     {
         var packages = new List<SbomPackage>();
         foreach (var spdxPackage in spdxPackages)
@@ -128,7 +131,7 @@ public class MergeableContentProvider : IMergeableContentProvider
         return packages;
     }
 
-    private IEnumerable<SbomRelationship> ProcessRelationships(IReadOnlyList<SPDXRelationship> spdxRelationships)
+    private IList<SbomRelationship> ProcessRelationships(IReadOnlyList<SPDXRelationship> spdxRelationships)
     {
         var relationships = new List<SbomRelationship>();
 
@@ -140,7 +143,7 @@ public class MergeableContentProvider : IMergeableContentProvider
                 {
                     SourceElementId = spdxRelationship.SourceElementId,
                     TargetElementId = spdxRelationship.TargetElementId,
-                    RelationshipType = "DEPENDS_ON" // Force output consistency
+                    RelationshipType = DependsOn, // Force output consistency
                 };
                 relationships.Add(relationship);
             }
@@ -154,5 +157,53 @@ public class MergeableContentProvider : IMergeableContentProvider
         // Include both "DEPENDS_ON" and "DEPENDSON" to cover variations in SPDX files, and ignore case.
         return spdxRelationship.RelationshipType.Equals("DEPENDS_ON", StringComparison.InvariantCultureIgnoreCase) ||
                spdxRelationship.RelationshipType.Equals("DEPENDSON", StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    /// <summary>
+    /// Build a mapping of fixed SPDXID values, then apply the mapping to the objects before returning the content.
+    /// </summary>
+    private static MergeableContent CreateRemappedMergeableContent(IList<SbomPackage> packages, IList<SbomRelationship> relationships)
+    {
+        // Build a map of special ID's--currently it's just the root package ID.
+        var spdxIdMapping = new Dictionary<string, string>();
+
+        foreach (var package in packages)
+        {
+            if (package.Id == Constants.RootPackageIdValue)
+            {
+                package.Id = null;
+                var newSpdxId = CommonSPDXUtils.GenerateSpdxPackageId(package);
+                package.Id = newSpdxId;
+                spdxIdMapping.Add(Constants.RootPackageIdValue, newSpdxId);
+                break;
+            }
+        }
+
+        // Remap any relationships where the source element ID is remapped.
+        foreach (var relationship in relationships)
+        {
+            if (spdxIdMapping.TryGetValue(relationship.SourceElementId, out var newSourceId))
+            {
+                // Update the source element ID with the new SPDX ID.
+                relationship.SourceElementId = newSourceId;
+            }
+        }
+
+        // Finally, make the output root depend on the remapped root.
+        foreach (var mapping in spdxIdMapping)
+        {
+            if (mapping.Key == Constants.RootPackageIdValue)
+            {
+                var relationship = new SbomRelationship
+                {
+                    SourceElementId = Constants.RootPackageIdValue,
+                    TargetElementId = mapping.Value,
+                    RelationshipType = DependsOn, // Force output consistency
+                };
+                relationships.Add(relationship);
+            }
+        }
+
+        return new MergeableContent(packages, relationships);
     }
 }

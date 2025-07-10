@@ -66,9 +66,14 @@ public class MergeableContentProviderTests
     }
 
     [TestMethod]
-    public void TryGetContent_FileExitstAndIsValid_ReturnsExpectedContent()
+    public void TryGetContent_FileExistsAndIsValid_ReturnsExpectedContent()
     {
         const string filePathFileExistsAndIsValid = "valid-manifest-file.json";
+        const string expectedMappedRootPackageId = "SPDXRef-Package-AB9E9DFAA1DE5301A6059720D507F78282B83DA56D6829ED7965987E7FCCAC3B";
+        const string expectedRootPackageName = "sbom-tool sample";
+        const int expectedPackageCount = 267;
+        const int expectedRelationshipCount = 267;
+        const int expectedUnmappedRootDependenciesCount = 48;
 
         fileSystemUtilsMock.Setup(m => m.FileExists(filePathFileExistsAndIsValid)).Returns(true);
         fileSystemUtilsMock.Setup(m => m.OpenRead(filePathFileExistsAndIsValid))
@@ -79,7 +84,22 @@ public class MergeableContentProviderTests
         Assert.IsTrue(result);
         Assert.IsNotNull(mergeableContent);
 
-        Assert.AreEqual(267, mergeableContent.Packages.Count());
-        Assert.AreEqual(266, mergeableContent.Relationships.Count());
+        Assert.AreEqual(expectedPackageCount, mergeableContent.Packages.Count());
+        Assert.AreEqual(expectedRelationshipCount, mergeableContent.Relationships.Count());
+        Assert.AreEqual(0, mergeableContent.Packages.Count(p => p.Id == Constants.RootPackageIdValue));
+        Assert.AreEqual(0, mergeableContent.Relationships.Count(r => r.TargetElementId == Constants.RootPackageIdValue));
+
+        // Ensure that we successfully completed the package remapping
+        var mappedRootPackages = mergeableContent.Packages.Where(p => p.Id == expectedMappedRootPackageId).ToList();
+        Assert.AreEqual(1, mappedRootPackages.Count);
+        Assert.AreEqual(expectedRootPackageName, mappedRootPackages[0].PackageName);
+
+        var unmappedRootDependencies = mergeableContent.Relationships.Where(r => r.SourceElementId == mappedRootPackages[0].Id).ToList();
+        Assert.AreEqual(expectedUnmappedRootDependenciesCount, unmappedRootDependencies.Count);
+
+        var mappedRootDependencies = mergeableContent.Relationships.Where(r => r.SourceElementId == Constants.RootPackageIdValue).ToList();
+        Assert.AreEqual(1, mappedRootDependencies.Count);
+        Assert.AreEqual(Constants.RootPackageIdValue, mappedRootDependencies[0].SourceElementId);
+        Assert.AreEqual(expectedMappedRootPackageId, mappedRootDependencies[0].TargetElementId);
     }
 }
