@@ -9,6 +9,7 @@ using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Serilog;
 
 namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests;
 
@@ -16,13 +17,15 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests;
 public class MergeableContentProviderTests
 {
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
+    private Mock<ILogger> loggerMock;
     private IMergeableContentProvider provider;
 
     [TestInitialize]
     public void BeforeEachTest()
     {
         fileSystemUtilsMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
-        provider = new MergeableContentProvider(fileSystemUtilsMock.Object);
+        loggerMock = new Mock<ILogger>(); // Intentionaly not using Strict behavior for logger
+        provider = new MergeableContentProvider(fileSystemUtilsMock.Object, loggerMock.Object);
     }
 
     [TestCleanup]
