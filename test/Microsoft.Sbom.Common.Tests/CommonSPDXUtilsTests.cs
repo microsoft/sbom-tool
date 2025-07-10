@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.Sbom.Parser;
-
 using System.Data;
 using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Microsoft.Sbom.Parser;
 
 [TestClass]
 public class CommonSPDXUtilsTests
@@ -39,7 +39,6 @@ public class CommonSPDXUtilsTests
     private const string TestPackage1WithPackageAndVersionSpdxId = "SPDXRef-Package-58C5DD56550594F89AB94FBE3702CC8D0DCB06D5C781305938449FBF9E309196";
     private const string TestPackage1WithPackageAndVersionAndTypeSpdxId = "SPDXRef-Package-E3FD92B139AF7424535396792FA2B2D70EB715EA83D24E497A6C716279227735";
     private const string TestPackage1WithPackageAndTypeSpdxId = "SPDXRef-Package-F79E2B8CF0C894FA3991089088856FA215B7B196872B8AD653ADA4810F78F33C";
-    private const string TestPackage1WithIdSpdxId = "SPDXRef-Package-A8187CB9A95FFD35E50AC36CBADA2BE0958125B7EEDCF10F795995B633A2C564";
     private const string ConstantPackageRootSpdxId = "SPDXRef-Package-27C5AE25932C81815EFD8B210DAA1A017B4A461AF82DE1405906163A2D5573BB";
 
     [DataRow(TestPackage1, TestPackage1SpdxId)]
@@ -65,8 +64,8 @@ public class CommonSPDXUtilsTests
     [DataRow(null, TestPackage1, TestPackageVersion, null, TestPackage1WithPackageAndVersionSpdxId)]
     [DataRow(null, TestPackage1, TestPackageVersion, TestPackageType, TestPackage1WithPackageAndVersionAndTypeSpdxId)]
     [DataRow(null, TestPackage1, null, TestPackageType, TestPackage1WithPackageAndTypeSpdxId)]
-    [DataRow(TestPackage1SpdxId, null, null, null, TestPackage1WithIdSpdxId)]
-    [DataRow(TestPackage1SpdxId, TestPackageType, TestPackageVersion, TestPackageType, TestPackage1WithIdSpdxId)]
+    [DataRow(TestPackage1SpdxId, null, null, null, TestPackage1SpdxId)]
+    [DataRow(TestPackage1SpdxId, TestPackageType, TestPackageVersion, TestPackageType, TestPackage1SpdxId)]
     [DataRow(ConstantPackageRoot, null, null, null, ConstantPackageRootSpdxId)]
     public void GenerateSpdxFileId_Packages(string packageId, string packageName, string packageVersion, string type, string expectedSpdxId)
     {

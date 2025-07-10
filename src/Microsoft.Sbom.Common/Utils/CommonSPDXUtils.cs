@@ -34,6 +34,12 @@ public static class CommonSPDXUtils
             throw new ArgumentNullException(nameof(packageInfo));
         }
 
+        // Special case to preserve incoming SPDX ID's during aggregation
+        if (packageInfo.Id is not null && packageInfo.Id.StartsWith(Constants.SPDXRefPackage, StringComparison.OrdinalIgnoreCase))
+        {
+            return packageInfo.Id;
+        }
+
         // Get package identity as package name and package version. If version is empty, just use package name
         var packageIdentity = $"{packageInfo.Type}-{packageInfo.PackageName}";
         if (!string.IsNullOrWhiteSpace(packageInfo.PackageVersion))
