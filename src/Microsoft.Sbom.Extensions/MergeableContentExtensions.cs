@@ -10,13 +10,30 @@ namespace Microsoft.Sbom.Extensions;
 
 public static class MergeableContentExtensions
 {
-    public static IEnumerable<SbomPackage> ToMergedPackages(this IEnumerable<MergeableContent> contents)
+    public static IEnumerable<SbomPackage> ToMergedPackages(this IEnumerable<MergeableContent> mergeableContents)
     {
-        if (contents == null)
+        if (mergeableContents == null)
         {
-            throw new ArgumentNullException(nameof(contents));
+            throw new ArgumentNullException(nameof(mergeableContents));
         }
 
-        return contents.SelectMany(c => c.Packages).Distinct();
+        return mergeableContents.SelectMany(c => c.Packages).Distinct();
+    }
+
+    public static IEnumerable<KeyValuePair<string, string>> ToMergedDependsOnRelationships(this IEnumerable<MergeableContent> mergeableContents)
+    {
+        if (mergeableContents == null)
+        {
+            throw new ArgumentNullException(nameof(mergeableContents));
+        }
+
+        var dependencies = new List<KeyValuePair<string, string>>();
+        foreach (var content in mergeableContents)
+        {
+            dependencies.AddRange(content.Relationships
+                .Select(r => new KeyValuePair<string, string>(r.SourceElementId, r.TargetElementId)));
+        }
+
+        return dependencies.Distinct();
     }
 }
