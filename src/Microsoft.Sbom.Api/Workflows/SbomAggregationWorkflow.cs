@@ -127,7 +127,7 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
         var isValidSpdxFormat = spdxFormatDetector.TryGetSbomsWithVersion(manifestDirPath, out var detectedSboms);
         if (!isValidSpdxFormat)
         {
-            logger.Information($"No SBOMs located in {manifestDirPath} of a recognized SPDX format.");
+            logger.Warning($"No SBOMs located in {manifestDirPath} of a recognized SPDX format.");
             return null;
         }
 
