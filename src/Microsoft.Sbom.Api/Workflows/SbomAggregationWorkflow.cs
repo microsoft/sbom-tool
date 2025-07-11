@@ -215,6 +215,7 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
         configuration.BuildDropPath = new ConfigurationSetting<string>(buildDropPath);
         configuration.BuildComponentPath = new ConfigurationSetting<string>(buildDropPath);
         configuration.PackagesList = new ConfigurationSetting<IEnumerable<SbomPackage>>(mergeableContents.ToMergedPackages());
+        configuration.PackageDependenciesList = new ConfigurationSetting<IEnumerable<KeyValuePair<string, string>>>(mergeableContents.ToMergedDependsOnRelationships());
     }
 
     private bool TryGetMergeableContent(IEnumerable<AggregationSource> aggregationSources, out IEnumerable<MergeableContent> mergeableContents)
