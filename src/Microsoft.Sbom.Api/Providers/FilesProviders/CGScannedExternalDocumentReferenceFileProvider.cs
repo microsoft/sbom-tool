@@ -53,8 +53,11 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
     {
         if (providerType == ProviderType.Files)
         {
-            Log.Debug($"Using the {nameof(CGScannedExternalDocumentReferenceFileProvider)} provider for the files workflow.");
-            return true;
+            if (Configuration.FilesList?.Value == null && string.IsNullOrWhiteSpace(Configuration.BuildListFile?.Value))
+            {
+                Log.Debug($"Using the {nameof(CGScannedExternalDocumentReferenceFileProvider)} provider for the files workflow.");
+                return true;
+            }
         }
 
         return false;
