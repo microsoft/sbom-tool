@@ -224,9 +224,4 @@ public interface IConfiguration
     /// The Key is the location of the artifact, and the value is an <see cref="ArtifactInfo"/> object.
     /// </summary>
     public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap { get; set; }
-
-    /// <summary>
-    /// Describes package dependencies in the form of source-destination pairs.
-    /// </summary>
-    public ConfigurationSetting<IEnumerable<KeyValuePair<string, string>>> PackageDependenciesList { get; set; }
 }

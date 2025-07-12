@@ -331,7 +331,6 @@ public class InterfaceConcretionTests
         public ConfigurationSetting<ConformanceType> Conformance { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ConfigurationSetting<IEnumerable<KeyValuePair<string, string>>> PackageDependenciesList { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
     private class PinnedISettingSourceable : ISettingSourceable

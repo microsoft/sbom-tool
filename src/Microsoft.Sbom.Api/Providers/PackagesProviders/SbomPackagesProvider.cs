@@ -19,8 +19,6 @@ namespace Microsoft.Sbom.Api.Providers.PackagesProviders;
 /// </summary>
 public class SbomPackagesProvider : CommonPackagesProvider<SbomPackage>
 {
-    private readonly ISbomConfigProvider sbomConfigs;
-
     public SbomPackagesProvider(
         IConfiguration configuration,
         ChannelUtils channelUtils,
@@ -31,8 +29,6 @@ public class SbomPackagesProvider : CommonPackagesProvider<SbomPackage>
         ILicenseInformationFetcher licenseInformationFetcher)
         : base(configuration, channelUtils, logger, sbomConfigs, packageInfoJsonWriter, packageDetailsFactory, licenseInformationFetcher)
     {
-        // These are already checked for null in the base class constructor.
-        this.sbomConfigs = sbomConfigs;
     }
 
     public override bool IsSupported(ProviderType providerType)
@@ -60,27 +56,6 @@ public class SbomPackagesProvider : CommonPackagesProvider<SbomPackage>
 
     protected override (ChannelReader<SbomPackage> entities, ChannelReader<FileValidationResult> errors) GetSourceChannel()
     {
-        if (Configuration.ManifestToolAction == ManifestToolActions.Aggregate)
-        {
-            if (Configuration.PackageDependenciesList?.Value is null)
-            {
-                Log.Error("Package dependencies list is null. Cannot proceed with package provider.");
-            }
-            else
-            {
-                foreach (var manifestInfo in Configuration.ManifestInfo.Value)
-                {
-                    if (sbomConfigs.TryGet(manifestInfo, out var sbomConfig))
-                    {
-                        foreach (var pair in Configuration.PackageDependenciesList.Value)
-                        {
-                            sbomConfig.Recorder?.RecordPackageId(pair.Key, pair.Value);
-                        }
-                    }
-                }
-            }
-        }
-
         var listWalker = new ListWalker<SbomPackage>();
         return listWalker.GetComponents(Configuration.PackagesList.Value);
     }
