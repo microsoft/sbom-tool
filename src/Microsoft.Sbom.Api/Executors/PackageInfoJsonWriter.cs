@@ -19,11 +19,11 @@ namespace Microsoft.Sbom.Api.Executors;
 /// </summary>
 public class PackageInfoJsonWriter
 {
-    private readonly ManifestGeneratorProvider manifestGeneratorProvider;
+    private readonly IManifestGeneratorProvider manifestGeneratorProvider;
     private readonly ILogger log;
 
     public PackageInfoJsonWriter(
-        ManifestGeneratorProvider manifestGeneratorProvider,
+        IManifestGeneratorProvider manifestGeneratorProvider,
         ILogger log)
     {
         if (manifestGeneratorProvider is null)
@@ -54,7 +54,7 @@ public class PackageInfoJsonWriter
         return (result, errors);
     }
 
-    private async Task GenerateJson(
+    internal async Task GenerateJson(
         IList<ISbomConfig> packagesArraySupportingConfigs,
         SbomPackage packageInfo,
         Channel<JsonDocWithSerializer> result,
