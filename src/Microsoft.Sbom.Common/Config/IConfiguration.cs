@@ -120,8 +120,8 @@ public interface IConfiguration
 
     /// <summary>
     /// Gets or sets a list of <see cref="SbomFile"/> files provided to us from the API.
-    /// We won't traverse the build root path to get a list of files if this is set, and
-    /// use the list provided here instead.
+    /// We will use the list provided here to populate the files section in addition to
+    /// select file providers.
     /// </summary>
     public ConfigurationSetting<IEnumerable<SbomFile>> FilesList { get; set; }
 
