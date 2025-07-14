@@ -51,13 +51,10 @@ public class CGScannedExternalDocumentReferenceFileProvider : PathBasedFileToJso
 
     public override bool IsSupported(ProviderType providerType)
     {
-        if (providerType == ProviderType.Files)
+        if (providerType == ProviderType.Files && Configuration.ManifestToolAction != ManifestToolActions.Aggregate)
         {
-            if (Configuration.FilesList?.Value == null && string.IsNullOrWhiteSpace(Configuration.BuildListFile?.Value))
-            {
-                Log.Debug($"Using the {nameof(CGScannedExternalDocumentReferenceFileProvider)} provider for the files workflow.");
-                return true;
-            }
+            Log.Debug($"Using the {nameof(CGScannedExternalDocumentReferenceFileProvider)} provider for the files workflow.");
+            return true;
         }
 
         return false;
