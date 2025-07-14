@@ -87,6 +87,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<IHashCodeGenerator, HashCodeGenerator>()
             .AddTransient<IManifestPathConverter, SbomToolManifestPathConverter>()
             .AddTransient<ManifestGeneratorProvider>()
+            .AddTransient<IManifestGeneratorProvider, ManifestGeneratorProvider>()
             .AddTransient<HashValidator>()
             .AddTransient<ValidationResultGenerator>()
             .AddTransient<IOutputWriter, FileOutputWriter>()
