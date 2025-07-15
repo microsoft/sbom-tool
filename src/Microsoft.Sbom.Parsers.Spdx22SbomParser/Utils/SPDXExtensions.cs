@@ -123,7 +123,7 @@ public static class SPDXExtensions
 
         if (checksums is null || !checksums.Any(c => c.Algorithm == AlgorithmName.SHA1))
         {
-            throw new MissingHashValueException($"The external reference {name} is missing the {HashAlgorithmName.SHA1} hash value.");
+            throw new MissingHashValueException($"The external reference {name} is missing the {HashAlgorithmName.SHA1} hash value."); // CodeQL [SM02196] Sha1 is required per the SPDX spec.
         }
 
         // Get the SHA1 for this file.

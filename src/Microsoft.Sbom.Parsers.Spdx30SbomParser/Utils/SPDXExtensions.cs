@@ -72,7 +72,7 @@ public static class SPDXExtensions
         var sha1checksums = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1);
         if (checksums is null || !sha1checksums.Any())
         {
-            throw new MissingHashValueException($"The external reference {name} is missing the {HashAlgorithmName.SHA1} hash value.");
+            throw new MissingHashValueException($"The external reference {name} is missing the {HashAlgorithmName.SHA1} hash value."); // CodeQL [SM02196] Sha1 is required per the SPDX spec.
         }
 
         // Get the SHA1 for this file.
