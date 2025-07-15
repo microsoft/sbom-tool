@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.Sbom.Contracts;
 
@@ -23,8 +22,6 @@ public static class MergeableContentExtensions
             .SelectMany(c => c.Packages)
             .GroupBy(p => p.Id)
             .Select(g => g.First());
-
-        Check(distinctPackages);
 
         var packageDictionary = distinctPackages
             .ToDictionary(p => p.Id, p => p);
@@ -73,39 +70,5 @@ public static class MergeableContentExtensions
         }
 
         return packageDictionary.Values;
-    }
-
-    public static IEnumerable<KeyValuePair<string, string>> ToMergedDependsOnRelationships(this IEnumerable<MergeableContent> mergeableContents)
-    {
-        if (mergeableContents == null)
-        {
-            throw new ArgumentNullException(nameof(mergeableContents));
-        }
-
-        var dependencies = new List<KeyValuePair<string, string>>();
-        foreach (var content in mergeableContents)
-        {
-            dependencies.AddRange(content.Relationships
-                .Select(r => new KeyValuePair<string, string>(r.SourceElementId, r.TargetElementId)));
-        }
-
-        return dependencies.Distinct();
-    }
-
-    private static void Check(IEnumerable<SbomPackage> packages)
-    {
-        var x = new HashSet<string>();
-
-        foreach (var package in packages)
-        {
-            if (!x.Contains(package.Id))
-            {
-                x.Add(package.Id);
-            }
-            else
-            {
-                Debug.WriteLine($"Duplicate package found: {package.Id}");
-            }
-        }
     }
 }
