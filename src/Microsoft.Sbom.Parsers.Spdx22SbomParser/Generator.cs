@@ -338,7 +338,7 @@ public class Generator : IManifestGenerator
 
         var packageChecksumString = string.Concat(sha1Checksums.OrderBy(s => s));
 #pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
-        var sha1Hasher = SHA1.Create();
+        var sha1Hasher = SHA1.Create(); // CodeQL [SM02196] Sha1 is required per the SPDX spec.
 #pragma warning restore CA5350
         var hashByteArray = sha1Hasher.ComputeHash(Encoding.Default.GetBytes(packageChecksumString));
 
