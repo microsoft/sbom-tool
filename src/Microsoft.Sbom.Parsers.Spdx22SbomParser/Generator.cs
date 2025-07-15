@@ -169,7 +169,7 @@ public class Generator : IManifestGenerator
 
         var dependOnIds = (packageInfo.DependOn ?? Enumerable.Empty<string>())
                             .Where(id => id is not null)
-                            .Select(id => IsIdInExpectedFormatForCurrentAction(id) ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
+                            .Select(id => ShouldWeKeepTheExistingId(id) ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
                             .ToList();
 
         return new GenerationResult
@@ -183,15 +183,14 @@ public class Generator : IManifestGenerator
         };
     }
 
-    private bool IsIdInExpectedFormatForCurrentAction(string spdxId)
+    private bool ShouldWeKeepTheExistingId(string spdxId)
     {
         switch (configuration.ManifestToolAction)
         {
+            case ManifestToolActions.Aggregate:
+                return true;
             case ManifestToolActions.Generate:
                 return spdxId.Equals(Constants.RootPackageIdValue, StringComparison.OrdinalIgnoreCase);
-            case ManifestToolActions.Aggregate:
-                return spdxId.Equals(Constants.RootPackageIdValue, StringComparison.OrdinalIgnoreCase) ||
-                       spdxId.StartsWith(Common.Constants.SPDXRefPackage, StringComparison.OrdinalIgnoreCase);
         }
 
         return false;

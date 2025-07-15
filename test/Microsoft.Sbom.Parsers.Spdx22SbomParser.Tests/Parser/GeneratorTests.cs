@@ -84,11 +84,33 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    [DataRow(ManifestToolActions.Generate)]
-    [DataRow(ManifestToolActions.Aggregate)]
-    public void GenerateJsonDocument_DependsOnId_EqualsRootPackageId_ReturnsInputId(ManifestToolActions action)
+    public void GenerateJsonDocument_Aggregating_DependsOnId_ReturnsInputId()
     {
-        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(action);
+        const string packageId1 = "SomePackageId";
+        const string packageId2 = Constants.RootPackageIdValue;
+        const string packageId3 = ExpectedFormatSpdxId;
+
+        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Aggregate);
+
+        var packageInfo = new SbomPackage
+        {
+            PackageName = "TestPackage",
+            DependOn = new List<string> { packageId1, packageId2, packageId3 }
+        };
+
+        var result = generator.GenerateJsonDocument(packageInfo);
+
+        Assert.AreEqual(3, result.ResultMetadata.DependOn.Count);
+        // Note that the order of the IDs in DependsOn is not guaranteed, so we check for their presence instead of exact order.
+        Assert.IsTrue(result.ResultMetadata.DependOn.Contains(packageId1));
+        Assert.IsTrue(result.ResultMetadata.DependOn.Contains(packageId2));
+        Assert.IsTrue(result.ResultMetadata.DependOn.Contains(packageId3));
+    }
+
+    [TestMethod]
+    public void GenerateJsonDocument_Generating_DependsOnId_EqualsRootPackageId_ReturnsInputId()
+    {
+        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Generate);
 
         var packageInfo = new SbomPackage
         {
@@ -103,62 +125,29 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocument_Aggregating_DependsOnId_IsWellFormedId_ReturnsInputId()
+    public void GenerateJsonDocument_Generating_DependsOnId_NotRootPackageId_GeneratesNewPackageId()
     {
-        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Aggregate);
+        const string packageId1 = "SomePackageId";
+        const string packageId2 = "AnotherPackageId";
+        const string packageId3 = ExpectedFormatSpdxId;
 
-        var packageInfo = new SbomPackage
-        {
-            PackageName = "TestPackage",
-            DependOn = new List<string> { ExpectedFormatSpdxId }
-        };
-
-        var result = generator.GenerateJsonDocument(packageInfo);
-
-        Assert.AreEqual(1, result.ResultMetadata.DependOn.Count);
-        Assert.AreEqual(ExpectedFormatSpdxId, result.ResultMetadata.DependOn[0]);
-    }
-
-    [TestMethod]
-    public void GenerateJsonDocument_Generating_DependsOnId_IsWellFormedId_DoesNotReturnInputId()
-    {
         configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Generate);
 
         var packageInfo = new SbomPackage
         {
             PackageName = "TestPackage",
-            DependOn = new List<string> { ExpectedFormatSpdxId }
+            DependOn = new List<string> { packageId1, packageId2, packageId3 }
         };
 
         var result = generator.GenerateJsonDocument(packageInfo);
 
-        Assert.AreEqual(1, result.ResultMetadata.DependOn.Count);
-        Assert.AreNotEqual(ExpectedFormatSpdxId, result.ResultMetadata.DependOn[0]);
-    }
-
-    [TestMethod]
-    [DataRow(ManifestToolActions.Generate)]
-    [DataRow(ManifestToolActions.Aggregate)]
-    public void GenerateJsonDocument_DependsOnId_ValidListOfValues_GeneratesSpdxPackageId(ManifestToolActions action)
-    {
-        const string packageId1 = "SomePackageId";
-        const string packageId2 = "AnotherPackageId";
-
-        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(action);
-
-        var packageInfo = new SbomPackage
-        {
-            PackageName = "TestPackage",
-            DependOn = new List<string> { packageId1, packageId2 }
-        };
-
-        var result = generator.GenerateJsonDocument(packageInfo);
-
-        Assert.AreEqual(2, result.ResultMetadata.DependOn.Count);
+        Assert.AreEqual(3, result.ResultMetadata.DependOn.Count);
         // Note that the order of the IDs in DependsOn is not guaranteed, so we check for their presence instead of exact order.
         var expectedDependOnId1 = CommonSPDXUtils.GenerateSpdxPackageId(packageId1);
         var expectedDependOnId2 = CommonSPDXUtils.GenerateSpdxPackageId(packageId2);
+        var expectedDependOnId3 = CommonSPDXUtils.GenerateSpdxPackageId(packageId3);
         Assert.IsTrue(result.ResultMetadata.DependOn.Contains(expectedDependOnId1));
         Assert.IsTrue(result.ResultMetadata.DependOn.Contains(expectedDependOnId2));
+        Assert.IsTrue(result.ResultMetadata.DependOn.Contains(expectedDependOnId3));
     }
 }
