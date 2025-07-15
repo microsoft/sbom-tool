@@ -38,17 +38,37 @@ public static class MergeableContentExtensions
 
         var uniqueDependencies = dependencies.Distinct();
 
+        var packageCallersDictionary = new Dictionary<string, HashSet<string>>();
+
+        // Build the list of callers for each package.
         foreach (var dependency in uniqueDependencies)
         {
-            if (packageDictionary.TryGetValue(dependency.Key, out var sourcePackage) &&
-                packageDictionary.TryGetValue(dependency.Value, out var targetPackage))
+            // Skip the root package reference, which is a special case.
+            // TODO: Use the shared constant here!
+            if (dependency.Key == "SPDXRef-RootPackage")
             {
-                if (sourcePackage.DependOn is null)
-                {
-                    sourcePackage.DependOn = new List<string>();
-                }
+                continue;
+            }
 
-                sourcePackage.DependOn.Add(targetPackage.Id);
+            if (!packageCallersDictionary.TryGetValue(dependency.Value, out var callers))
+            {
+                callers = new HashSet<string>();
+                packageCallersDictionary.Add(dependency.Value, callers);
+            }
+
+            callers.Add(dependency.Key);
+        }
+
+        // Save the callers in the list of packages
+        foreach (var package in packageDictionary.Values)
+        {
+            if (packageCallersDictionary.TryGetValue(package.Id, out var callers))
+            {
+                package.DependOn = callers.ToList();
+            }
+            else
+            {
+                package.DependOn = null;
             }
         }
 
