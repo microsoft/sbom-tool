@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
@@ -25,6 +26,8 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 /// </summary>
 public class Generator : IManifestGenerator
 {
+    private readonly IConfiguration configuration;
+
     public AlgorithmName[] RequiredHashAlgorithms => new[] { AlgorithmName.SHA256, AlgorithmName.SHA1 };
 
     public string Version { get; set; } = string.Join("-", Constants.SPDXName, Constants.SPDXVersion);
@@ -36,6 +39,11 @@ public class Generator : IManifestGenerator
     public string RelationshipsArrayHeaderName => Constants.RelationshipsArrayHeaderName;
 
     public string ExternalDocumentRefArrayHeaderName => Constants.ExternalDocumentRefArrayHeaderName;
+
+    public Generator(IConfiguration configuration)
+    {
+        this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+    }
 
     public GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo)
     {
@@ -161,7 +169,7 @@ public class Generator : IManifestGenerator
 
         var dependOnIds = (packageInfo.DependOn ?? Enumerable.Empty<string>())
                             .Where(id => id is not null)
-                            .Select(id => id == Constants.RootPackageIdValue ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
+                            .Select(id => IsAggregatingAndIdIsInExpectedFormat(id) ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
                             .ToList();
 
         return new GenerationResult
@@ -173,6 +181,18 @@ public class Generator : IManifestGenerator
                 DependOn = dependOnIds,
             }
         };
+    }
+
+    private bool IsAggregatingAndIdIsInExpectedFormat(string spdxId)
+    {
+        if (configuration.ManifestToolAction != ManifestToolActions.Aggregate)
+        {
+            return false;
+        }
+
+        // SPDX IDs should start with "SPDXRef-" or "SPDXRef-RootPackage".
+        return spdxId.StartsWith(Common.Constants.SPDXRefPackage, StringComparison.OrdinalIgnoreCase) ||
+               spdxId.Equals(Constants.RootPackageIdValue, StringComparison.OrdinalIgnoreCase);
     }
 
     public GenerationResult GenerateRootPackage(
