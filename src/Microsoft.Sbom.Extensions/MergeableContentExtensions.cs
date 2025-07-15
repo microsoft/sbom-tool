@@ -10,32 +10,62 @@ namespace Microsoft.Sbom.Extensions;
 
 public static class MergeableContentExtensions
 {
+    /// <summary>
+    /// Merges multiple <see cref="MergeableContent"/> instances into a distinct collection of <see cref="SbomPackage"/>
+    /// objects, including their transitive dependencies. The root package of each <see cref="MergeableContent"/> instance
+    /// is promoted to a top-level dependency in the final collection.
+    /// </summary>
     public static IEnumerable<SbomPackage> ToMergedPackages(this IEnumerable<MergeableContent> mergeableContents)
     {
-        if (mergeableContents == null)
-        {
-            throw new ArgumentNullException(nameof(mergeableContents));
-        }
+        ArgumentNullException.ThrowIfNull(mergeableContents, nameof(mergeableContents));
 
-        // Distinct by SbomPackage.Id
-        var distinctPackages = mergeableContents
+        var distinctPackages = mergeableContents.CollectDistinctPackages();
+
+        var distinctDependencies = mergeableContents.CollectDistinctDependencies(distinctPackages);
+
+        var packageCallersDictionary = BuildPackageCallersDictionary(distinctDependencies);
+
+        // Save the callers in the list of packages
+        UpdatePackageDependencies(distinctPackages, packageCallersDictionary);
+
+        return distinctPackages;
+    }
+
+    /// <summary>
+    /// Collect the distinct set of packages from all of the MergeableContent objects. In the future, this code
+    /// will also merge the package data, creating a single package that contains the most complete information
+    /// that is available to us. For now, it simply returns 1 package (the first we encounter) per unique Id.
+    /// </summary>
+    private static IEnumerable<SbomPackage> CollectDistinctPackages(this IEnumerable<MergeableContent> mergeableContents)
+    {
+        return mergeableContents
             .SelectMany(c => c.Packages)
             .GroupBy(p => p.Id)
             .Select(g => g.First());
+    }
 
-        var packageDictionary = distinctPackages
-            .ToDictionary(p => p.Id, p => p);
-
+    /// <summary>
+    /// Collect the distinct set of package relationships from all of the MergeableContent objects.
+    /// </summary>
+    private static IEnumerable<KeyValuePair<string, string>> CollectDistinctDependencies(
+        this IEnumerable<MergeableContent> mergeableContents, IEnumerable<SbomPackage> distinctPackages)
+    {
         var dependencies = new List<KeyValuePair<string, string>>();
-        foreach (var content in mergeableContents)
+        foreach (var mergeableContent in mergeableContents)
         {
-            dependencies.AddRange(content.Relationships
+            dependencies.AddRange(mergeableContent.Relationships
                 .Select(r => new KeyValuePair<string, string>(r.SourceElementId, r.TargetElementId)));
         }
 
-        var uniqueDependencies = dependencies.Distinct();
+        return dependencies.Distinct();
+    }
 
-        var packageCallersDictionary = new Dictionary<string, HashSet<string>>();
+    /// <summary>
+    /// Create a dictionary that maps each package ID to a set of the package IDs that depend on it.
+    /// </summary>
+    private static IReadOnlyDictionary<string, ISet<string>> BuildPackageCallersDictionary(IEnumerable<KeyValuePair<string, string>> uniqueDependencies)
+    {
+        var packageCallersDictionary = new Dictionary<string, ISet<string>>();
 
         // Build the list of callers for each package.
         foreach (var dependency in uniqueDependencies)
@@ -56,8 +86,15 @@ public static class MergeableContentExtensions
             callers.Add(dependency.Key);
         }
 
-        // Save the callers in the list of packages
-        foreach (var package in packageDictionary.Values)
+        return packageCallersDictionary;
+    }
+
+    /// <summary>
+    /// Apply the dependency mappings from the packageCallersDictionary to the distinctPackages.
+    /// </summary>
+    private static void UpdatePackageDependencies(IEnumerable<SbomPackage> distinctPackages, IReadOnlyDictionary<string, ISet<string>> packageCallersDictionary)
+    {
+        foreach (var package in distinctPackages)
         {
             if (packageCallersDictionary.TryGetValue(package.Id, out var callers))
             {
@@ -68,7 +105,5 @@ public static class MergeableContentExtensions
                 package.DependOn = null;
             }
         }
-
-        return packageDictionary.Values;
     }
 }
