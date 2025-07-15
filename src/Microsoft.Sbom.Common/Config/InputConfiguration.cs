@@ -163,7 +163,4 @@ public class InputConfiguration : IConfiguration
 
     /// <inheritdoc cref="IConfiguration.ArtifactInfoMap" />
     public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap { get; set; }
-
-    /// <inheritdoc cref="IConfiguration.PackageInfoMap" />
-    public ConfigurationSetting<IEnumerable<KeyValuePair<string, string>>> PackageDependenciesList { get; set; }
 }
