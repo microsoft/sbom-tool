@@ -12,8 +12,7 @@ public static class MergeableContentExtensions
 {
     /// <summary>
     /// Merges multiple <see cref="MergeableContent"/> instances into a distinct collection of <see cref="SbomPackage"/>
-    /// objects, including their transitive dependencies. The root package of each <see cref="MergeableContent"/> instance
-    /// is promoted to a top-level dependency in the final collection.
+    /// objects, including their transitive dependencies.
     /// </summary>
     public static IEnumerable<SbomPackage> ToMergedPackages(this IEnumerable<MergeableContent> mergeableContents)
     {
@@ -70,8 +69,9 @@ public static class MergeableContentExtensions
         // Build the list of callers for each package.
         foreach (var dependency in uniqueDependencies)
         {
-            // Skip the root package reference, which is a special case.
-            // TODO: Use the shared constant here!
+            // Skip the root package reference, which needs to translate to a null entry in the dictionary.
+            // This constant is the same as Microsoft.Sbom.Api.Constants.SPDXRefRootPackage, but we get
+            // into a dependency cycle if we try to reference it from here.
             if (dependency.Key == "SPDXRef-RootPackage")
             {
                 continue;
