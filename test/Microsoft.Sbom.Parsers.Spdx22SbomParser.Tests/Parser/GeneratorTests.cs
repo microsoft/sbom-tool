@@ -84,9 +84,11 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocument_Aggregating_DependsOnId_EqualsRootPackageId_ReturnsInputId()
+    [DataRow(ManifestToolActions.Generate)]
+    [DataRow(ManifestToolActions.Aggregate)]
+    public void GenerateJsonDocument_DependsOnId_EqualsRootPackageId_ReturnsInputId(ManifestToolActions action)
     {
-        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Aggregate);
+        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(action);
 
         var packageInfo = new SbomPackage
         {
@@ -118,24 +120,7 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocument_Generating_DependsOnId_EqualsRootPackageId_DoesNotReturnInputId()
-    {
-        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Generate);
-
-        var packageInfo = new SbomPackage
-        {
-            PackageName = "TestPackage",
-            DependOn = new List<string> { Constants.RootPackageIdValue }
-        };
-
-        var result = generator.GenerateJsonDocument(packageInfo);
-
-        Assert.AreEqual(1, result.ResultMetadata.DependOn.Count);
-        Assert.AreNotEqual(Constants.RootPackageIdValue, result.ResultMetadata.DependOn[0]);
-    }
-
-    [TestMethod]
-    public void GenerateJsonDocument_Generating_DependsOnId_IsWellFormedId_ReturnsInputId()
+    public void GenerateJsonDocument_Generating_DependsOnId_IsWellFormedId_DoesNotReturnInputId()
     {
         configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Generate);
 

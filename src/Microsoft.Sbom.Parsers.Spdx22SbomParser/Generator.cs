@@ -169,7 +169,7 @@ public class Generator : IManifestGenerator
 
         var dependOnIds = (packageInfo.DependOn ?? Enumerable.Empty<string>())
                             .Where(id => id is not null)
-                            .Select(id => IsAggregatingAndIdIsInExpectedFormat(id) ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
+                            .Select(id => IsIdInExpectedFormatForCurrentAction(id) ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
                             .ToList();
 
         return new GenerationResult
@@ -183,16 +183,18 @@ public class Generator : IManifestGenerator
         };
     }
 
-    private bool IsAggregatingAndIdIsInExpectedFormat(string spdxId)
+    private bool IsIdInExpectedFormatForCurrentAction(string spdxId)
     {
-        if (configuration.ManifestToolAction != ManifestToolActions.Aggregate)
+        switch (configuration.ManifestToolAction)
         {
-            return false;
+            case ManifestToolActions.Generate:
+                return spdxId.Equals(Constants.RootPackageIdValue, StringComparison.OrdinalIgnoreCase);
+            case ManifestToolActions.Aggregate:
+                return spdxId.Equals(Constants.RootPackageIdValue, StringComparison.OrdinalIgnoreCase) ||
+                       spdxId.StartsWith(Common.Constants.SPDXRefPackage, StringComparison.OrdinalIgnoreCase);
         }
 
-        // SPDX IDs should start with "SPDXRef-" or "SPDXRef-RootPackage".
-        return spdxId.StartsWith(Common.Constants.SPDXRefPackage, StringComparison.OrdinalIgnoreCase) ||
-               spdxId.Equals(Constants.RootPackageIdValue, StringComparison.OrdinalIgnoreCase);
+        return false;
     }
 
     public GenerationResult GenerateRootPackage(
