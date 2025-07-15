@@ -29,19 +29,7 @@ public static class SPDXExtensions
     /// <returns>Package ID that encapsulates unique info about a package.</returns>
     public static string AddSpdxId(this Package spdxPackage, SbomPackage packageInfo)
     {
-        if (packageInfo is null)
-        {
-            throw new ArgumentNullException(nameof(packageInfo));
-        }
-
-        // Get package identity as package name and package version. If version is empty, just use package name
-        var packageIdentity = $"{packageInfo.Type}-{packageInfo.PackageName}";
-        if (!string.IsNullOrWhiteSpace(packageInfo.PackageVersion))
-        {
-            packageIdentity = string.Join("-", packageInfo.Type, packageInfo.PackageName, packageInfo.PackageVersion);
-        }
-
-        spdxPackage.SpdxId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.Id ?? packageIdentity);
+        spdxPackage.SpdxId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo);
         return spdxPackage.SpdxId;
     }
 
