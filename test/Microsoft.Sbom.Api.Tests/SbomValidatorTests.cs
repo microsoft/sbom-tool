@@ -30,6 +30,15 @@ public class SbomValidatorTests
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
     private Mock<ISbomConfig> sbomConfigMock;
 
+    // Common test data
+    private readonly string buildDropPath = "/test/drop";
+    private readonly string outputPathFile = "/test/output.json";
+    private readonly string outputPathDirectory = "/test/output";
+    private readonly List<SbomSpecification> specifications = new List<SbomSpecification> { new SbomSpecification("SPDX", "2.2") };
+    private readonly string manifestDirPath = "/test/manifest";
+    private readonly ManifestInfo manifestInfo = Constants.TestManifestInfo;
+    private readonly string manifestJsonPath = "/test/manifest/manifest.json";
+
     [TestInitialize]
     public void Init()
     {
@@ -57,13 +66,6 @@ public class SbomValidatorTests
     [TestMethod]
     public async Task ValidateSbomAsync_WithNoErrorsAndNoExceptions_ReturnsTrue()
     {
-        var buildDropPath = "/test/drop";
-        var outputPath = "/test/output.json";
-        var specifications = new List<SbomSpecification> { new SbomSpecification("SPDX", "2.2") };
-        var manifestDirPath = "/test/manifest";
-        var manifestInfo = Constants.TestManifestInfo;
-        var manifestJsonPath = "/test/manifest/manifest.json";
-
         var errors = new List<FileValidationResult>();
         var exceptions = new List<Exception>();
 
@@ -92,7 +94,7 @@ public class SbomValidatorTests
             sbomConfigProviderMock.Object,
             fileSystemUtilsMock.Object);
 
-        var result = await validator.ValidateSbomAsync(buildDropPath, outputPath, specifications, manifestDirPath);
+        var result = await validator.ValidateSbomAsync(buildDropPath, outputPathFile, specifications, manifestDirPath);
 
         Assert.IsTrue(result.IsSuccess);
         Assert.AreEqual(0, result.Errors.Count);
@@ -101,13 +103,6 @@ public class SbomValidatorTests
     [TestMethod]
     public async Task ValidateSbomAsync_WithErrorsButNoExceptions_ReturnsFalse()
     {
-        var buildDropPath = "/test/drop";
-        var outputPath = "/test/output.json";
-        var specifications = new List<SbomSpecification> { new SbomSpecification("SPDX", "2.2") };
-        var manifestDirPath = "/test/manifest";
-        var manifestInfo = Constants.TestManifestInfo;
-        var manifestJsonPath = "/test/manifest/manifest.json";
-
         var errors = new List<FileValidationResult>
         {
             new FileValidationResult { ErrorType = ErrorType.MissingFile, Path = "/test/missing.txt" }
@@ -139,7 +134,7 @@ public class SbomValidatorTests
             sbomConfigProviderMock.Object,
             fileSystemUtilsMock.Object);
 
-        var result = await validator.ValidateSbomAsync(buildDropPath, outputPath, specifications, manifestDirPath);
+        var result = await validator.ValidateSbomAsync(buildDropPath, outputPathFile, specifications, manifestDirPath);
 
         Assert.IsFalse(result.IsSuccess);
         Assert.AreEqual(1, result.Errors.Count);
@@ -148,13 +143,6 @@ public class SbomValidatorTests
     [TestMethod]
     public async Task ValidateSbomAsync_WithNoErrorsButWithExceptions_ReturnsFalse()
     {
-        var buildDropPath = "/test/drop";
-        var outputPath = "/test/output"; // Directory path, not file path
-        var specifications = new List<SbomSpecification> { new SbomSpecification("SPDX", "2.2") };
-        var manifestDirPath = "/test/manifest";
-        var manifestInfo = Constants.TestManifestInfo;
-        var manifestJsonPath = "/test/manifest/manifest.json";
-
         var errors = new List<FileValidationResult>();
         var exceptions = new List<Exception>
         {
@@ -186,7 +174,7 @@ public class SbomValidatorTests
             sbomConfigProviderMock.Object,
             fileSystemUtilsMock.Object);
 
-        var result = await validator.ValidateSbomAsync(buildDropPath, outputPath, specifications, manifestDirPath);
+        var result = await validator.ValidateSbomAsync(buildDropPath, outputPathDirectory, specifications, manifestDirPath);
 
         Assert.IsFalse(result.IsSuccess);
         Assert.AreEqual(0, result.Errors.Count); // No validation errors, but should still fail due to exception
@@ -195,13 +183,6 @@ public class SbomValidatorTests
     [TestMethod]
     public async Task ValidateSbomAsync_WithBothErrorsAndExceptions_ReturnsFalse()
     {
-        var buildDropPath = "/test/drop";
-        var outputPath = "/test/output";
-        var specifications = new List<SbomSpecification> { new SbomSpecification("SPDX", "2.2") };
-        var manifestDirPath = "/test/manifest";
-        var manifestInfo = Constants.TestManifestInfo;
-        var manifestJsonPath = "/test/manifest/manifest.json";
-
         var errors = new List<FileValidationResult>
         {
             new FileValidationResult { ErrorType = ErrorType.MissingFile, Path = "/test/missing.txt" }
@@ -236,7 +217,7 @@ public class SbomValidatorTests
             sbomConfigProviderMock.Object,
             fileSystemUtilsMock.Object);
 
-        var result = await validator.ValidateSbomAsync(buildDropPath, outputPath, specifications, manifestDirPath);
+        var result = await validator.ValidateSbomAsync(buildDropPath, outputPathDirectory, specifications, manifestDirPath);
 
         Assert.IsFalse(result.IsSuccess);
         Assert.AreEqual(1, result.Errors.Count);
