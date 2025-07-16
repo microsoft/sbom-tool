@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using Microsoft.Sbom.Api.Utils.Comparer;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -491,6 +493,30 @@ public class IntegrationTests
         Assert.AreNotEqual(0, exitCode.Value);
     }
 
+    [TestMethod]
+    public void E2E_Aggregate_WithSingleInputFile_GeneratesManifest_ReturnsZeroExitCode()
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var testFolderPath = CreateTestFolder();
+        var configFilePath = Path.Combine(testFolderPath, "aggregation-config.json");
+        var manifestDirPath = Path.Combine(testFolderPath, "output");
+        var artifactSourcePath = Path.Combine(testFolderPath, "_manifest");
+        Directory.CreateDirectory(manifestDirPath);
+
+        GenerateManifestAndValidateSuccess(testFolderPath); // Generate a manifest of the repo
+
+        GenerateAggregationConfigFile(configFilePath, manifestDirPath, artifactSourcePath);
+
+        RunAggregationAndValidateSuccess(configFilePath, manifestDirPath);
+
+        // TODO: Validate the aggregated manifest
+    }
+
     private void GenerateManifestAndValidateSuccess(string testFolderPath, string manifestInfoSpdxVersion = null)
     {
         var manifestInfoArg = string.IsNullOrEmpty(manifestInfoSpdxVersion) ? string.Empty : $"-mi SPDX:{manifestInfoSpdxVersion}";
@@ -532,7 +558,12 @@ public class IntegrationTests
 
     private static string AppendFullManifestFolderPath(string manifestDir, string spdxVersion = null)
     {
-        return Path.Combine(manifestDir, ManifestRootFolderName, $"spdx_{spdxVersion ?? "2.2"}");
+        return AppendSpdxVersionFolderPath(Path.Combine(manifestDir, ManifestRootFolderName), spdxVersion);
+    }
+
+    private static string AppendSpdxVersionFolderPath(string manifestRoot, string spdxVersion = null)
+    {
+        return Path.Combine(manifestRoot, $"spdx_{spdxVersion ?? "2.2"}");
     }
 
     /// <summary>
@@ -680,5 +711,63 @@ public class IntegrationTests
 
         var jsonContent = File.ReadAllText(filePath);
         return JsonDocument.Parse(jsonContent).RootElement;
+    }
+
+    private void GenerateAggregationConfigFile(string configFilePath, string manifestDirPath, string artifactSourcePath)
+    {
+        var config = new
+        {
+            ArtifactInfoMap = BuildArtifactInfoMap(artifactSourcePath),
+            ManifestDirPath = manifestDirPath,
+            PackageName = TestContext.TestName,
+            PackageVersion = "0.1.2",
+            PackageSupplier = nameof(IntegrationTests),
+        };
+
+        var json = JsonConvert.SerializeObject(config, Formatting.Indented, new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore
+        });
+        File.WriteAllText(configFilePath, json);
+    }
+
+    private Dictionary<string, ArtifactInfo> BuildArtifactInfoMap(string artifactSourcePath)
+    {
+        var map = new Dictionary<string, ArtifactInfo>(StringComparer.OrdinalIgnoreCase)
+        {
+            {
+                testDropDirectory,
+                new ArtifactInfo
+                {
+                    IgnoreMissingFiles = true,
+                    ExternalManifestDir = artifactSourcePath,
+                }
+            }
+        };
+
+        return map;
+    }
+
+    private void RunAggregationAndValidateSuccess(string configFilePath, string manifestDirPath)
+    {
+        var arguments = $"aggregate -ConfigFilePath \"{configFilePath}\" -Verbosity Verbose";
+
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+
+        Assert.AreEqual(stderr, string.Empty);
+        Assert.AreEqual(0, exitCode.Value, $"Unexpected failure: stdout = {stdout}");
+
+        var manifestFolderPath = AppendSpdxVersionFolderPath(manifestDirPath, spdxVersion: null);
+        var jsonFilePath = Path.Combine(manifestFolderPath, ManifestFileName);
+        var shaFilePath = Path.Combine(manifestFolderPath, "manifest.spdx.json.sha256");
+        Assert.IsTrue(File.Exists(jsonFilePath), $"File not found at {jsonFilePath}");
+        Assert.IsTrue(File.Exists(shaFilePath), $"File not found at {shaFilePath}");
+
+        // Check that manifestFolderPath is the only folder in the directory
+        var directories = Directory.GetDirectories(manifestDirPath);
+        Assert.AreEqual(1, directories.Length, "There should be only one folder in the test directory.");
+        Assert.AreEqual(manifestFolderPath, directories[0], "The only folder in the test directory should be a folder with the correct SBOM version name.");
+
+        Assert.AreEqual(0, exitCode.Value, $"Unexpected failure. stdout = {stdout}");
     }
 }
