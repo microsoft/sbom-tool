@@ -12,5 +12,5 @@ namespace Microsoft.Sbom.Api.Hashing.Algorithms;
 #pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
 public class Sha1HashAlgorithm : IHashAlgorithm
 {
-    public byte[] ComputeHash(Stream stream) => SHA1.Create().ComputeHash(stream);
+    public byte[] ComputeHash(Stream stream) => SHA1.Create().ComputeHash(stream); // CodeQL [SM02196] Sha1 is required per the SPDX spec.
 }

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,6 +35,8 @@ public class SbomAggregationWorkflowTests
     private const string PathToSpdx22ManifestForArtifactKey2 = ExternalManifestDir2 + RelativePathToSpdx22Manifest;
     private const string PathToSpdx30ManifestForArtifactKey2 = ExternalManifestDir2 + RelativePathToSpdx30Manifest;
     private const string TempDirPath = "temp-dir";
+    private const string PackageId1 = "package-id-1";
+    private const string PackageId2 = "package-id-2";
 
     private Mock<ILogger> loggerMock;
     private Mock<IRecorder> recorderMock;
@@ -49,6 +52,8 @@ public class SbomAggregationWorkflowTests
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
     private Mock<IMetadataBuilderFactory> metadataBuilderFactoryMock;
     private SbomAggregationWorkflow testSubject;
+
+    private List<SbomPackage> actualPackageList;
 
     private Dictionary<string, ArtifactInfo> artifactInfoMapStub = new Dictionary<string, ArtifactInfo>()
     {
@@ -92,6 +97,8 @@ public class SbomAggregationWorkflowTests
             fileSystemUtilsMock.Object,
             metadataBuilderFactoryMock.Object,
             new[] { mergeableContent22ProviderMock.Object, mergeableContent30ProviderMock.Object });
+
+        actualPackageList = null;
     }
 
     [TestCleanup]
@@ -118,7 +125,9 @@ public class SbomAggregationWorkflowTests
             .Returns(new ConfigurationSetting<Dictionary<string, ArtifactInfo>>(new Dictionary<string, ArtifactInfo>()));
 
         var result = await testSubject.RunAsync();
+
         Assert.IsFalse(result);
+        Assert.IsNull(actualPackageList);
     }
 
     [TestMethod]
@@ -144,7 +153,9 @@ public class SbomAggregationWorkflowTests
         }
 
         var result = await testSubject.RunAsync();
+
         Assert.IsFalse(result);
+        Assert.IsNull(actualPackageList);
     }
 
     [TestMethod]
@@ -182,7 +193,9 @@ public class SbomAggregationWorkflowTests
         }
 
         var result = await testSubject.RunAsync();
+
         Assert.IsFalse(result);
+        Assert.IsNull(actualPackageList);
     }
 
     [TestMethod]
@@ -190,8 +203,11 @@ public class SbomAggregationWorkflowTests
     {
         SetUpSbomsToValidate();
         SetUpMinimalValidation(false);
+
         var result = await testSubject.RunAsync();
+
         Assert.IsFalse(result);
+        Assert.IsNull(actualPackageList);
     }
 
     [TestMethod]
@@ -212,7 +228,9 @@ public class SbomAggregationWorkflowTests
         sbomValidationWorkflowMock1.Setup(x => x.RunAsync()).ReturnsAsync(false);
 
         var result = await testSubject.RunAsync();
+
         Assert.IsFalse(result);
+        Assert.IsNull(actualPackageList);
     }
 
     [TestMethod]
@@ -226,29 +244,70 @@ public class SbomAggregationWorkflowTests
         SetupMinimalMergeableContentProviderMocks();
 
         var result = await testSubject.RunAsync();
+
         Assert.AreEqual(expectedResult, result);
+        ValidateActualPackageList();
     }
 
     private void SetupMinimalMergeableContentProviderMocks()
     {
-        var minimalMergeableContent = new MergeableContent(
-            new List<SbomPackage> { new SbomPackage() }, Enumerable.Empty<SbomRelationship>());
+        // mergeableContent 1 has the root package that depends on PackageId1.
+        // mergeableContent 2 has the root package that depends on PackageId2, which in turn depends on PackageId1.
+        var minimalMergeableContent1 = new MergeableContent(
+            [
+                new SbomPackage { Id = PackageId1 }
+            ],
+            Enumerable.Empty<SbomRelationship>());
+        var minimalMergeableContent2 = new MergeableContent(
+            [
+                new SbomPackage { Id = PackageId1 },
+                new SbomPackage { Id = PackageId2 }
+            ],
+            [
+                new SbomRelationship
+                {
+                    SourceElementId = PackageId2,
+                    TargetElementId = PackageId1,
+                    RelationshipType = "DEPENDS_ON"
+                }
+            ]);
+
+        MergeableContent nullMergeableContent = null;
 
         mergeableContent22ProviderMock
-            .Setup(m => m.TryGetContent(PathToSpdx22ManifestForArtifactKey1, out minimalMergeableContent))
+            .Setup(m => m.TryGetContent(PathToSpdx22ManifestForArtifactKey1, out minimalMergeableContent1))
             .Returns(true);
         mergeableContent22ProviderMock
-            .Setup(m => m.TryGetContent(PathToSpdx22ManifestForArtifactKey2, out minimalMergeableContent))
+            .Setup(m => m.TryGetContent(PathToSpdx22ManifestForArtifactKey2, out minimalMergeableContent2))
             .Returns(true);
         mergeableContent30ProviderMock
-            .Setup(m => m.TryGetContent(PathToSpdx30ManifestForArtifactKey1, out minimalMergeableContent))
-            .Returns(true);
+            .Setup(m => m.TryGetContent(PathToSpdx30ManifestForArtifactKey1, out nullMergeableContent))
+            .Returns(false);
         mergeableContent30ProviderMock
-            .Setup(m => m.TryGetContent(PathToSpdx30ManifestForArtifactKey2, out minimalMergeableContent))
-            .Returns(true);
+            .Setup(m => m.TryGetContent(PathToSpdx30ManifestForArtifactKey2, out nullMergeableContent))
+            .Returns(false);
 
-        recorderMock.Setup(m => m.RecordAggregationSource(
-            It.IsAny<string>(), 1 /* package count */, 0 /* relationship count */));
+        recorderMock.Setup(m => m.RecordAggregationSource(It.IsAny<string>(), 1, 0));  // minimalMergeableContent1
+        recorderMock.Setup(m => m.RecordAggregationSource(It.IsAny<string>(), 2, 1));  // minimalMergeableContent2
+    }
+
+    private void ValidateActualPackageList()
+    {
+        Assert.IsNotNull(actualPackageList);
+        Assert.AreEqual(2, actualPackageList.Count);
+
+        // Package order is not determined, so sort it to simplify our assertions.
+        actualPackageList.Sort((x, y) => string.Compare(x.Id, y.Id, StringComparison.Ordinal));
+
+        // PackageId1 should list PackageId2 in DependOn
+        Assert.AreEqual(PackageId1, actualPackageList[0].Id);
+        Assert.IsNotNull(actualPackageList[0].DependOn);
+        Assert.AreEqual(1, actualPackageList[0].DependOn.Count);
+        Assert.AreEqual(PackageId2, actualPackageList[0].DependOn[0]);
+
+        // PackageId2 should have a null DependOn
+        Assert.AreEqual(PackageId2, actualPackageList[1].Id);
+        Assert.IsNull(actualPackageList[1].DependOn);
     }
 
     private void SetUpSbomsToValidate()
@@ -328,7 +387,8 @@ public class SbomAggregationWorkflowTests
         configurationMock.SetupSet(m => m.BuildComponentPath = It.IsAny<ConfigurationSetting<string>>());
         configurationMock.SetupSet(m => m.BuildDropPath = It.IsAny<ConfigurationSetting<string>>());
         configurationMock.SetupSet(m => m.ManifestInfo = It.IsAny<ConfigurationSetting<IList<ManifestInfo>>>());
-        configurationMock.SetupSet(m => m.PackagesList = It.IsAny<ConfigurationSetting<IEnumerable<SbomPackage>>>());
+        configurationMock.SetupSet(m => m.PackagesList = It.IsAny<ConfigurationSetting<IEnumerable<SbomPackage>>>())
+            .Callback<ConfigurationSetting<IEnumerable<SbomPackage>>>(c => actualPackageList = c.Value.ToList());
 
         fileSystemUtilsMock.Setup(m => m.CreateDirectory(Path.Join(TempDirPath, "aggregated-build-drop"))).Returns<DirectoryInfo>(null);
 

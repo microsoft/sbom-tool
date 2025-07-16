@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
@@ -25,6 +26,8 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 /// </summary>
 public class Generator : IManifestGenerator
 {
+    private readonly IConfiguration configuration;
+
     public AlgorithmName[] RequiredHashAlgorithms => new[] { AlgorithmName.SHA256, AlgorithmName.SHA1 };
 
     public string Version { get; set; } = string.Join("-", Constants.SPDXName, Constants.SPDXVersion);
@@ -36,6 +39,11 @@ public class Generator : IManifestGenerator
     public string RelationshipsArrayHeaderName => Constants.RelationshipsArrayHeaderName;
 
     public string ExternalDocumentRefArrayHeaderName => Constants.ExternalDocumentRefArrayHeaderName;
+
+    public Generator(IConfiguration configuration)
+    {
+        this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+    }
 
     public GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo)
     {
@@ -161,7 +169,7 @@ public class Generator : IManifestGenerator
 
         var dependOnIds = (packageInfo.DependOn ?? Enumerable.Empty<string>())
                             .Where(id => id is not null)
-                            .Select(id => id == Constants.RootPackageIdValue ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
+                            .Select(id => ShouldWeKeepTheExistingId(id) ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
                             .ToList();
 
         return new GenerationResult
@@ -173,6 +181,19 @@ public class Generator : IManifestGenerator
                 DependOn = dependOnIds,
             }
         };
+    }
+
+    private bool ShouldWeKeepTheExistingId(string spdxId)
+    {
+        switch (configuration.ManifestToolAction)
+        {
+            case ManifestToolActions.Aggregate:
+                return true;
+            case ManifestToolActions.Generate:
+                return spdxId.Equals(Constants.RootPackageIdValue, StringComparison.OrdinalIgnoreCase);
+        }
+
+        return false;
     }
 
     public GenerationResult GenerateRootPackage(
@@ -338,7 +359,7 @@ public class Generator : IManifestGenerator
 
         var packageChecksumString = string.Concat(sha1Checksums.OrderBy(s => s));
 #pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
-        var sha1Hasher = SHA1.Create();
+        var sha1Hasher = SHA1.Create(); // CodeQL [SM02196] Sha1 is required per the SPDX spec.
 #pragma warning restore CA5350
         var hashByteArray = sha1Hasher.ComputeHash(Encoding.Default.GetBytes(packageChecksumString));
 
