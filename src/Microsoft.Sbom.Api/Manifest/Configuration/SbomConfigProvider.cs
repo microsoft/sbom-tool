@@ -20,6 +20,8 @@ namespace Microsoft.Sbom.Api.Manifest.Configuration;
 /// </summary>
 public class SbomConfigProvider : ISbomConfigProvider
 {
+    private static readonly object LockObject = new object();
+
     private IDictionary<ManifestInfo, ISbomConfig> configsDictionary;
 
     private IDictionary<ManifestInfo, ISbomConfig> ConfigsDictionary
@@ -138,9 +140,12 @@ public class SbomConfigProvider : ISbomConfigProvider
     /// <param name="action">The action to perform on the config.</param>
     public void ApplyToEachConfig(Action<ISbomConfig> action)
     {
-        foreach (var config in ConfigsDictionary)
+        lock (LockObject)
         {
-            action(config.Value);
+            foreach (var config in ConfigsDictionary)
+            {
+                action(config.Value);
+            }
         }
     }
 
@@ -213,7 +218,10 @@ public class SbomConfigProvider : ISbomConfigProvider
 
     public void ClearCache()
     {
-        configsDictionary = null;
+        lock (LockObject)
+        {
+            configsDictionary = null;
+        }
     }
 
     public void Dispose()
