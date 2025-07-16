@@ -57,7 +57,6 @@ public class SbomValidatorTests
     [TestMethod]
     public async Task ValidateSbomAsync_WithNoErrorsAndNoExceptions_ReturnsTrue()
     {
-        // Arrange
         var buildDropPath = "/test/drop";
         var outputPath = "/test/output.json";
         var specifications = new List<SbomSpecification> { new SbomSpecification("SPDX", "2.2") };
@@ -68,7 +67,6 @@ public class SbomValidatorTests
         var errors = new List<FileValidationResult>();
         var exceptions = new List<Exception>();
 
-        // Setup mocks
         configValidatorsMock.Setup(cv => cv.GetEnumerator()).Returns(new List<ConfigValidator>().GetEnumerator());
 
         configurationMock.Setup(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
@@ -94,10 +92,8 @@ public class SbomValidatorTests
             sbomConfigProviderMock.Object,
             fileSystemUtilsMock.Object);
 
-        // Act
         var result = await validator.ValidateSbomAsync(buildDropPath, outputPath, specifications, manifestDirPath);
 
-        // Assert
         Assert.IsTrue(result.IsSuccess);
         Assert.AreEqual(0, result.Errors.Count);
     }
@@ -105,7 +101,6 @@ public class SbomValidatorTests
     [TestMethod]
     public async Task ValidateSbomAsync_WithErrorsButNoExceptions_ReturnsFalse()
     {
-        // Arrange
         var buildDropPath = "/test/drop";
         var outputPath = "/test/output.json";
         var specifications = new List<SbomSpecification> { new SbomSpecification("SPDX", "2.2") };
@@ -115,11 +110,10 @@ public class SbomValidatorTests
 
         var errors = new List<FileValidationResult>
         {
-            new FileValidationResult { ErrorType = Microsoft.Sbom.Api.Entities.ErrorType.MissingFile, Path = "/test/missing.txt" }
+            new FileValidationResult { ErrorType = ErrorType.MissingFile, Path = "/test/missing.txt" }
         };
         var exceptions = new List<Exception>();
 
-        // Setup mocks
         configValidatorsMock.Setup(cv => cv.GetEnumerator()).Returns(new List<ConfigValidator>().GetEnumerator());
 
         configurationMock.Setup(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
@@ -145,10 +139,8 @@ public class SbomValidatorTests
             sbomConfigProviderMock.Object,
             fileSystemUtilsMock.Object);
 
-        // Act
         var result = await validator.ValidateSbomAsync(buildDropPath, outputPath, specifications, manifestDirPath);
 
-        // Assert
         Assert.IsFalse(result.IsSuccess);
         Assert.AreEqual(1, result.Errors.Count);
     }
@@ -156,7 +148,6 @@ public class SbomValidatorTests
     [TestMethod]
     public async Task ValidateSbomAsync_WithNoErrorsButWithExceptions_ReturnsFalse()
     {
-        // Arrange
         var buildDropPath = "/test/drop";
         var outputPath = "/test/output"; // Directory path, not file path
         var specifications = new List<SbomSpecification> { new SbomSpecification("SPDX", "2.2") };
@@ -170,7 +161,6 @@ public class SbomValidatorTests
             new InvalidOperationException("Cannot write to directory path")
         };
 
-        // Setup mocks
         configValidatorsMock.Setup(cv => cv.GetEnumerator()).Returns(new List<ConfigValidator>().GetEnumerator());
 
         configurationMock.Setup(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
@@ -196,10 +186,8 @@ public class SbomValidatorTests
             sbomConfigProviderMock.Object,
             fileSystemUtilsMock.Object);
 
-        // Act
         var result = await validator.ValidateSbomAsync(buildDropPath, outputPath, specifications, manifestDirPath);
 
-        // Assert
         Assert.IsFalse(result.IsSuccess);
         Assert.AreEqual(0, result.Errors.Count); // No validation errors, but should still fail due to exception
     }
@@ -207,7 +195,6 @@ public class SbomValidatorTests
     [TestMethod]
     public async Task ValidateSbomAsync_WithBothErrorsAndExceptions_ReturnsFalse()
     {
-        // Arrange
         var buildDropPath = "/test/drop";
         var outputPath = "/test/output";
         var specifications = new List<SbomSpecification> { new SbomSpecification("SPDX", "2.2") };
@@ -217,14 +204,13 @@ public class SbomValidatorTests
 
         var errors = new List<FileValidationResult>
         {
-            new FileValidationResult { ErrorType = Microsoft.Sbom.Api.Entities.ErrorType.MissingFile, Path = "/test/missing.txt" }
+            new FileValidationResult { ErrorType = ErrorType.MissingFile, Path = "/test/missing.txt" }
         };
         var exceptions = new List<Exception>
         {
             new InvalidOperationException("Cannot write to directory path")
         };
 
-        // Setup mocks
         configValidatorsMock.Setup(cv => cv.GetEnumerator()).Returns(new List<ConfigValidator>().GetEnumerator());
 
         configurationMock.Setup(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
@@ -250,10 +236,8 @@ public class SbomValidatorTests
             sbomConfigProviderMock.Object,
             fileSystemUtilsMock.Object);
 
-        // Act
         var result = await validator.ValidateSbomAsync(buildDropPath, outputPath, specifications, manifestDirPath);
 
-        // Assert
         Assert.IsFalse(result.IsSuccess);
         Assert.AreEqual(1, result.Errors.Count);
     }
