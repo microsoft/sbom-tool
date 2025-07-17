@@ -100,7 +100,7 @@ public class FileHasher
 
             output.Writer.Complete();
             errors.Writer.Complete();
-        }).GetAwaiter().GetResult();
+        }).ConfigureAwait(false).GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
 
         return (output, errors);
