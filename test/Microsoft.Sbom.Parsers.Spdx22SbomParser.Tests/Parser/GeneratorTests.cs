@@ -23,8 +23,7 @@ public class GeneratorTests
     public void BeforeEachTest()
     {
         configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
-        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Generate);
-        generator = new Generator(configurationMock.Object);
+        generator = new Generator();
     }
 
     [TestCleanup]

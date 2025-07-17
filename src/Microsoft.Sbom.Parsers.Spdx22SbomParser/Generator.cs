@@ -41,12 +41,13 @@ public class Generator : IManifestGenerator
     public string ExternalDocumentRefArrayHeaderName => Constants.ExternalDocumentRefArrayHeaderName;
 
     // This constructor gets called by an internal consumer that does not use IConfiguration.
+    // In this repo, we use it in tests to pin the existing behavior via this constructor.
     public Generator()
     {
         actionIsAggregate = false;
     }
 
-    // This constructor gets used within this repo.
+    // This constructor gets used by the production code and by at least one test.
     public Generator(IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
