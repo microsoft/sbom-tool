@@ -90,6 +90,7 @@ public class FileHasher
         var output = Channel.CreateUnbounded<InternalSbomFileInfo>();
         var errors = Channel.CreateUnbounded<FileValidationResult>();
 
+#pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
         Task.Run(async () =>
         {
             await foreach (var file in fileInfo.ReadAllAsync())
@@ -99,7 +100,8 @@ public class FileHasher
 
             output.Writer.Complete();
             errors.Writer.Complete();
-        });
+        }).ConfigureAwait(false).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
 
         return (output, errors);
     }

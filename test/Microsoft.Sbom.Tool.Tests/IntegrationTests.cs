@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -9,8 +10,10 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using Microsoft.Sbom.Api.Utils.Comparer;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Microsoft.Sbom.Tools.Tests;
@@ -20,6 +23,7 @@ public class IntegrationTests
 {
     private const string ManifestRootFolderName = "_manifest";
     private const string ManifestFileName = "manifest.spdx.json";
+    private const string RootPackageIdValue = "SPDXRef-RootPackage";
 
     private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
@@ -491,6 +495,31 @@ public class IntegrationTests
         Assert.AreNotEqual(0, exitCode.Value);
     }
 
+    [TestMethod]
+    public void E2E_Aggregate_WithSingleInputFile_GeneratesManifest_ReturnsZeroExitCode()
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var testFolderPath = CreateTestFolder();
+        var configFilePath = Path.Combine(testFolderPath, "aggregation-config.json");
+        var manifestDirPath = Path.Combine(testFolderPath, "output");
+        var artifactSourcePath = Path.Combine(testFolderPath, "_manifest");
+        Directory.CreateDirectory(manifestDirPath);
+
+        GenerateManifestAndValidateSuccess(testFolderPath); // Generate a manifest of the repo
+
+        GenerateAggregationConfigFile(configFilePath, manifestDirPath, artifactSourcePath);
+
+        RunAggregationAndValidateSuccess(configFilePath, manifestDirPath);
+
+        var manifestFilePath = Path.Combine(AppendSpdxVersionFolderPath(manifestDirPath), ManifestFileName);
+        VerifyExpectedSPDX22ManifestStructure(manifestFilePath, 1);  // Only 1 root dependency should be present
+    }
+
     private void GenerateManifestAndValidateSuccess(string testFolderPath, string manifestInfoSpdxVersion = null)
     {
         var manifestInfoArg = string.IsNullOrEmpty(manifestInfoSpdxVersion) ? string.Empty : $"-mi SPDX:{manifestInfoSpdxVersion}";
@@ -532,7 +561,12 @@ public class IntegrationTests
 
     private static string AppendFullManifestFolderPath(string manifestDir, string spdxVersion = null)
     {
-        return Path.Combine(manifestDir, ManifestRootFolderName, $"spdx_{spdxVersion ?? "2.2"}");
+        return AppendSpdxVersionFolderPath(Path.Combine(manifestDir, ManifestRootFolderName), spdxVersion);
+    }
+
+    private static string AppendSpdxVersionFolderPath(string manifestRoot, string spdxVersion = null)
+    {
+        return Path.Combine(manifestRoot, $"spdx_{spdxVersion ?? "2.2"}");
     }
 
     /// <summary>
@@ -680,5 +714,160 @@ public class IntegrationTests
 
         var jsonContent = File.ReadAllText(filePath);
         return JsonDocument.Parse(jsonContent).RootElement;
+    }
+
+    private void GenerateAggregationConfigFile(string configFilePath, string manifestDirPath, string artifactSourcePath)
+    {
+        var config = new
+        {
+            ArtifactInfoMap = BuildArtifactInfoMap(artifactSourcePath),
+            ManifestDirPath = manifestDirPath,
+            PackageName = TestContext.TestName,
+            PackageVersion = "0.1.2",
+            PackageSupplier = nameof(IntegrationTests),
+        };
+
+        var json = JsonConvert.SerializeObject(config, Formatting.Indented, new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore
+        });
+        File.WriteAllText(configFilePath, json);
+    }
+
+    private Dictionary<string, ArtifactInfo> BuildArtifactInfoMap(string artifactSourcePath)
+    {
+        var map = new Dictionary<string, ArtifactInfo>(StringComparer.OrdinalIgnoreCase)
+        {
+            {
+                testDropDirectory,
+                new ArtifactInfo
+                {
+                    IgnoreMissingFiles = true,
+                    ExternalManifestDir = artifactSourcePath,
+                }
+            }
+        };
+
+        return map;
+    }
+
+    private void RunAggregationAndValidateSuccess(string configFilePath, string manifestDirPath)
+    {
+        var arguments = $"aggregate -ConfigFilePath \"{configFilePath}\" -Verbosity Verbose";
+
+        var (stdout, stderr, exitCode) = LaunchAndCaptureOutput(arguments);
+
+        Assert.AreEqual(stderr, string.Empty);
+        Assert.AreEqual(0, exitCode.Value, $"Unexpected failure: stdout = {stdout}");
+
+        var manifestFolderPath = AppendSpdxVersionFolderPath(manifestDirPath, spdxVersion: null);
+        var jsonFilePath = Path.Combine(manifestFolderPath, ManifestFileName);
+        var shaFilePath = Path.Combine(manifestFolderPath, "manifest.spdx.json.sha256");
+        Assert.IsTrue(File.Exists(jsonFilePath), $"File not found at {jsonFilePath}");
+        Assert.IsTrue(File.Exists(shaFilePath), $"File not found at {shaFilePath}");
+
+        // Check that manifestFolderPath is the only folder in the directory
+        var directories = Directory.GetDirectories(manifestDirPath);
+        Assert.AreEqual(1, directories.Length, "There should be only one folder in the test directory.");
+        Assert.AreEqual(manifestFolderPath, directories[0], "The only folder in the test directory should be a folder with the correct SBOM version name.");
+
+        Assert.AreEqual(0, exitCode.Value, $"Unexpected failure. stdout = {stdout}");
+    }
+
+    private void VerifyExpectedSPDX22ManifestStructure(string manifestFilePath, int expectedRootDependencies)
+    {
+        Assert.IsTrue(File.Exists(manifestFilePath), $"Could not find '{manifestFilePath}'");
+        var jsonContent = File.ReadAllText(manifestFilePath);
+        var manifest = JsonConvert.DeserializeObject(jsonContent) as JObject;
+
+        Assert.IsNotNull(manifest, "Manifest should not be null");
+        VerifyArrayExists(manifest, "files", true);
+        var packages = VerifyArrayExists(manifest, "packages", false);
+        var relationships = VerifyArrayExists(manifest, "relationships", false);
+
+        var packageDictionary = new Dictionary<string, string>();
+        foreach (var package in packages)
+        {
+            var key = package["SPDXID"].ToString();
+            var value = $"{package["name"]}-{package["versionInfo"]}";
+            packageDictionary.Add(key, value);
+        }
+
+        Assert.AreEqual(packages.Count, packageDictionary.Count);
+
+        var rootDependencies = new HashSet<string>();
+        var allDependencies = new HashSet<string>();
+        var linkedPackages = new HashSet<string>
+        {
+            RootPackageIdValue,
+        };
+
+        VerifyAndRecordAllDependencies(relationships, packageDictionary, rootDependencies, allDependencies, linkedPackages);
+
+        VerifyAllPackagesAreLinked(linkedPackages, packageDictionary);
+
+        if (expectedRootDependencies != rootDependencies.Count)
+        {
+            var messageDetail = string.Join(", ", rootDependencies);
+            Assert.AreEqual(expectedRootDependencies, rootDependencies.Count, $"Root dependencies: {messageDetail}");
+        }
+    }
+
+    private JArray VerifyArrayExists(JObject manifest, string sectionName, bool shouldBeEmpty)
+    {
+        var section = manifest[sectionName] as JArray;
+        Assert.IsNotNull(section, $"Section {sectionName} should exist");
+        if (shouldBeEmpty)
+        {
+            Assert.AreEqual(0, section.Count, $"Section {sectionName} should be empty");
+        }
+        else
+        {
+            Assert.AreNotEqual(0, section.Count, $"Section {sectionName} should not be empty");
+        }
+
+        return section;
+    }
+
+    private static void VerifyAndRecordAllDependencies(JArray relationships, IReadOnlyDictionary<string, string> packageDictionary, ISet<string> rootDependencies, ISet<string> allDependencies, ISet<string> linkedPackages)
+    {
+        foreach (var relationship in relationships)
+        {
+            if (relationship["relationshipType"].ToString() != "DEPENDS_ON")
+            {
+                continue;
+            }
+
+            var sourceId = relationship["spdxElementId"].ToString();
+            var targetId = relationship["relatedSpdxElement"].ToString();
+
+            Assert.IsTrue(packageDictionary.ContainsKey(sourceId), $"Relationship references non-existent package {sourceId}");
+            Assert.IsTrue(packageDictionary.ContainsKey(targetId), $"Relationship references non-existent package {targetId}");
+
+            var description = $"Package {sourceId} depends on {targetId}";
+            Assert.IsFalse(allDependencies.Contains(description), $"Duplicate relationship: {description}");
+            allDependencies.Add(description);
+
+            linkedPackages.Add(targetId);
+
+            if (sourceId == RootPackageIdValue)
+            {
+                rootDependencies.Add(description);
+            }
+        }
+    }
+
+    private void VerifyAllPackagesAreLinked(ISet<string> linkedPackages, IDictionary<string, string> packageDictionary)
+    {
+        foreach (var linkedPackage in linkedPackages)
+        {
+            packageDictionary.Remove(linkedPackage);
+        }
+
+        if (packageDictionary.Any())
+        {
+            var unlinkedPackages = string.Join(", ", packageDictionary.Select(kvp => $"{kvp.Key} ({kvp.Value})"));
+            Assert.Fail($"The following packages are not linked to the root package: {unlinkedPackages}");
+        }
     }
 }
