@@ -23,6 +23,7 @@ public class GeneratorTests
     public void BeforeEachTest()
     {
         configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
+        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Generate);
         generator = new Generator(configurationMock.Object);
     }
 
@@ -90,7 +91,9 @@ public class GeneratorTests
         const string packageId2 = Constants.RootPackageIdValue;
         const string packageId3 = ExpectedFormatSpdxId;
 
+        // Reset the generator to use the Aggregate action
         configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Aggregate);
+        generator = new Generator(configurationMock.Object);
 
         var packageInfo = new SbomPackage
         {
@@ -110,8 +113,6 @@ public class GeneratorTests
     [TestMethod]
     public void GenerateJsonDocument_Generating_DependsOnId_EqualsRootPackageId_ReturnsInputId()
     {
-        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Generate);
-
         var packageInfo = new SbomPackage
         {
             PackageName = "TestPackage",
@@ -130,8 +131,6 @@ public class GeneratorTests
         const string packageId1 = "SomePackageId";
         const string packageId2 = "AnotherPackageId";
         const string packageId3 = ExpectedFormatSpdxId;
-
-        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Generate);
 
         var packageInfo = new SbomPackage
         {

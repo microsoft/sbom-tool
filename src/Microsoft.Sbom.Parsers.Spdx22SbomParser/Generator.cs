@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 /// </summary>
 public class Generator : IManifestGenerator
 {
-    private readonly IConfiguration configuration;
+    private readonly bool actionIsAggregate;
 
     public AlgorithmName[] RequiredHashAlgorithms => new[] { AlgorithmName.SHA256, AlgorithmName.SHA1 };
 
@@ -40,9 +40,18 @@ public class Generator : IManifestGenerator
 
     public string ExternalDocumentRefArrayHeaderName => Constants.ExternalDocumentRefArrayHeaderName;
 
+    // This constructor gets called by an internal consumer that does not use IConfiguration.
+    public Generator()
+    {
+        actionIsAggregate = false;
+    }
+
+    // This constructor gets used within this repo.
     public Generator(IConfiguration configuration)
     {
-        this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
+
+        actionIsAggregate = configuration.ManifestToolAction == ManifestToolActions.Aggregate;
     }
 
     public GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo)
@@ -185,15 +194,13 @@ public class Generator : IManifestGenerator
 
     private bool ShouldWeKeepTheExistingId(string spdxId)
     {
-        switch (configuration.ManifestToolAction)
+        if (actionIsAggregate)
         {
-            case ManifestToolActions.Aggregate:
-                return true;
-            case ManifestToolActions.Generate:
-                return spdxId.Equals(Constants.RootPackageIdValue, StringComparison.OrdinalIgnoreCase);
+            // If we are aggregating, we keep the existing SPDX ID.
+            return true;
         }
 
-        return false;
+        return spdxId.Equals(Constants.RootPackageIdValue, StringComparison.OrdinalIgnoreCase);
     }
 
     public GenerationResult GenerateRootPackage(
