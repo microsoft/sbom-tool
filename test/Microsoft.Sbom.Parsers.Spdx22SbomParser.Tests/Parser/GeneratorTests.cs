@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Utils;
@@ -14,16 +15,27 @@ namespace Microsoft.Sbom.Parser;
 [TestClass]
 public class GeneratorTests
 {
+    public enum GenerationConstructionMode
+    {
+        UseDefaultWithDefaults,
+        UseDefaultWithBool,
+        UseConfiguration,
+    }
+
+    public enum AggregationConstructionMode
+    {
+        UseDefaultWithBool,
+        UseConfiguration,
+    }
+
     private const string ExpectedFormatSpdxId = "SPDXRef-Package-C8D4982D8356503F1912C637E4DFB7A53400AF98C08BA4732BB9F3CF70F628A9";
 
     private Mock<IConfiguration> configurationMock;
-    private Generator generator;
 
     [TestInitialize]
     public void BeforeEachTest()
     {
         configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
-        generator = new Generator();
     }
 
     [TestCleanup]
@@ -33,8 +45,13 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocumentTest_FilesAnalyzed_IsFalse()
+    [DataRow(GenerationConstructionMode.UseDefaultWithDefaults)]
+    [DataRow(GenerationConstructionMode.UseDefaultWithBool)]
+    [DataRow(GenerationConstructionMode.UseConfiguration)]
+    public void GenerateJsonDocumentTest_FilesAnalyzed_IsFalse(GenerationConstructionMode mode)
     {
+        var generator = BuildGenerationGenerator(mode);
+
         const string PackageUrl = "packageUrl";
         var packageInfo = new SbomPackage
         {
@@ -50,8 +67,13 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocumentTest_FilesAnalyzed_IsTrue()
+    [DataRow(GenerationConstructionMode.UseDefaultWithDefaults)]
+    [DataRow(GenerationConstructionMode.UseDefaultWithBool)]
+    [DataRow(GenerationConstructionMode.UseConfiguration)]
+    public void GenerateJsonDocumentTest_FilesAnalyzed_IsTrue(GenerationConstructionMode mode)
     {
+        var generator = BuildGenerationGenerator(mode);
+
         var expected = "[\"NOASSERTION\"]";
 
         const string PackageUrl = "packageUrl";
@@ -70,8 +92,13 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocument_DependsOnId_Null_ReturnsEmptyList()
+    [DataRow(GenerationConstructionMode.UseDefaultWithDefaults)]
+    [DataRow(GenerationConstructionMode.UseDefaultWithBool)]
+    [DataRow(GenerationConstructionMode.UseConfiguration)]
+    public void GenerateJsonDocument_DependsOnId_Null_ReturnsEmptyList(GenerationConstructionMode mode)
     {
+        var generator = BuildGenerationGenerator(mode);
+
         var packageInfo = new SbomPackage
         {
             PackageName = "TestPackage",
@@ -84,15 +111,16 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocument_Aggregating_DependsOnId_ReturnsInputId()
+
+    [DataRow(AggregationConstructionMode.UseDefaultWithBool)]
+    [DataRow(AggregationConstructionMode.UseConfiguration)]
+    public void GenerateJsonDocument_Aggregating_DependsOnId_ReturnsInputId(AggregationConstructionMode mode)
     {
+        var generator = BuildAggregationGenerator(mode);
+
         const string packageId1 = "SomePackageId";
         const string packageId2 = Constants.RootPackageIdValue;
         const string packageId3 = ExpectedFormatSpdxId;
-
-        // Reset the generator to use the Aggregate action
-        configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Aggregate);
-        generator = new Generator(configurationMock.Object);
 
         var packageInfo = new SbomPackage
         {
@@ -110,8 +138,13 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocument_Generating_DependsOnId_EqualsRootPackageId_ReturnsInputId()
+    [DataRow(GenerationConstructionMode.UseDefaultWithDefaults)]
+    [DataRow(GenerationConstructionMode.UseDefaultWithBool)]
+    [DataRow(GenerationConstructionMode.UseConfiguration)]
+    public void GenerateJsonDocument_Generating_DependsOnId_EqualsRootPackageId_ReturnsInputId(GenerationConstructionMode mode)
     {
+        var generator = BuildGenerationGenerator(mode);
+
         var packageInfo = new SbomPackage
         {
             PackageName = "TestPackage",
@@ -125,8 +158,13 @@ public class GeneratorTests
     }
 
     [TestMethod]
-    public void GenerateJsonDocument_Generating_DependsOnId_NotRootPackageId_GeneratesNewPackageId()
+    [DataRow(GenerationConstructionMode.UseDefaultWithDefaults)]
+    [DataRow(GenerationConstructionMode.UseDefaultWithBool)]
+    [DataRow(GenerationConstructionMode.UseConfiguration)]
+    public void GenerateJsonDocument_Generating_DependsOnId_NotRootPackageId_GeneratesNewPackageId(GenerationConstructionMode mode)
     {
+        var generator = BuildGenerationGenerator(mode);
+
         const string packageId1 = "SomePackageId";
         const string packageId2 = "AnotherPackageId";
         const string packageId3 = ExpectedFormatSpdxId;
@@ -147,5 +185,35 @@ public class GeneratorTests
         Assert.IsTrue(result.ResultMetadata.DependOn.Contains(expectedDependOnId1));
         Assert.IsTrue(result.ResultMetadata.DependOn.Contains(expectedDependOnId2));
         Assert.IsTrue(result.ResultMetadata.DependOn.Contains(expectedDependOnId3));
+    }
+
+    private Generator BuildGenerationGenerator(GenerationConstructionMode mode)
+    {
+        switch (mode)
+        {
+            case GenerationConstructionMode.UseDefaultWithDefaults:
+                return new Generator();
+            case GenerationConstructionMode.UseDefaultWithBool:
+                return new Generator(false);
+            case GenerationConstructionMode.UseConfiguration:
+                configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Generate);
+                return new Generator(configurationMock.Object);
+            default:
+                throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+        }
+    }
+
+    private Generator BuildAggregationGenerator(AggregationConstructionMode mode)
+    {
+        switch (mode)
+        {
+            case AggregationConstructionMode.UseDefaultWithBool:
+                return new Generator(true);
+            case AggregationConstructionMode.UseConfiguration:
+                configurationMock.SetupGet(m => m.ManifestToolAction).Returns(ManifestToolActions.Aggregate);
+                return new Generator(configurationMock.Object);
+            default:
+                throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+        }
     }
 }
