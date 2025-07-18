@@ -26,7 +26,7 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 /// </summary>
 public class Generator : IManifestGenerator
 {
-    private readonly IConfiguration configuration;
+    private readonly bool keepAllExistingIds;
 
     public AlgorithmName[] RequiredHashAlgorithms => new[] { AlgorithmName.SHA256, AlgorithmName.SHA1 };
 
@@ -40,9 +40,25 @@ public class Generator : IManifestGenerator
 
     public string ExternalDocumentRefArrayHeaderName => Constants.ExternalDocumentRefArrayHeaderName;
 
+    // This constructor gets called by an internal consumer that does not use IConfiguration.
+    // In this repo, we use it in tests to pin the existing behavior via this constructor.
+    public Generator()
+        : this(keepAllExistingIds: false)
+    {
+    }
+
+    // This constructor gets used by the default constructor and by tests.
+    public Generator(bool keepAllExistingIds)
+    {
+        this.keepAllExistingIds = keepAllExistingIds;
+    }
+
+    // This constructor gets used by the production code and by at least one test.
     public Generator(IConfiguration configuration)
     {
-        this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
+
+        keepAllExistingIds = configuration.ManifestToolAction == ManifestToolActions.Aggregate;
     }
 
     public GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo)
@@ -185,15 +201,8 @@ public class Generator : IManifestGenerator
 
     private bool ShouldWeKeepTheExistingId(string spdxId)
     {
-        switch (configuration.ManifestToolAction)
-        {
-            case ManifestToolActions.Aggregate:
-                return true;
-            case ManifestToolActions.Generate:
-                return spdxId.Equals(Constants.RootPackageIdValue, StringComparison.OrdinalIgnoreCase);
-        }
-
-        return false;
+        return keepAllExistingIds ||
+            spdxId.Equals(Constants.RootPackageIdValue, StringComparison.OrdinalIgnoreCase);
     }
 
     public GenerationResult GenerateRootPackage(
