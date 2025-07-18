@@ -104,7 +104,8 @@ public class SbomValidator : ISbomValidator
         await recorder.FinalizeAndLogTelemetryAsync();
 
         var errors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
-        return new SbomValidationResult(!errors.Any(), errors);
+        var hasExceptions = recorder.Exceptions.Any();
+        return new SbomValidationResult(!errors.Any() && !hasExceptions, errors);
     }
 
     private InputConfiguration ValidateConfig(InputConfiguration config)
