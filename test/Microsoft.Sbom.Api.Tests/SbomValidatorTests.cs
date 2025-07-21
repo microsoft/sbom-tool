@@ -72,12 +72,8 @@ public class SbomValidatorTests
         sbomConfigMock.VerifyAll();
     }
 
-    [TestMethod]
-    public async Task ValidateSbomAsync_WithNoErrorsAndNoExceptions_ReturnsTrue()
+    private void SetupMocksForValidation(List<FileValidationResult> errors, List<Exception> exceptions)
     {
-        var errors = new List<FileValidationResult>();
-        var exceptions = new List<Exception>();
-
         configValidatorsMock.Setup(cv => cv.GetEnumerator()).Returns(new List<ConfigValidator>().GetEnumerator());
 
         configurationMock.Setup(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
@@ -94,6 +90,15 @@ public class SbomValidatorTests
         recorderMock.Setup(r => r.FinalizeAndLogTelemetryAsync()).Returns(Task.CompletedTask);
         recorderMock.Setup(r => r.Errors).Returns(errors);
         recorderMock.Setup(r => r.Exceptions).Returns(exceptions);
+    }
+
+    [TestMethod]
+    public async Task ValidateSbomAsync_WithNoErrorsAndNoExceptions_ReturnsTrue()
+    {
+        var errors = new List<FileValidationResult>();
+        var exceptions = new List<Exception>();
+
+        SetupMocksForValidation(errors, exceptions);
 
         var result = await sbomValidator.ValidateSbomAsync(buildDropPath, outputPathFile, specifications, manifestDirPath);
 
@@ -110,22 +115,7 @@ public class SbomValidatorTests
         };
         var exceptions = new List<Exception>();
 
-        configValidatorsMock.Setup(cv => cv.GetEnumerator()).Returns(new List<ConfigValidator>().GetEnumerator());
-
-        configurationMock.Setup(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
-        {
-            Value = new List<ManifestInfo> { manifestInfo }
-        });
-
-        sbomConfigProviderMock.Setup(scp => scp.Get(manifestInfo)).Returns(sbomConfigMock.Object);
-        sbomConfigMock.Setup(sc => sc.ManifestJsonFilePath).Returns(manifestJsonPath);
-
-        fileSystemUtilsMock.Setup(fs => fs.FileExists(manifestJsonPath)).Returns(true);
-        workflowMock.Setup(w => w.RunAsync()).ReturnsAsync(true);
-
-        recorderMock.Setup(r => r.FinalizeAndLogTelemetryAsync()).Returns(Task.CompletedTask);
-        recorderMock.Setup(r => r.Errors).Returns(errors);
-        recorderMock.Setup(r => r.Exceptions).Returns(exceptions);
+        SetupMocksForValidation(errors, exceptions);
 
         var result = await sbomValidator.ValidateSbomAsync(buildDropPath, outputPathFile, specifications, manifestDirPath);
 
@@ -142,22 +132,7 @@ public class SbomValidatorTests
             new InvalidOperationException("Cannot write to directory path")
         };
 
-        configValidatorsMock.Setup(cv => cv.GetEnumerator()).Returns(new List<ConfigValidator>().GetEnumerator());
-
-        configurationMock.Setup(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
-        {
-            Value = new List<ManifestInfo> { manifestInfo }
-        });
-
-        sbomConfigProviderMock.Setup(scp => scp.Get(manifestInfo)).Returns(sbomConfigMock.Object);
-        sbomConfigMock.Setup(sc => sc.ManifestJsonFilePath).Returns(manifestJsonPath);
-
-        fileSystemUtilsMock.Setup(fs => fs.FileExists(manifestJsonPath)).Returns(true);
-        workflowMock.Setup(w => w.RunAsync()).ReturnsAsync(true);
-
-        recorderMock.Setup(r => r.FinalizeAndLogTelemetryAsync()).Returns(Task.CompletedTask);
-        recorderMock.Setup(r => r.Errors).Returns(errors);
-        recorderMock.Setup(r => r.Exceptions).Returns(exceptions);
+        SetupMocksForValidation(errors, exceptions);
 
         var result = await sbomValidator.ValidateSbomAsync(buildDropPath, outputPathDirectory, specifications, manifestDirPath);
 
@@ -177,22 +152,7 @@ public class SbomValidatorTests
             new InvalidOperationException("Cannot write to directory path")
         };
 
-        configValidatorsMock.Setup(cv => cv.GetEnumerator()).Returns(new List<ConfigValidator>().GetEnumerator());
-
-        configurationMock.Setup(c => c.ManifestInfo).Returns(new ConfigurationSetting<IList<ManifestInfo>>
-        {
-            Value = new List<ManifestInfo> { manifestInfo }
-        });
-
-        sbomConfigProviderMock.Setup(scp => scp.Get(manifestInfo)).Returns(sbomConfigMock.Object);
-        sbomConfigMock.Setup(sc => sc.ManifestJsonFilePath).Returns(manifestJsonPath);
-
-        fileSystemUtilsMock.Setup(fs => fs.FileExists(manifestJsonPath)).Returns(true);
-        workflowMock.Setup(w => w.RunAsync()).ReturnsAsync(true);
-
-        recorderMock.Setup(r => r.FinalizeAndLogTelemetryAsync()).Returns(Task.CompletedTask);
-        recorderMock.Setup(r => r.Errors).Returns(errors);
-        recorderMock.Setup(r => r.Exceptions).Returns(exceptions);
+        SetupMocksForValidation(errors, exceptions);
 
         var result = await sbomValidator.ValidateSbomAsync(buildDropPath, outputPathDirectory, specifications, manifestDirPath);
 
