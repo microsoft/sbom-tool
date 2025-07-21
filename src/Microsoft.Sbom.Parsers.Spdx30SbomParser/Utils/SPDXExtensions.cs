@@ -42,7 +42,7 @@ public static class SPDXExtensions
 
         if (fileInfo.Checksum is null || !fileInfo.Checksum.Any(c => c.Algorithm == AlgorithmName.SHA1))
         {
-            throw new MissingHashValueException($"The file {fileInfo.Path} is missing the {HashAlgorithmName.SHA1} hash value.");
+            throw new MissingHashValueException($"The file {fileInfo.Path} is missing the {HashAlgorithmName.SHA1} hash value."); // CodeQL [SM02196] Sha1 is required per the SPDX spec.
         }
 
         // Get the SHA1 for this file.
