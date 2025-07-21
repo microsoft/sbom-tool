@@ -93,20 +93,24 @@ public class TelemetryRecorderTests
     }
 
     [TestMethod]
-    public void TelemetryRecorder_Exceptions_Property_ReturnsRecordedExceptions()
+    public void TelemetryRecorder_RecordException_StoresExceptionsCorrectly()
     {
         var telemetryRecorder = new TelemetryRecorder(fileSystemUtilsMock.Object, configMock.Object, loggerMock.Object);
         var testException1 = new InvalidOperationException("Test exception 1");
         var testException2 = new ArgumentException("Test exception 2");
 
-        Assert.AreEqual(0, telemetryRecorder.Exceptions.Count);
+        // Use reflection to access the private exceptions field
+        var exceptionsField = typeof(TelemetryRecorder).GetField("exceptions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var exceptions = (IList<Exception>)exceptionsField.GetValue(telemetryRecorder);
+
+        Assert.AreEqual(0, exceptions.Count);
 
         telemetryRecorder.RecordException(testException1);
         telemetryRecorder.RecordException(testException2);
 
-        Assert.AreEqual(2, telemetryRecorder.Exceptions.Count);
-        Assert.IsTrue(telemetryRecorder.Exceptions.Contains(testException1));
-        Assert.IsTrue(telemetryRecorder.Exceptions.Contains(testException2));
+        Assert.AreEqual(2, exceptions.Count);
+        Assert.IsTrue(exceptions.Contains(testException1));
+        Assert.IsTrue(exceptions.Contains(testException2));
     }
 
     [TestMethod]

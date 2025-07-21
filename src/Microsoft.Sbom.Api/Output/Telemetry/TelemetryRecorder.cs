@@ -122,8 +122,6 @@ public class TelemetryRecorder : IRecorder
 
     public IList<FileValidationResult> Errors => errors;
 
-    public IList<Exception> Exceptions => exceptions;
-
     public Result Result => result;
 
     /// <summary>
