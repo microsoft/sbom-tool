@@ -29,6 +29,7 @@ public class SbomValidatorTests
     private Mock<ISbomConfigProvider> sbomConfigProviderMock;
     private Mock<IFileSystemUtils> fileSystemUtilsMock;
     private Mock<ISbomConfig> sbomConfigMock;
+    private SbomValidator sbomValidator;
 
     // Common test data
     private readonly string buildDropPath = "/test/drop";
@@ -49,6 +50,14 @@ public class SbomValidatorTests
         sbomConfigProviderMock = new Mock<ISbomConfigProvider>(MockBehavior.Strict);
         fileSystemUtilsMock = new Mock<IFileSystemUtils>(MockBehavior.Strict);
         sbomConfigMock = new Mock<ISbomConfig>(MockBehavior.Strict);
+
+        sbomValidator = new SbomValidator(
+            workflowMock.Object,
+            recorderMock.Object,
+            configValidatorsMock.Object,
+            configurationMock.Object,
+            sbomConfigProviderMock.Object,
+            fileSystemUtilsMock.Object);
     }
 
     [TestCleanup]
@@ -86,15 +95,7 @@ public class SbomValidatorTests
         recorderMock.Setup(r => r.Errors).Returns(errors);
         recorderMock.Setup(r => r.Exceptions).Returns(exceptions);
 
-        var validator = new SbomValidator(
-            workflowMock.Object,
-            recorderMock.Object,
-            configValidatorsMock.Object,
-            configurationMock.Object,
-            sbomConfigProviderMock.Object,
-            fileSystemUtilsMock.Object);
-
-        var result = await validator.ValidateSbomAsync(buildDropPath, outputPathFile, specifications, manifestDirPath);
+        var result = await sbomValidator.ValidateSbomAsync(buildDropPath, outputPathFile, specifications, manifestDirPath);
 
         Assert.IsTrue(result.IsSuccess);
         Assert.AreEqual(0, result.Errors.Count);
@@ -126,15 +127,7 @@ public class SbomValidatorTests
         recorderMock.Setup(r => r.Errors).Returns(errors);
         recorderMock.Setup(r => r.Exceptions).Returns(exceptions);
 
-        var validator = new SbomValidator(
-            workflowMock.Object,
-            recorderMock.Object,
-            configValidatorsMock.Object,
-            configurationMock.Object,
-            sbomConfigProviderMock.Object,
-            fileSystemUtilsMock.Object);
-
-        var result = await validator.ValidateSbomAsync(buildDropPath, outputPathFile, specifications, manifestDirPath);
+        var result = await sbomValidator.ValidateSbomAsync(buildDropPath, outputPathFile, specifications, manifestDirPath);
 
         Assert.IsFalse(result.IsSuccess);
         Assert.AreEqual(1, result.Errors.Count);
@@ -166,15 +159,7 @@ public class SbomValidatorTests
         recorderMock.Setup(r => r.Errors).Returns(errors);
         recorderMock.Setup(r => r.Exceptions).Returns(exceptions);
 
-        var validator = new SbomValidator(
-            workflowMock.Object,
-            recorderMock.Object,
-            configValidatorsMock.Object,
-            configurationMock.Object,
-            sbomConfigProviderMock.Object,
-            fileSystemUtilsMock.Object);
-
-        var result = await validator.ValidateSbomAsync(buildDropPath, outputPathDirectory, specifications, manifestDirPath);
+        var result = await sbomValidator.ValidateSbomAsync(buildDropPath, outputPathDirectory, specifications, manifestDirPath);
 
         Assert.IsFalse(result.IsSuccess);
         Assert.AreEqual(0, result.Errors.Count); // No validation errors, but should still fail due to exception
@@ -209,15 +194,7 @@ public class SbomValidatorTests
         recorderMock.Setup(r => r.Errors).Returns(errors);
         recorderMock.Setup(r => r.Exceptions).Returns(exceptions);
 
-        var validator = new SbomValidator(
-            workflowMock.Object,
-            recorderMock.Object,
-            configValidatorsMock.Object,
-            configurationMock.Object,
-            sbomConfigProviderMock.Object,
-            fileSystemUtilsMock.Object);
-
-        var result = await validator.ValidateSbomAsync(buildDropPath, outputPathDirectory, specifications, manifestDirPath);
+        var result = await sbomValidator.ValidateSbomAsync(buildDropPath, outputPathDirectory, specifications, manifestDirPath);
 
         Assert.IsFalse(result.IsSuccess);
         Assert.AreEqual(1, result.Errors.Count);
