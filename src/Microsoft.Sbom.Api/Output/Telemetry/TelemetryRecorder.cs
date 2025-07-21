@@ -124,6 +124,8 @@ public class TelemetryRecorder : IRecorder
 
     public IList<Exception> Exceptions => exceptions;
 
+    public Result Result => result;
+
     /// <summary>
     /// Start recording the duration of exeuction of the given event.
     /// </summary>

@@ -3,8 +3,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common;
@@ -89,7 +91,10 @@ public class SbomValidatorTests
 
         recorderMock.Setup(r => r.FinalizeAndLogTelemetryAsync()).Returns(Task.CompletedTask);
         recorderMock.Setup(r => r.Errors).Returns(errors);
-        recorderMock.Setup(r => r.Exceptions).Returns(exceptions);
+
+        // Determine the result based on whether there are errors or exceptions
+        var result = (errors.Any() || exceptions.Any()) ? Result.Failure : Result.Success;
+        recorderMock.Setup(r => r.Result).Returns(result);
     }
 
     [TestMethod]
