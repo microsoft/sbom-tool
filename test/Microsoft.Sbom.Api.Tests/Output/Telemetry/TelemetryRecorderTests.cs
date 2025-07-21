@@ -109,8 +109,8 @@ public class TelemetryRecorderTests
         telemetryRecorder.RecordException(testException2);
 
         Assert.AreEqual(2, exceptions.Count);
-        Assert.IsTrue(exceptions.Contains(testException1));
-        Assert.IsTrue(exceptions.Contains(testException2));
+        Assert.AreEqual(testException1, exceptions[0]);
+        Assert.AreEqual(testException2, exceptions[1]);
     }
 
     [TestMethod]
