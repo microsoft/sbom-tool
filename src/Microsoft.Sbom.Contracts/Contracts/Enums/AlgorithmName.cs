@@ -114,5 +114,5 @@ public class AlgorithmName : IEquatable<AlgorithmName>
     /// Gets equivalent to <see cref="HashAlgorithmName.MD5"/>.
     /// </summary>
     [SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms", Justification = "Used by conda package manager.")]
-    public static AlgorithmName MD5 => new AlgorithmName(nameof(MD5), stream => System.Security.Cryptography.MD5.Create().ComputeHash(stream));
+    public static AlgorithmName MD5 => new AlgorithmName(nameof(MD5), stream => System.Security.Cryptography.MD5.Create().ComputeHash(stream)); // CodeQL [SM02196] Used by conda package manager.
 }
