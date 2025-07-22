@@ -186,11 +186,8 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         // Write all the JSON documents from the generationResults to the manifest based on the manifestInfo.
         // When aggregating, only call the packages generator. A helper method might make this more compact,
         // but it would be less readable.
-        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
-        {
-            var fileGeneratorResult = await fileArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
-            validErrors.AddRange(fileGeneratorResult.Errors);
-        }
+        var fileGeneratorResult = await fileArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+        validErrors.AddRange(fileGeneratorResult.Errors);
 
         var packageGeneratorResult = await packageArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
         validErrors.AddRange(packageGeneratorResult.Errors);
@@ -201,11 +198,8 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
             validErrors.AddRange(externalDocumentReferenceGeneratorResult.Errors);
         }
 
-        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
-        {
-            var relationshipGeneratorResult = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
-            validErrors.AddRange(relationshipGeneratorResult.Errors);
-        }
+        var relationshipGeneratorResult = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+        validErrors.AddRange(relationshipGeneratorResult.Errors);
 
         return validErrors;
     }

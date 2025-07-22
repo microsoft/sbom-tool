@@ -13,7 +13,7 @@ namespace Microsoft.Sbom.Api.Manifest;
 /// Factory class that returns the correct implementation of the <see cref="IManifestGenerator"/>
 /// at runtime based on the 'ManifestInfo' parameter.
 /// </summary>
-public class ManifestGeneratorProvider
+public class ManifestGeneratorProvider : IManifestGeneratorProvider
 {
     private readonly IEnumerable<IManifestGenerator> manifestGenerators;
     private readonly IDictionary<string, IManifestGenerator> manifestMap = new Dictionary<string, IManifestGenerator>(StringComparer.OrdinalIgnoreCase);
