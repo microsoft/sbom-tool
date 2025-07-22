@@ -140,7 +140,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
             {
                 recorder.RecordException(e);
                 log.Error("Encountered an error while generating the manifest.");
-                log.Error($"Error details: {e.Message}");
+                log.Error("Error details: {Message}", e.Message);
 
                 if (e is not ManifestFolderExistsException)
                 {
@@ -173,7 +173,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 }
                 catch (Exception e)
                 {
-                    log.Warning($"Unable to delete the temp directory {fileSystemUtils.GetSbomToolTempPath()}", e);
+                    log.Warning("Unable to delete the temp directory {SbomToolTempPath}", this.fileSystemUtils.GetSbomToolTempPath(), e);
                 }
             }
         }
@@ -215,7 +215,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
             }
             else
             {
-                log.Warning($"Ignoring unregistered manifest type: {manifestInfo}");
+                log.Warning("Ignoring unregistered manifest type: {ManifestInfo}", manifestInfo);
             }
         }
 
@@ -247,17 +247,13 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 }
                 else if (!fileSystemUtils.IsDirectoryEmpty(sbomDir))
                 {
-                    log.Warning($"Manifest generation failed, however we were " +
-                                $"unable to delete the partially generated manifest.json file and the {sbomDir} directory because the directory was not empty.");
+                    log.Warning("Manifest generation failed, however we were unable to delete the partially generated manifest.json file and the {Dir} directory because the directory was not empty.", sbomDir);
                 }
             }
         }
         catch (Exception e)
         {
-            this.log.Warning(
-                $"Manifest generation failed, however we were " +
-                $"unable to delete the partially generated manifest.json file and the {sbomDir} directory.",
-                e);
+            this.log.Warning("Manifest generation failed, however we were unable to delete the partially generated manifest.json file and the {Dir} directory.", sbomDir, e);
         }
     }
 
@@ -306,8 +302,7 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
                 }
 
                 log.Warning(
-                    $"Deleting pre-existing folder {rootManifestFolderPath} as {Constants.DeleteManifestDirBoolVariableName}" +
-                    $" is 'true'.");
+                    "Deleting pre-existing folder {Path} as {Name} is 'true'.", rootManifestFolderPath, Constants.DeleteManifestDirBoolVariableName);
                 fileSystemUtils.DeleteDir(rootManifestFolderPath, true);
             }
         }

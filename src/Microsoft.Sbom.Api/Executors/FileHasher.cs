@@ -139,7 +139,7 @@ public class FileHasher
                 ManifestData.HashesMap.Remove(relativeFilePath);
             }
 
-            log.Error($"Encountered an error while generating hash for file {file}: {e.Message}");
+            log.Error("Encountered an error while generating hash for file {Path}: {Message}", file, e.Message);
             await errors.Writer.WriteAsync(new FileValidationResult
             {
                 ErrorType = Entities.ErrorType.Other,

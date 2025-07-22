@@ -59,8 +59,7 @@ public class ComponentToPackageInfoConverter
 
                     if (sbom == null)
                     {
-                        log.Debug($"Unable to serialize component '{scannedComponent.Component.Id}' of type '{scannedComponent.DetectorId}'. " +
-                                  $"This component won't be included in the generated SBOM.");
+                        log.Debug("Unable to serialize component '{ComponentId}' of type '{DetectorId}'. This component won't be included in the generated SBOM.", scannedComponent.Component.Id, scannedComponent.DetectorId);
                     }
                     else
                     {
@@ -69,7 +68,7 @@ public class ComponentToPackageInfoConverter
                 }
                 catch (Exception e)
                 {
-                    log.Warning($"Encountered an error while processing package {scannedComponent.Component.Id}: {e.Message}");
+                    log.Warning("Encountered an error while processing package {ComponentId}: {Message}", scannedComponent.Component.Id, e.Message);
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
                         ErrorType = ErrorType.PackageError,

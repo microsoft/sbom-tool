@@ -63,7 +63,7 @@ public abstract class ComponentDetectionBaseWalker
     {
         if (fileSystemUtils.FileExists(buildComponentDirPath))
         {
-            log.Debug($"Scanning for packages under the root path {buildComponentDirPath}.");
+            log.Debug("Scanning for packages under the root path {BuildComponentDirPath}.", buildComponentDirPath);
         }
 
         // If the buildComponentDirPath is null or empty, make sure we have a ManifestDirPath and create a new temp directory with a random name.
@@ -157,7 +157,7 @@ public abstract class ComponentDetectionBaseWalker
 
                     LicenseDictionary = licenseInformationFetcher.GetLicenseDictionary();
 
-                    log.Information($"Found license information for {LicenseDictionary.Count} out of {uniqueComponents.Count()} unique components.");
+                    log.Information("Found license information for {LicenseCount} out of {ComponentCount} unique components.", this.LicenseDictionary.Count, uniqueComponents.Count());
                 }
             }
 
@@ -202,7 +202,7 @@ public abstract class ComponentDetectionBaseWalker
             }
             catch (Exception e)
             {
-                log.Error($"Unknown error while running CD scan: {e}");
+                log.Error("Unknown error while running CD scan: {Exception}", e);
                 await errors.Writer.WriteAsync(new ComponentDetectorException("Unknown exception", e));
                 return;
             }
