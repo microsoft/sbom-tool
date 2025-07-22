@@ -61,7 +61,7 @@ Actions
     PackageSupplier (-ps)                       Supplier of the package that this SBOM represents.
     DockerImagesToScan (-di)                    Comma separated list of docker image names or hashes to be scanned for packages, ex: ubuntu:16.04, 56bab49eef2ef07505f6a1b0d5bd3a601dfc3c76ad4460f24c91d6fa298369ab.
     AdditionalComponentDetectorArgs (-cd)       Additional set of arguments for Component Detector.  An appropriate usage of this would be a space-delimited list of `--key value` pairs, representing
-                                                command-line switches.
+                                                command-line arguments. See the component-detection repository for a list of valid arguments (https://github.com/microsoft/component-detection/blob/main/docs/detector-arguments.md).
     ExternalDocumentReferenceListFile (-er)     The path to a file containing a list of external SBOMs that will be included as external document reference in the output SBOM. SPDX 2.2 is the only supported
                                                 format for now.
     NamespaceUriUniquePart (-nsu)               A unique valid URI part that will be appended to the SPDX SBOM namespace URI. This value should be globally unique.
