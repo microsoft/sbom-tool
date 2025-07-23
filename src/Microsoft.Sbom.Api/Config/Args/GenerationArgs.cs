@@ -67,7 +67,7 @@ public class GenerationArgs : GenerationAndValidationCommonArgs
     public string DockerImagesToScan { get; set; }
 
     [ArgShortcut("cd")]
-    [ArgDescription("Additional set of arguments for Component Detector.  An appropriate usage of this would be a space-delimited list of `--key value` pairs, representing command-line switches.")]
+    [ArgDescription("Additional set of arguments for Component Detector.  An appropriate usage of this would be a space-delimited list of `--key value` pairs, representing command-line arguments. See the component-detection repository for a list of valid arguments (https://github.com/microsoft/component-detection/blob/main/docs/detector-arguments.md).")]
     public string AdditionalComponentDetectorArgs { get; set; }
 
     /// <summary>
