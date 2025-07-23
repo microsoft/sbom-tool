@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.IO;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,7 +21,6 @@ public class DownloadedRootPathFilterTests
 
         var configMock = new Mock<IConfiguration>();
         configMock.SetupGet(c => c.RootPathFilter).Returns((ConfigurationSetting<string>)null);
-        configMock.SetupGet(c => c.RootPathPatterns).Returns((ConfigurationSetting<string>)null);
 
         var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
         filter.Init();
@@ -43,7 +41,6 @@ public class DownloadedRootPathFilterTests
         var configMock = new Mock<IConfiguration>();
         configMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "C:/test" });
         configMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "validPath" });
-        configMock.SetupGet(c => c.RootPathPatterns).Returns((ConfigurationSetting<string>)null);
 
         var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
         filter.Init();
@@ -66,7 +63,7 @@ public class DownloadedRootPathFilterTests
 
         var configMock = new Mock<IConfiguration>();
         configMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "C:/test" });
-        configMock.SetupGet(c => c.RootPathPatterns).Returns(new ConfigurationSetting<string> { Value = "src/**/*.cs;bin/*.dll" });
+        configMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "src/**/*.cs;bin/*.dll" });
 
         var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
         filter.Init();
@@ -89,26 +86,22 @@ public class DownloadedRootPathFilterTests
     }
 
     [TestMethod]
-    public void DownloadedRootPathFilterTest_PatternTakesPrecedence_Succeeds()
+    public void DownloadedRootPathFilterTest_LegacyPathStillWorks_Succeeds()
     {
         var fileSystemMock = new Mock<IFileSystemUtils>();
-        fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>()))
-                     .Returns((string path1, string path2) => Path.Combine(path1, path2));
 
         var configMock = new Mock<IConfiguration>();
         configMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "C:/test" });
-        configMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "oldPath" });
-        configMock.SetupGet(c => c.RootPathPatterns).Returns(new ConfigurationSetting<string> { Value = "src/*.cs" });
+        configMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "src/*.cs" });
 
         var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
         filter.Init();
 
-        // Should use pattern matching, not legacy path filtering
+        // Should use pattern matching since glob patterns are detected
         Assert.IsTrue(filter.IsValid("C:/test/src/file.cs"));
-        Assert.IsFalse(filter.IsValid("C:/test/oldPath/file.txt")); // This would match with RootPathFilter but should be ignored
         Assert.IsFalse(filter.IsValid("C:/test/src/nested/file.cs")); // Doesn't match the pattern
 
-        fileSystemMock.VerifyAll();
+        // Pattern matching doesn't use JoinPaths, so we don't call VerifyAll on fileSystemMock
         configMock.VerifyAll();
     }
 
@@ -118,14 +111,37 @@ public class DownloadedRootPathFilterTests
         var fileSystemMock = new Mock<IFileSystemUtils>();
 
         var configMock = new Mock<IConfiguration>();
-        configMock.SetupGet(c => c.RootPathPatterns).Returns(new ConfigurationSetting<string> { Value = "   ;  ; " }); // Only whitespace and separators
+        configMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "   ;  ; " }); // Only whitespace and separators
 
         var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
         filter.Init();
 
-        // Should skip validation since patterns contain only whitespace and separators
+        // Should skip validation since no valid patterns or paths are provided
         Assert.IsTrue(filter.IsValid("any/path/should/pass"));
         Assert.IsTrue(filter.IsValid(null));
+
+        fileSystemMock.VerifyAll();
+        configMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void DownloadedRootPathFilterTest_LegacyPathPrefix_Succeeds()
+    {
+        var fileSystemMock = new Mock<IFileSystemUtils>();
+        fileSystemMock.Setup(f => f.JoinPaths(It.IsAny<string>(), It.IsAny<string>())).Returns((string r, string p) => $"{r}/{p}");
+
+        var configMock = new Mock<IConfiguration>();
+        configMock.SetupGet(c => c.BuildDropPath).Returns(new ConfigurationSetting<string> { Value = "C:/test" });
+        configMock.SetupGet(c => c.RootPathFilter).Returns(new ConfigurationSetting<string> { Value = "src;bin" }); // No glob patterns, should use legacy mode
+
+        var filter = new DownloadedRootPathFilter(configMock.Object, fileSystemMock.Object, logger.Object);
+        filter.Init();
+
+        // Should use legacy path prefix matching
+        Assert.IsTrue(filter.IsValid("c:/test/src/anything"));
+        Assert.IsTrue(filter.IsValid("c:/test/bin/anything"));
+        Assert.IsFalse(filter.IsValid("c:/test/lib/anything"));
+        Assert.IsFalse(filter.IsValid(null));
 
         fileSystemMock.VerifyAll();
         configMock.VerifyAll();

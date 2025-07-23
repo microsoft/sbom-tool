@@ -29,7 +29,6 @@ public class Configuration : IConfiguration
     private static readonly AsyncLocal<ConfigurationSetting<IList<ManifestInfo>>> manifestInfo = new();
     private static readonly AsyncLocal<ConfigurationSetting<AlgorithmName>> hashAlgorithm = new();
     private static readonly AsyncLocal<ConfigurationSetting<string>> rootFilterPath = new();
-    private static readonly AsyncLocal<ConfigurationSetting<string>> rootPathPatterns = new();
     private static readonly AsyncLocal<ConfigurationSetting<string>> catalogFilePath = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> validateSignature = new();
     private static readonly AsyncLocal<ConfigurationSetting<bool>> ignoreMissing = new();
@@ -160,14 +159,6 @@ public class Configuration : IConfiguration
     {
         get => rootFilterPath.Value;
         set => rootFilterPath.Value = value;
-    }
-
-    /// <inheritdoc cref="IConfiguration.RootPathPatterns" />
-    [Path]
-    public ConfigurationSetting<string> RootPathPatterns
-    {
-        get => rootPathPatterns.Value;
-        set => rootPathPatterns.Value = value;
     }
 
     /// <inheritdoc cref="IConfiguration.CatalogFilePath" />

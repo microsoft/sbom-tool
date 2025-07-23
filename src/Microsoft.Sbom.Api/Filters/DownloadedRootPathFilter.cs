@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
@@ -45,7 +44,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
     /// filters contains /root/parent1/ or /root/parent1/parent2/ in it, this filePath with return true,
     /// but if the root path contains /root/parent3/, this filePath will return false.
     ///
-    /// If patterns are specified, the filePath will be matched against glob-style patterns instead.
+    /// If glob patterns are detected in RootPathFilter, the filePath will be matched against glob-style patterns instead.
     /// </summary>
     /// <param name="filePath">The file path to validate.</param>
     public bool IsValid(string filePath)
@@ -114,6 +113,21 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
     }
 
     /// <summary>
+    /// Checks if a string contains glob patterns.
+    /// </summary>
+    /// <param name="value">The string to check.</param>
+    /// <returns>True if the string contains glob patterns, false otherwise.</returns>
+    private static bool ContainsGlobPatterns(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return false;
+        }
+
+        return value.Contains('*') || value.Contains('?');
+    }
+
+    /// <summary>
     /// Initializes the root path filters list or patterns.
     /// </summary>
     public void Init()
@@ -121,44 +135,59 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
         logger.Verbose("Adding root path filter valid paths");
         skipValidation = true;
 
-        // Start with legacy path prefix configuration (original default path)
         if (configuration.RootPathFilter != null && !string.IsNullOrWhiteSpace(configuration.RootPathFilter.Value))
         {
-            skipValidation = false;
-            validPaths = new HashSet<string>();
-            var relativeRootPaths = configuration.RootPathFilter.Value.Split(';');
+            var rootFilterValue = configuration.RootPathFilter.Value;
 
-            validPaths.UnionWith(relativeRootPaths.Select(r =>
-                new FileInfo(fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, r))
-                    .FullName));
-
-            foreach (var validPath in validPaths)
+            // Check if the RootPathFilter contains glob patterns
+            if (ContainsGlobPatterns(rootFilterValue))
             {
-                logger.Verbose($"Added valid path {validPath}");
-            }
-        }
+                // Use pattern matching
+                patterns = new List<string>();
+                var patternStrings = rootFilterValue.Split(';');
 
-        // Check if pattern-based configuration should override (takes precedence when specified)
-        if (configuration.RootPathPatterns != null && !string.IsNullOrWhiteSpace(configuration.RootPathPatterns.Value))
-        {
-            patterns = new List<string>();
-            var patternStrings = configuration.RootPathPatterns.Value.Split(';');
-
-            foreach (var pattern in patternStrings)
-            {
-                var trimmedPattern = pattern.Trim();
-                if (!string.IsNullOrEmpty(trimmedPattern))
+                foreach (var pattern in patternStrings)
                 {
-                    patterns.Add(trimmedPattern);
-                    logger.Verbose($"Added pattern {trimmedPattern}");
+                    var trimmedPattern = pattern.Trim();
+                    if (!string.IsNullOrEmpty(trimmedPattern))
+                    {
+                        patterns.Add(trimmedPattern);
+                        logger.Verbose($"Added pattern {trimmedPattern}");
+                    }
+                }
+
+                // Only skip validation if we actually have valid patterns
+                if (patterns.Count > 0)
+                {
+                    skipValidation = false;
                 }
             }
-
-            // Only override legacy path if we actually have patterns
-            if (patterns.Count > 0)
+            else
             {
-                skipValidation = false;
-                validPaths = null; // Clear legacy paths since patterns take precedence
+                // Use legacy path prefix matching
+                validPaths = new HashSet<string>();
+                var relativeRootPaths = rootFilterValue.Split(';');
+
+                foreach (var relativePath in relativeRootPaths)
+                {
+                    var trimmedPath = relativePath.Trim();
+                    if (!string.IsNullOrEmpty(trimmedPath))
+                    {
+                        // Check if BuildDropPath is available for legacy path prefix matching
+                        if (configuration.BuildDropPath?.Value != null)
+                        {
+                            var fullPath = new FileInfo(fileSystemUtils.JoinPaths(configuration.BuildDropPath.Value, trimmedPath)).FullName;
+                            validPaths.Add(fullPath);
+                            logger.Verbose($"Added valid path {fullPath}");
+                        }
+                    }
+                }
+
+                // Only skip validation if we actually have valid paths
+                if (validPaths.Count > 0)
+                {
+                    skipValidation = false;
+                }
             }
         }
     }

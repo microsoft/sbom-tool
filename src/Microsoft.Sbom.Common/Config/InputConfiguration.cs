@@ -70,10 +70,6 @@ public class InputConfiguration : IConfiguration
     [Path]
     public ConfigurationSetting<string> RootPathFilter { get; set; }
 
-    /// <inheritdoc cref="IConfiguration.RootPathPatterns" />
-    [Path]
-    public ConfigurationSetting<string> RootPathPatterns { get; set; }
-
     /// <inheritdoc cref="IConfiguration.CatalogFilePath" />
     [Path]
     public ConfigurationSetting<string> CatalogFilePath { get; set; }
