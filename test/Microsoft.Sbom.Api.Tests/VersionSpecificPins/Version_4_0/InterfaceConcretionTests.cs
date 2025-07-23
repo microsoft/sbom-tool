@@ -129,8 +129,6 @@ public class InterfaceConcretionTests
     {
         public IList<FileValidationResult> Errors => throw new NotImplementedException();
 
-        public IList<Exception> Exceptions => throw new NotImplementedException();
-
         public Result Result => throw new NotImplementedException();
 
         public void AddResult(string propertyName, string value) => throw new NotImplementedException();
