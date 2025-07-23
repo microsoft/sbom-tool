@@ -58,4 +58,123 @@ public class SbomFormatConverterTests
         var sbomChecksum = spdxChecksum.ToSbomChecksum();
         Assert.IsNull(sbomChecksum, "ToSbomChecksum should return null when the input checksum is null.");
     }
+
+    [TestMethod]
+    public void ToPurl_EmptyExternalReferences_ReturnsNull()
+    {
+        var emptyExternalReferences = new List<ExternalReference>();
+        var result = emptyExternalReferences.ToPurl();
+        Assert.IsNull(result, "ToPurl should return null when external references list is empty.");
+    }
+
+    [TestMethod]
+    public void ToPurl_NullExternalReferences_ReturnsNull()
+    {
+        IList<ExternalReference> nullExternalReferences = null;
+        var result = nullExternalReferences.ToPurl();
+        Assert.IsNull(result, "ToPurl should return null when external references list is null.");
+    }
+
+    [TestMethod]
+    public void ToPurl_NoPackageManagerReferences_ReturnsNull()
+    {
+        var externalReferences = new List<ExternalReference>
+        {
+            new ExternalReference
+            {
+                ReferenceCategory = "SECURITY",
+                Type = "cpe23Type",
+                Locator = "cpe:2.3:a:antlr4_runtime_standard:antlr4_runtime_standard_.net:4.13.1:*:*:*:*:*:*:*"
+            },
+            new ExternalReference
+            {
+                ReferenceCategory = "OTHER",
+                Type = "website",
+                Locator = "https://example.com"
+            }
+        };
+
+        var result = externalReferences.ToPurl();
+        Assert.IsNull(result, "ToPurl should return null when no PACKAGE-MANAGER references exist.");
+    }
+
+    [TestMethod]
+    public void ToPurl_WithPackageManagerReference_ReturnsCorrectPurl()
+    {
+        var externalReferences = new List<ExternalReference>
+        {
+            new ExternalReference
+            {
+                ReferenceCategory = "SECURITY",
+                Type = "cpe23Type",
+                Locator = "cpe:2.3:a:antlr4_runtime_standard:antlr4_runtime_standard_.net:4.13.1:*:*:*:*:*:*:*"
+            },
+            new ExternalReference
+            {
+                ReferenceCategory = "PACKAGE-MANAGER",
+                Type = "purl",
+                Locator = "pkg:nuget/Antlr4.Runtime.Standard@4.13.1"
+            }
+        };
+
+        var result = externalReferences.ToPurl();
+        Assert.AreEqual("pkg:nuget/Antlr4.Runtime.Standard@4.13.1", result, "ToPurl should return the package manager locator value.");
+    }
+
+    [TestMethod]
+    public void ToPurl_WithUnderscoreInReferenceCategory_ReturnsCorrectPurl()
+    {
+        var externalReferences = new List<ExternalReference>
+        {
+            new ExternalReference
+            {
+                ReferenceCategory = "PACKAGE_MANAGER", // Using underscore format that gets converted to hyphen
+                Type = "purl",
+                Locator = "pkg:npm/test-package@1.0.0"
+            }
+        };
+
+        var result = externalReferences.ToPurl();
+        Assert.AreEqual("pkg:npm/test-package@1.0.0", result, "ToPurl should handle underscore to hyphen conversion correctly.");
+    }
+
+    [TestMethod]
+    public void ToPurl_MultiplePackageManagerReferences_ReturnsFirst()
+    {
+        var externalReferences = new List<ExternalReference>
+        {
+            new ExternalReference
+            {
+                ReferenceCategory = "PACKAGE-MANAGER",
+                Type = "purl",
+                Locator = "pkg:nuget/FirstPackage@1.0.0"
+            },
+            new ExternalReference
+            {
+                ReferenceCategory = "PACKAGE-MANAGER",
+                Type = "purl",
+                Locator = "pkg:nuget/SecondPackage@2.0.0"
+            }
+        };
+
+        var result = externalReferences.ToPurl();
+        Assert.AreEqual("pkg:nuget/FirstPackage@1.0.0", result, "ToPurl should return the first PACKAGE-MANAGER reference when multiple exist.");
+    }
+
+    [TestMethod]
+    public void ToPurl_PackageManagerReferenceWithNullLocator_ReturnsNull()
+    {
+        var externalReferences = new List<ExternalReference>
+        {
+            new ExternalReference
+            {
+                ReferenceCategory = "PACKAGE-MANAGER",
+                Type = "purl",
+                Locator = null
+            }
+        };
+
+        var result = externalReferences.ToPurl();
+        Assert.IsNull(result, "ToPurl should return null when package manager reference has null locator.");
+    }
 }
