@@ -43,3 +43,6 @@ steps:
     condition: eq(variables['Agent.OS'], 'Windows_NT')
     inputs:
       summaryFileLocation: '$(Agent.TempDirectory)/coverage.cobertura.xml'
+
+  - powershell: 'Remove-Item -Path $(Build.SourcesDirectory)/samples -Recurse -Force'
+    displayName: 'Remove Samples to avoid treating them as external doc references'
