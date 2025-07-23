@@ -112,4 +112,18 @@ public class PathPatternMatcherTests
         Assert.IsFalse(PathPatternMatcher.IsMatch(@"C:\workspace\project\bin\app.exe", pattern, basePath));
         Assert.IsFalse(PathPatternMatcher.IsMatch(@"C:\workspace\other\bin\app.dll", pattern, basePath));
     }
+
+    [TestMethod]
+    public void PathPatternMatcher_DoubleWildcard_MatchesZeroDirectories()
+    {
+        var basePath = @"C:\test";
+        var pattern = @"src\**\*.txt";
+
+        // Test that ** matches zero directories (direct file in src folder)
+        Assert.IsTrue(PathPatternMatcher.IsMatch(@"C:\test\src\file.txt", pattern, basePath));
+
+        // Test that ** also matches one or more directories
+        Assert.IsTrue(PathPatternMatcher.IsMatch(@"C:\test\src\component\file.txt", pattern, basePath));
+        Assert.IsTrue(PathPatternMatcher.IsMatch(@"C:\test\src\component\sub\file.txt", pattern, basePath));
+    }
 }

@@ -156,11 +156,8 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
                     }
                 }
 
-                // Only skip validation if we actually have valid patterns
-                if (patterns.Count > 0)
-                {
-                    skipValidation = false;
-                }
+                // Enable validation if we have valid patterns
+                skipValidation = patterns.Count == 0;
             }
             else
             {
@@ -183,11 +180,8 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
                     }
                 }
 
-                // Only skip validation if we actually have valid paths
-                if (validPaths.Count > 0)
-                {
-                    skipValidation = false;
-                }
+                // Enable validation if we have valid paths
+                skipValidation = validPaths.Count == 0;
             }
         }
     }
