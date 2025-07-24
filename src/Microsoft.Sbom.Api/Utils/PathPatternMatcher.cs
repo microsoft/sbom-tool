@@ -3,18 +3,25 @@
 
 using System;
 using System.IO;
-using System.Text.RegularExpressions;
+using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace Microsoft.Sbom.Api.Utils;
 
 /// <summary>
 /// Provides pattern matching functionality for file paths using glob-style patterns.
+/// Leverages .NET's built-in Microsoft.Extensions.FileSystemGlobbing for robust cross-platform support.
+///
+/// Supported patterns:
+/// - * matches zero or more characters (excluding directory separators)
+/// - ** matches zero or more characters (including directory separators)
+///
+/// Note: The ? wildcard for single character matching is not supported by the underlying .NET implementation.
 /// </summary>
 public static class PathPatternMatcher
 {
     /// <summary>
     /// Checks if a file path matches a glob-style pattern.
-    /// Supports * (single level wildcard) and ** (recursive wildcard).
+    /// Uses .NET's built-in globbing which supports * and ** patterns but not ? for single character matching.
     /// </summary>
     /// <param name="filePath">The file path to check.</param>
     /// <param name="pattern">The glob pattern to match against.</param>
@@ -27,53 +34,86 @@ public static class PathPatternMatcher
             return false;
         }
 
-        // Normalize path separators for cross-platform compatibility
-        var normalizedFilePath = NormalizePath(filePath);
-        var normalizedBasePath = !string.IsNullOrEmpty(basePath) ? NormalizePath(basePath) : null;
-        var normalizedPattern = NormalizePath(pattern);
-
-        // If basePath is provided and pattern is relative, we need to match against the relative portion
-        string pathToMatch;
-        if (!string.IsNullOrEmpty(normalizedBasePath) && !Path.IsPathRooted(normalizedPattern))
+        try
         {
-            // Check if the file is within the base path
-            if (!normalizedFilePath.StartsWith(normalizedBasePath, StringComparison.OrdinalIgnoreCase))
+            // Normalize paths for cross-platform compatibility
+            var normalizedFilePath = NormalizePath(filePath);
+            var normalizedPattern = NormalizePath(pattern);
+
+            // Use case-insensitive matching for cross-platform compatibility
+            var matcher = new Matcher(StringComparison.OrdinalIgnoreCase);
+            matcher.AddInclude(normalizedPattern);
+
+            // Determine the path to match against
+            string pathToMatch;
+            if (!string.IsNullOrEmpty(basePath) && !Path.IsPathRooted(normalizedPattern))
             {
-                return false;
+                // For relative patterns with base path, get the relative path
+                if (!IsPathWithinBase(normalizedFilePath, basePath))
+                {
+                    return false;
+                }
+
+                pathToMatch = GetRelativePath(basePath, normalizedFilePath);
+            }
+            else
+            {
+                // For absolute patterns or no base path, use the normalized full path
+                pathToMatch = normalizedFilePath;
             }
 
-            // Get the relative path from the base path
-            var relativePath = GetRelativePath(normalizedBasePath, normalizedFilePath);
-            pathToMatch = relativePath;
+            // Use the matcher to check if the path matches the pattern
+            var result = matcher.Match(pathToMatch);
+            return result.HasMatches;
         }
-        else
+        catch
         {
-            pathToMatch = normalizedFilePath;
+            // If any exception occurs during matching, return false
+            return false;
         }
-
-        // Convert glob pattern to regex
-        var regexPattern = ConvertGlobToRegex(normalizedPattern);
-
-        // Perform case-insensitive matching for cross-platform compatibility
-        var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
-
-        return regex.IsMatch(pathToMatch);
     }
 
     /// <summary>
-    /// Normalizes path separators for cross-platform compatibility.
+    /// Checks if a file path is within the specified base path.
     /// </summary>
-    /// <param name="path">The path to normalize.</param>
-    /// <returns>A normalized path with consistent separators.</returns>
-    private static string NormalizePath(string path)
+    /// <param name="filePath">The file path to check.</param>
+    /// <param name="basePath">The base path.</param>
+    /// <returns>True if the file path is within the base path, false otherwise.</returns>
+    private static bool IsPathWithinBase(string filePath, string basePath)
     {
-        if (string.IsNullOrEmpty(path))
+        try
         {
-            return path;
-        }
+            // Normalize paths for cross-platform compatibility
+            var normalizedFilePath = NormalizePath(filePath);
+            var normalizedBasePath = NormalizePath(basePath);
 
-        // Replace all path separators with the standard forward slash for internal processing
-        return path.Replace('\\', '/');
+            // For Windows-style paths on non-Windows systems, use manual comparison
+            if (IsWindowsStylePath(normalizedBasePath) && IsWindowsStylePath(normalizedFilePath))
+            {
+                var normalizedBase = normalizedBasePath.TrimEnd('/') + "/";
+                return normalizedFilePath.StartsWith(normalizedBase, StringComparison.OrdinalIgnoreCase);
+            }
+
+            // Use Path.GetFullPath for proper platform-specific handling
+            var fullFilePath = Path.GetFullPath(normalizedFilePath);
+            var fullBasePath = Path.GetFullPath(normalizedBasePath);
+
+            // Ensure base path ends with separator for proper prefix check
+            if (!fullBasePath.EndsWith(Path.DirectorySeparatorChar) &&
+                !fullBasePath.EndsWith(Path.AltDirectorySeparatorChar))
+            {
+                fullBasePath += Path.DirectorySeparatorChar;
+            }
+
+            return fullFilePath.StartsWith(fullBasePath, StringComparison.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            // Fallback: manual comparison with normalized paths
+            var normalizedFilePath = NormalizePath(filePath);
+            var normalizedBasePath = NormalizePath(basePath).TrimEnd('/') + "/";
+            return normalizedFilePath.StartsWith(normalizedBasePath, StringComparison.OrdinalIgnoreCase);
+        }
     }
 
     /// <summary>
@@ -84,89 +124,79 @@ public static class PathPatternMatcher
     /// <returns>The relative path from base to target.</returns>
     private static string GetRelativePath(string basePath, string targetPath)
     {
+        try
+        {
+            // Normalize paths for cross-platform compatibility
+            var normalizedBasePath = NormalizePath(basePath);
+            var normalizedTargetPath = NormalizePath(targetPath);
+
+            // For cross-platform compatibility, handle Windows-style paths manually
+            if (IsWindowsStylePath(normalizedBasePath) && IsWindowsStylePath(normalizedTargetPath))
+            {
+                return GetRelativePathManual(normalizedBasePath, normalizedTargetPath);
+            }
+
+            // Use Path.GetRelativePath for Unix-style or when both paths are in the same format
+            var fullBasePath = Path.GetFullPath(normalizedBasePath);
+            var fullTargetPath = Path.GetFullPath(normalizedTargetPath);
+            return Path.GetRelativePath(fullBasePath, fullTargetPath);
+        }
+        catch
+        {
+            // Fallback: manual calculation
+            return GetRelativePathManual(basePath, targetPath);
+        }
+    }
+
+    /// <summary>
+    /// Normalizes a path by converting backslashes to forward slashes.
+    /// </summary>
+    /// <param name="path">The path to normalize.</param>
+    /// <returns>The normalized path.</returns>
+    private static string NormalizePath(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            return path;
+        }
+
+        return path.Replace('\\', '/');
+    }
+
+    /// <summary>
+    /// Checks if a path is in Windows style (has a drive letter).
+    /// </summary>
+    /// <param name="path">The path to check.</param>
+    /// <returns>True if the path is Windows-style, false otherwise.</returns>
+    private static bool IsWindowsStylePath(string path)
+    {
+        return !string.IsNullOrEmpty(path) &&
+               path.Length >= 2 &&
+               char.IsLetter(path[0]) &&
+               path[1] == ':';
+    }
+
+    /// <summary>
+    /// Manually calculates relative path for cross-platform compatibility.
+    /// </summary>
+    /// <param name="basePath">The base path.</param>
+    /// <param name="targetPath">The target path.</param>
+    /// <returns>The relative path.</returns>
+    private static string GetRelativePathManual(string basePath, string targetPath)
+    {
         if (string.IsNullOrEmpty(basePath) || string.IsNullOrEmpty(targetPath))
         {
             return targetPath;
         }
 
-        // Ensure base path ends with separator for proper prefix matching
-        if (!basePath.EndsWith("/", StringComparison.Ordinal) && !basePath.EndsWith("\\", StringComparison.Ordinal))
+        var normalizedBase = NormalizePath(basePath).TrimEnd('/') + "/";
+        var normalizedTarget = NormalizePath(targetPath);
+
+        if (normalizedTarget.StartsWith(normalizedBase, StringComparison.OrdinalIgnoreCase))
         {
-            basePath += "/";
+            return normalizedTarget.Substring(normalizedBase.Length);
         }
 
-        // If target starts with base path, return the remainder
-        if (targetPath.StartsWith(basePath, StringComparison.OrdinalIgnoreCase))
-        {
-            return targetPath.Substring(basePath.Length);
-        }
-
-        return targetPath;
-    }
-
-    /// <summary>
-    /// Converts a glob pattern to a regular expression.
-    /// </summary>
-    /// <param name="globPattern">The glob pattern to convert.</param>
-    /// <returns>A regular expression string.</returns>
-    private static string ConvertGlobToRegex(string globPattern)
-    {
-        // Start building the regex pattern
-        var regexPattern = new System.Text.StringBuilder();
-
-        for (var i = 0; i < globPattern.Length; i++)
-        {
-            var c = globPattern[i];
-
-            switch (c)
-            {
-                case '*':
-                    // Check for ** pattern
-                    if (i + 1 < globPattern.Length && globPattern[i + 1] == '*')
-                    {
-                        // Look ahead to see if ** is followed by a path separator
-                        if (i + 2 < globPattern.Length && (globPattern[i + 2] == '/' || globPattern[i + 2] == '\\'))
-                        {
-                            // **/ means zero or more directories followed by /
-                            regexPattern.Append("(?:[^/]+/)*");
-                            i += 2; // Skip the second * and the /
-                        }
-                        else
-                        {
-                            // ** at end or followed by non-separator
-                            regexPattern.Append(".*");
-                            i++; // Skip the second *
-                        }
-                    }
-                    else
-                    {
-                        regexPattern.Append(@"[^/]*"); // * matches any characters except path separators
-                    }
-
-                    break;
-
-                case '?':
-                    regexPattern.Append('.'); // ? matches any single character
-                    break;
-
-                case '\\':
-                case '/':
-                    regexPattern.Append('/'); // Use forward slash consistently
-                    break;
-
-                default:
-                    // Escape special regex characters
-                    if ("()[]{}^$+.|".Contains(c))
-                    {
-                        regexPattern.Append('\\');
-                    }
-
-                    regexPattern.Append(c);
-                    break;
-            }
-        }
-
-        // Don't anchor to end with .* since we want exact path matching
-        return "^" + regexPattern.ToString() + "$";
+        return normalizedTarget;
     }
 }

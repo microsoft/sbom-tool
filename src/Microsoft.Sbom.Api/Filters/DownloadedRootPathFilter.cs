@@ -114,6 +114,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
 
     /// <summary>
     /// Checks if a string contains glob patterns.
+    /// Only checks for patterns supported by .NET FileSystemGlobbing: * and **.
     /// </summary>
     /// <param name="value">The string to check.</param>
     /// <returns>True if the string contains glob patterns, false otherwise.</returns>
@@ -124,7 +125,7 @@ public class DownloadedRootPathFilter : IFilter<DownloadedRootPathFilter>
             return false;
         }
 
-        return value.Contains('*') || value.Contains('?');
+        return value.Contains('*');
     }
 
     /// <summary>
