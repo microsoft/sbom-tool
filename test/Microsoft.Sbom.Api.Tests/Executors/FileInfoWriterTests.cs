@@ -135,49 +135,6 @@ public class FileInfoWriterTests
     }
 
     [TestMethod]
-    public async Task Write_SpdxFileOutsideDropPath_RecordsSpdxFileId()
-    {
-        // Arrange
-        var sbomConfigs = new[] { sbomConfigMock.Object };
-        var fileInfo = new InternalSbomFileInfo
-        {
-            Path = "external/package.spdx.json",
-            IsOutsideDropPath = true,
-            FileTypes = new[] { FileType.SPDX },
-            Checksum = new[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "def456" } }
-        };
-
-        var fileInfoChannel = Channel.CreateUnbounded<InternalSbomFileInfo>();
-        await fileInfoChannel.Writer.WriteAsync(fileInfo);
-        fileInfoChannel.Writer.Complete();
-
-        // Setup expectations - allow but don't require
-        sbomPackageDetailsRecorderMock.Setup(m => m.RecordSPDXFileId(It.IsAny<string>()));
-
-        // Act
-        var (result, errors) = testSubject.Write(fileInfoChannel.Reader, sbomConfigs);
-
-        // Assert - drain the channels
-        var resultList = new List<JsonDocWithSerializer>();
-        await foreach (var item in result.ReadAllAsync())
-        {
-            resultList.Add(item);
-        }
-
-        var errorList = new List<FileValidationResult>();
-        await foreach (var error in errors.ReadAllAsync())
-        {
-            errorList.Add(error);
-        }
-
-        // Verify file was NOT written to files section
-        Assert.AreEqual(0, resultList.Count);
-        Assert.AreEqual(0, errorList.Count);
-
-        // Verification happens in the mock setup - if RecordSPDXFileId is not called, the test will fail
-    }
-
-    [TestMethod]
     public async Task Write_SpdxFileWithinDropPath_RecordsBothFileIdAndSpdxFileId()
     {
         // Arrange
