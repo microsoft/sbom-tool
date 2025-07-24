@@ -59,7 +59,7 @@ public class FileInfoWriterTests
         var sbomConfigs = new[] { sbomConfigMock.Object };
         var fileInfo = new InternalSbomFileInfo
         {
-            Path = "test_file.txt",
+            Path = "internal/package.spdx.json",
             IsOutsideDropPath = false,
             FileTypes = new[] { FileType.SPDX },
             Checksum = new[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "abc123" } }
@@ -69,8 +69,9 @@ public class FileInfoWriterTests
         await fileInfoChannel.Writer.WriteAsync(fileInfo);
         fileInfoChannel.Writer.Complete();
 
-        // Setup expectations
+        // Setup expectations - SPDX files within drop path should record both types of IDs
         sbomPackageDetailsRecorderMock.Setup(m => m.RecordFileId(It.IsAny<string>()));
+        sbomPackageDetailsRecorderMock.Setup(m => m.RecordSPDXFileId(It.IsAny<string>()));
 
         // Act
         var (result, errors) = testSubject.Write(fileInfoChannel.Reader, sbomConfigs);
@@ -132,49 +133,5 @@ public class FileInfoWriterTests
         // Verify file was NOT written to files section
         Assert.AreEqual(0, resultList.Count);
         Assert.AreEqual(0, errorList.Count);
-    }
-
-    [TestMethod]
-    public async Task Write_SpdxFileWithinDropPath_RecordsBothFileIdAndSpdxFileId()
-    {
-        // Arrange
-        var sbomConfigs = new[] { sbomConfigMock.Object };
-        var fileInfo = new InternalSbomFileInfo
-        {
-            Path = "internal/package.spdx.json",
-            IsOutsideDropPath = false,
-            FileTypes = new[] { FileType.SPDX },
-            Checksum = new[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "ghi789" } }
-        };
-
-        var fileInfoChannel = Channel.CreateUnbounded<InternalSbomFileInfo>();
-        await fileInfoChannel.Writer.WriteAsync(fileInfo);
-        fileInfoChannel.Writer.Complete();
-
-        // Setup expectations - allow but don't require
-        sbomPackageDetailsRecorderMock.Setup(m => m.RecordFileId(It.IsAny<string>()));
-        sbomPackageDetailsRecorderMock.Setup(m => m.RecordSPDXFileId(It.IsAny<string>()));
-
-        // Act
-        var (result, errors) = testSubject.Write(fileInfoChannel.Reader, sbomConfigs);
-
-        // Assert
-        var resultList = new List<JsonDocWithSerializer>();
-        await foreach (var item in result.ReadAllAsync())
-        {
-            resultList.Add(item);
-        }
-
-        var errorList = new List<FileValidationResult>();
-        await foreach (var error in errors.ReadAllAsync())
-        {
-            errorList.Add(error);
-        }
-
-        // Verify file was written to files section
-        Assert.AreEqual(1, resultList.Count);
-        Assert.AreEqual(0, errorList.Count);
-
-        // Verification of both IDs being recorded happens in the mock setup
     }
 }
