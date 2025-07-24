@@ -52,29 +52,40 @@ public class FileInfoWriterTests
         // Just verify nothing throws
     }
 
-    [TestMethod]
-    public async Task Write_FileWithinDropPath_WritesToFilesSection()
+    private async Task<(ChannelReader<JsonDocWithSerializer>, ChannelReader<FileValidationResult>, ISbomConfig[])> SetupFileInfoWriterTest(
+        string path,
+        bool isOutsideDropPath,
+        string checksumValue)
     {
-        // Arrange
         var sbomConfigs = new[] { sbomConfigMock.Object };
         var fileInfo = new InternalSbomFileInfo
         {
-            Path = "internal/package.spdx.json",
-            IsOutsideDropPath = false,
+            Path = path,
+            IsOutsideDropPath = isOutsideDropPath,
             FileTypes = new[] { FileType.SPDX },
-            Checksum = new[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "abc123" } }
+            Checksum = new[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = checksumValue } }
         };
 
         var fileInfoChannel = Channel.CreateUnbounded<InternalSbomFileInfo>();
         await fileInfoChannel.Writer.WriteAsync(fileInfo);
         fileInfoChannel.Writer.Complete();
 
+        var (result, errors) = testSubject.Write(fileInfoChannel.Reader, sbomConfigs);
+        return (result, errors, sbomConfigs);
+    }
+
+    [TestMethod]
+    public async Task Write_FileWithinDropPath_WritesToFilesSection()
+    {
+        // Arrange
+        var (result, errors, sbomConfigs) = await SetupFileInfoWriterTest(
+            "internal/package.spdx.json",
+            false,
+            "abc123");
+
         // Setup expectations - SPDX files within drop path should record both types of IDs
         sbomPackageDetailsRecorderMock.Setup(m => m.RecordFileId(It.IsAny<string>()));
         sbomPackageDetailsRecorderMock.Setup(m => m.RecordSPDXFileId(It.IsAny<string>()));
-
-        // Act
-        var (result, errors) = testSubject.Write(fileInfoChannel.Reader, sbomConfigs);
 
         // Assert
         var resultList = new List<JsonDocWithSerializer>();
@@ -98,24 +109,13 @@ public class FileInfoWriterTests
     public async Task Write_FileOutsideDropPath_DoesNotWriteToFilesSection()
     {
         // Arrange
-        var sbomConfigs = new[] { sbomConfigMock.Object };
-        var fileInfo = new InternalSbomFileInfo
-        {
-            Path = "external/package.spdx.json",
-            IsOutsideDropPath = true,
-            FileTypes = new[] { FileType.SPDX },
-            Checksum = new[] { new Checksum { Algorithm = AlgorithmName.SHA256, ChecksumValue = "def456" } }
-        };
-
-        var fileInfoChannel = Channel.CreateUnbounded<InternalSbomFileInfo>();
-        await fileInfoChannel.Writer.WriteAsync(fileInfo);
-        fileInfoChannel.Writer.Complete();
+        var (result, errors, sbomConfigs) = await SetupFileInfoWriterTest(
+            "external/package.spdx.json",
+            true,
+            "def456");
 
         // Setup expectations - SPDX file ID should still be recorded
         sbomPackageDetailsRecorderMock.Setup(m => m.RecordSPDXFileId(It.IsAny<string>()));
-
-        // Act
-        var (result, errors) = testSubject.Write(fileInfoChannel.Reader, sbomConfigs);
 
         // Assert
         var resultList = new List<JsonDocWithSerializer>();
