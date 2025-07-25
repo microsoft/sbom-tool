@@ -32,15 +32,15 @@ public class FileInfoWriterTests
     public void BeforeEach()
     {
         loggerMock = new Mock<ILogger>();
-        sbomPackageDetailsRecorderMock = new Mock<ISbomPackageDetailsRecorder>();
-        manifestToolJsonSerializerMock = new Mock<IManifestToolJsonSerializer>();
+        sbomConfigMock = new Mock<ISbomConfig>();
+        sbomPackageDetailsRecorderMock = new Mock<ISbomPackageDetailsRecorder>(MockBehavior.Strict);
+        manifestToolJsonSerializerMock = new Mock<IManifestToolJsonSerializer>(MockBehavior.Strict);
 
         manifestGeneratorProvider = new ManifestGeneratorProvider(new IManifestGenerator[] { new TestManifestGenerator() });
         manifestGeneratorProvider.Init();
 
         testSubject = new FileInfoWriter(manifestGeneratorProvider, loggerMock.Object);
 
-        sbomConfigMock = new Mock<ISbomConfig>();
         sbomConfigMock.SetupGet(x => x.ManifestInfo).Returns(Constants.TestManifestInfo);
         sbomConfigMock.SetupGet(x => x.Recorder).Returns(sbomPackageDetailsRecorderMock.Object);
         sbomConfigMock.SetupGet(x => x.JsonSerializer).Returns(manifestToolJsonSerializerMock.Object);
@@ -49,7 +49,9 @@ public class FileInfoWriterTests
     [TestCleanup]
     public void AfterEach()
     {
-        // Just verify nothing throws
+        loggerMock.VerifyAll();
+        sbomPackageDetailsRecorderMock.VerifyAll();
+        manifestToolJsonSerializerMock.VerifyAll();
     }
 
     private async Task<(ChannelReader<JsonDocWithSerializer>, ChannelReader<FileValidationResult>, ISbomConfig[])> SetupFileInfoWriterTest(
@@ -74,64 +76,57 @@ public class FileInfoWriterTests
         return (result, errors, sbomConfigs);
     }
 
+    private async Task AssertErrorsAndResultsMatchExpectations(
+        ChannelReader<JsonDocWithSerializer> result,
+        ChannelReader<FileValidationResult> errors,
+        int expectedResultListCount)
+    {
+        var resultList = new List<JsonDocWithSerializer>();
+        await foreach (var item in result.ReadAllAsync())
+        {
+            resultList.Add(item);
+        }
+
+        var errorList = new List<FileValidationResult>();
+        await foreach (var error in errors.ReadAllAsync())
+        {
+            errorList.Add(error);
+        }
+
+        Assert.AreEqual(expectedResultListCount, resultList.Count);
+        Assert.AreEqual(0, errorList.Count);
+    }
+
     [TestMethod]
     public async Task Write_FileWithinDropPath_WritesToFilesSection()
     {
+        // Setup expectations - SPDX files within drop path should record both types of IDs
+        sbomPackageDetailsRecorderMock.Setup(m => m.RecordFileId(It.IsAny<string>()));
+        sbomPackageDetailsRecorderMock.Setup(m => m.RecordSPDXFileId(It.IsAny<string>()));
+
         // Arrange
         var (result, errors, sbomConfigs) = await SetupFileInfoWriterTest(
             "internal/package.spdx.json",
             false,
             "abc123");
 
-        // Setup expectations - SPDX files within drop path should record both types of IDs
-        sbomPackageDetailsRecorderMock.Setup(m => m.RecordFileId(It.IsAny<string>()));
-        sbomPackageDetailsRecorderMock.Setup(m => m.RecordSPDXFileId(It.IsAny<string>()));
-
-        // Assert
-        var resultList = new List<JsonDocWithSerializer>();
-        await foreach (var item in result.ReadAllAsync())
-        {
-            resultList.Add(item);
-        }
-
-        var errorList = new List<FileValidationResult>();
-        await foreach (var error in errors.ReadAllAsync())
-        {
-            errorList.Add(error);
-        }
-
-        // Verify file was written to files section
-        Assert.AreEqual(1, resultList.Count);
-        Assert.AreEqual(0, errorList.Count);
+        // Assert - verify file was written to files section
+        await AssertErrorsAndResultsMatchExpectations(result, errors, 1);
     }
 
     [TestMethod]
     public async Task Write_FileOutsideDropPath_DoesNotWriteToFilesSection()
     {
+        // Setup expectations - SPDX file ID should still be recorded
+        sbomPackageDetailsRecorderMock.Setup(m => m.RecordSPDXFileId(It.IsAny<string>()));
+
         // Arrange
         var (result, errors, sbomConfigs) = await SetupFileInfoWriterTest(
             "external/package.spdx.json",
             true,
             "def456");
 
-        // Setup expectations - SPDX file ID should still be recorded
-        sbomPackageDetailsRecorderMock.Setup(m => m.RecordSPDXFileId(It.IsAny<string>()));
-
-        // Assert
-        var resultList = new List<JsonDocWithSerializer>();
-        await foreach (var item in result.ReadAllAsync())
-        {
-            resultList.Add(item);
-        }
-
-        var errorList = new List<FileValidationResult>();
-        await foreach (var error in errors.ReadAllAsync())
-        {
-            errorList.Add(error);
-        }
-
-        // Verify file was NOT written to files section
-        Assert.AreEqual(0, resultList.Count);
-        Assert.AreEqual(0, errorList.Count);
+        // Assert - verify file was NOT written to files section
+        await AssertErrorsAndResultsMatchExpectations(result, errors, 0);
     }
 }
