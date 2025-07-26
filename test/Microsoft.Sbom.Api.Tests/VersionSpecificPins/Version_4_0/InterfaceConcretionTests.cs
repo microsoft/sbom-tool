@@ -15,6 +15,7 @@ using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Api.Convertors;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Filters;
 using Microsoft.Sbom.Api.FormatValidator;
@@ -127,6 +128,8 @@ public class InterfaceConcretionTests
     private class PinnedIRecorder : IRecorder
     {
         public IList<FileValidationResult> Errors => throw new NotImplementedException();
+
+        public Result Result => throw new NotImplementedException();
 
         public void AddResult(string propertyName, string value) => throw new NotImplementedException();
         public void AddToTotalCountOfLicenses(int count) => throw new NotImplementedException();
