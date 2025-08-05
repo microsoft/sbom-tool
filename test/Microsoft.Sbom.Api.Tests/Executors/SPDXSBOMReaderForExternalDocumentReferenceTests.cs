@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Sbom.Api.Executors;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Manifest;
@@ -31,6 +32,7 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
     private readonly ManifestGeneratorProvider manifestGeneratorProvider;
     private readonly Mock<IFileSystemUtils> fileSystemMock = new Mock<IFileSystemUtils>();
     private readonly Mock<ISbomReferenceFactory> sbomReferenceFactory = new Mock<ISbomReferenceFactory>();
+    private readonly ServiceProvider serviceProvider;
 
     private const string JsonMissingName = "{\"documentNamespace\": \"namespace\", \"spdxVersion\": \"SPDX-2.2\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
     private const string JsonMissingNamespace = "{\"name\": \"docname\",\"spdxVersion\": \"SPDX-2.2\", \"documentDescribes\":[\"SPDXRef - RootPackage\"]}";
@@ -58,6 +60,17 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
 
         // Setup the mock to return the real instance
         sbomReferenceFactory.Setup(f => f.GetSbomReferenceDescriber(It.IsAny<string>())).Returns(spdx22SbomReference);
+
+        var services = new ServiceCollection();
+        services.AddSingleton(mockLogger.Object);
+        services.AddSingleton(mockHashGenerator.Object);
+        services.AddSingleton(fileSystemMock.Object);
+        services.AddSingleton(mockConfiguration.Object);
+        services.AddSingleton(manifestGeneratorProvider);
+        services.AddSingleton<ISbomReferenceDescriber>(sp =>
+            new Spdx22SbomReference(mockHashGenerator.Object, fileSystemMock.Object, new[] { AlgorithmName.SHA256 }));
+        services.AddSingleton<ISbomReferenceFactory, SbomReferenceFactory>();
+        serviceProvider = services.BuildServiceProvider();
     }
 
     [TestMethod]
@@ -89,7 +102,7 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
 
         sbomLocationChannel.Writer.Complete();
 
-        var spdxSBOMReaderForExternalDocumentReference = new SPDXSbomReaderForExternalDocumentReference(mockLogger.Object, sbomReferenceFactory.Object);
+        var spdxSBOMReaderForExternalDocumentReference = new SPDXSbomReaderForExternalDocumentReference(mockLogger.Object, serviceProvider);
         var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSbomFile(sbomLocationChannel);
         await foreach (var externalDocumentReferenceInfo in output.ReadAllAsync())
         {
@@ -127,7 +140,7 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
 
         sbomLocationChannel.Writer.Complete();
 
-        var spdxSBOMReaderForExternalDocumentReference = new SPDXSbomReaderForExternalDocumentReference(mockLogger.Object, sbomReferenceFactory.Object);
+        var spdxSBOMReaderForExternalDocumentReference = new SPDXSbomReaderForExternalDocumentReference(mockLogger.Object, serviceProvider);
         var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSbomFile(sbomLocationChannel);
 
         Assert.IsTrue(await errors.ReadAllAsync().AnyAsync());
@@ -150,7 +163,7 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
 
         sbomLocationChannel.Writer.Complete();
 
-        var spdxSBOMReaderForExternalDocumentReference = new SPDXSbomReaderForExternalDocumentReference(mockLogger.Object, sbomReferenceFactory.Object);
+        var spdxSBOMReaderForExternalDocumentReference = new SPDXSbomReaderForExternalDocumentReference(mockLogger.Object, serviceProvider);
         var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSbomFile(sbomLocationChannel);
 
         mockHashGenerator.VerifyNoOtherCalls();
@@ -194,7 +207,7 @@ public class SPDXSBOMReaderForExternalDocumentReferenceTests
 
         sbomLocationChannel.Writer.Complete();
 
-        var spdxSBOMReaderForExternalDocumentReference = new SPDXSbomReaderForExternalDocumentReference(mockLogger.Object, sbomReferenceFactory.Object);
+        var spdxSBOMReaderForExternalDocumentReference = new SPDXSbomReaderForExternalDocumentReference(mockLogger.Object, serviceProvider);
 
         var (output, errors) = spdxSBOMReaderForExternalDocumentReference.ParseSbomFile(sbomLocationChannel);
 

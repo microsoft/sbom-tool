@@ -15,6 +15,7 @@ using Constants = Microsoft.Sbom.Api.Utils.Constants;
 
 public class Spdx22SbomReference : ISbomReferenceDescriber, IDisposable
 {
+    private bool disposed = false;
     private JsonDocument document;
     private string currentDocumentPath;
     private readonly IHashCodeGenerator hashCodeGenerator;
@@ -146,8 +147,12 @@ public class Spdx22SbomReference : ISbomReferenceDescriber, IDisposable
 
     public void Dispose()
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
+        if(!disposed)
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+            disposed = true;
+        }
     }
 
     protected virtual void Dispose(bool disposing)

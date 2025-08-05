@@ -110,10 +110,10 @@ public static class ServiceCollectionExtensions
             .AddTransient<ExternalDocumentReferenceWriter>()
             .AddTransient<SbomComponentsWalker>()
             .AddTransient<FileListEnumerator>()
-            .AddTransient<ISbomReaderForExternalDocumentReference, SPDXSbomReaderForExternalDocumentReference>()
+            .AddScoped<ISbomReaderForExternalDocumentReference, SPDXSbomReaderForExternalDocumentReference>()
             .AddTransient<SbomMetadata>()
             .AddTransient<ILicenseInformationService, LicenseInformationService>()
-            .AddTransient<ISbomReferenceDescriber>(sp =>
+            .AddScoped<ISbomReferenceDescriber>(sp =>
             {
                 var hashCodeGenerator = sp.GetRequiredService<IHashCodeGenerator>();
                 var fileSystemUtils = sp.GetRequiredService<IFileSystemUtils>();
@@ -130,6 +130,7 @@ public static class ServiceCollectionExtensions
 
                 return new Spdx22SbomReference(hashCodeGenerator, fileSystemUtils, hashAlgorithmNames);
             })
+            .AddScoped<ISbomReferenceFactory, SbomReferenceFactory>()
             .AddSingleton<ISbomReferenceFactory, SbomReferenceFactory>()
             .AddSingleton<IPackageDetailsFactory, PackageDetailsFactory>()
             .AddSingleton<IPackageManagerUtils<NugetUtils>, NugetUtils>()
