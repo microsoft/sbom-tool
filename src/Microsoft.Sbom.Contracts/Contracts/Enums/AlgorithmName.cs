@@ -97,7 +97,7 @@ public class AlgorithmName : IEquatable<AlgorithmName>
     /// Gets equivalent to <see cref="HashAlgorithmName.SHA1"/>.
     /// </summary>
 #pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
-    public static AlgorithmName SHA1 => new AlgorithmName(nameof(SHA1), stream => System.Security.Cryptography.SHA1.Create().ComputeHash(stream));
+    public static AlgorithmName SHA1 => new AlgorithmName(nameof(SHA1), stream => System.Security.Cryptography.SHA1.Create().ComputeHash(stream)); // CodeQL [SM02196] Sha1 is required per the SPDX spec.
 #pragma warning restore CA5350
 
     /// <summary>
@@ -114,5 +114,5 @@ public class AlgorithmName : IEquatable<AlgorithmName>
     /// Gets equivalent to <see cref="HashAlgorithmName.MD5"/>.
     /// </summary>
     [SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms", Justification = "Used by conda package manager.")]
-    public static AlgorithmName MD5 => new AlgorithmName(nameof(MD5), stream => System.Security.Cryptography.MD5.Create().ComputeHash(stream));
+    public static AlgorithmName MD5 => new AlgorithmName(nameof(MD5), stream => System.Security.Cryptography.MD5.Create().ComputeHash(stream)); // CodeQL [SM02196] Used by conda package manager.
 }

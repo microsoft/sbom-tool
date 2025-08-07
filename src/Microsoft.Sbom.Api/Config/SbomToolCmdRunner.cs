@@ -79,6 +79,16 @@ public class SbomToolCmdRunner
     }
 
     /// <summary>
+    /// Aggregate multiple SBOMs into a single SBOM.
+    /// </summary>
+    [ArgActionMethod]
+    [ArgDescription("Aggregate multiple SBOMs into a single SBOM.")]
+    public AggregationArgs Aggregate(AggregationArgs aggregationArgs)
+    {
+        return aggregationArgs;
+    }
+
+    /// <summary>
     /// Prints the version of the tool.
     /// </summary>
     [ArgActionMethod]

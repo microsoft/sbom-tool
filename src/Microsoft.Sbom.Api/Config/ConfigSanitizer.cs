@@ -56,8 +56,8 @@ public class ConfigSanitizer
         if ((configuration.ManifestToolAction == ManifestToolActions.Validate || configuration.ManifestToolAction == ManifestToolActions.Generate) &&
             (configuration.BuildDropPath?.Value == null || (configuration.DockerImagesToScan?.Value != null && configuration.BuildComponentPath?.Value == null)))
         {
-                ValidateBuildDropPathConfiguration(configuration);
-                configuration.BuildDropPath = GetTempBuildDropPath(configuration);
+            ValidateBuildDropPathConfiguration(configuration);
+            configuration.BuildDropPath = GetTempBuildDropPath(configuration);
         }
 
         CheckValidateFormatConfig(configuration);
@@ -68,7 +68,7 @@ public class ConfigSanitizer
         configuration.ManifestDirPath = GetManifestDirPath(configuration.ManifestDirPath, configuration.BuildDropPath?.Value, configuration.ManifestToolAction);
 
         // Set namespace value, this handles default values and user provided values.
-        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
+        if (configuration.ManifestToolAction == ManifestToolActions.Generate || configuration.ManifestToolAction == ManifestToolActions.Aggregate)
         {
             configuration.NamespaceUriBase = GetNamespaceBaseUri(configuration, logger);
         }
@@ -111,6 +111,8 @@ public class ConfigSanitizer
         // Replace backslashes in directory paths with the OS-sepcific directory separator character.
         PathUtils.ConvertToOSSpecificPathSeparators(configuration);
 
+        CheckAggregationConfig(configuration);
+
         logger.Dispose();
 
         return configuration;
@@ -125,7 +127,20 @@ public class ConfigSanitizer
 
         if (config.SbomPath?.Value == null)
         {
-            throw new ValidationArgException($"Please provide a value for the SbomPath (-sp) parameter to validate the SBOM.");
+            throw new ValidationArgException("Please provide a value for the SbomPath (-sp) parameter to validate the SBOM.");
+        }
+    }
+
+    private void CheckAggregationConfig(IConfiguration config)
+    {
+        if (config.ManifestToolAction != ManifestToolActions.Aggregate)
+        {
+            return;
+        }
+
+        if (config.ArtifactInfoMap?.Value == null || !config.ArtifactInfoMap.Value.Any())
+        {
+            throw new ValidationArgException("Please provide a value for the ArtifactInfoMap to aggregate the SBOMs.");
         }
     }
 
@@ -140,7 +155,7 @@ public class ConfigSanitizer
         var defaultManifestInfo = assemblyConfig.DefaultManifestInfoForValidationAction;
         if (defaultManifestInfo == null && (configuration.ManifestInfo.Value == null || configuration.ManifestInfo.Value.Count == 0))
         {
-            throw new ValidationArgException($"Please provide a value for the ManifestInfo (-mi) parameter to validate the SBOM.");
+            throw new ValidationArgException("Please provide a value for the ManifestInfo (-mi) parameter to validate the SBOM.");
         }
 
         return new ConfigurationSetting<IList<ManifestInfo>>
@@ -184,20 +199,20 @@ public class ConfigSanitizer
             }
             else if (configuration.ManifestDirPath?.Value == null && configuration.BuildComponentPath?.Value == null && configuration.DockerImagesToScan?.Value != null)
             {
-                throw new ValidationArgException($"Please provide a (-m) if you intend to create an SBOM with only the contents of the Docker image or a (-bc) if you intend to include other components in your SBOM.");
+                throw new ValidationArgException("Please provide a (-m) if you intend to create an SBOM with only the contents of the Docker image or a (-bc) if you intend to include other components in your SBOM.");
             }
             else if (configuration.ManifestDirPath?.Value == null && configuration.DockerImagesToScan?.Value != null)
             {
-                throw new ValidationArgException($"Please provide a value for the ManifestDirPath (-m) parameter to generate the SBOM for the specified Docker image.");
+                throw new ValidationArgException("Please provide a value for the ManifestDirPath (-m) parameter to generate the SBOM for the specified Docker image.");
             }
             else
             {
-                throw new ValidationArgException($"Please provide a value for the BuildDropPath (-b) parameter to generate the SBOM.");
+                throw new ValidationArgException("Please provide a value for the BuildDropPath (-b) parameter to generate the SBOM.");
             }
         }
         else
         {
-            throw new ValidationArgException($"Please provide a value for the BuildDropPath (-b) parameter.");
+            throw new ValidationArgException("Please provide a value for the BuildDropPath (-b) parameter.");
         }
     }
 

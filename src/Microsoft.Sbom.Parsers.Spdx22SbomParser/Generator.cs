@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Sbom.Common;
+using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Utils;
 using Microsoft.Sbom.Contracts;
 using Microsoft.Sbom.Contracts.Enums;
@@ -25,6 +26,8 @@ namespace Microsoft.Sbom.Parsers.Spdx22SbomParser;
 /// </summary>
 public class Generator : IManifestGenerator
 {
+    private readonly bool keepAllExistingIds;
+
     public AlgorithmName[] RequiredHashAlgorithms => new[] { AlgorithmName.SHA256, AlgorithmName.SHA1 };
 
     public string Version { get; set; } = string.Join("-", Constants.SPDXName, Constants.SPDXVersion);
@@ -36,6 +39,27 @@ public class Generator : IManifestGenerator
     public string RelationshipsArrayHeaderName => Constants.RelationshipsArrayHeaderName;
 
     public string ExternalDocumentRefArrayHeaderName => Constants.ExternalDocumentRefArrayHeaderName;
+
+    // This constructor gets called by an internal consumer that does not use IConfiguration.
+    // In this repo, we use it in tests to pin the existing behavior via this constructor.
+    public Generator()
+        : this(keepAllExistingIds: false)
+    {
+    }
+
+    // This constructor gets used by the default constructor and by tests.
+    public Generator(bool keepAllExistingIds)
+    {
+        this.keepAllExistingIds = keepAllExistingIds;
+    }
+
+    // This constructor gets used by the production code and by at least one test.
+    public Generator(IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
+
+        keepAllExistingIds = configuration.ManifestToolAction == ManifestToolActions.Aggregate;
+    }
 
     public GenerationResult GenerateJsonDocument(InternalSbomFileInfo fileInfo)
     {
@@ -159,11 +183,10 @@ public class Generator : IManifestGenerator
         var packageId = spdxPackage.AddSpdxId(packageInfo);
         spdxPackage.AddPackageUrls(packageInfo);
 
-        var dependOnId = packageInfo.DependOn;
-        if (dependOnId is not null && dependOnId != Constants.RootPackageIdValue)
-        {
-            dependOnId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.DependOn);
-        }
+        var dependOnIds = (packageInfo.DependOn ?? Enumerable.Empty<string>())
+                            .Where(id => id is not null)
+                            .Select(id => ShouldWeKeepTheExistingId(id) ? id : CommonSPDXUtils.GenerateSpdxPackageId(id))
+                            .ToList();
 
         return new GenerationResult
         {
@@ -171,9 +194,15 @@ public class Generator : IManifestGenerator
             ResultMetadata = new ResultMetadata
             {
                 EntityId = packageId,
-                DependOn = dependOnId
+                DependOn = dependOnIds,
             }
         };
+    }
+
+    private bool ShouldWeKeepTheExistingId(string spdxId)
+    {
+        return keepAllExistingIds ||
+            spdxId.Equals(Constants.RootPackageIdValue, StringComparison.OrdinalIgnoreCase);
     }
 
     public GenerationResult GenerateRootPackage(
@@ -320,7 +349,6 @@ public class Generator : IManifestGenerator
     /// Algorithm defined here https://spdx.github.io/spdx-spec/v2.2.2/package-information/#79-package-verification-code-field.
     /// </summary>
     /// <param name="internalMetadataProvider"></param>
-    /// <returns></returns>
     private PackageVerificationCode GetPackageVerificationCode(IInternalMetadataProvider internalMetadataProvider)
     {
         if (internalMetadataProvider is null)
@@ -340,7 +368,7 @@ public class Generator : IManifestGenerator
 
         var packageChecksumString = string.Concat(sha1Checksums.OrderBy(s => s));
 #pragma warning disable CA5350 // Suppress Do Not Use Weak Cryptographic Algorithms as we use SHA1 intentionally
-        var sha1Hasher = SHA1.Create();
+        var sha1Hasher = SHA1.Create(); // CodeQL [SM02196] Sha1 is required per the SPDX spec.
 #pragma warning restore CA5350
         var hashByteArray = sha1Hasher.ComputeHash(Encoding.Default.GetBytes(packageChecksumString));
 
@@ -358,7 +386,6 @@ public class Generator : IManifestGenerator
     /// Creation info will not be generated in SPDX 2.2 format.
     /// </summary>
     /// <param name="internalMetadataProvider"></param>
-    /// <returns></returns>
     public GenerationResult GenerateJsonDocument(IInternalMetadataProvider internalMetadataProvider)
     {
         return null;

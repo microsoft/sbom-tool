@@ -6,6 +6,7 @@ namespace Microsoft.Sbom.Common;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 /// <summary>
 /// A wrapper class to make the filesystem methods unit testable.
@@ -26,6 +27,9 @@ public abstract class FileSystemUtils : IFileSystemUtils
 
     /// <inheritdoc />
     public string GetSbomToolTempPath() => SbomToolTempPath;
+
+    /// <inheritdoc />
+    public string CreateTempSubDirectory(string prefix = default) => Directory.CreateTempSubdirectory(prefix).FullName;
 
     /// <inheritdoc />
     public IEnumerable<string> GetDirectories(string path, bool followSymlinks = true) => followSymlinks switch
@@ -59,6 +63,9 @@ public abstract class FileSystemUtils : IFileSystemUtils
 
     /// <inheritdoc />
     public string ReadAllText(string filePath) => File.ReadAllText(filePath);
+
+    /// <inheritdoc />
+    public Task<string> ReadAllTextAsync(string filePath) => File.ReadAllTextAsync(filePath);
 
     /// <inheritdoc />
     public void WriteAllText(string filePath, string contents) => File.WriteAllText(filePath, contents);
@@ -108,4 +115,7 @@ public abstract class FileSystemUtils : IFileSystemUtils
 
     /// <inheritdoc />
     public byte[] ReadAllBytes(string path) => File.ReadAllBytes(path);
+
+    /// <inheritdoc />
+    public long GetFileSize(string path) => new FileInfo(path).Length;
 }

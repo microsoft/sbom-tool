@@ -30,7 +30,6 @@ public static class ApiConfigurationBuilder
     /// <param name="metadata"></param>
     /// <param name="specifications"></param>
     /// <param name="runtimeConfiguration"></param>
-    /// <param name="verbosity"></param>
     /// <returns>A generate configuration.</returns>
     public static InputConfiguration GetConfiguration(
         string rootPath,
@@ -156,7 +155,6 @@ public static class ApiConfigurationBuilder
     /// Convert sbom specifications to manifest info.
     /// </summary>
     /// <param name="specifications"></param>
-    /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentException"></exception>
     private static ConfigurationSetting<IList<ManifestInfo>> ConvertSbomSpecificationToManifestInfo(IList<SbomSpecification> specifications)

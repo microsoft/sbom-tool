@@ -137,6 +137,14 @@ This sample command provides the minimum mandatory arguments required to validat
 
 Currently SPDX 2.2 and SPDX 3.0 are supported.
 
+## Aggregating multiple SBOMs
+
+To aggregate multiple SBOMs from different sources, users can utilize the `aggregate` action -- note that the config file is required for aggregation. See [sbom-tool-arguments](sbom-tool-arguments.md) for more details on the config file contents.
+
+```powershell
+./sbom-tool-win-x64.exe aggregate -C c:\users\test\config.json
+```
+
 ## Common scenarios where users can provide additional parameters
 
 ### SBOM was placed in a different folder

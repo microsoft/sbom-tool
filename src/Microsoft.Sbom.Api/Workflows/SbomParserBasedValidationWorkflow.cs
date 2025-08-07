@@ -40,26 +40,66 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
     private readonly ILogger log;
     private readonly IManifestParserProvider manifestParserProvider;
     private readonly IConfiguration configuration;
-    private readonly ISbomConfigProvider sbomConfigs;
+    private readonly ISbomConfig sbomConfig;
     private readonly FilesValidator filesValidator;
     private readonly ValidationResultGenerator validationResultGenerator;
     private readonly IOutputWriter outputWriter;
     private readonly IFileSystemUtils fileSystemUtils;
     private readonly IOSUtils osUtils;
+    private readonly string? eventIdentifier;
 
-    public SbomParserBasedValidationWorkflow(IRecorder recorder, ISignValidationProvider signValidationProvider, ILogger log, IManifestParserProvider manifestParserProvider, IConfiguration configuration, ISbomConfigProvider sbomConfigs, FilesValidator filesValidator, ValidationResultGenerator validationResultGenerator, IOutputWriter outputWriter, IFileSystemUtils fileSystemUtils, IOSUtils osUtils)
+    public SbomParserBasedValidationWorkflow(
+        IRecorder recorder,
+        ISignValidationProvider signValidationProvider,
+        ILogger log,
+        IManifestParserProvider manifestParserProvider,
+        IConfiguration configuration,
+        ISbomConfigProvider sbomConfigs,
+        FilesValidator filesValidator,
+        ValidationResultGenerator validationResultGenerator,
+        IOutputWriter outputWriter,
+        IFileSystemUtils fileSystemUtils,
+        IOSUtils osUtils)
+        : this(
+            recorder,
+            signValidationProvider,
+            log,
+            manifestParserProvider,
+            configuration,
+            sbomConfigs?.Get(configuration.ManifestInfo.Value.FirstOrDefault()),
+            filesValidator,
+            validationResultGenerator,
+            outputWriter,
+            fileSystemUtils,
+            osUtils)
+    { }
+
+    public SbomParserBasedValidationWorkflow(
+        IRecorder recorder,
+        ISignValidationProvider signValidationProvider,
+        ILogger log,
+        IManifestParserProvider manifestParserProvider,
+        IConfiguration configuration,
+        ISbomConfig sbomConfig,
+        FilesValidator filesValidator,
+        ValidationResultGenerator validationResultGenerator,
+        IOutputWriter outputWriter,
+        IFileSystemUtils fileSystemUtils,
+        IOSUtils osUtils,
+        string eventIdentifier = null)
     {
         this.recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         this.signValidationProvider = signValidationProvider ?? throw new ArgumentNullException(nameof(signValidationProvider));
         this.log = log ?? throw new ArgumentNullException(nameof(log));
         this.manifestParserProvider = manifestParserProvider ?? throw new ArgumentNullException(nameof(manifestParserProvider));
         this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-        this.sbomConfigs = sbomConfigs ?? throw new ArgumentNullException(nameof(sbomConfigs));
+        this.sbomConfig = sbomConfig ?? throw new ArgumentNullException(nameof(sbomConfig));
         this.filesValidator = filesValidator ?? throw new ArgumentNullException(nameof(filesValidator));
         this.validationResultGenerator = validationResultGenerator ?? throw new ArgumentNullException(nameof(validationResultGenerator));
         this.outputWriter = outputWriter ?? throw new ArgumentNullException(nameof(outputWriter));
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
         this.osUtils = osUtils ?? throw new ArgumentNullException(nameof(osUtils));
+        this.eventIdentifier = eventIdentifier;
     }
 
     public async Task<bool> RunAsync()
@@ -68,12 +108,11 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         IEnumerable<FileValidationResult> validFailures = null;
         var totalNumberOfPackages = 0;
 
-        using (recorder.TraceEvent(Events.SbomValidationWorkflow))
+        using (recorder.TraceEvent(GetTelemetryKey(Events.SbomValidationWorkflow)))
         {
             try
             {
                 var sw = Stopwatch.StartNew();
-                var sbomConfig = sbomConfigs.Get(configuration.ManifestInfo.Value.FirstOrDefault());
                 using var stream = fileSystemUtils.OpenRead(sbomConfig.ManifestJsonFilePath);
                 var manifestInterface = manifestParserProvider.Get(sbomConfig.ManifestInfo);
                 var sbomParser = manifestInterface.CreateParser(stream);
@@ -86,7 +125,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
                     if (signValidator == null)
                     {
-                        log.Warning($"ValidateSignature switch is true, but couldn't find a sign validator for the current OS, skipping validation.");
+                        log.Warning("ValidateSignature switch is true, but couldn't find a sign validator for the current OS, skipping validation.");
                     }
                     else
                     {
@@ -177,7 +216,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
 
                 await outputWriter.WriteAsync(JsonSerializer.Serialize(validationResultOutput, options));
 
-                validFailures = fileValidationFailures.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType));
+                validFailures = fileValidationFailures.Where(f => !Constants.SkipFailureReportingForErrors.Contains(f.ErrorType)).ForEach(f => f.Identifier = eventIdentifier);
 
                 if (configuration.IgnoreMissing.Value)
                 {
@@ -213,7 +252,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
     {
         foreach (var pair in additionalTelemetry)
         {
-            recorder.AddResult(pair.Key, pair.Value);
+            recorder.AddResult(GetTelemetryKey(pair.Key), pair.Value);
         }
     }
 
@@ -294,7 +333,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
         Console.WriteLine($"Files successfully validated . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesSuccessfulCount}");
         Console.WriteLine($"Total files validated. . . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.FilesValidatedCount}");
         Console.WriteLine($"Total files in manifest. . . . . . . . . . . . . {validationResultOutput.Summary.ValidationTelemetery.TotalFilesInManifest}");
-        Console.WriteLine($"");
+        Console.WriteLine();
         Console.WriteLine($"Additional files not in the manifest . . . . . . {validFailures.Count(v => v.ErrorType == ErrorType.AdditionalFile)}");
         Console.WriteLine($"Files with invalid hashes . . . . . . . . . . . .{validFailures.Count(v => v.ErrorType == ErrorType.InvalidHash)}");
         Console.WriteLine($"Files in the manifest missing from the disk . . .{validFailures.Count(v => v.ErrorType == ErrorType.MissingFile)}");
@@ -356,4 +395,6 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
     {
         return conformance?.Value?.Name == "None";
     }
+
+    private string GetTelemetryKey(string key) => string.IsNullOrEmpty(eventIdentifier) ? key : $"{key}-{eventIdentifier}";
 }

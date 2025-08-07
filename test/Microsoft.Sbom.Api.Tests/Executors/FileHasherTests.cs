@@ -72,9 +72,9 @@ public class FileHasherTests
             });
         manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>(), false)).Returns((string r, bool v) => (r, true));
 
-        var files = Channel.CreateUnbounded<string>();
-        (ChannelReader<InternalSbomFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
-            = new FileHasher(
+        var files = await CreateChannelContainingFileList();
+
+        (var file, var error) = new FileHasher(
                     hashCodeGeneratorMock.Object,
                     manifestPathConverter.Object,
                     mockLogger.Object,
@@ -83,21 +83,15 @@ public class FileHasherTests
                     new ManifestGeneratorProvider(null),
                     new FileTypeUtils())
                 .Run(files);
-        foreach (var file in fileList)
-        {
-            await files.Writer.WriteAsync(file);
-        }
 
-        files.Writer.Complete();
-
-        await foreach (var fileHash in fileHashes.file.ReadAllAsync())
+        await foreach (var fileHash in file.ReadAllAsync())
         {
             Assert.IsTrue(fileList.Remove(fileHash.Path));
             Assert.AreEqual("hash", fileHash.Checksum.First().ChecksumValue);
             Assert.IsNull(fileHash.FileTypes);
         }
 
-        Assert.AreEqual(0, fileHashes.error.Count);
+        Assert.AreEqual(0, error.Count);
         hashCodeGeneratorMock.VerifyAll();
         manifestPathConverter.VerifyAll();
         mockConfiguration.VerifyAll();
@@ -135,15 +129,10 @@ public class FileHasherTests
             ManifestData = ManifestDataSingleton.Instance
         };
 
-        var files = Channel.CreateUnbounded<string>();
+        var files = await CreateChannelContainingFileList();
         (ChannelReader<InternalSbomFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
             = fileHasher.Run(files);
-        foreach (var file in fileList)
-        {
-            await files.Writer.WriteAsync(file);
-        }
 
-        files.Writer.Complete();
         var errorCount = 0;
         var filesCount = 0;
 
@@ -205,15 +194,10 @@ public class FileHasherTests
             ManifestData = ManifestDataSingleton.Instance
         };
 
-        var files = Channel.CreateUnbounded<string>();
+        var files = await CreateChannelContainingFileList();
         (ChannelReader<InternalSbomFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
             = fileHasher.Run(files);
-        foreach (var file in fileList)
-        {
-            await files.Writer.WriteAsync(file);
-        }
 
-        files.Writer.Complete();
         var errorCount = 0;
         var filesCount = 0;
 
@@ -281,9 +265,8 @@ public class FileHasherTests
 
         manifestPathConverter.Setup(m => m.Convert(It.IsAny<string>(), It.IsAny<bool>())).Returns((string r, bool v) => (r, true));
 
-        var files = Channel.CreateUnbounded<string>();
-        (ChannelReader<InternalSbomFileInfo> file, ChannelReader<FileValidationResult> error) fileHashes
-            = new FileHasher(
+        var files = await CreateChannelContainingFileList();
+        (var file, var error) = new FileHasher(
                     hashCodeGeneratorMock.Object,
                     manifestPathConverter.Object,
                     mockLogger.Object,
@@ -292,21 +275,15 @@ public class FileHasherTests
                     manifestGenProvider,
                     new FileTypeUtils())
                 .Run(files);
-        foreach (var file in fileList)
-        {
-            await files.Writer.WriteAsync(file);
-        }
 
-        files.Writer.Complete();
-
-        await foreach (var fileHash in fileHashes.file.ReadAllAsync())
+        await foreach (var fileHash in file.ReadAllAsync())
         {
             Assert.IsTrue(fileList.Remove(fileHash.Path));
             Assert.AreEqual("hash", fileHash.Checksum.First().ChecksumValue);
             Assert.IsNull(fileHash.FileTypes);
         }
 
-        Assert.AreEqual(0, fileHashes.error.Count);
+        Assert.AreEqual(0, error.Count);
         hashCodeGeneratorMock.VerifyAll();
         manifestPathConverter.VerifyAll();
         mockConfiguration.VerifyAll();
@@ -334,5 +311,17 @@ public class FileHasherTests
         {
             Lazy.Value.HashesMap = new ConcurrentDictionary<string, Checksum[]>(HashDictionary, StringComparer.InvariantCultureIgnoreCase);
         }
+    }
+
+    private async Task<Channel<string>> CreateChannelContainingFileList()
+    {
+        var files = Channel.CreateUnbounded<string>();
+        foreach (var file in fileList)
+        {
+            await files.Writer.WriteAsync(file);
+        }
+
+        files.Writer.Complete();
+        return files;
     }
 }

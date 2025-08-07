@@ -29,19 +29,7 @@ public static class SPDXExtensions
     /// <returns>Package ID that encapsulates unique info about a package.</returns>
     public static string AddSpdxId(this Package spdxPackage, SbomPackage packageInfo)
     {
-        if (packageInfo is null)
-        {
-            throw new ArgumentNullException(nameof(packageInfo));
-        }
-
-        // Get package identity as package name and package version. If version is empty, just use package name
-        var packageIdentity = $"{packageInfo.Type}-{packageInfo.PackageName}";
-        if (!string.IsNullOrWhiteSpace(packageInfo.PackageVersion))
-        {
-            packageIdentity = string.Join("-", packageInfo.Type, packageInfo.PackageName, packageInfo.PackageVersion);
-        }
-
-        spdxPackage.SpdxId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo.Id ?? packageIdentity);
+        spdxPackage.SpdxId = CommonSPDXUtils.GenerateSpdxPackageId(packageInfo);
         return spdxPackage.SpdxId;
     }
 
@@ -54,7 +42,7 @@ public static class SPDXExtensions
 
         if (fileInfo.Checksum is null || !fileInfo.Checksum.Any(c => c.Algorithm == AlgorithmName.SHA1))
         {
-            throw new MissingHashValueException($"The file {fileInfo.Path} is missing the {HashAlgorithmName.SHA1} hash value.");
+            throw new MissingHashValueException($"The file {fileInfo.Path} is missing the {HashAlgorithmName.SHA1} hash value."); // CodeQL [SM02196] Sha1 is required per the SPDX spec.
         }
 
         // Get the SHA1 for this file.
@@ -84,7 +72,7 @@ public static class SPDXExtensions
         var sha1checksums = checksums.Where(c => c.Algorithm == AlgorithmName.SHA1);
         if (checksums is null || !sha1checksums.Any())
         {
-            throw new MissingHashValueException($"The external reference {name} is missing the {HashAlgorithmName.SHA1} hash value.");
+            throw new MissingHashValueException($"The external reference {name} is missing the {HashAlgorithmName.SHA1} hash value."); // CodeQL [SM02196] Sha1 is required per the SPDX spec.
         }
 
         // Get the SHA1 for this file.

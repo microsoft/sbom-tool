@@ -6,6 +6,7 @@ namespace Microsoft.Sbom.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 /// <summary>
 /// Wrapper around file system functions. Used for unit testing.
@@ -62,6 +63,13 @@ public interface IFileSystemUtils
     /// <param name="filePath">The absolute path of the file.</param>
     /// <returns>The contents of the file.</returns>
     public string ReadAllText(string filePath);
+
+    /// <summary>
+    /// Read all text asynchronously from a file.
+    /// </summary>
+    /// <param name="filePath">The absolute path of the file.</param>
+    /// <returns>The contents of the file.</returns>
+    public Task<string> ReadAllTextAsync(string filePath);
 
     /// <summary>
     /// Write all text to a file.
@@ -184,4 +192,18 @@ public interface IFileSystemUtils
     /// <param name="path">The absolute relative path of a file.</param>
     /// <returns>Byte array content of the file.</returns>
     public byte[] ReadAllBytes(string path);
+
+    /// <summary>
+    /// Returns the size of the given file
+    /// </summary>
+    /// <param name="path">The absolute relative path of a file.</param>
+    /// <returns>Size of file in bytes.</returns>
+    public long GetFileSize(string path);
+
+    /// <summary>
+    /// Returns the path to a temp dir
+    /// </summary>
+    /// <param name="prefix">Optional prefix for the temp directory name.</param>
+    /// <returns>Path to a temp dir</returns>
+    public string CreateTempSubDirectory(string prefix = default);
 }

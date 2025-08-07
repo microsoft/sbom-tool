@@ -21,7 +21,6 @@ public static class ConfigurationExtensions
     /// Get the name and value of each IConfiguration property that is annotated with <see cref=ComponentDetectorArgumentAttribute />.
     /// </summary>
     /// <param name="configuration"></param>
-    /// <returns></returns>
     private static IEnumerable<(string Name, object Value)> GetComponentDetectorArgs(this IConfiguration configuration) => typeof(IConfiguration)
         .GetProperties()
         .Where(prop => prop.GetCustomAttributes(typeof(ComponentDetectorArgumentAttribute), true).Any()
@@ -34,7 +33,6 @@ public static class ConfigurationExtensions
     /// </summary>
     /// <param name="arg"></param>
     /// <param name="builder"></param>
-    /// <returns></returns>
     private static ComponentDetectionCliArgumentBuilder AddToCommandLineBuilder(this (string Name, object Value) arg, ComponentDetectionCliArgumentBuilder builder) =>
         !string.IsNullOrWhiteSpace(arg.Name) ? builder.AddArg(arg.Name, arg.Value.ToString()) : builder.ParseAndAddArgs(arg.Value.ToString());
 
@@ -43,7 +41,6 @@ public static class ConfigurationExtensions
     /// </summary>
     /// <param name="configuration"></param>
     /// <param name="builder"></param>
-    /// <returns></returns>
     public static string[] ToComponentDetectorCommandLineParams(this IConfiguration configuration, ComponentDetectionCliArgumentBuilder builder)
     {
         configuration

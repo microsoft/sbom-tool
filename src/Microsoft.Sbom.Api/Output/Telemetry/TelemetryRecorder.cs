@@ -36,6 +36,7 @@ public class TelemetryRecorder : IRecorder
     private readonly IList<Exception> apiExceptions = new List<Exception>();
     private readonly IList<Exception> metadataExceptions = new List<Exception>();
     private readonly Dictionary<string, string> additionalResults = new Dictionary<string, string>();
+    private readonly Dictionary<string, AggregationSourceTelemetry> aggregationSourceTelemetry = new Dictionary<string, AggregationSourceTelemetry>();
     private IList<FileValidationResult> errors = new List<FileValidationResult>();
     private Result result = Result.Success;
 
@@ -145,7 +146,7 @@ public class TelemetryRecorder : IRecorder
     /// <exception cref="ArgumentNullException">If the errors object is null.</exception>
     public void RecordTotalErrors(IList<FileValidationResult> errors)
     {
-        this.errors = errors ?? throw new ArgumentNullException(nameof(errors));
+        this.errors = this.errors.Concat(errors ?? throw new ArgumentNullException(nameof(errors))).ToList();
     }
 
     /// <inheritdoc/>
@@ -206,7 +207,7 @@ public class TelemetryRecorder : IRecorder
     /// <summary>
     /// Record any exception that was encountered during API calls.
     /// </summary>
-    /// <param name="exception">The exception that was encountered.</param>
+    /// <param name="apiException">The exception that was encountered.</param>
     /// <exception cref="ArgumentNullException">If the exception is null.</exception>
     public void RecordAPIException(Exception apiException)
     {
@@ -221,7 +222,7 @@ public class TelemetryRecorder : IRecorder
     /// <summary>
     /// Record any exception that was encountered during the detection or parsing of individual package metadata files.
     /// </summary>
-    /// <param name="exception">The exception that was encountered.</param>
+    /// <param name="metadataException">The exception that was encountered.</param>
     /// <exception cref="ArgumentNullException">If the exception is null.</exception>
     public void RecordMetadataException(Exception metadataException)
     {
@@ -326,6 +327,7 @@ public class TelemetryRecorder : IRecorder
                 TotalLicensesDetected = this.totalNumberOfLicenses,
                 PackageDetailsEntries = this.packageDetailsEntries,
                 AdditionalResults = this.additionalResults,
+                AggregationSourceTelemetry = aggregationSourceTelemetry,
             };
 
             // Log to logger.
@@ -354,5 +356,18 @@ public class TelemetryRecorder : IRecorder
     public void AddResult(string propertyName, string propertyValue)
     {
         this.additionalResults[propertyName] = propertyValue;
+    }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    /// <param name="identifier"></param>
+    public void RecordAggregationSource(string identifier, int packageCount, int relationshipCount)
+    {
+        aggregationSourceTelemetry.Add(identifier, new AggregationSourceTelemetry
+        {
+            PackageCount = packageCount,
+            RelationshipCount = relationshipCount
+        });
     }
 }

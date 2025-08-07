@@ -43,7 +43,6 @@ public abstract class CommonPackagesProvider<T> : EntityToJsonProviderBase<T>
     /// <summary>
     /// Get common packages that are provided by the build engine.
     /// </summary>
-    /// <returns></returns>
     private Channel<SbomPackage> GetCommonPackages()
     {
         var packageInfos = Channel.CreateUnbounded<SbomPackage>();
@@ -55,7 +54,7 @@ public abstract class CommonPackagesProvider<T> : EntityToJsonProviderBase<T>
                 if (sbomConfigs.TryGetMetadata(MetadataKey.ImageOS, out object imageOsObj) &&
                     sbomConfigs.TryGetMetadata(MetadataKey.ImageVersion, out object imageVersionObj))
                 {
-                    Log.Debug($"Adding the image OS package to the packages list as a dependency.");
+                    Log.Debug("Adding the image OS package to the packages list as a dependency.");
                     var name = $"Azure Pipelines Hosted Image {imageOsObj}";
                     await packageInfos.Writer.WriteAsync(new SbomPackage()
                     {

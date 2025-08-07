@@ -95,4 +95,9 @@ public interface IRecorder
     public void AddResult(string propertyName, string value);
 
     public IList<FileValidationResult> Errors { get; }
+
+    /// <summary>
+    /// Record telemetry for an AggregationSource.
+    /// </summary>
+    public void RecordAggregationSource(string identifier, int packageCount, int relationshipCount);
 }

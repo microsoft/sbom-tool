@@ -167,7 +167,7 @@ public class SPDX30Parser : ISbomParser
     {
         if (result.Contexts == null || !result.Contexts.Any() || result.Contexts.Count() > 1)
         {
-            throw new ParserException($"The context property is invalid. It should only have one string.");
+            throw new ParserException("The context property is invalid. It should only have one string.");
         }
     }
 
@@ -175,7 +175,6 @@ public class SPDX30Parser : ISbomParser
     /// Converts JSON objects to SPDX elements.
     /// </summary>
     /// <param name="jsonList"></param>
-    /// <returns></returns>
     private ElementsResult ConvertToElements(List<object>? jsonList, ParserStateResult? result)
     {
         var elementsResult = new ElementsResult(result);
@@ -310,9 +309,7 @@ public class SPDX30Parser : ISbomParser
     /// Handle deduplication of elements by checking SPDX ID
     /// </summary>
     /// <param name="spdxId"></param>
-    /// <param name="elementsList"></param>
     /// <param name="elementsSpdxIdList"></param>
-    /// <returns></returns>
     private bool IsUniqueElement(string spdxId, HashSet<string> elementsSpdxIdList)
     {
         if (!elementsSpdxIdList.TryGetValue(spdxId, out _))

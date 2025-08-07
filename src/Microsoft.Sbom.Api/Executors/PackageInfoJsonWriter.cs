@@ -19,11 +19,11 @@ namespace Microsoft.Sbom.Api.Executors;
 /// </summary>
 public class PackageInfoJsonWriter
 {
-    private readonly ManifestGeneratorProvider manifestGeneratorProvider;
+    private readonly IManifestGeneratorProvider manifestGeneratorProvider;
     private readonly ILogger log;
 
     public PackageInfoJsonWriter(
-        ManifestGeneratorProvider manifestGeneratorProvider,
+        IManifestGeneratorProvider manifestGeneratorProvider,
         ILogger log)
     {
         if (manifestGeneratorProvider is null)
@@ -54,7 +54,7 @@ public class PackageInfoJsonWriter
         return (result, errors);
     }
 
-    private async Task GenerateJson(
+    internal async Task GenerateJson(
         IList<ISbomConfig> packagesArraySupportingConfigs,
         SbomPackage packageInfo,
         Channel<JsonDocWithSerializer> result,
@@ -66,7 +66,23 @@ public class PackageInfoJsonWriter
             {
                 var generationResult =
                     manifestGeneratorProvider.Get(sbomConfig.ManifestInfo).GenerateJsonDocument(packageInfo);
-                sbomConfig.Recorder.RecordPackageId(generationResult?.ResultMetadata?.EntityId, generationResult?.ResultMetadata?.DependOn);
+
+                var recordedAnyDependencies = false;
+
+                if (generationResult?.ResultMetadata?.DependOn != null)
+                {
+                    foreach (var dependency in generationResult?.ResultMetadata?.DependOn)
+                    {
+                        sbomConfig.Recorder.RecordPackageId(generationResult?.ResultMetadata?.EntityId, dependency);
+                        recordedAnyDependencies = true;
+                    }
+                }
+
+                if (!recordedAnyDependencies)
+                {
+                    sbomConfig.Recorder.RecordPackageId(generationResult?.ResultMetadata?.EntityId, null);
+                }
+
                 await result.Writer.WriteAsync((generationResult?.Document, sbomConfig.JsonSerializer));
             }
         }

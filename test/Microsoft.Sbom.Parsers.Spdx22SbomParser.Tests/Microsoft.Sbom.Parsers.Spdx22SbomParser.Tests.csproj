@@ -11,4 +11,8 @@
     <ProjectReference Include="..\..\src\Microsoft.Sbom.Parsers.Spdx22SbomParser\Microsoft.Sbom.Parsers.Spdx22SbomParser.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\samples\spdx_2.2\manifest.spdx.json" />
+  </ItemGroup>
+
 </Project>

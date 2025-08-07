@@ -132,6 +132,7 @@ public class InterfaceConcretionTests
         public void AddToTotalCountOfLicenses(int count) => throw new NotImplementedException();
         public void AddToTotalNumberOfPackageDetailsEntries(int count) => throw new NotImplementedException();
         public Task FinalizeAndLogTelemetryAsync() => throw new NotImplementedException();
+        public void RecordAggregationSource(string identifier, int packageCount, int relationshipCount) => throw new NotImplementedException();
         public void RecordAPIException(Exception exception) => throw new NotImplementedException();
         public void RecordException(Exception exception) => throw new NotImplementedException();
         public void RecordMetadataException(Exception exception) => throw new NotImplementedException();
@@ -329,6 +330,7 @@ public class InterfaceConcretionTests
         public ConfigurationSetting<string> SbomDir { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<ConformanceType> Conformance { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
     private class PinnedISettingSourceable : ISettingSourceable

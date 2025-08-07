@@ -70,8 +70,12 @@ public static class ServiceCollectionExtensions
                 return Log.Logger = CreateLogger(logLevel);
             })
             .AddTransient<IWorkflow<SbomParserBasedValidationWorkflow>, SbomParserBasedValidationWorkflow>()
+            .AddTransient<ISbomValidationWorkflowFactory, SbomValidationWorkflowFactory>()
             .AddTransient<IWorkflow<SbomGenerationWorkflow>, SbomGenerationWorkflow>()
+            .AddTransient<IWorkflow<SbomAggregationWorkflow>, SbomAggregationWorkflow>()
             .AddTransient<IWorkflow<SbomRedactionWorkflow>, SbomRedactionWorkflow>()
+            .AddTransient<ISbomConfigFactory, SbomConfigFactory>()
+            .AddTransient<ISPDXFormatDetector, SPDXFormatDetector>()
             .AddTransient<ISbomRedactor, SbomRedactor>()
             .AddTransient<ValidatedSbomFactory>()
             .AddTransient<DirectoryWalker>()
@@ -83,6 +87,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<IHashCodeGenerator, HashCodeGenerator>()
             .AddTransient<IManifestPathConverter, SbomToolManifestPathConverter>()
             .AddTransient<ManifestGeneratorProvider>()
+            .AddTransient<IManifestGeneratorProvider, ManifestGeneratorProvider>()
             .AddTransient<HashValidator>()
             .AddTransient<ValidationResultGenerator>()
             .AddTransient<IOutputWriter, FileOutputWriter>()
@@ -113,6 +118,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<ISbomReaderForExternalDocumentReference, SPDXSbomReaderForExternalDocumentReference>()
             .AddTransient<SbomMetadata>()
             .AddTransient<ILicenseInformationService, LicenseInformationService>()
+            .AddTransient<IMergeableContentProvider, Parsers.Spdx22SbomParser.MergeableContentProvider>()
             .AddSingleton<IPackageDetailsFactory, PackageDetailsFactory>()
             .AddSingleton<IPackageManagerUtils<NugetUtils>, NugetUtils>()
             .AddSingleton<IPackageManagerUtils<MavenUtils>, MavenUtils>()
@@ -153,6 +159,7 @@ public static class ServiceCollectionExtensions
                 .AsImplementedInterfaces())
             .AddScoped<ISbomGenerator, SbomGenerator>()
             .AddScoped<ISbomValidator, SbomValidator>()
+            .AddScoped<ISbomAggregator, SbomAggegator>()
             .AddSingleton(x =>
             {
                 var fileSystemUtils = x.GetRequiredService<IFileSystemUtils>();

@@ -120,8 +120,8 @@ public interface IConfiguration
 
     /// <summary>
     /// Gets or sets a list of <see cref="SbomFile"/> files provided to us from the API.
-    /// We won't traverse the build root path to get a list of files if this is set, and
-    /// use the list provided here instead.
+    /// We will use the list provided here to populate the files section in addition to
+    /// select file providers.
     /// </summary>
     public ConfigurationSetting<IEnumerable<SbomFile>> FilesList { get; set; }
 
@@ -218,4 +218,10 @@ public interface IConfiguration
     /// maximum are truncated to <see cref="Constants.MaxLicenseFetchTimeoutInSeconds"/>
     /// </summary>
     public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get; set; }
+
+    /// <summary>
+    /// Describes the artifacts used for aggregation, as well information specific to each artifact.
+    /// The Key is the location of the artifact, and the value is an <see cref="ArtifactInfo"/> object.
+    /// </summary>
+    public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap { get; set; }
 }

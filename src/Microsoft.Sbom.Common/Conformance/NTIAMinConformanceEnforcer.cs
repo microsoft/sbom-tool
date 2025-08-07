@@ -63,7 +63,6 @@ public class NTIAMinConformanceEnforcer : IConformanceEnforcer
     /// <summary>
     /// Validate that information about the SBOM document is present.
     /// </summary>
-    /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
     private void ValidateSbomDocCreationForNTIAMin(List<SpdxDocument> spdxDocuments, List<CreationInfo> creationInfos, HashSet<InvalidElementInfo> invalidElements)
     {
@@ -93,7 +92,6 @@ public class NTIAMinConformanceEnforcer : IConformanceEnforcer
     /// <summary>
     /// Validate that all files have declared and concluded licenses.
     /// </summary>
-    /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
     private void ValidateSbomFilesForNTIAMin(List<File> files, HashSet<InvalidElementInfo> invalidElements)
     {
@@ -112,7 +110,6 @@ public class NTIAMinConformanceEnforcer : IConformanceEnforcer
     /// <summary>
     /// Validate that all packages have declared and concluded licenses.
     /// </summary>
-    /// <param name="elementsList"></param>
     /// <exception cref="ParserException"></exception>
     private void ValidateSbomPackagesForNTIAMin(List<Package> packages, HashSet<InvalidElementInfo> invalidElements)
     {

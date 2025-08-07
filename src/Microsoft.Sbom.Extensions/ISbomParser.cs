@@ -18,16 +18,12 @@ public interface ISbomParser
     /// <summary>
     /// Advance the parser to the next available state.
     /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
     public ParserStateResult? Next();
 
     /// <summary>
     /// Returns a <see cref="SbomMetadata"/> object using the metadata defined in the
     /// current SBOM.
     /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
     public SpdxMetadata GetMetadata();
 
     /// <summary>
@@ -42,6 +38,5 @@ public interface ISbomParser
     /// Set conformance for SPDX 3.0 parsers and above.
     /// Returns the conformance set by the user, if it is valid.
     /// </summary>
-    /// <param name="spdxVersion"></param>
     public void EnforceConformance(ConformanceType conformance);
 }
