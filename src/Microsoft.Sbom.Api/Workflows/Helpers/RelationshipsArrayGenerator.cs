@@ -28,6 +28,8 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
 
     private readonly IRecorder recorder;
 
+    private int dependsOnRelationshipCount = 0;
+
     public RelationshipsArrayGenerator(
         RelationshipGenerator generator,
         ChannelUtils channelUtils,
@@ -105,6 +107,8 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
                     }
 
                     log.Debug($"Wrote {count} relationship elements in the SBOM.");
+                    recorder.AddResult("NumberOfRelationships", count.ToString());
+                    recorder.AddResult("NumberOfDependsOnRelationships", dependsOnRelationshipCount.ToString());
                 }
             }
 
@@ -127,6 +131,11 @@ public class RelationshipsArrayGenerator : IJsonArrayGenerator<RelationshipsArra
         {
             if (targetElementId.Key != null || generationData.RootPackageId != null)
             {
+                if (relationshipType == RelationshipType.DEPENDS_ON)
+                {
+                    dependsOnRelationshipCount++;
+                }
+
                 yield return new Relationship
                 {
                     RelationshipType = relationshipType,
