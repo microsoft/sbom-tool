@@ -24,10 +24,12 @@ internal static class CargoComponentExtensions
         PackageUrl = cargoComponent.PackageUrl?.ToString(),
         PackageName = cargoComponent.Name,
         PackageVersion = cargoComponent.Version,
-        LicenseInfo = string.IsNullOrWhiteSpace(component.LicenseConcluded) ? null : new LicenseInfo
+        LicenseInfo = new LicenseInfo
         {
-            Concluded = component.LicenseConcluded,
+            Concluded = string.IsNullOrEmpty(component.LicenseConcluded) ? null : component.LicenseConcluded,
+            Declared = string.IsNullOrEmpty(cargoComponent.License) ? null : cargoComponent.License,
         },
+        Supplier = string.IsNullOrEmpty(cargoComponent.Author) ? null : $"Organization: {cargoComponent.Author}",
         FilesAnalyzed = false,
         Type = "cargo",
         DependOn = component.AncestralReferrers?.Select(r => r.Id).ToList(),
