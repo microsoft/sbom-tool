@@ -44,7 +44,7 @@ public class LicenseInformationService : ILicenseInformationService
             var batch = listOfComponentsForApi.Skip(i).Take(batchSize).ToList();
             var formattedData = JsonSerializer.Serialize(batch);
 
-            log.Debug($"Retrieving license information for {batch.Count} components...");
+            log.Debug("Retrieving license information for {BatchCount} components...", batch.Count);
 
             var content = new StringContent(formattedData, Encoding.UTF8, "application/json");
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -57,13 +57,13 @@ public class LicenseInformationService : ILicenseInformationService
             }
             catch (Exception e)
             {
-                log.Warning($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {e.Message}");
+                log.Warning("Error encountered while fetching license information from API, resulting SBOM may have incomplete license information: {Message}", e.Message);
                 recorder.RecordAPIException(new ClearlyDefinedResponseNotSuccessfulException(e.Message));
             }
 
             stopwatch.Stop();
 
-            log.Debug($"Retrieving license information for {batch.Count} components took {stopwatch.Elapsed.TotalSeconds} seconds");
+            log.Debug("Retrieving license information for {BatchCount} components took {ElapsedTotalSeconds} seconds", batch.Count, stopwatch.Elapsed.TotalSeconds);
         }
 
         foreach (var response in responses)
@@ -74,7 +74,7 @@ public class LicenseInformationService : ILicenseInformationService
             }
             else
             {
-                log.Warning($"Error encountered while fetching license information from API, resulting SBOM may have incomplete license information. Request returned status code: {response.StatusCode}");
+                log.Warning("Error encountered while fetching license information from API, resulting SBOM may have incomplete license information. Request returned status code: {ResponseStatusCode}", response.StatusCode);
                 recorder.RecordAPIException(new ClearlyDefinedResponseNotSuccessfulException($"Request returned status code: {response.StatusCode}"));
             }
         }

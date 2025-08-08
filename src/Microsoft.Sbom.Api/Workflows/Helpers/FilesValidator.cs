@@ -138,7 +138,7 @@ public class FilesValidator
         var (files, dirErrors) = directoryWalker.GetFilesRecursively(configuration.BuildDropPath.Value);
         errors.Add(dirErrors);
 
-        log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
+        log.Debug("Splitting the workflow into {Parallelism} threads.", this.configuration.Parallelism.Value);
         var splitFilesChannels = channelUtils.Split(files, configuration.Parallelism.Value);
 
         log.Debug("Waiting for the workflow to finish...");
@@ -178,7 +178,7 @@ public class FilesValidator
         var (sbomFilesChannel, sbomFileErrors) = enumeratorChannel.Enumerate(() => sbomFiles);
         errors.Add(sbomFileErrors);
 
-        log.Debug($"Splitting the workflow into {configuration.Parallelism.Value} threads.");
+        log.Debug("Splitting the workflow into {Parallelism} threads.", this.configuration.Parallelism.Value);
         var splitFilesChannels = channelUtils.Split(sbomFilesChannel, configuration.Parallelism.Value);
 
         log.Debug("Waiting for the workflow to finish...");

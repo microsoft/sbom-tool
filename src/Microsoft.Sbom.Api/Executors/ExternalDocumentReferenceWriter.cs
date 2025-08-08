@@ -61,7 +61,7 @@ public class ExternalDocumentReferenceWriter
                     }
                     catch (Exception e)
                     {
-                        log.Warning($"Encountered an error while generating json for external document reference {externalDocumentReferenceInfo.ExternalDocumentName}: {e.Message}");
+                        log.Warning("Encountered an error while generating json for external document reference {ExternalDocumentName}: {Message}", externalDocumentReferenceInfo.ExternalDocumentName, e.Message);
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
                             ErrorType = ErrorType.JsonSerializationError,

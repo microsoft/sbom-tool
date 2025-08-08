@@ -230,7 +230,7 @@ public class SbomParserBasedValidationWorkflow : IWorkflow<SbomParserBasedValida
             {
                 recorder.RecordException(e);
                 log.Error("Encountered an error while validating the drop.");
-                log.Error($"Error details: {e.Message}");
+                log.Error("Error details: {Message}", e.Message);
                 return false;
             }
             finally

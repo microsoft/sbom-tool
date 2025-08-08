@@ -52,13 +52,13 @@ public class SbomRedactor: ISbomRedactor
             {
                 if (package.HasFiles != null)
                 {
-                    this.log.Debug($"Removing has files property from package {package.Name}.");
+                    this.log.Debug("Removing has files property from package {Name}.", package.Name);
                     package.HasFiles = null;
                 }
 
                 if (package.SourceInfo != null)
                 {
-                    this.log.Debug($"Removing has sourceInfo property from package {package.Name}.");
+                    this.log.Debug("Removing has sourceInfo property from package {Name}.", package.Name);
                     package.SourceInfo = null;
                 }
             }
@@ -80,7 +80,7 @@ public class SbomRedactor: ISbomRedactor
 
             if (relationshipsToRemove.Any())
             {
-                this.log.Debug($"Removing {relationshipsToRemove.Count()} relationships with file references from SBOM.");
+                this.log.Debug("Removing {Count} relationships with file references from SBOM.", relationshipsToRemove.Count());
                 spdx.Relationships = spdx.Relationships.Except(relationshipsToRemove);
             }
         }
@@ -95,7 +95,7 @@ public class SbomRedactor: ISbomRedactor
             existingNamespaceComponents[^1] = uniqueComponent;
             spdx.DocumentNamespace = string.Join("/", existingNamespaceComponents);
 
-            this.log.Debug($"Updated document namespace to {spdx.DocumentNamespace}.");
+            this.log.Debug("Updated document namespace to {Namespace}.", spdx.DocumentNamespace);
         }
     }
 }

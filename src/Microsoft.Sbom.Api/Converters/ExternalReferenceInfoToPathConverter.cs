@@ -37,7 +37,7 @@ public class ExternalReferenceInfoToPathConverter
 
                     if (path == null)
                     {
-                        log.Debug($"Encountered an error while converting external reference {externalDocumentRef.ExternalDocumentName} for null path.");
+                        log.Debug("Encountered an error while converting external reference {Name} for null path.", externalDocumentRef.ExternalDocumentName);
                         await errors.Writer.WriteAsync(new FileValidationResult
                         {
                             ErrorType = ErrorType.Other,
@@ -53,7 +53,7 @@ public class ExternalReferenceInfoToPathConverter
                 }
                 catch (Exception e)
                 {
-                    log.Warning($"Encountered an error while converting external reference {externalDocumentRef.ExternalDocumentName} to path: {e.Message}");
+                    log.Warning("Encountered an error while converting external reference {ExternalDocumentName} to path: {Message}", externalDocumentRef.ExternalDocumentName, e.Message);
                     await errors.Writer.WriteAsync(new FileValidationResult
                     {
                         ErrorType = ErrorType.Other,

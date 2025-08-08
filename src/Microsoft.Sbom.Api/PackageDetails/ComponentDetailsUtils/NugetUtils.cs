@@ -55,7 +55,7 @@ public class NugetUtils : IPackageManagerUtils<NugetUtils>
             }
             else
             {
-                log.Verbose($"Nuspec file could not be found at: {nuspecLocation}");
+                log.Verbose("Nuspec file could not be found at: {NuspecLocation}", nuspecLocation);
             }
         }
 

@@ -56,7 +56,7 @@ public abstract class EntityToJsonProviderBase<T> : ISourcesProvider
         var (sources, sourceErrors) = GetSourceChannel();
         errors.Add(sourceErrors);
 
-        Log.Debug($"Splitting the workflow into {Configuration.Parallelism.Value} threads.");
+        Log.Debug("Splitting the workflow into {Parallelism} threads.", this.Configuration.Parallelism.Value);
         var splitSourcesChannels = ChannelUtils.Split(sources, Configuration.Parallelism.Value);
 
         Log.Debug("Running the generation workflow ...");

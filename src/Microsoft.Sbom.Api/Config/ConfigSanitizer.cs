@@ -93,12 +93,12 @@ public class ConfigSanitizer
         }
         else if (configuration.LicenseInformationTimeoutInSeconds.Value <= 0)
         {
-            logger.Warning($"Negative and Zero Values not allowed for timeout. Using the default {Common.Constants.DefaultLicenseFetchTimeoutInSeconds} seconds instead.");
+            logger.Warning("Negative and Zero Values not allowed for timeout. Using the default {DefaultLicenseFetchTimeoutInSeconds} seconds instead.", Common.Constants.DefaultLicenseFetchTimeoutInSeconds);
             configuration.LicenseInformationTimeoutInSeconds.Value = Common.Constants.DefaultLicenseFetchTimeoutInSeconds;
         }
         else if (configuration.LicenseInformationTimeoutInSeconds.Value > Common.Constants.MaxLicenseFetchTimeoutInSeconds)
         {
-            logger.Warning($"Specified timeout exceeds maximum allowed. Truncating the timeout to {Common.Constants.MaxLicenseFetchTimeoutInSeconds} seconds.");
+            logger.Warning("Specified timeout exceeds maximum allowed. Truncating the timeout to {MaxLicenseFetchTimeoutInSeconds} seconds.", Common.Constants.MaxLicenseFetchTimeoutInSeconds);
             configuration.LicenseInformationTimeoutInSeconds.Value = Common.Constants.MaxLicenseFetchTimeoutInSeconds;
         }
 
@@ -278,7 +278,7 @@ public class ConfigSanitizer
         {
             var defaultNamespaceUriBase = $"https://spdx.org/spdxdocs/sbom-tool-{SbomToolVersion}-{Guid.NewGuid()}";
 
-            logger.Information($"No namespace URI base provided, using unique generated default value {defaultNamespaceUriBase}");
+            logger.Information("No namespace URI base provided, using unique generated default value {DefaultNamespaceUriBase}", defaultNamespaceUriBase);
 
             return new ConfigurationSetting<string>
             {
