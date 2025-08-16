@@ -70,6 +70,8 @@ public static class Constants
     public const string DefaultRootElement = "SPDXRef-Document";
     public const string CatalogFileName = "manifest.cat";
     public const string BsiFileName = "bsi.json";
+    public const string BsiCoseFileName = "bsi.cose";
+    public const string ManifestCoseFileName = "manifest.spdx.cose";
     public const string DeleteManifestDirBoolVariableName = "DeleteManifestDirIfPresent";
     public const string RootPackageIdValue = "SPDXRef-RootPackage";
 

@@ -46,6 +46,10 @@ public abstract class BaseManifestConfigHandler : IManifestConfigHandler
 
     protected string BsiFilePath => fileSystemUtils.JoinPaths(SbomDirPath, Constants.BsiFileName);
 
+    protected string BsiCoseFilePath => fileSystemUtils.JoinPaths(SbomDirPath, Constants.BsiCoseFileName);
+
+    protected string ManifestCoseFilePath => fileSystemUtils.JoinPaths(SbomDirPath, Constants.ManifestCoseFileName);
+
     protected IMetadataBuilder MetadataBuilder => metadataBuilderFactory.Get(ManifestInfo);
 
     protected ISbomConfig CreateSbomConfig()
@@ -57,6 +61,8 @@ public abstract class BaseManifestConfigHandler : IManifestConfigHandler
             ManifestJsonFilePath = SbomFilePath,
             CatalogFilePath = CatalogFilePath,
             BsiFilePath = BsiFilePath,
+            BsiCoseFilePath = BsiCoseFilePath,
+            ManifestCoseFilePath = ManifestCoseFilePath,
             ManifestJsonFileSha256FilePath = ManifestJsonSha256FilePath,
             MetadataBuilder = MetadataBuilder,
             Recorder = new SbomPackageDetailsRecorder()

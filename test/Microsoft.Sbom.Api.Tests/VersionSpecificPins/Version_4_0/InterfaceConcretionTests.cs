@@ -220,6 +220,8 @@ public class InterfaceConcretionTests
         public string ManifestJsonFileSha256FilePath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string CatalogFilePath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string BsiFilePath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string BsiCoseFilePath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string ManifestCoseFilePath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ManifestInfo ManifestInfo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public IMetadataBuilder MetadataBuilder { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 

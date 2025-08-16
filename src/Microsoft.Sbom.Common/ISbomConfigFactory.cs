@@ -21,6 +21,8 @@ public interface ISbomConfigFactory
         string manifestFileSha256HashPath,
         string catalogFilePath,
         string bsiFilePath,
+        string bsiCoseFilePath,
+        string manifestCoseFilePath,
         ISbomPackageDetailsRecorder recorder,
         IMetadataBuilder metadataBuilder);
 

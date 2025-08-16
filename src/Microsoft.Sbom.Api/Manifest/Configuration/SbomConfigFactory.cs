@@ -26,6 +26,8 @@ public class SbomConfigFactory : ISbomConfigFactory
         string manifestFileSha256HashPath,
         string catalogFilePath,
         string bsiFilePath,
+        string bsiCoseFilePath,
+        string manifestCoseFilePath,
         ISbomPackageDetailsRecorder recorder,
         IMetadataBuilder metadataBuilder)
     {
@@ -35,6 +37,8 @@ public class SbomConfigFactory : ISbomConfigFactory
             ManifestJsonDirPath = manifestDirPath,
             ManifestJsonFilePath = manifestFilePath,
             BsiFilePath = bsiFilePath,
+            BsiCoseFilePath = bsiCoseFilePath,
+            ManifestCoseFilePath = manifestCoseFilePath,
             CatalogFilePath = catalogFilePath,
             ManifestJsonFileSha256FilePath = manifestFileSha256HashPath,
             MetadataBuilder = metadataBuilder,
@@ -52,6 +56,8 @@ public class SbomConfigFactory : ISbomConfigFactory
         var shaFilePath = $"{sbomFilePath}.sha256";
         var catFilePath = fileSystemUtils.JoinPaths(sbomDirPath, Constants.CatalogFileName);
         var bsiFilePath = fileSystemUtils.JoinPaths(sbomDirPath, Constants.BsiFileName);
+        var bsiCoseFilePath = fileSystemUtils.JoinPaths(sbomDirPath, Constants.BsiCoseFileName);
+        var manifestCoseFilePath = fileSystemUtils.JoinPaths(sbomDirPath, Constants.ManifestCoseFileName);
         if (!fileSystemUtils.FileExists(shaFilePath) && !fileSystemUtils.FileExists(catFilePath) && !fileSystemUtils.FileExists(bsiFilePath))
         {
             // This is likely a CloudBuild SBOM, adjust paths accordingly
@@ -66,6 +72,8 @@ public class SbomConfigFactory : ISbomConfigFactory
             shaFilePath,
             catFilePath,
             bsiFilePath,
+            bsiCoseFilePath,
+            manifestCoseFilePath,
             new SbomPackageDetailsRecorder(),
             metadataBuilderFactory.Get(manifestInfo));
     }
