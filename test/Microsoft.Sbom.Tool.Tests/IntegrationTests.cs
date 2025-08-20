@@ -870,4 +870,13 @@ public class IntegrationTests
             Assert.Fail($"The following packages are not linked to the root package: {unlinkedPackages}");
         }
     }
+
+    [DataRow("version")]
+    [DataRow("--version")]
+    [TestMethod]
+    public void E2E_Version_SuccessfulExitCode(string arguments)
+    {
+        var (_, _, exitCode) = LaunchAndCaptureOutput(arguments);
+        Assert.AreEqual(0, exitCode.Value, "Exit code should be 0 for version command");
+    }
 }
