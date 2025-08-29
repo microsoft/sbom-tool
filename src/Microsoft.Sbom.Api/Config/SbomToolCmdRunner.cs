@@ -9,6 +9,8 @@ using PowerArgs;
 
 namespace Microsoft.Sbom.Api.Config;
 
+using System.Diagnostics.CodeAnalysis;
+
 [ArgDescription("The Sbom tool generates a SBOM for any build artifact.")]
 [ArgExceptionBehavior(ArgExceptionPolicy.StandardExceptionHandling)]
 [ArgProductName("sbom-tool")]
@@ -91,6 +93,7 @@ public class SbomToolCmdRunner
     /// <summary>
     /// Prints the version of the tool.
     /// </summary>
+    [DoesNotReturn]
     [ArgActionMethod]
     [ArgShortcut("--version")]
     [ArgDescription("Displays the version of the tool being used. Can be used as '--version'")]
@@ -99,10 +102,12 @@ public class SbomToolCmdRunner
         if (!string.IsNullOrEmpty(SbomToolVersion))
         {
             Console.WriteLine(SbomToolVersion);
+            Environment.Exit((int)ExitCode.Success);
         }
         else
         {
             Console.WriteLine("Encountered error while getting the version of the tool.");
+            Environment.Exit((int)ExitCode.GeneralError);
         }
     }
 }

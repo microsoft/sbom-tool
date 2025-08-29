@@ -51,6 +51,16 @@ public class SbomConfig : ISbomConfig, IDisposable, IAsyncDisposable
     public string BsiFilePath { get; set; }
 
     /// <summary>
+    /// Gets or sets the absolute path of the build session information COSE file.
+    /// </summary>
+    public string BsiCoseFilePath { get; set; }
+
+    /// <summary>
+    /// Gets or sets the absolute path of the manifest COSE file.
+    /// </summary>
+    public string ManifestCoseFilePath { get; set; }
+
+    /// <summary>
     /// Gets or sets derived manifestInfo or from configurations.
     /// </summary>
     public ManifestInfo ManifestInfo { get; set; }
