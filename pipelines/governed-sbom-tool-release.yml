@@ -1,0 +1,283 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
+# This pipeline will be extended to the OneESPT template
+# The 'DownloadPipelineArtifact@2' tasks have been converted to inputs within the `templateContext` section of each job.
+# The Task 'DotNetCoreCLI@2' has been converted to a wrapper task named 'Push packages to ManifestTool feed'.
+# Job "Job_1" contains release tasks. Its type has been defined as 'releaseJob'.
+trigger: none
+name: $(Date:yyyyMMdd).$(Rev:r)
+variables:
+- name: GitHubApiKey
+  value: 
+- name: NuGetApiKey
+  value:
+parameters:
+  inputsForStages:
+    - input: pipelineArtifact
+      pipeline: 'SBOMTool'
+      artifactName: 'SBOMTool-GitHub-macOS'
+      targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+    - input: pipelineArtifact
+      pipeline: 'SBOMTool'
+      artifactName: 'SBOMTool-macOS'
+      targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+    - input: pipelineArtifact
+      pipeline: 'SBOMTool'
+      artifactName: 'SBOMTool-GitHub-macOS-arm64'
+      targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+    - input: pipelineArtifact
+      pipeline: 'SBOMTool'
+      artifactName: 'SBOMTool-macOS-arm64'
+      targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+    - input: pipelineArtifact
+      pipeline: 'SBOMTool'
+      artifactName: 'SBOMTool-GitHub-linux'
+      targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+    - input: pipelineArtifact
+      pipeline: 'SBOMTool'
+      artifactName: 'SBOMTool-linux'
+      targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+    - input: pipelineArtifact
+      pipeline: 'SBOMTool'
+      artifactName: 'SBOMTool-GitHub'
+      targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+    - input: pipelineArtifact
+      pipeline: 'SBOMTool'
+      artifactName: 'SBOMTool'
+      targetPath: '$(Pipeline.Workspace)/SBOMTool'
+resources:
+  pipelines:
+  - pipeline: 'SBOMTool'
+    project: 'AzureDevOps'
+    source: 'SSSC\SBOM Tool\SBOM Tool Main Build (YAML)'
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: Azure Pipelines
+      image: windows-2022
+      os: windows
+    customBuildTags:
+    - ES365AIMigrationTooling-Release
+    stages:
+    - stage: Stage_1
+      displayName: Validate Drop
+      jobs:
+      - job: Job_1
+        displayName: Windows
+        condition: succeeded()
+        timeoutInMinutes: 0
+        templateContext:
+          inputs: ${{ parameters.commonInputs }}
+        steps:
+        - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
+          displayName: 'Drop Validator '
+          inputs:
+            BuildDropPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool
+            ManifestDirPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool/_manifest
+            OutputPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool/bin/win-x64-validation-output.json
+            ValidateSignature: false
+            Verbosity: Verbose
+      - job: Job_2
+        displayName: Validate Linux Manifest
+        condition: succeeded()
+        timeoutInMinutes: 0
+        templateContext:
+          inputs: ${{ parameters.commonInputs }}
+        steps:
+        - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
+          displayName: 'Drop Validator '
+          inputs:
+            BuildDropPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-linux
+            ManifestDirPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-linux/_manifest
+            OutputPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-linux/bin/linux-x64-validation-output.json
+            ValidateSignature: false
+      - job: Job_3
+        displayName: Validate OSX Manifest
+        condition: succeeded()
+        timeoutInMinutes: 0
+        templateContext:
+          inputs: ${{ parameters.commonInputs }}
+        steps:
+        - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
+          displayName: 'Drop Validator '
+          inputs:
+            BuildDropPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-macOS
+            ManifestDirPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-macOS/_manifest
+            OutputPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-macOS/bin/osx-x64-validation-output.json
+            ValidateSignature: false
+    - stage: Stage_2
+      displayName: Push NuGet (private feeds)
+      dependsOn: Stage_1
+      jobs:
+      - job: PreDeploymentApprovalJob
+        displayName: Pre-Deployment Approval
+        condition: succeeded()
+        timeoutInMinutes: 0
+        pool: server
+        steps:
+        - task: ManualValidation@1
+          inputs:
+            notifyUsers: |-
+              [TEAM FOUNDATION]\Code Sharing RM MGRS,
+              [1ES]\SBOM,
+              [1ES]\SBOM-EBOM
+            approvers: |-
+              [TEAM FOUNDATION]\Code Sharing RM MGRS,
+              [1ES]\SBOM,
+              [1ES]\SBOM-EBOM
+      - job: Job_1
+        displayName: Push packages to ManifestTool feed
+        dependsOn: PreDeploymentApprovalJob
+        condition: succeeded()
+        timeoutInMinutes: 0
+        templateContext:
+          inputs: ${{ parameters.commonInputs }}
+        steps:
+        - task: NuGetAuthenticate@1
+          displayName: NuGet Authenticate
+        - task: 1ES.PublishNuGet@1
+          displayName: 'Push packages to ManifestTool feed'
+          inputs:
+            useDotNetTask: true
+            packageParentPath: '$(Build.ArtifactStagingDirectory)'
+            verbosityRestore: Detailed
+            packagesToPush: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool/nuget/*.nupkg
+            feedPublish: b924d696-3eae-4116-8443-9a18392d8544/aad7f774-e7ee-4d83-8795-c0280419adf3
+            verbosityPack: Detailed
+    - stage: Stage_3
+      displayName: GitHub Release
+      dependsOn: Stage_2
+      jobs:
+      - job: PreDeploymentApprovalJob
+        displayName: Pre-Deployment Approval
+        condition: succeeded()
+        timeoutInMinutes: 0
+        pool: server
+        steps:
+        - task: ManualValidation@1
+          inputs:
+            notifyUsers: |-
+              [TEAM FOUNDATION]\Code Sharing RM MGRS,
+              [1ES]\SBOM,
+              [1ES]\SBOM-EBOM
+            approvers: |-
+              [TEAM FOUNDATION]\Code Sharing RM MGRS,
+              [1ES]\SBOM,
+              [1ES]\SBOM-EBOM
+      - job: Job_1
+        displayName: Release on GitHub
+        dependsOn: PreDeploymentApprovalJob
+        condition: succeeded()
+        timeoutInMinutes: 0
+        templateContext:
+          type: releaseJob
+          isProduction: true
+          inputs: ${{ parameters.commonInputs }}
+        steps:
+        - task: PowerShell@2
+          name: SBOMToolVersion
+          displayName: Get current tag version
+          inputs:
+            targetType: inline
+            script: |-
+              $version = Get-Content -Path $(System.DefaultWorkingDirectory)\SBOMTool\SBOMTool\version.txt
+              echo "##vso[task.setvariable variable=Version;isOutput=true]v$version"
+        - task: PowerShell@2
+          displayName: Rename manifests
+          inputs:
+            targetType: inline
+            script: |-
+              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-GitHub-macOS/_manifest/spdx_2.2/manifest.spdx.json" -NewName "osx-x64-manifest.spdx.json"
+              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-GitHub-macOS-arm64/_manifest/spdx_2.2/manifest.spdx.json" -NewName "osx-arm64-manifest.spdx.json"
+              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-GitHub-linux/_manifest/spdx_2.2/manifest.spdx.json" -NewName "linux-x64-manifest.spdx.json"
+              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-GitHub/_manifest/spdx_2.2/manifest.spdx.json" -NewName "win-x64-manifest.spdx.json"
+        - task: GitHubRelease@1
+          displayName: Upload assets to GitHub Release
+          inputs:
+            gitHubConnection: SBOM GitHub
+            action: edit
+            tag: $(SBOMToolVersion.Version)
+            releaseNotesSource: inline
+            assets: |-
+              $(System.DefaultWorkingDirectory)\**\bin\**
+              $(System.DefaultWorkingDirectory)\**\SBOMTool-GitHub*\\**\*-manifest.spdx.json
+            assetUploadMode: replace
+            isDraft: true
+            addChangeLog: false
+    - stage: Stage_4
+      displayName: Push to NuGet.org
+      dependsOn: Stage_2
+      jobs:
+      - job: PreDeploymentApprovalJob
+        displayName: Pre-Deployment Approval
+        condition: succeeded()
+        timeoutInMinutes: 0
+        pool: server
+        steps:
+        - task: ManualValidation@1
+          inputs:
+            notifyUsers: |-
+              [TEAM FOUNDATION]\Code Sharing RM MGRS,
+              [1ES]\SBOM,
+              [1ES]\SBOM-EBOM
+            approvers: |-
+              [TEAM FOUNDATION]\Code Sharing RM MGRS,
+              [1ES]\SBOM,
+              [1ES]\SBOM-EBOM
+      - job: Job_1
+        displayName: Push to NuGet.org
+        dependsOn: PreDeploymentApprovalJob
+        condition: succeeded()
+        timeoutInMinutes: 0
+        templateContext:
+          inputs: ${{ parameters.commonInputs }}
+        steps:
+        - task: UseDotNet@2
+          displayName: Use .NET Core
+        - task: PowerShell@2
+          displayName: Push packages to NuGet.org
+          inputs:
+            targetType: inline
+            script: |
+              dotnet nuget push "$(System.DefaultWorkingDirectory)\SBOMTool\SBOMTool\nuget\*.nupkg" -s https://api.nuget.org/v3/index.json -k $(NuGetApiKey)
+    - stage: Stage_5
+      displayName: GitHub Packages Release
+      dependsOn: Stage_3
+      jobs:
+      - job: PreDeploymentApprovalJob
+        displayName: Pre-Deployment Approval
+        condition: succeeded()
+        timeoutInMinutes: 0
+        pool: server
+        steps:
+        - task: ManualValidation@1
+          inputs:
+            notifyUsers: |-
+              [TEAM FOUNDATION]\Code Sharing RM MGRS,
+              [1ES]\SBOM,
+              [1ES]\SBOM-EBOM
+            approvers: |-
+              [TEAM FOUNDATION]\Code Sharing RM MGRS,
+              [1ES]\SBOM,
+              [1ES]\SBOM-EBOM
+      - job: Job_1
+        displayName: Push nuget packages to GitHub Packages
+        dependsOn: PreDeploymentApprovalJob
+        condition: succeeded()
+        timeoutInMinutes: 0
+        templateContext:
+          inputs: ${{ parameters.commonInputs }}
+        steps:
+        - task: UseDotNet@2
+          displayName: Use .NET Core
+        - task: PowerShell@2
+          displayName: Push packages to GitHub Packages
+          inputs:
+            targetType: inline
+            script: dotnet nuget push "$(System.DefaultWorkingDirectory)\SBOMTool\SBOMTool\nuget\*.nupkg" -s https://nuget.pkg.github.com/microsoft -k $(GitHubApiKey)
