@@ -48,7 +48,7 @@ public class CGExternalDocumentReferenceProvider : EntityToJsonProviderBase<Scan
 
     public override bool IsSupported(ProviderType providerType)
     {
-        if (providerType == ProviderType.ExternalDocumentReference)
+        if (providerType == ProviderType.ExternalDocumentReference && Configuration.ManifestToolAction == ManifestToolActions.Generate)
         {
             Log.Debug($"Using the {nameof(CGExternalDocumentReferenceProvider)} provider for the external documents workflow.");
             return true;

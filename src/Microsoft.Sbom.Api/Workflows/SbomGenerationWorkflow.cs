@@ -192,11 +192,8 @@ public class SbomGenerationWorkflow : IWorkflow<SbomGenerationWorkflow>
         var packageGeneratorResult = await packageArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
         validErrors.AddRange(packageGeneratorResult.Errors);
 
-        if (configuration.ManifestToolAction == ManifestToolActions.Generate)
-        {
-            var externalDocumentReferenceGeneratorResult = await externalDocumentReferenceGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
-            validErrors.AddRange(externalDocumentReferenceGeneratorResult.Errors);
-        }
+        var externalDocumentReferenceGeneratorResult = await externalDocumentReferenceGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
+        validErrors.AddRange(externalDocumentReferenceGeneratorResult.Errors);
 
         var relationshipGeneratorResult = await relationshipsArrayGenerator.GenerateAsync(targetConfigs, elementsSpdxIdList);
         validErrors.AddRange(relationshipGeneratorResult.Errors);
