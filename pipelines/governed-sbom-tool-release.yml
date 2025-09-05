@@ -1,9 +1,5 @@
 # This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
-# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
-# This pipeline will be extended to the OneESPT template
-# The 'DownloadPipelineArtifact@2' tasks have been converted to inputs within the `templateContext` section of each job.
-# The Task 'DotNetCoreCLI@2' has been converted to a wrapper task named 'Push packages to ManifestTool feed'.
-# Job "Job_1" contains release tasks. Its type has been defined as 'releaseJob'.
+      # This pipeline will be extended to the OneESPT template
 trigger: none
 name: $(Date:yyyyMMdd).$(Rev:r)
 variables:
@@ -60,7 +56,7 @@ extends:
   parameters:
     pool:
       name: Azure Pipelines
-      image: windows-2022
+      image: windows-latest
       os: windows
     customBuildTags:
     - ES365AIMigrationTooling-Release
