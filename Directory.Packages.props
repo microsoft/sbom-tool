@@ -10,7 +10,7 @@
     <ComponentDetectionPackageVersion>5.2.19</ComponentDetectionPackageVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="AutoMapper" Version="10.1.1" />
+    <PackageVersion Include="AutoMapper" Version="15.0.1" />
     <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageVersion Include="Microsoft.Build" Version="17.11.4" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="17.11.4" />
