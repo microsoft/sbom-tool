@@ -90,8 +90,7 @@ public class FileHasher
         var output = Channel.CreateUnbounded<InternalSbomFileInfo>();
         var errors = Channel.CreateUnbounded<FileValidationResult>();
 
-#pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
-        Task.Run(async () =>
+        var task = Task.Run(async () =>
         {
             await foreach (var file in fileInfo.ReadAllAsync())
             {
@@ -100,7 +99,17 @@ public class FileHasher
 
             output.Writer.Complete();
             errors.Writer.Complete();
-        }).ConfigureAwait(false).GetAwaiter().GetResult();
+        });
+
+#pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
+        // Validation needs to be synchronous when aggregating, but this dramatically slows
+        // the validation workflow. The quick fix is to be synchronous only when aggregating.
+        // A better (but more expensive) fix would be to provide a way for the aggregation
+        // to wait for validation to complete before generating the aggregated manifest.
+        if (configuration.ManifestToolAction == ManifestToolActions.Aggregate)
+        {
+            task.ConfigureAwait(false).GetAwaiter().GetResult();
+        }
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
 
         return (output, errors);

@@ -24,6 +24,8 @@ public class SbomConfigFactoryTests
     private string cbCatFilePathStub = "cloud-build-cat-file-path";
     private string bsiFilePathStub = "bsi-file-path";
     private string cbBsiFilePathStub = "cloud-build-bsi-file-path";
+    private string bsiCoseFilePathStub = "bsi-cose-file-path";
+    private string manifestCoseFilePathStub = "manifest-cose-file-path";
     private ManifestInfo manifestInfoStub = Api.Utils.Constants.SPDX30ManifestInfo;
     private string manifestInfoStringStub = "spdx_3.0";
     private string manifestFileNameStub = "manifest.spdx.json";
@@ -86,6 +88,12 @@ public class SbomConfigFactoryTests
             .Setup(m => m.JoinPaths(spdxDirPathStub, Api.Utils.Constants.BsiFileName))
             .Returns(bsiFilePathStub);
         fileSystemUtilsMock
+            .Setup(m => m.JoinPaths(spdxDirPathStub, Api.Utils.Constants.BsiCoseFileName))
+            .Returns(bsiCoseFilePathStub);
+        fileSystemUtilsMock
+            .Setup(m => m.JoinPaths(spdxDirPathStub, Api.Utils.Constants.ManifestCoseFileName))
+            .Returns(manifestCoseFilePathStub);
+        fileSystemUtilsMock
             .Setup(m => m.FileExists($"{sbomFilePathStub}.sha256"))
             .Returns(true);
         metadataBuilderFactoryMock.Setup(m => m.Get(manifestInfoStub)).Returns(metadataBuilderStub);
@@ -114,6 +122,12 @@ public class SbomConfigFactoryTests
         fileSystemUtilsMock
             .Setup(m => m.JoinPaths(spdxDirPathStub, Api.Utils.Constants.BsiFileName))
             .Returns(bsiFilePathStub);
+        fileSystemUtilsMock
+            .Setup(m => m.JoinPaths(spdxDirPathStub, Api.Utils.Constants.BsiCoseFileName))
+            .Returns(bsiCoseFilePathStub);
+        fileSystemUtilsMock
+            .Setup(m => m.JoinPaths(spdxDirPathStub, Api.Utils.Constants.ManifestCoseFileName))
+            .Returns(manifestCoseFilePathStub);
         fileSystemUtilsMock
             .Setup(m => m.FileExists($"{sbomFilePathStub}.sha256"))
             .Returns(false);
