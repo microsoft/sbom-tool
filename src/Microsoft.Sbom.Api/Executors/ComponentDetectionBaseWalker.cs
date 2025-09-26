@@ -113,7 +113,7 @@ public abstract class ComponentDetectionBaseWalker
 
             var scanSettings = cliArgumentBuilder.BuildScanSettingsFromParsedArgs(cmdLineParams);
 
-            var scanResult = await componentDetector.ScanAsync(scanSettings) as DefaultGraphScanResult;
+            var scanResult = await componentDetector.ScanAsync(scanSettings);
 
             if (scanResult.ResultCode != ProcessingResultCode.Success)
             {
@@ -123,20 +123,21 @@ public abstract class ComponentDetectionBaseWalker
 
             var uniqueComponents = FilterScannedComponents(scanResult);
 
-            // Collect all explicitly referenced component IDs from all dependency graphs
-            var explicitComponentIds = new HashSet<string>();
-
-            if (scanResult.DependencyGraphs != null)
+            var defaultGraphScanResult = scanResult as DefaultGraphScanResult;
+            if (defaultGraphScanResult != null && defaultGraphScanResult.DependencyGraphs != null)
             {
-                foreach (var dependencyGraphPair in scanResult.DependencyGraphs)
+                // Collect all explicitly referenced component IDs from all dependency graphs
+                var explicitComponentIds = new HashSet<string>();
+
+                foreach (var dependencyGraphPair in defaultGraphScanResult.DependencyGraphs)
                 {
                     var dependencyGraph = dependencyGraphPair.Value;
                     explicitComponentIds.UnionWith(dependencyGraph.ExplicitlyReferencedComponentIds);
                 }
-            }
 
-            var explicitlyReferencedComponents = uniqueComponents
+                uniqueComponents = uniqueComponents
                 .Where(component => explicitComponentIds.Contains(component.Component.Id));
+            }
 
             if (configuration.EnablePackageMetadataParsing?.Value == true)
             {
@@ -177,7 +178,7 @@ public abstract class ComponentDetectionBaseWalker
             }
 
             // Converts every ScannedComponent into an ExtendedScannedComponent and attempts to add license information before writing to the channel.
-            foreach (var scannedComponent in explicitlyReferencedComponents)
+            foreach (var scannedComponent in uniqueComponents)
             {
                 var componentName = scannedComponent.Component.PackageUrl?.Name;
                 var componentVersion = scannedComponent.Component.PackageUrl?.Version;
