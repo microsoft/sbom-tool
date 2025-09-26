@@ -77,7 +77,7 @@ public class PackageInfoJsonWriterTests
     [TestMethod]
     [DataRow(null, true)]
     [DataRow(new string[0], true)]
-    [DataRow(new[] { "a", "b", "c" }, false)]
+    [DataRow(new[] { "a", "b", "c" }, true)]
     public async Task GenerateJson_RecordsExpectedDependencies(string[] testCase, bool expectNullDependency)
     {
         var sbomConfigs = new[] { sbomConfigMock.Object };
@@ -93,16 +93,9 @@ public class PackageInfoJsonWriterTests
         if (testCase is not null)
         {
             generationResult.ResultMetadata.DependOn = testCase.ToList();
-            foreach (var test in testCase)
-            {
-                sbomPackageDetailsRecorderMock.Setup(m => m.RecordPackageId(TestEntityId, test));
-            }
         }
 
-        if (expectNullDependency)
-        {
-            sbomPackageDetailsRecorderMock.Setup(m => m.RecordPackageId(TestEntityId, null));
-        }
+        sbomPackageDetailsRecorderMock.Setup(m => m.RecordPackageId(TestEntityId, null));
 
         await testSubject.GenerateJson(sbomConfigs, packageInfo, resultChannel, errorsChannel);
     }

@@ -123,6 +123,22 @@ public abstract class ComponentDetectionBaseWalker
 
             var uniqueComponents = FilterScannedComponents(scanResult);
 
+            var defaultGraphScanResult = scanResult as DefaultGraphScanResult;
+            if (defaultGraphScanResult != null && defaultGraphScanResult.DependencyGraphs != null)
+            {
+                // Collect all explicitly referenced component IDs from all dependency graphs
+                var explicitComponentIds = new HashSet<string>();
+
+                foreach (var dependencyGraphPair in defaultGraphScanResult.DependencyGraphs)
+                {
+                    var dependencyGraph = dependencyGraphPair.Value;
+                    explicitComponentIds.UnionWith(dependencyGraph.ExplicitlyReferencedComponentIds);
+                }
+
+                uniqueComponents = uniqueComponents
+                .Where(component => explicitComponentIds.Contains(component.Component.Id));
+            }
+
             if (configuration.EnablePackageMetadataParsing?.Value == true)
             {
                 if (uniqueComponents.Any())
