@@ -113,7 +113,7 @@ public abstract class ComponentDetectionBaseWalker
 
             var scanSettings = cliArgumentBuilder.BuildScanSettingsFromParsedArgs(cmdLineParams);
 
-            var scanResult = await componentDetector.ScanAsync(scanSettings);
+            var scanResult = await componentDetector.ScanAsync(scanSettings) as DefaultGraphScanResult;
 
             if (scanResult.ResultCode != ProcessingResultCode.Success)
             {
@@ -122,6 +122,21 @@ public abstract class ComponentDetectionBaseWalker
             }
 
             var uniqueComponents = FilterScannedComponents(scanResult);
+
+            // Collect all explicitly referenced component IDs from all dependency graphs
+            var explicitComponentIds = new HashSet<string>();
+
+            if (scanResult.DependencyGraphs != null)
+            {
+                foreach (var dependencyGraphPair in scanResult.DependencyGraphs)
+                {
+                    var dependencyGraph = dependencyGraphPair.Value;
+                    explicitComponentIds.UnionWith(dependencyGraph.ExplicitlyReferencedComponentIds);
+                }
+            }
+
+            var explicitlyReferencedComponents = uniqueComponents
+                .Where(component => explicitComponentIds.Contains(component.Component.Id));
 
             if (configuration.EnablePackageMetadataParsing?.Value == true)
             {
@@ -162,7 +177,7 @@ public abstract class ComponentDetectionBaseWalker
             }
 
             // Converts every ScannedComponent into an ExtendedScannedComponent and attempts to add license information before writing to the channel.
-            foreach (var scannedComponent in uniqueComponents)
+            foreach (var scannedComponent in explicitlyReferencedComponents)
             {
                 var componentName = scannedComponent.Component.PackageUrl?.Name;
                 var componentVersion = scannedComponent.Component.PackageUrl?.Version;

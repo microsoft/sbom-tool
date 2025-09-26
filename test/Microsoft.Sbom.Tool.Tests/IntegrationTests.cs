@@ -178,6 +178,27 @@ public class IntegrationTests
     }
 
     [TestMethod]
+    public void E2E_GenerateManifest_GeneratesNoTransitivePackagesAndDeps_ReturnsZeroExitCode()
+    {
+        if (!IsWindows)
+        {
+            Assert.Inconclusive("This test is not (yet) supported on non-Windows platforms.");
+            return;
+        }
+
+        var testFolderPath = CreateTestFolder();
+        GenerateManifestAndValidateSuccess(testFolderPath);
+
+        var originalManifestFolderPath = AppendFullManifestFolderPath(testFolderPath);
+        var originalManifestFilePath = Path.Combine(AppendFullManifestFolderPath(testFolderPath), ManifestFileName);
+
+        var jsonElement = ReadJsonFile(originalManifestFilePath);
+        var packages = jsonElement.GetProperty("packages");
+        var relationships = jsonElement.GetProperty("relationships");
+        Assert.AreEqual(relationships.GetArrayLength(), packages.GetArrayLength() + 1, "The number of relationships should equal the number of packages + 1, indicating only direct package dependencies are recorded. 1 is added because there is a default DESCRIBES relationship.");
+    }
+
+    [TestMethod]
     public void E2E_GenerateAndRedactManifest_RedactedFileIsSmaller_ReturnsZeroExitCode()
     {
         if (!IsWindows)
