@@ -123,21 +123,7 @@ public abstract class ComponentDetectionBaseWalker
 
             var uniqueComponents = FilterScannedComponents(scanResult);
 
-            var defaultGraphScanResult = scanResult as DefaultGraphScanResult;
-            if (defaultGraphScanResult != null && defaultGraphScanResult.DependencyGraphs != null)
-            {
-                // Collect all explicitly referenced component IDs from all dependency graphs
-                var explicitComponentIds = new HashSet<string>();
-
-                foreach (var dependencyGraphPair in defaultGraphScanResult.DependencyGraphs)
-                {
-                    var dependencyGraph = dependencyGraphPair.Value;
-                    explicitComponentIds.UnionWith(dependencyGraph.ExplicitlyReferencedComponentIds);
-                }
-
-                uniqueComponents = uniqueComponents
-                .Where(component => explicitComponentIds.Contains(component.Component.Id));
-            }
+            uniqueComponents = ProcessDependencyGraphs(scanResult, uniqueComponents);
 
             if (configuration.EnablePackageMetadataParsing?.Value == true)
             {
@@ -233,4 +219,30 @@ public abstract class ComponentDetectionBaseWalker
     }
 
     protected abstract IEnumerable<ScannedComponent> FilterScannedComponents(ScanResult result);
+
+    /// <summary>
+    /// Processes dependency graphs to filter components based on explicitly referenced component IDs.
+    /// </summary>
+    /// <param name="scanResult">The scan result from component detection.</param>
+    /// <param name="uniqueComponents">The collection of unique components to filter.</param>
+    /// <returns>Filtered collection of components that are explicitly referenced in dependency graphs.</returns>
+    private IEnumerable<ScannedComponent> ProcessDependencyGraphs(ScanResult scanResult, IEnumerable<ScannedComponent> uniqueComponents)
+    {
+        var defaultGraphScanResult = scanResult as DefaultGraphScanResult;
+        if (defaultGraphScanResult != null && defaultGraphScanResult.DependencyGraphs != null)
+        {
+            // Collect all explicitly referenced component IDs from all dependency graphs
+            var explicitComponentIds = new HashSet<string>();
+
+            foreach (var dependencyGraphPair in defaultGraphScanResult.DependencyGraphs)
+            {
+                var dependencyGraph = dependencyGraphPair.Value;
+                explicitComponentIds.UnionWith(dependencyGraph.ExplicitlyReferencedComponentIds);
+            }
+
+            return uniqueComponents.Where(component => explicitComponentIds.Contains(component.Component.Id));
+        }
+
+        return uniqueComponents;
+    }
 }
