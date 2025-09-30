@@ -3,7 +3,6 @@
 
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
 
-using System.Linq;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
 
@@ -31,6 +30,6 @@ internal static class PodComponentExtensions
         },
         FilesAnalyzed = false,
         Type = "pod",
-        DependOn = component.AncestralReferrers?.Select(r => r.Id).ToList(),
+        DependOn = null
     };
 }

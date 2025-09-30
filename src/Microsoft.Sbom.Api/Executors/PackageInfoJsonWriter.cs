@@ -67,22 +67,21 @@ public class PackageInfoJsonWriter
                 var generationResult =
                     manifestGeneratorProvider.Get(sbomConfig.ManifestInfo).GenerateJsonDocument(packageInfo);
 
-                //var recordedAnyDependencies = false;
+                var recordedAnyDependencies = false;
 
-                //if (generationResult?.ResultMetadata?.DependOn != null)
-                //{
-                //    foreach (var dependency in generationResult?.ResultMetadata?.DependOn)
-                //    {
-                //        sbomConfig.Recorder.RecordPackageId(generationResult?.ResultMetadata?.EntityId, dependency);
-                //        recordedAnyDependencies = true;
-                //    }
-                //}
+                if (generationResult?.ResultMetadata?.DependOn != null)
+                {
+                    foreach (var dependency in generationResult?.ResultMetadata?.DependOn)
+                    {
+                        sbomConfig.Recorder.RecordPackageId(generationResult?.ResultMetadata?.EntityId, dependency);
+                        recordedAnyDependencies = true;
+                    }
+                }
 
-                //if (!recordedAnyDependencies)
-                //{
-                //}
-
-                sbomConfig.Recorder.RecordPackageId(generationResult?.ResultMetadata?.EntityId, null);
+                if (!recordedAnyDependencies)
+                {
+                    sbomConfig.Recorder.RecordPackageId(generationResult?.ResultMetadata?.EntityId, null);
+                }
 
                 await result.Writer.WriteAsync((generationResult?.Document, sbomConfig.JsonSerializer));
             }
