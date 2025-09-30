@@ -77,7 +77,7 @@ public class PackageInfoJsonWriterTests
     [TestMethod]
     [DataRow(null, true)]
     [DataRow(new string[0], true)]
-    [DataRow(new[] { "a", "b", "c" }, true)]
+    [DataRow(new[] { "a", "b", "c" }, false)]
     public async Task GenerateJson_RecordsExpectedDependencies(string[] testCase, bool expectNullDependency)
     {
         var sbomConfigs = new[] { sbomConfigMock.Object };
@@ -89,13 +89,19 @@ public class PackageInfoJsonWriterTests
         };
         var resultChannel = Channel.CreateUnbounded<JsonDocWithSerializer>();
         var errorsChannel = Channel.CreateUnbounded<FileValidationResult>();
-
         if (testCase is not null)
         {
             generationResult.ResultMetadata.DependOn = testCase.ToList();
+            foreach (var test in testCase)
+            {
+                sbomPackageDetailsRecorderMock.Setup(m => m.RecordPackageId(TestEntityId, test));
+            }
         }
 
-        sbomPackageDetailsRecorderMock.Setup(m => m.RecordPackageId(TestEntityId, null));
+        if (expectNullDependency)
+        {
+            sbomPackageDetailsRecorderMock.Setup(m => m.RecordPackageId(TestEntityId, null));
+        }
 
         await testSubject.GenerateJson(sbomConfigs, packageInfo, resultChannel, errorsChannel);
     }
