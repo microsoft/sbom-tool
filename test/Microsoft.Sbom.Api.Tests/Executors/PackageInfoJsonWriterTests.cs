@@ -87,6 +87,7 @@ public class PackageInfoJsonWriterTests
             PackageVersion = "1.0.0",
             PackageUrl = "pkg:example/testpackage@1.0.0"
         };
+
         var resultChannel = Channel.CreateUnbounded<JsonDocWithSerializer>();
         var errorsChannel = Channel.CreateUnbounded<FileValidationResult>();
         if (testCase is not null)
