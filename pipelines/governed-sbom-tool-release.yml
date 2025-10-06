@@ -7,40 +7,6 @@ variables:
   value: 
 - name: NuGetApiKey
   value:
-parameters:
-  inputsForStages:
-    - input: pipelineArtifact
-      pipeline: 'SBOMTool'
-      artifactName: 'SBOMTool-GitHub-macOS'
-      targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
-    - input: pipelineArtifact
-      pipeline: 'SBOMTool'
-      artifactName: 'SBOMTool-macOS'
-      targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
-    - input: pipelineArtifact
-      pipeline: 'SBOMTool'
-      artifactName: 'SBOMTool-GitHub-macOS-arm64'
-      targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
-    - input: pipelineArtifact
-      pipeline: 'SBOMTool'
-      artifactName: 'SBOMTool-macOS-arm64'
-      targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
-    - input: pipelineArtifact
-      pipeline: 'SBOMTool'
-      artifactName: 'SBOMTool-GitHub-linux'
-      targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
-    - input: pipelineArtifact
-      pipeline: 'SBOMTool'
-      artifactName: 'SBOMTool-linux'
-      targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
-    - input: pipelineArtifact
-      pipeline: 'SBOMTool'
-      artifactName: 'SBOMTool-GitHub'
-      targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
-    - input: pipelineArtifact
-      pipeline: 'SBOMTool'
-      artifactName: 'SBOMTool'
-      targetPath: '$(Pipeline.Workspace)/SBOMTool'
 resources:
   pipelines:
   - pipeline: 'SBOMTool'
@@ -69,7 +35,39 @@ extends:
         condition: succeeded()
         timeoutInMinutes: 0
         templateContext:
-          inputs: ${{ parameters.commonInputs }}
+          inputs:
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool'
         steps:
         - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
           displayName: 'Drop Validator '
@@ -84,7 +82,39 @@ extends:
         condition: succeeded()
         timeoutInMinutes: 0
         templateContext:
-          inputs: ${{ parameters.commonInputs }}
+          inputs:
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool'
         steps:
         - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
           displayName: 'Drop Validator '
@@ -98,7 +128,39 @@ extends:
         condition: succeeded()
         timeoutInMinutes: 0
         templateContext:
-          inputs: ${{ parameters.commonInputs }}
+          inputs:
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool'
         steps:
         - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
           displayName: 'Drop Validator '
@@ -133,7 +195,39 @@ extends:
         condition: succeeded()
         timeoutInMinutes: 0
         templateContext:
-          inputs: ${{ parameters.commonInputs }}
+          inputs:
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool'
         steps:
         - task: NuGetAuthenticate@1
           displayName: NuGet Authenticate
@@ -174,7 +268,39 @@ extends:
         templateContext:
           type: releaseJob
           isProduction: true
-          inputs: ${{ parameters.commonInputs }}
+          inputs:
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool'
         steps:
         - task: PowerShell@2
           name: SBOMToolVersion
@@ -232,7 +358,39 @@ extends:
         condition: succeeded()
         timeoutInMinutes: 0
         templateContext:
-          inputs: ${{ parameters.commonInputs }}
+          inputs:
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool'
         steps:
         - task: UseDotNet@2
           displayName: Use .NET Core
@@ -268,7 +426,39 @@ extends:
         condition: succeeded()
         timeoutInMinutes: 0
         templateContext:
-          inputs: ${{ parameters.commonInputs }}
+          inputs:
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS-arm64'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-linux'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool'
+              targetPath: '$(Pipeline.Workspace)/SBOMTool'
         steps:
         - task: UseDotNet@2
           displayName: Use .NET Core
