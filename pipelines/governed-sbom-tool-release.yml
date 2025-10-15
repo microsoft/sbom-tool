@@ -22,7 +22,6 @@ extends:
   parameters:
     pool:
       name: sbom-windows-build-pool
-      image: windows-latest
       os: windows
     customBuildTags:
     - ES365AIMigrationTooling-Release
