@@ -30,7 +30,7 @@ extends:
       displayName: Validate Drop
       jobs:
       - job: Job_1
-        displayName: Windows
+        displayName: Validate Windows Manifest
         condition: succeeded()
         timeoutInMinutes: 0
         templateContext:
