@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Text.Json" />
     <ProjectReference Include="..\..\src\Microsoft.Sbom.Adapters\Microsoft.Sbom.Adapters.csproj" />
   </ItemGroup>
 
