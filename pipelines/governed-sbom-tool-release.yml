@@ -38,35 +38,35 @@ extends:
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool'
         steps:
         - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
           displayName: 'Drop Validator '
@@ -85,35 +85,35 @@ extends:
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool'
         steps:
         - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
           displayName: 'Drop Validator '
@@ -131,35 +131,35 @@ extends:
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool'
         steps:
         - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
           displayName: 'Drop Validator '
@@ -198,35 +198,35 @@ extends:
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool'
         steps:
         - task: NuGetAuthenticate@1
           displayName: NuGet Authenticate
@@ -271,35 +271,35 @@ extends:
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool'
         steps:
         - task: PowerShell@2
           name: SBOMToolVersion
@@ -361,35 +361,35 @@ extends:
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool'
         steps:
         - task: UseDotNet@2
           displayName: Use .NET Core
@@ -429,35 +429,35 @@ extends:
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-macOS-arm64'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS-arm64'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-linux'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-linux'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool-GitHub'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool-GitHub'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub'
             - input: pipelineArtifact
               pipeline: 'SBOMTool'
               artifactName: 'SBOMTool'
-              targetPath: '$(Pipeline.Workspace)/SBOMTool'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool'
         steps:
         - task: UseDotNet@2
           displayName: Use .NET Core
