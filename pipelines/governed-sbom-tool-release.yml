@@ -71,9 +71,9 @@ extends:
         - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
           displayName: 'Drop Validator '
           inputs:
-            BuildDropPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool
-            ManifestDirPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool/_manifest
-            OutputPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool/bin/win-x64-validation-output.json
+            BuildDropPath: $(System.DefaultWorkingDirectory)/SBOMTool
+            ManifestDirPath: $(System.DefaultWorkingDirectory)/SBOMTool/_manifest
+            OutputPath: $(System.DefaultWorkingDirectory)/SBOMTool/bin/win-x64-validation-output.json
             ValidateSignature: false
             Verbosity: Verbose
       - job: Job_2
