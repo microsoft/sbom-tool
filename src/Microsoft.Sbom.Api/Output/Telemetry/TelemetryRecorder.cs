@@ -122,6 +122,8 @@ public class TelemetryRecorder : IRecorder
 
     public IList<FileValidationResult> Errors => errors;
 
+    public Result Result => result;
+
     /// <summary>
     /// Start recording the duration of exeuction of the given event.
     /// </summary>

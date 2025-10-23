@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Entities;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Extensions.Entities;
 
 namespace Microsoft.Sbom.Api.Output.Telemetry;
@@ -100,4 +101,9 @@ public interface IRecorder
     /// Record telemetry for an AggregationSource.
     /// </summary>
     public void RecordAggregationSource(string identifier, int packageCount, int relationshipCount);
+
+    /// <summary>
+    /// Gets the result status of the recorder execution.
+    /// </summary>
+    public Result Result { get; }
 }
