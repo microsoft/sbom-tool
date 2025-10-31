@@ -20,5 +20,6 @@
   
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="System.Text.Json" VersionOverride="9.0.10" />
   </ItemGroup>
 </Project>
