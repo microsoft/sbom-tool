@@ -308,7 +308,7 @@ extends:
           inputs:
             targetType: inline
             script: |-
-              $version = Get-Content -Path $(System.DefaultWorkingDirectory)\SBOMTool\SBOMTool\version.txt
+              $version = Get-Content -Path $(System.DefaultWorkingDirectory)\SBOMTool\version.txt
               echo "##vso[task.setvariable variable=Version;isOutput=true]v$version"
         - task: PowerShell@2
           displayName: Rename manifests
