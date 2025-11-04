@@ -71,9 +71,9 @@ extends:
         - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
           displayName: 'Drop Validator '
           inputs:
-            BuildDropPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool
-            ManifestDirPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool/_manifest
-            OutputPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool/bin/win-x64-validation-output.json
+            BuildDropPath: $(System.DefaultWorkingDirectory)/SBOMTool
+            ManifestDirPath: $(System.DefaultWorkingDirectory)/SBOMTool/_manifest
+            OutputPath: $(System.DefaultWorkingDirectory)/SBOMTool/bin/win-x64-validation-output.json
             ValidateSignature: false
             Verbosity: Verbose
       - job: Job_2
@@ -118,9 +118,9 @@ extends:
         - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
           displayName: 'Drop Validator '
           inputs:
-            BuildDropPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-linux
-            ManifestDirPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-linux/_manifest
-            OutputPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-linux/bin/linux-x64-validation-output.json
+            BuildDropPath: $(System.DefaultWorkingDirectory)/SBOMTool-linux
+            ManifestDirPath: $(System.DefaultWorkingDirectory)/SBOMTool-linux/_manifest
+            OutputPath: $(System.DefaultWorkingDirectory)/SBOMTool-linux/bin/linux-x64-validation-output.json
             ValidateSignature: false
       - job: Job_3
         displayName: Validate OSX Manifest
@@ -164,9 +164,9 @@ extends:
         - task: AzureArtifacts.drop-validator-task.drop-validator-task.DropValidatorTask@0
           displayName: 'Drop Validator '
           inputs:
-            BuildDropPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-macOS
-            ManifestDirPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-macOS/_manifest
-            OutputPath: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-macOS/bin/osx-x64-validation-output.json
+            BuildDropPath: $(System.DefaultWorkingDirectory)/SBOMTool-macOS
+            ManifestDirPath: $(System.DefaultWorkingDirectory)/SBOMTool-macOS/_manifest
+            OutputPath: $(System.DefaultWorkingDirectory)/SBOMTool-macOS/bin/osx-x64-validation-output.json
             ValidateSignature: false
     - stage: Stage_2
       displayName: Push NuGet (private feeds)
