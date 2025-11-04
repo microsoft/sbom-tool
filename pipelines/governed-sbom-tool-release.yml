@@ -21,8 +21,7 @@ extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
     pool:
-      name: Azure Pipelines
-      image: windows-latest
+      name: sbom-windows-pool
       os: windows
     customBuildTags:
     - ES365AIMigrationTooling-Release
