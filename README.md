@@ -1,5 +1,7 @@
 # SBOM Tool
 
+testing pr, do not merge
+
 ![GitHub all releases](https://img.shields.io/github/downloads/microsoft/sbom-tool/total)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/microsoft/sbom-tool?include_prereleases)
 
