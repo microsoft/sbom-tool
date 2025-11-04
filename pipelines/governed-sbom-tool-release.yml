@@ -141,10 +141,10 @@ extends:
           displayName: 'Push packages to ManifestTool feed'
           inputs:
             useDotNetTask: true
-            packageParentPath: '$(Build.ArtifactStagingDirectory)'
+            packageParentPath: $(System.DefaultWorkingDirectory)
             verbosityRestore: Detailed
-            packagesToPush: $(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool/nuget/*.nupkg
-            feedPublish: b924d696-3eae-4116-8443-9a18392d8544/aad7f774-e7ee-4d83-8795-c0280419adf3
+            packagesToPush: $(System.DefaultWorkingDirectory)/SbomToolkit/nuget/*.nupkg
+            publishVstsFeed: ManifestTool
             verbosityPack: Detailed
     - stage: Stage_3
       displayName: GitHub Release
@@ -204,8 +204,7 @@ extends:
               $(System.DefaultWorkingDirectory)\**\bin\**
               $(System.DefaultWorkingDirectory)\**\SBOMTool-GitHub*\\**\*-manifest.spdx.json
             assetUploadMode: replace
-            isDraft: true
-            addChangeLog: false
+            addChangeLog: true
     - stage: Stage_4
       displayName: Push to NuGet.org
       dependsOn: Stage_2
