@@ -235,7 +235,7 @@ extends:
           inputs:
             packageParentPath: '$(System.DefaultWorkingDirectory)'
             verbosityRestore: Detailed
-            packagesToPush: $(System.DefaultWorkingDirectory)/SbomToolkit/nuget/*.nupkg
+            packagesToPush: $(System.DefaultWorkingDirectory)/SBOMTool/nuget/*.nupkg
             publishVstsFeed: b924d696-3eae-4116-8443-9a18392d8544/04a1a8f3-4f6c-7f2c-b0e7-2911591fdcc6
             nugetFeedType: external
             verbosityPack: Detailed
@@ -314,7 +314,7 @@ extends:
           inputs:
             targetType: inline
             script: |-
-              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-GitHub-macOS/_manifest/spdx_2.2/manifest.spdx.json" -NewName "osx-x64-manifest.spdx.json"
+              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS/_manifest/spdx_2.2/manifest.spdx.json" -NewName "osx-x64-manifest.spdx.json"
               Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-GitHub-macOS-arm64/_manifest/spdx_2.2/manifest.spdx.json" -NewName "osx-arm64-manifest.spdx.json"
               Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-GitHub-linux/_manifest/spdx_2.2/manifest.spdx.json" -NewName "linux-x64-manifest.spdx.json"
               Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool/SBOMTool-GitHub/_manifest/spdx_2.2/manifest.spdx.json" -NewName "win-x64-manifest.spdx.json"
