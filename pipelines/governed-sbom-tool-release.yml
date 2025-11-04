@@ -144,7 +144,7 @@ extends:
             packageParentPath: $(System.DefaultWorkingDirectory)
             verbosityRestore: Detailed
             packagesToPush: $(System.DefaultWorkingDirectory)/SbomToolkit/nuget/*.nupkg
-            publishVstsFeed: ManifestTool
+            publishVstsFeed:  b924d696-3eae-4116-8443-9a18392d8544/04a1a8f3-4f6c-7f2c-b0e7-2911591fdcc6
             verbosityPack: Detailed
     - stage: Stage_3
       displayName: GitHub Release
