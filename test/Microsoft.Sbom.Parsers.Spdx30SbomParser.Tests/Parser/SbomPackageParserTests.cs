@@ -15,8 +15,8 @@ namespace Microsoft.Sbom.Parser;
 public class SbomPackageParserTests : SbomParserTestsBase
 {
     [TestMethod]
-    [DataRow(SbomFullDocWithPackagesStrings.SbomPackageWithMissingNameJsonString, "was missing required properties including: 'name'")]
-    [DataRow(SbomFullDocWithPackagesStrings.SbomPackageWithMissingSpdxIdJsonString, "was missing required properties including: 'spdxId'")]
+    [DataRow(SbomFullDocWithPackagesStrings.SbomPackageWithMissingNameJsonString, "was missing required properties, including the following: name")]
+    [DataRow(SbomFullDocWithPackagesStrings.SbomPackageWithMissingSpdxIdJsonString, "was missing required properties, including the following: spdxId")]
     public void MissingPropertiesTest_SPDX_Throws(string json, string expectedMessage)
     {
         var bytes = Encoding.UTF8.GetBytes(json);
