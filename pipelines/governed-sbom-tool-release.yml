@@ -26,6 +26,106 @@ extends:
     customBuildTags:
     - ES365AIMigrationTooling-Release
     stages:
+    - stage: Stage_3
+      displayName: GitHub Release
+      dependsOn: Stage_2
+      jobs:
+      - job: PreDeploymentApprovalJob
+        displayName: Pre-Deployment Approval
+        condition: succeeded()
+        timeoutInMinutes: 0
+        pool: server
+        steps:
+        - task: ManualValidation@1
+          inputs:
+            notifyUsers: |-
+              [TEAM FOUNDATION]\Code Sharing RM MGRS,
+              [1ES]\SBOM,
+              [1ES]\SBOM-EBOM
+            approvers: |-
+              [TEAM FOUNDATION]\Code Sharing RM MGRS,
+              [1ES]\SBOM,
+              [1ES]\SBOM-EBOM
+      - job: Job_1
+        displayName: Release on GitHub
+        dependsOn: PreDeploymentApprovalJob
+        condition: succeeded()
+        timeoutInMinutes: 0
+        templateContext:
+          type: releaseJob
+          isProduction: true
+          inputs:
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-macOS-arm64'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS-arm64'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-linux'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-linux'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool-GitHub'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub'
+            - input: pipelineArtifact
+              pipeline: 'SBOMTool'
+              artifactName: 'SBOMTool'
+              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool'
+        steps:
+        - task: PowerShell@2
+          name: SBOMToolVersion
+          displayName: Get current tag version
+          inputs:
+            targetType: inline
+            script: |-
+              $versionFilePath = "$(System.DefaultWorkingDirectory)\SBOMTool\version.txt"
+              
+              if (Test-Path $versionFilePath) {
+                $version = Get-Content -Path $versionFilePath
+                Write-Host "Version read from file: $version"
+                Write-Host "##vso[task.setvariable variable=Version;isOutput=true]v$version"
+              } else {
+                Write-Host "##vso[task.logissue type=error]version.txt not found at $versionFilePath"
+                Write-Host "Listing contents of SBOMTool directory:"
+                Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\SBOMTool" -Recurse | Select-Object FullName | ForEach-Object { Write-Host $_.FullName }
+                exit 1
+              }
+        - task: PowerShell@2
+          displayName: Rename manifests
+          inputs:
+            targetType: inline
+            script: |-
+              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS/_manifest/spdx_2.2/manifest.spdx.json" -NewName "osx-x64-manifest.spdx.json"
+              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS-arm64/_manifest/spdx_2.2/manifest.spdx.json" -NewName "osx-arm64-manifest.spdx.json"
+              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-linux/_manifest/spdx_2.2/manifest.spdx.json" -NewName "linux-x64-manifest.spdx.json"
+              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool-GitHub/_manifest/spdx_2.2/manifest.spdx.json" -NewName "win-x64-manifest.spdx.json"
+        - task: GitHubRelease@1
+          displayName: Upload assets to GitHub Release
+          inputs:
+            gitHubConnection: SBOM GitHub
+            action: edit
+            tag: $(SBOMToolVersion.Version)
+            releaseNotesSource: inline
+            assets: |-
+              $(System.DefaultWorkingDirectory)\**\bin\**
+              $(System.DefaultWorkingDirectory)\**\SBOMTool-GitHub*\**\*-manifest.spdx.json
+            addChangeLog: true
     - stage: Stage_1
       displayName: Validate Drop
       jobs:
@@ -240,106 +340,7 @@ extends:
             allowPackageConflicts: true
             nugetFeedType: external
             verbosityPack: Detailed
-    - stage: Stage_3
-      displayName: GitHub Release
-      dependsOn: Stage_2
-      jobs:
-      - job: PreDeploymentApprovalJob
-        displayName: Pre-Deployment Approval
-        condition: succeeded()
-        timeoutInMinutes: 0
-        pool: server
-        steps:
-        - task: ManualValidation@1
-          inputs:
-            notifyUsers: |-
-              [TEAM FOUNDATION]\Code Sharing RM MGRS,
-              [1ES]\SBOM,
-              [1ES]\SBOM-EBOM
-            approvers: |-
-              [TEAM FOUNDATION]\Code Sharing RM MGRS,
-              [1ES]\SBOM,
-              [1ES]\SBOM-EBOM
-      - job: Job_1
-        displayName: Release on GitHub
-        dependsOn: PreDeploymentApprovalJob
-        condition: succeeded()
-        timeoutInMinutes: 0
-        templateContext:
-          type: releaseJob
-          isProduction: true
-          inputs:
-            - input: pipelineArtifact
-              pipeline: 'SBOMTool'
-              artifactName: 'SBOMTool-GitHub-macOS'
-              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS'
-            - input: pipelineArtifact
-              pipeline: 'SBOMTool'
-              artifactName: 'SBOMTool-macOS'
-              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS'
-            - input: pipelineArtifact
-              pipeline: 'SBOMTool'
-              artifactName: 'SBOMTool-GitHub-macOS-arm64'
-              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS-arm64'
-            - input: pipelineArtifact
-              pipeline: 'SBOMTool'
-              artifactName: 'SBOMTool-macOS-arm64'
-              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-macOS-arm64'
-            - input: pipelineArtifact
-              pipeline: 'SBOMTool'
-              artifactName: 'SBOMTool-GitHub-linux'
-              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-linux'
-            - input: pipelineArtifact
-              pipeline: 'SBOMTool'
-              artifactName: 'SBOMTool-linux'
-              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-linux'
-            - input: pipelineArtifact
-              pipeline: 'SBOMTool'
-              artifactName: 'SBOMTool-GitHub'
-              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool-GitHub'
-            - input: pipelineArtifact
-              pipeline: 'SBOMTool'
-              artifactName: 'SBOMTool'
-              targetPath: '$(System.DefaultWorkingDirectory)/SBOMTool'
-        steps:
-        - task: PowerShell@2
-          name: SBOMToolVersion
-          displayName: Get current tag version
-          inputs:
-            targetType: inline
-            script: |-
-              $versionFilePath = "$(System.DefaultWorkingDirectory)\SBOMTool\version.txt"
-              
-              if (Test-Path $versionFilePath) {
-                $version = Get-Content -Path $versionFilePath
-                Write-Host "Version read from file: $version"
-                Write-Host "##vso[task.setvariable variable=Version;isOutput=true]v$version"
-              } else {
-                Write-Host "##vso[task.logissue type=error]version.txt not found at $versionFilePath"
-                Write-Host "Listing contents of SBOMTool directory:"
-                Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\SBOMTool" -Recurse | Select-Object FullName | ForEach-Object { Write-Host $_.FullName }
-                exit 1
-              }
-        - task: PowerShell@2
-          displayName: Rename manifests
-          inputs:
-            targetType: inline
-            script: |-
-              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS/_manifest/spdx_2.2/manifest.spdx.json" -NewName "osx-x64-manifest.spdx.json"
-              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS-arm64/_manifest/spdx_2.2/manifest.spdx.json" -NewName "osx-arm64-manifest.spdx.json"
-              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-linux/_manifest/spdx_2.2/manifest.spdx.json" -NewName "linux-x64-manifest.spdx.json"
-              Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool-GitHub/_manifest/spdx_2.2/manifest.spdx.json" -NewName "win-x64-manifest.spdx.json"
-        - task: GitHubRelease@1
-          displayName: Upload assets to GitHub Release
-          inputs:
-            gitHubConnection: SBOM GitHub
-            action: edit
-            tag: $(SBOMToolVersion.Version)
-            releaseNotesSource: inline
-            assets: |-
-              $(System.DefaultWorkingDirectory)\**\bin\**
-              $(System.DefaultWorkingDirectory)\**\SBOMTool-GitHub*\**\*-manifest.spdx.json
-            addChangeLog: true
+    
     - stage: Stage_4
       displayName: Push to NuGet.org
       dependsOn: Stage_2
