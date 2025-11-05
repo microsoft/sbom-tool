@@ -308,8 +308,18 @@ extends:
           inputs:
             targetType: inline
             script: |-
-              $version = Get-Content -Path $(System.DefaultWorkingDirectory)\SBOMTool\version.txt
-              echo "##vso[task.setvariable variable=Version;isOutput=true]v$version"
+              $versionFilePath = "$(System.DefaultWorkingDirectory)\SBOMTool\version.txt"
+              
+              if (Test-Path $versionFilePath) {
+                $version = Get-Content -Path $versionFilePath
+                Write-Host "Version read from file: $version"
+                Write-Host "##vso[task.setvariable variable=Version;isOutput=true]v$version"
+              } else {
+                Write-Host "##vso[task.logissue type=error]version.txt not found at $versionFilePath"
+                Write-Host "Listing contents of SBOMTool directory:"
+                Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\SBOMTool" -Recurse | Select-Object FullName | ForEach-Object { Write-Host $_.FullName }
+                exit 1
+              }
         - task: PowerShell@2
           displayName: Rename manifests
           inputs:
@@ -323,13 +333,12 @@ extends:
           displayName: Upload assets to GitHub Release
           inputs:
             gitHubConnection: SBOM GitHub
-            action: create
+            action: edit
             tag: $(SBOMToolVersion.Version)
             releaseNotesSource: inline
             assets: |-
               $(System.DefaultWorkingDirectory)\**\bin\**
-              $(System.DefaultWorkingDirectory)\**\SBOMTool-GitHub*\\**\*-manifest.spdx.json
-            assetUploadMode: replace
+              $(System.DefaultWorkingDirectory)\**\SBOMTool-GitHub*\**\*-manifest.spdx.json
             addChangeLog: true
     - stage: Stage_4
       displayName: Push to NuGet.org
