@@ -323,7 +323,7 @@ extends:
           displayName: Upload assets to GitHub Release
           inputs:
             gitHubConnection: SBOM GitHub
-            action: edit
+            action: create
             tag: $(SBOMToolVersion.Version)
             releaseNotesSource: inline
             assets: |-
