@@ -236,7 +236,7 @@ extends:
             packageParentPath: '$(System.DefaultWorkingDirectory)/SBOMTool/nuget'
             verbosityRestore: Detailed
             packagesToPush: $(System.DefaultWorkingDirectory)/SBOMTool/nuget/*.nupkg
-            publishVstsFeed: ManifestTool
+            publishVstsFeed: AzureDevOps/ManifestTool
     - stage: Stage_3
       displayName: GitHub Release
       dependsOn: Stage_2
