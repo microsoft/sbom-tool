@@ -36,7 +36,7 @@ Note: These are not the only entries found in the packages section. To view a fu
 
 | Ecosystem | Detection Mechanism | Requirements | License Concluded (Via ClearlyDefinedApi) | License Declared | Supplier
 | - | - | - | - | - | - |
-| Cargo | <ul><li>Cargo.lock (v1, v2, v3)</li></ul> | - | ✔ | ✔ (Via RustCli detector) | ✔ |
+| Cargo | <ul><li>*.cargo-sbom.json</li><li>Cargo.toml</li><li>Cargo.lock (v1, v2, v3)</li></ul> | - | ✔ | ✔ (Via RustCli detector) | ✔ |
 | Ruby | <ul><li>gemfile.lock</li></ul> | - | ✔ | ✔ | ✔ |
 | Pip (Python) | <ul><li>setup.py</li><li>requirements.txt</li><li>*setup=distutils.core.run_setup({setup.py}); setup.install_requires*</li><li>dist package METADATA file</li></ul> | <ul><li>Python 2 or Python 3</li><li>Internet connection</li></ul> | ✔ | ✔ | ✔ |
 | Maven | <ul><li>pom.xml</li></ul> | <ul><li>Maven</li></ul> | - | - | - |
