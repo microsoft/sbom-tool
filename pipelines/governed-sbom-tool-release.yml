@@ -237,6 +237,7 @@ extends:
             verbosityRestore: Detailed
             packagesToPush: $(System.DefaultWorkingDirectory)/SBOMTool/nuget/*.nupkg
             publishVstsFeed: AzureDevOps/ManifestTool
+            allowPackageConflicts: $(AllowPackageConflicts)
     - stage: Stage_3
       displayName: GitHub Release
       dependsOn: Stage_2
