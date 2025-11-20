@@ -120,8 +120,7 @@ extends:
             gitHubConnection: SBOM GitHub
             action: create
             target: '$(Build.SourceVersion)'
-            tagSource: userSpecifiedTag
-            tag: "4.1.4"
+            tagSource: gitTag
             releaseNotesSource: inline
             assets: |-
               $(System.DefaultWorkingDirectory)\**\bin\**
