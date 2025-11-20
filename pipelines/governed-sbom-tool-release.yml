@@ -317,19 +317,19 @@ extends:
               Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-macOS-arm64/_manifest/spdx_2.2/manifest.spdx.json" -NewName "osx-arm64-manifest.spdx.json"
               Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool-GitHub-linux/_manifest/spdx_2.2/manifest.spdx.json" -NewName "linux-x64-manifest.spdx.json"
               Rename-Item -Path "$(System.DefaultWorkingDirectory)/SBOMTool-GitHub/_manifest/spdx_2.2/manifest.spdx.json" -NewName "win-x64-manifest.spdx.json"
-        - task: GitHubRelease@1
-          displayName: Upload assets to GitHub Release
-          inputs:
-            gitHubConnection: SBOM GitHub
-            action: edit
-            tag: $(SBOMToolVersion.Version)
-            releaseNotesSource: inline
-            assets: |-
-              $(System.DefaultWorkingDirectory)\**\bin\**
-              $(System.DefaultWorkingDirectory)\**\SBOMTool-GitHub*\\**\*-manifest.spdx.json
-            assetUploadMode: replace
-            isDraft: true
-            addChangeLog: false
+        # - task: GitHubRelease@1
+        #   displayName: Upload assets to GitHub Release
+        #   inputs:
+        #     gitHubConnection: SBOM GitHub
+        #     action: edit
+        #     tag: $(SBOMToolVersion.Version)
+        #     releaseNotesSource: inline
+        #     assets: |-
+        #       $(System.DefaultWorkingDirectory)\**\bin\**
+        #       $(System.DefaultWorkingDirectory)\**\SBOMTool-GitHub*\\**\*-manifest.spdx.json
+        #     assetUploadMode: replace
+        #     isDraft: true
+        #     addChangeLog: false
     - stage: Stage_4
       displayName: Push to NuGet.org
       dependsOn: Stage_2
