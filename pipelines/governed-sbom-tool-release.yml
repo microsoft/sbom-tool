@@ -119,7 +119,7 @@ extends:
           inputs:
             gitHubConnection: SBOM GitHub
             action: create
-            target: '$(Build.SourceVersion)'
+            target: main
             tagSource: gitTag
             releaseNotesSource: inline
             assets: |-
