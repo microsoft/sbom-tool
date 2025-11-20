@@ -15,6 +15,7 @@
         <PackageReference Include="Microsoft.ComponentDetection.Orchestrator" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" />
         <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="NuGet.Configuration" />
         <PackageReference Include="packageurl-dotnet" />
