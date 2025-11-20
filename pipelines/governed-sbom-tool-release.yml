@@ -398,6 +398,8 @@ extends:
             targetType: inline
             script: |
               dotnet nuget push "$(System.DefaultWorkingDirectory)\SBOMTool\nuget\*.nupkg" -s https://api.nuget.org/v3/index.json -k $(NuGetApiKey)
+          env:
+            NuGetApiKey: $(NuGetApiKey)
     - stage: Stage_5
       displayName: GitHub Packages Release
       dependsOn: Stage_3
@@ -465,3 +467,5 @@ extends:
           inputs:
             targetType: inline
             script: dotnet nuget push "$(System.DefaultWorkingDirectory)\SBOMTool\nuget\*.nupkg" -s https://nuget.pkg.github.com/microsoft -k $(GitHubApiKey)
+          env:
+            GitHubApiKey: $(GitHubApiKey)
