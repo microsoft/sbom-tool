@@ -119,8 +119,9 @@ extends:
           inputs:
             gitHubConnection: SBOM GitHub
             action: create
-            target: main
-            tagSource: gitTag
+            target: '$(Build.SourceVersion)'
+            tagSource: userSpecifiedTag
+            tag: $(SBOMToolVersion.Version)
             releaseNotesSource: inline
             assets: |-
               $(System.DefaultWorkingDirectory)\**\bin\**
