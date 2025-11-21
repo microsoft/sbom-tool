@@ -21,7 +21,7 @@ extends:
     customBuildTags:
     - ES365AIMigrationTooling-Release
     featureFlags:
-      disableNetworkIsolation: true
+      disableNetworkIsolation: true # This should not be necessary but pushing packages to nuget.org is blocked without it
     stages:
     - stage: Stage_1
       displayName: Validate Drop
