@@ -13,6 +13,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="Serilog.Sinks.Console" VersionOverride="6.1.1" />
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>$(AssemblyName).Tests, PublicKey=$(StrongNameSigningPublicKey)</_Parameter1>
     </AssemblyAttribute>
