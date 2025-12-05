@@ -68,6 +68,7 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="all" ExcludeAssets="Runtime" />
     <!-- This is a transitive dependency of Microsoft.Build.Utilities.Core, but we need to bump its version on .NET Framework -->
     <PackageReference Condition="'$(TargetFramework)'=='net472'" Include="Microsoft.IO.Redist" PrivateAssets = "all" ExcludeAssets="Runtime" />
+    <PackageReference Condition="'$(TargetFramework)'=='net8.0'" Include="Microsoft.Extensions.Options" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
