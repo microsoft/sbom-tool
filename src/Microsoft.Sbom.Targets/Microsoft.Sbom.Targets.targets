@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Full' ">net472</GenerateSbom_TFM>
-    <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Core' ">net8.0</GenerateSbom_TFM>
+    <GenerateSbom_TFM Condition=" '$(MSBuildRuntimeType)' == 'Core' ">net9.0</GenerateSbom_TFM>
 
     <SbomToolBinaryOutputPath Condition="'$(SbomToolBinaryOutputPath)' == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),sbom-tool))</SbomToolBinaryOutputPath>
     <GenerateSbomTaskAssemblyFilePath Condition="'$(GenerateSbomTaskAssemblyFilePath)' == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),..,tasks,$(GenerateSbom_TFM),Microsoft.Sbom.Targets.dll))</GenerateSbomTaskAssemblyFilePath>
