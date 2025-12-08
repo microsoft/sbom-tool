@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net8.0;net472</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net8.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net9.0;net472</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net9.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <RootNamespace>Microsoft.Sbom.Targets.Tests</RootNamespace>
-    <SbomCLIToolTargetFramework>net8.0</SbomCLIToolTargetFramework>
+    <SbomCLIToolTargetFramework>net9.0</SbomCLIToolTargetFramework>
     <SBOMCLIToolProjectDir>$(MSBuildThisFileDirectory)..\..\src\Microsoft.Sbom.Tool\</SBOMCLIToolProjectDir>
     <NoWarn>CA1515;CA1872;NU1903</NoWarn>
   </PropertyGroup>
@@ -38,10 +38,10 @@
   </Target>
 
   <ItemGroup>
-    <ProjectReference Condition="$(TargetFramework) == 'net8.0'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net8.0" />
+    <ProjectReference Condition="$(TargetFramework) == 'net9.0'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net9.0" />
     <ProjectReference Condition="$(TargetFramework) == 'net472'" Include="..\..\src\Microsoft.Sbom.Targets\Microsoft.Sbom.Targets.csproj" AdditionalProperties="TargetFramework=net472" />
-    <ProjectReference Condition="$(TargetFramework) == 'net8.0'" Include="..\..\src\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" />
-    <ProjectReference Condition="$(TargetFramework) == 'net8.0'" Include="..\..\src\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" />
+    <ProjectReference Condition="$(TargetFramework) == 'net9.0'" Include="..\..\src\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" />
+    <ProjectReference Condition="$(TargetFramework) == 'net9.0'" Include="..\..\src\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" />
   </ItemGroup>
 
 </Project>

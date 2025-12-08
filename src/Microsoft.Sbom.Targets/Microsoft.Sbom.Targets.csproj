@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <AssemblyName>Microsoft.Sbom.Targets</AssemblyName>
-    <TargetFrameworks>net8.0;net472</TargetFrameworks>
+    <TargetFrameworks>net9.0;net472</TargetFrameworks>
     <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
     <IsPublishable>true</IsPublishable>
     <IsPackable>true</IsPackable>
@@ -11,7 +11,7 @@
     <Title>GenerateSbomTask</Title>
     <Description>Tasks and targets for running the SBOM tool.</Description>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <SbomCLIToolTargetFramework>net8.0</SbomCLIToolTargetFramework>
+    <SbomCLIToolTargetFramework>net9.0</SbomCLIToolTargetFramework>
     <DevelopmentDependency>true</DevelopmentDependency>
 
     <!-- This target will run when MSBuild is collecting the files to be packaged, and we'll implement it below. This property controls the dependency list for this packaging process, so by adding our custom property we hook ourselves into the process in a supported way. -->
@@ -68,12 +68,13 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="all" ExcludeAssets="Runtime" />
     <!-- This is a transitive dependency of Microsoft.Build.Utilities.Core, but we need to bump its version on .NET Framework -->
     <PackageReference Condition="'$(TargetFramework)'=='net472'" Include="Microsoft.IO.Redist" PrivateAssets = "all" ExcludeAssets="Runtime" />
+    <PackageReference Condition="'$(TargetFramework)'=='net9.0'" Include="Microsoft.Extensions.Options" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Condition="'$(TargetFramework)'=='net8.0'" Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
-    <ProjectReference Condition="'$(TargetFramework)'=='net8.0'" Include="..\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" PrivateAssets="all" />
-    <ProjectReference Condition="'$(TargetFramework)'=='net8.0'" Include="..\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" PrivateAssets="all" IncludeAssets="output" />
+    <ProjectReference Condition="'$(TargetFramework)'=='net9.0'" Include="..\Microsoft.Sbom.Contracts\Microsoft.Sbom.Contracts.csproj" />
+    <ProjectReference Condition="'$(TargetFramework)'=='net9.0'" Include="..\Microsoft.Sbom.Extensions.DependencyInjection\Microsoft.Sbom.Extensions.DependencyInjection.csproj" PrivateAssets="all" />
+    <ProjectReference Condition="'$(TargetFramework)'=='net9.0'" Include="..\Microsoft.Sbom.Tool\Microsoft.Sbom.Tool.csproj" PrivateAssets="all" IncludeAssets="output" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
