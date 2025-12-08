@@ -30,6 +30,7 @@
     <PackageReference Include="NuGet.Frameworks" />
     <PackageReference Include="NuGet.ProjectModel" />
     <PackageReference Include="System.IO.Compression" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" VersionOverride="9.0.10" />
   </ItemGroup>
 
   <ItemGroup>

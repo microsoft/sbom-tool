@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" VersionOverride="9.0.9" />
+    <PackageReference Include="System.Text.Json" />
     <ProjectReference Include="..\Microsoft.Sbom.Extensions\Microsoft.Sbom.Extensions.csproj" />
   </ItemGroup>
 </Project>

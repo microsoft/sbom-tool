@@ -5,6 +5,7 @@ namespace Microsoft.Sbom.Targets;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,6 +37,7 @@ public partial class GenerateSbom : Task
     {
         var host = Host.CreateDefaultBuilder()
             .ConfigureServices((host, services) =>
+            {
                 services
                 .AddSbomTool()
                 /* Manually adding some dependencies since `AddSbomTool()` does not add them when
@@ -58,7 +60,18 @@ public partial class GenerateSbom : Task
                 .AddSingleton<IManifestInterface, SPDX22.Validator>()
                 .AddSingleton<IManifestInterface, SPDX30.Validator>()
                 .AddSingleton<IManifestConfigHandler, SPDX22ManifestConfigHandler>()
-                .AddSingleton<IManifestConfigHandler, SPDX30ManifestConfigHandler>())
+                .AddSingleton<IManifestConfigHandler, SPDX30ManifestConfigHandler>();
+
+                // Workaround for .NET 8 compatibility with Microsoft.Extensions.Http 9.x
+                // Remove the MetricsFactoryHttpMessageHandlerFilter that requires .NET 9 APIs
+                // This must be done AFTER AddHttpClient() is called (which happens inside AddSbomTool)
+                var metricsFilterDescriptor = services.FirstOrDefault(descriptor =>
+                    descriptor.ImplementationType?.ToString() == "Microsoft.Extensions.Http.MetricsFactoryHttpMessageHandlerFilter");
+                if (metricsFilterDescriptor != null)
+                {
+                    services.Remove(metricsFilterDescriptor);
+                }
+            })
             .Build();
         this.Generator = host.Services.GetRequiredService<ISbomGenerator>();
     }
