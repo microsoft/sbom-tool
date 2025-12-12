@@ -41,7 +41,7 @@
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0" />
     <PackageVersion Include="Serilog.Sinks.Async" Version="2.1.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
-    <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageVersion Include="Serilog.Sinks.Map" Version="2.0.0" />
     <PackageVersion Include="Spectre.Console.Cli" Version="0.53.1" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
