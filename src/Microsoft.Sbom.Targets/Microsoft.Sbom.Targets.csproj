@@ -81,6 +81,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net472'">
+    <PackageReference Include="Microsoft.Build.Framework" VersionOverride="18.0.2" />
     <Compile Remove="SbomCLIToolTask.cs" />
   </ItemGroup>
 
