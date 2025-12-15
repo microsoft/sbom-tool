@@ -2,11 +2,6 @@
       # This pipeline will be extended to the OneESPT template
 trigger: none
 name: $(Date:yyyyMMdd).$(Rev:r)
-variables:
-- name: GitHubApiKey
-  value: 
-- name: NuGetApiKey
-  value:
 resources:
   pipelines:
   - pipeline: 'SBOMTool'
@@ -20,6 +15,8 @@ resources:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+    settings:
+      networkIsolationPolicy: Permissive
     pool:
       name: sbom-windows-build-pool
       os: windows
