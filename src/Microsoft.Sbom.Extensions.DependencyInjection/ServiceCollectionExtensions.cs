@@ -59,7 +59,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddSbomTool(this IServiceCollection services, LogEventLevel logLevel = LogEventLevel.Information)
+    public static IServiceCollection AddSbomToolWithoutComponentDetection(this IServiceCollection services, LogEventLevel logLevel = LogEventLevel.Information)
     {
         services
             .AddSingleton<IConfiguration, Configuration>()
@@ -180,10 +180,16 @@ public static class ServiceCollectionExtensions
 
                 return manifestData;
             })
-            .AddComponentDetection()
             .ConfigureLoggingProviders()
             .AddHttpClient<LicenseInformationService>();
 
+        return services;
+    }
+
+    public static IServiceCollection AddSbomTool(this IServiceCollection services, LogEventLevel logLevel = LogEventLevel.Information)
+    {
+        services.AddSbomToolWithoutComponentDetection(logLevel)
+                .AddComponentDetection();
         return services;
     }
 
