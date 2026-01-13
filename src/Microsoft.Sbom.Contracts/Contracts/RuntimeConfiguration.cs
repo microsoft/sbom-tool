@@ -57,4 +57,14 @@ public class RuntimeConfiguration
     /// </para>
     /// </summary>
     public string AdditionComponentDetectorArgs { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to fetch license information for detected packages from the ClearlyDefined API.
+    /// </summary>
+    public bool FetchLicenseInformation { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to parse licensing and supplier information from package metadata files.
+    /// </summary>
+    public bool EnablePackageMetadataParsing { get; set; }
 }

@@ -69,6 +69,8 @@ public static class ApiConfigurationBuilder
             FollowSymlinks = GetConfigurationSetting(sanitizedRuntimeConfiguration.FollowSymlinks),
             DeleteManifestDirIfPresent = GetConfigurationSetting(sanitizedRuntimeConfiguration.DeleteManifestDirectoryIfPresent),
             AdditionalComponentDetectorArgs = GetConfigurationSetting(sanitizedRuntimeConfiguration.AdditionComponentDetectorArgs),
+            FetchLicenseInformation = GetConfigurationSetting(sanitizedRuntimeConfiguration.FetchLicenseInformation),
+            EnablePackageMetadataParsing = GetConfigurationSetting(sanitizedRuntimeConfiguration.EnablePackageMetadataParsing),
         };
 
         SetVerbosity(sanitizedRuntimeConfiguration, configuration);

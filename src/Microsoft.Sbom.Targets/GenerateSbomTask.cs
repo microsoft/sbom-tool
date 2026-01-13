@@ -88,6 +88,8 @@ public partial class GenerateSbom : Task
                 NamespaceUriBase = this.NamespaceBaseUri,
                 NamespaceUriUniquePart = this.NamespaceUriUniquePart,
                 DeleteManifestDirectoryIfPresent = this.DeleteManifestDirIfPresent,
+                FetchLicenseInformation = this.FetchLicenseInformation,
+                EnablePackageMetadataParsing = this.EnablePackageMetadataParsing,
                 Verbosity = ValidateAndAssignVerbosity(),
             };
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
