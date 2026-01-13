@@ -386,6 +386,70 @@ public abstract class AbstractGenerateSbomTaskTests
     }
 
     [TestMethod]
+    public void Sbom_Is_Successfully_Generated_With_FetchLicenseInformation_Enabled()
+    {
+        // Let's generate a SBOM for the current assembly
+        var sourceDirectory = Path.Combine(TestBuildDropPath, "..", "..", "..");
+
+        // Arrange
+        var task = new GenerateSbom
+        {
+            BuildDropPath = TestBuildDropPath,
+            BuildComponentPath = sourceDirectory,
+            PackageSupplier = PackageSupplier,
+            PackageName = PackageName,
+            PackageVersion = PackageVersion,
+            NamespaceBaseUri = NamespaceBaseUri,
+            FetchLicenseInformation = true,
+            BuildEngine = this.BuildEngine.Object,
+            ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
+        };
+
+        // Act
+        var result = task.Execute();
+
+        // Assert
+        Assert.IsTrue(result);
+        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, TestBuildDropPath, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri, buildComponentPath: sourceDirectory);
+        this.GeneratedSbomValidator.AssertSbomHasLicenseInformation(this.ManifestPath, shouldHaveLicenseInfo: true);
+    }
+
+    [TestMethod]
+    public void Sbom_Is_Successfully_Generated_With_EnablePackageMetadataParsing_Enabled()
+    {
+        // Let's generate a SBOM for the current assembly
+        var sourceDirectory = Path.Combine(TestBuildDropPath, "..", "..", "..");
+
+        // Arrange
+        var task = new GenerateSbom
+        {
+            BuildDropPath = TestBuildDropPath,
+            BuildComponentPath = sourceDirectory,
+            PackageSupplier = PackageSupplier,
+            PackageName = PackageName,
+            PackageVersion = PackageVersion,
+            NamespaceBaseUri = NamespaceBaseUri,
+            EnablePackageMetadataParsing = true,
+            BuildEngine = this.BuildEngine.Object,
+            ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
+        };
+
+        // Act
+        var result = task.Execute();
+
+        // Assert
+        Assert.IsTrue(result);
+        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, TestBuildDropPath, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri, buildComponentPath: sourceDirectory);
+        this.GeneratedSbomValidator.AssertSbomHasSupplierInformation(this.ManifestPath, shouldHaveSupplierInfo: true);
+    }
+
+    [TestMethod]
     [DataRow("550e8400-e29b-41d4-a716-446655440000")] // Standard random GUID
     [DataRow("3F2504E0-4f89-11D3-9A0C-0305E82c3301")] // Mixed cases
     [DataRow("3F2504E04F8911D39A0C0305E82C3301")] // Guids without hyphens

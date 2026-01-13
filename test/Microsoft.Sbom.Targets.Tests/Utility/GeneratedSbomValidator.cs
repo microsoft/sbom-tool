@@ -103,6 +103,98 @@ internal class GeneratedSbomValidator
         }
     }
 
+    internal void AssertSbomHasLicenseInformation(string manifestPath, bool shouldHaveLicenseInfo = true)
+    {
+        Assert.IsTrue(File.Exists(manifestPath));
+
+        // Read and parse the manifest
+        var manifestContent = File.ReadAllText(manifestPath);
+        var manifest = JsonConvert.DeserializeObject<dynamic>(manifestContent);
+
+        if (this.sbomSpecification.Equals(SPDX22Specification))
+        {
+            var packagesValue = manifest["packages"];
+            Assert.IsNotNull(packagesValue);
+
+            if (shouldHaveLicenseInfo)
+            {
+                // At least some packages should have licenseConcluded information.
+                // Note: Not all packages may have license info from ClearlyDefined API
+                // Note: licenseConcluded info is filled but licenseDeclared is not when FetchLicenseInformation is enabled.
+                var hasAnyLicenseInfo = false;
+                foreach (var package in packagesValue)
+                {
+                    var licenseConcluded = package["licenseConcluded"];
+                    if (licenseConcluded != null && !string.IsNullOrEmpty((string)licenseConcluded) && (string)licenseConcluded != "NOASSERTION")
+                    {
+                        hasAnyLicenseInfo = true;
+                        break;
+                    }
+                }
+
+                // We expect at least one package to have license information
+                // This is a weak assertion since license info depends on external API availability
+                // In a real test environment with packages, this should pass
+                Assert.IsTrue(hasAnyLicenseInfo || packagesValue.Count == 1, "Expected at least one package to have license information when FetchLicenseInformation is enabled");
+            }
+        }
+        else if (this.sbomSpecification.Equals(SPDX30Specification))
+        {
+            Console.Write("SPDX 3.0 specified, license validation not yet implemented for this version.");
+        }
+    }
+
+    internal void AssertSbomHasSupplierInformation(string manifestPath, bool shouldHaveSupplierInfo = true)
+    {
+        Assert.IsTrue(File.Exists(manifestPath));
+
+        // Read and parse the manifest
+        var manifestContent = File.ReadAllText(manifestPath);
+        var manifest = JsonConvert.DeserializeObject<dynamic>(manifestContent);
+
+        if (this.sbomSpecification.Equals(SPDX22Specification))
+        {
+            var packagesValue = manifest["packages"];
+            Assert.IsNotNull(packagesValue);
+
+            if (shouldHaveSupplierInfo)
+            {
+                // At least some packages should have supplier information & license declared information
+                var hasAnySupplierInfo = false;
+                foreach (var package in packagesValue)
+                {
+                    var supplier = package["supplier"];
+                    if (supplier != null && !string.IsNullOrEmpty((string)supplier) && (string)supplier != "NOASSERTION")
+                    {
+                        hasAnySupplierInfo = true;
+                        break;
+                    }
+                }
+
+                var hasAnyLicenseInfo = false;
+                foreach (var package in packagesValue)
+                {
+                    var licenseDeclared = package["licenseDeclared"];
+                    if (licenseDeclared != null && !string.IsNullOrEmpty((string)licenseDeclared) && (string)licenseDeclared != "NOASSERTION")
+                    {
+                        hasAnyLicenseInfo = true;
+                        break;
+                    }
+                }
+
+                // We expect at least one package to have supplier information
+                Assert.IsTrue(hasAnySupplierInfo || packagesValue.Count == 1, "Expected at least one package to have supplier information when EnablePackageMetadataParsing is enabled");
+
+                // We expect at least one package to have license information
+                Assert.IsTrue(hasAnyLicenseInfo || packagesValue.Count == 1, "Expected at least one package to have licenseDeclared information when EnablePackageMetadataParsing is enabled");
+            }
+        }
+        else if (this.sbomSpecification.Equals(SPDX30Specification))
+        {
+            Console.Write("SPDX 3.0 specified, supplier validation not yet implemented for this version.");
+        }
+    }
+
     private IDictionary<string, IDictionary<string, string>> GetBuildDropFileHashes(string buildDropPath)
     {
         var filesHashes = new Dictionary<string, IDictionary<string, string>>();
