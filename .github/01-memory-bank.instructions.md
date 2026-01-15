@@ -62,7 +62,16 @@ Reference this path to find the active context for any agent.
 - Verify you have complete context before starting development.
 - If the current work focus has changed, clear the `activeContext.md` file before continuing.
 
-### 2. During Development
+### 2. Starting New Feature Work
+
+When the user indicates they are ready to start working on a new feature (e.g., "I'm ready to start a new feature", "let's begin a new feature", "starting new feature work"):
+
+1. **Create the feature instructions file**: Copy the content from `.github/02-feature-instructions-template.md` and create a new file at `.memory-bank/feature-instructions.txt`.
+2. **Clear `activeContext.md`**: Reset the active context file to prepare for the new feature.
+3. **Wait for feature details**: Ask the user to describe the feature so you can populate the `ORIGINAL INSTRUCTIONS` section in the newly created `feature-instructions.txt`.
+4. **Follow the feature instructions**: Once the feature file is created and populated, follow all rules defined within it, especially the `BASE RULES` section which takes precedence during feature development.
+
+### 3. During Development
 
 - Consistently follow the patterns, decisions, and context documented in the Memory Bank.
 - **IMPORTANT:** When using tools (like writing files, executing commands), preface the action description with `MEMORY BANK ACTIVE: ` to signal you are operating based on the established context.
@@ -78,7 +87,7 @@ Reference this path to find the active context for any agent.
   - If `activeContext.md` becomes malformed, STOP and completely rewrite it with current accurate state.
 - **REGULAR CONTEXT UPDATES:** Update Memory Bank files (`activeContext.md` and `learnings.md`) after implementing significant changes, discovering new patterns, or encountering issues that should be documented for future reference.
 
-### 3. Priority
+### 4. Priority
 
 - When context from Memory Bank files conflicts with general knowledge, **always prioritize the Memory Bank information** for this specific repository.
 - Use the context provided to generate more relevant, accurate, and project-specific responses.
