@@ -7,7 +7,7 @@
     </PackageVersion>
   </ItemDefinitionGroup>
   <PropertyGroup>
-    <ComponentDetectionPackageVersion>6.0.0</ComponentDetectionPackageVersion>
+    <ComponentDetectionPackageVersion>6.2.6</ComponentDetectionPackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="AutoMapper" Version="10.1.1" />
@@ -53,7 +53,7 @@
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
     <PackageVersion Include="System.Reactive" Version="6.0.1" />
     <PackageVersion Include="System.Runtime.Loader" Version="4.3.0" />
-    <PackageVersion Include="System.Text.Json" Version="9.0.9" />
+    <PackageVersion Include="System.Text.Json" Version="9.0.10" />
     <PackageVersion Include="System.Threading.Channels" Version="9.0.10" />
     <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="8.0.1" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
