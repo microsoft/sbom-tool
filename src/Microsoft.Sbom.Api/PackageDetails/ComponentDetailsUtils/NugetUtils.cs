@@ -23,7 +23,7 @@ public class NugetUtils : IPackageManagerUtils<NugetUtils>
     private readonly ILogger log;
     private readonly IRecorder recorder;
 
-    private static readonly string NugetPackagesPath = SettingsUtility.GetGlobalPackagesFolder(new NullSettings());
+    private static readonly string NugetPackagesPath = SettingsUtility.GetGlobalPackagesFolder(Settings.LoadDefaultSettings(null, null, null));
 
     public NugetUtils(IFileSystemUtils fileSystemUtils, ILogger log, IRecorder recorder)
     {
