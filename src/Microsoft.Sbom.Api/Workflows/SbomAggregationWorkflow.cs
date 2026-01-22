@@ -198,7 +198,7 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
             return false;
         }
 
-        SetConfigurationForAggregation(mergeableContents);
+        SetConfigurationForAggregation(mergeableContents, aggregationSources);
 
         // The configs contain the input paths. We need to clear them so we write to the correct locations.
         sbomConfigProvider.ClearCache();
@@ -206,7 +206,7 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
         return await sbomGenerationWorkflow.RunAsync().ConfigureAwait(false);
     }
 
-    private void SetConfigurationForAggregation(IEnumerable<MergeableContent> mergeableContents)
+    private void SetConfigurationForAggregation(IEnumerable<MergeableContent> mergeableContents, IEnumerable<AggregationSource> aggregationSources)
     {
         var buildDropPath = Path.Combine(workingDir, "aggregated-build-drop");
         fileSystemUtils.CreateDirectory(buildDropPath);
@@ -215,6 +215,10 @@ public class SbomAggregationWorkflow : IWorkflow<SbomAggregationWorkflow>
         configuration.BuildDropPath = new ConfigurationSetting<string>(buildDropPath);
         configuration.BuildComponentPath = new ConfigurationSetting<string>(buildDropPath);
         configuration.PackagesList = new ConfigurationSetting<IEnumerable<SbomPackage>>(mergeableContents.ToMergedPackages());
+        var externalDocRefsListFilePath = Path.Combine(workingDir, "aggregation-external-doc-refs.txt");
+        fileSystemUtils.WriteAllText(externalDocRefsListFilePath, string.Join(Environment.NewLine, aggregationSources.Select(s => s.SbomConfig.ManifestJsonFilePath)));
+        logger.Warning(externalDocRefsListFilePath);
+        configuration.ExternalDocumentReferenceListFile = new ConfigurationSetting<string>(externalDocRefsListFilePath);
     }
 
     private bool TryGetMergeableContent(IEnumerable<AggregationSource> aggregationSources, out IEnumerable<MergeableContent> mergeableContents)
