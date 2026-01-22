@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Sbom.Api.Config;
 using Microsoft.Sbom.Api.Config.Extensions;
+using Microsoft.Sbom.Api.Entities.Output;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Api.Workflows;
 using Microsoft.Sbom.Common;
@@ -104,7 +105,7 @@ public class SbomValidator : ISbomValidator
         await recorder.FinalizeAndLogTelemetryAsync();
 
         var errors = recorder.Errors.Select(error => error.ToEntityError()).ToList();
-        return new SbomValidationResult(!errors.Any(), errors);
+        return new SbomValidationResult(recorder.Result == Result.Success, errors);
     }
 
     private InputConfiguration ValidateConfig(InputConfiguration config)
