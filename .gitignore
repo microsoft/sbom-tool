@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Memory Bank (local agent context, not committed — except AGENTS.md)
+.memory-bank/*
+!.memory-bank/AGENTS.md
+
 # User-specific files
 *.rsuser
 *.suo
