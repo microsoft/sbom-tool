@@ -346,6 +346,103 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         Assert.IsNull(sbomPackage);
     }
 
+    [TestMethod]
+    public void UnknownEnumValue_DoesNotBreakDeserialization()
+    {
+        // This test verifies that unknown enum values in the JSON do not break deserialization.
+        // This can happen when the Component Detection tool adds new enum values that the SBOM tool doesn't know about yet.
+#pragma warning disable JSON002 // Probable JSON string detected
+        var json = @"{
+                        ""componentsFound"": [
+                            {
+                                ""locationsFoundAt"": [
+                                    ""/some/path/package.json""
+                                ],
+                                ""component"": {
+                                    ""name"": ""test-package"",
+                                    ""version"": ""1.0.0"",
+                                    ""type"": ""Npm"",
+                                    ""id"": ""test-package 1.0.0 - Npm""
+                                },
+                                ""detectorId"": ""Npm"",
+                                ""isDevelopmentDependency"": null,
+                                ""topLevelReferrers"": [],
+                                ""containerDetailIds"": []
+                            }
+                        ],
+                        ""detectorsInScan"": [
+                            {
+                                ""detectorId"": ""Npm"",
+                                ""isExperimental"": false,
+                                ""version"": 1,
+                                ""supportedComponentTypes"": [999]
+                            }
+                        ],
+                        ""ContainerDetailsMap"": {},
+                        ""resultCode"": ""UnknownResultCode""
+                    }";
+#pragma warning restore JSON002 // Probable JSON string detected
+        var (errors, packages) = GenerateJsonFileForTestAndRun(json);
+
+        // Should still succeed even with unknown enum values
+        Assert.AreEqual(1, errors.Report.Count);
+        Assert.AreEqual(AdapterReportItemType.Success, errors.Report.First().Type);
+
+        // Package should still be converted
+        Assert.IsNotNull(packages);
+        Assert.AreEqual(1, packages.Count);
+        Assert.AreEqual("test-package", packages[0].PackageName);
+    }
+
+    [TestMethod]
+    public void NuGetComponent_WithInvalidComponentTypeEnum_DoesNotBreakDeserialization()
+    {
+        // This test verifies that a NuGet component with an invalid integer for supportedComponentTypes
+        // does not break deserialization.
+#pragma warning disable JSON002 // Probable JSON string detected
+        var json = @"{
+                        ""componentsFound"": [
+                            {
+                                ""locationsFoundAt"": [
+                                    ""/some/path/project.csproj""
+                                ],
+                                ""component"": {
+                                    ""name"": ""Newtonsoft.Json"",
+                                    ""version"": ""13.0.1"",
+                                    ""type"": ""NuGet"",
+                                    ""id"": ""Newtonsoft.Json 13.0.1 - NuGet""
+                                },
+                                ""detectorId"": ""NuGet"",
+                                ""isDevelopmentDependency"": false,
+                                ""topLevelReferrers"": [],
+                                ""containerDetailIds"": []
+                            }
+                        ],
+                        ""detectorsInScan"": [
+                            {
+                                ""detectorId"": ""NuGet"",
+                                ""isExperimental"": false,
+                                ""version"": 2,
+                                ""supportedComponentTypes"": [""UnknownEnum"", ""AnotherUnknownEnum"" ]
+                            }
+                        ],
+                        ""ContainerDetailsMap"": {},
+                        ""resultCode"": ""Success""
+                    }";
+#pragma warning restore JSON002 // Probable JSON string detected
+        var (errors, packages) = GenerateJsonFileForTestAndRun(json);
+
+        // Should still succeed even with invalid enum integer values
+        Assert.AreEqual(1, errors.Report.Count);
+        Assert.AreEqual(AdapterReportItemType.Success, errors.Report.First().Type);
+
+        // NuGet package should still be converted correctly
+        Assert.IsNotNull(packages);
+        Assert.AreEqual(1, packages.Count);
+        Assert.AreEqual("Newtonsoft.Json", packages[0].PackageName);
+        Assert.AreEqual("13.0.1", packages[0].PackageVersion);
+    }
+
     private void AssertPackageUrlIsCorrect(PackageUrl.PackageURL expectedPackageUrl, string actualPackageUrl)
     {
         if (expectedPackageUrl is null)
