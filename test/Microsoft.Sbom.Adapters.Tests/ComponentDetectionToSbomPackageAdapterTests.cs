@@ -443,6 +443,128 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         Assert.AreEqual("13.0.1", packages[0].PackageVersion);
     }
 
+    [TestMethod]
+    public void UnknownComponent_WithInvalidComponentTypeEnum_DoesNotBreakDeserialization()
+    {
+        // This test verifies that when a component has a completely unknown type,
+        // deserialization continues gracefully - the unknown component is skipped but doesn't crash.
+        // The upstream TypedComponentConverter now handles unknown types by returning null.
+#pragma warning disable JSON002 // Probable JSON string detected
+        var json = @"{
+                        ""componentsFound"": [
+                            {
+                                ""locationsFoundAt"": [
+                                    ""/some/path/project.csproj""
+                                ],
+                                ""component"": {
+                                    ""name"": ""Newtonsoft.Json"",
+                                    ""version"": ""13.0.1"",
+                                    ""type"": ""UnknownType"",
+                                    ""id"": ""Newtonsoft.Json 13.0.1 - UnknownType""
+                                },
+                                ""detectorId"": ""UnknownDetectorId"",
+                                ""isDevelopmentDependency"": false,
+                                ""topLevelReferrers"": [],
+                                ""containerDetailIds"": []
+                            }
+                        ],
+                        ""detectorsInScan"": [
+                            {
+                                ""detectorId"": ""UnknownDetectorId"",
+                                ""isExperimental"": false,
+                                ""version"": 2,
+                                ""supportedComponentTypes"": [""UnknownEnum"", ""AnotherUnknownEnum"" ]
+                            }
+                        ],
+                        ""ContainerDetailsMap"": {},
+                        ""resultCode"": ""UnknownResultCode""
+                    }";
+#pragma warning restore JSON002 // Probable JSON string detected
+        var (errors, packages) = GenerateJsonFileForTestAndRun(json);
+
+        // Should succeed - unknown component types are skipped gracefully
+        Assert.AreEqual(2, errors.Report.Count);
+        Assert.IsNotNull(errors.Report.FirstOrDefault(x => x.Type == AdapterReportItemType.Failure));
+        Assert.IsNotNull(errors.Report.FirstOrDefault(x => x.Type == AdapterReportItemType.Success));
+
+        // No packages since the only component had an unknown type (skipped)
+        Assert.IsNotNull(packages);
+        Assert.AreEqual(0, packages.Count);
+    }
+
+    [TestMethod]
+    public void MixedKnownAndUnknownComponents_ParsesValidComponentsOnly()
+    {
+        // This test verifies that when there's a mix of known and unknown component types,
+        // the known components are still parsed successfully while unknown ones are skipped.
+#pragma warning disable JSON002 // Probable JSON string detected
+        var json = @"{
+                        ""componentsFound"": [
+                            {
+                                ""locationsFoundAt"": [
+                                    ""/some/path/package.json""
+                                ],
+                                ""component"": {
+                                    ""name"": ""lodash"",
+                                    ""version"": ""4.17.21"",
+                                    ""type"": ""Npm"",
+                                    ""id"": ""lodash 4.17.21 - Npm""
+                                },
+                                ""detectorId"": ""Npm"",
+                                ""isDevelopmentDependency"": false,
+                                ""topLevelReferrers"": [],
+                                ""containerDetailIds"": []
+                            },
+                            {
+                                ""locationsFoundAt"": [
+                                    ""/some/path/unknown.file""
+                                ],
+                                ""component"": {
+                                    ""name"": ""unknown-package"",
+                                    ""version"": ""1.0.0"",
+                                    ""type"": ""FutureNewComponentType"",
+                                    ""id"": ""unknown-package 1.0.0 - FutureNewComponentType""
+                                },
+                                ""detectorId"": ""FutureDetector"",
+                                ""isDevelopmentDependency"": false,
+                                ""topLevelReferrers"": [],
+                                ""containerDetailIds"": []
+                            },
+                            {
+                                ""locationsFoundAt"": [
+                                    ""/some/path/project.csproj""
+                                ],
+                                ""component"": {
+                                    ""name"": ""Newtonsoft.Json"",
+                                    ""version"": ""13.0.1"",
+                                    ""type"": ""NuGet"",
+                                    ""id"": ""Newtonsoft.Json 13.0.1 - NuGet""
+                                },
+                                ""detectorId"": ""NuGet"",
+                                ""isDevelopmentDependency"": false,
+                                ""topLevelReferrers"": [],
+                                ""containerDetailIds"": []
+                            }
+                        ],
+                        ""detectorsInScan"": [],
+                        ""ContainerDetailsMap"": {},
+                        ""resultCode"": ""Success""
+                    }";
+#pragma warning restore JSON002 // Probable JSON string detected
+        var (errors, packages) = GenerateJsonFileForTestAndRun(json);
+
+        // Should succeed - unknown components are skipped but still reported, valid ones are processed
+        Assert.AreEqual(2, errors.Report.Count);
+        Assert.IsNotNull(errors.Report.FirstOrDefault(x => x.Type == AdapterReportItemType.Failure));
+        Assert.IsNotNull(errors.Report.FirstOrDefault(x => x.Type == AdapterReportItemType.Success));
+
+        // Should have 2 packages (Npm and NuGet), the unknown FutureNewComponentType is skipped
+        Assert.IsNotNull(packages);
+        Assert.AreEqual(2, packages.Count);
+        Assert.IsTrue(packages.Any(p => p.PackageName == "lodash"));
+        Assert.IsTrue(packages.Any(p => p.PackageName == "Newtonsoft.Json"));
+    }
+
     private void AssertPackageUrlIsCorrect(PackageUrl.PackageURL expectedPackageUrl, string actualPackageUrl)
     {
         if (expectedPackageUrl is null)
