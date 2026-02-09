@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -18,23 +17,31 @@ public class TolerantEnumContractResolver : DefaultContractResolver
     private static readonly TolerantEnumConverter TolerantConverter = new TolerantEnumConverter();
 
     /// <inheritdoc />
-    protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+    protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
     {
-        var property = base.CreateProperty(member, memberSerialization);
+        var properties = base.CreateProperties(type, memberSerialization);
 
-        // If the property type is an enum or nullable enum, use our tolerant converter
-        if (property.PropertyType != null && IsEnumType(property.PropertyType))
+        foreach (var property in properties)
         {
-            property.Converter = TolerantConverter;
+            if (property.PropertyType == null)
+            {
+                continue;
+            }
+
+            // If the property type is an enum or nullable enum, use our tolerant converter
+            if (IsEnumType(property.PropertyType))
+            {
+                property.Converter = TolerantConverter;
+            }
+
+            // If the property is a collection of enums, set the item converter
+            if (IsEnumCollectionType(property.PropertyType))
+            {
+                property.ItemConverter = TolerantConverter;
+            }
         }
 
-        // If the property is a collection of enums, set the item converter
-        if (property.PropertyType != null && IsEnumCollectionType(property.PropertyType))
-        {
-            property.ItemConverter = TolerantConverter;
-        }
-
-        return property;
+        return properties;
     }
 
     /// <inheritdoc />
@@ -70,36 +77,31 @@ public class TolerantEnumContractResolver : DefaultContractResolver
             return true;
         }
 
-        // Check if it's a generic collection (IEnumerable<T>, List<T>, etc.) of enums
-        if (type.IsGenericType)
+        // Check if the type itself is IEnumerable<TEnum> (e.g. IEnumerable<ComponentType>)
+        if (IsGenericIEnumerableOfEnum(type))
         {
-            var genericArgs = type.GetGenericArguments();
-            if (genericArgs.Length == 1 && IsEnumType(genericArgs[0]))
-            {
-                var genericDef = type.GetGenericTypeDefinition();
-                if (typeof(IEnumerable<>).IsAssignableFrom(genericDef) ||
-                    genericDef == typeof(List<>) ||
-                    genericDef == typeof(IList<>) ||
-                    genericDef == typeof(ICollection<>) ||
-                    genericDef == typeof(IReadOnlyList<>) ||
-                    genericDef == typeof(IReadOnlyCollection<>))
-                {
-                    return true;
-                }
+            return true;
+        }
 
-                // Also check if the type implements IEnumerable<EnumType>
-                foreach (var iface in type.GetInterfaces())
-                {
-                    if (iface.IsGenericType &&
-                        iface.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
-                        IsEnumType(iface.GetGenericArguments()[0]))
-                    {
-                        return true;
-                    }
-                }
+        // This covers List<T>, IList<T>, ICollection<T>, IReadOnlyList<T>, and any custom collection.
+        foreach (var iface in type.GetInterfaces())
+        {
+            if (IsGenericIEnumerableOfEnum(iface))
+            {
+                return true;
             }
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Checks if the type is a generic IEnumerable of an enum type.
+    /// </summary>
+    private static bool IsGenericIEnumerableOfEnum(Type type)
+    {
+        return type.IsGenericType &&
+               type.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
+               IsEnumType(type.GetGenericArguments()[0]);
     }
 }

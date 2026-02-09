@@ -30,6 +30,28 @@ public class TolerantEnumConverterTests
         Third = 2
     }
 
+    /// <summary>
+    /// An enum with a -1 member that is NOT named "Unknown",
+    /// used to test fallback priority #2 (value -1) independently.
+    /// </summary>
+    private enum TestEnumWithNegativeOne
+    {
+        Undefined = -1,
+        Alpha = 0,
+        Beta = 1
+    }
+
+    /// <summary>
+    /// An enum that starts at 1 (no 0 value, no -1, no "Unknown"),
+    /// used to test fallback priority #4 (first defined value).
+    /// </summary>
+    private enum TestEnumNoZero
+    {
+        First = 1,
+        Second = 2,
+        Third = 3
+    }
+
     private class TestClass
     {
         public TestEnum EnumProperty { get; set; }
@@ -37,6 +59,10 @@ public class TolerantEnumConverterTests
         public TestEnum? NullableEnumProperty { get; set; }
 
         public TestEnumNoUnknown EnumNoUnknownProperty { get; set; }
+
+        public TestEnumWithNegativeOne NegativeOneEnumProperty { get; set; }
+
+        public TestEnumNoZero NoZeroEnumProperty { get; set; }
     }
 
     [TestMethod]
@@ -153,6 +179,128 @@ public class TolerantEnumConverterTests
     public void DeserializeNegativeIntegerForUnknown_ReturnsUnknown()
     {
         var json = @"{ ""EnumProperty"": -1 }";
+        var result = JsonConvert.DeserializeObject<TestClass>(json, this.settings);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(TestEnum.Unknown, result.EnumProperty);
+    }
+
+    // -------------------------------------------------------------------
+    // CanConvert tests
+    // -------------------------------------------------------------------
+
+    [TestMethod]
+    public void CanConvert_EnumType_ReturnsTrue()
+    {
+        var converter = new TolerantEnumConverter();
+        Assert.IsTrue(converter.CanConvert(typeof(TestEnum)));
+    }
+
+    [TestMethod]
+    public void CanConvert_NullableEnumType_ReturnsTrue()
+    {
+        var converter = new TolerantEnumConverter();
+        Assert.IsTrue(converter.CanConvert(typeof(TestEnum?)));
+    }
+
+    [TestMethod]
+    public void CanConvert_NonEnumType_ReturnsFalse()
+    {
+        var converter = new TolerantEnumConverter();
+        Assert.IsFalse(converter.CanConvert(typeof(string)));
+        Assert.IsFalse(converter.CanConvert(typeof(int)));
+    }
+
+    // -------------------------------------------------------------------
+    // WriteJson tests
+    // -------------------------------------------------------------------
+
+    [TestMethod]
+    public void SerializeNullEnumValue_WritesNull()
+    {
+        var obj = new TestClass { NullableEnumProperty = null };
+        var json = JsonConvert.SerializeObject(obj, this.settings);
+
+        Assert.IsTrue(json.Contains("null"));
+    }
+
+    // -------------------------------------------------------------------
+    // GetDefaultEnumValue fallback priority tests
+    // -------------------------------------------------------------------
+
+    [TestMethod]
+    public void DefaultFallback_EnumWithNegativeOneButNoUnknownName_ReturnsNegativeOne()
+    {
+        // Tests priority #2: member with value -1 when there is no member named "Unknown"
+        var json = @"{ ""NegativeOneEnumProperty"": ""NonExistentValue"" }";
+        var result = JsonConvert.DeserializeObject<TestClass>(json, this.settings);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(TestEnumWithNegativeOne.Undefined, result.NegativeOneEnumProperty);
+    }
+
+    [TestMethod]
+    public void DefaultFallback_EnumWithNoZeroNoNegOneNoUnknown_ReturnsFirstDefined()
+    {
+        // Tests priority #4: first defined value when there is no "Unknown", no -1, and no 0
+        var json = @"{ ""NoZeroEnumProperty"": ""NonExistentValue"" }";
+        var result = JsonConvert.DeserializeObject<TestClass>(json, this.settings);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(TestEnumNoZero.First, result.NoZeroEnumProperty);
+    }
+
+    [TestMethod]
+    public void DefaultFallback_EnumNoUnknown_UnknownIntegerValue_ReturnsZero()
+    {
+        // Tests priority #3: value 0 when there is no "Unknown" name and no -1
+        var json = @"{ ""EnumNoUnknownProperty"": 999 }";
+        var result = JsonConvert.DeserializeObject<TestClass>(json, this.settings);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(TestEnumNoUnknown.First, result.EnumNoUnknownProperty);
+    }
+
+    // -------------------------------------------------------------------
+    // ReadJson edge-case tests
+    // -------------------------------------------------------------------
+
+    [TestMethod]
+    public void DeserializeNullTokenOnNonNullableEnum_ReturnsDefault()
+    {
+        // Non-nullable enum receiving a JSON null should fall back to default
+        var json = @"{ ""EnumProperty"": null }";
+        var result = JsonConvert.DeserializeObject<TestClass>(json, this.settings);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(TestEnum.Unknown, result.EnumProperty);
+    }
+
+    [TestMethod]
+    public void DeserializeNullableEnumWithEmptyString_ReturnsNull()
+    {
+        var json = @"{ ""NullableEnumProperty"": """" }";
+        var result = JsonConvert.DeserializeObject<TestClass>(json, this.settings);
+
+        Assert.IsNotNull(result);
+        Assert.IsNull(result.NullableEnumProperty);
+    }
+
+    [TestMethod]
+    public void DeserializeNullableEnumWithUnknownIntegerValue_ReturnsDefault()
+    {
+        var json = @"{ ""NullableEnumProperty"": 999 }";
+        var result = JsonConvert.DeserializeObject<TestClass>(json, this.settings);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(TestEnum.Unknown, result.NullableEnumProperty);
+    }
+
+    [TestMethod]
+    public void DeserializeBooleanTokenForEnum_ReturnsDefault()
+    {
+        // A boolean JSON token is not a valid enum representation
+        var json = @"{ ""EnumProperty"": true }";
         var result = JsonConvert.DeserializeObject<TestClass>(json, this.settings);
 
         Assert.IsNotNull(result);
