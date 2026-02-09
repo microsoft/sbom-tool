@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Sbom.Adapters.ComponentDetection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Microsoft.Sbom.Adapters.Tests;
 
@@ -52,6 +53,26 @@ public class TolerantEnumContractResolverTests
         public List<TestEnum> EnumList { get; set; } = new List<TestEnum>();
 
         public int[] IntArray { get; set; } = System.Array.Empty<int>();
+    }
+
+    /// <summary>
+    /// Mimics the upstream Detector.SupportedComponentTypes which has
+    /// [JsonProperty(ItemConverterType = typeof(StringEnumConverter))].
+    /// </summary>
+    private class ClassWithItemConverterAttribute
+    {
+        [JsonProperty(ItemConverterType = typeof(StringEnumConverter))]
+        public IEnumerable<TestEnum> EnumValues { get; set; } = Enumerable.Empty<TestEnum>();
+    }
+
+    /// <summary>
+    /// Tests that a concrete collection type (List) with ItemConverterType attribute
+    /// is also handled. Unlike IEnumerable, List implements IEnumerable via GetInterfaces().
+    /// </summary>
+    private class ClassWithListAndItemConverterAttribute
+    {
+        [JsonProperty(ItemConverterType = typeof(StringEnumConverter))]
+        public List<TestEnum> EnumValues { get; set; } = new List<TestEnum>();
     }
 
     [TestMethod]
@@ -210,5 +231,38 @@ public class TolerantEnumContractResolverTests
         Assert.AreEqual(TestEnum.Value1, result.EnumArray[0]);
         Assert.AreEqual(TestEnum.Value2, result.EnumArray[1]);
         Assert.AreEqual(TestEnum.Value3, result.EnumArray[2]);
+    }
+
+    [TestMethod]
+    public void DeserializeEnumCollection_WithItemConverterAttribute_UnknownValues_UsesTolerantConverter()
+    {
+        // This is the key test: it mimics the upstream Detector.SupportedComponentTypes which has
+        // [JsonProperty(ItemConverterType = typeof(StringEnumConverter))] on it.
+        // Our TolerantEnumContractResolver should override this attribute-level converter.
+        var json = @"{ ""EnumValues"": [""Value1"", ""UnknownEnum"", ""AnotherUnknown""] }";
+        var result = JsonConvert.DeserializeObject<ClassWithItemConverterAttribute>(json, this.settings);
+
+        Assert.IsNotNull(result);
+        var list = result.EnumValues.ToList();
+        Assert.AreEqual(3, list.Count);
+        Assert.AreEqual(TestEnum.Value1, list[0]);
+        Assert.AreEqual(TestEnum.Unknown, list[1]);
+        Assert.AreEqual(TestEnum.Unknown, list[2]);
+    }
+
+    [TestMethod]
+    public void DeserializeEnumList_WithItemConverterAttribute_UnknownValues_UsesTolerantConverter()
+    {
+        // This test covers concrete collection types (e.g. List<T>) with ItemConverterType attributes.
+        // Unlike IEnumerable<T>, List<T> is not itself IEnumerable<> — it only *implements* it,
+        // so IsEnumCollectionType must check type.GetInterfaces() to detect it.
+        var json = @"{ ""EnumValues"": [""Value1"", ""UnknownEnum"", ""Value2""] }";
+        var result = JsonConvert.DeserializeObject<ClassWithListAndItemConverterAttribute>(json, this.settings);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(3, result.EnumValues.Count);
+        Assert.AreEqual(TestEnum.Value1, result.EnumValues[0]);
+        Assert.AreEqual(TestEnum.Unknown, result.EnumValues[1]);
+        Assert.AreEqual(TestEnum.Value2, result.EnumValues[2]);
     }
 }
