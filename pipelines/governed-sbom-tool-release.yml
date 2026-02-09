@@ -2,11 +2,6 @@
       # This pipeline will be extended to the OneESPT template
 trigger: none
 name: $(Date:yyyyMMdd).$(Rev:r)
-variables:
-- name: GitHubApiKey
-  value: 
-- name: NuGetApiKey
-  value:
 resources:
   pipelines:
   - pipeline: 'SBOMTool'
@@ -25,6 +20,8 @@ extends:
       os: windows
     customBuildTags:
     - ES365AIMigrationTooling-Release
+    featureFlags:
+      disableNetworkIsolation: true # This should not be necessary but pushing packages to nuget.org is blocked without it
     stages:
     - stage: Stage_1
       displayName: Validate Drop
@@ -398,3 +395,6 @@ extends:
             targetType: inline
             script: |
               dotnet nuget push "$(System.DefaultWorkingDirectory)\SBOMTool\nuget\*.nupkg" -s https://api.nuget.org/v3/index.json -k $(NuGetApiKey)
+          env:
+            NuGetApiKey: $(NuGetApiKey)
+      
