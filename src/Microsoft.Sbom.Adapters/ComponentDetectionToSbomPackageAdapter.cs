@@ -15,6 +15,12 @@ namespace Microsoft.Sbom.Adapters;
 
 public class ComponentDetectionToSbomPackageAdapter
 {
+    private static readonly JsonSerializerSettings TolerantEnumSettings = new JsonSerializerSettings
+    {
+        ContractResolver = new TolerantEnumContractResolver(),
+        Converters = { new TolerantEnumConverter() }
+    };
+
     private readonly IOSUtils osUtils;
 
     public ComponentDetectionToSbomPackageAdapter(IOSUtils osUtils)
@@ -42,7 +48,7 @@ public class ComponentDetectionToSbomPackageAdapter
 
         try
         {
-            var componentDetectionScanResult = JsonConvert.DeserializeObject<ExtendedScanResult>(File.ReadAllText(bcdeOutputPath));
+            var componentDetectionScanResult = JsonConvert.DeserializeObject<ExtendedScanResult>(File.ReadAllText(bcdeOutputPath), TolerantEnumSettings);
 
             if (componentDetectionScanResult == null)
             {
