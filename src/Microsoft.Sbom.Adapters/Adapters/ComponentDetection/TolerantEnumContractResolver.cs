@@ -78,9 +78,7 @@ public class TolerantEnumContractResolver : DefaultContractResolver
         }
 
         // Check if the type itself is IEnumerable<TEnum> (e.g. IEnumerable<ComponentType>)
-        if (type.IsGenericType &&
-           type.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
-           IsEnumType(type.GetGenericArguments()[0]))
+        if (IsGenericIEnumerableOfEnum(type))
         {
             return true;
         }
@@ -88,14 +86,22 @@ public class TolerantEnumContractResolver : DefaultContractResolver
         // This covers List<T>, IList<T>, ICollection<T>, IReadOnlyList<T>, and any custom collection.
         foreach (var iface in type.GetInterfaces())
         {
-            if (iface.IsGenericType &&
-                iface.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
-                IsEnumType(iface.GetGenericArguments()[0]))
+            if (IsGenericIEnumerableOfEnum(iface))
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Checks if the type is a generic IEnumerable of an enum type.
+    /// </summary>
+    private static bool IsGenericIEnumerableOfEnum(Type type)
+    {
+        return type.IsGenericType &&
+               type.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
+               IsEnumType(type.GetGenericArguments()[0]);
     }
 }
