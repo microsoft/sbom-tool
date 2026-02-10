@@ -13,7 +13,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: PR Comment
         run:
           gh pr comment $PRNUM --body-file .github/workflows/pr-comment-api-change.md
