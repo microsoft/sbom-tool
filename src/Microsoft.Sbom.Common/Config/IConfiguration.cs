@@ -80,6 +80,7 @@ public interface IConfiguration
     /// Gets or sets if you're downloading only a part of the drop using the '-r' or 'root' parameter
     /// in the drop client, specify the same string value here in order to skip
     /// validating paths that are not downloaded.
+    /// Supports both path prefixes (legacy) and glob-style patterns (* and **) for flexible file path matching.
     /// </summary>
     public ConfigurationSetting<string> RootPathFilter { get; set; }
 
