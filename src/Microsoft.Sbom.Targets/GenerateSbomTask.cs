@@ -89,6 +89,7 @@ public partial class GenerateSbom : Task
                 NamespaceUriUniquePart = this.NamespaceUriUniquePart,
                 DeleteManifestDirectoryIfPresent = this.DeleteManifestDirIfPresent,
                 Verbosity = ValidateAndAssignVerbosity(),
+                AdditionComponentDetectorArgs = this.AdditionalComponentDetectorArgs,
             };
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
             var result = System.Threading.Tasks.Task.Run(() => this.Generator.GenerateSbomAsync(

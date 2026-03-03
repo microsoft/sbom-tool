@@ -93,6 +93,14 @@ public partial class GenerateSbom
     public string ManifestDirPath { get; set; }
 
     /// <summary>
+    /// Gets or sets additional arguments to pass to the Component Detector tool.
+    /// An appropriate usage of this would be a space-delimited list of `--key value` pairs, representing
+    /// command-line arguments. See the component-detection repository for a list of valid arguments
+    /// (https://github.com/microsoft/component-detection/blob/main/docs/detector-arguments.md).
+    /// </summary>
+    public string AdditionalComponentDetectorArgs { get; set; }
+
+    /// <summary>
     /// Gets or sets the path to the SBOM CLI tool
     /// </summary>
     public string SbomToolPath { get; set; }
