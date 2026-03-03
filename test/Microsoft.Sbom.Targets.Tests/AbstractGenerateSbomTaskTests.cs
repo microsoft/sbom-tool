@@ -356,6 +356,33 @@ public abstract class AbstractGenerateSbomTaskTests
     }
 
     [TestMethod]
+    public void Sbom_Is_Successfully_Generated_With_AdditionalComponentDetectorArgs()
+    {
+        // Arrange
+        var task = new GenerateSbom
+        {
+            BuildDropPath = TestBuildDropPath,
+            PackageSupplier = PackageSupplier,
+            PackageName = PackageName,
+            PackageVersion = PackageVersion,
+            NamespaceBaseUri = NamespaceBaseUri,
+            AdditionalComponentDetectorArgs = "--DirectoryExclusionList **/test/**",
+            BuildEngine = this.BuildEngine.Object,
+            ManifestInfo = this.SbomSpecification,
+#if NET472
+            SbomToolPath = SbomToolPath,
+#endif
+        };
+
+        // Act
+        var result = task.Execute();
+
+        // Assert
+        Assert.IsTrue(result);
+        this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, TestBuildDropPath, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri);
+    }
+
+    [TestMethod]
     public void Sbom_Is_Successfully_Generated_With_Component_Path()
     {
         // Let's generate a SBOM for the current assembly
