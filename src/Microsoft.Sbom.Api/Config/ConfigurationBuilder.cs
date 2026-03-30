@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Common.Config;
 using PowerArgs;
@@ -13,12 +12,12 @@ namespace Microsoft.Sbom.Api.Config;
 /// <remarks>Throws an error if the same parameters are defined in both the config file and command line.</remarks>
 public class ConfigurationBuilder<T> : IConfigurationBuilder<T>
 {
-    private readonly IMapper mapper;
+    private readonly ConfigPostProcessor configPostProcessor;
     private readonly ConfigFileParser configFileParser;
 
-    public ConfigurationBuilder(IMapper mapper, ConfigFileParser configFileParser)
+    public ConfigurationBuilder(ConfigPostProcessor configPostProcessor, ConfigFileParser configFileParser)
     {
-        this.mapper = mapper;
+        this.configPostProcessor = configPostProcessor;
         this.configFileParser = configFileParser;
     }
 
@@ -31,23 +30,23 @@ public class ConfigurationBuilder<T> : IConfigurationBuilder<T>
         {
             case ValidationArgs validationArgs:
                 validationArgs.ManifestToolAction = ManifestToolActions.Validate;
-                commandLineArgs = mapper.Map<InputConfiguration>(validationArgs);
+                commandLineArgs = ConfigurationMapper.MapFrom(validationArgs);
                 break;
             case GenerationArgs generationArgs:
                 generationArgs.ManifestToolAction = ManifestToolActions.Generate;
-                commandLineArgs = mapper.Map<InputConfiguration>(generationArgs);
+                commandLineArgs = ConfigurationMapper.MapFrom(generationArgs);
                 break;
             case RedactArgs redactArgs:
                 redactArgs.ManifestToolAction = ManifestToolActions.Redact;
-                commandLineArgs = mapper.Map<InputConfiguration>(redactArgs);
+                commandLineArgs = ConfigurationMapper.MapFrom(redactArgs);
                 break;
             case FormatValidationArgs formatValidationArgs:
                 formatValidationArgs.ManifestToolAction = ManifestToolActions.ValidateFormat;
-                commandLineArgs = mapper.Map<InputConfiguration>(formatValidationArgs);
+                commandLineArgs = ConfigurationMapper.MapFrom(formatValidationArgs);
                 break;
             case AggregationArgs aggregationArgs:
                 aggregationArgs.ManifestToolAction = ManifestToolActions.Aggregate;
-                commandLineArgs = mapper.Map<InputConfiguration>(aggregationArgs);
+                commandLineArgs = ConfigurationMapper.MapFrom(aggregationArgs);
                 break;
             default:
                 throw new ValidationArgException($"Unsupported configuration type found {typeof(T)}");
@@ -59,10 +58,10 @@ public class ConfigurationBuilder<T> : IConfigurationBuilder<T>
             new ConfigFile();
 
         // Convert config file arguments to configuration.
-        var configFileArgs = mapper.Map<ConfigFile, InputConfiguration>(configFromFile);
+        var configFileArgs = ConfigurationMapper.MapFrom(configFromFile);
 
         // Combine both configs, include defaults.
-        return mapper.Map(commandLineArgs, configFileArgs);
+        return ConfigurationMapper.Merge(commandLineArgs, configFileArgs, configPostProcessor);
     }
 }
 

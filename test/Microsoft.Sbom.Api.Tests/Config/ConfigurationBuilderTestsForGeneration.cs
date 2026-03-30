@@ -28,7 +28,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_ForGenerator_CombinesConfigs()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<GenerationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigGoodWithManifestInfo);
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
@@ -57,7 +57,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_ForGenerator_CombinesConfigs_CmdLineSucceeds()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<GenerationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigGoodWithManifestInfo);
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
@@ -86,7 +86,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_Generation_BuildDropPathDoNotExist_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<GenerationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(false);
 
@@ -104,7 +104,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_Generation_BuildDropPathNotWriteAccess_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<GenerationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
@@ -124,7 +124,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_Generation_DefaultManifestDirPath_AddsManifestDir()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<GenerationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
@@ -153,7 +153,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_Generation_UserManifestDirPath_AddsManifestDir()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<GenerationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
@@ -183,7 +183,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_Generation_NSBaseUri_Validated()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<GenerationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
@@ -213,7 +213,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_Generation_BadNSBaseUriWithDefaultValue_Succeds()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<GenerationArgs>(configPostProcessor, configFileParser);
 
         mockAssemblyConfig.SetupGet(a => a.DefaultSbomNamespaceBaseUri).Returns("https://uri");
 
@@ -246,7 +246,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_Generation_NullNSBaseUriChangesToDefault()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<GenerationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
@@ -279,7 +279,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_Generation_BadNSBaseUri_Fails(string badNsUri)
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<GenerationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
@@ -304,7 +304,7 @@ public class ConfigurationBuilderTestsForGeneration : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_Generation_BadManifestInfo_Fails(string manifestInfo)
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<GenerationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<GenerationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);

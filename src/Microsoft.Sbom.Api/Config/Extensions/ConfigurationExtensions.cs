@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
 using Microsoft.Sbom.Api.Utils;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Common.Config.Attributes;
@@ -51,7 +50,5 @@ public static class ConfigurationExtensions
 
     // Map the validated InputConfiguration to a Configuration, which will persist the mapping statically and globally
     public static Configuration ToConfiguration(this InputConfiguration inputConfig) =>
-        new MapperConfiguration(cfg => cfg.CreateMap<InputConfiguration, Configuration>())
-            .CreateMapper()
-            .Map<Configuration>(inputConfig);
+        ConfigurationMapper.ToConfiguration(inputConfig);
 }

@@ -144,7 +144,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ExternalReferenceInfoToPathConverter>()
             .AddSingleton<ExternalReferenceDeduplicator>()
             .AddSingleton<ISbomConfigFactory, SbomConfigFactory>()
-            .AddAutoMapper(x => x.AddProfile(new ConfigurationProfile()), typeof(ConfigValidator), typeof(ConfigSanitizer))
+            .AddTransient<ConfigPostProcessor>()
             .Scan(scan => scan.FromApplicationDependencies()
                 .AddClasses(classes => classes.AssignableTo<ConfigValidator>())
                 .As<ConfigValidator>()
