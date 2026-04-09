@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
-using AutoMapper;
 using Microsoft.Sbom.Api.Config.Validators;
 using Microsoft.Sbom.Api.Hashing;
 using Microsoft.Sbom.Api.Utils;
@@ -20,7 +18,7 @@ namespace Microsoft.Sbom.Api.Config.Tests;
 public class ConfigurationBuilderTestsBase
 {
     protected Mock<IFileSystemUtils> fileSystemUtilsMock;
-    private protected IMapper mapper;
+    private protected ConfigPostProcessor configPostProcessor;
     protected ConfigValidator[] configValidators;
     protected Mock<IAssemblyConfig> mockAssemblyConfig;
 
@@ -47,23 +45,8 @@ public class ConfigurationBuilderTestsBase
         hashAlgorithmProvider.Init();
 
         var configSanitizer = new ConfigSanitizer(hashAlgorithmProvider, fileSystemUtilsMock.Object, mockAssemblyConfig.Object);
-        object Ctor(Type type)
-        {
-            if (type == typeof(ConfigPostProcessor))
-            {
-                return new ConfigPostProcessor(configValidators, configSanitizer, fileSystemUtilsMock.Object);
-            }
 
-            return Activator.CreateInstance(type);
-        }
-
-        var mapperConfiguration = new MapperConfiguration(cfg =>
-        {
-            cfg.ConstructServicesUsing(Ctor);
-            cfg.AddProfile<ConfigurationProfile>();
-        });
-
-        mapper = mapperConfiguration.CreateMapper();
+        configPostProcessor = new ConfigPostProcessor(configValidators, configSanitizer, fileSystemUtilsMock.Object);
     }
 
     protected const string JSONConfigWithManifestPath = "{ \"ManifestDirPath\": \"manifestDirPath\"}";

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using AutoMapper;
 using Microsoft.Sbom.Api.Output.Telemetry;
 using Microsoft.Sbom.Common;
 using Microsoft.Sbom.Common.Config;
@@ -17,7 +16,7 @@ namespace Microsoft.Sbom.Api.Config;
 /// <summary>
 /// Runs finalizing operations on the configuration once it has been successfully parsed.
 /// </summary>
-public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration>
+public class ConfigPostProcessor
 {
     private readonly IEnumerable<ConfigValidator> configValidators;
     private readonly ConfigSanitizer configSanitizer;
@@ -30,7 +29,7 @@ public class ConfigPostProcessor : IMappingAction<IConfiguration, IConfiguration
         this.fileSystemUtils = fileSystemUtils ?? throw new ArgumentNullException(nameof(fileSystemUtils));
     }
 
-    public void Process(IConfiguration source, IConfiguration destination, ResolutionContext context)
+    public void Process(IConfiguration source, IConfiguration destination)
     {
         // Replace backslashes in directory paths with the OS-sepcific directory separator character.
         PathUtils.ConvertToOSSpecificPathSeparators(destination);

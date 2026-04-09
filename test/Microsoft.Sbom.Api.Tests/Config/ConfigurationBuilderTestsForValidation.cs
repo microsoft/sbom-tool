@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.Sbom.Api.Config.Args;
 using Microsoft.Sbom.Common.Config;
 using Microsoft.Sbom.Contracts.Enums;
@@ -29,7 +28,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_CombinesConfigs()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<ValidationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
@@ -62,7 +61,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_CombinesConfigs_DuplicateConfig_DefaultLoses()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<ValidationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
@@ -95,7 +94,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_CombinesConfigs_DuplicateConfig_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<ValidationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath);
 
@@ -107,14 +106,14 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
             ManifestDirPath = "ManifestPath"
         };
 
-        await Assert.ThrowsExceptionAsync<AutoMapperMappingException>(() => cb.GetConfiguration(args));
+        await Assert.ThrowsExceptionAsync<ValidationArgException>(() => cb.GetConfiguration(args));
     }
 
     [TestMethod]
     public async Task ConfigurationBuilderTest_CombinesConfigs_NegativeParallism_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<ValidationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath);
 
@@ -133,7 +132,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_Validation_DefaultManifestDirPath_AddsManifestDir()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<ValidationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
@@ -159,7 +158,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_Validation_UserManifestDirPath_DoesntManifestDir()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<ValidationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
@@ -188,7 +187,7 @@ public class ConfigurationBuilderTestsForValidation : ConfigurationBuilderTestsB
     public async Task ConfigurationBuilderTest_Validation_BadManifestInfo_Fails(string manifestInfo)
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<ValidationArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<ValidationArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.ReadAllTextAsync(It.IsAny<string>())).ReturnsAsync(JSONConfigWithManifestPath).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();

@@ -24,7 +24,7 @@ public class ConfigurationBuilderTestsForRedact : ConfigurationBuilderTestsBase
     public async Task ConfigurationBuilderTest_ForRedact_CombinesConfigs()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<RedactArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<RedactArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true).Verifiable();
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true).Verifiable();
@@ -49,7 +49,7 @@ public class ConfigurationBuilderTestsForRedact : ConfigurationBuilderTestsBase
     public async Task ConfigurationBuilderTest_Redact_OuputPathNotWriteAccess_Throws()
     {
         var configFileParser = new ConfigFileParser(fileSystemUtilsMock.Object);
-        var cb = new ConfigurationBuilder<RedactArgs>(mapper, configFileParser);
+        var cb = new ConfigurationBuilder<RedactArgs>(configPostProcessor, configFileParser);
 
         fileSystemUtilsMock.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
         fileSystemUtilsMock.Setup(f => f.DirectoryHasReadPermissions(It.IsAny<string>())).Returns(true);
