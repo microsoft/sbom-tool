@@ -31,8 +31,8 @@ variables:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
   parameters:
-    settings:
-      networkIsolationPolicy: Permissive
+    featureFlags:
+      disableNetworkIsolation: true
     sdl:
       sourceAnalysisPool:
         name: sbom-windows-build-pool
