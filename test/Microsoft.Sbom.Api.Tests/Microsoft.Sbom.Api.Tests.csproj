@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" />
     <ProjectReference Include="..\..\src\Microsoft.Sbom.Api\Microsoft.Sbom.Api.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Sbom.Parsers.Spdx30SbomParser\Microsoft.Sbom.Parsers.Spdx30SbomParser.csproj" />
   </ItemGroup>

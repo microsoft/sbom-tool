@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" />
     <ProjectReference Include="..\..\src\Microsoft.Sbom.Adapters\Microsoft.Sbom.Adapters.csproj" />
   </ItemGroup>
 
