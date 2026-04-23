@@ -7,7 +7,7 @@
     </PackageVersion>
   </ItemDefinitionGroup>
   <PropertyGroup>
-    <ComponentDetectionPackageVersion>7.0.18</ComponentDetectionPackageVersion>
+    <ComponentDetectionPackageVersion>7.1.0</ComponentDetectionPackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.Build" Version="17.11.48" />
