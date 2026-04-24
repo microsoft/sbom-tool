@@ -565,7 +565,7 @@ public class ComponentDetectionToSBOMPackageAdapterTests
         Assert.IsTrue(packages.Any(p => p.PackageName == "Newtonsoft.Json"));
     }
 
-    private void AssertPackageUrlIsCorrect(PackageUrl.PackageUrl expectedPackageUrl, string actualPackageUrl)
+    private void AssertPackageUrlIsCorrect(PackageUrl.PackageURL expectedPackageUrl, string actualPackageUrl)
     {
         if (expectedPackageUrl is null)
         {
