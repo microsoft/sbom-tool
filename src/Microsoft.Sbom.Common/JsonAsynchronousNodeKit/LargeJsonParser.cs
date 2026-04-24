@@ -149,7 +149,7 @@ public class LargeJsonParser
 
     private ParserStateResult HandleExplicitProperty(ref Utf8JsonReader reader, string propertyName)
     {
-        var handler = this.handlers![propertyName];
+        var handler = this.handlers[propertyName];
 
         object? result;
 
