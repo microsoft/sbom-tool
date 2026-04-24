@@ -20,5 +20,6 @@
   
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Serilog" VersionOverride="4.3.1" />
   </ItemGroup>
 </Project>
