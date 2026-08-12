@@ -39,6 +39,7 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
 using Serilog.Filters;
+using Spectre.Console;
 using Constants = Microsoft.Sbom.Api.Utils.Constants;
 using ILogger = Serilog.ILogger;
 
@@ -180,6 +181,7 @@ public static class ServiceCollectionExtensions
 
                 return manifestData;
             })
+            .AddSingleton(_ => CreateAnsiConsole())
             .AddComponentDetection()
             .ConfigureLoggingProviders()
             .AddHttpClient<LicenseInformationService>();
@@ -205,6 +207,30 @@ public static class ServiceCollectionExtensions
         });
 
         return services;
+    }
+
+    private static IAnsiConsole CreateAnsiConsole()
+    {
+        // Microsoft.ComponentDetection.Orchestrator's DetectorProcessingService takes an optional
+        // IAnsiConsole constructor parameter and falls back to the process-wide static
+        // AnsiConsole.Console singleton whenever DI doesn't supply one. That static singleton is
+        // created lazily on first use and permanently captures whichever TextWriter happened to be
+        // bound to Console.Out at that moment. Under a long-lived, reused process -- e.g. MSBuild
+        // Server, or any host that runs GenerateSbom in-process more than once -- the writer
+        // captured during the first invocation can be disposed once that build completes, and the
+        // static console then throws ObjectDisposedException the next time ComponentDetection tries
+        // to write to it (see https://github.com/dotnet/msbuild/issues/14691).
+        //
+        // Registering our own IAnsiConsole here -- scoped to this service collection/host instance
+        // rather than the process -- ensures ComponentDetection never touches the shared static
+        // console or the live Console.Out binding. The output is intentionally discarded via
+        // TextWriter.Null: the detection-times table should only be written to the log file, not the
+        // console (see the "DetectionTimeLine" filter in CreateLogger below), so there's nothing to
+        // gain by wiring this console up to the real standard output.
+        return AnsiConsole.Create(new AnsiConsoleSettings
+        {
+            Out = new AnsiConsoleOutput(TextWriter.Null),
+        });
     }
 
     private static ILogger CreateLogger(LogEventLevel logLevel)

@@ -103,6 +103,46 @@ internal class GeneratedSbomValidator
         }
     }
 
+    /// <summary>
+    /// Lightweight validation used by tests that invoke GenerateSbom repeatedly against a shared
+    /// BuildDropPath. Unlike <see cref="AssertSbomIsValid"/>, this does not hash-compare every file
+    /// under BuildDropPath (fragile when BuildDropPath is shared across invocations/tests); it only
+    /// confirms the manifest is parseable and that component/package detection produced real data.
+    /// </summary>
+    internal void AssertSbomHasPackageData(string manifestPath, string expectedPackageName, string expectedPackageVersion, string expectedPackageSupplier)
+    {
+        Assert.IsTrue(File.Exists(manifestPath));
+
+        var manifestContent = File.ReadAllText(manifestPath);
+        var manifest = JsonConvert.DeserializeObject<dynamic>(manifestContent);
+
+        if (this.sbomSpecification.Equals(SPDX22Specification))
+        {
+            var filesValue = manifest["files"];
+            Assert.IsNotNull(filesValue);
+            Assert.IsTrue(filesValue.Count > 0, "Expected at least one file entry in the manifest.");
+
+            var packagesValue = manifest["packages"];
+            Assert.IsNotNull(packagesValue);
+            Assert.IsTrue(packagesValue.Count > 1, $"Expected component detection to report more than 1 package but found {packagesValue.Count}.");
+
+            var nameValue = manifest["name"];
+            Assert.AreEqual($"{expectedPackageName} {expectedPackageVersion}", (string)nameValue);
+
+            var creatorsValue = manifest["creationInfo"]["creators"];
+            Assert.IsTrue(creatorsValue.Count > 0);
+            Assert.IsTrue(((string)creatorsValue[0]).Contains(expectedPackageSupplier));
+        }
+        else if (this.sbomSpecification.Equals(SPDX30Specification))
+        {
+            Console.Write("SPDX 3.0 specified, validation is handled through parser and validation already.");
+        }
+        else
+        {
+            Assert.Fail("An unexpected SBOM specification was used. Please specify a valid SPDX version. Current supported versions are 2.2 and 3.0.");
+        }
+    }
+
     private IDictionary<string, IDictionary<string, string>> GetBuildDropFileHashes(string buildDropPath)
     {
         var filesHashes = new Dictionary<string, IDictionary<string, string>>();

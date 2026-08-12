@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -383,6 +384,91 @@ public abstract class AbstractGenerateSbomTaskTests
         // Assert
         Assert.IsTrue(result);
         this.GeneratedSbomValidator.AssertSbomIsValid(this.ManifestPath, TestBuildDropPath, PackageName, PackageVersion, PackageSupplier, NamespaceBaseUri, buildComponentPath: sourceDirectory);
+    }
+
+    // Regression test for https://github.com/dotnet/msbuild/issues/14691: under MSBuild Server
+    // reuse, ComponentDetection previously fell back to the static AnsiConsole.Console singleton,
+    // which captured build #1's Console.Out and threw ObjectDisposedException once that writer
+    // was disposed and build #2 ran in the same process.
+    [TestMethod]
+    [DoNotParallelize]
+    public void Sbom_Is_Successfully_Generated_Across_Repeated_Invocations_After_ConsoleOut_Disposed()
+    {
+        var sourceDirectory = Path.Combine(TestBuildDropPath, "..", "..", "..");
+        var originalOut = Console.Out;
+
+        // Manifest output lives outside TestBuildDropPath/sourceDirectory so invocation-1's
+        // manifest files are never picked up by invocation-2's file/component scan.
+        var firstManifestDirPath = Path.Combine(Path.GetTempPath(), "sbom-e2e-" + Guid.NewGuid().ToString("N"));
+        var secondManifestDirPath = Path.Combine(Path.GetTempPath(), "sbom-e2e-" + Guid.NewGuid().ToString("N"));
+
+        try
+        {
+            Directory.CreateDirectory(firstManifestDirPath);
+            using (var firstConsoleOut = new StringWriter())
+            {
+                Console.SetOut(firstConsoleOut);
+
+                var firstTask = new GenerateSbom
+                {
+                    BuildDropPath = TestBuildDropPath,
+                    BuildComponentPath = sourceDirectory,
+                    ManifestDirPath = firstManifestDirPath,
+                    PackageSupplier = PackageSupplier,
+                    PackageName = PackageName,
+                    PackageVersion = PackageVersion,
+                    NamespaceBaseUri = NamespaceBaseUri,
+                    BuildEngine = this.BuildEngine.Object,
+                    ManifestInfo = this.SbomSpecification,
+#if NET472
+                    SbomToolPath = SbomToolPath,
+#endif
+                };
+
+                Assert.IsTrue(firstTask.Execute());
+                var firstManifestPath = Path.Combine(firstManifestDirPath, "_manifest", this.SbomSpecificationDirectoryName, "manifest.spdx.json");
+                this.GeneratedSbomValidator.AssertSbomHasPackageData(firstManifestPath, PackageName, PackageVersion, PackageSupplier);
+            }
+
+            // firstConsoleOut is now disposed; a naive fallback to AnsiConsole.Console would still
+            // hold it and throw ObjectDisposedException on the next write attempt below.
+            Directory.CreateDirectory(secondManifestDirPath);
+            using var secondConsoleOut = new StringWriter();
+            Console.SetOut(secondConsoleOut);
+
+            var secondTask = new GenerateSbom
+            {
+                BuildDropPath = TestBuildDropPath,
+                BuildComponentPath = sourceDirectory,
+                ManifestDirPath = secondManifestDirPath,
+                PackageSupplier = PackageSupplier,
+                PackageName = PackageName,
+                PackageVersion = PackageVersion,
+                NamespaceBaseUri = NamespaceBaseUri,
+                BuildEngine = this.BuildEngine.Object,
+                ManifestInfo = this.SbomSpecification,
+#if NET472
+                SbomToolPath = SbomToolPath,
+#endif
+            };
+
+            Assert.IsTrue(secondTask.Execute());
+            var secondManifestPath = Path.Combine(secondManifestDirPath, "_manifest", this.SbomSpecificationDirectoryName, "manifest.spdx.json");
+            this.GeneratedSbomValidator.AssertSbomHasPackageData(secondManifestPath, PackageName, PackageVersion, PackageSupplier);
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+            if (Directory.Exists(firstManifestDirPath))
+            {
+                Directory.Delete(firstManifestDirPath, true);
+            }
+
+            if (Directory.Exists(secondManifestDirPath))
+            {
+                Directory.Delete(secondManifestDirPath, true);
+            }
+        }
     }
 
     [TestMethod]
