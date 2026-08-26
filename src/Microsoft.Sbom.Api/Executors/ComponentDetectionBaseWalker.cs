@@ -143,7 +143,7 @@ public abstract class ComponentDetectionBaseWalker
 
                     IList<string> apiResponses;
 
-                    apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi, configuration.LicenseInformationTimeoutInSeconds.Value);
+                    apiResponses = await licenseInformationFetcher.FetchLicenseInformationAsync(listOfComponentsForApi, configuration.LicenseInformationTimeoutInSeconds.Value, configuration.LicenseInformationBatchSize.Value);
 
                     foreach (var response in apiResponses)
                     {

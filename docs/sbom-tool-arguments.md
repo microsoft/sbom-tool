@@ -70,6 +70,9 @@ Actions
     DeleteManifestDirIfPresent (-D)             If set to true, we will delete any previous manifest directories that are already present in the ManifestDirPath without asking the user for confirmation. The new
                                                 manifest directory will then be created at this location and the generated SBOM will be stored there.
     FetchLicenseInformation (-li)               If set to true, we will attempt to fetch license information of packages detected in the SBOM from the ClearlyDefinedApi.
+    LicenseInformationBatchSize (-lbs)          Specifies how many components are sent to the ClearlyDefined API in a single request. Defaults to 500. Has no effect if the FetchLicenseInformation (li) argument
+                                                is false or not provided. Valid values are from 1 to 1000. Non-positive values use the default value and values exceeding the maximum are truncated to the
+                                                maximum. Smaller batches are less likely to time out on the server side.
     LicenseInformationTimeoutInSeconds (-lto)   Specifies the timeout in seconds for fetching the license information. Defaults to 30 seconds. Has no effect if the FetchLicenseInformation (li) argument is false
                                                 or not provided. A negative value correspondsto an infinite timeout.
     EnablePackageMetadataParsing (-pm)          If set to true, we will attempt to parse license and supplier info from the packages metadata file.

@@ -82,9 +82,9 @@ public class LicenseInformationFetcher : ILicenseInformationFetcher
         return listOfComponentsForApi;
     }
 
-    public async Task<IList<string>> FetchLicenseInformationAsync(IList<string> listOfComponentsForApi, int timeoutInSeconds)
+    public async Task<IList<string>> FetchLicenseInformationAsync(IList<string> listOfComponentsForApi, int timeoutInSeconds, int batchSize)
     {
-        return await licenseInformationService.FetchLicenseInformationFromAPI(listOfComponentsForApi, timeoutInSeconds);
+        return await licenseInformationService.FetchLicenseInformationFromAPI(listOfComponentsForApi, timeoutInSeconds, batchSize);
     }
 
     // Will attempt to extract license information from a clearlyDefined batch API response. Will always return a dictionary which may be empty depending on the response.

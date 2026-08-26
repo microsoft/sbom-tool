@@ -102,10 +102,34 @@ public class ConfigSanitizer
             configuration.LicenseInformationTimeoutInSeconds.Value = Common.Constants.MaxLicenseFetchTimeoutInSeconds;
         }
 
+        // Prevent null value for LicenseInformationBatchSize.
+        // Values of (0, Constants.MaxLicenseFetchBatchSize] are allowed. Non-positive values are replaced with the default, and
+        // higher values are truncated to the maximum of Common.Constants.MaxLicenseFetchBatchSize
+        if (configuration.LicenseInformationBatchSize is null)
+        {
+            configuration.LicenseInformationBatchSize = new(Common.Constants.DefaultLicenseFetchBatchSize, SettingSource.Default);
+        }
+        else if (configuration.LicenseInformationBatchSize.Value <= 0)
+        {
+            logger.Warning($"Negative and Zero Values not allowed for batch size. Using the default {Common.Constants.DefaultLicenseFetchBatchSize} instead.");
+            configuration.LicenseInformationBatchSize.Value = Common.Constants.DefaultLicenseFetchBatchSize;
+        }
+        else if (configuration.LicenseInformationBatchSize.Value > Common.Constants.MaxLicenseFetchBatchSize)
+        {
+            logger.Warning($"Specified batch size exceeds maximum allowed. Truncating the batch size to {Common.Constants.MaxLicenseFetchBatchSize}.");
+            configuration.LicenseInformationBatchSize.Value = Common.Constants.MaxLicenseFetchBatchSize;
+        }
+
         // Check if arg -lto is specified but -li is not
         if (configuration.FetchLicenseInformation?.Value != true && !configuration.LicenseInformationTimeoutInSeconds.IsDefaultSource)
         {
             logger.Warning("A license fetching timeout is specified (argument -lto), but this has no effect when FetchLicenseInfo is unspecified or false (argument -li)");
+        }
+
+        // Check if arg -lbs is specified but -li is not
+        if (configuration.FetchLicenseInformation?.Value != true && !configuration.LicenseInformationBatchSize.IsDefaultSource)
+        {
+            logger.Warning("A license fetching batch size is specified (argument -lbs), but this has no effect when FetchLicenseInfo is unspecified or false (argument -li)");
         }
 
         // Replace backslashes in directory paths with the OS-sepcific directory separator character.

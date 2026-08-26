@@ -43,6 +43,7 @@ public static class ConfigurationMapper
         dest.DeleteManifestDirIfPresent = WrapNullableBool(args.DeleteManifestDirIfPresent, s);
         dest.FetchLicenseInformation = WrapNullableBool(args.FetchLicenseInformation, s);
         dest.LicenseInformationTimeoutInSeconds = WrapNullableInt(args.LicenseInformationTimeoutInSeconds, s);
+        dest.LicenseInformationBatchSize = WrapNullableInt(args.LicenseInformationBatchSize, s);
         dest.EnablePackageMetadataParsing = WrapNullableBool(args.EnablePackageMetadataParsing, s);
 
         return dest;
@@ -193,6 +194,7 @@ public static class ConfigurationMapper
         configFile.FailIfNoPackages = MergeSetting(commandLine.FailIfNoPackages, configFile.FailIfNoPackages);
         configFile.FetchLicenseInformation = MergeSetting(commandLine.FetchLicenseInformation, configFile.FetchLicenseInformation);
         configFile.LicenseInformationTimeoutInSeconds = MergeSetting(commandLine.LicenseInformationTimeoutInSeconds, configFile.LicenseInformationTimeoutInSeconds);
+        configFile.LicenseInformationBatchSize = MergeSetting(commandLine.LicenseInformationBatchSize, configFile.LicenseInformationBatchSize);
         configFile.EnablePackageMetadataParsing = MergeSetting(commandLine.EnablePackageMetadataParsing, configFile.EnablePackageMetadataParsing);
         configFile.SbomPath = MergeSetting(commandLine.SbomPath, configFile.SbomPath);
         configFile.SbomDir = MergeSetting(commandLine.SbomDir, configFile.SbomDir);
@@ -253,6 +255,7 @@ public static class ConfigurationMapper
         dest.FailIfNoPackages = src.FailIfNoPackages;
         dest.FetchLicenseInformation = src.FetchLicenseInformation;
         dest.LicenseInformationTimeoutInSeconds = src.LicenseInformationTimeoutInSeconds;
+        dest.LicenseInformationBatchSize = src.LicenseInformationBatchSize;
         dest.EnablePackageMetadataParsing = src.EnablePackageMetadataParsing;
         dest.SbomPath = src.SbomPath;
         dest.SbomDir = src.SbomDir;
