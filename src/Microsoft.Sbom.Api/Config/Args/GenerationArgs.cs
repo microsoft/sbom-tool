@@ -127,6 +127,17 @@ public class GenerationArgs : GenerationAndValidationCommonArgs
     public int? LicenseInformationTimeoutInSeconds { get; set; }
 
     /// <summary>
+    /// Specifies how many components are sent to the ClearlyDefined API in a single request. Defaults to 500.
+    /// Has no effect if the FetchLicenseInformation (li) argument is false or not provided. Values outside the
+    /// range of 1 to 1000 are replaced with the default or truncated to the maximum respectively.
+    /// </summary>
+    [ArgShortcut("lbs")]
+    [ArgDescription("Specifies how many components are sent to the ClearlyDefined API in a single request. " +
+        "Defaults to 500. Has no effect if the FetchLicenseInformation (li) argument is false or not provided. " +
+        "Valid values are from 1 to 1000. Smaller batches are less likely to time out on the server side.")]
+    public int? LicenseInformationBatchSize { get; set; }
+
+    /// <summary>
     /// If set to true, we will attempt to parse license and supplier info from the packages metadata file.
     /// </summary>
     [ArgShortcut("pm")]

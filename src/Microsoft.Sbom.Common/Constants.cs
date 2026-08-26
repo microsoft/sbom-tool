@@ -16,6 +16,9 @@ public static class Constants
     public const int DefaultLicenseFetchTimeoutInSeconds = 30;
     public const int MaxLicenseFetchTimeoutInSeconds = 86400;
 
+    public const int DefaultLicenseFetchBatchSize = 500;
+    public const int MaxLicenseFetchBatchSize = 1000;
+
     public const LogEventLevel DefaultLogLevel = LogEventLevel.Warning;
 
     public const string DefaultManifestInfoName = "SPDX";

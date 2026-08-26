@@ -146,6 +146,10 @@ public class InputConfiguration : IConfiguration
     [DefaultValue(Constants.DefaultLicenseFetchTimeoutInSeconds)]
     public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get; set; }
 
+    /// <inheritdoc cref="IConfiguration.LicenseInformationBatchSize" />
+    [DefaultValue(Constants.DefaultLicenseFetchBatchSize)]
+    public ConfigurationSetting<int> LicenseInformationBatchSize { get; set; }
+
     [DefaultValue(false)]
     public ConfigurationSetting<bool> EnablePackageMetadataParsing { get; set; }
 

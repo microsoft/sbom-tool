@@ -75,14 +75,14 @@ public class InterfaceConcretionTests
         public void AppendLicensesToDictionary(IDictionary<string, string> partialLicenseDictionary) => throw new NotImplementedException();
         public IDictionary<string, string> ConvertClearlyDefinedApiResponseToList(string httpResponseContent) => throw new NotImplementedException();
         public IList<string> ConvertComponentsToListForApi(IEnumerable<ScannedComponent> scannedComponents) => throw new NotImplementedException();
-        public Task<IList<string>> FetchLicenseInformationAsync(IList<string> listOfComponentsForApi, int timeoutInSeconds) => throw new NotImplementedException();
+        public Task<IList<string>> FetchLicenseInformationAsync(IList<string> listOfComponentsForApi, int timeoutInSeconds, int batchSize) => throw new NotImplementedException();
         public string GetFromLicenseDictionary(string key) => throw new NotImplementedException();
         public ConcurrentDictionary<string, string> GetLicenseDictionary() => throw new NotImplementedException();
     }
 
     private class PinnedILicenstInformationService : ILicenseInformationService
     {
-        public Task<IList<string>> FetchLicenseInformationFromAPI(IList<string> listOfComponentsForApi, int timeoutInSeconds) => throw new NotImplementedException();
+        public Task<IList<string>> FetchLicenseInformationFromAPI(IList<string> listOfComponentsForApi, int timeoutInSeconds, int batchSize) => throw new NotImplementedException();
     }
 
     private class Pinned_SBOMReaderForExternalDocumentReference : ISbomReaderForExternalDocumentReference
@@ -332,6 +332,7 @@ public class InterfaceConcretionTests
         public ConfigurationSetting<string> SbomDir { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<ConformanceType> Conformance { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ConfigurationSetting<int> LicenseInformationBatchSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ConfigurationSetting<Dictionary<string, ArtifactInfo>> ArtifactInfoMap { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 

@@ -508,6 +508,51 @@ public class ConfigSanitizerTests
     }
 
     [TestMethod]
+    [DataRow(1, DisplayName = "Minimum value of 1")]
+    [DataRow(Common.Constants.DefaultLicenseFetchBatchSize, DisplayName = "Default value of 500")]
+    [DataRow(Common.Constants.MaxLicenseFetchBatchSize, DisplayName = "Maximum value of 1000")]
+    public void LicenseInformationBatchSize_SanitizeMakesNoChanges(int value)
+    {
+        var config = GetConfigurationBaseObject();
+        config.LicenseInformationBatchSize = new(value, SettingSource.CommandLine);
+
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(value, config.LicenseInformationBatchSize.Value, "The value of LicenseInformationBatchSize should remain the same through the sanitization process");
+    }
+
+    [TestMethod]
+    [DataRow(int.MinValue, Common.Constants.DefaultLicenseFetchBatchSize, DisplayName = "Negative value is changed to Default")]
+    [DataRow(0, Common.Constants.DefaultLicenseFetchBatchSize, DisplayName = "Zero is changed to Default")]
+    [DataRow(Common.Constants.MaxLicenseFetchBatchSize + 1, Common.Constants.MaxLicenseFetchBatchSize, DisplayName = "Max value + 1 is truncated")]
+    [DataRow(int.MaxValue, Common.Constants.MaxLicenseFetchBatchSize, DisplayName = "int.MaxValue is truncated")]
+    public void LicenseInformationBatchSize_SanitizeExceedsLimits(int value, int expected)
+    {
+        var config = GetConfigurationBaseObject();
+        config.LicenseInformationBatchSize = new(value, SettingSource.CommandLine);
+
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(expected, config.LicenseInformationBatchSize.Value, "The value of LicenseInformationBatchSize should be sanitized to a valid value");
+    }
+
+    [TestMethod]
+    public void LicenseInformationBatchSize_SanitizeNull()
+    {
+        var config = GetConfigurationBaseObject();
+        config.LicenseInformationBatchSize = null;
+
+        configSanitizer.SanitizeConfig(config);
+
+        Assert.AreEqual(
+            Common.Constants.DefaultLicenseFetchBatchSize,
+            config.LicenseInformationBatchSize.Value,
+            $"The value of LicenseInformationBatchSize should be set to {Common.Constants.DefaultLicenseFetchBatchSize} when null");
+
+        Assert.AreEqual(SettingSource.Default, config.LicenseInformationBatchSize.Source, "The source of LicenseInformationBatchSize should be set to Default when null");
+    }
+
+    [TestMethod]
     [DataRow(false, "no artifactInfoMap exists")]
     [DataRow(true, "empty artifactInfoMap exists")]
     public void ArtifactMapInfo_InvalidCases_SanitizeThrowsException(bool specifyEmptyArtifactInfoMap, string description)

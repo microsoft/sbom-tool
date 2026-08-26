@@ -21,7 +21,8 @@ public interface ILicenseInformationFetcher
     /// </summary>
     /// <param name="listOfComponentsForApi"> A list of strings formatted into a list of strings that can be used to call the batch ClearlyDefined API.</param>
     /// <param name="timeoutInSeconds">Timeout in seconds to use when making web requests. Caller owns sanitizing this value</param>
-    public Task<IList<string>> FetchLicenseInformationAsync(IList<string> listOfComponentsForApi, int timeoutInSeconds);
+    /// <param name="batchSize">How many components to send to the API in a single request. Caller owns sanitizing this value</param>
+    public Task<IList<string>> FetchLicenseInformationAsync(IList<string> listOfComponentsForApi, int timeoutInSeconds, int batchSize);
 
     /// <summary>
     /// Gets the dictionary of licenses that were fetched from the ClearlyDefined API.
@@ -36,7 +37,7 @@ public interface ILicenseInformationFetcher
 
     /// <summary>
     /// Appends the licenses from the partialLicenseDictionary to the licenseDictionary.
-    /// We only request license information for 400 components at a time so we can end up with multiple responses. This function is used to combine the responses into a single dictionary.
+    /// We only request license information for a limited number of components at a time so we can end up with multiple responses. This function is used to combine the responses into a single dictionary.
     /// </summary>
     /// <param name="partialLicenseDictionary"> A dictionary of licenses and component names in the {name@version, license} format</param>
     public void AppendLicensesToDictionary(IDictionary<string, string> partialLicenseDictionary);

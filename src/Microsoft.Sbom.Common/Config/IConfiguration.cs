@@ -220,6 +220,14 @@ public interface IConfiguration
     public ConfigurationSetting<int> LicenseInformationTimeoutInSeconds { get; set; }
 
     /// <summary>
+    /// Specifies how many components are sent to the ClearlyDefined API in a single request. Defaults to
+    /// <see cref="Constants.DefaultLicenseFetchBatchSize"/>. Has no effect if FetchLicenseInformation (li) argument is false
+    /// or not provided. Non-positive values are set to the default and values exceeding the maximum are truncated to
+    /// <see cref="Constants.MaxLicenseFetchBatchSize"/>.
+    /// </summary>
+    public ConfigurationSetting<int> LicenseInformationBatchSize { get; set; }
+
+    /// <summary>
     /// Describes the artifacts used for aggregation, as well information specific to each artifact.
     /// The Key is the location of the artifact, and the value is an <see cref="ArtifactInfo"/> object.
     /// </summary>
