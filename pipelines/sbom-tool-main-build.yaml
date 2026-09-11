@@ -104,37 +104,6 @@ extends:
           - powershell: 'Get-ChildItem -Recurse -Filter *.csproj -Path src | ForEach-Object { dotnet pack $_.FullName  -c $(BuildConfiguration) --no-restore --no-build -o $(Build.ArtifactStagingDirectory)/nuget --include-symbols -p:SymbolPackageFormat=snupkg }'
             displayName: 'Pack NuGet package'
 
-          - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@5
-            displayName: 'Sign packages'
-            inputs:
-              ConnectedServiceName: 'SBOM Tool CI ESRP'
-              AppRegistrationClientId: '51c11fce-97e9-4671-9176-0fc328a9dd17'
-              AppRegistrationTenantId: '33e01921-4d64-4f8c-a055-5bdaffd5e33d'
-              AuthAKVName: 'Sbom-Esrp-Secrets'
-              AuthCertName: 'SBOM-CI-ESRP-Auth-Cert'
-              AuthSignCertName: 'SBOM-CI-ESRP-Signing-Cert'
-              FolderPath: '$(Build.ArtifactStagingDirectory)'
-              Pattern: '*.nupkg'
-              signConfigType: inlineSignParams
-              inlineOperation: |
-                [
-                    {
-                        "keyCode": "CP-401405",
-                        "operationSetCode": "NuGetSign",
-                        "parameters": [ ],
-                        "toolName": "sign",
-                        "toolVersion": "1.0"
-                    },
-                    {
-                        "keyCode": "CP-401405",
-                        "operationSetCode": "NuGetVerify",
-                        "parameters": [ ],
-                        "toolName": "sign",
-                        "toolVersion": "1.0"
-                    }
-                ]
-            condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
-
           - task: DotNetCoreCLI@2
             displayName: 'Build self-contained binary'
             inputs:
@@ -188,15 +157,56 @@ extends:
           - powershell: |
               cd $(Build.ArtifactStagingDirectory)/win
               $version = (ls $(BinaryNameWindows) -r | Select-Object -ExpandProperty VersionInfo).ProductVersion
-              echo "##vso[task.setvariable variable=Version;isOutput=true]$version"
-            displayName: 'Set variable version'
-
-          - powershell: |
-              cd $(Build.ArtifactStagingDirectory)/win
-              $version = (ls $(BinaryNameWindows) -r | Select-Object -ExpandProperty VersionInfo).ProductVersion
-              echo "##vso[task.setvariable variable=Version;isOutput=true]$version"
+              echo "##vso[task.setvariable variable=Version]$version"
               $version | Out-File $(Build.ArtifactStagingDirectory)/version.txt
-            displayName: 'Write version file'
+            displayName: 'Set version'
+
+          - task: NuGetToolInstaller@1
+            displayName: 'Install NuGet'
+            inputs:
+              versionSpec: 6.x
+
+          - task: NuGetCommand@2
+            displayName: 'Pack win-x64 executable'
+            inputs:
+              command: pack
+              packagesToPack: $(Build.SourcesDirectory)/src/Microsoft.Sbom.Tool.Win-x64/Microsoft.Sbom.Tool.Win-x64.nuspec
+              packDestination: $(Build.ArtifactStagingDirectory)/nuget
+              versioningScheme: byEnvVar
+              versionEnvVar: Version
+              basePath: $(Build.ArtifactStagingDirectory)/win
+              buildProperties: PackageReadmePath=$(Build.SourcesDirectory)\src\Microsoft.Sbom.Tool.Win-x64\README.md
+
+          - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@5
+            displayName: 'Sign packages'
+            inputs:
+              ConnectedServiceName: 'SBOM Tool CI ESRP'
+              AppRegistrationClientId: '51c11fce-97e9-4671-9176-0fc328a9dd17'
+              AppRegistrationTenantId: '33e01921-4d64-4f8c-a055-5bdaffd5e33d'
+              AuthAKVName: 'Sbom-Esrp-Secrets'
+              AuthCertName: 'SBOM-CI-ESRP-Auth-Cert'
+              AuthSignCertName: 'SBOM-CI-ESRP-Signing-Cert'
+              FolderPath: '$(Build.ArtifactStagingDirectory)'
+              Pattern: '*.nupkg'
+              signConfigType: inlineSignParams
+              inlineOperation: |
+                [
+                    {
+                        "keyCode": "CP-401405",
+                        "operationSetCode": "NuGetSign",
+                        "parameters": [ ],
+                        "toolName": "sign",
+                        "toolVersion": "1.0"
+                    },
+                    {
+                        "keyCode": "CP-401405",
+                        "operationSetCode": "NuGetVerify",
+                        "parameters": [ ],
+                        "toolName": "sign",
+                        "toolVersion": "1.0"
+                    }
+                ]
+            condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
 
           - powershell: |
               del $(Build.ArtifactStagingDirectory)\CodeSignSummary-*.md
