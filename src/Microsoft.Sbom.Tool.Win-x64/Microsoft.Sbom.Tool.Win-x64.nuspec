@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Microsoft.Sbom.Tool.Win-x64</id>
+    <version>$version$</version>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/microsoft/sbom-tool</projectUrl>
+    <repository type="git" url="https://github.com/microsoft/sbom-tool.git" />
+    <releaseNotes>https://github.com/microsoft/sbom-tool/releases</releaseNotes>
+    <readme>README.md</readme>
+    <description>Self-contained win-x64 executable for Microsoft SBOM Tool.</description>
+    <copyright>Copyright Microsoft Corporation. All rights reserved.</copyright>
+    <tags>sbom spdx cli win-x64</tags>
+  </metadata>
+  <files>
+    <file src="sbom-tool-win-x64.exe" target="tools\win-x64" />
+    <file src="$PackageReadmePath$" target="" />
+  </files>
+</package>
