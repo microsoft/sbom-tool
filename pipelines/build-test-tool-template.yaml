@@ -4,12 +4,16 @@ steps:
     inputs:
       useGlobalJson: true
 
+  - task: NuGetAuthenticate@1
+    displayName: 'Authenticate to Azure Artifacts'
+
   - task: DotNetCoreCLI@2
     displayName: 'Restore solution'
     inputs:
       command: restore
-      feedsToUse: config
-      nugetConfigPath: nuget.config
+      feedsToUse: select
+      vstsFeed: AzureDevOps/ManifestTool
+      includeNuGetOrg: false
       verbosityRestore: Normal
 
   - task: DotNetCoreCLI@2
