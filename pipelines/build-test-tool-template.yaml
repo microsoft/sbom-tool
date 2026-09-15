@@ -19,7 +19,7 @@ steps:
   - task: DotNetCoreCLI@2
     displayName: Build
     inputs:
-      arguments: '-c $(BuildConfiguration)'
+      arguments: '-c $(BuildConfiguration) --no-restore'
 
   - task: DotNetCoreCLI@2
     displayName: Run unit tests (with coverage on Windows)
