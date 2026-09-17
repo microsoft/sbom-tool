@@ -52,8 +52,8 @@ extends:
         - job: Job_4
           displayName: 'Build (macOS-arm64)'
           pool:
-            name: GitHub-hosted Agents
-            vmImage: macos-26-arm64
+            name: Azure Pipelines
+            image: macos-latest
             os: macOS
           steps:
           - template: pipelines/build-test-tool-template.yaml@self
