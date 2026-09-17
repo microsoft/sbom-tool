@@ -10,7 +10,7 @@ steps:
   - pwsh: |
       $configPath = "$(Build.SourcesDirectory)/nuget.config"
       dotnet nuget remove source nuget.org --configfile $configPath
-      dotnet nuget add source "https://pkgs.dev.azure.com/mseng/AzureDevOps/_packaging/ManifestTool/nuget/v3/index.json" --name ManifestTool --configfile $configPath
+      dotnet nuget add source "https://pkgs.dev.azure.com/mseng/_packaging/SbomTool-PublicPackagesFeed/nuget/v3/index.json" --name SbomTool-PublicPackagesFeed --configfile $configPath
     displayName: 'Configure internal NuGet source'
 
   - task: DotNetCoreCLI@2
