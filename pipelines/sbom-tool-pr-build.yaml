@@ -53,7 +53,7 @@ extends:
           displayName: 'Build (macOS-arm64)'
           pool:
             name: GitHub-hosted Agents
-            image: macos-26-arm64
+            vmImage: macos-26-arm64
             os: macOS
           steps:
           - template: pipelines/build-test-tool-template.yaml@self
