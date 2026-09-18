@@ -11,6 +11,7 @@ resources:
 
 variables:
   BuildConfiguration: 'Release'
+  MacOSArm64NetRuntime: 'osx-arm64'
 
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
@@ -53,7 +54,17 @@ extends:
           displayName: 'Build (macOS-arm64)'
           pool:
             name: Azure Pipelines
-            image: macos-14-arm64
+            image: macos-latest
             os: macOS
           steps:
           - template: pipelines/build-test-tool-template.yaml@self
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build osx-arm64 self-contained binary'
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj
+              arguments: '-c $(BuildConfiguration) --no-restore --output $(Build.ArtifactStagingDirectory)/osx-arm64 --self-contained --runtime $(MacOSArm64NetRuntime) -p:PublishSingleFile=true -p:DebugType=None -f net8.0'
+              zipAfterPublish: false
+              modifyOutputPath: false
