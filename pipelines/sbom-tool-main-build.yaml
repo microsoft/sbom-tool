@@ -99,7 +99,7 @@ extends:
                             "ToolVersion" : "1.0"
                         }
                 ]
-            condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
+            condition: and(succeeded(), or(startswith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['ForceSigning'], 'true')))
 
           - powershell: 'Get-ChildItem -Recurse -Filter *.csproj -Path src | ForEach-Object { dotnet pack $_.FullName  -c $(BuildConfiguration) --no-restore --no-build -o $(Build.ArtifactStagingDirectory)/nuget --include-symbols -p:SymbolPackageFormat=snupkg }'
             displayName: 'Pack NuGet package'
@@ -149,7 +149,7 @@ extends:
                             "ToolVersion" : "1.0"
                         }
                 ]
-            condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
+            condition: and(succeeded(), or(startswith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['ForceSigning'], 'true')))
 
           - powershell: 'Rename-Item -Path $(Build.ArtifactStagingDirectory)\win\Microsoft.Sbom.Tool.exe -NewName $(BinaryNameWindows)'
             displayName: 'Rename binaries'
@@ -206,7 +206,7 @@ extends:
                         "toolVersion": "1.0"
                     }
                 ]
-            condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags/'))
+            condition: and(succeeded(), or(startswith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['ForceSigning'], 'true')))
 
           - powershell: |
               del $(Build.ArtifactStagingDirectory)\CodeSignSummary-*.md
