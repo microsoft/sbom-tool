@@ -76,7 +76,12 @@ public class FileInfoWriter
                     config.Recorder.RecordSPDXFileId(fileId);
                 }
 
-                await result.Writer.WriteAsync((generationResult?.Document, config.JsonSerializer));
+                // Only include files in the files section if they are within the BuildDropPath
+                // Files outside the BuildDropPath should only be processed as external document references
+                if (!sbomFile.IsOutsideDropPath)
+                {
+                    await result.Writer.WriteAsync((generationResult?.Document, config.JsonSerializer));
+                }
             }
         }
         catch (Exception e)
