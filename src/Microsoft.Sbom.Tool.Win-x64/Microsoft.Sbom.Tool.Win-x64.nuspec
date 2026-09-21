@@ -12,7 +12,7 @@
     <releaseNotes>https://github.com/microsoft/sbom-tool/releases</releaseNotes>
     <readme>README.md</readme>
     <description>Self-contained win-x64 executable for Microsoft SBOM Tool.</description>
-    <copyright>Copyright Microsoft Corporation. All rights reserved.</copyright>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <tags>sbom spdx cli win-x64</tags>
   </metadata>
   <files>
