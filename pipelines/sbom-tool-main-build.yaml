@@ -18,7 +18,6 @@ variables:
   BuildConfiguration: 'Release'
   OutputArtifactName: 'SBOMTool'
   Packaging.EnableSBOMSigning: 'true'
-  ForceSigning: 'false'
   WindowsNetRuntime: 'win-x64'
   MacOSNetRuntime: 'osx-x64'
   MacOSArm64NetRuntime: 'osx-arm64'
