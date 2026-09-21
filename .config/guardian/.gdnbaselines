@@ -1,0 +1,3283 @@
+{
+  "properties": {
+    "helpUri": "https://eng.ms/docs/microsoft-security/security/azure-security/cloudai-security-fundamentals-engineering/security-integration/guardian-wiki/microsoft-guardian/general/baselines"
+  },
+  "version": "1.0.0",
+  "baselines": {
+    "default": {
+      "name": "default",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "lastUpdatedDate": "2026-09-21 16:35:15Z"
+    }
+  },
+  "results": {
+    "1110d9912aafab76bcb12928944e4504c3e2d063d69e993de9422c335524b0a3": {
+      "signature": "1110d9912aafab76bcb12928944e4504c3e2d063d69e993de9422c335524b0a3",
+      "alternativeSignatures": [
+        "28625be47fc50d5ac71cf277304bf082b58976ce8138760fd371447884b628e9",
+        "eae30144ab82273e80e6229043707358e88ee6129196001417341d1bebc27d09",
+        "05f90ebcae691b6f694514adc2732723a97a899e31dc54dc872b4023ab465eb4"
+      ],
+      "target": "src/Microsoft.Sbom.Extensions.DependencyInjection/RemapComponentDetectionErrorsToWarningsLogger.cs",
+      "line": 46,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "1ca0c06acc13712d9cfbae97213d016050575f7274759d65f67cd53f7c3978e1": {
+      "signature": "1ca0c06acc13712d9cfbae97213d016050575f7274759d65f67cd53f7c3978e1",
+      "alternativeSignatures": [
+        "2ed7ae6a7336ccb3abe1cd56a9b448eb773771e4fafd409d1ffd2e5c3e51edee",
+        "8a251ff811065ea31649af2254325d27a30456b2f25429f1504fcd1229b4e412",
+        "b6cdb1aa7b43ec7f8c6e2203dc358361ab410abfb82eae7f9b638c74b4cfaed8"
+      ],
+      "target": "src/Microsoft.Sbom.Extensions.DependencyInjection/ServiceCollectionExtensions.cs",
+      "line": 220,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "5aa3e584c53e963aea7864d9be40dc2906c061c1ca0f27e951c0c237405718d0": {
+      "signature": "5aa3e584c53e963aea7864d9be40dc2906c061c1ca0f27e951c0c237405718d0",
+      "alternativeSignatures": [
+        "d35a54021d99ed9c9beaec505e42734e1f844c80902cbd73ab58265d3e846bad",
+        "7bac2fef0a945c58d1d60d24f15bbcabdf58d687a47d090ed2d1c477e75bc33e",
+        "0588c34786d7daf9df0f9c3d428614e84b70952254b5db4291589de8e5bba4f7"
+      ],
+      "target": "src/Microsoft.Sbom.Extensions.DependencyInjection/ServiceCollectionExtensions.cs",
+      "line": 224,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "1d0e1f54dae6f380c61c9cff4ef336e9d96747baf28e0cebebd3e1b12d8867b8": {
+      "signature": "1d0e1f54dae6f380c61c9cff4ef336e9d96747baf28e0cebebd3e1b12d8867b8",
+      "alternativeSignatures": [
+        "71f09febcac6f6a977f2900d748f13885285dfc621c23c7664c9c39a88c3d53d",
+        "52abb58866badb5513f3cbd224226088d67b9845eda17b9b693253db32891f71",
+        "0f7017a261f27f1ab8e48fe8b65edb6b75c8c297901fe3d2bca6708eff42aa64"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx22SbomParser/Generator.cs",
+      "line": 105,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "4116090a73d3af29bd7953464b42541db0a1f1f7ed6b16a9f912e034f0ad18cf": {
+      "signature": "4116090a73d3af29bd7953464b42541db0a1f1f7ed6b16a9f912e034f0ad18cf",
+      "alternativeSignatures": [
+        "bd27067058b205bcc48f3cee625a8d69627ac4d70247be4c0773053b517aa14c",
+        "2251cd239d99320352f2c8102ba0cf6521fb7d239686b3685a0b39e876325881",
+        "9fcf4858e363fd49df18f2db09e2102ee04b177af98e1c3690335d979a39b37f"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx22SbomParser/Generator.cs",
+      "line": 134,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "f918e56a596c64487d0db1656f451935c72b7f2458e42bc885e05880c98fe9f2": {
+      "signature": "f918e56a596c64487d0db1656f451935c72b7f2458e42bc885e05880c98fe9f2",
+      "alternativeSignatures": [
+        "b520d771f07e142293971a499b35913366c9043f001ced47cdeb13f88a8d92ae",
+        "3203085dd83742a14cfbc82d02b059cb494e71d519f28af8f6af8e174e7e1800",
+        "e478b213885005270bb03655b69b24d6bf62e926293dfdd792dc368b5b442f63"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx22SbomParser/Generator.cs",
+      "line": 238,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "4fa7747da9a71cf336859edf2152f2a73c23f6510534d3360f781c0768594728": {
+      "signature": "4fa7747da9a71cf336859edf2152f2a73c23f6510534d3360f781c0768594728",
+      "alternativeSignatures": [
+        "e87076d5d2b2e3f72478581933f7612e00d08fc816ef307de857f31b913f5421",
+        "222828168e9540533425652a4b38778fa171d634e58f9b7f6c4e74a78b113ab7",
+        "eccdd849a7baf6bc4c6993f0e88426157a1801d362c25a18a3b755cd815035cb"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx22SbomParser/Generator.cs",
+      "line": 322,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "3c195a512f79e4a9c6fff458b2190736cb33e6a609f3a721adbd6d04068dbaa2": {
+      "signature": "3c195a512f79e4a9c6fff458b2190736cb33e6a609f3a721adbd6d04068dbaa2",
+      "alternativeSignatures": [
+        "e746b04784d2bee709c87ea8d74b889ac905b7dfde28916c775c0e0e8100efe8",
+        "82e27ff70a8c92dd1ba801bdc4431b7fda8cf53ee983befb02ff62dbe2132a9c",
+        "a92b87285c9818d06100ef86cf8513b556504bba419912f1ffdc2e2c25bfd91d"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx22SbomParser/Generator.cs",
+      "line": 377,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "15488d9273b313a6e8ef2c5d8c3328e0161993d02cec7b4a2d64b5e1ba69df7e": {
+      "signature": "15488d9273b313a6e8ef2c5d8c3328e0161993d02cec7b4a2d64b5e1ba69df7e",
+      "alternativeSignatures": [
+        "830645396f8713995392be0ecd909027562f7617719a5c26ee8719474cdfdeef",
+        "9ec7fd8cf076b02fef92e6b02def41fab5a03247cd25588015d7e958a01e5257",
+        "f8012d343c09bab904d508d70648c350057e338a74169678641e074e9da273d7"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx22SbomParser/MergeableContentProvider.cs",
+      "line": 155,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "1a34676573892926f760e4d9cc39eed96cdec1f90a9d95046715eddb1e0aa087": {
+      "signature": "1a34676573892926f760e4d9cc39eed96cdec1f90a9d95046715eddb1e0aa087",
+      "alternativeSignatures": [
+        "987dce6282ccca9cde9b2c1fbaf3a69c4dd974f0679698b0eaf8201572364326",
+        "d431093bd25a725b263d71f10e8d9c16b6c92b4fef3131ad5d235449d6657268",
+        "308d3adfb2470788e82dc85c7f59950780ecceb1b688bfe23b7b398256dbc111"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx22SbomParser/MergeableContentProvider.cs",
+      "line": 156,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "c0c076a35047b2faf58b4d9cdcd90753e856def6882b7bbcd515036e48799348": {
+      "signature": "c0c076a35047b2faf58b4d9cdcd90753e856def6882b7bbcd515036e48799348",
+      "alternativeSignatures": [
+        "d6722aa965fc4cc9d5bbf13ae98ec72f79dbd27ada6eb0011c361ab066a07b68",
+        "9a46b16203b330f8ce955d357d2f2e1166c0bb9390b1848631f592568844b353",
+        "5ad1a8ef0079724cad333fd651fbf8951f7b890adb51a89a1418417b0d4c2ae1"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx30SbomParser/Generator.cs",
+      "line": 198,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "bdbaa2a9694505a1ebdfc5b9c8d524cd6fa52b84de9080317ee6829617a28e2b": {
+      "signature": "bdbaa2a9694505a1ebdfc5b9c8d524cd6fa52b84de9080317ee6829617a28e2b",
+      "alternativeSignatures": [
+        "7824c4035f3b2bcbe81c1357f06234196bbc0ff3b5ebd99c59c4f18188d0f5e2",
+        "639acc8359f1e53af21e75e0538b93a3891c1e8709645a865ad1d97cf8059535",
+        "9cd8835616133ca6e7fd908139d224f82f7ec9d4b3d0009dc03ec6e9de302bcd"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx30SbomParser/Generator.cs",
+      "line": 277,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "233bc5916950fb894077cd95168e0f161f2415d36571d6ceffc7734a853e3d44": {
+      "signature": "233bc5916950fb894077cd95168e0f161f2415d36571d6ceffc7734a853e3d44",
+      "alternativeSignatures": [
+        "48a994ff83343940ae0b148919387b41f51ad662150de01385894c1eadecd919",
+        "4972b24a2791627d6cc9b8a2cab3ca454e13dd0ff89052157aa76c0333c5245f",
+        "fa05d19a0c4177b9af299490288086fcf6c4fd16eb566ab2376015e979b77ea4"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx30SbomParser/Generator.cs",
+      "line": 677,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "de0a5d9b321795dc788ed66c8ff44a28389d65a5b704a40b5da0f7e7f0e2dedb": {
+      "signature": "de0a5d9b321795dc788ed66c8ff44a28389d65a5b704a40b5da0f7e7f0e2dedb",
+      "alternativeSignatures": [
+        "3490b5bd4f9cd568a949bb78a1174c36f2d56b9b6a25147c97888cc5b6c0871f",
+        "0cdd7fcf364c5ab9459641cc86178696876819276263f7864e17ed02ae932446",
+        "ea6e64c701a99314ca6f8ac81b5fcb67f6c2b0268ef7ffcc6d3c6ce876cd7f8a"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx30SbomParser/Generator.cs",
+      "line": 664,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "2fc9052c5b489b45b30bec1eae1c0ed23e931f4175c78dba3d99c021995f8971": {
+      "signature": "2fc9052c5b489b45b30bec1eae1c0ed23e931f4175c78dba3d99c021995f8971",
+      "alternativeSignatures": [
+        "366a8c7da1b61ed0dbef5d44390f6884a491bf17649eec5a6a961242d885bcb4",
+        "db0edb3632ed4cdd2a681c50655bb0d345915c49ce4ca7286516693d1fdcfa85",
+        "4294654d3c0757a40a185c7e522aecc90bdc03ff881b9aa7d431ec72b16cc312"
+      ],
+      "target": "src/Microsoft.Sbom.Targets/SbomInputValidator.cs",
+      "line": 55,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "0adf66b4b2d6747f30a10339bcbea6cfabe92bda2609c7389ea4ad7124c44774": {
+      "signature": "0adf66b4b2d6747f30a10339bcbea6cfabe92bda2609c7389ea4ad7124c44774",
+      "alternativeSignatures": [
+        "cf9802a2b12c28da9ce2dfccc8349fbb4df4900bba1479f192405851e3a1a8c5",
+        "fd024afac00fa79d841adb7a6f887f5bb1b3797f5d52e5e60f9a66336ab72857",
+        "76c1b1053c48beae82988d837a40ce252efa93b922c030d63f76c01ec303d09f"
+      ],
+      "target": "src/Microsoft.Sbom.Targets/SbomInputValidator.cs",
+      "line": 46,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "8eddbdf1a2e458f6cbfd3f508e9240f7d87019e5c51970b18aab8a3c802de0a8": {
+      "signature": "8eddbdf1a2e458f6cbfd3f508e9240f7d87019e5c51970b18aab8a3c802de0a8",
+      "alternativeSignatures": [
+        "d85962d8c61599c8cf85d5519800d4a4e1e8af2cb443203a9585db3bb54ccefb",
+        "1a660877dae76d0853af424ba6a45ca7edf5b0298f48c4c3c0f2ef916df460ee",
+        "99a146904ab293db6757b58b9dcd9193f50b9b3bb983809f36be39909dbdaa4a"
+      ],
+      "target": "src/Microsoft.Sbom.Targets/SbomInputValidator.cs",
+      "line": 85,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "34996cd5e45ba968285644f7ea59c983f5aee472d32b4e0742ad16a4ddf3f2c0": {
+      "signature": "34996cd5e45ba968285644f7ea59c983f5aee472d32b4e0742ad16a4ddf3f2c0",
+      "alternativeSignatures": [
+        "8d3c65ef5456431fea229a63da0f091d416421168bc9b94b31533b846a73c0ab",
+        "0744d1d01ee0ccae8c3020e75c4447b2ff4227a71126d9ba1f2cbeca4f3b832e",
+        "418afb764a6930fac37fe1617fd0bc2b4239805d770ca5fe7e901fd6ca71908a"
+      ],
+      "target": "src/Microsoft.Sbom.Targets/SbomInputValidator.cs",
+      "line": 115,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "1a02532206d7cb8ed4343f3541f59c34aa39ce53a70c9a16094f5b674d19eb31": {
+      "signature": "1a02532206d7cb8ed4343f3541f59c34aa39ce53a70c9a16094f5b674d19eb31",
+      "alternativeSignatures": [
+        "20b68fa951bd331e30cfa93f7f2c437901fcf5e18c39d93a18d66b4c7b9683d5",
+        "1f79c1b7dc841665f38aaa02cadcbb0120e66be3f336bc0d83e97154c038f81c",
+        "dce48e22093b4413a747dd4375f27202d9a07f5ce4a46206c728afb2b8bb9d4e"
+      ],
+      "target": "src/Microsoft.Sbom.Targets/SbomInputValidator.cs",
+      "line": 115,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "a25f1be23755799b7d4010737a8b334da7fa5ce1c1c92cacc45f7b9784b61b22": {
+      "signature": "a25f1be23755799b7d4010737a8b334da7fa5ce1c1c92cacc45f7b9784b61b22",
+      "alternativeSignatures": [
+        "b189d4ace17594616bd271308c69d69d19d4c6d504731ecf004034865ca7a436",
+        "fecb87c7c48becbbbe1b06772c3c879a168a98775c239b1be7a7434324602c5e",
+        "cfc51383382cff7546515e0e0094e28d9b36df210a077a35c284bd72f8f264b4"
+      ],
+      "target": "test/Microsoft.Sbom.Adapters.Tests/TolerantEnumContractResolverTests.cs",
+      "line": 218,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "da0ea5fb469b64ea050acad8938f86aba74ed7a78c740ec4547b1f9ce8a11e92": {
+      "signature": "da0ea5fb469b64ea050acad8938f86aba74ed7a78c740ec4547b1f9ce8a11e92",
+      "alternativeSignatures": [
+        "80b7dfcadab3365e08577d7cc671c16b693b12650cb1b78358abc1527a9510a1",
+        "a544e9577d12ea2938011e43789e2833a6ed96e9456471b0854762ecd6a0833d",
+        "4bf03ac9cfd7e531045fccdbf74ae4609f5f087fa09ba747b97114e5445492fe"
+      ],
+      "target": "test/Microsoft.Sbom.Adapters.Tests/TolerantEnumContractResolverTests.cs",
+      "line": 219,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "9e0460b0f501385d3cd44a67fc4b7dfe903c701218c6341b93c5023d03680df3": {
+      "signature": "9e0460b0f501385d3cd44a67fc4b7dfe903c701218c6341b93c5023d03680df3",
+      "alternativeSignatures": [
+        "81eb9ac826873f8341ce3818277510350d0a4680eae5abe1c1b6aa1e4ba809d0",
+        "45b193bb21e0e354788c428fdf582be4be1a5bde2d70fad7546082a28acb4341",
+        "48257c4c95a6c6aea1b53302bfebf1e399699cea757db9c52dc185dbe46eb76a"
+      ],
+      "target": "test/Microsoft.Sbom.Adapters.Tests/TolerantEnumContractResolverTests.cs",
+      "line": 220,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "9c2d22a014e2efef137fd54364cbc665aa9f575a6bda9a1042c3ad96981a1d9e": {
+      "signature": "9c2d22a014e2efef137fd54364cbc665aa9f575a6bda9a1042c3ad96981a1d9e",
+      "alternativeSignatures": [
+        "b4671d1da5aa8dd023e669d3cec044c94d43ffcad735211386aed056b5401d56",
+        "443ca5203f4d7ee2bd7a340b5b88b52b08faf448121cb081779992a7e490216f",
+        "b406ed3d70703027c46c50a5503f955f523895f93613a0bb0fb50016a2d7c956"
+      ],
+      "target": "test/Microsoft.Sbom.Adapters.Tests/TolerantEnumConverterTests.cs",
+      "line": 165,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "f010f94e6f9cea054c1ca79ae9b31966897d5ecde135a6e6a1e970629a93e78e": {
+      "signature": "f010f94e6f9cea054c1ca79ae9b31966897d5ecde135a6e6a1e970629a93e78e",
+      "alternativeSignatures": [
+        "73a86c7342b391cad868b34ba5e0e32a5d86d630e6afbbe1ce36bbeba92e623e",
+        "2cec46c94748694512b8c12f65cd88fc0ea3b3aebf803dfc5c4b4536bfffca2b",
+        "3486882f25a52dd94a23c7ab09574c1d1a26c5f68b4b7420e5b57c8da9be1fb1"
+      ],
+      "target": "test/Microsoft.Sbom.Adapters.Tests/TolerantEnumConverterTests.cs",
+      "line": 224,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "1596959e98aa6ab61e83a256cc3f84c6d352b3ee028ec6b7f56c1146b3549805": {
+      "signature": "1596959e98aa6ab61e83a256cc3f84c6d352b3ee028ec6b7f56c1146b3549805",
+      "alternativeSignatures": [
+        "d3d524383bfa3bd1b95abe06dc991406903b079389f6b4507dcd66442fe52c28",
+        "0da5263d8dea4179e9fd4ca1ce79b199c6a883256f6b48be3a6a1c3583755af2",
+        "650175fe350349e78425f02ed415de4047e99f85bb9acc71b69c29c99aa1be1b"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.E2E.Tests/GenerateSbomE2ETests.cs",
+      "line": 145,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "411ba3b3a7208a1f973fd153a50ef2bc6d83a9d2c6faabe2c0cc889c59a4ef3e": {
+      "signature": "411ba3b3a7208a1f973fd153a50ef2bc6d83a9d2c6faabe2c0cc889c59a4ef3e",
+      "alternativeSignatures": [
+        "02cb8b2ae3a804c26a096548a27bf3775f438b79be8f7472554320cf30181cc8",
+        "dbceeb2891b12b0019697d4736d8928fddf00b56d78a83cf89bec29e3757f5a8",
+        "24a09f86ff41416e035544048af321de2a35f90c7dfacc6f186a3fbef38fc925"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.E2E.Tests/GenerateSbomE2ETests.cs",
+      "line": 136,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "e0101e9294e521e1bb562f85924efb7b9640a97bb486f4e6bcdab95e66b1ce1a": {
+      "signature": "e0101e9294e521e1bb562f85924efb7b9640a97bb486f4e6bcdab95e66b1ce1a",
+      "alternativeSignatures": [
+        "e2bed6ab1f7f3c49b0cd7c5305dd44a349818679c5915c346383fb7765265998",
+        "fb0b6f0b1c75b14b98b3d76c124aaa8d108e4173d7086a857e259511d1840586",
+        "47f59982b6eb64ae5e525895d890bea4872b225bd9f11623b2e7df991dad4a65"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.E2E.Tests/GenerateSbomE2ETests.cs",
+      "line": 144,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "b9ee7c8a9f701a7b8602c3e7b33fe7a1775d80fad57c7ae67eb762e7d8836e15": {
+      "signature": "b9ee7c8a9f701a7b8602c3e7b33fe7a1775d80fad57c7ae67eb762e7d8836e15",
+      "alternativeSignatures": [
+        "64d13ef8cc27f9600833293fe093b03ffd5cf7cc91436d60824e5fdfc62efafc",
+        "adbcef716083f795f4499ee5ada18308c743312b28b659f254de08df29d6265d",
+        "55aacb4fbb11d8fb9d743dc60f03c10d16ecbc81d15223567fd6caceb36a2bd1"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.E2E.Tests/GenerateSbomE2ETests.cs",
+      "line": 145,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "bb1856cb4fa8af964ec3d3f534f0450a0bc352fc98477a397f45babe985d8d16": {
+      "signature": "bb1856cb4fa8af964ec3d3f534f0450a0bc352fc98477a397f45babe985d8d16",
+      "alternativeSignatures": [
+        "0d2905950567a8eeb8258a53e8681b239f37bed4a096ecd7bdeac103d6f19610",
+        "d74ab98eeed84980388a524e294dc0cba4df42a534bea2c441262a632102fd8b",
+        "6fd59f77d8d0af7a37bc9b25b0acd81fb48b97c1f5172f2839ad8cae73a7a13c"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/AbstractGenerateSbomTaskInputTests.cs",
+      "line": 413,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "ae7f0c5a510b81a3b7b517f05c19bc03d62ec3cc11f2ed6ecac3581db572df6a": {
+      "signature": "ae7f0c5a510b81a3b7b517f05c19bc03d62ec3cc11f2ed6ecac3581db572df6a",
+      "alternativeSignatures": [
+        "aa7ad2c9c4736a5a4ceb79db787dc88e18511d6189cf95acf72351f5efe307fa",
+        "ea13519b1699d2b0842bbaf47e9ac7d3d984c28d6ed241d58d0cf825ccbd6b3a",
+        "8cb6a04b526668774609d01634a68e919e745d4b902a6438e4af62cb479de4f9"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/AbstractGenerateSbomTaskInputTests.cs",
+      "line": 418,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "6c01f994a446aaaf21a3bcf007605fb0d3fe478bb526cee320a576a4baa02603": {
+      "signature": "6c01f994a446aaaf21a3bcf007605fb0d3fe478bb526cee320a576a4baa02603",
+      "alternativeSignatures": [
+        "0498330646f51f1c18d1e5762707a1796c8e6a10e6859d8f07f79baaf5202912",
+        "6bb84ca408595170d281c8b1e1740b6f549283ad0cc08847e21c125dabf36948",
+        "e4b49dedd8e8895d05309c4ade618cce0d000b6fcbbced7711b30edebb388d10"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/AbstractGenerateSbomTaskTests.cs",
+      "line": 486,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "02f587d1aad551e389b6dd8fc415ebfb5f3c8ddbda5dad7efacc3011c073fe84": {
+      "signature": "02f587d1aad551e389b6dd8fc415ebfb5f3c8ddbda5dad7efacc3011c073fe84",
+      "alternativeSignatures": [
+        "3e1020c194d7d0c80f1d3c613cdbf91accd06d82bf37a052c2b3f65101bf07bc",
+        "7d38a1ac2f6096bbc6c8eead7852397ea0cbd052f79f99e3d687a49f6175ddf5",
+        "08ca3f3ffca8a4105a6f27b40b0b4cde8e221f68d10333ef85d13c94efcb3d04"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/AbstractGenerateSbomTaskTests.cs",
+      "line": 491,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "cf23d9e202d477073e8838eada410900ec9385b12fffb8f79f394edfced52dfe": {
+      "signature": "cf23d9e202d477073e8838eada410900ec9385b12fffb8f79f394edfced52dfe",
+      "alternativeSignatures": [
+        "65e017ab7f9ac1c83f94e38fb771f9f144401679fbbfbd3cc7df40831ef804d2",
+        "056e5af8a3564d246f1f32d8ddf16f8fe0746126b4976b04134bf12dd8796587",
+        "b2d7ad39c1a1c6ed01930579b995710bf0e2dda79635192ff6a80d391c3af1ce"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 83,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "d8e6f20bab622beab8d7978317401a8c96779a604d106248cd6dde61ac0cae4a": {
+      "signature": "d8e6f20bab622beab8d7978317401a8c96779a604d106248cd6dde61ac0cae4a",
+      "alternativeSignatures": [
+        "316bed52fee90d5422b17c5c28ff95da60072e53efc8eee4e6fe7dc5311336e3",
+        "7ebc7bbe84e4edf73e0c8d38dcd2e3c583bf2650793d43424192895f890e922f",
+        "0ff7d5d9627cc476f0243b65b4d26765bf5c185ea8252d0fd00ddd578203588a"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 84,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "9a4255d77592025d350c1a5f569969283d701f85343d4a633a326be6358c7855": {
+      "signature": "9a4255d77592025d350c1a5f569969283d701f85343d4a633a326be6358c7855",
+      "alternativeSignatures": [
+        "5fbdf7eba69f6beeac865852c110f73ca4000b63f08521fe65812727b6c7b25a",
+        "30019817642e0f4baf04fa1b3bd01024eeb38ae99cc8a08cc57c283d91f7da8f",
+        "8a4370c78b9ed32ba1e6d8cb8da01d18e750e23ab123e750c1e4842c89c776d4"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 85,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "7dd6333512cfe685288b8c73097ce578fd2f1994cd7042a848897c4469a355c3": {
+      "signature": "7dd6333512cfe685288b8c73097ce578fd2f1994cd7042a848897c4469a355c3",
+      "alternativeSignatures": [
+        "a69c7f8a2c11a0770e5391315723a2b1b13b0eb6fb77d2e79d8401a7274c073c",
+        "98d30203eafc1eac5441fe864e5c1572b71ef09c3b92eb756bbbde38650c1059",
+        "84ab83fae6633fd05c9bf6a06ff7c0fee253dd96e3be598304ea5c6e046ca523"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 228,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "cc5f1299ef15a33829a13b7b990a07c7718fcf84fadf987eabc18076cfb7bbdd": {
+      "signature": "cc5f1299ef15a33829a13b7b990a07c7718fcf84fadf987eabc18076cfb7bbdd",
+      "alternativeSignatures": [
+        "0205d643768e7ed13a2649b52d4ea32ef7027b85adcf18f37977131a7fb23306",
+        "565c51763889dcfdab3191fb5a516104768d5bd87ce1702bbc63f2dae78c2fa0",
+        "fd8cce26259f60262811c65f92c32d17255f78ce1987e2ac25e88c246fe132aa"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 284,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "3e5aa13be54c76ce09ee0c0baf25bbfa6eaea4748aebc72c61f27aaf899ff2a6": {
+      "signature": "3e5aa13be54c76ce09ee0c0baf25bbfa6eaea4748aebc72c61f27aaf899ff2a6",
+      "alternativeSignatures": [
+        "02ffc91c33a5fdd43c252059fa6218938c1dee8586370d8fd9966ae40dbf7b66",
+        "643f687689f39a15d5b332067b655e9f05a8eb722eebe0c540f716dd671e3bfe",
+        "c426411e5b8805a499db473f00d719503f984fca4b41460cbc3df4fd2467592d"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 305,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "17a074d8223d75948fcb5ef0b501528106ac70934abb707f556ba5af4718e08a": {
+      "signature": "17a074d8223d75948fcb5ef0b501528106ac70934abb707f556ba5af4718e08a",
+      "alternativeSignatures": [
+        "3f25abc8b4c2601f2e28d9c069c3d40721eec0f184b6cc363f613b05343f766a",
+        "8daadb1b8325a3e8543d5b9ccbe1df3f411dcb160ee31d7717c73ddce3951ebd",
+        "4eaeae9b3c979fddbdf0ac13081ca1ee36678e34da1d3b84860d6a2e228e9051"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 327,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "2a9cb3481c2901fa0cae17ed04e2da7d9e5d00f9a9b94771e05fbcc21d34e4f5": {
+      "signature": "2a9cb3481c2901fa0cae17ed04e2da7d9e5d00f9a9b94771e05fbcc21d34e4f5",
+      "alternativeSignatures": [
+        "3ba97a7cc171999321c880ac32d48f7fc7b3367b71809c8f78c9b68b75ab034a",
+        "4be2fe30035c16855e498d2783944a71833f35a6c08ac2a5faf40c882d5d53d6",
+        "43a6a98f1416acbf5141d7bc05ca96e8a1393985beba3f75e43c745bf0000392"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 348,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "a95cfe0c6f77af92fd2c858d42d4bd7fad9742e10a49f7ca05c7dd6dd191a2a0": {
+      "signature": "a95cfe0c6f77af92fd2c858d42d4bd7fad9742e10a49f7ca05c7dd6dd191a2a0",
+      "alternativeSignatures": [
+        "56225afd74361e7e320bf5f759df9b729f51ef8d6747bf4e78a4a51b1a852b21",
+        "d7be911f9acc3eff8dfdf0206fb34c1e42082f68cccf4bc39cec77de1cad0cec",
+        "408666af48643b2f6c7d9a22e83e805d870958e6e5ca451133bb2ef5e21a3d54"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 349,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "f79e1bab3f8b950d406ac21b7fb5cb92b83c64db5f1182c6020f044cc260bf76": {
+      "signature": "f79e1bab3f8b950d406ac21b7fb5cb92b83c64db5f1182c6020f044cc260bf76",
+      "alternativeSignatures": [
+        "ab2baffd14981fc86365ad55eebe929269e7cb2e0bb389ddb3fb146843a7b9dd",
+        "33d5f5a0faa50e0b6e7330c3a7aae39f1d1986b32f25a05ab04dad3a5f887869",
+        "b71702193464f1ccedd2a9672e0997dd1a567dd271412a68475194dd59886a8f"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 403,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "a4f4cb2f9c626bc31a27ea5e6de30f71aa1c096f4cbb33ca67a795f02909e3c7": {
+      "signature": "a4f4cb2f9c626bc31a27ea5e6de30f71aa1c096f4cbb33ca67a795f02909e3c7",
+      "alternativeSignatures": [
+        "d39199e8c9000a0e0f63d045f56f11b3c9dab5bdc37d44e08337dd44f57793d0",
+        "fed66eac06df610211136e234a7a07d77653c432632e964af161f0a5ba1101fb",
+        "af324b41059293d901151df1ea0d24339c34d1125c8fe1a67c9c026c20812404"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 468,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "97e9f77cfadff932e591b515f7103215449a0c073539d6fd0af653029c9c2934": {
+      "signature": "97e9f77cfadff932e591b515f7103215449a0c073539d6fd0af653029c9c2934",
+      "alternativeSignatures": [
+        "22d99f3f45d54b67d3b2e7d8552286804aa7e9bd6a7dc7a76a1a02a0a133c6c6",
+        "8fcd9dc0c459e9eb3b3e225d80f09f376bca6965a047ad8009f553bfe29664d0",
+        "1c0e715fa5a46a4a59460be1a0f0d7798a5133308ad940e95e0be950a98da071"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 469,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "af3fb53256d46d259ab6d5ee87a08aa2816809ac6883281cc3a3cebbd34c47fc": {
+      "signature": "af3fb53256d46d259ab6d5ee87a08aa2816809ac6883281cc3a3cebbd34c47fc",
+      "alternativeSignatures": [
+        "42c0c4d40492448224f6712798b09b99a98e9d8e3bffe96c90b34fcef13efa66",
+        "9c6bf6fec718ec3e55e111398c8993181d36175c4de7b689d7437e08ec4e0f3c",
+        "7ba8acf38b48052153ad8e8f74fbd9d7a813132d83280b41a2ce64c5508fd9d5"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 494,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "9598735154cda6528b728dc18934a438398463adb0cb3303a825a76e74526ea1": {
+      "signature": "9598735154cda6528b728dc18934a438398463adb0cb3303a825a76e74526ea1",
+      "alternativeSignatures": [
+        "62a0ef05901a154a75a4407146dc51d1bceace07ff3b1e35df0d2b831f9d6f19",
+        "3605b16210fc2545f312db4c05208d742a36d678eeb8ad043cb1c03de3b22f38",
+        "14513ef60f292b4ebcf6b709fea42ca32b851313efb190114dbd1c6be6749ab2"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 699,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "9c7d2055f16545e1580f40d7578634818b3b9471d40ff8e25fca420d9711329e": {
+      "signature": "9c7d2055f16545e1580f40d7578634818b3b9471d40ff8e25fca420d9711329e",
+      "alternativeSignatures": [
+        "6f29c6163fda28ee21f496d905febb49a378f242c0ba79c1edb8d89a1a3dc520",
+        "c89f2a0294f6b987831ece2b6d4a7d50b10d6d1a130e0ee96ce0170163eb88b4",
+        "d43a53912e44860a7dc45b1c58fb139bbbe4ab473a4facd50b4a5f256b84889b"
+      ],
+      "target": "test/Microsoft.Sbom.Tool.Tests/IntegrationTests.cs",
+      "line": 704,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "35d408627514921a6ac06e6603baabd2d8266345addc3d260271eeabec3916a0": {
+      "signature": "35d408627514921a6ac06e6603baabd2d8266345addc3d260271eeabec3916a0",
+      "alternativeSignatures": [
+        "f42e24956fbcfc9970905cc214eec14450a3e788e2060e456b822f52e77c18c9",
+        "891a088b287e5cf3d7efc12e5c3f8a151dd4603232d80afca0803dafda15ae50",
+        "2f815f05033aa7bb69957b8e39331e9fe9bb35dfc5281e217faf151dbf3aa496"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Config/ConfigSanitizer.cs",
+      "line": 50,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "8067ef67966282a52d1e201f00b9c369a6487df84dc24274afa9cd57e0aeda47": {
+      "signature": "8067ef67966282a52d1e201f00b9c369a6487df84dc24274afa9cd57e0aeda47",
+      "alternativeSignatures": [
+        "4c0785a257e00d74415a6bf6dc446a8db3dc4837dea0ab49df2a35bb8b2a2bcc",
+        "101dfb1c2117cb998ff40190a5c35ec7cd18b054d8f6e97adc80909275ddd7f2",
+        "f6314fd3210e8d96f387295bd21b39670e3909823ba425b165f0bc0b873417cd"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Converters/SbomToolManifestPathConverter.cs",
+      "line": 63,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "a1f47a0f7511ba2ec622130c2dd2e2c3ba6539c9e051c8d053d8036466e81552": {
+      "signature": "a1f47a0f7511ba2ec622130c2dd2e2c3ba6539c9e051c8d053d8036466e81552",
+      "alternativeSignatures": [
+        "640e636011de153717b7bc6842134d6dedc949b07f57039cb067a2423776dda7",
+        "b69303a4b7ab4160ef52fcc696c4716b3ecaeb7337543f71fe04e93fa1581b97",
+        "671f1397125c66b16c28b3a5f332929eaec6ee3297c1c6d8c4143771b09a5cee"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Executors/ConcurrentSha256HashValidator.cs",
+      "line": 82,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "76553d67db6e9f3b4996009c968bbfc61ca188c9f64aa3469c158fc9498458b5": {
+      "signature": "76553d67db6e9f3b4996009c968bbfc61ca188c9f64aa3469c158fc9498458b5",
+      "alternativeSignatures": [
+        "2257ff6233da540c62801ab606d7d7695cc259519959631b9be51723f0818168",
+        "0e4624b64404072a6eff17b805d28dd4698ce8cfa203890d2503ebdcb9c17765",
+        "f5fe25a3bdcb7e7b9a9301f9adb76454f1478650608b0ac8694cf60cdaab01ea"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Executors/LicenseInformationFetcher.cs",
+      "line": 39,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "e8fc18f3024ad5cddf809b073ff929e83ec583312853de1c71b9bfdb31056a38": {
+      "signature": "e8fc18f3024ad5cddf809b073ff929e83ec583312853de1c71b9bfdb31056a38",
+      "alternativeSignatures": [
+        "6ef916c73803441ccce85310ef0aba1ad198c90fc824a0a0740b952d49b518f8",
+        "ee714c8ff45527990e54ac1cb1c795630c06d5bf27eb3cdda226243b949c01c4",
+        "625ffe5ed6d8a2150019cbb65033ea435c9134b8362e560628bda731bbd6981e"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Executors/LicenseInformationFetcher.cs",
+      "line": 47,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "83b7b4f83dd44b8232eb8c2d65f3015b45d65f43743370b3bb5db5441dbc2969": {
+      "signature": "83b7b4f83dd44b8232eb8c2d65f3015b45d65f43743370b3bb5db5441dbc2969",
+      "alternativeSignatures": [
+        "85f4884aea61914c7ec2ce8bd07d30caf776ddb020fc4f3bb95e8dc8710a84b6",
+        "fabc3ecaf77b52c0fd13fc142ae54d3bcce0ba8850e8df9fd99826be68b394f0",
+        "bff5356613cd3be5e221df24f4b8069ce67a053ae9636f63e1f96c7637f0c0a3"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Executors/LicenseInformationFetcher.cs",
+      "line": 165,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "abe33862060aaadf714c35bcdaea0742023520a7c0d94e5c02d1691b9ac453b0": {
+      "signature": "abe33862060aaadf714c35bcdaea0742023520a7c0d94e5c02d1691b9ac453b0",
+      "alternativeSignatures": [
+        "9deb3a4ec3b03ab2e49fd9b3388454a90356274d532402a601b32d93c9421cc5",
+        "fe1dc1069d40bab38d6bee171b958da405db0a012bd394e67fbc59dba11a9baf",
+        "db22f5f4770ae746547418ace39c4a0a8f6d38486e2921667f1547b7f5f0f2c1"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Hashing/HashCodeGenerator.cs",
+      "line": 47,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "40381289e50e8bfee26da25d0956c6d2c94e308ed40bc17f8b8d0db86cc00880": {
+      "signature": "40381289e50e8bfee26da25d0956c6d2c94e308ed40bc17f8b8d0db86cc00880",
+      "alternativeSignatures": [
+        "b0cb40cbe70cb18179a71e0153d2ac27ece5cc8c5193345c2f63b4692bc97ea1",
+        "64226872f9bdad1bbf2a56d1088f226cc2c2ab11237ae8a4b477573f19988671",
+        "81baceb6b71945a2cff89bbc77ee62cc4de6cbc923481ebdb716188a7dd197b4"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Manifest/BaseManifestConfigHandler.cs",
+      "line": 39,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "add404782c23cd3e933fcfe70d95788953e990dfe9c021ae0c6dd2dafc2a398f": {
+      "signature": "add404782c23cd3e933fcfe70d95788953e990dfe9c021ae0c6dd2dafc2a398f",
+      "alternativeSignatures": [
+        "e455692a81d7bde7c4e5b4307c8f7253ce750b0d5f6842242dfcd843421e24a6",
+        "40948d43bf516b037e53acd07b39d37a79ac547429b4c3ddccdd40c5f200a4c2",
+        "854531512ba102e0871712b37c7836defaddab8d47a83c34bdc30bca76fca5b9"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Manifest/BaseManifestConfigHandler.cs",
+      "line": 41,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "b5943f8d747fb3373f8eb695244a0b329d0db21d989d9ea92f3f647569580538": {
+      "signature": "b5943f8d747fb3373f8eb695244a0b329d0db21d989d9ea92f3f647569580538",
+      "alternativeSignatures": [
+        "353df868fe7bf95f550797000e8747b171149f9ebd03c4555dcf282fe2e4d6c3",
+        "42fa1a74d44ed56e726218ab18c7b82e81db4c9e0a90d63ee5a1991c09ac4d11",
+        "ee618abf74beba1f59085f32fa7587b2fbd7d79e84c9e2949193d3035d992c3d"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Output/MetadataBuilder.cs",
+      "line": 52,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "601d9fa257621ede5e6a2ab5aa3d72c2a9f940b2007de4e0c40e0159387597f8": {
+      "signature": "601d9fa257621ede5e6a2ab5aa3d72c2a9f940b2007de4e0c40e0159387597f8",
+      "alternativeSignatures": [
+        "07a56f9e50c7cfac79d52532af2bb2d38166e071fda31e55e1b3a5749d2e2cf0",
+        "57afb191800611a5e2e2516561755733b1ea445de9aa45a94e7d91e0d6e5b2ee",
+        "fc1aec808efec1f8edd4c4ee88aa2713819f254374785c9c0555210b4fa635eb"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Output/MetadataBuilder.cs",
+      "line": 46,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "814a5c1ff6a701a2be6f4028ac7446223e84fb16d09aa6902f6931a35e0c3cfd": {
+      "signature": "814a5c1ff6a701a2be6f4028ac7446223e84fb16d09aa6902f6931a35e0c3cfd",
+      "alternativeSignatures": [
+        "8ada0c061436ad356c8d94e1feb3a92a0cd62d39d19b64b27b3aa008595aadea",
+        "dd880f012d2d87c4ebbe448477be8d77027fb6a8a226bfc5036f7bc94d9de31b",
+        "b5a3abc25750594e35265797388e6c1098b6fdc83784f9b40ce5ba9e03b0a712"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Output/MetadataBuilder.cs",
+      "line": 47,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "a464e9657e583541b14cef6b3251f7d86a3a52ee8133fb6876a3c41045759eaa": {
+      "signature": "a464e9657e583541b14cef6b3251f7d86a3a52ee8133fb6876a3c41045759eaa",
+      "alternativeSignatures": [
+        "c8090aad319a599bc9b1e4d39bbc1335955c3767296bac0733d60a0c8397b905",
+        "ee1d1c9cfd2467907a6c6774b076276c5f36ece77ed10226570720f6df12751c",
+        "63a561185b4131e2bc73b9a1b2ec1311e22b61f38325df2517568cbed48dbb93"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/ComponentDetectionCliArgumentBuilder.cs",
+      "line": 20,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "6228a761e2364f9c114ae7060f8ae817106c0cd734e24c7ea822a8a169c257bf": {
+      "signature": "6228a761e2364f9c114ae7060f8ae817106c0cd734e24c7ea822a8a169c257bf",
+      "alternativeSignatures": [
+        "6e96697e6d440c5010873d98777a89abca41b5aa96de29ef064b682e4d64f403",
+        "d8ddf9785b8eaef6016d6d30de74fa81cf83a637cb710301ee9c9b14070b7119",
+        "4554d71128a401923ad1acdd0b251ec826fc26865692080d58bff5a750ea252d"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/ComponentDetectionCliArgumentBuilder.cs",
+      "line": 244,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "75178cc839dc754d22bbb0af4787967eccad1e0d363c190322479cc706d15267": {
+      "signature": "75178cc839dc754d22bbb0af4787967eccad1e0d363c190322479cc706d15267",
+      "alternativeSignatures": [
+        "08b65e0e2fd9ac0ec9947228de00c6ce0d5c06e51de4e5cf17b884914e2d3c1a",
+        "1dea70cb7c4712158499eff6840c179aed0041ec82b1bf5a5e2c94224f6d52f5",
+        "7c5bb17766d66c0a177f80ecbb657948bc0b6373325dbdaa985b74ca0ad5568f"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/ComponentDetectorCachedExecutor.cs",
+      "line": 43,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "21e0edf0c90e5fd8fad367f8c5da139b952adfd28404cda57c91957b40bdb08f": {
+      "signature": "21e0edf0c90e5fd8fad367f8c5da139b952adfd28404cda57c91957b40bdb08f",
+      "alternativeSignatures": [
+        "1c51b4dd7d9e2c2f7a12e89e265d8daa5d536474195651f63fd3e276a2664d29",
+        "ade50e32abdb20c5add24caef4b224b77c289647a8b28a0538d29ab75dd6f419",
+        "1accce2e85c52ffa9ff91b836cbce2bf420f893efb2274e1f96beaba066ce3d2"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/ExternalDocumentReferenceEqualityComparer.cs",
+      "line": 43,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "886298a468c3f20d1ddc71ad6e9a1849d0d85ccf1c15e23e6482c4e01cc5839a": {
+      "signature": "886298a468c3f20d1ddc71ad6e9a1849d0d85ccf1c15e23e6482c4e01cc5839a",
+      "alternativeSignatures": [
+        "d8191bc47f36b6dd91d234844aa69993d19cebc91502b813b5e3e59ffb8ea9b0",
+        "7ccb8758026af391d2ac164c6ffc293a06951d0e6671330a9389f8f66a21fb96",
+        "20139827075664b74262f3b4c75bdbc21cacda74809e690c99139690096362ef"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/ScannedComponentEqualityComparer.cs",
+      "line": 41,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "cc08063b05c750596811ad213164e1a2879877c0360857517670b1011466f754": {
+      "signature": "cc08063b05c750596811ad213164e1a2879877c0360857517670b1011466f754",
+      "alternativeSignatures": [
+        "d7e27a6f470a172bf2a4d5dfaf742d34c88a7c16fe8aef16a692f00aafcf8ba6",
+        "0172c5a0496ecbb5789e1cd0f2bc65351378bb352154a3c31e635d9f42f4387c",
+        "3b8bd3c84d0001a5520d42ff4b76174014d02acb89e213198e10e31302591c27"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/ScannedComponentEqualityComparer.cs",
+      "line": 41,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "661803504f9519d73a4ceab8fd0066c40548247894332937b3a4bbb3cdcdc745": {
+      "signature": "661803504f9519d73a4ceab8fd0066c40548247894332937b3a4bbb3cdcdc745",
+      "alternativeSignatures": [
+        "f81f2f22d233193f8f353e1f6723cd42856a317b34dd416a59140e1cd0b9a565",
+        "c996d3dd233a41bfc07141d32d24257a00cba1d743cd0eee4ce712ac3c05d5f8",
+        "699973f631036018097f276e85b53f227b29cd5e0c085c9dadfa303b220b40db"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/SPDXFormatDetector.cs",
+      "line": 96,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "17355116354275e16d882090f43ac4572f2e57378b7ef1b6e88725ea8ec4c494": {
+      "signature": "17355116354275e16d882090f43ac4572f2e57378b7ef1b6e88725ea8ec4c494",
+      "alternativeSignatures": [
+        "4c1e55fc288dbb6c757e2ce773812846b373398895123576a81723659f9d659a",
+        "035009d2a84363600e1b749e5ad247f268cd644a0e99dec5a6f5b49a4e10072f",
+        "4dd503b2709971a8bc0d4431d60d6bc5556e2acce6ee646d4b18dbb704881122"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/SPDXFormatDetector.cs",
+      "line": 96,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "0c76c660f09d697aa26e22899c2d287d9ec69a2f26d541cb60deed9442c3687c": {
+      "signature": "0c76c660f09d697aa26e22899c2d287d9ec69a2f26d541cb60deed9442c3687c",
+      "alternativeSignatures": [
+        "d591eb9571c1aba73eace6e5c331b2b0c13af7873407e2cf6c82a30aa071b59d",
+        "507a5ee2415b0a7f6821cd7ab20a3e43f0dfa9a0c2454756d6d3a40145d3f6ac",
+        "dd8f72623e53921628a3c1f0ee6b948587fcb8adaf8201c29b23457419fd01c3"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/SPDXFormatDetector.cs",
+      "line": 126,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "017bf1f9c01b52585220d81f5a2c28b79d45e30da2e9f979c2ad8bac05ee0d69": {
+      "signature": "017bf1f9c01b52585220d81f5a2c28b79d45e30da2e9f979c2ad8bac05ee0d69",
+      "alternativeSignatures": [
+        "34f97d5397b7bfaedfaa12bcf61f7f193a4365954dfeae66797b2a44474964c8",
+        "5e6b5d1754b16f1719380de0e7c505e121f53b63d0ed2c9ef828072a94e48c82",
+        "d090a66b63d50a0a09939acf17498ab4799c692e0fa94612c8550e569dac6070"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Workflows/SbomRedactionWorkflow.cs",
+      "line": 122,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "394d67b3298fea1fbcc7e953fccafb99b0f989b72e5ee1fe4d3a76380092aa94": {
+      "signature": "394d67b3298fea1fbcc7e953fccafb99b0f989b72e5ee1fe4d3a76380092aa94",
+      "alternativeSignatures": [
+        "0367ae17067d0646d3c1be17be42a39988bf5df22f56c7ddca7f22f316f23263",
+        "5cd90c4d08080f9e82feacc7fb61b74f85439173aaa52ff1fc1345648bcd6e06",
+        "416ab9d38c2a026e65090f40339836b92b95f6cbc9e531476039f085520c5a07"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Workflows/SbomRedactionWorkflow.cs",
+      "line": 122,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "12903256ee204d73c7e2e4d197177af6157222523941c48c9341b70f57c91db8": {
+      "signature": "12903256ee204d73c7e2e4d197177af6157222523941c48c9341b70f57c91db8",
+      "alternativeSignatures": [
+        "cd5ee8d95be5231608e0a9dd8646b073ae1ae51b46940ab1662da1d91cf1a0db",
+        "3e5f185f4dec8fe6833f3292ced67112248028537847f29ffb2a802621c8db4b",
+        "5317b072afb7a0ac0d30b7951389aa3df25bcdfe97c7f6ab8200cab088dcbf2a"
+      ],
+      "target": "src/Microsoft.Sbom.Common/Utils/CommonSPDXUtils.cs",
+      "line": 83,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "5b5bedd51a1663907121f37fd21da1be2b90e8ff956a51159150a8897f01a795": {
+      "signature": "5b5bedd51a1663907121f37fd21da1be2b90e8ff956a51159150a8897f01a795",
+      "alternativeSignatures": [
+        "95e7bb8a4178398f8dd590c0f0e302ed2483ae508dcae65ab7f41a8528bc3b9b",
+        "4547f31e9a9d7cbcbb339305e9dfbeeda750abc0a340564fbfd3e1a4fefb2540",
+        "7a2ff99828b11c06e41f8c1f1c56771c1cef96062c1aaff0ec636d5145c11fd0"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx30SbomParser/Parser/SPDX30Parser.cs",
+      "line": 334,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "c2fcff915cf510d7de37e5fdbe4dbfcc22db240949c0635541d3f4d232a115a9": {
+      "signature": "c2fcff915cf510d7de37e5fdbe4dbfcc22db240949c0635541d3f4d232a115a9",
+      "alternativeSignatures": [
+        "94e08dc176ce1b1d11ecd1b49f810d74df909ffc3b030894cfa49ce1536a0513",
+        "0eceeb6c35168f63bb825adb8a47d15128888633fba17c1c76f359e4280bb98d",
+        "c81eae315d72a8c3809fda5420bfd9ee301a559cb8b0916b991fcf95037ffe4c"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx30SbomParser/Parser/SPDX30Parser.cs",
+      "line": 338,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "9adc6d7a3f354f346473ae30b8f7c35cbcacfd9c252ba9626fe6b3ade5337e17": {
+      "signature": "9adc6d7a3f354f346473ae30b8f7c35cbcacfd9c252ba9626fe6b3ade5337e17",
+      "alternativeSignatures": [
+        "e6f6a712982fc0580bebf6f511d640c65e0aed2458c75563c83219a180b5ac9f",
+        "566a8297b4a72efae10740799d58e864e1fc903b82e0ed38bb7b969f2d7793d5",
+        "88c7f83cf84d34e0d07170d4b69ef1b7e05193de9211f4bc669f716fb2b77f02"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx30SbomParser/Parser/SPDX30Parser.cs",
+      "line": 342,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "4ba9baac888eebb78dc84858429febc9bb60c558f39ae7c30a43f47983ff06fa": {
+      "signature": "4ba9baac888eebb78dc84858429febc9bb60c558f39ae7c30a43f47983ff06fa",
+      "alternativeSignatures": [
+        "09fcda54890be332073221f2f53d82faabddf2b62e2dbe4c8a8795247648e016",
+        "74e2dc8188f2468f42ce7f7836f4eaf757f963e73f1fab85d4f4f19fbdd24817",
+        "817c0c09c0eabcdc5e3d6e6f3a9c4b07fa5b23066269d25da04be75dd1a8647f"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx30SbomParser/Parser/SPDX30Parser.cs",
+      "line": 345,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "2439285764a1ca1fde3c1b3a6f50002c17b36eee5c005c022b50e967ac4f3819": {
+      "signature": "2439285764a1ca1fde3c1b3a6f50002c17b36eee5c005c022b50e967ac4f3819",
+      "alternativeSignatures": [
+        "fad9db843af7aef603e835a8695f98ff776b3648924b401f29c837c128b06842",
+        "3fc140c39e8754ed1dfbcfe99fc8f94bfff4ba9a15c31fcb0b7a14286bd8c083",
+        "ec31d28b558e32864778be1590d9fff4546ba795490ba844882c5e4e461c3017"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx30SbomParser/Parser/SPDX30Parser.cs",
+      "line": 348,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "0f50ca4bb828122d546c3bf2ed1d4c44eb850dfa766310ed92ebc218c662f657": {
+      "signature": "0f50ca4bb828122d546c3bf2ed1d4c44eb850dfa766310ed92ebc218c662f657",
+      "alternativeSignatures": [
+        "1ff766480a6742a967205fb400252c7aea0370692d0fe3c153a6020b5f608ea4",
+        "2a2522d8618e51f0d404de2823f2593ec41c5270ecd5bda82e7cb8aaf1a93e22",
+        "2162699c7583f38e33bf7b51e686b3058efb987227b628254f681f92e792dbb3"
+      ],
+      "target": "src/Microsoft.Sbom.Parsers.Spdx30SbomParser/Parser/SPDX30Parser.cs",
+      "line": 351,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "37663dc2d1f9d384b66e0157e47937eefd85648c7ca7d5d8cb9c00e0f760923c": {
+      "signature": "37663dc2d1f9d384b66e0157e47937eefd85648c7ca7d5d8cb9c00e0f760923c",
+      "alternativeSignatures": [
+        "d9607ceb36aef86dd09753d8cf79c0bd7d5918fc71b3141a08b0ce3ba29c4c57",
+        "661bf6adcbbe969fced2d5f32bc3758b89da5cb03389a77894178d14f4021a8b",
+        "9ce735f0ed1f78d5c20a2d84f36c8b82a4181c4974307943d7a51a7c5691006e"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Config/ConfigSanitizerTests.cs",
+      "line": 162,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "c9fc38c74980947a460e220eace69110144fa19029264ed006ded7acc18eccd4": {
+      "signature": "c9fc38c74980947a460e220eace69110144fa19029264ed006ded7acc18eccd4",
+      "alternativeSignatures": [
+        "6dd35f40e998ba6cd255a16a7fe76781a19002a59ed97fa60493452335652cfe",
+        "720ccdc39acd53142315cf12cdf1620b67f7428a2c6abfeb1bd6b1ae826ecaa3",
+        "ee5f229fa74dc6e30de24798ef5768accd20139c21ed2b534b9a2e7b01bc1b00"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Config/ConfigSanitizerTests.cs",
+      "line": 528,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "80f6b4df73b88f97626b35b65830eed8ecddd3ee2ab9783c8751ef677e219978": {
+      "signature": "80f6b4df73b88f97626b35b65830eed8ecddd3ee2ab9783c8751ef677e219978",
+      "alternativeSignatures": [
+        "7ffa9cc8c5d88d347d2451296dd7a03c169fb293f4e6228cb0a2814885df28f5",
+        "61bd927fca7e7d0d3da3dde2189364930d91dc6b1c8a1499249cc52d1cef6bd0",
+        "f0d5977dd3a98dc38c5dbdaa512ea8b25ab204c308adb5333a4c0a2fe07fb984"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Config/ConfigurationBuilderTestsForGeneration.cs",
+      "line": 325,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "fe60c4941e7e0f8f7dc1367e535c2489136d1cb71c673ff805f928f0e2a48657": {
+      "signature": "fe60c4941e7e0f8f7dc1367e535c2489136d1cb71c673ff805f928f0e2a48657",
+      "alternativeSignatures": [
+        "b7e7fc1bcefabd36aa954ced12455b04d73edf5fe1173e4da9c89e8a4f48b754",
+        "74f93d45f71c5400230a0703da0fde1acc66da5ba53af6bd4e258597c78af084",
+        "4dded4c64012203737339f7bdf201b305b4cc5632c21b1e41c4e258777ca3586"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Config/ConfigurationBuilderTestsForValidation.cs",
+      "line": 209,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "68430ddebe59ed41f74108fe8f8d7fbc424daa33ae94aa3d72ef5eb4fc7c5c62": {
+      "signature": "68430ddebe59ed41f74108fe8f8d7fbc424daa33ae94aa3d72ef5eb4fc7c5c62",
+      "alternativeSignatures": [
+        "bca825b067f2ba5efc1d73e7cd6978d647372e8b9bc1acb2d735d0763313fd30",
+        "d2912fc05f97c9c9c777cac19eb9eab91aed053f0149a3875dfdc2f5ea4c4184",
+        "c803e51a2158a1c16c44b4b62290f1c2f2714894ed4d77bf55ab219e5d90c500"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Executors/HashValidatorTests.cs",
+      "line": 74,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "cd7f8b059e57cf4314086d0431bafba5669f4baf242068dece1a05507418fdd5": {
+      "signature": "cd7f8b059e57cf4314086d0431bafba5669f4baf242068dece1a05507418fdd5",
+      "alternativeSignatures": [
+        "26d36c2b0e4b6fea5bd80038c8d17cdfbd85bb433644be65a37357d25fc9726b",
+        "f3e29985f7297b5646150512c45653c6b3f39be691aa73751931aac3b3d66303",
+        "0130b3ce51ff355979dfc241bba9f33a6b7e98814fdf07d13b46a1415b33edd3"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Executors/HashValidatorTests.cs",
+      "line": 118,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "26047ad68d94a0e2f30a282433f3cb4eb054a4929d16298a2392365668023dfe": {
+      "signature": "26047ad68d94a0e2f30a282433f3cb4eb054a4929d16298a2392365668023dfe",
+      "alternativeSignatures": [
+        "be4c29cac90cfcb6b3f300c0a78f5c4738406dc4b9e80789f59f2f4b2c42c8f0",
+        "c237769f63f852fcb1fd3473b26ffc648ee92476886a0eeb9d47073ddd7bee9f",
+        "3d2622be32995e2e4a5d3425a07364b1f5b4071025aa65dc00fd9fcfee2b46c6"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Executors/HashValidatorTests.cs",
+      "line": 129,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "7bc5bf22c180813a75a24ffc20740870efd0aba8546342f010f6dd0008680a52": {
+      "signature": "7bc5bf22c180813a75a24ffc20740870efd0aba8546342f010f6dd0008680a52",
+      "alternativeSignatures": [
+        "758b1d1d9ed794767ffc74155e670a9ee965f5290f55e89dcc525e33d9474135",
+        "bb5abfa0a7aa48d41c9122db91c5fbba8161e7a0230d3635c362a7aeec23694c",
+        "54838c92897e5039dbb988878f4dfbbdece8c6afbf9d899a0af8b79ee4babc47"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/FormatValidator/FormatValidatorTests.cs",
+      "line": 177,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "a2480588d7f85ddec1177c2f9632438f8e49cd4d5ec00f87882b12e8372812de": {
+      "signature": "a2480588d7f85ddec1177c2f9632438f8e49cd4d5ec00f87882b12e8372812de",
+      "alternativeSignatures": [
+        "80a07a0cbf5e3ee9f6ec2bb0bd81424de38d151c5cdb4878e0594e681f54a14f",
+        "b87c004b63ced629b121fee7e6169382e5800c10d3dcac31868df47644c4ae7a",
+        "780f5725ab66037a0e667413e63c73f1923f5f3a3d4b34945a79739590a0ff4e"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/PackageDetails/NugetUtilsTests.cs",
+      "line": 36,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "d0b43428f6f51174e27e91860fa27ec1b4e89c9bc195a1b50fa5ad38e41f34ed": {
+      "signature": "d0b43428f6f51174e27e91860fa27ec1b4e89c9bc195a1b50fa5ad38e41f34ed",
+      "alternativeSignatures": [
+        "c7c2ca2ceca8946e53c3824b92ca3d36ad35c276ed6a86a054d08c1d39ad3d6f",
+        "1ecdea29cf51e0fd33f912e63794ead465034940bb2b2b668c5794a47db638db",
+        "9df00d0d84f2cc3cac1d6ae389749fc81f373b64f5a9d342278d2acb549f251a"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Utils/ComponentDetectionCliArgumentBuilderTests.cs",
+      "line": 314,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "2ed22e78e51720c16c9d03c0bf080630bfbaff64044a83d125c79c082057d016": {
+      "signature": "2ed22e78e51720c16c9d03c0bf080630bfbaff64044a83d125c79c082057d016",
+      "alternativeSignatures": [
+        "f52a7f38050b42a78c38eeaf2572c386b9f422ae7af1741a6c5daae9c9a065c6",
+        "2dd0ce3d0c4d061f4ea11d4d97ca98c66395f8ca79fddb9ee5042b39a5827339",
+        "d0ce46f5d46bd35c957c68d9596278c8e0e4f00c66715249dcee7b903568ea18"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Utils/ComponentDetectionCliArgumentBuilderTests.cs",
+      "line": 276,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "6a967f0d60d97ffea00743e64ed8883cbb46a36ae637f79b0fe20436f39906c6": {
+      "signature": "6a967f0d60d97ffea00743e64ed8883cbb46a36ae637f79b0fe20436f39906c6",
+      "alternativeSignatures": [
+        "14d336b53ec77435bdec6bdd31aaf8ed0f3cc2ce23ac7267959c5a8ea12d46e5",
+        "fd2e6380ca9906aed08fb49952f83b2baddf025ccf58fe02bdfbea71d03209a4",
+        "7174a88187edae8e853ddd37215b3e9769e0cfe0122211cf6721aca16c43ed80"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Utils/ComponentDetectionCliArgumentBuilderTests.cs",
+      "line": 285,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "1e87f9dfc1587e902cc4b99d78c1d0ba5702f3e16f0394b4b0f463023c1468a2": {
+      "signature": "1e87f9dfc1587e902cc4b99d78c1d0ba5702f3e16f0394b4b0f463023c1468a2",
+      "alternativeSignatures": [
+        "ec29a38bee8a4605f9940a2a9bbc1d8f776398efe220ad71b9013efb8eb81be3",
+        "9404bcff81aeb5943e03928336b8bfc0620a8e6997effd09458ac31877a04bcf",
+        "ef4b2c85b84b3c58198b1fbf26a90daeb5b60cc3a98a06032b046c4104ee8e48"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Utils/OSUtilsTest.cs",
+      "line": 72,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "b099b0df6d2fce46db1e5c57373f32af6b27beee558f560e27ca0a5eabba2969": {
+      "signature": "b099b0df6d2fce46db1e5c57373f32af6b27beee558f560e27ca0a5eabba2969",
+      "alternativeSignatures": [
+        "ffe91e2bd1d9fca625f289815252629006d1ae360debc2ca499a07be1c40bc0e",
+        "597ac4692678c5cb1459b3a6c8cd6d1274a0cd03d2a682baacb1567fdfd89d76",
+        "5432240383415ee724f8e5bd0020fe3d2e0a6c309aec8d5df39c7b443df88329"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Utils/OSUtilsTest.cs",
+      "line": 73,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "11e15d5881c658bb46ff3a28bba46f4184dd4b212a4985cd75d4f97291bf0943": {
+      "signature": "11e15d5881c658bb46ff3a28bba46f4184dd4b212a4985cd75d4f97291bf0943",
+      "alternativeSignatures": [
+        "bcd9453d58c19327a05324fc842c8fbd7be23b59f30b6e191c42b7fa497e21fa",
+        "1cab3e042db13fcfcef092091a7c8c5222e433a6705d6c7210894a6eef2804a9",
+        "5100f9ddb71b9465f788feaa53d2d5b57d64ee6e6bce8c4e90a552529dbe0147"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Utils/SPDXFormatDetectorTests.cs",
+      "line": 91,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "8344028f4a98567e8d968fc26d63ad04871803fc8a458e4339682bc0eb5031b6": {
+      "signature": "8344028f4a98567e8d968fc26d63ad04871803fc8a458e4339682bc0eb5031b6",
+      "alternativeSignatures": [
+        "d9d07733b55f8c87835cbf10b72778b2258308cfa6a31ecda610e65e62703ea0",
+        "05fc56656e1022bc741ded9918ae60898d1a49c4d6b7556fa8fc9055e7b042c1",
+        "d241245bb060162169d0ccd3e8870de4789269e650a3e0bc3e96cc26ec335474"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Utils/SPDXFormatDetectorTests.cs",
+      "line": 91,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "59fedcc3727fba5ffff92447436c67eea778c761e6115878d1f9a09f1a46ef25": {
+      "signature": "59fedcc3727fba5ffff92447436c67eea778c761e6115878d1f9a09f1a46ef25",
+      "alternativeSignatures": [
+        "b9a09a02e8441a1f3a6fb0ca2dab35554e032613fccaa086ae9101f7a56de7a6",
+        "9a9b58d8efcc5bd42aa18029117299a8113d8b4fa1f57012ef38bdc285c6f549",
+        "d81e22d364343ae2ad1744aef5c3c299b8429b5df8b09c20b8858cae70556730"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Utils/SPDXFormatDetectorTests.cs",
+      "line": 128,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "4377a28e84e4f75d865125f50f9646c800509b76761715720593e9c79947c656": {
+      "signature": "4377a28e84e4f75d865125f50f9646c800509b76761715720593e9c79947c656",
+      "alternativeSignatures": [
+        "b170816cd3b74ede63398e9370b1a54efecfe1c860f50e9398828ff0e700217c",
+        "bcaef69e0a9fb22d4604b643e0c35aa20897cad1575213ac92a189cc25a9d470",
+        "91a4d836d57c8996a666a4627fd26d8ee29e3b0d422374f7b0db2cc5610e281a"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Utils/SPDXFormatDetectorTests.cs",
+      "line": 129,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "1329fc0f987a164ed25c150e84642c7317605b30a230fb77748272cf18df272e": {
+      "signature": "1329fc0f987a164ed25c150e84642c7317605b30a230fb77748272cf18df272e",
+      "alternativeSignatures": [
+        "52dc08c57371c0bbd1988abfcaf30763c2fb65901f0035a5e6e5e519ef1810a1",
+        "bd9cd0297977d76bc587a721955906f5845c5b9bd5c212c468a1da27bc5ec2c0",
+        "a25171d9ea71e7aee96022aa0f30bb583409ca2e8f9bc4626a233ef7a84348fe"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Utils/SPDXFormatDetectorTests.cs",
+      "line": 128,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "92c9285c5f11d1777109f823511d8ac2b33c26c5733e3f51b9de0c0ff49e5db6": {
+      "signature": "92c9285c5f11d1777109f823511d8ac2b33c26c5733e3f51b9de0c0ff49e5db6",
+      "alternativeSignatures": [
+        "8748e062abf6f0bf247c8a746a88f444bb6f645c4b82bab499c9f8b1c09902c3",
+        "d92a6aed34194f01d22c1c29578019c7ff7221d60792deff9f088abe8e0286cf",
+        "bd5b57de7de2a81a2b1d506d862815ab899cb6c99ba19684b1a96baf1a0fb1e1"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Utils/SPDXFormatDetectorTests.cs",
+      "line": 129,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "3429bbc0a5cb104ec03a0f80d1e9803f230ce4e4201f3e52de75f7bb77733fb6": {
+      "signature": "3429bbc0a5cb104ec03a0f80d1e9803f230ce4e4201f3e52de75f7bb77733fb6",
+      "alternativeSignatures": [
+        "864a2a7c6fca4c709cf9723115ac6ea3cd6b62ed4cebb210e5db3ab275aaf054",
+        "49fa75ba2334c0a9876406180f9bde727b2100e6426159aec6996f1e44bcf92e",
+        "8f3cf5f88147a783f0797c5505495c5565dfa78d5763f997c874e426cf9f9ddc"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/ManifestGenerationWorkflowTests.cs",
+      "line": 248,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "be1510b5fc69a905034b536914425f74b5fea98601946ad06e245ca9d5242b0a": {
+      "signature": "be1510b5fc69a905034b536914425f74b5fea98601946ad06e245ca9d5242b0a",
+      "alternativeSignatures": [
+        "d3c7d35dbe0544f418fa5761ba3b094284177359eaaf0350c7833f04fe7fd90d",
+        "d0f14171fcb42c70c02b1489ef33132bdf36076eaf68742f1db8a6c021abb22f",
+        "bcdf959d7bed3dea7dd53129fe5204011755594fbc7bdf54834ba1d51b65eb6f"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/SbomAggregationWorkflowTests.cs",
+      "line": 220,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "9d82a89fcc7c6de902d27ca4fa97eebff1cd9457135cc659e6fc7f1e4c5e11ab": {
+      "signature": "9d82a89fcc7c6de902d27ca4fa97eebff1cd9457135cc659e6fc7f1e4c5e11ab",
+      "alternativeSignatures": [
+        "11130ec049973783cbb9a4694b880c24756bf64d32ec626af4b91e29feff762b",
+        "22d056ffc04b0956e2f5fa32466d94af056f9b96026635600f030fd527ac0c07",
+        "517288e2580864d9ca40c7c9390b740060fc61fbcc30fa11bb4b07f24820885e"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/SbomAggregationWorkflowTests.cs",
+      "line": 226,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "fbebc555da9fbce9f02ec6715e832623f84380f680932b6773608bc2dcc53159": {
+      "signature": "fbebc555da9fbce9f02ec6715e832623f84380f680932b6773608bc2dcc53159",
+      "alternativeSignatures": [
+        "8273a4c36a73db500ce63bb13f129facedb5180859de27d68fee295899519bf2",
+        "0658c95ef0a753d9fab800318b97e4f42b478777534ef81d136dfe964c6a77d5",
+        "0cfe815564a87732009e1d542d55ea876d944ff460a3ce825a83c52930be1c45"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/SbomParserBasedValidationWorkflowTests.cs",
+      "line": 224,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "9e3e7f42111482036c998167f5ade76790dbcb43526d078040c9d55debc7d1f6": {
+      "signature": "9e3e7f42111482036c998167f5ade76790dbcb43526d078040c9d55debc7d1f6",
+      "alternativeSignatures": [
+        "0e054f339f4d265753cf7ed657e972819ca0e9033f8b25a5c595e17eaf58dddc",
+        "fd8b5a59ff20eb4460a157ec1e0c0d4531ffe14499f665f36f22f3edeed29be1",
+        "775e3fd8aacac1f791feb4095fa708dafeb760e4b6e57282b2081d08256141a4"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/SbomParserBasedValidationWorkflowTests.cs",
+      "line": 251,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "9f4b7a3d75f52b54647e36a47da38c31b37a6ad0b5216008d71f18c4d2b1aa1b": {
+      "signature": "9f4b7a3d75f52b54647e36a47da38c31b37a6ad0b5216008d71f18c4d2b1aa1b",
+      "alternativeSignatures": [
+        "d0aa4b1361dfaa69de0b573fd627628f09a1f75b92bfe5f974dc65c9494b42e3",
+        "3ecd1dd1372f045294b532d22236a1781f2f88d5a4af63109ba441cd32c0e25a",
+        "4fd8dc0decb9bbb1825a33413b66dbbe785189babe2e5301d8747cdb3a721416"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/SbomParserBasedValidationWorkflowTests.cs",
+      "line": 405,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "8e4357a707145c13146c26591325f77373907520f79c1c56136c563554521f65": {
+      "signature": "8e4357a707145c13146c26591325f77373907520f79c1c56136c563554521f65",
+      "alternativeSignatures": [
+        "ac0787df5cff7b9ac71461e963a938257e3f9c656a994fd6e6589c7178e6d983",
+        "ecc1c37f088343e277bd6b608be76459f4ede9a9b7a51c2a4254b08698b012b8",
+        "d92f67e9ebba1e3c23c3161a0d0a58dd09bc42c8063c52e80c195c3ae0051774"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/SbomParserBasedValidationWorkflowTests.cs",
+      "line": 506,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "e25d36d8d840ab3d78abd01f0578af34d154cdb215dd332c185ebd766ebba683": {
+      "signature": "e25d36d8d840ab3d78abd01f0578af34d154cdb215dd332c185ebd766ebba683",
+      "alternativeSignatures": [
+        "a25b44f04c45eee2243e536f37abc3d655de19a74126c02938b821fedeac2f8e",
+        "2f8d8e22addd905ac3b90eb5e910a7d320fbbaa3f9a5b74f7dbea4b452999890",
+        "420fe081a56f10c749dcaba972c07f5ea88c0a509838e6b71b6ed796c5efee01"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/SbomParserBasedValidationWorkflowTests.cs",
+      "line": 507,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "3bc6b1979e9de12f87bbe7aa1ede79773696d3c8a622f06390d7b7bfe59a2a7e": {
+      "signature": "3bc6b1979e9de12f87bbe7aa1ede79773696d3c8a622f06390d7b7bfe59a2a7e",
+      "alternativeSignatures": [
+        "15dd9fb19087890d1a9066e07dd5bcf039eb1e669194b147a0dd4cb07c027857",
+        "b0baa755fa735063072af44d509680262042474a10595bf06ad8079ba2207fa5",
+        "1c5ea6aa8612a13eb27c8d7dca636a31bba11ee0621090ff567bfe233245da98"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/SbomParserBasedValidationWorkflowTests.cs",
+      "line": 508,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "332e58ca5ecff0022bab233c48e30a0f735fe9bf6289d4a59c0fbb98950f3d75": {
+      "signature": "332e58ca5ecff0022bab233c48e30a0f735fe9bf6289d4a59c0fbb98950f3d75",
+      "alternativeSignatures": [
+        "cbd602602631b955c278b1e246ad21c2344909c7ee7a0d2a16170ff06bb9994b",
+        "4eeba0194493e3aee073e7ab8da340f125e6e92e7fad1c5c801b820884643009",
+        "6747e5dde9f23a8bab6df16f7a6ef92e73f22a24a9cb7feecb0df7d46c4e56a5"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/SbomParserBasedValidationWorkflowTests.cs",
+      "line": 509,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "5286e654e25d0e10f14bb11eb69fde3590fa2d22dac4cf0739dca6efe5775d01": {
+      "signature": "5286e654e25d0e10f14bb11eb69fde3590fa2d22dac4cf0739dca6efe5775d01",
+      "alternativeSignatures": [
+        "9a25c25bf82a21790ced192b7b0f9c665997e7cb91eee422f6778de0d0308875",
+        "ffd90ab4a2c2b251c007f8c5b3fb56b46149d6017c9981f48077f77cb675956c",
+        "47b7fcf371c1e2e1ecfb44c54ca9103d7c4f31908d45212072d33b05458de7f4"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/SbomParserBasedValidationWorkflowTests.cs",
+      "line": 510,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "2fef2d56d0f353b84bd4f1881789a523b43a081df2df9afd5672b83670385370": {
+      "signature": "2fef2d56d0f353b84bd4f1881789a523b43a081df2df9afd5672b83670385370",
+      "alternativeSignatures": [
+        "7914291c3663d5213416cf1d2184d3bd3fb19bbb3cb457f4f17adc269fc1b174",
+        "c53a0a167253f32110ab31920a0c0e1eaf8818c40f8e2353726f6e15c68371b7",
+        "f68a25973976c776d8a6e8cbb05b0f42aa2da94fbf3023c36773caf057a2915a"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/SbomRedactionWorkflowTests.cs",
+      "line": 139,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "aced87b955fc7b578418e4b9406541c979b942889ed5f0ecb09404a9576ba110": {
+      "signature": "aced87b955fc7b578418e4b9406541c979b942889ed5f0ecb09404a9576ba110",
+      "alternativeSignatures": [
+        "e81f3fcbc368cdcb1150a9f4fd53ab7b4ddb63585ebea0c40ac30fc8e1a6622b",
+        "670b805c2f6eb02160d3e9b7c85cd5f103a837c0f63955b5158f3e5b463b84a3",
+        "131c03d93fad8bc4b7d7a5bcee7f513478466f73b6cf7d8a8d6b833f76bde007"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests/Parser/SbomFileParserTests.cs",
+      "line": 47,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "77d24394313a2b406afae31dae8cf006d13ff644be672ec0754707fe0c72ce6f": {
+      "signature": "77d24394313a2b406afae31dae8cf006d13ff644be672ec0754707fe0c72ce6f",
+      "alternativeSignatures": [
+        "087bdffb507b19493c7c15b7548b8e63f9d2acecadda26c0cbc668e1bc5686bc",
+        "af7facc5c98ccb1d6baffb8ab8dfd3c1cb81f1bdffb06cf3d6b4cdac3d7166e0",
+        "a53f6c6ea2131438dde258e12289b2c1ed1fd15732192256acb599c3514343ba"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests/Utils/InternalMetadataProviderIdentityExtensionsTests.cs",
+      "line": 46,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "289c72731ab198bf019b53a6ffefe8d2c4863dfa0477f411ae04ddbfff331afb": {
+      "signature": "289c72731ab198bf019b53a6ffefe8d2c4863dfa0477f411ae04ddbfff331afb",
+      "alternativeSignatures": [
+        "602fb1f92f8f0c107e2b6147024d8a6525b8b02093aef319b910096cad6b5de2",
+        "13f4aeeea73939656b63b41ea856e93b19c276716b71be1e89a63cf7218b7809",
+        "7a8eb9e86420fc42496fbd003e8e2944895da7b1541f7e55d8b605c946b19603"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests/Utils/InternalMetadataProviderIdentityExtensionsTests.cs",
+      "line": 46,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "cd00b05d0aea601afa9b974724641e577c8ba4d379eb8cab0eea26a3e3e76079": {
+      "signature": "cd00b05d0aea601afa9b974724641e577c8ba4d379eb8cab0eea26a3e3e76079",
+      "alternativeSignatures": [
+        "4309d9592b68376c20ee2decadc2cb57baf1ece8e80ab496b7bee583152f16e2",
+        "5c0c07b980787630a83698e84972e31ccc08967388c31481bc8d4170a893ce48",
+        "d913a28041a7cb4fcd637975b39285b8a77b84011eb234daa9f2b826acb417e8"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx22SbomParser.Tests/Utils/SPDXExtensionsTest.cs",
+      "line": 152,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "5f923060296265b04c760b503683dfede433ccee36745ff63597d25d67d6719d": {
+      "signature": "5f923060296265b04c760b503683dfede433ccee36745ff63597d25d67d6719d",
+      "alternativeSignatures": [
+        "2a83cdc794ef395212b450d0426b2fdd7ff979578d9d6056aea69df209590a8c",
+        "07c008690b268094eb4c1e34b00dc70517229fb8fb8507f60129d9c3adf61132",
+        "e1ca3da4cf9b4c45976089b656593a0e102f73986c8006058ff1dbc8e83b055d"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests/Parser/GeneratorTests.cs",
+      "line": 225,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "43beda7278ce86d825c4f5e48bc5aec569846ced367ed0296c6314f59401ad7e": {
+      "signature": "43beda7278ce86d825c4f5e48bc5aec569846ced367ed0296c6314f59401ad7e",
+      "alternativeSignatures": [
+        "7fa7f3df2754b2cd979c961c9ec5b9ec2f667f4f44afe45204dee3a5f3c1ea2a",
+        "3c5e0c02512110e98caaa3e996943f07af930f32a7f6ea2fbbff4ece985a5e2b",
+        "65f5b98bc27785f555afd70547b78c896b17cf2bb2d5959431a9afaec47078cf"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests/Parser/GeneratorTests.cs",
+      "line": 226,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "807a958217b0311bce1e18255b5dcdd9870e5c0ad6440c3e3d3ceabf954b8265": {
+      "signature": "807a958217b0311bce1e18255b5dcdd9870e5c0ad6440c3e3d3ceabf954b8265",
+      "alternativeSignatures": [
+        "b5d68aafdbd45bd36ec9aea2dc4efcc358efb074390342dc7bc7d3f48a3de5df",
+        "f8e6fec8b047eec3f84a6702f2774e557b25d84d24daa7a986f3bda02fa60e89",
+        "85ac5c160e59b26d5ecd8d0bf9943b84eb6183f564c898a7d9217ba00222d38d"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests/Parser/GeneratorTests.cs",
+      "line": 268,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "3088272ac8d790f6ea7a854f930cb5ec29a5b0808933b63305e70d639ab05ad7": {
+      "signature": "3088272ac8d790f6ea7a854f930cb5ec29a5b0808933b63305e70d639ab05ad7",
+      "alternativeSignatures": [
+        "c0ca8edc179c3b662dc1d992cd04e537aac3ce4f060ff0ad293def464838e883",
+        "e29c812cd27aba647ed2b4dd346f709ef82b9d3e55501c4453887bdd4ceae8ef",
+        "4987487bfb65b6cbe76c0104fab2faebe8eaf58fc3e425d6e2f1a875f223a688"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests/Parser/GeneratorTests.cs",
+      "line": 343,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "41ca1e2cd701d5fca009923b7c69bc9579038a84e6f7ee79cb2199b714664676": {
+      "signature": "41ca1e2cd701d5fca009923b7c69bc9579038a84e6f7ee79cb2199b714664676",
+      "alternativeSignatures": [
+        "f024d1fd70cc43ee78917001120602691d5b08df1a1b3a0fe92fb24db7449b05",
+        "a6983f7f1e94073941ddced692f8dd84a84fa70f70c0d6aaddfa9585a1c0a7cf",
+        "2c5d59dc831808f390b254fb6ade8777e09e97edc7aa097087a277fea035dd9c"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests/Parser/GeneratorTests.cs",
+      "line": 343,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "f830696effbdd67bcbd3dd69bd88ce5293736bd5b6b4f3ed5ac75b1216e353d6": {
+      "signature": "f830696effbdd67bcbd3dd69bd88ce5293736bd5b6b4f3ed5ac75b1216e353d6",
+      "alternativeSignatures": [
+        "d8e41146b3bfb6014c19d25c013c6dcc65e7dcc7492bca66c3bb07b020402414",
+        "e11cf3a129c1c704a60086e0ddeba04c84d4c8222771ef5298bcdc31cb6c164d",
+        "2779952d765bfd131e3ba9285d9dffd3157ca9a8024ae1576340364519acc392"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests/Parser/GeneratorTests.cs",
+      "line": 343,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "44e15a5b490c90d0fcb3823f61f8938521fefa3c15952cc93f40db17aa0f4937": {
+      "signature": "44e15a5b490c90d0fcb3823f61f8938521fefa3c15952cc93f40db17aa0f4937",
+      "alternativeSignatures": [
+        "10de4cfe5286559cb38e0e7018420e3fec6982bf0b0157d6ee40e63e2491d6ee",
+        "2a005aba17c3ed8940edaa35786edff00bd28e89fa1ef9bf9f864f5738a414be",
+        "ae3c0d081180df60a9ed5a3760281ef293552d9f37c3579e775d031eea7180f3"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests/Parser/GeneratorTests.cs",
+      "line": 353,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "b3ba05ca798a9ff328c77f2b39d2c8288101840eadb8f88844f14e1576745ae6": {
+      "signature": "b3ba05ca798a9ff328c77f2b39d2c8288101840eadb8f88844f14e1576745ae6",
+      "alternativeSignatures": [
+        "ca5fb4ad40b28c062535d479e9f52b9266cbedb651fc8f45cd4b8a9c062bbcd4",
+        "5feb48f8ffe1ff65d1d719faa07c8b873e47e2c94554907b2e0595e056b79ee8",
+        "c0105c8e35a0f731f7c3cfccb7828d87b268cc7e6e4c3e5d0694ad9f4d5db624"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests/Parser/SbomPackageParserTests.cs",
+      "line": 26,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "2b87625c8595bcd24552770e76da59ca870102049a98fa97d1f799faa858b710": {
+      "signature": "2b87625c8595bcd24552770e76da59ca870102049a98fa97d1f799faa858b710",
+      "alternativeSignatures": [
+        "68606d5320aa4c603a2fbdeec45bd7cd45fd5ce77eec212a209e62ffc6633361",
+        "ab3b58a4816c747f250d12ae8823d563c2e569fba14d2b83ac7ef3e0b7577c55",
+        "94a54831b4875e837653bdec64b51d128b1bcae529fe5a60a068c966304e8d72"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests/Utils/SbomFormatConverterTests.cs",
+      "line": 245,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "328ead80e361565307ab1eec93c7adcd69ac0089b5ebbff8aa093080ba20fb7b": {
+      "signature": "328ead80e361565307ab1eec93c7adcd69ac0089b5ebbff8aa093080ba20fb7b",
+      "alternativeSignatures": [
+        "f7f03a11410e0b89625e005126287d5bd26e832cbf6a2da51696711b74ee7406",
+        "2cdcd971d23d9774fd1cd304cd1fd4786e7d064ffbe059a99eece9733b0bd1aa",
+        "028f8ba3af954730ea323f7aea2a895cc02efd9030fa2ff1afc195fc4409b6cf"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests/Utils/SbomFormatConverterTests.cs",
+      "line": 287,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "da3ee43219aa0fa43f696d0e73010be6c7abadebc88ceb78fe7aeda3ff7709bb": {
+      "signature": "da3ee43219aa0fa43f696d0e73010be6c7abadebc88ceb78fe7aeda3ff7709bb",
+      "alternativeSignatures": [
+        "619b07e09c876ddd87e2042c05d3921e9f7bb515a75661c430c75ef8ffae43c2",
+        "d9d9e1b1a192b2c682a6cfc4f8d9257fd0441d855a83e6b6b66c78f4e9a54560",
+        "b0ac4bf1d4768f59cee8674660025baa9821d4964062db091a4e45f640030d18"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests/Utils/SbomFormatConverterTests.cs",
+      "line": 289,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "05a4a75c394d665750608394f037920713a664bc9ad81d0069c9308d82d4e689": {
+      "signature": "05a4a75c394d665750608394f037920713a664bc9ad81d0069c9308d82d4e689",
+      "alternativeSignatures": [
+        "49e42918a9c56d1633908255b2e84501a87d270d9267d2e43f910f2816b921a7",
+        "f30aa2394d862805e0d28a1dc1e98dde4008133f6d3b3eb124a7690089e93e5f",
+        "f0f5975d631e2543283d03724e28023acd8a568d9a039c7e4535e671d2631592"
+      ],
+      "target": "test/Microsoft.Sbom.Parsers.Spdx30SbomParser.Tests/Utils/SPDXExtensionsTest.cs",
+      "line": 154,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "85d9893ddab178193ea3aef78e67bf88706bb354198e2419e8ea1e54f0e9e035": {
+      "signature": "85d9893ddab178193ea3aef78e67bf88706bb354198e2419e8ea1e54f0e9e035",
+      "alternativeSignatures": [
+        "5963030c4d09f83d05c0a8aacb276f6bb48910d04ed526f1a7db7a9a4fb38e9e",
+        "abd90fcacc591961f87798ed061e6144c8a40877c50d4bd7785016ef3f50d675",
+        "2a33f53532960a5a1783e143fe6389fb48e0167b8115c6f3ba8c6f83cdc8a2c4"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/Utility/GeneratedSbomValidator.cs",
+      "line": 60,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "1713b3a866e79006354ee0688f01b54b2821eeb35fd3f9c1fd1cc1bea6eaaee9": {
+      "signature": "1713b3a866e79006354ee0688f01b54b2821eeb35fd3f9c1fd1cc1bea6eaaee9",
+      "alternativeSignatures": [
+        "0f7bdee52801f658fc16397b231cbbf0359f87cd9ef357390113e64c8a410ac2",
+        "9c13efd1065c947f05be8bd9bbc5fd18cc8c4fe593d3a1dda8f351aed4971d29",
+        "c492b4908ad2dfb2c1bb190953081363f4aa10a37c803655056daebfefbc2784"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/Utility/GeneratedSbomValidator.cs",
+      "line": 89,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "05d2f0eff3b597a452e3f8c040b0eb10adbcc4163adc0f6c7c6dc9e06a55f37b": {
+      "signature": "05d2f0eff3b597a452e3f8c040b0eb10adbcc4163adc0f6c7c6dc9e06a55f37b",
+      "alternativeSignatures": [
+        "4732448ad99cdc31d4fd962d09ce95e2fecc04abef33338ca2ce47d3f060a97d",
+        "29e735c798f63d90e9f255b22135ee01c1b314575e9fcbbf591fd34e2caeeb99",
+        "c7d6a0beb6f9b4422727cb8016e06b6c2d98dd4d8766ea370b86a04b9af79a69"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/Utility/GeneratedSbomValidator.cs",
+      "line": 96,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "ad92bffa28054a6ae4b18617ee6f2588671292e49e09e05c942f469771c8641b": {
+      "signature": "ad92bffa28054a6ae4b18617ee6f2588671292e49e09e05c942f469771c8641b",
+      "alternativeSignatures": [
+        "6377b914e9eb57898204b298d00b388d1db58e95fee6c5b8cf6db7e3de075007",
+        "8301abffee2ddbfec2f7e2057b19738b1067d06272ac827dc06be158248b3856",
+        "2be60b67c1957dc1662d1b605139f7c8c00e32a9d74f2b2cb8ff0e2aeefb81c5"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/Utility/GeneratedSbomValidator.cs",
+      "line": 82,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "683c7dd4ad375e9866d460eb6a42e063761ec5604e8d9e5373d35bc886515ad9": {
+      "signature": "683c7dd4ad375e9866d460eb6a42e063761ec5604e8d9e5373d35bc886515ad9",
+      "alternativeSignatures": [
+        "a7987a5f0a9be1be5b29b909789f7993c5d1b567d36c2701cdf43e10de075753",
+        "72fe79b69db6333b6c9634e400e201d5dd7db6f6096e56830e026a78df103236",
+        "f5c4d3ffa752db732fa90a3f2822d83b7ba52be334cc03e194c588e98526a09b"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/Utility/GeneratedSbomValidator.cs",
+      "line": 93,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "f56f666890f6602e4e804db538e3b7b5a1b2c07547c350fd8227d7bcd0b87a47": {
+      "signature": "f56f666890f6602e4e804db538e3b7b5a1b2c07547c350fd8227d7bcd0b87a47",
+      "alternativeSignatures": [
+        "fa06fbcdccd48a21053c7c3048bdc17a81ba5cccabad2589120d9ac1cd6d2ae8",
+        "5d4232fd6310a0ec773a2f12024dfd0691ff96dcfdc6d7215933e162df41352e",
+        "b23c171e38e36de7120a84b6ab50989d5f07a34412ef40a1e29c3169b155c1e1"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/Utility/GeneratedSbomValidator.cs",
+      "line": 96,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "4dd75e60374c2b03c51de4f43ea4223ca0877c5de55b785d857f234f63a2df5d": {
+      "signature": "4dd75e60374c2b03c51de4f43ea4223ca0877c5de55b785d857f234f63a2df5d",
+      "alternativeSignatures": [
+        "6b33b371d77daf96a8e79fb196694a4e5cd8c1df619c43f64384250cb4acceb1",
+        "3ad583d3cfe9ff5e39e7037112dc8254b9d9ff957f1299d990562a2c1a958f88",
+        "6069f8e2855886e40070d0db4269862e1fad87c3a761acb0ad51252c211d5d18"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/Utility/GeneratedSbomValidator.cs",
+      "line": 112,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "cd12dc9759ed74d5e4414a6d5a208a345ed5d7bb43aed85ee817da96139f7f73": {
+      "signature": "cd12dc9759ed74d5e4414a6d5a208a345ed5d7bb43aed85ee817da96139f7f73",
+      "alternativeSignatures": [
+        "44d38082fc9b795a220dce46700dc42e4df8a644c98c258d0106dc0fa755cf6c",
+        "0d8ae0b71eaeafd3dc115e6f531fc2b9a9b7b899b1a110d32abae517e417cfbc",
+        "01a0d04b6bdb7af585683a37cfc7c97043fc897115abb30247c18da2ded07ad6"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/Utility/GeneratedSbomValidator.cs",
+      "line": 125,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "7ca9c2b93fe3aa70c01dd05a3463a8f9b8710d121ecb070fced4da55a7ce1989": {
+      "signature": "7ca9c2b93fe3aa70c01dd05a3463a8f9b8710d121ecb070fced4da55a7ce1989",
+      "alternativeSignatures": [
+        "094d498a5d95daf21e63991c4ac047ab001ff66c37a1fa58a2e2f7ed40d9480c",
+        "da1b257ee5aa7ec212aaa43cdbc356875e175a7f04f5c61512a54fe9c15dbee6",
+        "a0f1565ea05245e64bd80e3401a62b26a28fe69e4fff3a0b9cb34b0f017eb355"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/Utility/GeneratedSbomValidator.cs",
+      "line": 137,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "1e5dc8578b9e0d3048441f4a594db3f9664ecf855c38cac2493cfc694483549d": {
+      "signature": "1e5dc8578b9e0d3048441f4a594db3f9664ecf855c38cac2493cfc694483549d",
+      "alternativeSignatures": [
+        "9f361fbb5fa3bf958e74be38cd2b838026941f5e6a37f8465e0e5ed035f23bb0",
+        "eb6135ed8e6dc486ab54f7ef97df371095b6ea5476645293faadb3d4c4e0c960",
+        "256c4c7eced925e343556ea4880379a63c233845349c2f8b4513d2a5ec1cd3aa"
+      ],
+      "target": "test/Microsoft.Sbom.Targets.Tests/Utility/GeneratedSbomValidator.cs",
+      "line": 137,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "05804b0f2796f3fd60ba674361b41f9bfc7440139af19bccb85d1ee317d7d56f": {
+      "signature": "05804b0f2796f3fd60ba674361b41f9bfc7440139af19bccb85d1ee317d7d56f",
+      "alternativeSignatures": [
+        "8cc0ca5c12c830e6d95a0374d5269e0e1ec07ebc5c2a77b255b6c60faf76a7ea",
+        "b8685ddb2850a61634c22c3d9da0c45f9c5e06962ea2d5d64dd303bdb831acee",
+        "f4369fb278c78b741aff9f15f694dd23c8288242eb8572d378898636b1f31f82"
+      ],
+      "target": "src/Microsoft.Sbom.Adapters/Adapters/ComponentDetection/DotNetComponentExtensions.cs",
+      "line": 45,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "a2a2f1ab93ea4e30e5c3f4f7daec2c3c855a7665b1a39152749a383550e6168a": {
+      "signature": "a2a2f1ab93ea4e30e5c3f4f7daec2c3c855a7665b1a39152749a383550e6168a",
+      "alternativeSignatures": [
+        "921261a8a95cf5418dd9d19693515e4ed6d0578bf47acad38c0eb7e3a1f0d05d",
+        "00e7b52385bf7afe0786b6766e8f9f174ebbde1433982ac4fc60741e9a44b3d8",
+        "845e9698681b57eb0535d1e450feec45beae17c3f8a4a1ef26bb3ff75177c834"
+      ],
+      "target": "src/Microsoft.Sbom.Adapters/Adapters/ComponentDetection/DotNetComponentExtensions.cs",
+      "line": 46,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "b072b8da5cfe9bca6f11fec4524d36598f12492094047817a3f3594461bc5081": {
+      "signature": "b072b8da5cfe9bca6f11fec4524d36598f12492094047817a3f3594461bc5081",
+      "alternativeSignatures": [
+        "c60270182b1d37c1dba0956c49acb8c3000ffa96be8543a0633b71079e8c9e78",
+        "956f85fbbb23973fdd254c8571a231360743a097a6ee03e03b100c01b59f8c98",
+        "f6bb8ac1c57908308fa93b9361f4e2d56c7e292683bdb56d5a0184329177e4dc"
+      ],
+      "target": "src/Microsoft.Sbom.Adapters/Adapters/ComponentDetection/TolerantEnumConverter.cs",
+      "line": 74,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "bc98635e012904e3a169f634637d4f6424ce7947da2ef2316513bfc6939e1d89": {
+      "signature": "bc98635e012904e3a169f634637d4f6424ce7947da2ef2316513bfc6939e1d89",
+      "alternativeSignatures": [
+        "138342db3ccc0840b0dedc8a7c15ae47d09c17556ff7c916117bc86140c80859",
+        "4fa7a8b2251681aff26d17978225a9af89d1a522f4c2dd67f40a0b37abb2d20b",
+        "6185a3b9cef7d3482b8bcf568271e7d82b3ee2288bf9d7268f02cda1891a8c3a"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Manifest/Configuration/SbomConfigFactory.cs",
+      "line": 83,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "e22f136af5d00c714f58d5436e1f520628cbe93c61797cb7e8360cb3deed9284": {
+      "signature": "e22f136af5d00c714f58d5436e1f520628cbe93c61797cb7e8360cb3deed9284",
+      "alternativeSignatures": [
+        "4cff3bfca7b5552a648066b27f4d148ce58625a69a0aa1f70ce7646ce6d62b34",
+        "53914bbf8b95c1112ce0c51956c8a20ca25dcc1b7b313813e3765fe64c5bb852",
+        "5a8494c69268f6e89d61d82030d6e2a3bb248be9b764d93ae6f767e70e62019c"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Manifest/Configuration/SbomConfigFactory.cs",
+      "line": 87,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "35f826a75fcdc7f1d03f37acc61c2f2e9a5917cf659a113f3f7547eee66c9444": {
+      "signature": "35f826a75fcdc7f1d03f37acc61c2f2e9a5917cf659a113f3f7547eee66c9444",
+      "alternativeSignatures": [
+        "0f6c4627ee4c1562ec6538d5cc2fcb777f763da81312582b974580596b190cb5",
+        "d25baf2caa060e7407d8c5eece9d0a306388edf849e3ddc4566fd34cdaac341f",
+        "71c59d251cf90f1aaa390be854e25f4f9cc4212a9534bfb1e07d53e8619bd20a"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Output/Telemetry/TelemetryRecorder.cs",
+      "line": 85,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "a1979e328dc67aa923b387891edca91d6ae35e3897e67c3c1a4b873c07521700": {
+      "signature": "a1979e328dc67aa923b387891edca91d6ae35e3897e67c3c1a4b873c07521700",
+      "alternativeSignatures": [
+        "9c6ad45a079d8ac8f75da54f1007faf9aa379836caee06b97e6b023064083c12",
+        "f5ac61dc4ce653928475039788a5d4dbe46d35718bd1a166caf3396f1bc68cf4",
+        "cf443f49e2c1b346d75add7a1a70ff9a6dbcc2e153a01b491ff56a1c13f2a87a"
+      ],
+      "target": "src/Microsoft.Sbom.Api/PackageDetails/ComponentDetailsUtils/MavenUtils.cs",
+      "line": 53,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "dbcfe82224c7616ff6929b88124a879bed57d30ba321480224cd68780c40f09f": {
+      "signature": "dbcfe82224c7616ff6929b88124a879bed57d30ba321480224cd68780c40f09f",
+      "alternativeSignatures": [
+        "b9e837d813695100adcb69e2f12e997b98a9faed25c00db620f687bd2dd4b215",
+        "32b749bf1b01884efa96876a7f1bda7352baa74d46850055350a2bf9d7dc5852",
+        "3738bc63bdf2ac827a5ee814f033d42f8f854189d02fc9fe76414dc9d68947f9"
+      ],
+      "target": "src/Microsoft.Sbom.Api/PackageDetails/ComponentDetailsUtils/MavenUtils.cs",
+      "line": 54,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "6e898e587bb97c3103a5559d8216d50c2d0a011fca0499bb0975ba482a29d929": {
+      "signature": "6e898e587bb97c3103a5559d8216d50c2d0a011fca0499bb0975ba482a29d929",
+      "alternativeSignatures": [
+        "8ded424e7918980a9f9facf44f09124233b1aa5424b047a56b25efc1096d3a6a",
+        "1b6974bf89e9da8da4d4d555309236e6fec8d92043d6520a8095450f24e557fd",
+        "511eb2677b1d393d20b63baa1b318d9762d953a39fcb2ed4c27e09d466b0632e"
+      ],
+      "target": "src/Microsoft.Sbom.Api/PackageDetails/ComponentDetailsUtils/NugetUtils.cs",
+      "line": 40,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "bb65015a3ebe93ce50ed633322dbe9eab1ac36456bbe8550cb26e8289c771f49": {
+      "signature": "bb65015a3ebe93ce50ed633322dbe9eab1ac36456bbe8550cb26e8289c771f49",
+      "alternativeSignatures": [
+        "40948b8d15667e5b66f1692123b89ae65ea5498f165d0ab42e6c32f4b862d37c",
+        "caea5ea6260c22e5319233251c956e4345cb1c6cf806623cb4d5c2f60f3e9681",
+        "f7d89f889e975f338b37b64889dceebb4b7f774e3c5ede95401580d2e11ec96f"
+      ],
+      "target": "src/Microsoft.Sbom.Api/PackageDetails/ComponentDetailsUtils/NugetUtils.cs",
+      "line": 42,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "b14d8942b0fb57cfdb5c67310d6ad48d4376f70ef146e703c7f49c01386b8c31": {
+      "signature": "b14d8942b0fb57cfdb5c67310d6ad48d4376f70ef146e703c7f49c01386b8c31",
+      "alternativeSignatures": [
+        "24bfa0bec88a98041fbbd5025093b2ba4a058cf2b2762a0c9a1e9d366ca1b5c3",
+        "114716dc7fcd65c5277723b8d08769c27f36b296eb701170c867eac6c6075526",
+        "284b25e60ffbd3fdeca607acbe1339ecd36fc8f0d1da64a7a18a0bc1578c6ad0"
+      ],
+      "target": "src/Microsoft.Sbom.Api/PackageDetails/ComponentDetailsUtils/NugetUtils.cs",
+      "line": 94,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "de4df665e87d6e31d51a8986514589a06ff611d5f140e3ad6fe8ab86561f391b": {
+      "signature": "de4df665e87d6e31d51a8986514589a06ff611d5f140e3ad6fe8ab86561f391b",
+      "alternativeSignatures": [
+        "2beb2f43926b85aa03bacafdc0a3cb7b68009e5fb2de6a57b310807ccdb70fd1",
+        "9b63e6dc039eda3c6ee7ed19a5dfa27dd2565e70db582181135049e98c772294",
+        "9c50f0ebe39547890f0361df2657dd253072cc33eb0bb295de1bc53908f410bb"
+      ],
+      "target": "src/Microsoft.Sbom.Api/PackageDetails/ComponentDetailsUtils/RubyGemsUtils.cs",
+      "line": 54,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1304",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "10938b15651289ec6c2710b84e45a101f2107f8a78ebabf32972270bd18e8f77": {
+      "signature": "10938b15651289ec6c2710b84e45a101f2107f8a78ebabf32972270bd18e8f77",
+      "alternativeSignatures": [
+        "9a49f9112469e5aab430c5ae48635dabe65e77b3c8be3430df293897cdd7f367",
+        "000c93c7792c0102ea9322653b17c072468d0172a3805d330a3828e27f1e37f5",
+        "bbd0ded5ec6b459ff0c7af732c9bdf0885ceed69c51a0fd0fdf1ad4f2456a381"
+      ],
+      "target": "src/Microsoft.Sbom.Api/PackageDetails/ComponentDetailsUtils/RubyGemsUtils.cs",
+      "line": 119,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "829c818a6684ed2fc4e2de40634f511f65f95b32d860c011fecd98264b9f1bad": {
+      "signature": "829c818a6684ed2fc4e2de40634f511f65f95b32d860c011fecd98264b9f1bad",
+      "alternativeSignatures": [
+        "4da74b48087de5dba6fb0dd9fb4d373e33b833bd12330fcc8378ec53ebd6ff8b",
+        "0b85c8721e164584cfdcee2aa574714f05e984c9d0d9c355817e2b508ad319f7",
+        "2a41cf466442adf8b2752259078203e2f938b03af5accbb1ee4badec02f9be61"
+      ],
+      "target": "src/Microsoft.Sbom.Api/PackageDetails/ComponentDetailsUtils/RubyGemsUtils.cs",
+      "line": 137,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "1fa7c87fb356551456d51cde1f93901d66439b05933fbd95b2b9c956e3def3af": {
+      "signature": "1fa7c87fb356551456d51cde1f93901d66439b05933fbd95b2b9c956e3def3af",
+      "alternativeSignatures": [
+        "bc48c2cada526433846622508508f43ea2b551b6097058dea10629e08a4fcb44",
+        "35c292aabb8ea3d4aef062b93dad8a99bccf74002ed7dc6d7697d1ce76e0158f",
+        "9133d94c390bba9e853a97172d67163e091c535bbfe6b97a27650e3a2c1870f1"
+      ],
+      "target": "src/Microsoft.Sbom.Api/PackageDetails/ComponentDetailsUtils/RubyGemsUtils.cs",
+      "line": 208,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "f22d60656c4f10626457c8df896e66f699ab4322ed4b31f7916b3a8fb5e19ed3": {
+      "signature": "f22d60656c4f10626457c8df896e66f699ab4322ed4b31f7916b3a8fb5e19ed3",
+      "alternativeSignatures": [
+        "5954187a5c010430299f6f75998e2239fb21b445663476681dad96ea5cfeaca1",
+        "bcc665894ae38f63f33cbabb4ac6d894a9b4657e826bd8bc0657bae9ed398439",
+        "00bb6345261d694d258d8aa6b6ae1df285cba1a71f5893692d338c4733dbe97c"
+      ],
+      "target": "src/Microsoft.Sbom.Api/PackageDetails/ComponentDetailsUtils/RubyGemsUtils.cs",
+      "line": 243,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "f36e7c27e9fc6d479831cdf8f64fb0d449d982650e5042195b0627cf3a26f88b": {
+      "signature": "f36e7c27e9fc6d479831cdf8f64fb0d449d982650e5042195b0627cf3a26f88b",
+      "alternativeSignatures": [
+        "bde8ba56e2fb4711bd87d51c97393f0a41ee8cd25acd629ded4cefa97d7e371b",
+        "50e29184bd7a800f9656a74fc9286dedc76632b0c075780f562f49949ad2555e",
+        "59568873d41d7cdb248b0517a9ce9d76d2ed89521d71e26c693e4837cdeeaff0"
+      ],
+      "target": "src/Microsoft.Sbom.Api/PackageDetails/ComponentDetailsUtils/RubyGemsUtils.cs",
+      "line": 247,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "18db79e85b0e350983464ffbd09aaa9dc0f8d65c63b3dafae53805489565ff07": {
+      "signature": "18db79e85b0e350983464ffbd09aaa9dc0f8d65c63b3dafae53805489565ff07",
+      "alternativeSignatures": [
+        "52625e23b71d0ab77f2fbdf92e2af658e2750c943faf59263e649683afa2578a",
+        "111ee0856a27cac62f36956f444f0d5761b161eb43984c156ba7d79d64fc94da",
+        "16b58e07749fd2be49e2e99ecf0a260d2aca1f888b324c63e679ff1d477978a4"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomChecksumComparer.cs",
+      "line": 39,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "133da45ec15aa99e873953b39507968229f4198e57bdb5b73a57cd4129f28f6d": {
+      "signature": "133da45ec15aa99e873953b39507968229f4198e57bdb5b73a57cd4129f28f6d",
+      "alternativeSignatures": [
+        "181e4c01938025955df2a24a468b1e04ecc8e19f9cc99dbc2d86718c76ce1332",
+        "88ea69e8aefc6cef76819f4641f688c497a0492a09e10f031832130bee93663d",
+        "897ea661cfa503703726a5c261a07318c69660cd3354d05a68c2a8c5eee564d3"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomFileComparer.cs",
+      "line": 43,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "b0b79b9be52136ec1732800babddb4cce3ba1136f942be00391a8f2352667cca": {
+      "signature": "b0b79b9be52136ec1732800babddb4cce3ba1136f942be00391a8f2352667cca",
+      "alternativeSignatures": [
+        "482f9752594dad07939e8241897414ab5197a93d2e5c0865a9666b2edae6bcbe",
+        "a5f8cc857acbacf1375affa4fdf49591ba2fe7f7715147cc414ede3834f74987",
+        "01b3d23eae3f8073450e662dde5b1c633c8e7a5cd6409baa8dbe839dbb34a5b4"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomPackageComparer.cs",
+      "line": 64,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "23a0aac51eff541a2472221d76253ed68f7d6f1266fa73e508baf17c851c3bd3": {
+      "signature": "23a0aac51eff541a2472221d76253ed68f7d6f1266fa73e508baf17c851c3bd3",
+      "alternativeSignatures": [
+        "caacbd085abacfbd19d193e54fb73c375dda18f78bb56e6e3007fb12dec49645",
+        "3c8845ad3fec1d317c23bfb3c0883141694201eeabe40df80ca014643ab95f1a",
+        "d822d19fa05609bc1f3262c8ae6f8d714daecbfa099f32faa188b790a22d3903"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomPackageComparer.cs",
+      "line": 73,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "ce489808acb9aced94f9340c5c01f89451303e933bdf1a97f5c5ae99c703028d": {
+      "signature": "ce489808acb9aced94f9340c5c01f89451303e933bdf1a97f5c5ae99c703028d",
+      "alternativeSignatures": [
+        "121f838fac15e0be45b3e06c1e9c70505b32ca79e731478ee4cd1795dafc2257",
+        "7f57b56ddc5917aa68c6b764fdeb0d35d46f9850576553e5f15b4641dadf6a0c",
+        "8092813f2583f67abd9f9044d09515a8c87e08a9c3b5078836f4e02b70ae1b4b"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomReferenceComparer.cs",
+      "line": 29,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "b169ce981153cee96e5700701ecebb9345402e6d1f927e160b1a56b968139934": {
+      "signature": "b169ce981153cee96e5700701ecebb9345402e6d1f927e160b1a56b968139934",
+      "alternativeSignatures": [
+        "a601ac4690c559a54eb6f5b30a197bf8ef7b6557c8f023c84558b8593f6d6fbf",
+        "70a272cd863b29a53a585f9cb6d4826f88094f8026b97760b0a1666d0f08a847",
+        "b2cd0b91ff87f0a890b811e3b9a82ce0de2c915005768dd333935aa3c7d74759"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomReferenceComparer.cs",
+      "line": 30,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1309",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "f62b9c1ec3ad5c6f49f1854742da861ab023b6c8acc17532d8795e0907f5392a": {
+      "signature": "f62b9c1ec3ad5c6f49f1854742da861ab023b6c8acc17532d8795e0907f5392a",
+      "alternativeSignatures": [
+        "3c5c3c71c7182002e74fd71f0b88388256847cfff4c82d3a8fbe3dad5a656cfc",
+        "4963a672883ef30c905852e427278a49f2f32a603346d413e65fe054b8af81a2",
+        "5b6c61f36f2f48441e34720a8069ebb583d34b7c0b451715765a90c60049c1d2"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomReferenceComparer.cs",
+      "line": 29,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "326fc7e37401669f8b81486e14262c12388167bce9788db5e127387a5f05982c": {
+      "signature": "326fc7e37401669f8b81486e14262c12388167bce9788db5e127387a5f05982c",
+      "alternativeSignatures": [
+        "f2daca091ea29409677811383f2eb96b525006b0983992f2df71ff7386292dbf",
+        "2e045679093ac5a381c08a2ed152a57534ff924f41713ce664fae0ffa4c8867b",
+        "70a0511322cbf5a3873b5f69722123c91fa3a48919ea73c6e36c1d30fe874c78"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomReferenceComparer.cs",
+      "line": 30,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "7b425274fcd7fa4a2d23ce0091397b503cadb41b56e907ffcf3d17f22c4f9db2": {
+      "signature": "7b425274fcd7fa4a2d23ce0091397b503cadb41b56e907ffcf3d17f22c4f9db2",
+      "alternativeSignatures": [
+        "d41797ef88d67b5fa39b94eb28944a782878bacb77400beaac6a5d6b24e37a53",
+        "d9350afa10b3cb5ad88071221f349d5496e052fb1957190917eb28b41fde24c0",
+        "b81428d24a21def43cda5a24452de56ebbe5bb79e9be07bd7d47ddcbe59b8a6e"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomReferenceComparer.cs",
+      "line": 44,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "723c03aa17ada361f5a59de9b89c531ffd4edeb6fff39ed967fe390e40be7f24": {
+      "signature": "723c03aa17ada361f5a59de9b89c531ffd4edeb6fff39ed967fe390e40be7f24",
+      "alternativeSignatures": [
+        "dc07b57c39a1b5871965928a6fef97013e0000ebf1e82b2172c33005aa46d009",
+        "da6e7b75cc9af681ad8bc4e9872920ff1e03944c78c76de7446bb5e89cc63a69",
+        "400f9b58f485f3bb0e0df4c5e8851df65932711af9182d9736c81415e8475edd"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomReferenceComparer.cs",
+      "line": 45,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "5e4715307e3ccf21acf4aa460942fd28965dabf83adba3f20520c6fb64a19b2f": {
+      "signature": "5e4715307e3ccf21acf4aa460942fd28965dabf83adba3f20520c6fb64a19b2f",
+      "alternativeSignatures": [
+        "a7dd255cdabde581b8bd3014743dd653c9d41beaba8e875c66120c6c67599bdf",
+        "aec11ca86a1b6013285f9d1b0744c7469fa14d1155b2c2194b58158c260d81e3",
+        "7dc15be27e4490ab2f1a702dbd11788a9a06d94dd11acf49f94cf62dc903af89"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomRelationshipComparer.cs",
+      "line": 37,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "d9664b000ecda97e9dc3341e65ca4d785b998fab0e751672ef1725432b978eb9": {
+      "signature": "d9664b000ecda97e9dc3341e65ca4d785b998fab0e751672ef1725432b978eb9",
+      "alternativeSignatures": [
+        "ed005e66c1437691b38126aae2cd3eaf8227558aa47b5d7a75480a3ec8482b2c",
+        "bf7c64654fa4514c390f6c03213dbe05cb64d3b3e107bd54bf20b7691b2094f6",
+        "0af97f598998b877f77390998c4abf538c039428c485139e8f678d2d3ff42b4a"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomRelationshipComparer.cs",
+      "line": 42,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "a68aa4c70b2d03d751cc4c90692968171e7aa26751fbbc9fcaf4de4976f09bcc": {
+      "signature": "a68aa4c70b2d03d751cc4c90692968171e7aa26751fbbc9fcaf4de4976f09bcc",
+      "alternativeSignatures": [
+        "09994a004cb52a2b298a814d9d96bd69fe40b4f211a31f31a1f5a7ffa6451015",
+        "5036eef48d57fce89fbd75bed0bfdcca7e2f13e56f18397f323cce2b734212b0",
+        "e2130ce7ed7eb0545ce736e75c20993e3ca38cd9ecf760437a5f976148dc90bd"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Utils/Comparer/SbomRelationshipComparer.cs",
+      "line": 47,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "1d34f96e761bb49749ed77bad47ebb214d12b09474192fd07b253f1506605d6c": {
+      "signature": "1d34f96e761bb49749ed77bad47ebb214d12b09474192fd07b253f1506605d6c",
+      "alternativeSignatures": [
+        "4cab12994944d7ae112fd37b2f4085ac5496aaffbf8f90cc52a67822ce49dace",
+        "b8b5b5642095daf5172b3cb9174fb7e66e2f1099e33dda1a9c5b709a4e06856b",
+        "3c2650e9d6d071de64e40dc16e90a0c05b14b399af0aca1bb3b3d4be27fb44fa"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Workflows/Helpers/AggregationSource.cs",
+      "line": 28,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "d5724607f5ccdc41785b4aa01527a650ed8937facfa1b5084db901a318650d2d": {
+      "signature": "d5724607f5ccdc41785b4aa01527a650ed8937facfa1b5084db901a318650d2d",
+      "alternativeSignatures": [
+        "9e82af8bb6273ccc32cbfbbf0d069718e03a3ff1536489a4bc80028c4fdb4d3b",
+        "6d494100326eecda5f0ce6ec4196da58b07ce6aa3422dacc69e5648a0933c0a1",
+        "d9d9574ea848ef5bbe7efc97472915447e8b70757dffaf18c999b61e7a97a39a"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Workflows/Helpers/AggregationSource.cs",
+      "line": 28,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "530b8e8258f6ab7dd039a00aaa993d2dd32b44f878b752dc3a44163072464d72": {
+      "signature": "530b8e8258f6ab7dd039a00aaa993d2dd32b44f878b752dc3a44163072464d72",
+      "alternativeSignatures": [
+        "97fcbe3c98582c2679625db4b6331d9a45ff9e0ba8f3df8da8af322730fa8132",
+        "a1b9503865bffb3d4a56d49addec30b1142b329f6818c6a2df299ee278669902",
+        "eef6cde5e270a7d2d1cf4095e9238bfef7ad76832743c05ba4a12752c7c8fae9"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Workflows/Helpers/RelationshipsArrayGenerator.cs",
+      "line": 110,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "5989f3eaa6bcd124027f396faa51ff2e0c81332705f88988954f47d2f87fc343": {
+      "signature": "5989f3eaa6bcd124027f396faa51ff2e0c81332705f88988954f47d2f87fc343",
+      "alternativeSignatures": [
+        "bc45f7aa34c9951e9365197fa3c3050dd999ec91a802f0b29fa275fc48039d44",
+        "5db3f796f3b5cd73892ce3f3e5ecd3a71d9713015aaabec6c8e5e3232b0d7bf9",
+        "beb991c37b8daa13b4be7c1d3d51532bf41ed815c2c37ce10d020865c0d1a03b"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Workflows/Helpers/RelationshipsArrayGenerator.cs",
+      "line": 111,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1305",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "279bb0ff01e1ec5f97b521b083b9a7ec20ccda08ccc2099c36aabf0e4c73c5ac": {
+      "signature": "279bb0ff01e1ec5f97b521b083b9a7ec20ccda08ccc2099c36aabf0e4c73c5ac",
+      "alternativeSignatures": [
+        "000519af38982caba7f5b07e1258fdaf261aae3f45cf9300f95bdccf3e27c1fa",
+        "2f71c6743105e2a9c8e6c2768b2975fe7115eb0ecc67d5564b2f9695b3f29034",
+        "a42922eef0903db31c3b219cb6fb5ba2d8e9e912b6e6973665843557e2fe3d24"
+      ],
+      "target": "src/Microsoft.Sbom.Api/Workflows/Helpers/SbomRedactor.cs",
+      "line": 75,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "abe9a3206df2f83ecfc55d096f33c1443b3720432837201b572640705c4ca946": {
+      "signature": "abe9a3206df2f83ecfc55d096f33c1443b3720432837201b572640705c4ca946",
+      "alternativeSignatures": [
+        "6fa8e58dde34a631752cc79dd5cc0731068bac85c1643af449b570c70d68b571",
+        "5d6f75f507a9f1e06c5f597b071633e3772ac65da315c7eb6bcbfb0388c55f4a",
+        "435fccccaf895e863de94971894012434148aab2c5ed887c6b79748faa024c01"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/Helpers/SbomRedactorTests.cs",
+      "line": 139,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    },
+    "2c841652a4f38018bbffe7be477b8c29a097fce8088ff3374e51c2686322a142": {
+      "signature": "2c841652a4f38018bbffe7be477b8c29a097fce8088ff3374e51c2686322a142",
+      "alternativeSignatures": [
+        "d5a2512224222e3372c163e3873972eb0d70863d8a9489eca0fe5fcdf3371f99",
+        "ec79ba324e5634bbf9c223673af0c8b708eed76fb880f028d143c5d747c44e67",
+        "6740a3bd5825698fc30727baa63639d18f89365b5b127b9d96b9de3d5cd4bc84"
+      ],
+      "target": "test/Microsoft.Sbom.Api.Tests/Workflows/Helpers/SbomRedactorTests.cs",
+      "line": 140,
+      "uriBaseId": "file:///D:/a/_work/1/s/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "roslynanalyzers",
+      "ruleId": "CA1307",
+      "createdDate": "2026-09-21 16:33:16Z",
+      "expirationDate": "2027-03-10 16:36:58Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-09-21 16:36:58Z"
+    }
+  }
+}
