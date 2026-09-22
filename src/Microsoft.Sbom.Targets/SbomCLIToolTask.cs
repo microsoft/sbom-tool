@@ -62,6 +62,11 @@ public partial class GenerateSbom : ToolTask
             builder.AppendSwitchIfNotNull("-ManifestInfo ", this.ManifestInfo);
         }
 
+        if (!string.IsNullOrWhiteSpace(this.AdditionalComponentDetectorArgs))
+        {
+            builder.AppendSwitchIfNotNull("-AdditionalComponentDetectorArgs ", this.AdditionalComponentDetectorArgs);
+        }
+
         return builder.ToString();
     }
 

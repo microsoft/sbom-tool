@@ -68,6 +68,7 @@
         Verbosity="$(SbomGenerationVerbosity)"
         ManifestInfo="$(SbomGenerationManifestInfo)"
         DeleteManifestDirIfPresent="$(SbomGenerationDeleteManifestDirIfPresent)"
+        AdditionalComponentDetectorArgs="$(SbomGenerationAdditionalComponentDetectorArgs)"
         SbomToolPath="$(SbomToolPath)"
         ContinueOnError="ErrorAndContinue">
     </GenerateSbom>

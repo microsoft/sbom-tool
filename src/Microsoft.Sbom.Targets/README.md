@@ -41,6 +41,7 @@ The custom MSBuild task accepts most of the arguments available for the [SBOM CL
 | `<SbomGenerationVerbosity>`                         | `Information` | No |
 | `<SbomGenerationManifestInfo>`                      | `SPDX:2.2` | No |
 | `<SbomGenerationDeleteManifestDirIfPresent>`        | `true` | No |
+| `<SbomGenerationAdditionalComponentDetectorArgs>`   | N/A | No |
 
 ## Local SBOM Generation Workflow
 
