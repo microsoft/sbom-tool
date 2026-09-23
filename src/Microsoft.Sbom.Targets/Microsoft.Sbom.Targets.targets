@@ -37,15 +37,25 @@
   <!-- After the Nuget Package is generated, we will unzip, scan, generate the SBOM and zip again. -->
   <Target Name="GenerateSbomTarget" AfterTargets="Pack" Condition="'$(IsPackable)' == 'true' AND '$(GenerateSBOM)' ==  'true'" >
     <!-- Unzip Nuget package, so it can be scanned by the SBOM Task. -->
-    <PropertyGroup>
-      <PackageOutputFullPath>$([System.IO.Path]::GetFullPath('$(PackageOutputPath)'))</PackageOutputFullPath>
+    <GetPackOutputItemsTask
+        PackageOutputPath="$(PackageOutputAbsolutePath)"
+        NuspecOutputPath="$(NuspecOutputAbsolutePath)"
+        PackageId="$(PackageId)"
+        PackageVersion="$(PackageVersion)"
+        IncludeSymbols="false"
+        IncludeSource="false"
+        SymbolPackageFormat="$(SymbolPackageFormat)">
+      <Output TaskParameter="OutputPackItems"
+              ItemName="_NugetPackageItems" />
+    </GetPackOutputItemsTask>
 
-      <NugetPackage>
-        $([System.IO.Path]::Combine($(PackageOutputFullPath), $(PackageId).$(PackageVersion).nupkg))
-      </NugetPackage>
-      <NugetPackageUnzip>
-        $([System.IO.Path]::Combine($(PackageOutputFullPath), $(PackageId).$(PackageVersion).$(ShortUnzipGuidFolder).temp))
-      </NugetPackageUnzip>
+    <ItemGroup>
+      <_NugetPackageItems Remove="@(_NugetPackageItems)"
+                          Condition="'%(Extension)' != '.nupkg'" />
+    </ItemGroup>
+    <PropertyGroup>
+      <NugetPackage>@(_NugetPackageItems)</NugetPackage>
+      <NugetPackageUnzip>$(NugetPackage).$(ShortUnzipGuidFolder).temp</NugetPackageUnzip>
     </PropertyGroup>
     <Microsoft.Build.Tasks.Unzip DestinationFolder="$(NugetPackageUnzip)" SourceFiles="$(NugetPackage)" OverwriteReadOnlyFiles="true" ContinueOnError="ErrorAndContinue" />
 
