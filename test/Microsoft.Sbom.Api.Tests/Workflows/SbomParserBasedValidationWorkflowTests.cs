@@ -164,7 +164,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         var osUtilsMock = new Mock<IOSUtils>(MockBehavior.Strict);
 
         var fileHash = BuildFileHash();
-        var hashValidator = new ConcurrentSha256HashValidator(fileHash);
+        var hashValidator = new ConcurrentSha256HashValidator(fileHash, configurationMock.Object);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
         var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
@@ -342,7 +342,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         osUtilsMock.Setup(x => x.IsCaseSensitiveOS()).Returns(false);
 
         var fileHash = BuildFileHash();
-        var hashValidator = new ConcurrentSha256HashValidator(fileHash);
+        var hashValidator = new ConcurrentSha256HashValidator(fileHash, configurationMock.Object);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
         var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);
@@ -535,7 +535,7 @@ public class SbomParserBasedValidationWorkflowTests : ValidationWorkflowTestsBas
         rootFileFilterMock.Init();
 
         var fileHash = BuildFileHash();
-        var hashValidator = new ConcurrentSha256HashValidator(fileHash);
+        var hashValidator = new ConcurrentSha256HashValidator(fileHash, configurationMock.Object);
         var enumeratorChannel = new EnumeratorChannel(mockLogger.Object);
         var fileConverter = new SbomFileToFileInfoConverter(new FileTypeUtils());
         var spdxFileFilterer = new FileFilterer(rootFileFilterMock, mockLogger.Object, configurationMock.Object, fileSystemMock.Object);

@@ -69,7 +69,7 @@ public class SbomValidationWorkflowFactory : ISbomValidationWorkflowFactory
     public IWorkflow<SbomParserBasedValidationWorkflow> Get(IConfiguration configuration, ISbomConfig sbomConfig, string eventName)
     {
         var fileHashesDictionary = new FileHashesDictionary(new System.Collections.Concurrent.ConcurrentDictionary<string, FileHashes>(osUtils.GetFileSystemStringComparer()));
-        var hashValidator = new ConcurrentSha256HashValidator(fileHashesDictionary);
+        var hashValidator = new ConcurrentSha256HashValidator(fileHashesDictionary, configuration);
         var filesValidator = new FilesValidator(directoryWalker, configuration, log, fileHasher, fileFilterer, hashValidator, enumeratorChannel, fileConverter, fileHashesDictionary, spdxFileFilterer);
         return new SbomParserBasedValidationWorkflow(recorder, signValidationProvider, log, manifestParserProvider, configuration, sbomConfig, filesValidator, validationResultGenerator, outputWriter, fileSystemUtils, osUtils, eventName);
     }
