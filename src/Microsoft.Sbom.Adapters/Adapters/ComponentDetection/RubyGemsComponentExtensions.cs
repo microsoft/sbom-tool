@@ -3,7 +3,6 @@
 
 namespace Microsoft.Sbom.Adapters.ComponentDetection;
 
-using System.Linq;
 using Microsoft.ComponentDetection.Contracts.TypedComponent;
 using Microsoft.Sbom.Contracts;
 
@@ -33,6 +32,6 @@ internal static class RubyGemsComponentExtensions
         },
         FilesAnalyzed = false,
         Type = "ruby",
-        DependOn = component.AncestralReferrers?.Select(r => r.Id).ToList(),
+        DependOn = null
     };
 }
